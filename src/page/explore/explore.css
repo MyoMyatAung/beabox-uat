@@ -1,0 +1,13 @@
+.scrollbar {
+  scrollbar-width: none;
+}
+
+.swiper-pagination-bullet {
+    background: white;
+  }
+  
+  .swiper-pagination-bullet-active {
+    background: #FFFFFF;
+  }
+  
+
