@@ -71,3 +71,13 @@
 .gradient-bg {
   @apply bg-gradient-to-r to-[#CD3EFF] from-[#FFB2E0];
 }
+
+/* For modern browsers */
+.no-scrollbar {
+  overflow-y: scroll; /* Allows scrolling */
+  scrollbar-width: none; /* For Firefox */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Edge */
+}

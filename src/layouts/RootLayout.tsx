@@ -5,7 +5,7 @@ const RootLayout = ({ children }: any) => {
   return (
     <div className="h-screen">
       {children}
-      <RightSideActions />
+      {/* <RightSideActions /> */}
       <div className="fixed bottom-0 left-0 w-full">
         <BottomNav />
       </div>
