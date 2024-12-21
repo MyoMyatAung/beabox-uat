@@ -2,12 +2,13 @@ import { lazy, Suspense } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { paths } from "./paths";
 import RootLayout from "@/layouts/RootLayout";
-import Settings from "@/page/profile/settings";
 
 const Home = lazy(() => import("../page/home/Home"));
 const Explore = lazy(() => import("../page/explore/Explore"));
 const Application = lazy(() => import("../page/application/Application"));
 const Profile = lazy(() => import("../page/profile/Profile"));
+const ProfileDetail = lazy(() => import("../page/profile/ProfileDetail"));
+const Settings = lazy(() => import("../page/profile/Settings"));
 
 const Routing = () => {
   const router = createBrowserRouter([
@@ -48,6 +49,14 @@ const Routing = () => {
           <RootLayout>
             <Profile />
           </RootLayout>
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.profileDetail,
+      element: (
+        <Suspense fallback={<p>loading...</p>}>
+          <ProfileDetail />
         </Suspense>
       ),
     },

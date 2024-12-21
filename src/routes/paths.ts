@@ -3,5 +3,6 @@ export const paths = {
   explore: "/explore",
   profile: "/profile",
   settings: "/settings",
+  profileDetail: "/profile-detail",
   application: "/application",
 };

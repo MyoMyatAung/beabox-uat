@@ -2,8 +2,6 @@ import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { Button } from "../ui/button";
 import { useState } from "react";
-import { X } from "lucide-react";
-import { Textarea } from "../ui/textarea";
 
 const EditBio = () => {
   const [isOpen, setIsOpen] = useState(false);

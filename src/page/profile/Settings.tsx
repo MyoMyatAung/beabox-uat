@@ -1,57 +1,69 @@
 import { paths } from "@/routes/paths";
-import { Camera } from "lucide-react";
-import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
+import { FaAngleLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import EditUsername from "@/components/profile/edit-username";
-import EditGender from "@/components/profile/edit-gender";
-import EditReferral from "@/components/profile/edit-referral";
-import ChangePassword from "@/components/profile/change-password";
-import EditBio from "@/components/profile/edit-bio";
+import { Globe, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import EditLanguage from "@/components/profile/edit-language";
 
 const Settings = () => {
   return (
-    <div className="w-full h-screen px-5">
-      <div className="flex justify-between items-center py-5">
-        <Link to={paths.profile}>
-          <FaAngleLeft size={18} />
-        </Link>
-        <p className="text-[16px] mr-5">Profile</p>
-        <div></div>
-      </div>
-      <div className="w-[80px] h-[80px] rounded-full bg-[#FFFFFF12] flex justify-center items-center mx-auto">
-        <Camera />
-      </div>
-      <div className="flex flex-col gap-7 my-7">
-        <h1 className="text-[12px] text-[#888]">About you</h1>
-        <EditUsername />
-        <EditGender />
-        <div className="text-[14px] flex items-center justify-between">
-          <h1>Region</h1>
-          <p className="flex items-center gap-1 text-[#888]">
-            Bangkok,Thailand <FaAngleRight />
+    <div className="w-full h-screen px-5 flex flex-col items-center justify-between">
+      <div className="top flex flex-col gap-5 w-full">
+        <div className="flex justify-between items-center py-5">
+          <Link to={paths.profile}>
+            <FaAngleLeft size={18} />
+          </Link>
+          <p className="text-[16px]">Profile</p>
+          <div></div>
+        </div>
+
+        <EditLanguage />
+
+        <div className="border-b border-white/10"></div>
+        <div className="flex justify-between items-center">
+          <p className="flex items-center gap-1 text-[14px]">Current Version</p>
+          <p className="flex items-center gap-1 text-[14px]">
+            V 8.0.4 <ChevronRight size={15} className="text-[#777777]" />
           </p>
         </div>
-        <div className="text-[14px] flex items-center justify-between">
-          <h1>User ID</h1>
-          <p className="flex items-center gap-1 text-[#888]">123456</p>
-        </div>
-        <EditBio />
-      </div>
-      <div className="w-full h-[0.08px] bg-[#FFFFFF0A]"></div>
-      <div className="flex flex-col gap-7 my-7">
-        <h1 className="text-[12px] text-[#888]">Invitation</h1>
-        <EditReferral />
-      </div>
-      <div className="w-full h-[0.08px] bg-[#FFFFFF0A]"></div>
-      <div className="flex flex-col gap-7 my-7">
-        <h1 className="text-[12px] text-[#888]">Account Security</h1>
-        <ChangePassword />
-        {/* <div className="text-[14px] flex items-center justify-between">
-          <h1>Change Password</h1>
-          <p className="flex items-center gap-1 text-[#888]">
-            <FaAngleRight />
+        <div className="border-b border-white/10"></div>
+        <div className="flex justify-between items-center">
+          <p className="flex items-center gap-1 text-[14px]">Clear Cache</p>
+          <p className="flex items-center gap-1 text-[14px]">
+            V 8.0.4 <ChevronRight size={15} className="text-[#777777]" />
           </p>
-        </div> */}
+        </div>
+        <div className="border-b border-white/10"></div>
+        <div className="flex justify-between items-start">
+          <div className="">
+            <p className="text-[14px]">Private Profile</p>
+            <p className="text-[12px] w-[230px] text-[#888]">
+              No one can see your posts and alos followers, or following list
+            </p>
+          </div>
+          <label className="switch">
+            <input type="checkbox" />
+            <span className="slider round"></span>
+          </label>
+        </div>
+        <div className="border-b border-white/10"></div>
+        <div className="flex justify-between items-start">
+          <div className="">
+            <p className="text-[14px]">Allowed Liked video Visibility</p>
+            <p className="text-[12px] w-[230px] text-[#888]">
+              public can see the videos you've liked.
+            </p>
+          </div>
+          <label className="switch">
+            <input type="checkbox" />
+            <span className="slider round"></span>
+          </label>
+        </div>
+      </div>
+      <div className="bot w-full py-5">
+        <Button className="w-full rounded-lg bg-[#1C1A22] hover:bg-[#1C1A22]">
+          Log Out
+        </Button>
       </div>
     </div>
   );
