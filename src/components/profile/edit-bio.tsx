@@ -10,7 +10,7 @@ const EditBio = () => {
   const [value, setValue] = useState("");
   return (
     <Drawer open={isOpen} onOpenChange={() => setIsOpen(true)}>
-      <div className="text-[14px] flex items-center justify-between">
+      <div className="text-[14px] flex items-start justify-between">
         <h1>Bio</h1>
         <DrawerTrigger asChild>
           <p className="flex items-start gap-1 text-[#888]">
