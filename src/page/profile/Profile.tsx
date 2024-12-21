@@ -12,6 +12,8 @@ import VideoTabs from "@/components/profile/video-tabs";
 import { stats } from "./data";
 import { FaAngleRight } from "react-icons/fa";
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { paths } from "@/routes/paths";
 
 const Profile = () => {
   const [login, setLogin] = useState(false);
@@ -21,9 +23,12 @@ const Profile = () => {
         <div className="bg-[#FFFFFF12] w-10 h-10 rounded-full flex items-center justify-center">
           <Bell />
         </div>
-        <div className="bg-[#FFFFFF12] w-10 h-10 rounded-full flex items-center justify-center">
+        <Link
+          to={paths.settings}
+          className="bg-[#FFFFFF12] w-10 h-10 rounded-full flex items-center justify-center"
+        >
           <Setting />
-        </div>
+        </Link>
       </div>
       {/* login  */}
       <div className="w-full flex flex-col justify-center items-center gap-3 py-5">
