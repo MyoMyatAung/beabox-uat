@@ -5,4 +5,7 @@ export const paths = {
   settings: "/settings",
   profileDetail: "/profile-detail",
   application: "/application",
+  login: "/login",
+  regiter: "/register",
+  otp: "/otp",
 };

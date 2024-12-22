@@ -14,9 +14,15 @@ import { FaAngleRight } from "react-icons/fa";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { paths } from "@/routes/paths";
+import { useGetMyProfileQuery } from "@/store/api/profileApi";
 
 const Profile = () => {
   const [login, setLogin] = useState(false);
+  const { data } = useGetMyProfileQuery("");
+  console.log(data);
+  // useEffect(() => {
+  //   getMyProfile();
+  // }, []);
   return (
     <div className="px-5">
       <div className="flex gap-3 my-5 justify-end">
@@ -36,9 +42,13 @@ const Profile = () => {
           <Person />
         </div>
         {!login ? (
-          <p className="text-[14px]" onClick={() => setLogin(true)}>
+          <Link
+            to={paths.login}
+            className="text-[14px]"
+            onClick={() => setLogin(true)}
+          >
             Login Or Sign Up
-          </p>
+          </Link>
         ) : (
           <button
             onClick={() => setLogin(false)}
