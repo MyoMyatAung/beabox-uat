@@ -28,16 +28,16 @@ const Banner: React.FC<BannerProps> = () => {
         slidesPerView={1}
       >
         <SwiperSlide>
-          <img className="w-full" src={banner} alt="Slide 1" />
+          <img className="w-screen xl:w-[600px]" src={banner} alt="Slide 1" />
         </SwiperSlide>
         <SwiperSlide>
-          <img className="w-full" src={banner} alt="Slide 2" />
+          <img className="w-screen xl:w-[600px]" src={banner} alt="Slide 2" />
         </SwiperSlide>
         <SwiperSlide>
-          <img className="w-full" src={banner} alt="Slide 3" />
+          <img className="w-screen xl:w-[600px]" src={banner} alt="Slide 3" />
         </SwiperSlide>
         <SwiperSlide>
-          <img className="w-full" src={banner} alt="Slide 4" />
+          <img className="w-screen xl:w-[600px]" src={banner} alt="Slide 4" />
         </SwiperSlide>
       </Swiper>
     </div>
