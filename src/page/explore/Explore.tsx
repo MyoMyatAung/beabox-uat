@@ -1,14 +1,28 @@
+import React, { useState } from "react";
 import Header from "./comp/Header";
 import "./explore.css";
 import Banner from "./comp/Banner";
 import PopApp from "./comp/PopApp";
+import Recommand from "./comp/Recommand";
 
 const Explore = () => {
+  const [activeTab, setActiveTab] = useState("Recommend"); // State to track active tab
+
   return (
-    <div className=" px-[20px]">
-      <Header />
+    <div className=" px-[20px] pb-[100px]">
+      <Header activeTab={activeTab} setActiveTab={setActiveTab} />
       <Banner />
-      <PopApp />
+      <div className="mt-[20px]">
+        {activeTab === "Recommend" && (
+          <div className="">
+            <PopApp />
+            <Recommand title="Chinese Drama" />
+            <Recommand title="Latest Drama" />
+          </div>
+        )}
+        {activeTab === "Latest" && <div>Latest Content</div>}
+        {activeTab === "Hollywood" && <div>Hollywood Content</div>}
+      </div>
     </div>
   );
 };

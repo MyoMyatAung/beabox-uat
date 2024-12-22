@@ -3,4 +3,5 @@ export const paths = {
   explore: "/explore",
   profile: "/profile",
   application: "/application",
+  recommand_more : "/rec_more"
 };
