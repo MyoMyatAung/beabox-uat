@@ -7,8 +7,11 @@ import EditGender from "@/components/profile/edit-gender";
 import EditReferral from "@/components/profile/edit-referral";
 import ChangePassword from "@/components/profile/change-password";
 import EditBio from "@/components/profile/edit-bio";
+import { useSelector } from "react-redux";
 
 const Settings = () => {
+  const user = useSelector((state: any) => state.persist.user);
+
   return (
     <div className="w-full h-screen px-5">
       <div className="flex justify-between items-center py-5">
@@ -33,7 +36,7 @@ const Settings = () => {
         </div>
         <div className="text-[14px] flex items-center justify-between">
           <h1>User ID</h1>
-          <p className="flex items-center gap-1 text-[#888]">123456</p>
+          <p className="flex items-center gap-1 text-[#888]">{user?.id}</p>
         </div>
         <EditBio />
       </div>

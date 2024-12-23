@@ -2,7 +2,7 @@ import { paths } from "@/routes/paths";
 import { ChevronLeft, Eye, EyeOff, X } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LoginFormData, loginSchema } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -13,9 +13,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
+import { useLoginMutation } from "@/store/api/authApi";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/store/slices/persistSlice";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [login, { isLoading }] = useLoginMutation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -24,9 +30,16 @@ const Login = () => {
       password: "",
     },
   });
-  async function onSubmit(data: LoginFormData) {
+  async function onSubmit(values: LoginFormData) {
     // Handle form submission
-    console.log(data);
+    const { data } = await login({
+      username: values?.emailOrPhone,
+      password: values?.password,
+    });
+    if (data?.status) {
+      dispatch(setUser(data?.data));
+      navigate(paths.profile);
+    }
   }
   return (
     <div className="px-5">
@@ -108,7 +121,7 @@ const Login = () => {
               type="submit"
               className="w-full gradient-bg rounded-lg hover:gradient-bg"
             >
-              Login
+              {isLoading ? "loading..." : "Login"}
             </Button>
             <Link to="/">
               <p className="text-center text-[14px] mt-5">Forgot Password?</p>

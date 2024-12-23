@@ -3,17 +3,20 @@ import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { Button } from "../ui/button";
 import { useState } from "react";
 import { X } from "lucide-react";
+import { useSelector } from "react-redux";
 
 const EditUsername = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState("");
+  const user = useSelector((state: any) => state.persist.user);
+
   return (
     <Drawer open={isOpen} onOpenChange={() => setIsOpen(true)}>
       <div className="text-[14px] flex items-center justify-between">
         <h1>User Name</h1>
         <DrawerTrigger asChild>
           <p className="flex items-center gap-1 text-[#888]">
-            Kimmy0372 <FaAngleRight />
+            {user?.username} <FaAngleRight />
           </p>
         </DrawerTrigger>
       </div>

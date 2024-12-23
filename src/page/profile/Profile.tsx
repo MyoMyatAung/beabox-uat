@@ -15,16 +15,20 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { paths } from "@/routes/paths";
 import { useGetMyProfileQuery } from "@/store/api/profileApi";
+import { useDispatch, useSelector } from "react-redux";
+import { logOutUser } from "@/store/slices/persistSlice";
 
 const Profile = () => {
-  const [login, setLogin] = useState(false);
   const { data } = useGetMyProfileQuery("");
-  console.log(data);
+  console.log(data?.data, "data");
+  const user = useSelector((state: any) => state.persist.user);
+  const dispatch = useDispatch();
+  console.log(user);
   // useEffect(() => {
   //   getMyProfile();
   // }, []);
   return (
-    <div className="px-5">
+    <div className="px-5 max-h-screen no-scrollbar">
       <div className="flex gap-3 my-5 justify-end">
         <div className="bg-[#FFFFFF12] w-10 h-10 rounded-full flex items-center justify-center">
           <Bell />
@@ -38,24 +42,23 @@ const Profile = () => {
       </div>
       {/* login  */}
       <div className="w-full flex flex-col justify-center items-center gap-3 py-5">
-        <div className="w-[56px] h-[56px] rounded-full bg-[#FFFFFF12] flex justify-center items-center">
+        <Link
+          to={paths.profileDetail}
+          className="w-[56px] h-[56px] rounded-full bg-[#FFFFFF12] flex justify-center items-center"
+        >
           <Person />
-        </div>
-        {!login ? (
-          <Link
-            to={paths.login}
-            className="text-[14px]"
-            onClick={() => setLogin(true)}
-          >
+        </Link>
+        {!user?.token ? (
+          <Link to={paths.login} className="text-[14px]">
             Login Or Sign Up
           </Link>
         ) : (
           <button
-            onClick={() => setLogin(false)}
+            onClick={() => dispatch(logOutUser())}
             className="bg-gradient-to-r from-[#FFB2E038] to-[#CD3EFF38] px-4 py-1 rounded-full shadow-md flex gap-1 items-center"
           >
             <span className="mr-3 text-[14px] flex items-center gap-1">
-              <span>Kimmy</span> <FaAngleRight />
+              <span>{data?.data?.username}</span> <FaAngleRight />
             </span>
             <p className="flex items-center bg-[#F9DDF5] text-[#625386] text-[12px] font-bold py-[2px] px-3 rounded-full relative">
               <div className="absolute -left-3">
@@ -68,12 +71,12 @@ const Profile = () => {
       </div>
       {/* Stats */}
       <Stats
-        follower={login ? stats.follower : 0}
-        following={login ? stats.following : 0}
-        like={login ? stats.like : 0}
+        follower={user?.token ? stats.follower : 0}
+        following={user?.token ? stats.following : 0}
+        like={user?.token ? stats.like : 0}
       />
 
-      {login ? (
+      {user?.token ? (
         <h1 className="text-center text-[12px] text-[#888] mb-5">
           “Here is My Bio Tag Line”
         </h1>
@@ -86,7 +89,7 @@ const Profile = () => {
         <MenuCard Icon={Wallet} title="My Wallet" />
         <MenuCard Icon={Creater} title="Creator Account" />
       </div>
-      <VideoTabs login={login} />
+      <VideoTabs login={user?.token} />
     </div>
   );
 };
