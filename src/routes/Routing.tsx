@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { paths } from "./paths";
 import RootLayout from "@/layouts/RootLayout";
+import More from "@/page/explore/comp/More";
 
 const Home = lazy(() => import("../page/home/Home"));
 const Explore = lazy(() => import("../page/explore/Explore"));
@@ -92,6 +93,10 @@ const Routing = () => {
       element: (
         <Suspense fallback={<p>loading...</p>}>
           <Settings />
+      path: paths.recommand_more,
+      element: (
+        <Suspense fallback={<p>Panding..</p>}>
+          <More />
         </Suspense>
       ),
     },
