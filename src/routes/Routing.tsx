@@ -98,6 +98,7 @@ const Routing = () => {
         <Suspense fallback={<p>Panding..</p>}>
           <More />
         </Suspense>
+        </Suspense>
       ),
     },
     {
