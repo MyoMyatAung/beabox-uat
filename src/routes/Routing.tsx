@@ -93,6 +93,10 @@ const Routing = () => {
       element: (
         <Suspense fallback={<p>loading...</p>}>
           <Settings />
+        </Suspense>
+      ),
+    },
+    {
       path: paths.recommand_more,
       element: (
         <Suspense fallback={<p>Panding..</p>}>
