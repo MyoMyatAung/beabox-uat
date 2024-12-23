@@ -23,7 +23,7 @@ const Profile = () => {
   console.log(data?.data, "data");
   const user = useSelector((state: any) => state.persist.user);
   const dispatch = useDispatch();
-  console.log(user);
+  // console.log(user);
   // useEffect(() => {
   //   getMyProfile();
   // }, []);

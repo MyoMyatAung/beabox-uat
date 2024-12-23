@@ -8,5 +8,6 @@ export const paths = {
   login: "/login",
   regiter: "/register",
   otp: "/otp",
-  recommand_more : "/rec_more"
+  recommand_more : "/rec_more",
+  wallet : "/wallet"
 };

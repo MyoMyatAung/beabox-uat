@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { paths } from "./paths";
 import RootLayout from "@/layouts/RootLayout";
 import More from "@/page/explore/comp/More";
+import Wallet from "@/page/wallet/Wallet";
 
 const Home = lazy(() => import("../page/home/Home"));
 const Explore = lazy(() => import("../page/explore/Explore"));
@@ -109,6 +110,14 @@ const Routing = () => {
       element: (
         <Suspense>
           <h1>Page Not Found!</h1>
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.wallet,
+      element: (
+        <Suspense fallback={<p>loading...</p>}>
+          <Wallet />
         </Suspense>
       ),
     },
