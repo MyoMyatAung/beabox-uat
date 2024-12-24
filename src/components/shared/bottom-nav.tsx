@@ -1,17 +1,36 @@
 import { cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
 import HomeSVG from "@/assets/icons/Home1.svg";
+import Home1SVG from "@/assets/icons/Home.svg";
 import ExploreSVG from "@/assets/icons/Explore.svg";
 import AppSVG from "@/assets/icons/App.svg";
 import PlusSVG from "@/assets/icons/Plus.svg";
 import ProfileSVG from "@/assets/icons/Profile.svg";
+import Profile1SVG from "@/assets/icons/Profile1.svg";
+import Explore1SVG from "@/assets/icons/Explore1.svg";
+import App1SVG from "@/assets/icons/App1.svg";
 
 const navItems = [
-  { name: "Home", selectedIcon: HomeSVG, icon: HomeSVG, href: "/" },
-  { name: "Explore", selectedIcon: ExploreSVG, icon: ExploreSVG, href: "/explore" },
+  { name: "Home", selectedIcon: Home1SVG, icon: HomeSVG, href: "/" },
+  {
+    name: "Explore",
+    selectedIcon: Explore1SVG,
+    icon: ExploreSVG,
+    href: "/explore",
+  },
   { name: "", selectedIcon: PlusSVG, icon: PlusSVG, href: "/profile" },
-  { name: "Application", selectedIcon: AppSVG, icon: AppSVG, href: "/application" },
-  { name: "Profile", selectedIcon: ProfileSVG, icon: ProfileSVG, href: "/profile" },
+  {
+    name: "Application",
+    selectedIcon: App1SVG,
+    icon: AppSVG,
+    href: "/application",
+  },
+  {
+    name: "Profile",
+    selectedIcon: Profile1SVG,
+    icon: ProfileSVG,
+    href: "/profile",
+  },
 ];
 
 export function BottomNav() {
@@ -27,7 +46,10 @@ export function BottomNav() {
             pathname === item.href ? "text-white" : "text-white/60"
           )}
         >
-          <img src={item.icon} alt="" />
+          <img
+            src={pathname === item.href ? item?.selectedIcon : item?.icon}
+            alt=""
+          />
           <span className="text-[10px]">{item.name}</span>
         </Link>
       ))}
