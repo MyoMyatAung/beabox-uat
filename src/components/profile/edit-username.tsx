@@ -4,11 +4,23 @@ import { Button } from "../ui/button";
 import { useState } from "react";
 import { X } from "lucide-react";
 import { useSelector } from "react-redux";
+import { useChangeUsernameMutation } from "@/store/api/profileApi";
+import { useNavigate } from "react-router-dom";
 
-const EditUsername = () => {
+const EditUsername = ({ username }: { username: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState("");
-  const user = useSelector((state: any) => state.persist.user);
+  const [changeUsername, { data, isLoading }] = useChangeUsernameMutation();
+  const navigate = useNavigate();
+  console.log(data);
+
+  console.log(data);
+  const onSubmitHandler = async (e: any) => {
+    e.preventDefault();
+    console.log(value);
+    await changeUsername({ username: value });
+    setIsOpen(false);
+  };
 
   return (
     <Drawer open={isOpen} onOpenChange={() => setIsOpen(true)}>
@@ -16,7 +28,7 @@ const EditUsername = () => {
         <h1>User Name</h1>
         <DrawerTrigger asChild>
           <p className="flex items-center gap-1 text-[#888]">
-            {user?.username} <FaAngleRight />
+            {username} <FaAngleRight />
           </p>
         </DrawerTrigger>
       </div>
@@ -29,7 +41,7 @@ const EditUsername = () => {
             <p className="text-[16px]">User Name</p>
             <div></div>
           </div>
-          <form>
+          <form onSubmit={onSubmitHandler}>
             <div className="relative">
               <input
                 className="w-full bg-transparent border-0 border-b py-3 outline-0 border-[#888]"
@@ -42,13 +54,14 @@ const EditUsername = () => {
               </div>
             </div>
             <Button
+              type="submit"
               className={`w-full ${
                 value.length > 1
                   ? "gradient-bg hover:gradient-bg"
                   : "bg-[#FFFFFF0A] hover:bg-[#FFFFFF0A]"
               } bg-[#FFFFFF0A]   mt-10 rounded-xl`}
             >
-              Save
+              {isLoading ? "loading..." : "Save"}
             </Button>
           </form>
         </div>

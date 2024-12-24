@@ -8,9 +8,17 @@ import EditReferral from "@/components/profile/edit-referral";
 import ChangePassword from "@/components/profile/change-password";
 import EditBio from "@/components/profile/edit-bio";
 import { useSelector } from "react-redux";
+import { useGetMyProfileQuery } from "@/store/api/profileApi";
+import { useEffect } from "react";
 
 const Settings = () => {
   const user = useSelector((state: any) => state.persist.user);
+  const { data, refetch } = useGetMyProfileQuery("");
+  console.log(data?.data?.bio);
+
+  // useEffect(() => {
+  //   refetch();
+  // }, []);
 
   return (
     <div className="w-full h-screen px-5">
@@ -26,7 +34,7 @@ const Settings = () => {
       </div>
       <div className="flex flex-col gap-7 my-7">
         <h1 className="text-[12px] text-[#888]">About you</h1>
-        <EditUsername />
+        <EditUsername username={data?.data?.username} />
         <EditGender />
         <div className="text-[14px] flex items-center justify-between">
           <h1>Region</h1>
@@ -38,12 +46,12 @@ const Settings = () => {
           <h1>User ID</h1>
           <p className="flex items-center gap-1 text-[#888]">{user?.id}</p>
         </div>
-        <EditBio />
+        <EditBio bio={data?.data?.bio} />
       </div>
       <div className="w-full h-[0.08px] bg-[#FFFFFF0A]"></div>
       <div className="flex flex-col gap-7 my-7">
         <h1 className="text-[12px] text-[#888]">Invitation</h1>
-        <EditReferral />
+        <EditReferral referral_code={data?.data?.referral_code} />
       </div>
       <div className="w-full h-[0.08px] bg-[#FFFFFF0A]"></div>
       <div className="flex flex-col gap-7 my-7">

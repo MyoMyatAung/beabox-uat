@@ -1,11 +1,15 @@
 import { paths } from "@/routes/paths";
 import { FaAngleLeft } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Globe, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import EditLanguage from "@/components/profile/edit-language";
+import { logOutUser } from "@/store/slices/persistSlice";
+import { useDispatch } from "react-redux";
 
 const Settings = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   return (
     <div className="w-full h-screen px-5 flex flex-col items-center justify-between">
       <div className="top flex flex-col gap-5 w-full">
@@ -61,7 +65,13 @@ const Settings = () => {
         </div>
       </div>
       <div className="bot w-full py-5">
-        <Button className="w-full rounded-lg bg-[#1C1A22] hover:bg-[#1C1A22]">
+        <Button
+          onClick={() => {
+            dispatch(logOutUser());
+            navigate(paths.profile);
+          }}
+          className="w-full rounded-lg bg-[#1C1A22] hover:bg-[#1C1A22]"
+        >
           Log Out
         </Button>
       </div>
