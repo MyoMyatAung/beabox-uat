@@ -163,7 +163,7 @@ const Recommand: React.FC<RecommandProps> = ({ title }) => {
         )}
       </div>
       {/* buttons */}
-      <div className="flex gap-[20px] pr-[10px]">
+      <div className="flex justify-center gap-[20px] px-[10px]">
         <button
           onClick={() => navigate("/rec_more", { state: { title } })}
           className="more_btn w-1/2 p-[16px]"

@@ -11,41 +11,40 @@ interface BannerProps {}
 
 const Banner: React.FC<BannerProps> = () => {
   const [ad, setad] = useState([]);
-  const data = useGetExploreHeaderQuery("");
+  const { data, isLoading } = useGetExploreHeaderQuery("");
   useEffect(() => {
     if (data?.data) {
-      const cur = data?.data?.data?.ads?.carousel;
+      const cur = data?.data?.ads?.carousel;
       setad(cur);
     }
   }, [data, ad]);
-  const spanP =
-    "<div> <span className=' absolute z-[99] bg-white w-[10px] h-[10px]'></span> </div>";
   return (
     <div className="pt-[80px]">
-      <Swiper
-        modules={[Autoplay, Pagination]}
-        pagination={{
-         
-        }}
-        autoplay={{
-          delay: 3000,
-          disableOnInteraction: false,
-        }}
-        spaceBetween={50}
-        slidesPerView={1}
-      >
-        {ad.map((cc: any) => (
-          <SwiperSlide key={cc.id}>
-            <img
-              className="w-screen h-[174px] xl:w-[600px]"
-              src={cc.image}
-              alt="Slide 1"
-            />
-          </SwiperSlide>
-        ))}
-                <div className="swiper-pagination"></div>
-
-      </Swiper>
+      {isLoading ? (
+        <div className=" w-[300px] h-[174px] bg-slate-700 animate-pulse"></div>
+      ) : (
+        <Swiper
+          modules={[Autoplay, Pagination]}
+          pagination={{}}
+          autoplay={{
+            delay: 3000,
+            disableOnInteraction: false,
+          }}
+          spaceBetween={50}
+          slidesPerView={1}
+        >
+          {ad.map((cc: any) => (
+            <SwiperSlide key={cc.id}>
+              <img
+                className="w-screen h-[174px] xl:w-[600px]"
+                src={cc.image}
+                alt="Slide 1"
+              />
+            </SwiperSlide>
+          ))}
+          <div className="swiper-pagination"></div>
+        </Swiper>
+      )}
     </div>
   );
 };
