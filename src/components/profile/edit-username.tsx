@@ -5,17 +5,21 @@ import { useState } from "react";
 import { X } from "lucide-react";
 import { useSelector } from "react-redux";
 import { useChangeUsernameMutation } from "@/store/api/profileApi";
+import { useNavigate } from "react-router-dom";
 
 const EditUsername = ({ username }: { username: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState("");
-  const [changeUsername, { data }] = useChangeUsernameMutation();
+  const [changeUsername, { data, isLoading }] = useChangeUsernameMutation();
+  const navigate = useNavigate();
+  console.log(data);
 
   console.log(data);
   const onSubmitHandler = async (e: any) => {
     e.preventDefault();
     console.log(value);
     await changeUsername({ username: value });
+    setIsOpen(false);
   };
 
   return (
@@ -57,7 +61,7 @@ const EditUsername = ({ username }: { username: string }) => {
                   : "bg-[#FFFFFF0A] hover:bg-[#FFFFFF0A]"
               } bg-[#FFFFFF0A]   mt-10 rounded-xl`}
             >
-              Save
+              {isLoading ? "loading..." : "Save"}
             </Button>
           </form>
         </div>

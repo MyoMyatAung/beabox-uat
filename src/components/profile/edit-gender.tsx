@@ -2,10 +2,18 @@ import { FaAngleRight } from "react-icons/fa";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { Button } from "../ui/button";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setGender } from "@/store/slices/persistSlice";
+import { useChangeGenderMutation } from "@/store/api/profileApi";
 
 const EditGender = () => {
-  const [gender, setGender] = useState("Other");
+  const gender = useSelector((state: any) => state.persist.gender);
+  console.log(gender);
+  const dispatch = useDispatch();
+  // const [gender, setGender] = useState("Other");
   const [isOpen, setIsOpen] = useState(false);
+  const [changeGender, { data }] = useChangeGenderMutation();
+  console.log(data);
 
   return (
     <Drawer open={isOpen} onOpenChange={() => setIsOpen(true)}>
@@ -22,7 +30,11 @@ const EditGender = () => {
           <div className="flex flex-col items-center gap-5">
             <div className="flex items-center gap-2">
               <h1
-                onClick={() => setGender("Other")}
+                onClick={async () => {
+                  dispatch(setGender("Other"));
+                  setIsOpen(false);
+                  await changeGender({ gender: "Other" });
+                }}
                 className={`${
                   gender == "Other" ? "text-white" : "text-[#999]"
                 } text-[16px]`}
@@ -37,7 +49,11 @@ const EditGender = () => {
             </div>
             <div className="flex items-center gap-2">
               <h1
-                onClick={() => setGender("Male")}
+                onClick={async () => {
+                  dispatch(setGender("Male"));
+                  setIsOpen(false);
+                  await changeGender({ gender: "Male" });
+                }}
                 className={`${
                   gender == "Male" ? "text-white" : "text-[#999]"
                 } text-[16px]`}
@@ -52,7 +68,11 @@ const EditGender = () => {
             </div>
             <div className="flex items-center gap-2">
               <h1
-                onClick={() => setGender("Female")}
+                onClick={async () => {
+                  dispatch(setGender("Female"));
+                  setIsOpen(false);
+                  await changeGender({ gender: "Female" });
+                }}
                 className={`${
                   gender == "Female" ? "text-white" : "text-[#999]"
                 } text-[16px]`}

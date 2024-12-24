@@ -93,14 +93,29 @@ const Routing = () => {
       element: (
         <Suspense fallback={<p>loading...</p>}>
           <Settings />
-      path: paths.recommand_more,
-      element: (
-        <Suspense fallback={<p>Panding..</p>}>
-          <More />
-        </Suspense>
         </Suspense>
       ),
     },
+    {
+      path: paths.recommand_more,
+      element: (
+        <Suspense fallback={<p>loading...</p>}>
+          <More />
+        </Suspense>
+      ),
+    },
+    // {
+    //   path: paths.settings,
+    //   element: (
+    //     <Suspense fallback={<p>loading...</p>}>
+    //       <Settings />
+    //       path: paths.recommand_more, element: (
+    //       <Suspense fallback={<p>Panding..</p>}>
+    //         <More />
+    //       </Suspense>
+    //     </Suspense>
+    //   ),
+    // },
     {
       path: "*",
       element: (

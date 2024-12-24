@@ -30,7 +30,40 @@ export const profileApi = createApi({
         },
       }),
     }),
+    changeGender: builder.mutation({
+      query: ({ gender }) => ({
+        url: `/profile/change-gender`,
+        method: "POST",
+        body: {
+          gender,
+        },
+      }),
+    }),
+    changeBio: builder.mutation({
+      query: ({ bio }) => ({
+        url: `/profile/save-bio`,
+        method: "POST",
+        body: {
+          bio,
+        },
+      }),
+    }),
+    changeReferralCode: builder.mutation({
+      query: ({ referral_code }) => ({
+        url: `/profile/save-referral-code`,
+        method: "POST",
+        body: {
+          referral_code,
+        },
+      }),
+    }),
   }),
 });
 
-export const { useGetMyProfileQuery, useChangeUsernameMutation } = profileApi;
+export const {
+  useGetMyProfileQuery,
+  useChangeUsernameMutation,
+  useChangeGenderMutation,
+  useChangeBioMutation,
+  useChangeReferralCodeMutation,
+} = profileApi;

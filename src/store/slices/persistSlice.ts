@@ -4,6 +4,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 const initialState: any = {
   registerUser: null,
   user: null,
+  gender: "Other",
 };
 
 export const persistSlice = createSlice({
@@ -16,12 +17,16 @@ export const persistSlice = createSlice({
     setUser: (state, { payload }) => {
       state.user = payload;
     },
+    setGender: (state, { payload }) => {
+      state.gender = payload;
+    },
     logOutUser: (state) => {
       state.user = null;
     },
   },
 });
 
-export const { setRegisterUser, setUser, logOutUser } = persistSlice.actions;
+export const { setRegisterUser, setUser, logOutUser, setGender } =
+  persistSlice.actions;
 
 export default persistSlice.reducer;
