@@ -32,6 +32,7 @@ const Poppizza: React.FC<PoppizzaProps> = ({}) => {
         <div className=" grid grid-cols-5 gap-[20px]">
           {ad.map((app: any) => (
             <a
+            key={app.id}
               href={app.url}
               target="_blink"
               className=" flex flex-col justify-center items-center gap-[4px]"

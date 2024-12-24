@@ -10,7 +10,7 @@ const Explore = () => {
   const [activeTab, setActiveTab] = useState("Recommend"); // State to track active tab
 
   return (
-    <div className=" max-w-[600px] flex flex-col justify-center items-cente px-[20px] pb-[100px]">
+    <div className=" max-w-[800px] flex flex-col justify-center items-cente px-[20px] pb-[100px]">
       <Header activeTab={activeTab} setActiveTab={setActiveTab} />
       <Banner />
       <div className="mt-[20px]">
