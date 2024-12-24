@@ -7,11 +7,11 @@ import PlusSVG from "@/assets/icons/Plus.svg";
 import ProfileSVG from "@/assets/icons/Profile.svg";
 
 const navItems = [
-  { name: "Home", icon: HomeSVG, href: "/" },
-  { name: "Explore", icon: ExploreSVG, href: "/explore" },
-  { name: "", icon: PlusSVG, href: "/profile" },
-  { name: "Application", icon: AppSVG, href: "/application" },
-  { name: "Profile", icon: ProfileSVG, href: "/profile" },
+  { name: "Home", selectedIcon: HomeSVG, icon: HomeSVG, href: "/" },
+  { name: "Explore", selectedIcon: ExploreSVG, icon: ExploreSVG, href: "/explore" },
+  { name: "", selectedIcon: PlusSVG, icon: PlusSVG, href: "/profile" },
+  { name: "Application", selectedIcon: AppSVG, icon: AppSVG, href: "/application" },
+  { name: "Profile", selectedIcon: ProfileSVG, icon: ProfileSVG, href: "/profile" },
 ];
 
 export function BottomNav() {
