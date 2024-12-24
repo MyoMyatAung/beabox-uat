@@ -13,7 +13,13 @@ export const exploreApi = createApi({
         method: "GET",
       }),
     }),
+    getExploreTag: builder.query<any, string>({
+      query: () => ({
+        url: `/post/search/tag?tag=Chinese Drama&order=popular&pageSize=10`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useGetExploreHeaderQuery } = exploreApi;
+export const { useGetExploreHeaderQuery, useGetExploreTagQuery } = exploreApi;
