@@ -1,34 +1,44 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useGetConfigQuery, useGetPostsQuery } from "./services/homeApi";
-import Player from "./components/Player";
-import loader from "./vod_loader.gif";
+import { useGetConfigQuery } from "../services/homeApi";
+import Player from "./Player";
 
-import VideoSidebar from "./components/VideoSidebar";
-import "./home.css";
-import VideoFooter from "./components/VideoFooter";
-import ShowHeart from "./components/ShowHeart";
-import Top20Movies from "./components/Top20Movies";
+import VideoSidebar from "./VideoSidebar";
 
-const Home = () => {
+import VideoFooter from "./VideoFooter";
+import ShowHeart from "./ShowHeart";
+import Top20Movies from "./Top20Movies";
+
+const VideoFeed = ({
+  videos,
+  currentActiveId,
+  setShowVideoFeed,
+}: {
+  videos: any;
+  currentActiveId: any;
+  setShowVideoFeed: any;
+}) => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
-  const [videos, setVideos] = useState<any[]>([]);
-  const [page, setPage] = useState(1);
-  const [currentActivePost, setCurrentActivePost] = useState<any>(null); // Active post ID
+
+  const [currentActivePost, setCurrentActivePost] =
+    useState<any>(currentActiveId); // Active post ID
   const [showHeart, setShowHeart] = useState(false);
   const [countdown, setCountdown] = useState(3);
   const [countNumber, setCountNumber] = useState(0); // New state for counting clicks
   const [topmovies, setTopMovies] = useState(false);
   const { data: config } = useGetConfigQuery({});
-  const { data, isLoading, isError } = useGetPostsQuery({ page });
 
+  // Scroll to the first current post when the component is mounted
   useEffect(() => {
-    if (data?.data) {
-      const videoData = data.data.filter(
-        (item: any) => item.file_type === "video"
+    const container = videoContainerRef.current;
+    if (container && currentActiveId) {
+      const activeElement = container.querySelector(
+        `[data-post-id="${currentActiveId}"]`
       );
-      setVideos((prevVideos) => [...prevVideos, ...videoData]);
+      if (activeElement) {
+        activeElement.scrollIntoView({ block: "center" });
+      }
     }
-  }, [data]);
+  }, [currentActiveId]);
 
   useEffect(() => {
     const container = videoContainerRef.current;
@@ -59,7 +69,6 @@ const Home = () => {
     };
   }, [videos]);
 
-  console.log(config);
   useEffect(() => {
     if (currentActivePost) {
       // Reset state when the active post changes
@@ -69,36 +78,10 @@ const Home = () => {
     }
   }, [currentActivePost]);
 
-  // Pagination observer for loading more videos
-  useEffect(() => {
-    const container = videoContainerRef.current;
-    if (!container || !data?.data) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setPage((prevPage) => prevPage + 1);
-          }
-        });
-      },
-      { rootMargin: "100px", threshold: 0.5 }
-    );
-
-    if (videos.length > 1) {
-      const secondLastVideo = container.children[container.children.length - 3];
-      if (secondLastVideo) observer.observe(secondLastVideo);
-    }
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [videos, data]);
-
   const currentPadding = useMemo(() => {
     console.log(currentActivePost);
     const currentVideo = videos.find(
-      (video) => video.post_id == currentActivePost
+      (video: any) => video.post_id == currentActivePost
     );
     console.log(currentVideo);
     return currentVideo?.related?.length > 0 ? "pb-[90px]" : "pb-[43px]";
@@ -112,30 +95,6 @@ const Home = () => {
     console.log(related);
   };
 
-  if (isError) {
-    return (
-      <div style={{ textAlign: "center", padding: "20px" }}>
-        <div className="text-white flex items-center gap-2">
-          <span className="text-[28px] font-bold">
-            <span className="text-[#FA408D] text-[36px]">Not</span> Found
-          </span>
-        </div>
-      </div>
-    );
-  }
-
-  if (isLoading && page === 1) {
-    return (
-      <div className="app bg-black">
-        <div style={{ textAlign: "center", padding: "20px" }}>
-          <div className="heart">
-            <img src={loader} className="w-[100px] h-[100px]" />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   if (topmovies) {
     return <Top20Movies setTopMovies={setTopMovies} />;
   }
@@ -144,7 +103,7 @@ const Home = () => {
   return (
     <div className="app bg-black">
       <div ref={videoContainerRef} className={`app__videos ${currentPadding}`}>
-        {videos.map((video, index) => (
+        {videos.map((video: any, index: any) => (
           <div
             key={index}
             className="video mt-[20px]"
@@ -175,6 +134,23 @@ const Home = () => {
               username={video?.user?.name}
               city={video?.city}
             />
+            <button
+              className="absolute top-0 left-0 z-50 p-5"
+              onClick={() => setShowVideoFeed(false)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="10"
+                height="14"
+                viewBox="0 0 10 14"
+                fill="none"
+              >
+                <path
+                  d="M8.95748 0.326623C8.85923 0.243209 8.74251 0.17703 8.61401 0.131875C8.48551 0.0867197 8.34775 0.0634766 8.20863 0.0634766C8.06951 0.0634766 7.93175 0.0867197 7.80325 0.131875C7.67475 0.17703 7.55803 0.243209 7.45978 0.326623L0.428239 6.28126C0.349798 6.34756 0.287565 6.4263 0.245104 6.51298C0.202642 6.59967 0.180786 6.69259 0.180786 6.78644C0.180786 6.88029 0.202642 6.97321 0.245104 7.0599C0.287565 7.14658 0.349798 7.22533 0.428239 7.29162L7.45978 13.2463C7.8744 13.5974 8.54286 13.5974 8.95748 13.2463C9.37209 12.8951 9.37209 12.3291 8.95748 11.9779L2.83132 6.78286L8.96594 1.58777C9.37209 1.24382 9.37209 0.670574 8.95748 0.326623Z"
+                  fill="white"
+                />
+              </svg>
+            </button>
             {showHeart && <ShowHeart countNumber={countNumber} />}
             {video?.related.length > 0 && (
               <button
@@ -284,7 +260,7 @@ const Home = () => {
         ))}
       </div>
 
-      {!data?.data?.length && (
+      {!videos?.length && (
         <p style={{ textAlign: "center" }}>
           <b>You have seen all videos</b>
         </p>
@@ -293,4 +269,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default VideoFeed;

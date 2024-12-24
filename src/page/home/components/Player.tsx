@@ -5,7 +5,15 @@ import lozad from "lozad"; // Import lozad library for lazy loading
 import indicator from "../indicator.svg";
 import vod_loader from "../vod_loader.gif";
 
-const Player = ({ src, thumbnail }: { src: any; thumbnail: any }) => {
+const Player = ({
+  src,
+  thumbnail,
+  onPlay,
+}: {
+  src: any;
+  thumbnail: any;
+  onPlay?: () => void; // Add an optional onPlay callback
+}) => {
   const playerContainerRef = useRef(null);
   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
 
@@ -21,8 +29,6 @@ const Player = ({ src, thumbnail }: { src: any; thumbnail: any }) => {
             artPlayerInstanceRef.current = new Artplayer({
               container: el,
               url: src,
-              backdrop: true,
-              // poster: thumbnail,
               volume: 0.5,
               muted: false,
               autoplay: true,
@@ -44,10 +50,14 @@ const Player = ({ src, thumbnail }: { src: any; thumbnail: any }) => {
                 },
               },
               icons: {
-                loading: `<img width="150" heigth="150" src=${vod_loader}>`,
-                state: `<img width="50" heigth="50" src=${indicator}>`,
-                // indicator: `<img width="16" heigth="16" src=${indicator}>`,
+                loading: `<img width="100" height="100" src=${vod_loader}>`,
+                state: `<img width="50" height="50" src=${indicator}>`,
               },
+            });
+
+            // Trigger the onPlay callback when playback starts
+            artPlayerInstanceRef.current.on("play", () => {
+              if (onPlay) onPlay();
             });
           }
         },
@@ -86,13 +96,9 @@ const Player = ({ src, thumbnail }: { src: any; thumbnail: any }) => {
         // Safely clean up IntersectionObserver
         if (intersectionObserver) intersectionObserver.disconnect();
 
-        // // Safely clean up lozad observer
-        // if (observer && observer.observe) {
-        //   observer.disconnect();
-        // }
-        // Use lozad's custom API for cleanup
-        if (observer) {
-          observer; // Safely stop observing with lozad observer
+        // Safely clean up lozad observer
+        if (observer && observer.observe) {
+          observer.observe = () => {};
         }
       };
     }

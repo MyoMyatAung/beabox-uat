@@ -1,11 +1,14 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import counterSlice from "./slices/counterSlice";
+import { homeApi } from "../page/home/services/homeApi";
 
-export const store: any = configureStore({
-  reducer: {
-    count: counterSlice,
-  },
+const rootReducer = combineReducers({
+  count: counterSlice,
+  [homeApi.reducerPath]: homeApi.reducer,
 });
 
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+export const store = configureStore({
+  reducer: rootReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(homeApi.middleware),
+});
