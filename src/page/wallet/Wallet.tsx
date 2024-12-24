@@ -27,7 +27,7 @@ const Wallet: React.FC<WalletProps> = ({}) => {
           <Tabs />
           <Transit />
         </div>
-        <h1 className=" px-[30px] text-[#888] text-[14px] font-[400] leading-[20px]">
+        <h1 className=" px-[30px] pb-[20px] text-[#888] text-[14px] font-[400] leading-[20px]">
           Tip: Gold coins are used for gifting creators to support them for
           future contents.
         </h1>

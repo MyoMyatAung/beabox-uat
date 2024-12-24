@@ -7,6 +7,7 @@ import { profileApi } from "./api/profileApi";
 import { authApi } from "./api/authApi";
 import persistSlice from "./slices/persistSlice";
 import { walletApi } from "./api/wallet/walletApi";
+import { exploreApi } from "./api/explore/exploreApi";
 
 const persistConfig = {
   key: "root",
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
   [profileApi.reducerPath]: profileApi.reducer,
   [authApi.reducerPath]: authApi.reducer,
   [walletApi.reducerPath]: walletApi.reducer,
+  [exploreApi.reducerPath]: exploreApi.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -31,7 +33,8 @@ export const store: any = configureStore({
     getDefaultMiddleware()
       .concat(profileApi.middleware)
       .concat(authApi.middleware)
-      .concat(walletApi.middleware),
+      .concat(walletApi.middleware)
+      .concat(exploreApi.middleware),
 });
 
 export const persistor = persistStore(store);

@@ -1,44 +1,50 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
-import '../explore.css'
+import "../explore.css";
 
 import { Autoplay, Pagination } from "swiper/modules"; // Correct way to import Autoplay
-import banner from "../../../assets/explore/banner.png";
+import { useGetExploreHeaderQuery } from "@/store/api/explore/exploreApi";
 
 interface BannerProps {}
 
 const Banner: React.FC<BannerProps> = () => {
+  const [ad, setad] = useState([]);
+  const data = useGetExploreHeaderQuery("");
+  useEffect(() => {
+    if (data?.data) {
+      const cur = data?.data?.data?.ads?.carousel;
+      setad(cur);
+    }
+  }, [data, ad]);
+  const spanP =
+    "<div> <span className=' absolute z-[99] bg-white w-[10px] h-[10px]'></span> </div>";
   return (
     <div className="pt-[80px]">
       <Swiper
         modules={[Autoplay, Pagination]}
         pagination={{
-          clickable: true,
-          renderBullet: (index, className = " text-white") => {
-            return `<span class="${className}"></span>`;
-          },
+         
         }}
         autoplay={{
-          delay: 2000,
+          delay: 3000,
           disableOnInteraction: false,
         }}
         spaceBetween={50}
         slidesPerView={1}
       >
-        <SwiperSlide>
-          <img className="w-screen xl:w-[600px]" src={banner} alt="Slide 1" />
-        </SwiperSlide>
-        <SwiperSlide>
-          <img className="w-screen xl:w-[600px]" src={banner} alt="Slide 2" />
-        </SwiperSlide>
-        <SwiperSlide>
-          <img className="w-screen xl:w-[600px]" src={banner} alt="Slide 3" />
-        </SwiperSlide>
-        <SwiperSlide>
-          <img className="w-screen xl:w-[600px]" src={banner} alt="Slide 4" />
-        </SwiperSlide>
+        {ad.map((cc: any) => (
+          <SwiperSlide key={cc.id}>
+            <img
+              className="w-screen h-[174px] xl:w-[600px]"
+              src={cc.image}
+              alt="Slide 1"
+            />
+          </SwiperSlide>
+        ))}
+                <div className="swiper-pagination"></div>
+
       </Swiper>
     </div>
   );
