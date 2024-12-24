@@ -26,6 +26,8 @@ const Player = ({
         loaded: function (el: any) {
           if (!artPlayerInstanceRef.current) {
             // Initialize Artplayer with m3u8 support
+            Artplayer.MOBILE_DBCLICK_PLAY = false;
+            Artplayer.MOBILE_CLICK_PLAY = true;
             artPlayerInstanceRef.current = new Artplayer({
               container: el,
               url: src,
