@@ -30,7 +30,7 @@ const Latest: React.FC = () => {
             {card.title}
           </div>
           {/* counts */}
-          <div className=" w-full absolute bottom-[30px] text-white text-[14px] font-[400] leading-[30px] flex justify-between px-[10px]">
+          <div className=" w-full absolute bottom-[30px] text-white text-[14px] font-[400] leading-[30px] flex justify-between px-[10px] mb-2 -ml-1">
             <span className=" flex gap-[5px] items-center">
               <FaHeart />
               819.1K
