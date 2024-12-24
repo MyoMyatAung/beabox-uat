@@ -11,7 +11,6 @@ import Stats from "@/components/profile/stats";
 import VideoTabs from "@/components/profile/video-tabs";
 import { stats } from "./data";
 import { FaAngleRight } from "react-icons/fa";
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { paths } from "@/routes/paths";
 import { useGetMyProfileQuery } from "@/store/api/profileApi";

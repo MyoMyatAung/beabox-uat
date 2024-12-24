@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
-import HomeSVG from "@/assets/icons/Home1.svg";
-import Home1SVG from "@/assets/icons/Home.svg";
+import HomeSVG from "@/assets/icons/Home.svg";
+import Home1SVG from "@/assets/icons/Home1.svg";
 import ExploreSVG from "@/assets/icons/Explore.svg";
 import AppSVG from "@/assets/icons/App.svg";
 import PlusSVG from "@/assets/icons/Plus.svg";
