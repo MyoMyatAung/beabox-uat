@@ -19,6 +19,7 @@ function VideoSidebar({
   showHeart,
   countdown,
   config,
+  image,
 }: {
   likes: any;
   messages: any;
@@ -30,6 +31,7 @@ function VideoSidebar({
   showHeart: any;
   countdown: any;
   config: any;
+  image: any;
 }) {
   const [alertVisible, setAlertVisible] = useState(false);
   const [likeCount, setLikeCount] = useState(likes);
@@ -267,7 +269,7 @@ function VideoSidebar({
             Share your thoughts & favorite moments with others
           </h1>
           <div className="mb-4">
-            <img src={spider} alt="" />
+            <img src={image} alt="" className="h-[150px] w-full object-fill" />
           </div>
           <div className="grid grid-cols-2 mb-4 justify-items-center items-center">
             <div className="text-right">

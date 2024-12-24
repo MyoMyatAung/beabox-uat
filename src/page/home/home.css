@@ -50,7 +50,8 @@ html {
 }
 
 .art-progress-indicator {
-  width: 0 !important;
+  width: 10px !important;
+  height: 10px !important;
 }
 
 .app {

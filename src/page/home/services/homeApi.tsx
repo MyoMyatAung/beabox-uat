@@ -11,10 +11,10 @@ export const homeApi = createApi({
       if (accessToken) {
         headers.set("Authorization", `Bearer ${accessToken}`);
       } else {
-        // headers.set(
-        //   "Authorization",
-        //   `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTA3LjE0OC40Ny45NDo4ODAwL2FwaS92MS9sb2dpbiIsImlhdCI6MTczNDY5OTgwNywiZXhwIjoxNzM1MzA0NjA3LCJuYmYiOjE3MzQ2OTk4MDcsImp0aSI6InpEQjM3SUkycU5waW5hb0oiLCJzdWIiOiI1MSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.xR_zLWUvsRsP-vmc1KzJ8QNgVf2Z21vcY1Kd7lZDo3g`
-        // );
+        headers.set(
+          "Authorization",
+          `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTA3LjE0OC40Ny45NDo4ODAwL2FwaS92MS9sb2dpbiIsImlhdCI6MTczNDY5OTgwNywiZXhwIjoxNzM1MzA0NjA3LCJuYmYiOjE3MzQ2OTk4MDcsImp0aSI6InpEQjM3SUkycU5waW5hb0oiLCJzdWIiOiI1MSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.xR_zLWUvsRsP-vmc1KzJ8QNgVf2Z21vcY1Kd7lZDo3g`
+        );
       }
       return headers;
     },
