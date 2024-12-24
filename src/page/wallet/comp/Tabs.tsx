@@ -13,7 +13,7 @@ const Tabs: React.FC<TabsProps> = ({}) => {
       id: 1,
       title: "invite",
       pic: invite,
-      to: "#",
+      to: "/wallet/invite",
     },
     {
       id: 2,

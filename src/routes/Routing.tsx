@@ -4,6 +4,7 @@ import { paths } from "./paths";
 import RootLayout from "@/layouts/RootLayout";
 import More from "@/page/explore/comp/More";
 import Wallet from "@/page/wallet/Wallet";
+import Invite from "@/page/wallet/comp/Invite";
 
 const Home = lazy(() => import("../page/home/Home"));
 const Explore = lazy(() => import("../page/explore/Explore"));
@@ -118,6 +119,14 @@ const Routing = () => {
       element: (
         <Suspense fallback={<p>loading...</p>}>
           <Wallet />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.wallet_invite,
+      element: (
+        <Suspense fallback={<p>loading...</p>}>
+          <Invite />
         </Suspense>
       ),
     },

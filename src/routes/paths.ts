@@ -9,5 +9,6 @@ export const paths = {
   regiter: "/register",
   otp: "/otp",
   recommand_more : "/rec_more",
-  wallet : "/wallet"
+  wallet : "/wallet",
+  wallet_invite : "/wallet/invite"
 };
