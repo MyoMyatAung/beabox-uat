@@ -21,7 +21,16 @@ export const profileApi = createApi({
         method: "GET",
       }),
     }),
+    changeUsername: builder.mutation({
+      query: ({ username }) => ({
+        url: `/profile/change-username`,
+        method: "POST",
+        body: {
+          username,
+        },
+      }),
+    }),
   }),
 });
 
-export const { useGetMyProfileQuery } = profileApi;
+export const { useGetMyProfileQuery, useChangeUsernameMutation } = profileApi;

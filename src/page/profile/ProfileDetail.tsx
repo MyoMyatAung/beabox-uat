@@ -8,9 +8,11 @@ import EditReferral from "@/components/profile/edit-referral";
 import ChangePassword from "@/components/profile/change-password";
 import EditBio from "@/components/profile/edit-bio";
 import { useSelector } from "react-redux";
+import { useGetMyProfileQuery } from "@/store/api/profileApi";
 
 const Settings = () => {
   const user = useSelector((state: any) => state.persist.user);
+  const { data } = useGetMyProfileQuery("");
 
   return (
     <div className="w-full h-screen px-5">
@@ -26,7 +28,7 @@ const Settings = () => {
       </div>
       <div className="flex flex-col gap-7 my-7">
         <h1 className="text-[12px] text-[#888]">About you</h1>
-        <EditUsername />
+        <EditUsername username={data?.data?.username} />
         <EditGender />
         <div className="text-[14px] flex items-center justify-between">
           <h1>Region</h1>
