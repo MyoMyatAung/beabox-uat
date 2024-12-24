@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { BottomNav } from "@/components/shared/bottom-nav";
-import RightSideActions from "@/components/shared/right-side-actions";
 
 const RootLayout = ({ children }: any) => {
   return (
