@@ -21,7 +21,7 @@ const Banner: React.FC<BannerProps> = () => {
   return (
     <div className="pt-[80px]">
       {isLoading ? (
-        <div className=" w-[300px] h-[174px] bg-slate-700 animate-pulse"></div>
+        <div className=" w-[320px] h-[174px] bg-white/20 animate-pulse"></div>
       ) : (
         <Swiper
           modules={[Autoplay, Pagination]}

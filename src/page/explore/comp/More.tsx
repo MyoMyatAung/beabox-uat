@@ -79,7 +79,7 @@ const More: React.FC<MoreProps> = () => {
               key={index}
               className=" flex w-full justify-center items-center gap-[16px]"
             >
-              <img className=" w-[107px] h-[69px]" src={item.preview_image} alt="More" />
+              <img className=" w-[107px] h-[69px] rounded-[8px] object-cover object-center" src={item.preview_image} alt="More" />
               <div className=" w-2/3 flex flex-col h-[70px] justify-between">
                 <span className=" text-white text-[14px] font-[400]">
                   {item.title.length > 20
@@ -99,7 +99,7 @@ const More: React.FC<MoreProps> = () => {
               key={index}
               className=" flex w-full justify-center items-center gap-[16px]"
             >
-              <img className=" w-[107px] h-[69px]" src={item.preview_image} alt="More" />
+              <img className=" w-[107px] h-[69px] rounded-[8px] object-cover object-center" src={item.preview_image} alt="More" />
               <div className=" w-2/3 flex flex-col h-[70px] justify-between">
                 <span className=" text-white text-[14px] font-[400]">
                   {item.title.length > 20

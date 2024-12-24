@@ -54,13 +54,12 @@ const Recommand: React.FC<RecommandProps> = ({ title }) => {
         ) : (
           <>
             {isLoading ? (
-              <div className=" grid grid-cols-2 gap-[20px] justify-center">
-                <div className="flex items-center gap-[20px] space-x-4">
-                  <div className="space-y-2">
-                    <div className=" w-[335px] h-[150px] animate-pulse bg-slate-700"></div>
-                  </div>
-                </div>
-              </div>
+              <>
+                <div className="w-[175px] h-[120px] bg-white/20"></div>
+                <div className="w-[175px] h-[120px] bg-white/20"></div>
+                <div className="w-[175px] h-[120px] bg-white/20"></div>
+                <div className="w-[175px] h-[120px] bg-white/20"></div>
+              </>
             ) : (
               <>
                 {list?.slice(0, 4).map((card: any) => (
@@ -84,16 +83,16 @@ const Recommand: React.FC<RecommandProps> = ({ title }) => {
                         : card.title}
                     </h1>
                     {/* uploader */}
-                      <div className=" flex justify-cente py-[4px] items-center gap-[8px]">
-                        <img
-                          className=" w-[26px] h-[26px] rounded-full"
-                          src={card.user.avatar ? card.user.avatar : avatar}
-                          alt=""
-                        />
-                        <h1 className=" text-white text-[12px] font-[400] leading-[20px]">
-                          {card.user.name}
-                        </h1>
-                      </div>
+                    <div className=" flex justify-cente py-[4px] items-center gap-[8px]">
+                      <img
+                        className=" w-[26px] h-[26px] rounded-full"
+                        src={card.user.avatar ? card.user.avatar : avatar}
+                        alt=""
+                      />
+                      <h1 className=" text-white text-[12px] font-[400] leading-[20px]">
+                        {card.user.name}
+                      </h1>
+                    </div>
                   </div>
                 ))}
               </>
