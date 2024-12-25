@@ -20,6 +20,7 @@ const Home = () => {
   const [topmovies, setTopMovies] = useState(false);
   const { data: config } = useGetConfigQuery({});
   const { data, isLoading, isError } = useGetPostsQuery({ page });
+  const playerRefs = useRef<any[]>([]);
 
   useEffect(() => {
     if (data?.data) {
@@ -30,6 +31,35 @@ const Home = () => {
     }
   }, [data]);
 
+  // useEffect(() => {
+  //   const container = videoContainerRef.current;
+  //   if (!container || videos.length === 0) return;
+
+  //   const observer = new IntersectionObserver(
+  //     (entries) => {
+  //       entries.forEach((entry) => {
+  //         if (entry.isIntersecting) {
+  //           // Get the post ID of the currently visible video
+  //           const postId = entry.target.getAttribute("data-post-id");
+  //           if (postId) {
+  //             setCurrentActivePost(postId);
+  //           }
+  //         }
+  //       });
+  //     },
+  //     { root: null, rootMargin: "0px", threshold: 0.5 } // Trigger when 50% of the video is visible
+  //   );
+
+  //   // Observe all video elements
+  //   Array.from(container.children).forEach((child) => {
+  //     observer.observe(child);
+  //   });
+
+  //   return () => {
+  //     observer.disconnect();
+  //   };
+  // }, [videos]);
+
   useEffect(() => {
     const container = videoContainerRef.current;
     if (!container || videos.length === 0) return;
@@ -37,29 +67,34 @@ const Home = () => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
+          const postId = entry.target.getAttribute("data-post-id");
+
           if (entry.isIntersecting) {
-            // Get the post ID of the currently visible video
-            const postId = entry.target.getAttribute("data-post-id");
-            if (postId) {
+            // Play the video that is in view
+            const index = videos.findIndex((video) => video.post_id === postId);
+            if (index !== -1) {
               setCurrentActivePost(postId);
+              playerRefs.current[index]?.play();
+            }
+          } else {
+            // Pause videos that are out of view
+            const index = videos.findIndex((video) => video.post_id === postId);
+            if (index !== -1) {
+              playerRefs.current[index]?.pause();
             }
           }
         });
       },
-      { root: null, rootMargin: "0px", threshold: 0.5 } // Trigger when 50% of the video is visible
+      { root: null, rootMargin: "0px", threshold: 0.5 }
     );
 
-    // Observe all video elements
-    Array.from(container.children).forEach((child) => {
-      observer.observe(child);
-    });
+    Array.from(container.children).forEach((child) => observer.observe(child));
 
     return () => {
       observer.disconnect();
     };
   }, [videos]);
 
-  console.log(config);
   useEffect(() => {
     if (currentActivePost) {
       // Reset state when the active post changes

@@ -89,6 +89,21 @@ const Player = ({
 
       intersectionObserver.observe(playerContainerRef.current);
 
+      // return () => {
+      //   // Clean up the Artplayer instance and observers
+      //   if (artPlayerInstanceRef.current) {
+      //     artPlayerInstanceRef.current.destroy();
+      //     artPlayerInstanceRef.current = null;
+      //   }
+      //   // Safely clean up IntersectionObserver
+      //   if (intersectionObserver) intersectionObserver.disconnect();
+
+      //   // Safely clean up lozad observer
+      //   if (observer && observer.observe) {
+      //     observer.observe = () => {};
+      //   }
+      // };
+
       return () => {
         // Clean up the Artplayer instance and observers
         if (artPlayerInstanceRef.current) {
@@ -98,9 +113,13 @@ const Player = ({
         // Safely clean up IntersectionObserver
         if (intersectionObserver) intersectionObserver.disconnect();
 
-        // Safely clean up lozad observer
-        if (observer && observer.observe) {
-          observer.observe = () => {};
+        // // Safely clean up lozad observer
+        // if (observer && observer.observe) {
+        //   observer.disconnect();
+        // }
+        // Use lozad's custom API for cleanup
+        if (observer) {
+          observer = null; // Safely nullify; lozad has no explicit `disconnect`
         }
       };
     }
