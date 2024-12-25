@@ -1,45 +1,52 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
-import '../explore.css'
+import "../explore.css";
 
 import { Autoplay, Pagination } from "swiper/modules"; // Correct way to import Autoplay
-import banner from "../../../assets/explore/banner.png";
+import { useGetExploreHeaderQuery } from "@/store/api/explore/exploreApi";
 
 interface BannerProps {}
 
 const Banner: React.FC<BannerProps> = () => {
+  const [ad, setad] = useState([]);
+  const { data, isLoading } = useGetExploreHeaderQuery("");
+  useEffect(() => {
+    if (data?.data) {
+      const cur = data?.data?.ads?.carousel;
+      setad(cur);
+    }
+  }, [data, ad]);
   return (
     <div className="pt-[80px]">
-      <Swiper
-        modules={[Autoplay, Pagination]}
-        pagination={{
-          clickable: true,
-          renderBullet: (index, className = " text-white") => {
-            return `<span class="${className}"></span>`;
-          },
-        }}
-        autoplay={{
-          delay: 2000,
-          disableOnInteraction: false,
-        }}
-        spaceBetween={50}
-        slidesPerView={1}
-      >
-        <SwiperSlide>
-          <img className="w-screen xl:w-[600px]" src={banner} alt="Slide 1" />
-        </SwiperSlide>
-        <SwiperSlide>
-          <img className="w-screen xl:w-[600px]" src={banner} alt="Slide 2" />
-        </SwiperSlide>
-        <SwiperSlide>
-          <img className="w-screen xl:w-[600px]" src={banner} alt="Slide 3" />
-        </SwiperSlide>
-        <SwiperSlide>
-          <img className="w-screen xl:w-[600px]" src={banner} alt="Slide 4" />
-        </SwiperSlide>
-      </Swiper>
+      {isLoading ? (
+        <div className=" w-full h-[174px] bg-white/20 rounded-md animate-pulse"></div>
+      ) : (
+        <Swiper
+          modules={[Autoplay, Pagination]}
+          pagination={{}}
+          autoplay={{
+            delay: 3000,
+            disableOnInteraction: false,
+          }}
+          spaceBetween={50}
+          slidesPerView={1}
+        >
+          {ad.map((cc: any) => (
+            <SwiperSlide key={cc.id}>
+              <a href={cc.url} target="_blank" key={cc.id}>
+                <img
+                  className="w-screen h-[174px] xl:w-[600px] rounded-md"
+                  src={cc.image}
+                  alt="Slide 1"
+                />
+              </a>
+            </SwiperSlide>
+          ))}
+          <div className="swiper-pagination"></div>
+        </Swiper>
+      )}
     </div>
   );
 };

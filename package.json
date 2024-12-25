@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "start": "vite --host",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -18,9 +19,13 @@
     "@radix-ui/react-switch": "^1.1.2",
     "@radix-ui/react-tabs": "^1.1.2",
     "@reduxjs/toolkit": "^2.5.0",
-    "axios": "^1.7.9",
+    "artplayer": "^5.2.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "hls.js": "^1.5.18",
+    "lozad": "^1.16.0",
+    "axios": "^1.7.9",
+    "html-to-image": "^1.11.11",
     "lucide-react": "^0.468.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -37,6 +42,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
+    "@types/lozad": "^1.16.4",
     "@types/node": "^22.10.2",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",

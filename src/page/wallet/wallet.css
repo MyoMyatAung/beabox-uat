@@ -1,0 +1,49 @@
+.level_box {
+  border-radius: 0px 15px 15px 0px;
+  border: 0.75px solid #cbb5ff;
+  background: #f9ddf5;
+}
+
+.balance_box {
+  border-radius: 20px;
+  background: linear-gradient(
+    99deg,
+    rgba(255, 255, 255, 0.08) 22.91%,
+    rgba(255, 255, 255, 0.04) 92.45%
+  );
+}
+
+.tabs_icon {
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.transit_header {
+  background: rgba(245, 245, 245, 0.04);
+}
+
+.transit_view_all {
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.bitcoin_border {
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.transit_list {
+  border-bottom: 1px solid rgba(245, 245, 245, 0.12);
+}
+
+.copy_btn {
+  border-radius: 100px;
+  background: var(
+    --Fade-Gradient,
+    linear-gradient(
+      180deg,
+      rgba(163, 133, 255, 0.12) 0%,
+      rgba(255, 255, 255, 0.12) 100%
+    )
+  );
+}

@@ -1,44 +1,64 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import sp from "../../../assets/explore/sp.png";
 import { FaHeart } from "react-icons/fa";
+import { useGetExploreListQuery } from "@/store/api/explore/exploreApi";
 
 const Latest: React.FC = () => {
-  // Dummy data for demonstration
-  const cards = [
-    { id: 1, image: sp, title: "记录生活的美好瞬间" },
-    { id: 2, image: sp, title: "记录生活的美好瞬间" },
-    { id: 3, image: sp, title: "记录生活的美好瞬间" },
-    { id: 4, image: sp, title: "记录生活的美好瞬间" },
-    { id: 5, image: sp, title: "记录生活的美好瞬间" },
-    { id: 6, image: sp, title: "记录生活的美好瞬间" },
-    { id: 7, image: sp, title: "记录生活的美好瞬间" },
-    { id: 7, image: sp, title: "记录生活的美好瞬间" },
-  ];
+  const { data, isLoading } = useGetExploreListQuery({ id: 3 });
+  const [waterfall, setWaterFall] = useState<any>();
+
+  useEffect(() => {
+    if (data?.data) {
+      setWaterFall(data.data);
+    }
+  }, [data]);
 
   return (
-    <div className="container grid grid-cols-2 justify-center content-center gap-[10px]">
-      {cards.map((card, index) => (
-        <div key={card.id} className={`rounded-lg  shadow-lg h-fit relative py-[10px]`}>
-          <img
-            className={` w-[172px] h-[272px] object-cover rounded-[6px] bg-gray-300
-            //  ${index % 2 === 0 ? "h-[220px]" : "h-[272px]"}
-            `}
-            src={card.image}
-            alt=""
-          />
-          <div className=" text-white text-[15px] font-[400] leading-[30px]">
-            {card.title}
-          </div>
-          {/* counts */}
-          <div className=" w-full absolute bottom-[30px] text-white text-[14px] font-[400] leading-[30px] flex justify-between px-[10px]">
-            <span className=" flex gap-[5px] items-center">
-              <FaHeart />
-              819.1K
-            </span>
-            <span>00:54</span>
-          </div>
-        </div>
-      ))}
+    <div
+      className="columns-2 gap-2 px-[10px]"
+      style={{
+        columnGap: "20px",
+      }}
+    >
+      {isLoading ? (
+        <>
+          <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[220px] h-[172px]"></div>
+          <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[220px] h-[172px]"></div>
+          <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[220px] h-[172px]"></div>
+          <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[220px] h-[172px]"></div>
+        </>
+      ) : (
+        <>
+          {waterfall?.map((card: any, index: number) => (
+            <div
+              key={card.id}
+              className="rounded-lg shadow-lg h-fit mb-4 w-[172px] relative"
+              style={{ breakInside: "avoid" }}
+            >
+              <img
+                className="w-full object-cover rounded-[6px] bg-white/20"
+                src={card.preview_image}
+                alt=""
+                style={{
+                  height: index % 2 === 0 ? "220px" : "272px",
+                }}
+              />
+              <div className="absolute z-[999]  w-[172px] bottom-[30px] text-white text-[14px] font-[400] leading-[30px] flex justify-between px-[10px] mb-2 -ml-1">
+                <span className="flex gap-[5px] items-center">
+                  <FaHeart />
+                  {card?.like_count}
+                </span>
+                <span>00:54</span>
+              </div>
+              <div className="text-white text-[15px] font-[400] leading-[30px]">
+                {card.title.length > 20
+                  ? `${card.title.slice(0, 18)}...`
+                  : card.title}
+              </div>
+            </div>
+          ))}
+        </>
+      )}
     </div>
   );
 };

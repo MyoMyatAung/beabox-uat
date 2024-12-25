@@ -3,6 +3,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { paths } from "./paths";
 import RootLayout from "@/layouts/RootLayout";
 import More from "@/page/explore/comp/More";
+import Wallet from "@/page/wallet/Wallet";
+import Invite from "@/page/wallet/comp/Invite";
 
 const Home = lazy(() => import("../page/home/Home"));
 const Explore = lazy(() => import("../page/explore/Explore"));
@@ -13,6 +15,7 @@ const Settings = lazy(() => import("../page/profile/Settings"));
 const Login = lazy(() => import("../page/auth/Login"));
 const Register = lazy(() => import("../page/auth/Register"));
 const OTP = lazy(() => import("../page/auth/OTP"));
+const UploadComponent = lazy(() => import("../page/upload/Upload"));
 
 const Routing = () => {
   const router = createBrowserRouter([
@@ -29,6 +32,16 @@ const Routing = () => {
       element: (
         <Suspense fallback={<p>loading...</p>}>
           <Register />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.upload,
+      element: (
+        <Suspense fallback={<p>loading...</p>}>
+          <RootLayout>
+            <UploadComponent />
+          </RootLayout>
         </Suspense>
       ),
     },
@@ -121,6 +134,22 @@ const Routing = () => {
       element: (
         <Suspense>
           <h1>Page Not Found!</h1>
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.wallet,
+      element: (
+        <Suspense fallback={<p>loading...</p>}>
+          <Wallet />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.wallet_invite,
+      element: (
+        <Suspense fallback={<p>loading...</p>}>
+          <Invite />
         </Suspense>
       ),
     },
