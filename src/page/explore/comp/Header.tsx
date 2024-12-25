@@ -15,7 +15,6 @@ const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
       sethd(cur);
     }
   }, [data, hd]);
-  // console.log(hd)
 
   return (
     <div className="bg-black z-[99] py-[10px] fixed top-0 w-screen">

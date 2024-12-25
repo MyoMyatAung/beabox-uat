@@ -12,7 +12,10 @@ interface RecommandProps {
 
 const Recommand: React.FC<RecommandProps> = ({ title }) => {
   const [list, setList] = useState([]);
-  const { data, isLoading, refetch } = useGetExploreTagQuery("");
+  const { data, isLoading, refetch } = useGetExploreTagQuery({
+    order: "popular",
+    tag : title
+  });
   useEffect(() => {
     if (data?.data) {
       setList(data?.data.list);

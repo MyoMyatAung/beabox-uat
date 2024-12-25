@@ -14,9 +14,9 @@ export const exploreApi = createApi({
         method: "GET",
       }),
     }),
-    getExploreTag: builder.query<any, string>({
-      query: () => ({
-        url: `/post/search/tag?tag=Chinese Drama&order=popular&pageSize=10`,
+    getExploreTag: builder.query<any, any>({
+      query: ({ order, tag }) => ({
+        url: `/post/search/tag?tag=${tag}&order=${order}&pageSize=10`,
         method: "GET",
       }),
     }),
@@ -26,7 +26,18 @@ export const exploreApi = createApi({
         method: "GET",
       }),
     }),
+    getExploreList: builder.query<any, any>({
+      query: ({ id }) => ({
+        url: `explore/list?id=${id}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useGetExploreHeaderQuery, useGetExploreTagQuery, useGetApplicationAdsQuery } = exploreApi;
+export const {
+  useGetExploreHeaderQuery,
+  useGetExploreTagQuery,
+  useGetApplicationAdsQuery,
+  useGetExploreListQuery
+} = exploreApi;

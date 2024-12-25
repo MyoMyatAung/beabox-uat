@@ -8,24 +8,27 @@ import { useGetExploreTagQuery } from "@/store/api/explore/exploreApi";
 interface MoreProps {}
 
 const More: React.FC<MoreProps> = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { title } = location.state || {};
   const [list, setList] = useState([]);
-  const { data, isLoading, refetch } = useGetExploreTagQuery("");
+  const [activeTab, setActiveTab] = useState("popular");
+  const { data, isLoading, refetch } = useGetExploreTagQuery({
+    order: activeTab,
+    tag : title
+  });
   useEffect(() => {
     if (data?.data) {
       setList(data?.data.list);
     }
-  }, [data, list]);
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { title } = location.state || {};
+    refetch();
+  }, [data, list, activeTab]);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  // State to manage active tab
-  const [activeTab, setActiveTab] = useState("popular");
 
-  // Dummy data for tabs
   const popularItems = Array.from({ length: 10 }, (_, i) => ({
     title: `My Boss (2021) - ${i + 1}`,
     views: 3685 + i * 10,
@@ -73,47 +76,53 @@ const More: React.FC<MoreProps> = () => {
 
       {/* List */}
       <div className=" py-[20px] flex flex-col gap-[20px] w-full">
-        {renderItems.length > 0 ? (
-          list.map((item: any, index) => (
-            <div
-              key={index}
-              className=" flex w-full justify-center items-center gap-[16px]"
-            >
-              <img className=" w-[107px] h-[69px] rounded-[8px] object-cover object-center" src={item.preview_image} alt="More" />
-              <div className=" w-2/3 flex flex-col h-[70px] justify-between">
-                <span className=" text-white text-[14px] font-[400]">
-                  {item.title.length > 20
-                    ? `${item.title.slice(0, 30)}...`
-                    : item.title}{" "}
-                </span>
-                <div className=" flex justify-between text-[#AAA] text-[12px] font-[400] leading-[15px]">
-                  <span></span>
-                  <span>{item.like_count} likes</span>
+        {renderItems.length > 0
+          ? list.map((item: any, index) => (
+              <div
+                key={index}
+                className=" flex w-full justify-center items-center gap-[16px]"
+              >
+                <img
+                  className=" w-[107px] h-[69px] rounded-[8px] object-cover object-center"
+                  src={item.preview_image}
+                  alt="More"
+                />
+                <div className=" w-2/3 flex flex-col h-[70px] justify-between">
+                  <span className=" text-white text-[14px] font-[400]">
+                    {item.title.length > 20
+                      ? `${item.title.slice(0, 30)}...`
+                      : item.title}{" "}
+                  </span>
+                  <div className=" flex justify-between text-[#AAA] text-[12px] font-[400] leading-[15px]">
+                    <span></span>
+                    <span>{item.like_count} likes</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
-        ) : (
-          list.map((item: any, index) => (
-            <div
-              key={index}
-              className=" flex w-full justify-center items-center gap-[16px]"
-            >
-              <img className=" w-[107px] h-[69px] rounded-[8px] object-cover object-center" src={item.preview_image} alt="More" />
-              <div className=" w-2/3 flex flex-col h-[70px] justify-between">
-                <span className=" text-white text-[14px] font-[400]">
-                  {item.title.length > 20
-                    ? `${item.title.slice(0, 30)}...`
-                    : item.title}{" "}
-                </span>
-                <div className=" flex justify-between text-[#AAA] text-[12px] font-[400] leading-[15px]">
-                  <span></span>
-                  <span>{item.like_count} likes</span>
+            ))
+          : list.map((item: any, index) => (
+              <div
+                key={index}
+                className=" flex w-full justify-center items-center gap-[16px]"
+              >
+                <img
+                  className=" w-[107px] h-[69px] rounded-[8px] object-cover object-center"
+                  src={item.preview_image}
+                  alt="More"
+                />
+                <div className=" w-2/3 flex flex-col h-[70px] justify-between">
+                  <span className=" text-white text-[14px] font-[400]">
+                    {item.title.length > 20
+                      ? `${item.title.slice(0, 30)}...`
+                      : item.title}{" "}
+                  </span>
+                  <div className=" flex justify-between text-[#AAA] text-[12px] font-[400] leading-[15px]">
+                    <span></span>
+                    <span>{item.like_count} likes</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
-        )}
+            ))}
       </div>
     </div>
   );
