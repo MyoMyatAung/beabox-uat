@@ -13,13 +13,16 @@ import { useEffect } from "react";
 
 const Settings = () => {
   const user = useSelector((state: any) => state.persist.user);
+  const bio = useSelector((state: any) => state.persist.bio);
+  const gender = useSelector((state: any) => state.persist.gender);
+  console.log(bio);
+
   const { data, refetch } = useGetMyProfileQuery("");
   console.log(data?.data?.bio);
 
-  // useEffect(() => {
-  //   refetch();
-  // }, []);
-
+  useEffect(() => {
+    refetch();
+  }, [bio, refetch, gender]);
   return (
     <div className="w-full h-screen px-5">
       <div className="flex justify-between items-center py-5">

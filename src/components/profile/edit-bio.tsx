@@ -3,19 +3,18 @@ import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { Button } from "../ui/button";
 import { useState } from "react";
 import { useChangeBioMutation } from "@/store/api/profileApi";
-import { useNavigate } from "react-router-dom";
-import { paths } from "@/routes/paths";
+import { useDispatch, useSelector } from "react-redux";
+import { setBio } from "@/store/slices/persistSlice";
 
 const EditBio = ({ bio }: any) => {
   const [isOpen, setIsOpen] = useState(false);
-  
   const [value, setValue] = useState("");
   const [changeBio, { data, isLoading }] = useChangeBioMutation();
+  const dispatch = useDispatch();
   console.log(data);
-  const navigate = useNavigate();
   const onSubmitHandler = async (e: any) => {
     e.preventDefault();
-
+    dispatch(setBio(value));
     await changeBio({ bio: value });
     setIsOpen(false);
   };

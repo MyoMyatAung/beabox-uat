@@ -32,8 +32,8 @@ const EditGender = () => {
               <h1
                 onClick={async () => {
                   dispatch(setGender("Other"));
-                  setIsOpen(false);
                   await changeGender({ gender: "Other" });
+                  setIsOpen(false);
                 }}
                 className={`${
                   gender == "Other" ? "text-white" : "text-[#999]"
@@ -51,8 +51,8 @@ const EditGender = () => {
               <h1
                 onClick={async () => {
                   dispatch(setGender("Male"));
-                  setIsOpen(false);
                   await changeGender({ gender: "Male" });
+                  setIsOpen(false);
                 }}
                 className={`${
                   gender == "Male" ? "text-white" : "text-[#999]"
@@ -70,8 +70,8 @@ const EditGender = () => {
               <h1
                 onClick={async () => {
                   dispatch(setGender("Female"));
-                  setIsOpen(false);
                   await changeGender({ gender: "Female" });
+                  setIsOpen(false);
                 }}
                 className={`${
                   gender == "Female" ? "text-white" : "text-[#999]"

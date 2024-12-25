@@ -57,6 +57,20 @@ export const profileApi = createApi({
         },
       }),
     }),
+    uploadProfilePic: builder.mutation({
+      query: ({ file_url }) => ({
+        url: `/profile/upload`,
+        method: "POST",
+        body: {
+          file_url,
+        },
+      }),
+    }),
+    logout: builder.mutation({
+      query: () => ({
+        url: `/profile/logout`,
+      }),
+    }),
   }),
 });
 
@@ -66,4 +80,6 @@ export const {
   useChangeGenderMutation,
   useChangeBioMutation,
   useChangeReferralCodeMutation,
+  useUploadProfilePicMutation,
+  useLogoutMutation,
 } = profileApi;
