@@ -22,10 +22,10 @@ const Latest: React.FC = () => {
     >
       {isLoading ? (
         <>
-          <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[220px] h-[172px]"></div>
-          <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[220px] h-[172px]"></div>
-          <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[220px] h-[172px]"></div>
-          <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[220px] h-[172px]"></div>
+          <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[220px]"></div>
+          <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[220px]"></div>
+          <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[220px]"></div>
+          <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[220px]"></div>
         </>
       ) : (
         <>

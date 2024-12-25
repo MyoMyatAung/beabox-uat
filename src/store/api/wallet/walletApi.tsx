@@ -21,7 +21,13 @@ export const walletApi = createApi({
         method: "GET",
       }),
     }),
+    getTransitionHistory: builder.query<any, any>({
+      query: ({ period, type }) => ({
+        url: `/wallet/transaction-history?period=${period}&type=${type}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useGetInviteQuery } = walletApi;
+export const { useGetInviteQuery, useGetTransitionHistoryQuery } = walletApi;
