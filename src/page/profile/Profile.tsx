@@ -22,10 +22,7 @@ const Profile = () => {
   console.log(data?.data, "data");
   const user = useSelector((state: any) => state.persist.user);
   const dispatch = useDispatch();
-  // console.log(user);
-  // useEffect(() => {
-  //   getMyProfile();
-  // }, []);
+
   return (
     <div className="px-5 max-h-screen no-scrollbar">
       <div className="flex gap-3 my-5 justify-end">
@@ -53,7 +50,7 @@ const Profile = () => {
           </Link>
         ) : (
           <button
-            onClick={() => dispatch(logOutUser())}
+            // onClick={() => dispatch(logOutUser())}
             className="bg-gradient-to-r from-[#FFB2E038] to-[#CD3EFF38] px-4 py-1 rounded-full shadow-md flex gap-1 items-center"
           >
             <span className="mr-3 text-[14px] flex items-center gap-1">

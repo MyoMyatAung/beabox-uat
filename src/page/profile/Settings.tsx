@@ -6,10 +6,14 @@ import { Button } from "@/components/ui/button";
 import EditLanguage from "@/components/profile/edit-language";
 import { logOutUser } from "@/store/slices/persistSlice";
 import { useDispatch } from "react-redux";
+import { useLogoutMutation } from "@/store/api/profileApi";
 
 const Settings = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [logout, { data }] = useLogoutMutation();
+  console.log(data, "logout");
+
   return (
     <div className="w-full h-screen px-5 flex flex-col items-center justify-between">
       <div className="top flex flex-col gap-5 w-full">
@@ -66,8 +70,9 @@ const Settings = () => {
       </div>
       <div className="bot w-full py-5">
         <Button
-          onClick={() => {
+          onClick={async () => {
             dispatch(logOutUser());
+            await logout("");
             navigate(paths.profile);
           }}
           className="w-full rounded-lg bg-[#1C1A22] hover:bg-[#1C1A22]"

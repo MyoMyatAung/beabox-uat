@@ -5,6 +5,7 @@ const initialState: any = {
   registerUser: null,
   user: null,
   gender: "Other",
+  bio: "",
 };
 
 export const persistSlice = createSlice({
@@ -20,13 +21,16 @@ export const persistSlice = createSlice({
     setGender: (state, { payload }) => {
       state.gender = payload;
     },
+    setBio: (state, { payload }) => {
+      state.bio = payload;
+    },
     logOutUser: (state) => {
       state.user = null;
     },
   },
 });
 
-export const { setRegisterUser, setUser, logOutUser, setGender } =
+export const { setRegisterUser, setUser, logOutUser, setGender, setBio } =
   persistSlice.actions;
 
 export default persistSlice.reducer;
