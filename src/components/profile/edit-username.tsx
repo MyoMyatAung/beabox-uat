@@ -7,7 +7,13 @@ import { useSelector } from "react-redux";
 import { useChangeUsernameMutation } from "@/store/api/profileApi";
 import { useNavigate } from "react-router-dom";
 
-const EditUsername = ({ username }: { username: string }) => {
+const EditUsername = ({
+  username,
+  refetchHandler,
+}: {
+  username: string;
+  refetchHandler: any;
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState("");
   const [changeUsername, { data, isLoading }] = useChangeUsernameMutation();
@@ -19,6 +25,7 @@ const EditUsername = ({ username }: { username: string }) => {
     e.preventDefault();
     console.log(value);
     await changeUsername({ username: value });
+    await refetchHandler();
     setIsOpen(false);
   };
 

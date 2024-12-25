@@ -71,6 +71,16 @@ export const profileApi = createApi({
         url: `/profile/logout`,
       }),
     }),
+    changePassword: builder.mutation({
+      query: ({ current_password, new_password }) => ({
+        url: `/profile/change-password`,
+        method: "POST",
+        body: {
+          current_password,
+          new_password,
+        },
+      }),
+    }),
   }),
 });
 
@@ -82,4 +92,5 @@ export const {
   useChangeReferralCodeMutation,
   useUploadProfilePicMutation,
   useLogoutMutation,
+  useChangePasswordMutation,
 } = profileApi;

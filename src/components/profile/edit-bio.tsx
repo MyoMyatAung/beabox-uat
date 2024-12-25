@@ -6,7 +6,7 @@ import { useChangeBioMutation } from "@/store/api/profileApi";
 import { useDispatch, useSelector } from "react-redux";
 import { setBio } from "@/store/slices/persistSlice";
 
-const EditBio = ({ bio }: any) => {
+const EditBio = ({ bio, refetchHandler }: any) => {
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState("");
   const [changeBio, { data, isLoading }] = useChangeBioMutation();
@@ -16,6 +16,7 @@ const EditBio = ({ bio }: any) => {
     e.preventDefault();
     dispatch(setBio(value));
     await changeBio({ bio: value });
+    await refetchHandler();
     setIsOpen(false);
   };
   return (
