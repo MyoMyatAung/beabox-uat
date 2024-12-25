@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const exploreApi = createApi({
@@ -19,7 +20,13 @@ export const exploreApi = createApi({
         method: "GET",
       }),
     }),
+    getApplicationAds: builder.query<any, string>({
+      query: () => ({
+        url: `/application/ads`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useGetExploreHeaderQuery, useGetExploreTagQuery } = exploreApi;
+export const { useGetExploreHeaderQuery, useGetExploreTagQuery, useGetApplicationAdsQuery } = exploreApi;

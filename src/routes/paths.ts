@@ -7,6 +7,7 @@ export const paths = {
   application: "/application",
   login: "/login",
   regiter: "/register",
+  upload: "/upload",
   otp: "/otp",
   recommand_more : "/rec_more",
   wallet : "/wallet",

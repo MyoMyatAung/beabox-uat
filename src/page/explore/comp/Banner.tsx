@@ -21,7 +21,7 @@ const Banner: React.FC<BannerProps> = () => {
   return (
     <div className="pt-[80px]">
       {isLoading ? (
-        <div className=" w-[320px] h-[174px] bg-white/20 animate-pulse"></div>
+        <div className=" w-full h-[174px] bg-white/20 rounded-md animate-pulse"></div>
       ) : (
         <Swiper
           modules={[Autoplay, Pagination]}
@@ -35,11 +35,13 @@ const Banner: React.FC<BannerProps> = () => {
         >
           {ad.map((cc: any) => (
             <SwiperSlide key={cc.id}>
-              <img
-                className="w-screen h-[174px] xl:w-[600px]"
-                src={cc.image}
-                alt="Slide 1"
-              />
+              <a href={cc.url} target="_blank" key={cc.id}>
+                <img
+                  className="w-screen h-[174px] xl:w-[600px] rounded-md"
+                  src={cc.image}
+                  alt="Slide 1"
+                />
+              </a>
             </SwiperSlide>
           ))}
           <div className="swiper-pagination"></div>

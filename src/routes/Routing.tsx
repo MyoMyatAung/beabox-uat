@@ -15,6 +15,7 @@ const Settings = lazy(() => import("../page/profile/Settings"));
 const Login = lazy(() => import("../page/auth/Login"));
 const Register = lazy(() => import("../page/auth/Register"));
 const OTP = lazy(() => import("../page/auth/OTP"));
+const UploadComponent = lazy(() => import("../page/upload/Upload"));
 
 const Routing = () => {
   const router = createBrowserRouter([
@@ -31,6 +32,16 @@ const Routing = () => {
       element: (
         <Suspense fallback={<p>loading...</p>}>
           <Register />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.upload,
+      element: (
+        <Suspense fallback={<p>loading...</p>}>
+          <RootLayout>
+            <UploadComponent />
+          </RootLayout>
         </Suspense>
       ),
     },

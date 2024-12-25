@@ -22,16 +22,16 @@ const Poppizza: React.FC<PoppizzaProps> = ({}) => {
       </h1>
       {isLoading ? (
         <div className="grid grid-cols-5 gap-[20px]">
-          <div className="w-[56px] h-[68px] bg-white/20 animate-pulse"></div>
-          <div className="w-[56px] h-[68px] bg-white/20 animate-pulse"></div>
-          <div className="w-[56px] h-[68px] bg-white/20 animate-pulse"></div>
-          <div className="w-[56px] h-[68px] bg-white/20 animate-pulse"></div>
-          <div className="w-[56px] h-[68px] bg-white/20 animate-pulse"></div>
-          <div className="w-[56px] h-[68px] bg-white/20 animate-pulse"></div>
-          <div className="w-[56px] h-[68px] bg-white/20 animate-pulse"></div>
-          <div className="w-[56px] h-[68px] bg-white/20 animate-pulse"></div>
-          <div className="w-[56px] h-[68px] bg-white/20 animate-pulse"></div>
-          <div className="w-[56px] h-[68px] bg-white/20 animate-pulse"></div>
+          <div className="w-[56px] h-[53px] rounded-md bg-white/20 animate-pulse"></div>
+          <div className="w-[56px] h-[53px] rounded-md bg-white/20 animate-pulse"></div>
+          <div className="w-[56px] h-[53px] rounded-md bg-white/20 animate-pulse"></div>
+          <div className="w-[56px] h-[53px] rounded-md bg-white/20 animate-pulse"></div>
+          <div className="w-[56px] h-[53px] rounded-md bg-white/20 animate-pulse"></div>
+          <div className="w-[56px] h-[53px] rounded-md bg-white/20 animate-pulse"></div>
+          <div className="w-[56px] h-[53px] rounded-md bg-white/20 animate-pulse"></div>
+          <div className="w-[56px] h-[53px] rounded-md bg-white/20 animate-pulse"></div>
+          <div className="w-[56px] h-[53px] rounded-md bg-white/20 animate-pulse"></div>
+          <div className="w-[56px] h-[53px] rounded-md bg-white/20 animate-pulse"></div>
         </div>
       ) : (
         <div className=" grid grid-cols-5 gap-[20px]">
