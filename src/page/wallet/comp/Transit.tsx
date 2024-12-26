@@ -4,10 +4,12 @@ import { ChevronRight, ScrollText } from "lucide-react";
 import transit from "../../../assets/wallet/ transit.png";
 import { useGetTransitionHistoryQuery } from "@/store/api/wallet/walletApi";
 import noTran from "../../../assets/wallet/noTran.svg";
+import { useNavigate } from "react-router-dom";
 
 interface TransitProps {}
 
 const Transit: React.FC<TransitProps> = ({}) => {
+  const navigate = useNavigate()
   const [tran, setTran] = useState<any>();
   const { data, isLoading } = useGetTransitionHistoryQuery({
     period: "12-2024",
@@ -18,7 +20,6 @@ const Transit: React.FC<TransitProps> = ({}) => {
       setTran(data?.data);
     }
   }, [data]);
-  console.log(data);
 
   return (
     <div className=" py-[20px]">
@@ -27,7 +28,7 @@ const Transit: React.FC<TransitProps> = ({}) => {
         <h1 className=" text-white text-[14px] font-[500] leading-normal">
           Transitions
         </h1>
-        <div className=" flex transit_view_all pl-[10px] py-[2px] pr-[2px]">
+        <div onClick={() => navigate('/wallet/transition')} className=" flex transit_view_all pl-[10px] py-[2px] pr-[2px]">
           <span className=" capitalize">view all</span>
           <ChevronRight />
         </div>

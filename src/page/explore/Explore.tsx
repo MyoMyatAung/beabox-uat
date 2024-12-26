@@ -39,7 +39,8 @@ const Explore = () => {
   };
 
   return (
-    <div className="explore_sec max-w-[800px] flex flex-col justify-center items-cente px-[10px] pb-[100px]">
+    <div className=" flex justify-center items-center">
+    <div className="explore_sec w-screen xl:w-[800px] flex flex-col justify-center items-cente px-[10px] pb-[100px]">
       <Header activeTab={activeTab} setActiveTab={setActiveTab} />
       <Banner />
       <div className="mt-[20px]">
@@ -74,6 +75,7 @@ const Explore = () => {
           </SwiperSlide>
         </Swiper>
       </div>
+    </div>
     </div>
   );
 };
