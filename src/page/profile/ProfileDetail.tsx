@@ -7,22 +7,31 @@ import EditGender from "@/components/profile/edit-gender";
 import EditReferral from "@/components/profile/edit-referral";
 import ChangePassword from "@/components/profile/change-password";
 import EditBio from "@/components/profile/edit-bio";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useGetMyProfileQuery } from "@/store/api/profileApi";
 import { useEffect } from "react";
+import { setProfileData } from "@/store/slices/persistSlice";
 
 const Settings = () => {
   const user = useSelector((state: any) => state.persist.user);
-  const bio = useSelector((state: any) => state.persist.bio);
-  const gender = useSelector((state: any) => state.persist.gender);
-  console.log(bio);
-
+  const profileData = useSelector((state: any) => state.persist.profileData);
+  const private_profile = useSelector(
+    (state: any) => state.persist.private_profile
+  );
   const { data, refetch } = useGetMyProfileQuery("");
-  console.log(data?.data);
-
+  console.log(data);
+  const dispatch = useDispatch();
   const refetchHandler = async () => {
     await refetch();
   };
+  console.log(profileData, "pd");
+  useEffect(() => {
+    if (data?.status) dispatch(setProfileData(data?.data));
+  }, []);
+
+  useEffect(() => {
+    refetch();
+  }, [private_profile]);
 
   // useEffect(() => {
   //   refetch();
@@ -41,7 +50,10 @@ const Settings = () => {
       </div>
       <div className="flex flex-col gap-7 my-7">
         <h1 className="text-[12px] text-[#888]">About you</h1>
-        <EditUsername username={data?.data?.username} refetchHandler={refetchHandler} />
+        <EditUsername
+          username={data?.data?.username}
+          refetchHandler={refetchHandler}
+        />
         <EditGender />
         <div className="text-[14px] flex items-center justify-between">
           <h1>Region</h1>

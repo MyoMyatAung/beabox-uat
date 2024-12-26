@@ -1,18 +1,23 @@
 import { paths } from "@/routes/paths";
 import { FaAngleLeft } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import { Globe, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import EditLanguage from "@/components/profile/edit-language";
 import { logOutUser } from "@/store/slices/persistSlice";
 import { useDispatch } from "react-redux";
 import { useLogoutMutation } from "@/store/api/profileApi";
+import withProfileData from "@/hocs/withProfileData";
 
-const Settings = () => {
+const Settings = ({
+  private_profile,
+  changePrivateProfileStatsHandler,
+  liked_video_visibility,
+  changeVisibilityHandler,
+}: any) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [logout, { data }] = useLogoutMutation();
-  console.log(data, "logout");
+  const [logout] = useLogoutMutation();
 
   return (
     <div className="w-full h-screen px-5 flex flex-col items-center justify-between">
@@ -50,7 +55,17 @@ const Settings = () => {
             </p>
           </div>
           <label className="switch">
-            <input type="checkbox" />
+            <input
+              type="checkbox"
+              defaultChecked={private_profile == "on" ? true : false}
+              onChange={changePrivateProfileStatsHandler}
+              // defaultChecked={private_profile == "off" ? false : true}
+              // onChange={async (e) =>
+              //   await changePrivateProfileStats({
+              //     status: e.target.checked ? "on" : "off",
+              //   })
+              // }
+            />
             <span className="slider round"></span>
           </label>
         </div>
@@ -63,7 +78,11 @@ const Settings = () => {
             </p>
           </div>
           <label className="switch">
-            <input type="checkbox" />
+            <input
+              type="checkbox"
+              defaultChecked={liked_video_visibility}
+              onChange={changeVisibilityHandler}
+            />
             <span className="slider round"></span>
           </label>
         </div>
@@ -84,4 +103,4 @@ const Settings = () => {
   );
 };
 
-export default Settings;
+export default withProfileData(Settings);
