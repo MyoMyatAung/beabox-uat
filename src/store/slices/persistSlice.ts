@@ -6,6 +6,9 @@ const initialState: any = {
   user: null,
   gender: "Other",
   bio: "",
+  profileData: null,
+  private_profile: "off",
+  visibility: "off",
 };
 
 export const persistSlice = createSlice({
@@ -27,10 +30,27 @@ export const persistSlice = createSlice({
     logOutUser: (state) => {
       state.user = null;
     },
+    setProfileData: (state, { payload }) => {
+      state.profileData = payload;
+    },
+    setPrivateProfile: (state, { payload }) => {
+      state.private_profile = payload;
+    },
+    setVisibility: (state, { payload }) => {
+      state.visibility = payload;
+    },
   },
 });
 
-export const { setRegisterUser, setUser, logOutUser, setGender, setBio } =
-  persistSlice.actions;
+export const {
+  setRegisterUser,
+  setUser,
+  logOutUser,
+  setGender,
+  setBio,
+  setProfileData,
+  setPrivateProfile,
+  setVisibility,
+} = persistSlice.actions;
 
 export default persistSlice.reducer;

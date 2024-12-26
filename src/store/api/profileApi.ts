@@ -81,6 +81,24 @@ export const profileApi = createApi({
         },
       }),
     }),
+    changePrivateProfileStats: builder.mutation({
+      query: ({ status }) => ({
+        url: `/profile/private-profile-status`,
+        method: "POST",
+        body: {
+          status,
+        },
+      }),
+    }),
+    changeVisibility: builder.mutation({
+      query: ({ status }) => ({
+        url: `/profile/liked-video-visibility`,
+        method: "POST",
+        body: {
+          status,
+        },
+      }),
+    }),
   }),
 });
 
@@ -93,4 +111,6 @@ export const {
   useUploadProfilePicMutation,
   useLogoutMutation,
   useChangePasswordMutation,
+  useChangePrivateProfileStatsMutation,
+  useChangeVisibilityMutation,
 } = profileApi;

@@ -14,14 +14,12 @@ import { FaAngleRight } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { paths } from "@/routes/paths";
 import { useGetMyProfileQuery } from "@/store/api/profileApi";
-import { useDispatch, useSelector } from "react-redux";
-import { logOutUser } from "@/store/slices/persistSlice";
+import { useSelector } from "react-redux";
 
 const Profile = () => {
   const { data } = useGetMyProfileQuery("");
   console.log(data?.data, "data");
   const user = useSelector((state: any) => state.persist.user);
-  const dispatch = useDispatch();
 
   return (
     <div className="px-5 max-h-screen no-scrollbar">
