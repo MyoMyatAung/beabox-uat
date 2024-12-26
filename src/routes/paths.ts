@@ -11,5 +11,6 @@ export const paths = {
   otp: "/otp",
   recommand_more : "/rec_more",
   wallet : "/wallet",
-  wallet_invite : "/wallet/invite"
+  wallet_invite : "/wallet/invite",
+  wallet_history : "/wallet/Transition"
 };

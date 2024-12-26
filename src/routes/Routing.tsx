@@ -5,6 +5,7 @@ import RootLayout from "@/layouts/RootLayout";
 import More from "@/page/explore/comp/More";
 import Wallet from "@/page/wallet/Wallet";
 import Invite from "@/page/wallet/comp/Invite";
+import TranHist from "@/page/wallet/comp/TranHist";
 
 const Home = lazy(() => import("../page/home/Home"));
 const Explore = lazy(() => import("../page/explore/Explore"));
@@ -150,6 +151,14 @@ const Routing = () => {
       element: (
         <Suspense fallback={<p>loading...</p>}>
           <Invite />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.wallet_history,
+      element: (
+        <Suspense fallback={<p>loading...</p>}>
+          <TranHist />
         </Suspense>
       ),
     },
