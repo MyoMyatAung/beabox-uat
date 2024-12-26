@@ -6,13 +6,17 @@ import transit from "../../../assets/wallet/ transit.png";
 import noTran from "../../../assets/wallet/noTran.svg";
 import { useGetTransitionHistoryQuery } from "@/store/api/wallet/walletApi";
 import DatePick from "./DatePick";
+import TypePick from "./TypePick";
 
 interface TranHistProps {}
 
 const TranHist: React.FC<TranHistProps> = ({}) => {
+  const [curMon, setCurMon] = useState("December");
+  const [curYr, setCurYr] = useState(2024);
+  const [plus, setplus] = useState(12);
   const [tran, setTran] = useState<any>();
   const { data, isLoading } = useGetTransitionHistoryQuery({
-    period: "12-2024",
+    period: `${plus}-${curYr}`,
     type: "topup",
   });
   useEffect(() => {
@@ -20,27 +24,23 @@ const TranHist: React.FC<TranHistProps> = ({}) => {
       setTran(data?.data);
     }
   }, [data]);
+  console.log(plus);
   return (
     <div className=" flex justify-center items-center">
       <div className="w-screen xl:w-[800px]">
         <Header lv={false} title="Transition History" />
         <div className=" px-[20px] flex justify-center items-center">
           {/* types */}
-          <div className="types_all px-[16px] my-[10px] py-[8px] flex justify-center items-center gap-[4px]">
-            <h1 className=" text-white text-[14px] font-[500] leading-[20px]">
-              All Types
-            </h1>
-            <FaCaretDown />
-          </div>
+          <TypePick />
         </div>
         {/* time */}
-        <DatePick />
-        {/* <div className=" bg-white/5 w-full flex gap-[4px] items-center px-[20px] py-[8px]">
-          <h1 className=" text-white text-[14px] font-[500] leading-[20px]">
-            2024 October
-          </h1>
-          <FaCaretDown />
-        </div> */}
+        <DatePick
+          curMon={curMon}
+          curYr={curYr}
+          setCurMon={setCurMon}
+          setCurYr={setCurYr}
+          setplus={setplus}
+        />
         {/* transition */}
         <div className=" py-[12px] px-[18px]">
           {isLoading ? (
