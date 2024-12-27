@@ -4,19 +4,24 @@ import { Button } from "../ui/button";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useChangePasswordMutation } from "@/store/api/profileApi";
+import Loader from "../shared/loader";
+import loader from "@/page/home/vod_loader.gif";
+import SubmitButton from "../shared/submit-button";
+
 const ChangePassword = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [current_password, setCurrentPassword] = useState("");
   const [new_password, setNewPassword] = useState("");
   const [show, setShow] = useState(false);
   const [show2, setShow2] = useState(false);
-  const [changePassword, { data }] = useChangePasswordMutation();
+  const [changePassword, { data, isLoading }] = useChangePasswordMutation();
+  console.log(data);
   const changePassWordHandler = async (e: any) => {
     e.preventDefault();
     if (current_password?.length && new_password?.length) {
       await changePassword({ current_password, new_password });
-      console.log(data);
     }
+    setIsOpen(false);
   };
   return (
     <Drawer open={isOpen} onOpenChange={() => setIsOpen(true)}>
@@ -29,6 +34,7 @@ const ChangePassword = () => {
         </DrawerTrigger>
       </div>
       <DrawerContent className="border-0">
+        {isLoading ? <Loader /> : <></>}
         <div className="w-full h-screen px-5">
           <div className="flex justify-between items-center py-5">
             <button onClick={() => setIsOpen(false)}>
@@ -70,8 +76,9 @@ const ChangePassword = () => {
                 )}
               </div>
             </div>
-            <Button
+            {/* <Button
               type="submit"
+              disabled={isLoading ? true : false}
               className={`w-full ${
                 current_password.length > 1 && new_password?.length > 1
                   ? "gradient-bg hover:gradient-bg"
@@ -79,7 +86,14 @@ const ChangePassword = () => {
               }  bg-[#FFFFFF0A] mt-10 rounded-xl`}
             >
               Continue
-            </Button>
+            </Button> */}
+            <SubmitButton
+              isLoading={isLoading}
+              condition={
+                current_password.length > 1 && new_password?.length > 1
+              }
+              text="Continue"
+            />
           </form>
         </div>
       </DrawerContent>

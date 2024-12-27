@@ -47,7 +47,6 @@ const Register = () => {
     // Handle form submission
     // await getCaptcha();
     setShowVerification(true);
-    console.log(data, code);
   }
   const handleVerify = async () => {
     // Add verification logic here
@@ -58,6 +57,7 @@ const Register = () => {
       captcha,
       captcha_key: data?.data?.captcha_key,
     });
+    console.log(registerData, "rgd");
     if (registerData?.status) {
       dispatch(setRegisterUser(registerData?.data));
       navigate(paths.login);

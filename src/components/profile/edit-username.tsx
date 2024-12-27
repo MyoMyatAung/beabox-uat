@@ -6,6 +6,8 @@ import { X } from "lucide-react";
 import { useSelector } from "react-redux";
 import { useChangeUsernameMutation } from "@/store/api/profileApi";
 import { useNavigate } from "react-router-dom";
+import SubmitButton from "../shared/submit-button";
+import Loader from "../shared/loader";
 
 const EditUsername = ({
   username,
@@ -40,6 +42,7 @@ const EditUsername = ({
         </DrawerTrigger>
       </div>
       <DrawerContent className="border-0">
+        {isLoading ? <Loader /> : <></>}
         <div className="w-full h-screen px-5">
           <div className="flex justify-between items-center py-5">
             <button onClick={() => setIsOpen(false)}>
@@ -60,7 +63,7 @@ const EditUsername = ({
                 <X className="w-2" />
               </div>
             </div>
-            <Button
+            {/* <Button
               type="submit"
               className={`w-full ${
                 value.length > 1
@@ -69,7 +72,12 @@ const EditUsername = ({
               } bg-[#FFFFFF0A]   mt-10 rounded-xl`}
             >
               {isLoading ? "loading..." : "Save"}
-            </Button>
+            </Button> */}
+            <SubmitButton
+              isLoading={isLoading}
+              condition={value.length > 1}
+              text="Save"
+            />
           </form>
         </div>
       </DrawerContent>
