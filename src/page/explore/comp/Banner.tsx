@@ -19,7 +19,7 @@ const Banner: React.FC<BannerProps> = () => {
     }
   }, [data, ad]);
   return (
-    <div className="pt-[80px]">
+    <div className="pt-[20px]">
       {isLoading ? (
         <div className=" w-full h-[174px] bg-white/20 rounded-md animate-pulse"></div>
       ) : (
