@@ -32,7 +32,7 @@ const Player = ({
               container: el,
               url: src,
               volume: 0.5,
-              muted: false,
+              muted: true,
               autoplay: true,
               flip: true,
               aspectRatio: true,

@@ -127,6 +127,7 @@ const VideoFeed = ({
               showHeart={showHeart}
               countdown={countdown}
               config={config?.data}
+              image={video?.preview_image}
             />
             <VideoFooter
               tags={video?.tag}

@@ -10,11 +10,6 @@ export const homeApi = createApi({
       headers.set("Accept-Language", "en");
       if (accessToken) {
         headers.set("Authorization", `Bearer ${accessToken}`);
-      } else {
-        headers.set(
-          "Authorization",
-          `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTA3LjE0OC40Ny45NDo4ODAwL2FwaS92MS9sb2dpbiIsImlhdCI6MTczNDY5OTgwNywiZXhwIjoxNzM1MzA0NjA3LCJuYmYiOjE3MzQ2OTk4MDcsImp0aSI6InpEQjM3SUkycU5waW5hb0oiLCJzdWIiOiI1MSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.xR_zLWUvsRsP-vmc1KzJ8QNgVf2Z21vcY1Kd7lZDo3g`
-        );
       }
       return headers;
     },
@@ -22,6 +17,12 @@ export const homeApi = createApi({
   endpoints: (builder) => ({
     getPosts: builder.query({
       query: ({ page }) => `posts/list?pageSize=10&page=${page}`,
+    }),
+    getLatestPosts: builder.query({
+      query: ({ page }) => `posts/latest?pageSize=10&page=${page}`,
+    }),
+    getFollowedPosts: builder.query({
+      query: ({ page }) => `posts/following?pageSize=10&page=${page}`,
     }),
 
     getConfig: builder.query({
@@ -116,6 +117,8 @@ export const homeApi = createApi({
 });
 
 export const {
+  useGetLatestPostsQuery,
+  useGetFollowedPostsQuery,
   useTop20PostsQuery,
   useCommentReactionMutation,
   usePostCommentMutation,
