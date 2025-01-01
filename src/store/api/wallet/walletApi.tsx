@@ -27,7 +27,24 @@ export const walletApi = createApi({
         method: "GET",
       }),
     }),
+    getCoinList: builder.query<any, any>({
+      query: () => ({
+        url: "/wallet/coin-list",
+        method: "GET",
+      }),
+    }),
+    getPaymentMethod: builder.query<any, any>({
+      query: () => ({
+        url: "/wallet/payment-methods",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useGetInviteQuery, useGetTransitionHistoryQuery } = walletApi;
+export const {
+  useGetInviteQuery,
+  useGetTransitionHistoryQuery,
+  useGetCoinListQuery,
+  useGetPaymentMethodQuery
+} = walletApi;

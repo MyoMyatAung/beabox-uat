@@ -12,5 +12,7 @@ export const paths = {
   recommand_more : "/rec_more",
   wallet : "/wallet",
   wallet_invite : "/wallet/invite",
-  wallet_history : "/wallet/Transition"
+  wallet_history : "/wallet/Transition",
+  wallet_recharge : '/wallet/recharge',
+  wallet_withdraw : '/wallet/withdraw',
 };

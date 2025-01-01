@@ -1,15 +1,13 @@
-import React, { useEffect, useState } from "react";
-import Header from "../Header";
-import "../wallet.css";
-import transit from "../../../assets/wallet/transit.png";
-import noTran from "../../../assets/wallet/noTran.svg";
 import { useGetTransitionHistoryQuery } from "@/store/api/wallet/walletApi";
-import DatePick from "./DatePick";
-import TypePick from "./TypePick";
+import React, { useEffect, useState } from "react";
+import DatePick from "../comp/DatePick";
+import noTran from "../../../assets/wallet/noTran.svg";
+import transit from "../../../assets/wallet/transit.png";
+import "../wallet.css";
 
-interface TranHistProps {}
+interface RechRecordProps {}
 
-const TranHist: React.FC<TranHistProps> = ({}) => {
+const RechRecord: React.FC<RechRecordProps> = ({}) => {
   const [curMon, setCurMon] = useState("December");
   const [curYr, setCurYr] = useState(2024);
   const [plus, setplus] = useState(12);
@@ -23,15 +21,11 @@ const TranHist: React.FC<TranHistProps> = ({}) => {
       setTran(data?.data);
     }
   }, [data]);
-  console.log(plus);
   return (
-    <div className=" flex justify-center items-center">
+    <div className=" flex justify-center items-center py-[20px]">
       <div className="w-screen xl:w-[800px]">
-        <Header lv={false} title="Transition History" />
-        <div className=" px-[20px] flex justify-center items-center">
-          {/* types */}
-          <TypePick />
-        </div>
+        {/* <Header lv={false} title="Transition History" /> */}
+        <div className=" px-[20px] flex justify-center items-center"></div>
         {/* time */}
         <DatePick
           curMon={curMon}
@@ -97,4 +91,4 @@ const TranHist: React.FC<TranHistProps> = ({}) => {
   );
 };
 
-export default TranHist;
+export default RechRecord;

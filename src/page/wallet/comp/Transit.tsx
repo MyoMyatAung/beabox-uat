@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import "../wallet.css";
 import { ChevronRight, ScrollText } from "lucide-react";
-import transit from "../../../assets/wallet/ transit.png";
+import transit from "../../../assets/wallet/transit.png";
 import { useGetTransitionHistoryQuery } from "@/store/api/wallet/walletApi";
 import noTran from "../../../assets/wallet/noTran.svg";
 import { useNavigate } from "react-router-dom";
+import loader from "../../home/vod_loader.gif";
 
 interface TransitProps {}
 
 const Transit: React.FC<TransitProps> = ({}) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [tran, setTran] = useState<any>();
   const { data, isLoading } = useGetTransitionHistoryQuery({
     period: "12-2024",
@@ -28,16 +29,22 @@ const Transit: React.FC<TransitProps> = ({}) => {
         <h1 className=" text-white text-[14px] font-[500] leading-normal">
           Transitions
         </h1>
-        <div onClick={() => navigate('/wallet/transition')} className=" flex transit_view_all pl-[10px] py-[2px] pr-[2px]">
+        <div
+          onClick={() => navigate("/wallet/transition")}
+          className=" hidden flex transit_view_all pl-[10px] py-[2px] pr-[2px]"
+        >
           <span className=" capitalize">view all</span>
           <ChevronRight />
         </div>
       </div>
       <div className=" py-[12px] px-[16px]">
         {isLoading ? (
-          <div className=" flex flex-col justify-center items-center h-[300px]">
-            <img src={noTran} alt="" />
-            <h1 className=" text-white font-[400] text-[14px]">Loading ...</h1>
+          <div
+           className=" flex justify-center items-center py-[100px]"
+          >
+            <div className="heart">
+              <img src={loader} className="w-[100px] h-[100px]" alt="Loading" />
+            </div>
           </div>
         ) : (
           <>
@@ -50,7 +57,8 @@ const Transit: React.FC<TransitProps> = ({}) => {
               </div>
             ) : (
               <>
-                {tran?.slice(0, 5).map((ts: any) => (
+                {/* {tran?.slice(0, 5).map((ts: any) => ( */}
+                {tran?.map((ts: any) => (
                   <div
                     key={ts.id}
                     className=" transit_list py-[20px] flex justify-between"

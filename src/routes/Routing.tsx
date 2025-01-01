@@ -6,6 +6,8 @@ import More from "@/page/explore/comp/More";
 import Wallet from "@/page/wallet/Wallet";
 import Invite from "@/page/wallet/comp/Invite";
 import TranHist from "@/page/wallet/comp/TranHist";
+import Recharge from "@/page/wallet/page/Recharge";
+import Withdraw from "@/page/wallet/page/Withdraw";
 
 const Home = lazy(() => import("../page/home/Home"));
 const Explore = lazy(() => import("../page/explore/Explore"));
@@ -159,6 +161,22 @@ const Routing = () => {
       element: (
         <Suspense fallback={<p>loading...</p>}>
           <TranHist />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.wallet_recharge,
+      element: (
+        <Suspense fallback={<p>loading...</p>}>
+          <Recharge />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.wallet_withdraw,
+      element: (
+        <Suspense fallback={<p>loading...</p>}>
+          <Withdraw />
         </Suspense>
       ),
     },
