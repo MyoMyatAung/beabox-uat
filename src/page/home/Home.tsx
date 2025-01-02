@@ -334,42 +334,46 @@ const Home = () => {
               </div>
             </div>
           ) : (
-            <>
-              <div ref={videoContainerRef} className={`app__videos pb-[55px] `}>
-                {videos.map((video, index) => (
-                  <div
-                    key={index}
-                    className="video mt-[20px]"
-                    data-post-id={video.post_id} // Add post ID to the container
-                  >
-                    <Player
-                      src={video.files[0].resourceURL}
-                      thumbnail={
-                        video.files[0].thumbnail ||
-                        "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg"
-                      }
-                    />
-                    <VideoSidebar
-                      likes={video?.like_count}
-                      is_liked={video?.is_liked}
-                      messages={video?.comment_count}
-                      post_id={video?.post_id}
-                      setCountNumber={setCountNumber}
-                      setCountdown={setCountdown}
-                      setShowHeart={setShowHeart}
-                      showHeart={showHeart}
-                      countdown={countdown}
-                      config={config?.data}
-                      image={video?.preview_image}
-                    />
-                    <VideoFooter
-                      tags={video?.tag}
-                      title={video?.title}
-                      username={video?.user?.name}
-                      city={video?.city}
-                    />
-                    {showHeart && <ShowHeart countNumber={countNumber} />}
-                    {/* {video?.related.length > 0 && (
+            !isError && (
+              <>
+                <div
+                  ref={videoContainerRef}
+                  className={`app__videos pb-[55px] `}
+                >
+                  {videos.map((video, index) => (
+                    <div
+                      key={index}
+                      className="video mt-[20px]"
+                      data-post-id={video.post_id} // Add post ID to the container
+                    >
+                      <Player
+                        src={video.files[0].resourceURL}
+                        thumbnail={
+                          video.files[0].thumbnail ||
+                          "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg"
+                        }
+                      />
+                      <VideoSidebar
+                        likes={video?.like_count}
+                        is_liked={video?.is_liked}
+                        messages={video?.comment_count}
+                        post_id={video?.post_id}
+                        setCountNumber={setCountNumber}
+                        setCountdown={setCountdown}
+                        setShowHeart={setShowHeart}
+                        showHeart={showHeart}
+                        countdown={countdown}
+                        config={config?.data}
+                        image={video?.preview_image}
+                      />
+                      <VideoFooter
+                        tags={video?.tag}
+                        title={video?.title}
+                        username={video?.user?.name}
+                        city={video?.city}
+                      />
+                      {showHeart && <ShowHeart countNumber={countNumber} />}
+                      {/* {video?.related.length > 0 && (
                       <button
                         onClick={() => handleRelated(video?.related)}
                         className="flex items-center py-1 justify-between px-4 absolute bottom-[-10px] left-0 z-50 w-full bg-black"
@@ -474,18 +478,19 @@ const Home = () => {
                         </div>
                       </button>
                     )} */}
-                  </div>
-                ))}
-              </div>
+                    </div>
+                  ))}
+                </div>
 
-              {(!followData?.data?.length ||
-                !latestData?.data?.length ||
-                !forYouData?.data?.length) && (
-                <p style={{ textAlign: "center" }}>
-                  <b>You have seen all videos</b>
-                </p>
-              )}
-            </>
+                {(!followData?.data?.length ||
+                  !latestData?.data?.length ||
+                  !forYouData?.data?.length) && (
+                  <p style={{ textAlign: "center" }}>
+                    <b>You have seen all videos</b>
+                  </p>
+                )}
+              </>
+            )
           )}
 
           {/* {!isLoading && !isError && (

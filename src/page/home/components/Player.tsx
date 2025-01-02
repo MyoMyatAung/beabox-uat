@@ -162,7 +162,7 @@ const Player = ({
           container: playerContainerRef.current,
           url: src,
           volume: 0.5,
-          muted: true,
+          muted: false,
           autoplay: true,
           moreVideoAttr: {
             playsInline: true,
