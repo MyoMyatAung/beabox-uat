@@ -5,10 +5,14 @@ import { useState } from "react";
 import { useChangeBioMutation } from "@/store/api/profileApi";
 import { useDispatch, useSelector } from "react-redux";
 import { setBio } from "@/store/slices/persistSlice";
+import SubmitButton from "../shared/submit-button";
+import Loader from "../shared/loader";
 
 const EditBio = ({ bio, refetchHandler }: any) => {
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState("");
+  // const [text, setText] = useState("");
+  const maxLength = 100;
   const [changeBio, { data, isLoading }] = useChangeBioMutation();
   const dispatch = useDispatch();
   console.log(data);
@@ -31,6 +35,7 @@ const EditBio = ({ bio, refetchHandler }: any) => {
         </DrawerTrigger>
       </div>
       <DrawerContent className="border-0">
+        {isLoading ? <Loader /> : <></>}
         <div className="w-full h-screen px-5">
           <div className="flex justify-between items-center py-5">
             <button onClick={() => setIsOpen(false)}>
@@ -41,8 +46,18 @@ const EditBio = ({ bio, refetchHandler }: any) => {
           </div>
           <form onSubmit={onSubmitHandler}>
             <div className="relative">
-              <textarea
-                // name="bio"
+              <div className="relative">
+                <textarea
+                  value={value}
+                  onChange={(e: any) => setValue(e.target.value)}
+                  placeholder="Enter your profile bio"
+                  className="min-h-[100px] w-full resize-none  bg-black p-3 text-white placeholder:text-gray-400  border-b border-[#888] focus:outline-none focus:ring-0 focus:border-[#888]"
+                />
+                <span className="absolute bottom-2 right-2 text-sm text-gray-400">
+                  {value.length}/{maxLength}
+                </span>
+              </div>
+              {/* <textarea
                 value={value}
                 onChange={(e: any) => setValue(e.target.value)}
                 className={`
@@ -52,9 +67,14 @@ const EditBio = ({ bio, refetchHandler }: any) => {
                 resize-none
                 `}
                 placeholder="Enter your profile bio"
-              />
+              /> */}
             </div>
-            <Button
+            <SubmitButton
+              isLoading={isLoading}
+              condition={value.length > 1}
+              text="Save"
+            />
+            {/* <Button
               type="submit"
               className={`w-full ${
                 value.length > 1
@@ -63,7 +83,7 @@ const EditBio = ({ bio, refetchHandler }: any) => {
               } bg-[#FFFFFF0A]  mt-10 rounded-xl`}
             >
               {isLoading ? "loading..." : "Save"}
-            </Button>
+            </Button> */}
           </form>
         </div>
       </DrawerContent>

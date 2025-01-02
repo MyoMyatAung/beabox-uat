@@ -25,11 +25,13 @@ import {
 } from "@/store/api/authApi";
 import { useDispatch } from "react-redux";
 import { setRegisterUser } from "@/store/slices/persistSlice";
+import Shield from "@/assets/profile/shield.png";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [code, setCode] = useState("");
   const [showVerification, setShowVerification] = useState(false);
+  const [showSecurity, setShowSecurity] = useState(false);
   const [captcha, setCaptcha] = useState("");
   const [getCaptcha, { data, isLoading }] = useGetCaptchaMutation();
   const [register, { isLoading: registerLoading }] = useRegisterMutation();
@@ -60,9 +62,10 @@ const Register = () => {
     console.log(registerData, "rgd");
     if (registerData?.status) {
       dispatch(setRegisterUser(registerData?.data));
-      navigate(paths.login);
-      setShowVerification(false);
+      // navigate(paths.login);
     }
+    setShowVerification(false);
+    setShowSecurity(true);
   };
   return (
     <div className="px-5">
@@ -87,7 +90,7 @@ const Register = () => {
                   <div className="relative">
                     <input
                       className="block w-full px-3 py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none "
-                      placeholder="Enter Your Mail or Phone Number"
+                      placeholder="Enter User Name"
                       {...field}
                     />
                     {field.value && (
@@ -191,6 +194,37 @@ const Register = () => {
             ) : (
               <></>
             )}
+          </Dialog>
+          <Dialog open={showSecurity} onOpenChange={setShowSecurity}>
+            <DialogContent className="bg-[#242424] max-w-[340px] border-0 rounded-[16px]">
+              <DialogHeader>
+                <DialogTitle className="text-white text-[16px]">
+                  Security Question
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-6">
+                <img src={Shield} className="w-[77px] mx-auto" alt="" />
+                <p className="text-[14px]">
+                  Set up security question to protect your account from lost or
+                  forgotten passwords and theft. You can also choose to do this
+                  later.
+                </p>
+                <div className="space-y-2">
+                  <Button
+                    onClick={() => navigate(paths.security_questions)}
+                    className="w-full gradient-bg rounded-[16px] hover:gradient-bg"
+                  >
+                    Continue
+                  </Button>
+                  <Button
+                    onClick={() => navigate(paths.login)}
+                    className="w-full bg-[#444444] rounded-[16px] hover:bg-[#444444]"
+                  >
+                    Later
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
           </Dialog>
         </form>
       </Form>
