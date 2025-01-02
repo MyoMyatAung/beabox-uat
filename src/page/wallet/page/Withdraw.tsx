@@ -2,16 +2,17 @@ import React, { useState } from "react";
 import BalNew from "./BalNew";
 import { useNavigate } from "react-router-dom";
 import loader from "../../home/vod_loader.gif";
-import { useGetCoinListQuery } from "@/store/api/wallet/walletApi";
+import { useGetCoinListQuery, useGetPaymentMethodQuery } from "@/store/api/wallet/walletApi";
 import { paths } from "@/routes/paths";
 import { ChevronLeft } from "lucide-react";
 import RechRecord from "./RechRecord";
+import WithDetails from "./WithDetails";
 
 interface WithdrawProps {}
 
 const Withdraw: React.FC<WithdrawProps> = ({}) => {
   const [activeTab, setActiveTab] = useState(1);
-  const { data: coinList, isLoading: coinLoading } = useGetCoinListQuery("");
+  const { data: paymentMeth, isLoading } = useGetPaymentMethodQuery("");
   const navigate = useNavigate();
   return (
     <div className=" flex justify-center items-center">
@@ -56,7 +57,7 @@ const Withdraw: React.FC<WithdrawProps> = ({}) => {
         {activeTab === 1 ? (
           <div className="">
             <BalNew title="可提取金额" amount={0} to={paths.wallet_recharge} />
-            {coinLoading ? (
+            {isLoading ? (
               <div className=" flex justify-center items-center py-[100px]">
                 <div className="heart">
                   <img
@@ -68,7 +69,7 @@ const Withdraw: React.FC<WithdrawProps> = ({}) => {
               </div>
             ) : (
               <div className="">
-                {/* <RechDetails paymentMeth={paymentMeth} coin={coinList?.data} /> */}
+                <WithDetails payment={paymentMeth?.data} />
               </div>
             )}
           </div>

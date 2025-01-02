@@ -57,8 +57,8 @@ const Transit: React.FC<TransitProps> = ({}) => {
               </div>
             ) : (
               <>
-                {/* {tran?.slice(0, 5).map((ts: any) => ( */}
-                {tran?.map((ts: any) => (
+                {tran?.slice(0, 5).map((ts: any) => (
+                // {tran?.map((ts: any) => (
                   <div
                     key={ts.id}
                     className=" transit_list py-[20px] flex justify-between"

@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import DatePick from "../comp/DatePick";
 import noTran from "../../../assets/wallet/noTran.svg";
 import transit from "../../../assets/wallet/transit.png";
+import loader from "../../home/vod_loader.gif";
+
 import "../wallet.css";
 
 interface RechRecordProps {}
@@ -37,12 +39,21 @@ const RechRecord: React.FC<RechRecordProps> = ({}) => {
         {/* transition */}
         <div className=" py-[12px] px-[18px]">
           {isLoading ? (
-            <div className=" flex flex-col justify-center items-center h-[300px]">
-              <img src={noTran} alt="" />
-              <h1 className=" text-white font-[400] text-[14px]">
-                Loading ...
-              </h1>
+            // <div className=" flex flex-col justify-center items-center h-[300px]">
+            //   <img src={noTran} alt="" />
+            //   <h1 className=" text-white font-[400] text-[14px]">
+            //     Loading ...
+            //   </h1>
+            // </div>
+            <div className=" flex justify-center items-center py-[100px]">
+            <div className="heart">
+              <img
+                src={loader}
+                className="w-[100px] h-[100px]"
+                alt="Loading"
+              />
             </div>
+          </div>
           ) : (
             <>
               {data?.data.length === 0 ? (

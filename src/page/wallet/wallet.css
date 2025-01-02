@@ -133,3 +133,34 @@
     linear-gradient(325deg, #cd3eff 43.64%, #ffb2e0 100%)
   );
 }
+
+.withdraw_input {
+  border-bottom: 0.5px solid #888;
+}
+
+.payment_select_box {
+  border-radius: 12px;
+  border: 0.5px solid #888;
+  background: #111011;
+}
+
+.payment_select_box:focus {
+  outline: none; /* Removes the blue border on focus */
+  box-shadow: none; /* Removes any potential box-shadow applied by browser defaults */
+}
+
+.payment_select_content {
+  border-radius: 17.171px 17.171px 8.585px 8.585px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #121012;
+  backdrop-filter: blur(8.651399612426758px);
+}
+
+option selected {
+  background: transparent;
+}
+
+.comfirm_withdraw_btn {
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+}
