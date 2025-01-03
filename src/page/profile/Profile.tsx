@@ -1,10 +1,4 @@
-import {
-  Setting,
-  Person,
-  Wallet,
-  Creater,
-  Level,
-} from "@/assets/profile";
+import { Setting, Person, Wallet, Creater, Level } from "@/assets/profile";
 import MenuCard from "@/components/profile/menu-card";
 import Stats from "@/components/profile/stats";
 import VideoTabs from "@/components/profile/video-tabs";
@@ -21,16 +15,19 @@ import SettingBtn from "@/components/profile/setting-btn";
 
 const Profile = () => {
   const { data } = useGetMyProfileQuery("");
-  console.log(data?.data, "data");
+  // console.log(data?.data, "data");
   const user = useSelector((state: any) => state.persist.user);
-  console.log(data, user);
+  // console.log(data, user);
 
   return (
     <div className="px-5 max-h-screen no-scrollbar">
       <div className="flex gap-3 my-5 justify-end">
-        <div className="bg-[#FFFFFF12] w-10 h-10 rounded-full flex items-center justify-center">
+        <Link
+          to={paths.noti}
+          className="bg-[#FFFFFF12] w-10 h-10 rounded-full flex items-center justify-center"
+        >
           <Bell />
-        </div>
+        </Link>
         <SettingBtn />
       </div>
       {/* login  */}

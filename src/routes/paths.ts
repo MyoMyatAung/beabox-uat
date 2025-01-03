@@ -14,4 +14,5 @@ export const paths = {
   recommand_more: "/rec_more",
   wallet: "/wallet",
   wallet_invite: "/wallet/invite",
+  noti: "/notifications",
 };
