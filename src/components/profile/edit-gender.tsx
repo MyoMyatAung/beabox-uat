@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setGender } from "@/store/slices/persistSlice";
 import { useChangeGenderMutation } from "@/store/api/profileApi";
+import Loader from "../shared/loader";
 
 const EditGender = () => {
   const gender = useSelector((state: any) => state.persist.gender);
@@ -12,7 +13,7 @@ const EditGender = () => {
   const dispatch = useDispatch();
   // const [gender, setGender] = useState("Other");
   const [isOpen, setIsOpen] = useState(false);
-  const [changeGender, { data }] = useChangeGenderMutation();
+  const [changeGender, { data, isLoading }] = useChangeGenderMutation();
   console.log(data);
 
   return (
@@ -26,6 +27,7 @@ const EditGender = () => {
         </DrawerTrigger>
       </div>
       <DrawerContent className="border-0 bg-[#121012]">
+        {/* {isLoading ? <Loader /> : <></>} */}
         <div className="w-full px-5 py-7">
           <div className="flex flex-col items-center gap-5">
             <div className="flex items-center gap-2">

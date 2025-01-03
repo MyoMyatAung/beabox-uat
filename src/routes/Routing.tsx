@@ -15,10 +15,13 @@ const Application = lazy(() => import("../page/application/Application"));
 const Profile = lazy(() => import("../page/profile/Profile"));
 const ProfileDetail = lazy(() => import("../page/profile/ProfileDetail"));
 const Settings = lazy(() => import("../page/profile/Settings"));
+const Noti = lazy(() => import("../page/profile/noti/Noti"));
+const SecurityQuestion = lazy(() => import("../page/profile/SecurityQuestion"));
 const Login = lazy(() => import("../page/auth/Login"));
 const Register = lazy(() => import("../page/auth/Register"));
 const OTP = lazy(() => import("../page/auth/OTP"));
 const UploadComponent = lazy(() => import("../page/upload/Upload"));
+const UploadProcess = lazy(() => import("../page/upload/UploadProcess"));
 
 const Routing = () => {
   const router = createBrowserRouter([
@@ -49,10 +52,26 @@ const Routing = () => {
       ),
     },
     {
+      path: paths.upload_process,
+      element: (
+        <Suspense fallback={<p>loading...</p>}>
+          <UploadProcess />
+        </Suspense>
+      ),
+    },
+    {
       path: paths.otp,
       element: (
         <Suspense fallback={<p>loading...</p>}>
           <OTP />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.security_questions,
+      element: (
+        <Suspense fallback={<p>loading...</p>}>
+          <SecurityQuestion />
         </Suspense>
       ),
     },
@@ -109,6 +128,14 @@ const Routing = () => {
       element: (
         <Suspense fallback={<p>loading...</p>}>
           <Settings />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.noti,
+      element: (
+        <Suspense fallback={<p>loading...</p>}>
+          <Noti />
         </Suspense>
       ),
     },

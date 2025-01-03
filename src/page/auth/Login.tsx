@@ -16,6 +16,8 @@ import { Button } from "@/components/ui/button";
 import { useLoginMutation } from "@/store/api/authApi";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/store/slices/persistSlice";
+import SubmitButton from "@/components/shared/submit-button";
+import Loader from "@/components/shared/loader";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -41,8 +43,10 @@ const Login = () => {
       navigate(paths.profile);
     }
   }
+
   return (
     <div className="px-5">
+      {isLoading ? <Loader /> : <></>}
       <div className="flex justify-between items-center py-5">
         <Link to={paths.profile}>
           <ChevronLeft />
@@ -64,7 +68,7 @@ const Login = () => {
                   <div className="relative">
                     <input
                       className="block w-full px-3 py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none "
-                      placeholder="Enter Your Mail or Phone Number"
+                      placeholder="Enter User Name"
                       {...field}
                     />
                     {field.value && (
@@ -117,20 +121,25 @@ const Login = () => {
           />
 
           <div className="">
-            <Button
+            <SubmitButton
+              isLoading={isLoading}
+              condition={true}
+              text={"Login"}
+            />
+            {/* <Button
               type="submit"
               className="w-full gradient-bg rounded-lg hover:gradient-bg"
             >
               {isLoading ? "loading..." : "Login"}
-            </Button>
+            </Button> */}
             <Link to="/">
               <p className="text-center text-[14px] mt-5">Forgot Password?</p>
             </Link>
           </div>
-          <div className="">
+          <div className="w-full flex flex-col items-center">
             <p className="text-[14px] text-[#333333] text-center mb-5">OR</p>
             <Link to={paths.regiter}>
-              <Button className="w-full" variant={"outline"}>
+              <Button className="w-[320px]" variant={"outline"}>
                 Create New Account
               </Button>
             </Link>
