@@ -11,8 +11,9 @@ export const paths = {
   upload: "/upload",
   upload_process: "/upload/process",
   otp: "/otp",
-  recommand_more: "/rec_more",
-  wallet: "/wallet",
-  wallet_invite: "/wallet/invite",
   noti: "/notifications",
+  recommand_more : "/rec_more",
+  wallet : "/wallet",
+  wallet_invite : "/wallet/invite",
+  wallet_history : "/wallet/Transition"
 };

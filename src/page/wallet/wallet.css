@@ -47,3 +47,22 @@
     )
   );
 }
+
+.types_all {
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.draw_canccel_btn {
+  border-radius: 12px;
+  background: rgba(245, 245, 245, 0.04);
+}
+
+.draw_done_btn {
+  border-radius: 12px;
+  background: linear-gradient(
+    315deg,
+    rgba(205, 62, 255, 0.32) 0%,
+    rgba(255, 178, 224, 0.32) 100%
+  );
+}
