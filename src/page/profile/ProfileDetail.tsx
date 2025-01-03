@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useGetMyProfileQuery } from "@/store/api/profileApi";
 import { useEffect } from "react";
 import { setProfileData } from "@/store/slices/persistSlice";
+import EditNickName from "@/components/profile/edit-nickname";
 
 const Settings = () => {
   const user = useSelector((state: any) => state.persist.user);
@@ -54,6 +55,10 @@ const Settings = () => {
           username={data?.data?.username}
           refetchHandler={refetchHandler}
         />
+        <EditNickName
+          username={data?.data?.nickname}
+          refetchHandler={refetchHandler}
+        />
         <EditGender />
         <div className="text-[14px] flex items-center justify-between">
           <h1>Region</h1>
@@ -73,16 +78,10 @@ const Settings = () => {
         <EditReferral referral_code={data?.data?.referral_code} />
       </div>
       <div className="w-full h-[0.08px] bg-[#FFFFFF0A]"></div>
-      <div className="flex flex-col gap-7 my-7">
+      {/* <div className="flex flex-col gap-7 my-7">
         <h1 className="text-[12px] text-[#888]">Account Security</h1>
         <ChangePassword />
-        {/* <div className="text-[14px] flex items-center justify-between">
-          <h1>Change Password</h1>
-          <p className="flex items-center gap-1 text-[#888]">
-            <FaAngleRight />
-          </p>
-        </div> */}
-      </div>
+      </div> */}
     </div>
   );
 };

@@ -1,30 +1,37 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Play, Heart, Watch, NoVideo } from "@/assets/profile";
+import { Play, NoVideo } from "@/assets/profile";
 import VideoGrid from "./video-grid";
+import { FaHeart } from "react-icons/fa";
+import { MdWatchLater } from "react-icons/md";
+
 const VideoTabs = ({ login }: any) => {
   return (
-    <Tabs defaultValue="videos" className="my-5">
+    <Tabs defaultValue="liked" className="my-5">
       <TabsList className="grid w-full grid-cols-3 bg-transparent">
-        <TabsTrigger
+        {/* <TabsTrigger
           className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2"
           value="videos"
         >
           <Play /> <span>Your Videos</span>
-        </TabsTrigger>
+        </TabsTrigger> */}
         <TabsTrigger
           className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2"
           value="liked"
         >
-          <Heart /> <span>Liked Videos</span>
+          <span className="flex items-center gap-1">
+            <FaHeart /> Liked Videos
+          </span>
         </TabsTrigger>
         <TabsTrigger
           className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2"
           value="history"
         >
-          <Watch /> <span>Watch History</span>
+          <span className="flex items-center gap-1">
+            <MdWatchLater /> Watch History
+          </span>
         </TabsTrigger>
       </TabsList>
-      <TabsContent value="videos">
+      {/* <TabsContent value="videos">
         {login ? (
           <VideoGrid isUpload={true} />
         ) : (
@@ -33,7 +40,7 @@ const VideoTabs = ({ login }: any) => {
             <p className="text-[12px] text-[#888]">Oops! No videos here</p>
           </div>
         )}
-      </TabsContent>
+      </TabsContent> */}
       <TabsContent value="liked">
         {login ? (
           <VideoGrid />

@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import SubmitButton from "../shared/submit-button";
 import Loader from "../shared/loader";
 
-const EditUsername = ({
+const EditNickName = ({
   username,
   refetchHandler,
 }: {
@@ -34,7 +34,7 @@ const EditUsername = ({
   return (
     <Drawer open={isOpen} onOpenChange={() => setIsOpen(true)}>
       <div className="text-[14px] flex items-center justify-between">
-        <h1>User Name</h1>
+        <h1>Nickname</h1>
         <DrawerTrigger asChild>
           <p className="flex items-center gap-1 text-[#888]">
             {username} <FaAngleRight />
@@ -85,4 +85,4 @@ const EditUsername = ({
   );
 };
 
-export default EditUsername;
+export default EditNickName;
