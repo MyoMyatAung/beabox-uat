@@ -253,7 +253,7 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
                     stroke-width="0.860504"
                   />
                 </svg>
-                <span className="like_text">Like</span>
+                <span className="like_text">{comment?.comment_like_count}</span>
               </button>
             )}
           </div>
@@ -408,7 +408,7 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
                     stroke-width="0.860504"
                   />
                 </svg>
-                <span className="like_text">Like</span>
+                <span className="like_text">{reply?.reply_like_count}</span>
               </button>
             )}
           </div>
@@ -537,10 +537,10 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
         </div>
         <div className="absolute bottom-0 add_comment w-full  py-3 ">
           <div className="flex items-center gap-2 px-4">
-            <Avatar className="w-[40.25px] h-[40.25px] border-2 border-white">
+            {/* <Avatar className="w-[40.25px] h-[40.25px] border-2 border-white">
               <AvatarImage src="https://i.pinimg.com/236x/64/bf/60/64bf60f08e226ae662e83a459a28a9bf.jpg" />
               <AvatarFallback>SM</AvatarFallback>
-            </Avatar>
+            </Avatar> */}
             <input
               type="text"
               className="w-full p-[6px] bg-transparent border-none outline-none"

@@ -172,7 +172,7 @@ function VideoSidebar({
   return (
     <div className="videoSidebar z-[999]">
       <div className="videoSidebar__button">
-        <div className="flex flex-col items-center relative">
+        <div className="flex flex-col items-center relative mb-2">
           <Avatar className="w-[35.25px] h-[35.25px] border-2 border-white ">
             <AvatarImage src="https://i.pinimg.com/236x/64/bf/60/64bf60f08e226ae662e83a459a28a9bf.jpg" />
             <AvatarFallback>SM</AvatarFallback>

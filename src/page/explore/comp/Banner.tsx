@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
@@ -11,6 +11,7 @@ interface BannerProps {}
 
 const Banner: React.FC<BannerProps> = () => {
   const [ad, setad] = useState([]);
+  const paginationRef = useRef<HTMLButtonElement | null>(null);
   const { data, isLoading } = useGetExploreHeaderQuery("");
   useEffect(() => {
     if (data?.data) {
@@ -19,13 +20,16 @@ const Banner: React.FC<BannerProps> = () => {
     }
   }, [data, ad]);
   return (
-    <div className="pt-[20px]">
+    <div className="py-[20px] relative">
       {isLoading ? (
         <div className=" w-full h-[174px] bg-white/20 rounded-md animate-pulse"></div>
       ) : (
         <Swiper
           modules={[Autoplay, Pagination]}
-          pagination={{}}
+          pagination={{
+            // el: paginationRef.current,
+          }}
+          // navigation
           autoplay={{
             delay: 3000,
             disableOnInteraction: false,
@@ -44,7 +48,7 @@ const Banner: React.FC<BannerProps> = () => {
               </a>
             </SwiperSlide>
           ))}
-          <div className="swiper-pagination"></div>
+          {/* <div ref={paginationRef} className="swiper-pagination  "></div> */}
         </Swiper>
       )}
     </div>

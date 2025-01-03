@@ -9,6 +9,7 @@ import persistSlice from "./slices/persistSlice";
 import { walletApi } from "./api/wallet/walletApi";
 import { exploreApi } from "./api/explore/exploreApi";
 import { homeApi } from "../page/home/services/homeApi";
+import exploreSlice from "./slices/exploreSlice";
 
 const persistConfig = {
   key: "root",
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
   [homeApi.reducerPath]: homeApi.reducer,
   profile: profileSlice,
   persist: persistSlice,
+  explore : exploreSlice,
   [profileApi.reducerPath]: profileApi.reducer,
   [authApi.reducerPath]: authApi.reducer,
   [walletApi.reducerPath]: walletApi.reducer,

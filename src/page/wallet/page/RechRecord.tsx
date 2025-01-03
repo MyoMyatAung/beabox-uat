@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
-import Header from "../Header";
-import "../wallet.css";
-import transit from "../../../assets/wallet/transit.png";
-import noTran from "../../../assets/wallet/noTran.svg";
 import { useGetTransitionHistoryQuery } from "@/store/api/wallet/walletApi";
-import DatePick from "./DatePick";
-import TypePick from "./TypePick";
+import React, { useEffect, useState } from "react";
+import DatePick from "../comp/DatePick";
+import noTran from "../../../assets/wallet/noTran.svg";
+import transit from "../../../assets/wallet/transit.png";
+import loader from "../../home/vod_loader.gif";
 
-interface TranHistProps {}
+import "../wallet.css";
 
-const TranHist: React.FC<TranHistProps> = ({}) => {
+interface RechRecordProps {}
+
+const RechRecord: React.FC<RechRecordProps> = ({}) => {
   const [curMon, setCurMon] = useState("December");
   const [curYr, setCurYr] = useState(2024);
   const [plus, setplus] = useState(12);
@@ -23,15 +23,11 @@ const TranHist: React.FC<TranHistProps> = ({}) => {
       setTran(data?.data);
     }
   }, [data]);
-  console.log(plus);
   return (
-    <div className=" flex justify-center items-center">
+    <div className=" flex justify-center items-center py-[20px]">
       <div className="w-screen xl:w-[800px]">
-        <Header lv={false} title="Transition History" />
-        <div className=" px-[20px] flex justify-center items-center">
-          {/* types */}
-          <TypePick />
-        </div>
+        {/* <Header lv={false} title="Transition History" /> */}
+        <div className=" px-[20px] flex justify-center items-center"></div>
         {/* time */}
         <DatePick
           curMon={curMon}
@@ -43,12 +39,21 @@ const TranHist: React.FC<TranHistProps> = ({}) => {
         {/* transition */}
         <div className=" py-[12px] px-[18px]">
           {isLoading ? (
-            <div className=" flex flex-col justify-center items-center h-[300px]">
-              <img src={noTran} alt="" />
-              <h1 className=" text-white font-[400] text-[14px]">
-                Loading ...
-              </h1>
+            // <div className=" flex flex-col justify-center items-center h-[300px]">
+            //   <img src={noTran} alt="" />
+            //   <h1 className=" text-white font-[400] text-[14px]">
+            //     Loading ...
+            //   </h1>
+            // </div>
+            <div className=" flex justify-center items-center py-[100px]">
+            <div className="heart">
+              <img
+                src={loader}
+                className="w-[100px] h-[100px]"
+                alt="Loading"
+              />
             </div>
+          </div>
           ) : (
             <>
               {data?.data.length === 0 ? (
@@ -97,4 +102,4 @@ const TranHist: React.FC<TranHistProps> = ({}) => {
   );
 };
 
-export default TranHist;
+export default RechRecord;

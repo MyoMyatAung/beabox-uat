@@ -27,8 +27,8 @@ export const exploreApi = createApi({
       }),
     }),
     getExploreList: builder.query<any, any>({
-      query: ({ id }) => ({
-        url: `explore/list?id=${id}`,
+      query: ({ id , page }) => ({
+        url: `explore/list?id=${id}&page=${page}`,
         method: "GET",
       }),
     }),

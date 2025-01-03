@@ -5,16 +5,22 @@ import avatar from "../../../assets/explore/avatar.png";
 import "../explore.css";
 import { useNavigate } from "react-router-dom";
 import { useGetExploreTagQuery } from "@/store/api/explore/exploreApi";
+import { Person } from "@/assets/profile";
+import { useDispatch } from "react-redux";
+import { setDetails } from "@/store/slices/exploreSlice";
 
 interface RecommandProps {
   title: string;
+  setshow : any
 }
 
-const Recommand: React.FC<RecommandProps> = ({ title }) => {
+const Recommand: React.FC<RecommandProps> = ({ title ,setshow }) => {
+  const dispatch = useDispatch();
+
   const [list, setList] = useState([]);
   const { data, isLoading, refetch } = useGetExploreTagQuery({
     order: "popular",
-    tag : title
+    tag: title,
   });
   useEffect(() => {
     if (data?.data) {
@@ -28,11 +34,14 @@ const Recommand: React.FC<RecommandProps> = ({ title }) => {
     await refetch(); // Refetch data
     setRefresh(false); // Hide loading animation after refetch
   };
-
+  const showDetailsVod = (file: any) => {
+    dispatch(setDetails(file));
+    setshow(true);
+  };
   return (
-    <div className=" pb-[20px] pt-[10px]">
+    <div className=" pb-[20px] px-[10px] pt-[10px] flex flex-col items-center">
       {/* header */}
-      <div className=" flex justify-between items-center">
+      <div className=" flex w-full justify-between items-center">
         <h1 className=" text-white text-[14px] font-[500] leading-[20px]">
           {title}
         </h1>
@@ -42,7 +51,7 @@ const Recommand: React.FC<RecommandProps> = ({ title }) => {
         />
       </div>
       {/* content */}
-      <div className=" py-[12px] grid grid-cols-2 gap-[18px]">
+      <div className=" py-[12px] grid grid-cols-2 justify-cente w-full items-cente  gap-[18px]">
         <>
           {isLoading || refresh ? (
             <>
@@ -54,19 +63,21 @@ const Recommand: React.FC<RecommandProps> = ({ title }) => {
           ) : (
             <>
               {list?.slice(0, 4).map((card: any) => (
-                <div key={card.post_id} className="w-[175px">
-                  <div className=" relative  chinese_photo">
+                <div key={card.post_id} className="w-full">
+                  <div onClick={() => showDetailsVod(card)} className=" relative  chinese_photo">
                     <img
                       className=" w-[175px] h-[100px] rounded-[8px] object-cover"
                       src={card.preview_image}
                       alt=""
                     />
-                    <span className=" text-white text-[11px] absolute bottom-2 left-2">
-                      29.3k views
-                    </span>
-                    <span className=" text-white text-[11px] absolute bottom-2 right-2">
-                      00:23:32
-                    </span>
+                    <div className=" absolute bottom-0 flex justify-between px-[15px] w-[175px]">
+                      <span className=" text-white text-[11px]  left-2">
+                        29.3k views
+                      </span>
+                      <span className=" text-white text-[11px]  right-0">
+                        00:23
+                      </span>
+                    </div>
                   </div>
                   <h1 className="text-white text-[14px] font-[500] leading-[20px] py-[4px]">
                     {card.title.length > 20
@@ -75,11 +86,17 @@ const Recommand: React.FC<RecommandProps> = ({ title }) => {
                   </h1>
                   {/* uploader */}
                   <div className=" flex justify-cente py-[4px] items-center gap-[8px]">
-                    <img
-                      className=" w-[26px] h-[26px] rounded-full"
-                      src={card.user.avatar ? card.user.avatar : avatar}
-                      alt=""
-                    />
+                    {card.user.avatar ? (
+                      <img
+                        className=" w-[26px] h-[26px] rounded-full"
+                        src={card.user.avatar}
+                        alt=""
+                      />
+                    ) : (
+                      <div className="w-[15px] h-[15px] rounded-full bg-[#FFFFFF12] flex justify-center items-center">
+                        <Person />
+                      </div>
+                    )}
                     <h1 className=" text-white text-[12px] font-[400] leading-[20px]">
                       {card.user.name}
                     </h1>
@@ -91,7 +108,7 @@ const Recommand: React.FC<RecommandProps> = ({ title }) => {
         </>
       </div>
       {/* buttons */}
-      <div className="flex justify-center gap-[20px] px-[10px]">
+      <div className="fle hidden justify-center gap-[20px] px-[10px]">
         <button
           onClick={() => navigate("/rec_more", { state: { title } })}
           className="more_btn w-1/2 p-[16px]"

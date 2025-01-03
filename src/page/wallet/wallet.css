@@ -66,3 +66,101 @@
     rgba(255, 178, 224, 0.32) 100%
   );
 }
+
+.new_bal_box {
+  border-radius: 20px;
+  background: linear-gradient(
+    99deg,
+    rgba(255, 255, 255, 0.08) 22.91%,
+    rgba(255, 255, 255, 0.04) 92.45%
+  );
+}
+
+.bonus_text {
+  background: linear-gradient(89deg, #bc68e5 42.24%, #fb3470 64.06%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: "Source Han Sans CN";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0.3px;
+}
+
+.coin_list_box {
+  border-radius: 8px;
+  border: 1px solid #282828;
+  background: #131113;
+}
+
+.coin_bonus_text {
+  background: var(--Linear, linear-gradient(90deg, #bc68e5 0%, #fb3470 82.89%));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.badge_bouns_pop {
+  border-radius: 0px 0px 0px 6px;
+  background: var(--Linear, linear-gradient(90deg, #bc68e5 0%, #fb3470 82.89%));
+}
+
+.popular_box {
+  border-radius: 8px;
+  border: 1px solid var(--Purple-Gradient-2, #cd3eff);
+  background: #141214;
+}
+
+.total_pay_text {
+  background: linear-gradient(315deg, #cd3eff 0%, #ffb2e0 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: "Helvetica Neue";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 15.456px;
+  letter-spacing: 0.3px;
+}
+
+.comfirm_butoon {
+  border-radius: 16px;
+  background: var(
+    --Purple-Gradient-2,
+    linear-gradient(325deg, #cd3eff 43.64%, #ffb2e0 100%)
+  );
+}
+
+.withdraw_input {
+  border-bottom: 0.5px solid #888;
+}
+
+.payment_select_box {
+  border-radius: 12px;
+  border: 0.5px solid #888;
+  background: #111011;
+}
+
+.payment_select_box:focus {
+  outline: none; /* Removes the blue border on focus */
+  box-shadow: none; /* Removes any potential box-shadow applied by browser defaults */
+}
+
+.payment_select_content {
+  border-radius: 17.171px 17.171px 8.585px 8.585px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #121012;
+  backdrop-filter: blur(8.651399612426758px);
+}
+
+option selected {
+  background: transparent;
+}
+
+.comfirm_withdraw_btn {
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+}
