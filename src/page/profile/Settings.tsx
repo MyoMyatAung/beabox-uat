@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLogoutMutation } from "@/store/api/profileApi";
 import withProfileData from "@/hocs/withProfileData";
 import ChangePassword from "@/components/profile/change-password";
+import EditSecurity from "@/components/profile/edit-security";
 
 const Settings = ({
   private_profile,
@@ -29,7 +30,9 @@ const Settings = ({
           <Link to={paths.profile}>
             <FaAngleLeft size={18} />
           </Link>
-          <p className="text-[16px]">{user?.token ? "Setting & Privacy" : "Setting"}</p>
+          <p className="text-[16px]">
+            {user?.token ? "Setting & Privacy" : "Setting"}
+          </p>
           <div></div>
         </div>
 
@@ -37,14 +40,16 @@ const Settings = ({
           <>
             {/* <EditLanguage />
             <div className="border-b border-white/10"></div> */}
-            <div className="flex flex-col gap-4 mb-7">
+            <div className="flex flex-col gap-4">
               <h1 className="text-[12px] text-[#888]">Account Security</h1>
               <ChangePassword />
+              <EditSecurity />
             </div>
           </>
         ) : (
           <></>
         )}
+
         <div className="flex justify-between items-center">
           <p className="flex items-center gap-1 text-[14px]">Current Version</p>
           <p className="flex items-center gap-1 text-[14px]">

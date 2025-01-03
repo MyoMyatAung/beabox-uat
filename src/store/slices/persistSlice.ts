@@ -9,10 +9,7 @@ const initialState: any = {
   profileData: null,
   private_profile: "off",
   visibility: "off",
-  securityQues: {
-    ques: "",
-    ans: "",
-  },
+  securityQues: null,
 };
 
 export const persistSlice = createSlice({
@@ -33,6 +30,7 @@ export const persistSlice = createSlice({
     },
     logOutUser: (state) => {
       state.user = null;
+      state.securityQues = null;
     },
     setProfileData: (state, { payload }) => {
       state.profileData = payload;
