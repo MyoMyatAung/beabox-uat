@@ -9,6 +9,10 @@ const initialState: any = {
   profileData: null,
   private_profile: "off",
   visibility: "off",
+  securityQues: {
+    ques: "",
+    ans: "",
+  },
 };
 
 export const persistSlice = createSlice({
@@ -39,6 +43,9 @@ export const persistSlice = createSlice({
     setVisibility: (state, { payload }) => {
       state.visibility = payload;
     },
+    setSecurityQues: (state, { payload }) => {
+      state.securityQues = payload;
+    },
   },
 });
 
@@ -51,6 +58,7 @@ export const {
   setProfileData,
   setPrivateProfile,
   setVisibility,
+  setSecurityQues,
 } = persistSlice.actions;
 
 export default persistSlice.reducer;
