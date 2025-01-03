@@ -18,7 +18,7 @@ const navItems = [
     icon: ExploreSVG,
     href: "/explore",
   },
-  { name: "", selectedIcon: PlusSVG, icon: PlusSVG, href: "/upload" },
+  // { name: "", selectedIcon: PlusSVG, icon: PlusSVG, href: "/upload" },
   {
     name: "Application",
     selectedIcon: App1SVG,
