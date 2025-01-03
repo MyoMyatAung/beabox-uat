@@ -1,10 +1,16 @@
 import Balance from "@/assets/profile/balance.png";
+import { paths } from "@/routes/paths";
+import { useNavigate } from "react-router-dom";
 
 const BalanceNotiLink = () => {
+  const navigate = useNavigate();
   return (
-    <div className="system flex items-start gap-2">
+    <div
+      onClick={() => navigate(paths.balance_noti)}
+      className="flex items-start gap-2"
+    >
       <img src={Balance} className="w-10 h-10 mt-1" alt="" />
-      <div className="">
+      <div className="w-full">
         <div className="flex items-center text-[14px] justify-between">
           <p>Balance Alert</p>
           {/* <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div> */}
