@@ -52,7 +52,7 @@ const Stats = ({
           <div className="text-gray-400 text-[14px]">Like</div>
         </div>
       </div>
-      <DrawerContent className="border-0">
+      <DrawerContent className="border-0 z-[1000]">
         <div className="w-full h-screen px-5">
           <div className="flex justify-between items-center py-5">
             <button onClick={() => dispatch(setIsDrawerOpen(false))}>
