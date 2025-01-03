@@ -9,7 +9,7 @@ const SettingBtn = () => {
     {
       title: "Balance",
       icon: <Wallet size={14} />,
-      link: paths.settings,
+      link: paths.wallet,
     },
     {
       title: "Creator Centre",
@@ -24,7 +24,7 @@ const SettingBtn = () => {
     {
       title: "Invitation QR",
       icon: <QrCode size={14} />,
-      link: paths.settings,
+      link: paths.wallet_invite,
     },
     {
       title: "Setting & Privacy",
