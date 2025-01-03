@@ -5,6 +5,7 @@ import avatar from "../../../assets/explore/avatar.png";
 import "../explore.css";
 import { useNavigate } from "react-router-dom";
 import { useGetExploreTagQuery } from "@/store/api/explore/exploreApi";
+import { Person } from "@/assets/profile";
 
 interface RecommandProps {
   title: string;
@@ -14,7 +15,7 @@ const Recommand: React.FC<RecommandProps> = ({ title }) => {
   const [list, setList] = useState([]);
   const { data, isLoading, refetch } = useGetExploreTagQuery({
     order: "popular",
-    tag : title
+    tag: title,
   });
   useEffect(() => {
     if (data?.data) {
@@ -75,11 +76,17 @@ const Recommand: React.FC<RecommandProps> = ({ title }) => {
                   </h1>
                   {/* uploader */}
                   <div className=" flex justify-cente py-[4px] items-center gap-[8px]">
-                    <img
-                      className=" w-[26px] h-[26px] rounded-full"
-                      src={card.user.avatar ? card.user.avatar : avatar}
-                      alt=""
-                    />
+                    {card.user.avatar ? (
+                      <img
+                        className=" w-[26px] h-[26px] rounded-full"
+                        src={card.user.avatar}
+                        alt=""
+                      />
+                    ) : (
+                      <div className="w-[15px] h-[15px] rounded-full bg-[#FFFFFF12] flex justify-center items-center">
+                        <Person />
+                      </div>
+                    )}
                     <h1 className=" text-white text-[12px] font-[400] leading-[20px]">
                       {card.user.name}
                     </h1>
@@ -91,7 +98,7 @@ const Recommand: React.FC<RecommandProps> = ({ title }) => {
         </>
       </div>
       {/* buttons */}
-      <div className="flex justify-center gap-[20px] px-[10px]">
+      <div className="fle hidden justify-center gap-[20px] px-[10px]">
         <button
           onClick={() => navigate("/rec_more", { state: { title } })}
           className="more_btn w-1/2 p-[16px]"

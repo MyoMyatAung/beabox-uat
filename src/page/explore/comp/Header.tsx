@@ -41,7 +41,7 @@ const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
               <span
                 className={`${
                   activeTab !== tab.title ? "opacity-0" : "opacity-100"
-                } w-[6px] h-[6px] bg-white rounded-full`}
+                } w-[24px] h-[4px] bg-white rounded-full`}
               ></span>
             </div>
           ))}

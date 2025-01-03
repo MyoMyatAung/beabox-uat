@@ -47,10 +47,11 @@ const Explore = () => {
         <div className="mt-[20px] relative">
           <Header activeTab={activeTab} setActiveTab={setActiveTab} />
           <Swiper
+          className=""
             onSlideChange={handleSlideChange}
             onSwiper={(swiper) => (swiperRef.current = swiper)}
             slidesPerView={1}
-            spaceBetween={50}
+            spaceBetween={10}
             loop={true}
           >
             <SwiperSlide>
@@ -70,7 +71,9 @@ const Explore = () => {
             </SwiperSlide>
             <SwiperSlide>
               {activeTab === "Hollywood" && (
-                <div className=" h-screen">Hollywood Content</div>
+                <div className="">
+                  <Latest />
+                </div>
               )}
             </SwiperSlide>
           </Swiper>

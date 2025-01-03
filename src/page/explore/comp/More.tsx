@@ -27,7 +27,7 @@ const More: React.FC<MoreProps> = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
+// console.log(list)
 
   const popularItems = Array.from({ length: 10 }, (_, i) => ({
     title: `My Boss (2021) - ${i + 1}`,
@@ -94,7 +94,7 @@ const More: React.FC<MoreProps> = () => {
                       : item.title}{" "}
                   </span>
                   <div className=" flex justify-between text-[#AAA] text-[12px] font-[400] leading-[15px]">
-                    <span></span>
+                  <span>{item.view_count ? item.view_count : "0"} views</span>
                     <span>{item.like_count} likes</span>
                   </div>
                 </div>
@@ -117,7 +117,7 @@ const More: React.FC<MoreProps> = () => {
                       : item.title}{" "}
                   </span>
                   <div className=" flex justify-between text-[#AAA] text-[12px] font-[400] leading-[15px]">
-                    <span></span>
+                    <span>{item.view_count ? item.view_count : "0"} views</span>
                     <span>{item.like_count} likes</span>
                   </div>
                 </div>
