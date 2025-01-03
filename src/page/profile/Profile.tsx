@@ -1,5 +1,4 @@
 import {
-  Bell,
   Setting,
   Person,
   Wallet,
@@ -15,9 +14,10 @@ import { Link } from "react-router-dom";
 import { paths } from "@/routes/paths";
 import { useGetMyProfileQuery } from "@/store/api/profileApi";
 import { useSelector } from "react-redux";
-import { ChevronRight, UserPen } from "lucide-react";
+import { ChevronRight, Menu, UserPen, Bell } from "lucide-react";
 import { BsPatchCheckFill } from "react-icons/bs";
 import { Button } from "@/components/ui/button";
+import SettingBtn from "@/components/profile/setting-btn";
 
 const Profile = () => {
   const { data } = useGetMyProfileQuery("");
@@ -31,12 +31,7 @@ const Profile = () => {
         <div className="bg-[#FFFFFF12] w-10 h-10 rounded-full flex items-center justify-center">
           <Bell />
         </div>
-        <Link
-          to={paths.settings}
-          className="bg-[#FFFFFF12] w-10 h-10 rounded-full flex items-center justify-center"
-        >
-          <Setting />
-        </Link>
+        <SettingBtn />
       </div>
       {/* login  */}
       <div className="w-full flex items-center gap-3 py-5">
