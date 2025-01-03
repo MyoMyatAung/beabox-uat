@@ -2,12 +2,18 @@ import React, { useEffect, useState } from "react";
 // import sp from "../../../assets/explore/sp.png";
 import { FaHeart } from "react-icons/fa";
 import { useGetExploreListQuery } from "@/store/api/explore/exploreApi";
-// import Player from "./Player";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Person } from "@/assets/profile";
 import Loader from "../../../page/home/vod_loader.gif";
+import { useDispatch, useSelector } from "react-redux";
+import { setDetails } from "@/store/slices/exploreSlice";
 
-const Latest: React.FC = () => {
+interface LatestPorp {
+  setshow: any;
+}
+
+const Latest: React.FC<LatestPorp> = ({ setshow }) => {
+  const dispatch = useDispatch()
   const [waterfall, setWaterFall] = useState<any[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
@@ -16,14 +22,14 @@ const Latest: React.FC = () => {
   useEffect(() => {
     if (data?.data) {
       setWaterFall((prev) => [...prev, ...data.data]);
-  
-      const loadedItems = data.pagination.current_page * data.pagination.per_page;
+
+      const loadedItems =
+        data.pagination.current_page * data.pagination.per_page;
       setHasMore(loadedItems < data.pagination.total);
     } else {
       setHasMore(false);
     }
   }, [data]);
-  
 
   const formatNumber = (num: number) => {
     if (num >= 1000) {
@@ -33,10 +39,13 @@ const Latest: React.FC = () => {
   };
 
   const fetchMoreData = () => {
-      console.log("gg")
-      setPage((prevPage) => prevPage + 1);
+    setPage((prevPage) => prevPage + 1);
   };
-console.log(page)
+
+  const showDetailsVod = (file : any) => {
+    dispatch(setDetails(file))
+    setshow(true)
+  }
   return (
     <div className=" flex w-full justify-around items-cente">
       <div
@@ -61,6 +70,7 @@ console.log(page)
                 style={{ breakInside: "avoid" }}
               >
                 <img
+                  onClick={() => showDetailsVod(card)}
                   className="w-full object-cover rounded-[6px] bg-white/20"
                   src={card.preview_image}
                   alt=""
@@ -114,7 +124,7 @@ console.log(page)
                 </div>
               }
               endMessage={
-                <div className="flex bg-whit justify-center items-center  w-screen absolute bottom-[-30px] left-[-20px]">
+                <div className="flex bg-whit pt-20 justify-center items-center  w-screen absolute bottom-[-20px] left-[-20px]">
                   <p className="py-10" style={{ textAlign: "center" }}>
                     <b>No more yet!</b>
                   </p>
@@ -126,15 +136,6 @@ console.log(page)
           </>
         )}
       </div>
-      {/* {waterfall?.map((wt: any) => (
-        <Player
-          src={wt?.files[0].resourceURL}
-          thumbnail={
-            wt?.files[0].thumbnail ||
-            "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg"
-          }
-        />
-      ))} */}
     </div>
   );
 };
