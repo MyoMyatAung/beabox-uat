@@ -2,6 +2,7 @@ import { paths } from "@/routes/paths";
 import { FaAngleLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import SystemNotiLink from "@/components/profile/noti/system-noti-link";
+import BalanceNotiLink from "@/components/profile/noti/balance-noti-link";
 
 const Noti = () => {
   return (
@@ -14,8 +15,9 @@ const Noti = () => {
           <p className="text-[16px]">Notifications</p>
           <div></div>
         </div>
-        <div className="">
+        <div className="space-y-5">
           <SystemNotiLink />
+          <BalanceNotiLink />
         </div>
       </div>
     </div>
