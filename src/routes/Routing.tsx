@@ -14,6 +14,8 @@ const Profile = lazy(() => import("../page/profile/Profile"));
 const ProfileDetail = lazy(() => import("../page/profile/ProfileDetail"));
 const Settings = lazy(() => import("../page/profile/Settings"));
 const Noti = lazy(() => import("../page/profile/noti/Noti"));
+const SystemNoti = lazy(() => import("../page/profile/noti/SystemNoti"));
+const BalanceNoti = lazy(() => import("../page/profile/noti/BalanceNoti"));
 const SecurityQuestion = lazy(() => import("../page/profile/SecurityQuestion"));
 const Login = lazy(() => import("../page/auth/Login"));
 const Register = lazy(() => import("../page/auth/Register"));
@@ -134,6 +136,22 @@ const Routing = () => {
       element: (
         <Suspense fallback={<p>loading...</p>}>
           <Noti />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.system_noti,
+      element: (
+        <Suspense fallback={<p>loading...</p>}>
+          <SystemNoti />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.balance_noti,
+      element: (
+        <Suspense fallback={<p>loading...</p>}>
+          <BalanceNoti />
         </Suspense>
       ),
     },
