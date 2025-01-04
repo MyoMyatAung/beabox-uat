@@ -1,5 +1,6 @@
-import { Person } from "@/assets/profile";
 import Stats from "@/components/profile/stats";
+import { Person } from "@/assets/profile";
+
 import VideoTabs from "@/components/profile/video-tabs";
 import { stats } from "./data";
 import { Link } from "react-router-dom";
@@ -10,6 +11,7 @@ import { ChevronRight, UserPen, Bell } from "lucide-react";
 import { BsPatchCheckFill } from "react-icons/bs";
 import { Button } from "@/components/ui/button";
 import SettingBtn from "@/components/profile/setting-btn";
+import ProfileAvatar from "@/components/profile/profile-avatar";
 
 const Profile = () => {
   const { data } = useGetMyProfileQuery("");
@@ -29,9 +31,13 @@ const Profile = () => {
       </div>
       {/* login  */}
       <div className="w-full flex items-center gap-3 py-5">
-        <div className="w-[58px] h-[58px] rounded-full bg-[#FFFFFF12] flex justify-center items-center">
-          <Person />
-        </div>
+        {!user?.token ? (
+          <div className="w-[58px] h-[58px] rounded-full bg-[#FFFFFF12] flex justify-center items-center p-2">
+            <Person />
+          </div>
+        ) : (
+          <ProfileAvatar />
+        )}
         {!user?.token ? (
           <Link to={paths.login} className="flex items-center gap-2 flex-1">
             <span className="text-[18px] ">Login Or Sign Up</span>
