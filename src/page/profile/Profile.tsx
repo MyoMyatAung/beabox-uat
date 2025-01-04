@@ -15,7 +15,6 @@ import SettingBtn from "@/components/profile/setting-btn";
 
 const Profile = () => {
   const { data } = useGetMyProfileQuery("");
-  console.log(data, "data");
   const user = useSelector((state: any) => state.persist.user);
   // console.log(data, user);
 

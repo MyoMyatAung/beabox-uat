@@ -21,12 +21,10 @@ const Settings = () => {
     (state: any) => state.persist.private_profile
   );
   const { data, refetch } = useGetMyProfileQuery("");
-  console.log(data);
   const dispatch = useDispatch();
   const refetchHandler = async () => {
     await refetch();
   };
-  console.log(profileData, "pd");
   useEffect(() => {
     if (data?.status) dispatch(setProfileData(data?.data));
   }, []);

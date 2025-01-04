@@ -20,12 +20,9 @@ const EditNickName = ({
   const [value, setValue] = useState("");
   const [changeNickname, { data, isLoading }] = useChangeNicknameMutation();
   const navigate = useNavigate();
-  console.log(data);
 
-  console.log(data);
   const onSubmitHandler = async (e: any) => {
     e.preventDefault();
-    console.log(value);
     await changeNickname({ nickname: value });
     await refetchHandler();
     setIsOpen(false);

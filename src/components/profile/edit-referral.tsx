@@ -11,11 +11,9 @@ const EditReferral = ({ referral_code }: any) => {
   const user = useSelector((state: any) => state.persist.user);
   const [changeRerralCode, { data, isLoading }] =
     useChangeReferralCodeMutation();
-  console.log(data);
 
   const onSubmitHandler = async (e: any) => {
     e.preventDefault();
-    console.log(value);
     await changeRerralCode({ referral_code: value });
     setIsOpen(false);
   };
