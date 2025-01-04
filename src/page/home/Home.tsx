@@ -15,6 +15,7 @@ import ShowHeart from "./components/ShowHeart";
 import Top20Movies from "./components/Top20Movies";
 import TopNavbar from "./components/TopNavbar";
 import TwoColumns from "./components/TwoColumns";
+import Explorer from "../explore/Explore";
 
 const Home = () => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
@@ -496,6 +497,11 @@ const Home = () => {
           {/* {!isLoading && !isError && (
           
           )} */}
+        </div>
+      ) : currentTab == "explore" ? (
+        <div className="w-screen">
+          <TopNavbar currentTab={currentTab} onTabClick={handleTabClick} />
+          <Explorer />
         </div>
       ) : (
         <TwoColumns

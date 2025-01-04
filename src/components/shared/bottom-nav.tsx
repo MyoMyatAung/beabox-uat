@@ -12,12 +12,12 @@ import App1SVG from "@/assets/icons/App1.svg";
 
 const navItems = [
   { name: "Home", selectedIcon: Home1SVG, icon: HomeSVG, href: "/" },
-  {
-    name: "Explore",
-    selectedIcon: Explore1SVG,
-    icon: ExploreSVG,
-    href: "/explore",
-  },
+  // {
+  //   name: "Explore",
+  //   selectedIcon: Explore1SVG,
+  //   icon: ExploreSVG,
+  //   href: "/explore",
+  // },
   // { name: "", selectedIcon: PlusSVG, icon: PlusSVG, href: "/upload" },
   {
     name: "Application",

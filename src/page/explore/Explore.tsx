@@ -44,8 +44,8 @@ const Explore = () => {
     <>
       {show && <VodDetails setshow={setshow} />}
 
-      <div className=" flex justify-center items-center">
-        <div className="explore_sec w-screen xl:w-[800px] flex flex-col justify-center items-cente px-[10px] pb-[100px]">
+      <div className="flex justify-center items-center">
+        <div className="explore_sec w-screen xl:w-[800px] flex flex-col justify-center items-cente px-[10px] pb-[100px] mt-14">
           <Banner />
           <PopApp />
           <div className="mt-[20px] relative">
