@@ -20,12 +20,12 @@ const EditUsername = ({
   const [value, setValue] = useState("");
   const [changeUsername, { data, isLoading }] = useChangeUsernameMutation();
   const navigate = useNavigate();
-  console.log(data);
 
-  console.log(data);
+
+
   const onSubmitHandler = async (e: any) => {
     e.preventDefault();
-    console.log(value);
+  
     await changeUsername({ username: value });
     await refetchHandler();
     setIsOpen(false);

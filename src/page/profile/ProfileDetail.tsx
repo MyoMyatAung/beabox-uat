@@ -14,19 +14,17 @@ import { setProfileData } from "@/store/slices/persistSlice";
 import EditNickName from "@/components/profile/edit-nickname";
 import EditRegion from "@/components/profile/edit-region";
 
-const Settings = () => {
+const ProfileDetail = () => {
   const user = useSelector((state: any) => state.persist.user);
   const profileData = useSelector((state: any) => state.persist.profileData);
   const private_profile = useSelector(
     (state: any) => state.persist.private_profile
   );
   const { data, refetch } = useGetMyProfileQuery("");
-  console.log(data);
   const dispatch = useDispatch();
   const refetchHandler = async () => {
     await refetch();
   };
-  console.log(profileData, "pd");
   useEffect(() => {
     if (data?.status) dispatch(setProfileData(data?.data));
   }, []);
@@ -88,4 +86,4 @@ const Settings = () => {
   );
 };
 
-export default Settings;
+export default ProfileDetail;

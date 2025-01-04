@@ -59,7 +59,6 @@ const Register = () => {
       captcha,
       captcha_key: data?.data?.captcha_key,
     });
-    console.log(registerData, "rgd");
     if (registerData?.status) {
       dispatch(setRegisterUser(registerData?.data));
       // navigate(paths.login);

@@ -15,7 +15,6 @@ const EditBio = ({ bio, refetchHandler }: any) => {
   const maxLength = 100;
   const [changeBio, { data, isLoading }] = useChangeBioMutation();
   const dispatch = useDispatch();
-  console.log(data);
   const onSubmitHandler = async (e: any) => {
     e.preventDefault();
     dispatch(setBio(value));
