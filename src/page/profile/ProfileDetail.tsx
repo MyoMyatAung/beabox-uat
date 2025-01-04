@@ -14,7 +14,7 @@ import { setProfileData } from "@/store/slices/persistSlice";
 import EditNickName from "@/components/profile/edit-nickname";
 import EditRegion from "@/components/profile/edit-region";
 
-const Settings = () => {
+const ProfileDetail = () => {
   const user = useSelector((state: any) => state.persist.user);
   const profileData = useSelector((state: any) => state.persist.profileData);
   const private_profile = useSelector(
@@ -86,4 +86,4 @@ const Settings = () => {
   );
 };
 
-export default Settings;
+export default ProfileDetail;

@@ -1,14 +1,12 @@
-import { Setting, Person, Wallet, Creater, Level } from "@/assets/profile";
-import MenuCard from "@/components/profile/menu-card";
+import { Person } from "@/assets/profile";
 import Stats from "@/components/profile/stats";
 import VideoTabs from "@/components/profile/video-tabs";
 import { stats } from "./data";
-import { FaAngleRight } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { paths } from "@/routes/paths";
 import { useGetMyProfileQuery } from "@/store/api/profileApi";
 import { useSelector } from "react-redux";
-import { ChevronRight, Menu, UserPen, Bell } from "lucide-react";
+import { ChevronRight, UserPen, Bell } from "lucide-react";
 import { BsPatchCheckFill } from "react-icons/bs";
 import { Button } from "@/components/ui/button";
 import SettingBtn from "@/components/profile/setting-btn";
@@ -55,7 +53,7 @@ const Profile = () => {
                 </div>
                 <span>Lv 1</span>
               </p> */}
-              <p className="text-[14px]">(ID {data?.data?.id})</p>
+              <p className="text-[14px]">(ID {data?.data?.user_code})</p>
             </div>
           </div>
           // <button
