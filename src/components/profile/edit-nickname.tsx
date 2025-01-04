@@ -4,21 +4,21 @@ import { Button } from "../ui/button";
 import { useState } from "react";
 import { X } from "lucide-react";
 import { useSelector } from "react-redux";
-import { useChangeUsernameMutation } from "@/store/api/profileApi";
+import { useChangeNicknameMutation } from "@/store/api/profileApi";
 import { useNavigate } from "react-router-dom";
 import SubmitButton from "../shared/submit-button";
 import Loader from "../shared/loader";
 
 const EditNickName = ({
-  username,
+  nickname,
   refetchHandler,
 }: {
-  username: string;
+  nickname: string;
   refetchHandler: any;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState("");
-  const [changeUsername, { data, isLoading }] = useChangeUsernameMutation();
+  const [changeNickname, { data, isLoading }] = useChangeNicknameMutation();
   const navigate = useNavigate();
   console.log(data);
 
@@ -26,7 +26,7 @@ const EditNickName = ({
   const onSubmitHandler = async (e: any) => {
     e.preventDefault();
     console.log(value);
-    await changeUsername({ username: value });
+    await changeNickname({ nickname: value });
     await refetchHandler();
     setIsOpen(false);
   };
@@ -37,7 +37,7 @@ const EditNickName = ({
         <h1>Nickname</h1>
         <DrawerTrigger asChild>
           <p className="flex items-center gap-1 text-[#888]">
-            {username} <FaAngleRight />
+            {nickname} <FaAngleRight />
           </p>
         </DrawerTrigger>
       </div>
@@ -48,14 +48,14 @@ const EditNickName = ({
             <button onClick={() => setIsOpen(false)}>
               <FaAngleLeft size={18} />
             </button>
-            <p className="text-[16px]">User Name</p>
+            <p className="text-[16px]">Nickname</p>
             <div></div>
           </div>
           <form onSubmit={onSubmitHandler}>
             <div className="relative">
               <input
                 className="w-full bg-transparent border-0 border-b py-3 outline-0 border-[#888]"
-                placeholder="Enter user name"
+                placeholder="Enter nickname"
                 onChange={(e: any) => setValue(e.target.value)}
                 value={value}
               />

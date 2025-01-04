@@ -15,12 +15,12 @@ import SettingBtn from "@/components/profile/setting-btn";
 
 const Profile = () => {
   const { data } = useGetMyProfileQuery("");
-  // console.log(data?.data, "data");
+  console.log(data, "data");
   const user = useSelector((state: any) => state.persist.user);
   // console.log(data, user);
 
   return (
-    <div className="px-5 max-h-screen no-scrollbar">
+    <div className="px-5 max-h-screen no-scrollbar profile-bg">
       <div className="flex gap-3 my-5 justify-end">
         <Link
           to={paths.noti}
@@ -36,25 +36,26 @@ const Profile = () => {
           <Person />
         </div>
         {!user?.token ? (
-          <Link to={paths.login} className="flex items-center gap-2">
+          <Link to={paths.login} className="flex items-center gap-2 flex-1">
             <span className="text-[18px] ">Login Or Sign Up</span>
             <ChevronRight size={18} />
           </Link>
         ) : (
-          <div className="">
+          <div className="flex-1">
             <p className="text-[18px] flex items-center gap-2">
-              {data?.data?.username}{" "}
+              {data?.data?.nickname}
               <span>
                 <BsPatchCheckFill className="text-[#888]" />
               </span>{" "}
             </p>
-            <div className="flex items-center gap-2 mt-1">
-              <p className="flex items-center bg-[#F9DDF5] text-[#625386] text-[12px] font-bold py-[0.3px] px-5 rounded-full relative">
+            <div className="flex items-start gap-2 mt-1">
+              <img src={data?.data?.level} className="w-14" alt="" />
+              {/* <p className="flex items-center bg-[#F9DDF5] text-[#625386] text-[12px] font-bold py-[0.3px] px-5 rounded-full relative">
                 <div className="absolute -left-3">
                   <Level />
                 </div>
                 <span>Lv 1</span>
-              </p>
+              </p> */}
               <p className="text-[14px]">(ID {data?.data?.id})</p>
             </div>
           </div>
