@@ -2,31 +2,7 @@
   scrollbar-width: none;
 }
 
-.swiper-pagination-bullet {
-  background: rgba(255, 255, 255, 0.8);
-}
 
-.swiper-pagination-bullet-active {
-  background: #ffffff;
-}
-
-.swiper-pagination-fraction,
-.swiper-pagination-custom,
-.swiper-horizontal > .swiper-pagination-bullets,
-.swiper-pagination-bullets.swiper-pagination-horizontal {
-  bottom: var(--swiper-pagination-bottom, 8px);
-  top: var(--swiper-pagination-top, auto);
-  left: 0;
-  width: 100%;
-}
-
-.swiper-pagination {
-  position: absolute;
-  text-align: right;
-  transition: 300ms opacity;
-  transform: translate3d(0, 0, 0);
-  z-index: 100;
-}
 
 .chinese_photo {
   background: linear-gradient(

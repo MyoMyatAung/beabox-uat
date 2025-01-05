@@ -1,55 +1,72 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
-import "../explore.css";
+import "./ss.css";
 
-import { Autoplay, Pagination } from "swiper/modules"; // Correct way to import Autoplay
+import { Autoplay, Pagination } from "swiper/modules";
 import { useGetExploreHeaderQuery } from "@/store/api/explore/exploreApi";
 
-interface BannerProps {}
-
-const Banner: React.FC<BannerProps> = () => {
-  const [ad, setad] = useState([]);
-  const paginationRef = useRef<HTMLButtonElement | null>(null);
+const Banner: React.FC = () => {
+  const [ad, setAd] = useState([]);
+  const [activeIndex, setActiveIndex] = useState(0); // Track the active slide index
   const { data, isLoading } = useGetExploreHeaderQuery("");
+
   useEffect(() => {
     if (data?.data) {
       const cur = data?.data?.ads?.carousel;
-      setad(cur);
+      setAd(cur);
     }
-  }, [data, ad]);
+  }, [data]);
+
   return (
     <div className="py-[20px] relative">
       {isLoading ? (
-        <div className=" w-full h-[174px] bg-white/20 rounded-md animate-pulse"></div>
+        <div className="w-full h-[194px] bg-white/20 rounded-md animate-pulse"></div>
       ) : (
         <Swiper
           modules={[Autoplay, Pagination]}
           pagination={{
-            // el: paginationRef.current,
+            el: ".custom-pagination",
+            clickable: true,
           }}
-          // navigation
           autoplay={{
-            delay: 3000,
+            delay: 1000,
             disableOnInteraction: false,
           }}
-          spaceBetween={50}
+          spaceBetween={"1px"}
           slidesPerView={1}
+          centeredSlides={true}
+          loop={true}
+          onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)} // Use realIndex to handle loop
         >
-          {ad.map((cc: any) => (
+          {ad.map((cc: any, index: number) => (
             <SwiperSlide key={cc.id}>
-              <a href={cc.url} target="_blank" key={cc.id}>
+              <a
+                className="flex justify-center items-center"
+                href={cc.url}
+                target="_blank"
+              >
                 <img
-                  className="w-screen h-[174px] xl:w-[600px] rounded-md"
+                  className={`rounded-md transition-all duration-300
+                   ${
+                    activeIndex === index
+                      ? "w-screen h-[162px]" // Active slide size
+                      : "w-screen h-[162px]" // Non-active slide size
+                  }
+                  `}
                   src={cc.image}
-                  alt="Slide 1"
+                  alt="Slide"
                 />
               </a>
             </SwiperSlide>
           ))}
-          {/* <div ref={paginationRef} className="swiper-pagination  "></div> */}
         </Swiper>
+      )}
+
+      {/* Custom Pagination */}
+      {!isLoading && (
+        <div className="custom-pagination mt-4 flex justify-center"></div>
       )}
     </div>
   );
