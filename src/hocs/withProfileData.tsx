@@ -16,8 +16,6 @@ const withProfileData = (WrapperCompo: any) => {
     const dispatch = useDispatch();
     const persistState = useSelector((state: any) => state.persist);
     const { data, refetch, isLoading } = useGetMyProfileQuery("");
-    console.log(data?.data, "my profile");
-    console.log(persistState, "persistState");
     const [changePrivateProfileStats] = useChangePrivateProfileStatsMutation();
     const [changeVisibility] = useChangeVisibilityMutation();
     const changePrivateProfileStatsHandler = async (e: any) => {

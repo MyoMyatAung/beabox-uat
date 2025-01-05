@@ -21,7 +21,6 @@ const Settings = ({
   const navigate = useNavigate();
   const [logout] = useLogoutMutation();
   const user = useSelector((state: any) => state.persist.user);
-  console.log(user);
 
   return (
     <div className="w-full h-screen px-5 flex flex-col items-center justify-between">

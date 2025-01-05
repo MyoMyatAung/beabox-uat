@@ -7,7 +7,7 @@ export const profileApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "http://107.148.47.94:8800/api/v1",
     prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).persist.user.token; // Adjust 'auth.token' to match your Redux slice structure
+      const token = (getState() as RootState).persist?.user?.token; // Adjust 'auth.token' to match your Redux slice structure
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
       }
@@ -21,12 +21,28 @@ export const profileApi = createApi({
         method: "GET",
       }),
     }),
+    getRegion: builder.query<any, string>({
+      // query: () => `/pcities-and-provinces`,
+      query: () => ({
+        url: `/cities-and-provinces`,
+        method: "GET",
+      }),
+    }),
     changeUsername: builder.mutation({
       query: ({ username }) => ({
         url: `/profile/change-username`,
         method: "POST",
         body: {
           username,
+        },
+      }),
+    }),
+    changeNickname: builder.mutation({
+      query: ({ nickname }) => ({
+        url: `/profile/change-nickname`,
+        method: "POST",
+        body: {
+          nickname,
         },
       }),
     }),
@@ -99,6 +115,13 @@ export const profileApi = createApi({
         },
       }),
     }),
+    changeRegion: builder.mutation({
+      query: (region) => ({
+        url: `/profile/change-region`,
+        method: "POST",
+        body: region,
+      }),
+    }),
   }),
 });
 
@@ -113,4 +136,7 @@ export const {
   useChangePasswordMutation,
   useChangePrivateProfileStatsMutation,
   useChangeVisibilityMutation,
+  useGetRegionQuery,
+  useChangeRegionMutation,
+  useChangeNicknameMutation,
 } = profileApi;

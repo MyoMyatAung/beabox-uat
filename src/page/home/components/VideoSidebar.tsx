@@ -7,6 +7,7 @@ import {
 import qr from "../qr.png";
 import spider from "../spider.png";
 import CommentOverlay from "./CommentOverlay";
+import ShareOverlay from "./ShareOverlay";
 
 function VideoSidebar({
   likes,
@@ -258,10 +259,10 @@ function VideoSidebar({
         </button>
       </div>
       {/* Alert Box */}
-      {alertVisible && (
+      {/* {alertVisible && (
         <div
           ref={alertRef} // Attach the ref to the alert box
-          className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-5 w-[320px] z-50 share ${
+          className={`fixed bottom-0 left-1/2 transform -translate-x-1/2 p-5 w-full z-[999] share ${
             isClosingAlert ? "animate-fade-out" : "animate-fade-in"
           }`}
         >
@@ -298,7 +299,52 @@ function VideoSidebar({
             </button>
           </div>
         </div>
-      )}
+        // <div
+        //   ref={alertRef} // Attach the ref to the alert box
+        //   className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-5 w-[320px] z-50 share ${
+        //     isClosingAlert ? "animate-fade-out" : "animate-fade-in"
+        //   }`}
+        // >
+        //   <h1 className="share_text mb-4">
+        //     Share your thoughts & favorite moments with others
+        //   </h1>
+        //   <div className="mb-4">
+        //     <img src={image} alt="" className="h-[150px] w-full object-fill" />
+        //   </div>
+        //   <div className="grid grid-cols-2 mb-4 justify-items-center items-center">
+        //     <div className="text-right">
+        //       <img src={qr} alt="" width={100} height={100} />
+        //     </div>
+        //     <div>
+        //       <h1 className="qr_text1 mb-2">Scan Qr Code</h1>
+        //       <p className="qr_text2 mb-2">
+        //         If the qr code cannot be open, please enter the link
+        //       </p>
+        //       <p className="qr_text3">{config?.app_download_link}</p>
+        //     </div>
+        //   </div>
+        //   <div className="grid grid-cols-2 gap-2">
+        //     <button className="share_btn">Save img to share</button>
+        //     <button
+        //       className="share_btn"
+        //       onClick={() => {
+        //         const shareUrl = config?.app_download_link;
+        //         navigator.clipboard.writeText(shareUrl).catch((err) => {
+        //           console.error("Failed to copy the share link: ", err);
+        //         });
+        //       }}
+        //     >
+        //       Copy share link
+        //     </button>
+        //   </div>
+        // </div>
+      )} */}
+
+      <ShareOverlay
+        alertVisible={alertVisible}
+        setAlertVisible={setAlertVisible}
+        config={config}
+      />
 
       <CommentOverlay
         post_id={post_id}

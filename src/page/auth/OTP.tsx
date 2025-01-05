@@ -29,7 +29,6 @@ const OTP = () => {
     }
   };
 
-  console.log(otp);
 
   return (
     <div className="px-5">

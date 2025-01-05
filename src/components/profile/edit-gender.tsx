@@ -9,12 +9,12 @@ import Loader from "../shared/loader";
 
 const EditGender = () => {
   const gender = useSelector((state: any) => state.persist.gender);
-  console.log(gender);
+
   const dispatch = useDispatch();
   // const [gender, setGender] = useState("Other");
   const [isOpen, setIsOpen] = useState(false);
   const [changeGender, { data, isLoading }] = useChangeGenderMutation();
-  console.log(data);
+
 
   return (
     <Drawer open={isOpen} onOpenChange={() => setIsOpen(true)}>

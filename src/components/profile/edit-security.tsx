@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 
 const EditSecurity = () => {
   const securityQues = useSelector((state: any) => state.persist.securityQues);
-  console.log(securityQues);
   return (
     <div>
       <div

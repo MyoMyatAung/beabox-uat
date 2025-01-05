@@ -94,7 +94,7 @@ const Application: React.FC<any> = () => {
             </>
           ))}
       </div>
-      <div className="mt-[20px]">
+      <div className="mt-[20px] mb-[80px]">
         {applicationData?.footer?.length > 0 &&
           applicationData?.footer.map((footer: any) => (
             <a href={footer.url} target="_blank" key={footer.id}>

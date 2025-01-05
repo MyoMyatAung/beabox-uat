@@ -12,20 +12,19 @@ import { useGetMyProfileQuery } from "@/store/api/profileApi";
 import { useEffect } from "react";
 import { setProfileData } from "@/store/slices/persistSlice";
 import EditNickName from "@/components/profile/edit-nickname";
+import EditRegion from "@/components/profile/edit-region";
 
-const Settings = () => {
+const ProfileDetail = () => {
   const user = useSelector((state: any) => state.persist.user);
   const profileData = useSelector((state: any) => state.persist.profileData);
   const private_profile = useSelector(
     (state: any) => state.persist.private_profile
   );
   const { data, refetch } = useGetMyProfileQuery("");
-  console.log(data);
   const dispatch = useDispatch();
   const refetchHandler = async () => {
     await refetch();
   };
-  console.log(profileData, "pd");
   useEffect(() => {
     if (data?.status) dispatch(setProfileData(data?.data));
   }, []);
@@ -56,16 +55,17 @@ const Settings = () => {
           refetchHandler={refetchHandler}
         />
         <EditNickName
-          username={data?.data?.nickname}
+          nickname={data?.data?.nickname}
           refetchHandler={refetchHandler}
         />
         <EditGender />
-        <div className="text-[14px] flex items-center justify-between">
+        <EditRegion />
+        {/* <div className="text-[14px] flex items-center justify-between">
           <h1>Region</h1>
           <p className="flex items-center gap-1 text-[#888]">
             Bangkok,Thailand <FaAngleRight />
           </p>
-        </div>
+        </div> */}
         <div className="text-[14px] flex items-center justify-between">
           <h1>User ID</h1>
           <p className="flex items-center gap-1 text-[#888]">{user?.id}</p>
@@ -86,4 +86,4 @@ const Settings = () => {
   );
 };
 
-export default Settings;
+export default ProfileDetail;

@@ -15,6 +15,7 @@ import ShowHeart from "./components/ShowHeart";
 import Top20Movies from "./components/Top20Movies";
 import TopNavbar from "./components/TopNavbar";
 import TwoColumns from "./components/TwoColumns";
+import Explorer from "../explore/Explore";
 
 const Home = () => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
@@ -237,10 +238,88 @@ const Home = () => {
   return (
     <>
       {currentTab !== "explore" ? (
-        <div className="app bg-black">
+        <div className="app  bg-black">
           <TopNavbar currentTab={currentTab} onTabClick={handleTabClick} />
+          {isError &&
+            (currentTab === "follow" ? (
+              <div style={{ textAlign: "center", padding: "20px" }}>
+                <div className="text-white flex flex-col justify-center items-center  gap-2">
+                  <div>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="33"
+                      height="33"
+                      viewBox="0 0 33 33"
+                      fill="none"
+                    >
+                      <path
+                        d="M24.4993 28.7502C24.4993 25.9212 23.3755 23.2081 21.3752 21.2077C19.3748 19.2073 16.6617 18.0835 13.8327 18.0835C11.0037 18.0835 8.2906 19.2073 6.29021 21.2077C4.28982 23.2081 3.16602 25.9212 3.16602 28.7502"
+                        stroke="#888888"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M13.8327 18.0833C17.5146 18.0833 20.4993 15.0986 20.4993 11.4167C20.4993 7.73477 17.5146 4.75 13.8327 4.75C10.1508 4.75 7.16602 7.73477 7.16602 11.4167C7.16602 15.0986 10.1508 18.0833 13.8327 18.0833Z"
+                        stroke="#888888"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M29.8337 27.4164C29.8337 22.9231 27.1671 18.7498 24.5004 16.7498C25.3769 16.0921 26.0779 15.2286 26.5411 14.2355C27.0044 13.2424 27.2157 12.1504 27.1564 11.0562C27.0971 9.96195 26.7689 8.89922 26.201 7.96204C25.6331 7.02486 24.8429 6.24212 23.9004 5.68311"
+                        stroke="#888888"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </div>
+                  <div className="follow-error">
+                    Follow the creator you love
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div style={{ textAlign: "center", padding: "20px" }}>
+                <div className="text-white flex flex-col justify-center items-center  gap-2">
+                  <div>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="33"
+                      height="33"
+                      viewBox="0 0 33 33"
+                      fill="none"
+                    >
+                      <path
+                        d="M24.4993 28.7502C24.4993 25.9212 23.3755 23.2081 21.3752 21.2077C19.3748 19.2073 16.6617 18.0835 13.8327 18.0835C11.0037 18.0835 8.2906 19.2073 6.29021 21.2077C4.28982 23.2081 3.16602 25.9212 3.16602 28.7502"
+                        stroke="#888888"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M13.8327 18.0833C17.5146 18.0833 20.4993 15.0986 20.4993 11.4167C20.4993 7.73477 17.5146 4.75 13.8327 4.75C10.1508 4.75 7.16602 7.73477 7.16602 11.4167C7.16602 15.0986 10.1508 18.0833 13.8327 18.0833Z"
+                        stroke="#888888"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M29.8337 27.4164C29.8337 22.9231 27.1671 18.7498 24.5004 16.7498C25.3769 16.0921 26.0779 15.2286 26.5411 14.2355C27.0044 13.2424 27.2157 12.1504 27.1564 11.0562C27.0971 9.96195 26.7689 8.89922 26.201 7.96204C25.6331 7.02486 24.8429 6.24212 23.9004 5.68311"
+                        stroke="#888888"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </div>
+                  <div className="follow-error">Videos Error</div>
+                </div>
+              </div>
+            ))}
 
-          {isLoading && videos.length === 0 && (
+          {isLoading && videos.length === 0 ? (
             <div
               style={{
                 textAlign: "center",
@@ -255,84 +334,47 @@ const Home = () => {
                 />
               </div>
             </div>
-          )}
-
-          {isError && (
-            <div style={{ textAlign: "center", padding: "20px" }}>
-              <div className="text-white flex flex-col justify-center items-center  gap-2">
-                <div>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="33"
-                    height="33"
-                    viewBox="0 0 33 33"
-                    fill="none"
-                  >
-                    <path
-                      d="M24.4993 28.7502C24.4993 25.9212 23.3755 23.2081 21.3752 21.2077C19.3748 19.2073 16.6617 18.0835 13.8327 18.0835C11.0037 18.0835 8.2906 19.2073 6.29021 21.2077C4.28982 23.2081 3.16602 25.9212 3.16602 28.7502"
-                      stroke="#888888"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                    <path
-                      d="M13.8327 18.0833C17.5146 18.0833 20.4993 15.0986 20.4993 11.4167C20.4993 7.73477 17.5146 4.75 13.8327 4.75C10.1508 4.75 7.16602 7.73477 7.16602 11.4167C7.16602 15.0986 10.1508 18.0833 13.8327 18.0833Z"
-                      stroke="#888888"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                    <path
-                      d="M29.8337 27.4164C29.8337 22.9231 27.1671 18.7498 24.5004 16.7498C25.3769 16.0921 26.0779 15.2286 26.5411 14.2355C27.0044 13.2424 27.2157 12.1504 27.1564 11.0562C27.0971 9.96195 26.7689 8.89922 26.201 7.96204C25.6331 7.02486 24.8429 6.24212 23.9004 5.68311"
-                      stroke="#888888"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </div>
-                <div className="follow-error">Follow the creator you love</div>
-              </div>
-            </div>
-          )}
-
-          {!isLoading && !isError && (
-            <>
-              <div ref={videoContainerRef} className={`app__videos pb-[55px] `}>
-                {videos.map((video, index) => (
-                  <div
-                    key={index}
-                    className="video mt-[20px]"
-                    data-post-id={video.post_id} // Add post ID to the container
-                  >
-                    <Player
-                      src={video.files[0].resourceURL}
-                      thumbnail={
-                        video.files[0].thumbnail ||
-                        "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg"
-                      }
-                    />
-                    <VideoSidebar
-                      likes={video?.like_count}
-                      is_liked={video?.is_liked}
-                      messages={video?.comment_count}
-                      post_id={video?.post_id}
-                      setCountNumber={setCountNumber}
-                      setCountdown={setCountdown}
-                      setShowHeart={setShowHeart}
-                      showHeart={showHeart}
-                      countdown={countdown}
-                      config={config?.data}
-                      image={video?.preview_image}
-                    />
-                    <VideoFooter
-                      tags={video?.tag}
-                      title={video?.title}
-                      username={video?.user?.name}
-                      city={video?.city}
-                    />
-                    {showHeart && <ShowHeart countNumber={countNumber} />}
-                    {/* {video?.related.length > 0 && (
+          ) : (
+            !isError && (
+              <>
+                <div
+                  ref={videoContainerRef}
+                  className={`app__videos pb-[55px] `}
+                >
+                  {videos.map((video, index) => (
+                    <div
+                      key={index}
+                      className="video mt-[20px]"
+                      data-post-id={video.post_id} // Add post ID to the container
+                    >
+                      <Player
+                        src={video.files[0].resourceURL}
+                        thumbnail={
+                          video.files[0].thumbnail ||
+                          "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg"
+                        }
+                      />
+                      <VideoSidebar
+                        likes={video?.like_count}
+                        is_liked={video?.is_liked}
+                        messages={video?.comment_count}
+                        post_id={video?.post_id}
+                        setCountNumber={setCountNumber}
+                        setCountdown={setCountdown}
+                        setShowHeart={setShowHeart}
+                        showHeart={showHeart}
+                        countdown={countdown}
+                        config={config?.data}
+                        image={video?.preview_image}
+                      />
+                      <VideoFooter
+                        tags={video?.tag}
+                        title={video?.title}
+                        username={video?.user?.name}
+                        city={video?.city}
+                      />
+                      {showHeart && <ShowHeart countNumber={countNumber} />}
+                      {/* {video?.related.length > 0 && (
                       <button
                         onClick={() => handleRelated(video?.related)}
                         className="flex items-center py-1 justify-between px-4 absolute bottom-[-10px] left-0 z-50 w-full bg-black"
@@ -437,19 +479,29 @@ const Home = () => {
                         </div>
                       </button>
                     )} */}
-                  </div>
-                ))}
-              </div>
+                    </div>
+                  ))}
+                </div>
 
-              {(!followData?.data?.length ||
-                !latestData?.data?.length ||
-                !forYouData?.data?.length) && (
-                <p style={{ textAlign: "center" }}>
-                  <b>You have seen all videos</b>
-                </p>
-              )}
-            </>
+                {(!followData?.data?.length ||
+                  !latestData?.data?.length ||
+                  !forYouData?.data?.length) && (
+                  <p style={{ textAlign: "center" }}>
+                    <b>You have seen all videos</b>
+                  </p>
+                )}
+              </>
+            )
           )}
+
+          {/* {!isLoading && !isError && (
+          
+          )} */}
+        </div>
+      ) : currentTab == "explore" ? (
+        <div className="w-screen">
+          <TopNavbar currentTab={currentTab} onTabClick={handleTabClick} />
+          <Explorer />
         </div>
       ) : (
         <TwoColumns

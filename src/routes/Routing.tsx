@@ -6,6 +6,7 @@ import More from "@/page/explore/comp/More";
 import Wallet from "@/page/wallet/Wallet";
 import Invite from "@/page/wallet/comp/Invite";
 import TranHist from "@/page/wallet/comp/TranHist";
+import Loader from "@/components/shared/loader";
 import Recharge from "@/page/wallet/page/Recharge";
 import Withdraw from "@/page/wallet/page/Withdraw";
 
@@ -16,6 +17,8 @@ const Profile = lazy(() => import("../page/profile/Profile"));
 const ProfileDetail = lazy(() => import("../page/profile/ProfileDetail"));
 const Settings = lazy(() => import("../page/profile/Settings"));
 const Noti = lazy(() => import("../page/profile/noti/Noti"));
+const SystemNoti = lazy(() => import("../page/profile/noti/SystemNoti"));
+const BalanceNoti = lazy(() => import("../page/profile/noti/BalanceNoti"));
 const SecurityQuestion = lazy(() => import("../page/profile/SecurityQuestion"));
 const Login = lazy(() => import("../page/auth/Login"));
 const Register = lazy(() => import("../page/auth/Register"));
@@ -28,7 +31,7 @@ const Routing = () => {
     {
       path: paths.login,
       element: (
-        <Suspense fallback={<p>loading...</p>}>
+        <Suspense fallback={<Loader />}>
           <Login />
         </Suspense>
       ),
@@ -36,7 +39,7 @@ const Routing = () => {
     {
       path: paths.regiter,
       element: (
-        <Suspense fallback={<p>loading...</p>}>
+        <Suspense fallback={<Loader />}>
           <Register />
         </Suspense>
       ),
@@ -44,7 +47,7 @@ const Routing = () => {
     {
       path: paths.upload,
       element: (
-        <Suspense fallback={<p>loading...</p>}>
+        <Suspense fallback={<Loader />}>
           <RootLayout>
             <UploadComponent />
           </RootLayout>
@@ -54,7 +57,7 @@ const Routing = () => {
     {
       path: paths.upload_process,
       element: (
-        <Suspense fallback={<p>loading...</p>}>
+        <Suspense fallback={<Loader />}>
           <UploadProcess />
         </Suspense>
       ),
@@ -62,7 +65,7 @@ const Routing = () => {
     {
       path: paths.otp,
       element: (
-        <Suspense fallback={<p>loading...</p>}>
+        <Suspense fallback={<Loader />}>
           <OTP />
         </Suspense>
       ),
@@ -70,7 +73,7 @@ const Routing = () => {
     {
       path: paths.security_questions,
       element: (
-        <Suspense fallback={<p>loading...</p>}>
+        <Suspense fallback={<Loader />}>
           <SecurityQuestion />
         </Suspense>
       ),
@@ -78,7 +81,7 @@ const Routing = () => {
     {
       path: paths.home,
       element: (
-        <Suspense fallback={<p>loading...</p>}>
+        <Suspense fallback={<Loader />}>
           <RootLayout>
             <Home />
           </RootLayout>
@@ -88,7 +91,7 @@ const Routing = () => {
     {
       path: paths.explore,
       element: (
-        <Suspense fallback={<p>loading...</p>}>
+        <Suspense fallback={<Loader />}>
           <RootLayout>
             <Explore />
           </RootLayout>
@@ -98,7 +101,7 @@ const Routing = () => {
     {
       path: paths.application,
       element: (
-        <Suspense fallback={<p>loading...</p>}>
+        <Suspense fallback={<Loader />}>
           <RootLayout>
             <Application />
           </RootLayout>
@@ -108,7 +111,7 @@ const Routing = () => {
     {
       path: paths.profile,
       element: (
-        <Suspense fallback={<p>loading...</p>}>
+        <Suspense fallback={<Loader />}>
           <RootLayout>
             <Profile />
           </RootLayout>
@@ -118,7 +121,7 @@ const Routing = () => {
     {
       path: paths.profileDetail,
       element: (
-        <Suspense fallback={<p>loading...</p>}>
+        <Suspense fallback={<Loader />}>
           <ProfileDetail />
         </Suspense>
       ),
@@ -126,7 +129,7 @@ const Routing = () => {
     {
       path: paths.settings,
       element: (
-        <Suspense fallback={<p>loading...</p>}>
+        <Suspense fallback={<Loader />}>
           <Settings />
         </Suspense>
       ),
@@ -134,15 +137,31 @@ const Routing = () => {
     {
       path: paths.noti,
       element: (
-        <Suspense fallback={<p>loading...</p>}>
+        <Suspense fallback={<Loader />}>
           <Noti />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.system_noti,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <SystemNoti />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.balance_noti,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <BalanceNoti />
         </Suspense>
       ),
     },
     {
       path: paths.recommand_more,
       element: (
-        <Suspense fallback={<p>loading...</p>}>
+        <Suspense fallback={<Loader />}>
           <More />
         </Suspense>
       ),
@@ -150,7 +169,7 @@ const Routing = () => {
     // {
     //   path: paths.settings,
     //   element: (
-    //     <Suspense fallback={<p>loading...</p>}>
+    //     <Suspense fallback={<Loader />}>
     //       <Settings />
     //       path: paths.recommand_more, element: (
     //       <Suspense fallback={<p>Panding..</p>}>
@@ -170,7 +189,7 @@ const Routing = () => {
     {
       path: paths.wallet,
       element: (
-        <Suspense fallback={<p>loading...</p>}>
+        <Suspense fallback={<Loader />}>
           <Wallet />
         </Suspense>
       ),
@@ -178,7 +197,7 @@ const Routing = () => {
     {
       path: paths.wallet_invite,
       element: (
-        <Suspense fallback={<p>loading...</p>}>
+        <Suspense fallback={<Loader />}>
           <Invite />
         </Suspense>
       ),
@@ -186,7 +205,7 @@ const Routing = () => {
     {
       path: paths.wallet_history,
       element: (
-        <Suspense fallback={<p>loading...</p>}>
+        <Suspense fallback={<Loader />}>
           <TranHist />
         </Suspense>
       ),

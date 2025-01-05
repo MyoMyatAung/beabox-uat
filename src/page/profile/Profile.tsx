@@ -1,26 +1,25 @@
-import { Setting, Person, Wallet, Creater, Level } from "@/assets/profile";
-import MenuCard from "@/components/profile/menu-card";
 import Stats from "@/components/profile/stats";
+import { Person } from "@/assets/profile";
+
 import VideoTabs from "@/components/profile/video-tabs";
 import { stats } from "./data";
-import { FaAngleRight } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { paths } from "@/routes/paths";
 import { useGetMyProfileQuery } from "@/store/api/profileApi";
 import { useSelector } from "react-redux";
-import { ChevronRight, Menu, UserPen, Bell } from "lucide-react";
+import { ChevronRight, UserPen, Bell } from "lucide-react";
 import { BsPatchCheckFill } from "react-icons/bs";
 import { Button } from "@/components/ui/button";
 import SettingBtn from "@/components/profile/setting-btn";
+import ProfileAvatar from "@/components/profile/profile-avatar";
 
 const Profile = () => {
   const { data } = useGetMyProfileQuery("");
-  // console.log(data?.data, "data");
   const user = useSelector((state: any) => state.persist.user);
   // console.log(data, user);
 
   return (
-    <div className="px-5 max-h-screen no-scrollbar">
+    <div className="px-5 max-h-screen no-scrollbar profile-bg">
       <div className="flex gap-3 my-5 justify-end">
         <Link
           to={paths.noti}
@@ -32,30 +31,35 @@ const Profile = () => {
       </div>
       {/* login  */}
       <div className="w-full flex items-center gap-3 py-5">
-        <div className="w-[58px] h-[58px] rounded-full bg-[#FFFFFF12] flex justify-center items-center">
-          <Person />
-        </div>
         {!user?.token ? (
-          <Link to={paths.login} className="flex items-center gap-2">
+          <div className="w-[58px] h-[58px] rounded-full bg-[#FFFFFF12] flex justify-center items-center p-2">
+            <Person />
+          </div>
+        ) : (
+          <ProfileAvatar />
+        )}
+        {!user?.token ? (
+          <Link to={paths.login} className="flex items-center gap-2 flex-1">
             <span className="text-[18px] ">Login Or Sign Up</span>
             <ChevronRight size={18} />
           </Link>
         ) : (
-          <div className="">
+          <div className="flex-1">
             <p className="text-[18px] flex items-center gap-2">
-              {data?.data?.username}{" "}
+              {data?.data?.nickname}
               <span>
                 <BsPatchCheckFill className="text-[#888]" />
               </span>{" "}
             </p>
-            <div className="flex items-center gap-2 mt-1">
-              <p className="flex items-center bg-[#F9DDF5] text-[#625386] text-[12px] font-bold py-[0.3px] px-5 rounded-full relative">
+            <div className="flex items-start gap-2 mt-1">
+              <img src={data?.data?.level} className="w-14" alt="" />
+              {/* <p className="flex items-center bg-[#F9DDF5] text-[#625386] text-[12px] font-bold py-[0.3px] px-5 rounded-full relative">
                 <div className="absolute -left-3">
                   <Level />
                 </div>
                 <span>Lv 1</span>
-              </p>
-              <p className="text-[14px]">(ID {data?.data?.id})</p>
+              </p> */}
+              <p className="text-[14px]">(ID {data?.data?.user_code})</p>
             </div>
           </div>
           // <button
