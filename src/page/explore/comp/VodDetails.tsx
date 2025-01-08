@@ -5,14 +5,21 @@ import "../../home/home.css";
 import { ChevronLeft } from "lucide-react";
 import search from "../../../assets/explore/search.svg";
 import cmt from "../../../assets/explore/cmt.svg";
+import VideoSidebar from "@/page/home/components/VideoSidebar";
+import { useGetConfigQuery } from "@/page/home/services/homeApi";
+import ShowHeart from "@/page/home/components/ShowHeart";
 
 interface VodDetailsProps {
   setshow: (value: boolean) => void;
 }
 
 const VodDetails: React.FC<VodDetailsProps> = ({ setshow }) => {
+  const [showHeart, setShowHeart] = useState(false);
   const { files } = useSelector((state: any) => state.explore);
   const [showFullTitle, setShowFullTitle] = useState(false);
+  const [countNumber, setCountNumber] = useState(0); // New state for counting clicks
+  const [countdown, setCountdown] = useState(3);
+  const { data: config } = useGetConfigQuery({});
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -26,8 +33,10 @@ const VodDetails: React.FC<VodDetailsProps> = ({ setshow }) => {
     setShowFullTitle((prev) => !prev);
   };
 
+  console.log(files);
+
   return (
-    <div className="fixed top-0 inset-0 z-[97919] bg-black">
+    <div className="fixed top-0 inset-0 z-[99999] bg-black">
       {/* Header */}
       <div className="absolute top-0 z-[979191] flex gap-[6px] py-[30px] px-[20px] w-full">
         <button className="text-white" onClick={() => setshow(false)}>
@@ -47,6 +56,20 @@ const VodDetails: React.FC<VodDetailsProps> = ({ setshow }) => {
           thumbnail={files.files[0].thumbnail}
           src={files.files[0].resourceURL}
         />
+        <VideoSidebar
+          likes={files?.like_count}
+          is_liked={files?.is_liked}
+          messages={files?.comment_count}
+          post_id={files?.post_id}
+          setCountNumber={setCountNumber}
+          setCountdown={setCountdown}
+          setShowHeart={setShowHeart}
+          showHeart={showHeart}
+          countdown={countdown}
+          config={config?.data}
+          image={files?.preview_image}
+        />
+        {showHeart && <ShowHeart countNumber={countNumber} />}
 
         {/* Footer */}
         <div className="absolute bottom-[50px] z-[979191] flex flex-col pl-[20px] pr-[40px] text-white">
@@ -74,7 +97,10 @@ const VodDetails: React.FC<VodDetailsProps> = ({ setshow }) => {
           </span>
         </div>
         <div className=" mx-[10px] bg-white/20 flex gap-[10px] rounded-[12px] px-[20px] py-[6px]">
-          <input className=" my-[10px] w-full bg-transparent focus:outline-none" type="text" />
+          <input
+            className=" my-[10px] w-full bg-transparent focus:outline-none"
+            type="text"
+          />
           <img src={cmt} alt="" />
         </div>
       </div>
