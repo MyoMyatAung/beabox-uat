@@ -19,7 +19,7 @@ const ShareOverlay: React.FC<any> = ({
   if (!alertVisible && !isClosing) return null;
 
   return ReactDOM.createPortal(
-    <div className="fixed inset-0 z-[9999] flex justify-center items-end">
+    <div className="fixed inset-0 z-[999999] flex justify-center items-end">
       <div
         className="absolute inset-0 bg-transparent bg-opacity-80"
         onClick={handleClose}
