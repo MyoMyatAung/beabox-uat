@@ -2,8 +2,6 @@
   scrollbar-width: none;
 }
 
-
-
 .chinese_photo {
   background: linear-gradient(
     180deg,
@@ -61,4 +59,9 @@
   scrollbar-width: none;
 }
 
-
+.tip_comment {
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(16, 16, 16, 0.6);
+  backdrop-filter: blur(4px);
+}
