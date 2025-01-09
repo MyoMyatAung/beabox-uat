@@ -1,17 +1,27 @@
 import React, { useEffect, useState } from "react";
 import pizza from "../../../assets/explore/pizza.png";
-import { useGetExploreHeaderQuery } from "@/store/api/explore/exploreApi";
+import {
+  useGetApplicationAdsQuery,
+  useGetExploreHeaderQuery,
+} from "@/store/api/explore/exploreApi";
 interface PoppizzaProps {}
 
 const Poppizza: React.FC<PoppizzaProps> = ({}) => {
   const [ad, setad] = useState([]);
   const { data, isLoading } = useGetExploreHeaderQuery("");
+  const { data: gg } = useGetApplicationAdsQuery("");
+  // console.log(gg)
   useEffect(() => {
-    if (data?.data) {
-      const cur = data?.data?.ads?.application?.apps;
+    // if (data?.data) {
+    //   const cur = data?.data?.ads?.application?.apps;
+    //   setad(cur);
+    // }
+    if (gg?.data) {
+      const cur = gg?.data.application[2].apps;
+      console.log(cur , "cur")
       setad(cur);
     }
-  }, [data, ad]);
+  }, [gg, ad]);
 
   return (
     <div className=" pt-[20px]">
@@ -35,9 +45,9 @@ const Poppizza: React.FC<PoppizzaProps> = ({}) => {
         </div>
       ) : (
         <div className=" grid grid-cols-5 gap-[20px]">
-          {ad.map((app: any) => (
+          {ad?.map((app: any) => (
             <a
-            key={app.id}
+              key={app.id}
               href={app.url}
               target="_blink"
               className=" flex flex-col justify-center items-center gap-[4px]"

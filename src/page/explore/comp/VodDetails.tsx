@@ -8,6 +8,7 @@ import cmt from "../../../assets/explore/cmt.svg";
 import VideoSidebar from "@/page/home/components/VideoSidebar";
 import { useGetConfigQuery } from "@/page/home/services/homeApi";
 import ShowHeart from "@/page/home/components/ShowHeart";
+import { usePostCommentExpMutation } from "@/store/api/explore/exploreApi";
 
 interface VodDetailsProps {
   setshow: (value: boolean) => void;
@@ -20,6 +21,9 @@ const VodDetails: React.FC<VodDetailsProps> = ({ setshow }) => {
   const [countNumber, setCountNumber] = useState(0); // New state for counting clicks
   const [countdown, setCountdown] = useState(3);
   const { data: config } = useGetConfigQuery({});
+  const [content, setContent] = useState<string>("");
+  const [postComment] = usePostCommentExpMutation();
+  const [showTip, setShowTip] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -33,10 +37,39 @@ const VodDetails: React.FC<VodDetailsProps> = ({ setshow }) => {
     setShowFullTitle((prev) => !prev);
   };
 
-  console.log(files);
+  const handleCommentPost = async () => {
+    // e.preventDefault()
+    if (!content.trim()) return;
+    console.log(content);
+
+    try {
+      const { data } = await postComment({
+        post_id: files.post_id,
+        content: content,
+      }).unwrap();
+      console.log(data);
+      if (data?.data) {
+        setShowTip(true);
+        setTimeout(() => {
+          setShowTip(false);
+        }, 2000);
+      }
+    } catch (error) {
+      console.error("Failed to post reply:", error);
+    }
+    setContent("");
+  };
 
   return (
-    <div className="fixed top-0 inset-0 z-[99999] bg-black">
+    <div className="fixed top-0 inset-0 z-[99999] bg-black w-screen overflow-hidden">
+      {/* tip */}
+      {showTip && (
+        <div className="absolute top-[100px] z-[999991] w-screen flex justify-center">
+          <div className="py-[8px] px-[12px] text-white text-[14px] font-[500] leading-[20px] tip_comment">
+            Comment added
+          </div>
+        </div>
+      )}
       {/* Header */}
       <div className="absolute top-0 z-[979191] flex gap-[6px] py-[30px] px-[20px] w-full">
         <button className="text-white" onClick={() => setshow(false)}>
@@ -98,10 +131,14 @@ const VodDetails: React.FC<VodDetailsProps> = ({ setshow }) => {
         </div>
         <div className=" mx-[10px] bg-white/20 flex gap-[10px] rounded-[12px] px-[20px] py-[6px]">
           <input
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
             className=" my-[10px] w-full bg-transparent focus:outline-none"
             type="text"
           />
-          <img src={cmt} alt="" />
+          <button onClick={handleCommentPost}>
+            <img src={cmt} alt="" />
+          </button>
         </div>
       </div>
       {/* cmt */}
