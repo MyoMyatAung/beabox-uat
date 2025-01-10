@@ -30,7 +30,7 @@ const Search: React.FC<SearchProps> = ({}) => {
       {/* header */}
       <div className=" pb-[32px] pt-[20px] flex justify-between items-center gap-[10px]">
         <img
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/")}
           className=" pt-[6px]"
           src={back}
           alt=""

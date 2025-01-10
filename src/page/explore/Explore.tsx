@@ -50,7 +50,7 @@ const Explore = () => {
           <PopApp />
           <div className="mt-[20px] relative">
             <Header activeTab={activeTab} setActiveTab={setActiveTab} />
-            {/* <Swiper
+            <Swiper
               className=""
               onSlideChange={handleSlideChange}
               onSwiper={(swiper) => (swiperRef.current = swiper)}
@@ -58,29 +58,29 @@ const Explore = () => {
               spaceBetween={10}
               loop={true}
             >
-              <SwiperSlide> */}
+              <SwiperSlide>
                 {activeTab === "Recommend" && (
                   <div className="">
                     <Recommand setshow={setshow} title="Chinese Drama" />
                     <Recommand setshow={setshow} title="Latest Drama" />
                   </div>
                 )}
-              {/* </SwiperSlide> */}
-              {/* <SwiperSlide> */}
+              </SwiperSlide>
+              <SwiperSlide>
                 {activeTab === "Latest" && (
                   <div className="">
                     <Latest setshow={setshow} />
                   </div>
                 )}
-              {/* </SwiperSlide>
-              <SwiperSlide> */}
+              </SwiperSlide>
+              <SwiperSlide>
                 {activeTab === "Hollywood" && (
                   <div className="">
                     <Latest setshow={setshow} />
                   </div>
                 )}
-              {/* </SwiperSlide>
-            </Swiper> */}
+              </SwiperSlide>
+            </Swiper>
           </div>
         </div>
       </div>
