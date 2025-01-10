@@ -9,6 +9,8 @@ import TranHist from "@/page/wallet/comp/TranHist";
 import Loader from "@/components/shared/loader";
 import Recharge from "@/page/wallet/page/Recharge";
 import Withdraw from "@/page/wallet/page/Withdraw";
+import Search from "@/page/search/Search";
+import Results from "@/page/search/page/Results";
 
 const Home = lazy(() => import("../page/home/Home"));
 const Explore = lazy(() => import("../page/explore/Explore"));
@@ -223,6 +225,22 @@ const Routing = () => {
       element: (
         <Suspense fallback={<p>loading...</p>}>
           <Withdraw />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.search,
+      element: (
+        <Suspense fallback={<p>loading...</p>}>
+          <Search />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.search_result,
+      element: (
+        <Suspense fallback={<p>loading...</p>}>
+          <Results />
         </Suspense>
       ),
     },
