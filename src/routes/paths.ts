@@ -20,4 +20,6 @@ export const paths = {
   wallet_history: "/wallet/Transition",
   wallet_recharge : '/wallet/recharge',
   wallet_withdraw : '/wallet/withdraw',
+  search : "/search_overlay",
+  search_result : "/search"
 };

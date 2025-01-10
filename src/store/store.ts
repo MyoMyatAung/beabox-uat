@@ -10,11 +10,12 @@ import { walletApi } from "./api/wallet/walletApi";
 import { exploreApi } from "./api/explore/exploreApi";
 import { homeApi } from "../page/home/services/homeApi";
 import exploreSlice from "./slices/exploreSlice";
+import HistorySlice from "@/page/search/slice/HistorySlice";
 
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["persist"], // Reducers you want to persist
+  whitelist: ["persist","history"], // Reducers you want to persist
 };
 
 const rootReducer = combineReducers({
@@ -23,6 +24,7 @@ const rootReducer = combineReducers({
   profile: profileSlice,
   persist: persistSlice,
   explore : exploreSlice,
+  history : HistorySlice,
   [profileApi.reducerPath]: profileApi.reducer,
   [authApi.reducerPath]: authApi.reducer,
   [walletApi.reducerPath]: walletApi.reducer,

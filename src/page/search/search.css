@@ -1,0 +1,19 @@
+.search_input {
+  border-radius: 100px;
+  background: #171717;
+}
+
+.search_btn {
+  background: var(
+    --Purple-Gradient,
+    linear-gradient(315deg, #cd3eff 0%, #ffb2e0 100%)
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.history_box {
+  border-radius: 100px;
+  background: rgba(58, 58, 58, 0.2);
+}

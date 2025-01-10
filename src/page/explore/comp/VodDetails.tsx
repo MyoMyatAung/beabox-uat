@@ -9,6 +9,7 @@ import VideoSidebar from "@/page/home/components/VideoSidebar";
 import { useGetConfigQuery } from "@/page/home/services/homeApi";
 import ShowHeart from "@/page/home/components/ShowHeart";
 import { usePostCommentExpMutation } from "@/store/api/explore/exploreApi";
+import { useNavigate } from "react-router-dom";
 
 interface VodDetailsProps {
   setshow: (value: boolean) => void;
@@ -24,6 +25,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({ setshow }) => {
   const [content, setContent] = useState<string>("");
   const [postComment] = usePostCommentExpMutation();
   const [showTip, setShowTip] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -43,11 +45,11 @@ const VodDetails: React.FC<VodDetailsProps> = ({ setshow }) => {
     console.log(content);
 
     try {
-      const { data } = await postComment({
+      const { data }: any = await postComment({
         post_id: files.post_id,
         content: content,
       }).unwrap();
-      console.log(data);
+      // console.log(data);
       if (data?.data) {
         setShowTip(true);
         setTimeout(() => {
@@ -75,7 +77,10 @@ const VodDetails: React.FC<VodDetailsProps> = ({ setshow }) => {
         <button className="text-white" onClick={() => setshow(false)}>
           <ChevronLeft />
         </button>
-        <div className="bg-white/10 rounded-[100px] w-full flex justify-centr py-[8px] px-[15px] items-center gap-[12px]">
+        <div
+          onClick={() => navigate("/search_overlay")}
+          className="bg-white/10 rounded-[100px] w-full flex justify-centr py-[8px] px-[15px] items-center gap-[12px]"
+        >
           <img className="w-[22px] h-[22px]" src={search} alt="" />
           <span className="text-[14px] font-[400] text-white/40">
             {files.tag[0]}
