@@ -17,6 +17,7 @@ const SecurityQuestion = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const registerUser = useSelector((state: any) => state.persist.registerUser);
+  const user = useSelector((state: RootState) => state.persist.user);
 
   const [storeSecurityQues, { isLoading }] = useStoreSecurityQuesMutation();
 
@@ -35,7 +36,7 @@ const SecurityQuestion = () => {
         })
       );
     }
-    navigate(paths.login);
+    user?.token ? navigate(paths.settings) : navigate(paths.login);
   };
 
   return (
