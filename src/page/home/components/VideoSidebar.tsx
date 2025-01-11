@@ -8,6 +8,8 @@ import qr from "../qr.png";
 import spider from "../spider.png";
 import CommentOverlay from "./CommentOverlay";
 import ShareOverlay from "./ShareOverlay";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 function VideoSidebar({
   likes,
@@ -17,6 +19,7 @@ function VideoSidebar({
   setCountdown,
   setCountNumber,
   setShowHeart,
+  countNumber,
   showHeart,
   countdown,
   config,
@@ -31,6 +34,7 @@ function VideoSidebar({
   setShowHeart: any;
   showHeart: any;
   countdown: any;
+  countNumber: any;
   config: any;
   image: any;
 }) {
@@ -44,8 +48,11 @@ function VideoSidebar({
   const [commentsVisible, setCommentsVisible] = useState(false);
   const [comments, setComments] = useState<any[]>([]);
   const [isClosingAlert, setIsClosingAlert] = useState(false); // Tracks the closing animation state
-
+  const user = useSelector((state: any) => state.persist.user);
+  const navigate = useNavigate();
   const alertRef = useRef<HTMLDivElement>(null); // Reference to the alert box
+
+  console.log(user);
 
   // Handle comment list fetching and visibility
   const handleCommentList = async () => {
@@ -77,20 +84,70 @@ function VideoSidebar({
   };
 
   // Handle like click
-  const handleLike = async () => {
-    try {
-      setLikeCount((prev: any) => +prev + 1);
-      setIsLiked(true);
-      setCountNumber((prev: any) => prev + 1);
+  // const handleLike = async () => {
+  //   if (user?.token) {
+  //     try {
+  //       setLikeCount((prev: any) => +prev + 1);
+  //       setIsLiked(true);
+  // setCountNumber((prev: any) => prev + 1);
 
-      // Show the heart animation
-      setShowHeart(true);
-      setCountdown(3); // Reset countdown
-      await likePost({ post_id });
-    } catch (error) {
-      console.error("Error liking the post:", error);
-    }
-  };
+  // // Show the heart animation
+  // setShowHeart(true);
+  // setCountdown(3); // Reset countdown
+  //       await likePost({ post_id });
+  //     } catch (error) {
+  //       console.error("Error liking the post:", error);
+  //     }
+  //   } else {
+  //     navigate("/login");
+  //   }
+  // };
+
+  const handleLike = (() => {
+    const likeTimeout = useRef<NodeJS.Timeout | null>(null); // Track the debounce timeout
+    //const [pendingLikes, setPendingLikes] = useState(0); // Track pending likes locally
+
+    const handleLikeClick = () => {
+      if (user?.token) {
+        setShowHeart(true);
+        setCountdown(3); // Reset countdown
+        setLikeCount((prev: any) => +prev + 1);
+        setIsLiked(true);
+        // setPendingLikes((prev) => prev + 1);
+        setCountNumber((prev: any) => prev + 1);
+
+        // // Show the heart animation
+
+        // Clear any existing debounce timer
+        if (likeTimeout.current) {
+          clearTimeout(likeTimeout.current);
+        }
+
+        // Set up a new debounce timer
+        likeTimeout.current = setTimeout(async () => {
+          try {
+            await likePost({ post_id, count: countNumber + 1 }); // Pass the accumulated count to the API
+            setCountNumber(0); // Reset pending likes after a successful API call
+          } catch (error) {
+            console.error("Error liking the post:", error);
+          }
+        }, 1000); // Call API 1 second after the last click
+      } else {
+        navigate("/login");
+      }
+    };
+
+    useEffect(() => {
+      // Cleanup on component unmount
+      return () => {
+        if (likeTimeout.current) {
+          clearTimeout(likeTimeout.current);
+        }
+      };
+    }, []);
+
+    return handleLikeClick;
+  })();
 
   const handleShareClick = () => {
     setAlertVisible(true);

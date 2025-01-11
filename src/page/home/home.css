@@ -69,8 +69,8 @@ html {
   /* margin-top: -20px !important; */
   /* padding-bottom: 90px !important; */
   overflow: scroll;
-  width: 80%;
-  max-width: 480px;
+  width: 100%;
+  max-width: 1024px;
   scroll-snap-type: y mandatory;
 }
 
@@ -96,6 +96,27 @@ html {
   position: absolute;
   color: white;
   bottom: 40px;
+  margin-left: 10px;
+  display: flex;
+}
+
+.feed-input {
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.12);
+  display: flex;
+  /* padding: 8px 10px; */
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  align-self: stretch;
+}
+
+.videoFooter1 {
+  z-index: 99;
+
+  position: absolute;
+  color: white;
+  bottom: 100px;
   margin-left: 10px;
   display: flex;
 }
@@ -321,6 +342,22 @@ html {
   .inner_div {
     padding-left: 10px;
     padding-right: 10px;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .home-main {
+    width: 480px !important;
+  }
+  .app__videos {
+    max-width: 480px !important;
+    width: 480px !important;
+    height: 100vh !important;
+    border-radius: 0px !important;
+  }
+  .foot {
+    max-width: 100% !important;
+    width: 100% !important;
   }
 }
 

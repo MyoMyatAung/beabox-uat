@@ -17,7 +17,6 @@ const Search: React.FC<SearchProps> = ({}) => {
   const navigate = useNavigate();
 
   const handleSubmit = (event: any) => {
-    console.log(query)
     event.preventDefault();
 
     if (query.trim()) {
@@ -26,7 +25,7 @@ const Search: React.FC<SearchProps> = ({}) => {
     }
   };
   return (
-    <div className=" px-[16px] bg-[#16131C] h-screen">
+    <div className=" px-[16px] bg-[#16131C] h-full min-h-screen">
       {/* header */}
       <div className=" pb-[32px] pt-[20px] flex justify-between items-center gap-[10px]">
         <img
@@ -36,7 +35,7 @@ const Search: React.FC<SearchProps> = ({}) => {
           alt=""
         />
         <div
-        //   onSubmit={handleSubmit}
+          //   onSubmit={handleSubmit}
           className=" w-full px-[10px] py-[8px] search_input flex gap-[12px]"
         >
           <img src={sc} alt="" />
@@ -48,7 +47,9 @@ const Search: React.FC<SearchProps> = ({}) => {
             type="text"
           />
         </div>
-        <button onClick={handleSubmit} className="search_btn">Search</button>
+        <button onClick={handleSubmit} className="search_btn">
+          Search
+        </button>
       </div>
       {/* initial */}
       <History />

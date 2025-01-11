@@ -1,9 +1,15 @@
 import heart from "../heart.png";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-const ShowHeart = ({ countNumber }: { countNumber: any }) => {
+const ShowHeart = ({
+  countNumber,
+  username,
+}: {
+  countNumber: any;
+  username: any;
+}) => {
   return (
-    <div className="absolute bottom-[130px] left-[10px]  z-[99]">
+    <div className="absolute bottom-[200px] left-[10px]  z-[99]">
       <div className="">
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-2">
@@ -11,7 +17,7 @@ const ShowHeart = ({ countNumber }: { countNumber: any }) => {
               <AvatarImage src="https://i.pinimg.com/236x/64/bf/60/64bf60f08e226ae662e83a459a28a9bf.jpg" />
               <AvatarFallback>SM</AvatarFallback>
             </Avatar>
-            <span className="like_user">Tesing Name</span>
+            <span className="like_user">{username}</span>
           </div>
           <div className="flex items-end">
             <img src={heart} width={42} height={42} alt="" />

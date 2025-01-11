@@ -7,6 +7,8 @@ import {
   usePostCommentMutation,
   useReplyListMutation,
 } from "../services/homeApi";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 interface CommentOverlayProps {
   commentsVisible: boolean;
@@ -40,7 +42,8 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
   const [getReply] = useReplyListMutation();
   const [commentReaction] = useCommentReactionMutation();
   const [isClosing, setIsClosing] = useState(false); // Tracks whether the portal is closing
-
+  const user = useSelector((state: any) => state.persist.user);
+  const navigate = useNavigate();
   const handleReplyClick = (
     commentId: number,
     replyId: number | null = null
@@ -58,19 +61,23 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
     commentId: number,
     replyId?: number | null
   ) => {
-    if (!replyContent.trim()) return;
-    try {
-      await postComment({
-        post_id: post_id,
-        content: replyContent,
-        comment_id: commentId,
-        reply_id: replyId || undefined,
-      }).unwrap();
-      setActiveReply({ commentId: null, replyId: null });
-      setReplyContent("");
-      refetchComments();
-    } catch (error) {
-      console.error("Failed to post reply:", error);
+    if (user?.token) {
+      if (!replyContent.trim()) return;
+      try {
+        await postComment({
+          post_id: post_id,
+          content: replyContent,
+          comment_id: commentId,
+          reply_id: replyId || undefined,
+        }).unwrap();
+        setActiveReply({ commentId: null, replyId: null });
+        setReplyContent("");
+        refetchComments();
+      } catch (error) {
+        console.error("Failed to post reply:", error);
+      }
+    } else {
+      navigate("/login");
     }
   };
 
@@ -135,17 +142,21 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
     }));
   };
   const handleComment = async () => {
-    if (!content.trim()) return;
+    if (user?.token) {
+      if (!content.trim()) return;
 
-    try {
-      await postComment({
-        post_id: post_id, // Assuming all comments belong to the same post
-        content: content,
-      }).unwrap();
-      setContent("");
-      refetchComments();
-    } catch (error) {
-      console.error("Failed to post reply:", error);
+      try {
+        await postComment({
+          post_id: post_id, // Assuming all comments belong to the same post
+          content: content,
+        }).unwrap();
+        setContent("");
+        refetchComments();
+      } catch (error) {
+        console.error("Failed to post reply:", error);
+      }
+    } else {
+      navigate("/login");
     }
   };
   const handleLoadMore = async (comment_id: number, last_reply_id: number) => {
@@ -537,10 +548,6 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
         </div>
         <div className="absolute bottom-0 add_comment w-full  py-3 ">
           <div className="flex items-center gap-2 px-4">
-            {/* <Avatar className="w-[40.25px] h-[40.25px] border-2 border-white">
-              <AvatarImage src="https://i.pinimg.com/236x/64/bf/60/64bf60f08e226ae662e83a459a28a9bf.jpg" />
-              <AvatarFallback>SM</AvatarFallback>
-            </Avatar> */}
             <input
               type="text"
               className="w-full p-[6px] bg-transparent border-none outline-none"

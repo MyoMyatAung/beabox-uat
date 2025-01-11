@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function VideoFooter({
+function FeedFooter({
   title,
   tags,
   city,
@@ -18,7 +18,7 @@ function VideoFooter({
   };
 
   return (
-    <div className="videoFooter">
+    <div className="videoFooter1">
       <div className="">
         <div className="flex items-center gap-3 mb-2">
           <div className="flex items-center gap-2">
@@ -101,4 +101,4 @@ function VideoFooter({
   );
 }
 
-export default VideoFooter;
+export default FeedFooter;
