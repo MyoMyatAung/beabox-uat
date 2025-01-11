@@ -157,4 +157,5 @@ input:checked + .slider:before {
     #271e42 40.61%,
     rgba(13, 12, 12, 0) 92.3%
   );
+  height: 100vh;
 }
