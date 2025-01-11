@@ -2,6 +2,7 @@ import { ChevronRight } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import chinese from "../../../assets/explore/chinese.png";
 import avatar from "../../../assets/explore/avatar.png";
+import uiLeft from "../../../assets/explore/uiLeftt.svg";
 import "../explore.css";
 import { useNavigate } from "react-router-dom";
 import { useGetExploreTagQuery } from "@/store/api/explore/exploreApi";
@@ -15,7 +16,7 @@ interface RecommandProps {
   // setshow : any
 }
 
-const Recommand: React.FC<RecommandProps> = ({ title  }) => {
+const Recommand: React.FC<RecommandProps> = ({ title }) => {
   const dispatch = useDispatch();
   const [list, setList] = useState([]);
   const { data, isLoading, refetch } = useGetExploreTagQuery({
@@ -36,8 +37,9 @@ const Recommand: React.FC<RecommandProps> = ({ title  }) => {
   };
   const showDetailsVod = (file: any) => {
     dispatch(setDetails(file));
-    navigate(paths.vod_details)
+    navigate(paths.vod_details);
   };
+  // console.log(data.data)
   return (
     <div className=" pb-[20px] px-[10px] pt-[10px] flex flex-col items-center">
       {/* header */}
@@ -45,10 +47,14 @@ const Recommand: React.FC<RecommandProps> = ({ title  }) => {
         <h1 className=" text-white text-[14px] font-[500] leading-[20px]">
           {title}
         </h1>
-        <ChevronRight
+        {/* <ChevronRight
+        color="#E8B9FF"
           onClick={() => navigate("/rec_more", { state: { title } })}
           className="rec_exp_more_btn px-[2px]"
-        />
+        /> */}
+        <div className="rec_exp_more_btn">
+          <img src={uiLeft} alt="" />
+        </div>
       </div>
       {/* content */}
       <div className=" py-[12px] grid grid-cols-2 justify-cente w-full items-cente  gap-[18px]">
@@ -64,19 +70,24 @@ const Recommand: React.FC<RecommandProps> = ({ title  }) => {
             <>
               {list?.slice(0, 4).map((card: any) => (
                 <div key={card.post_id} className="w-full">
-                  <div onClick={() => showDetailsVod(card)} className=" relative  chinese_photo">
+                  <div
+                    onClick={() => showDetailsVod(card)}
+                    className=" relative  chinese_photo"
+                  >
                     <img
                       className=" w-[175px] h-[100px] rounded-[8px] object-cover"
                       src={card.preview_image}
                       alt=""
                     />
-                    <div className=" absolute bottom-0 flex justify-between px-[15px] w-[175px]">
-                      <span className=" text-white text-[11px]  left-2">
-                        29.3k views
-                      </span>
-                      <span className=" text-white text-[11px]  right-0">
-                        00:23
-                      </span>
+                    <div className=" absolute bottom-0 flex justify-between px-[5px w-[165px]">
+                      <div className=" flex w-full justify-around">
+                        <span className=" text-white text-[11px]  left-2">
+                          29.3k views
+                        </span>
+                        <span className=" text-white text-[11px]  right-0">
+                          00:23
+                        </span>
+                      </div>
                     </div>
                   </div>
                   <h1 className="text-white text-[14px] font-[500] leading-[20px] py-[4px]">
