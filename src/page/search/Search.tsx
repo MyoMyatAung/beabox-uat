@@ -43,7 +43,7 @@ const Search: React.FC<SearchProps> = ({}) => {
             value={query}
             onChange={(e) => setQuery(e.target.value)} // Update the query state on input change
             placeholder="Search Videos"
-            className=" bg-transparent focus:outline-none text-[12px] font-[400] text-[#888] w-full"
+            className=" bg-transparent focus:outline-none text-[16px] font-[400] text-[#888] w-full"
             type="text"
           />
         </div>
