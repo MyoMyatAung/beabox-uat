@@ -42,7 +42,7 @@ const Explore = () => {
 
   return (
     <>
-      {show && <VodDetails setshow={setshow} />}
+      {/* {show && <VodDetails  />} */}
 
       <div className="flex justify-center items-center">
         <div className="explore_sec w-screen xl:w-[800px] flex flex-col justify-center items-cente px-[10px] pb-[100px] mt-14">
@@ -61,22 +61,22 @@ const Explore = () => {
               <SwiperSlide>
                 {activeTab === "Recommend" && (
                   <div className="">
-                    <Recommand setshow={setshow} title="Chinese Drama" />
-                    <Recommand setshow={setshow} title="Latest Drama" />
+                    <Recommand  title="Chinese Drama" />
+                    <Recommand  title="Latest Drama" />
                   </div>
                 )}
               </SwiperSlide>
               <SwiperSlide>
                 {activeTab === "Latest" && (
                   <div className="">
-                    <Latest setshow={setshow} />
+                    <Latest  />
                   </div>
                 )}
               </SwiperSlide>
               <SwiperSlide>
                 {activeTab === "Hollywood" && (
                   <div className="">
-                    <Latest setshow={setshow} />
+                    <Latest  />
                   </div>
                 )}
               </SwiperSlide>

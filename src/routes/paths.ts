@@ -24,5 +24,6 @@ export const paths = {
   wallet_recharge : '/wallet/recharge',
   wallet_withdraw : '/wallet/withdraw',
   search : "/search_overlay",
-  search_result : "/search"
+  search_result : "/search",
+  vod_details : "/vod_details"
 };

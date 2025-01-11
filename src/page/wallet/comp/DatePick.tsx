@@ -101,7 +101,7 @@ const DatePick: React.FC<any> = ({
             </div>
             <div className="fixed z-[99] right-20 top-[60px]">
               <Swiper
-                className="h-[100px]"
+                className="h-[120px]"
                 direction="vertical"
                 spaceBetween={1}
                 slidesPerView={2}
@@ -112,7 +112,7 @@ const DatePick: React.FC<any> = ({
               >
                 {years.map((yr) => (
                   <SwiperSlide key={yr}>
-                    <h1 className="py-[10px] text-white text-[20px] font-[400]">
+                    <h1 className="py-[12px] text-white text-[20px] font-[400]">
                       {yr}
                     </h1>
                   </SwiperSlide>

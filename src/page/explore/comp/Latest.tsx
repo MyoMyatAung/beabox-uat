@@ -7,17 +7,20 @@ import { Person } from "@/assets/profile";
 import Loader from "../../../page/home/vod_loader.gif";
 import { useDispatch, useSelector } from "react-redux";
 import { setDetails } from "@/store/slices/exploreSlice";
+import { useNavigate } from "react-router-dom";
+import { paths } from "@/routes/paths";
 
 interface LatestPorp {
-  setshow: any;
+  // setshow: any;
 }
 
-const Latest: React.FC<LatestPorp> = ({ setshow }) => {
-  const dispatch = useDispatch()
+const Latest: React.FC<LatestPorp> = ({}) => {
+  const dispatch = useDispatch();
   const [waterfall, setWaterFall] = useState<any[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
   const { data, isLoading } = useGetExploreListQuery({ id: 3, page });
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (data?.data) {
@@ -42,10 +45,10 @@ const Latest: React.FC<LatestPorp> = ({ setshow }) => {
     setPage((prevPage) => prevPage + 1);
   };
 
-  const showDetailsVod = (file : any) => {
-    dispatch(setDetails(file))
-    setshow(true)
-  }
+  const showDetailsVod = (file: any) => {
+    dispatch(setDetails(file));
+    navigate(paths.vod_details);
+  };
   return (
     <div className=" flex w-full justify-around items-cente">
       <div
@@ -126,7 +129,7 @@ const Latest: React.FC<LatestPorp> = ({ setshow }) => {
               endMessage={
                 <div className="flex bg-whit pt-20 justify-center items-center  w-screen absolute bottom-[-20px] left-[-20px]">
                   <p className="py-10" style={{ textAlign: "center" }}>
-                    <b>No more yet!</b>
+                    {/* <b>No more yet!</b> */}
                   </p>
                 </div>
               }

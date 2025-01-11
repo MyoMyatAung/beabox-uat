@@ -11,6 +11,7 @@ import Recharge from "@/page/wallet/page/Recharge";
 import Withdraw from "@/page/wallet/page/Withdraw";
 import Search from "@/page/search/Search";
 import Results from "@/page/search/page/Results";
+import VodDetails from "@/page/explore/comp/VodDetails";
 
 const Home = lazy(() => import("../page/home/Home"));
 const Explore = lazy(() => import("../page/explore/Explore"));
@@ -242,7 +243,7 @@ const Routing = () => {
     {
       path: paths.wallet_recharge,
       element: (
-        <Suspense fallback={<p>loading...</p>}>
+        <Suspense fallback={<Loader />}>
           <Recharge />
         </Suspense>
       ),
@@ -250,7 +251,7 @@ const Routing = () => {
     {
       path: paths.wallet_withdraw,
       element: (
-        <Suspense fallback={<p>loading...</p>}>
+        <Suspense fallback={<Loader />}>
           <Withdraw />
         </Suspense>
       ),
@@ -258,7 +259,7 @@ const Routing = () => {
     {
       path: paths.search,
       element: (
-        <Suspense fallback={<p>loading...</p>}>
+        <Suspense fallback={<Loader />}>
           <Search />
         </Suspense>
       ),
@@ -266,8 +267,16 @@ const Routing = () => {
     {
       path: paths.search_result,
       element: (
-        <Suspense fallback={<p>loading...</p>}>
+        <Suspense fallback={<Loader />}>
           <Results />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.vod_details,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <VodDetails />
         </Suspense>
       ),
     },

@@ -8,15 +8,15 @@ import { useGetExploreTagQuery } from "@/store/api/explore/exploreApi";
 import { Person } from "@/assets/profile";
 import { useDispatch } from "react-redux";
 import { setDetails } from "@/store/slices/exploreSlice";
+import { paths } from "@/routes/paths";
 
 interface RecommandProps {
   title: string;
-  setshow : any
+  // setshow : any
 }
 
-const Recommand: React.FC<RecommandProps> = ({ title ,setshow }) => {
+const Recommand: React.FC<RecommandProps> = ({ title  }) => {
   const dispatch = useDispatch();
-
   const [list, setList] = useState([]);
   const { data, isLoading, refetch } = useGetExploreTagQuery({
     order: "popular",
@@ -36,7 +36,7 @@ const Recommand: React.FC<RecommandProps> = ({ title ,setshow }) => {
   };
   const showDetailsVod = (file: any) => {
     dispatch(setDetails(file));
-    setshow(true);
+    navigate(paths.vod_details)
   };
   return (
     <div className=" pb-[20px] px-[10px] pt-[10px] flex flex-col items-center">

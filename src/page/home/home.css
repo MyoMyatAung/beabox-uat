@@ -347,7 +347,7 @@ html {
 
 .like_text {
   color: #777;
-  font-family: Inter;
+  /* font-family: Inter; */
   font-size: 9.681px;
   font-style: normal;
   font-weight: 400;
@@ -367,7 +367,7 @@ html {
 
 .comment_name {
   color: #fff;
-  font-family: Inter;
+  /* font-family: Inter; */
   font-size: 12px;
   font-style: normal;
   font-weight: 500;
@@ -376,7 +376,7 @@ html {
 
 .comment_content {
   color: #fff;
-  font-family: Inter;
+  /* font-family: Inter; */
   font-size: 12px;
   font-style: normal;
   font-weight: 400;
@@ -385,7 +385,7 @@ html {
 
 .created_at_comment {
   color: #777;
-  font-family: Inter;
+  /* font-family: Inter; */
   font-size: 10px;
   font-style: normal;
   font-weight: 400;
@@ -406,7 +406,7 @@ html {
   align-items: center;
   gap: 4px;
   color: #fff;
-  font-family: Inter;
+  /* font-family: Inter; */
   font-size: 10px;
   font-style: normal;
   font-weight: 400;
