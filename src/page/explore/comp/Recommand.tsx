@@ -52,7 +52,10 @@ const Recommand: React.FC<RecommandProps> = ({ title }) => {
           onClick={() => navigate("/rec_more", { state: { title } })}
           className="rec_exp_more_btn px-[2px]"
         /> */}
-        <div className="rec_exp_more_btn">
+        <div
+          onClick={() => navigate("/rec_more", { state: { title } })}
+          className="rec_exp_more_btn"
+        >
           <img src={uiLeft} alt="" />
         </div>
       </div>
