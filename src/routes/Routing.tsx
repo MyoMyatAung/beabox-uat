@@ -11,6 +11,7 @@ import Recharge from "@/page/wallet/page/Recharge";
 import Withdraw from "@/page/wallet/page/Withdraw";
 import Search from "@/page/search/Search";
 import Results from "@/page/search/page/Results";
+import VodDetails from "@/page/explore/comp/VodDetails";
 
 const Home = lazy(() => import("../page/home/Home"));
 const Explore = lazy(() => import("../page/explore/Explore"));
@@ -27,6 +28,9 @@ const Register = lazy(() => import("../page/auth/Register"));
 const OTP = lazy(() => import("../page/auth/OTP"));
 const UploadComponent = lazy(() => import("../page/upload/Upload"));
 const UploadProcess = lazy(() => import("../page/upload/UploadProcess"));
+const Question = lazy(() => import("../page/profile/security/Question"));
+const Answer = lazy(() => import("../page/profile/security/Answer"));
+const Manage = lazy(() => import("../page/profile/security/Manage"));
 
 const Routing = () => {
   const router = createBrowserRouter([
@@ -77,6 +81,30 @@ const Routing = () => {
       element: (
         <Suspense fallback={<Loader />}>
           <SecurityQuestion />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.question,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <Question />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.answer,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <Answer />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.manage,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <Manage />
         </Suspense>
       ),
     },
@@ -215,7 +243,7 @@ const Routing = () => {
     {
       path: paths.wallet_recharge,
       element: (
-        <Suspense fallback={<p>loading...</p>}>
+        <Suspense fallback={<Loader />}>
           <Recharge />
         </Suspense>
       ),
@@ -223,7 +251,7 @@ const Routing = () => {
     {
       path: paths.wallet_withdraw,
       element: (
-        <Suspense fallback={<p>loading...</p>}>
+        <Suspense fallback={<Loader />}>
           <Withdraw />
         </Suspense>
       ),
@@ -231,7 +259,7 @@ const Routing = () => {
     {
       path: paths.search,
       element: (
-        <Suspense fallback={<p>loading...</p>}>
+        <Suspense fallback={<Loader />}>
           <Search />
         </Suspense>
       ),
@@ -239,8 +267,16 @@ const Routing = () => {
     {
       path: paths.search_result,
       element: (
-        <Suspense fallback={<p>loading...</p>}>
+        <Suspense fallback={<Loader />}>
           <Results />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.vod_details,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <VodDetails />
         </Suspense>
       ),
     },

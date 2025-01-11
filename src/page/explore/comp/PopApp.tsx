@@ -18,7 +18,7 @@ const Poppizza: React.FC<PoppizzaProps> = ({}) => {
     // }
     if (gg?.data) {
       const cur = gg?.data.application[2].apps;
-      console.log(cur , "cur")
+      // console.log(cur , "cur")
       setad(cur);
     }
   }, [gg, ad]);

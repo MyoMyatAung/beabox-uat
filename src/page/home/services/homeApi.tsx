@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const homeApi = createApi({
   reducerPath: "homeApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://107.148.47.94:8800/api/v1",
+    baseUrl: "https://77eewm.qdhgtch.com/api/v1",
     prepareHeaders: (headers, { getState }) => {
       const state = getState() as any;
       const accessToken = state.persist?.user?.token;

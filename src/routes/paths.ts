@@ -3,6 +3,9 @@ export const paths = {
   explore: "/explore",
   profile: "/profile",
   security_questions: "/security-questions",
+  question: "/security/question",
+  answer: "/security/answer",
+  manage: "/security/manage",
   settings: "/settings",
   profileDetail: "/profile-detail",
   application: "/application",
@@ -21,5 +24,6 @@ export const paths = {
   wallet_recharge : '/wallet/recharge',
   wallet_withdraw : '/wallet/withdraw',
   search : "/search_overlay",
-  search_result : "/search"
+  search_result : "/search",
+  vod_details : "/vod_details"
 };

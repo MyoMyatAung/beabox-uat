@@ -3,8 +3,14 @@ import { Play, NoVideo } from "@/assets/profile";
 import VideoGrid from "./video-grid";
 import { FaHeart } from "react-icons/fa";
 import { MdWatchLater } from "react-icons/md";
+import { useSelector } from "react-redux";
+import { useGetLikedPostQuery } from "@/store/api/profileApi";
 
 const VideoTabs = ({ login }: any) => {
+  const user = useSelector((state: any) => state.persist.user);
+  const { data } = useGetLikedPostQuery(user?.id);
+  console.log(data?.data, "liked videos");
+
   return (
     <Tabs defaultValue="liked" className="my-5">
       <TabsList className="grid w-full grid-cols-3 bg-transparent">
@@ -42,23 +48,23 @@ const VideoTabs = ({ login }: any) => {
         )}
       </TabsContent> */}
       <TabsContent value="liked">
-        {login ? (
-          <VideoGrid />
-        ) : (
+        {!login || data?.data?.length <= 0 ? (
           <div className="flex flex-col justify-center items-center w-full mt-[150px]">
             <NoVideo />
             <p className="text-[12px] text-[#888]">Oops! No videos here</p>
           </div>
+        ) : (
+          <VideoGrid data={data?.data} />
         )}
       </TabsContent>
       <TabsContent value="history">
-        {login ? (
-          <VideoGrid />
-        ) : (
+        {!login || data?.data?.length <= 0 ? (
           <div className="flex flex-col justify-center items-center w-full mt-[150px]">
             <NoVideo />
             <p className="text-[12px] text-[#888]">Oops! No videos here</p>
           </div>
+        ) : (
+          <VideoGrid data={data?.data} />
         )}
       </TabsContent>
     </Tabs>

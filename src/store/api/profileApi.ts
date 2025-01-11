@@ -3,11 +3,11 @@ import { RootState } from "../store";
 
 export const profileApi = createApi({
   reducerPath: "profileApi",
-  // baseQuery: fetchBaseQuery({ baseUrl: "http://107.148.47.94:8800/api/v1" }),
+  // baseQuery: fetchBaseQuery({ baseUrl: "https://77eewm.qdhgtch.com/api/v1" }),
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://107.148.47.94:8800/api/v1",
+    baseUrl: "https://77eewm.qdhgtch.com/api/v1",
     prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).persist?.user?.token; // Adjust 'auth.token' to match your Redux slice structure
+      const token = (getState() as RootState).persist?.user?.token;
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
       }
@@ -122,6 +122,18 @@ export const profileApi = createApi({
         body: region,
       }),
     }),
+    getLikedPost: builder.query<any, string>({
+      query: (user_id) => ({
+        url: `/user/liked-post?user_id=${user_id}`,
+        method: "GET",
+      }),
+    }),
+    getSecurityQuestions: builder.mutation<any, string>({
+      query: () => ({
+        url: `/get-security-question`,
+        method: "Post",
+      }),
+    }),
   }),
 });
 
@@ -139,4 +151,6 @@ export const {
   useGetRegionQuery,
   useChangeRegionMutation,
   useChangeNicknameMutation,
+  useGetLikedPostQuery,
+  useGetSecurityQuestionsMutation,
 } = profileApi;
