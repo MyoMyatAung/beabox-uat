@@ -78,7 +78,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
         </button>
         <div
           onClick={() => navigate("/search_overlay")}
-          className="bg-white/10 rounded-[100px] w-full flex justify-centr py-[8px] px-[15px] items-center gap-[12px]"
+          className="bg-[#77777760 bg-zinc-700 rounded-[100px] w-full flex justify-centr py-[8px] px-[15px] items-center gap-[12px]"
         >
           <img className="w-[22px] h-[22px]" src={search} alt="" />
           <span className="text-[14px] font-[400] text-white/40">
@@ -115,7 +115,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
         {showHeart && <ShowHeart countNumber={countNumber} />}
 
         {/* Footer */}
-        <div className="absolute bottom-[50px] z-[979191] flex flex-col text-white px-[10px]">
+        <div className="absolute w-screen bottom-[50px] z-[979191] flex flex-col text-white px-[10px]">
           <div className=" pr-[40px]">
             <span className="font-bold">{files.user.name}</span>
             <span>
@@ -146,11 +146,11 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
               )}
             </span>
           </div>
-          <div onClick={handleCommentPost} className=" mb-[5px] mt-[10px] bg-white/20 flex gap-[10px] rounded-[12px] px-[20px] py-[6px]">
+          <div onClick={handleCommentPost} className=" mb-[5px mt-[10px] bg-[#77777790 bg-zinc-700 flex gap-[10px] rounded-[12px] px-[20px] py-[6px]">
             <div
               // value={content}
               // onChange={(e) => setContent(e.target.value)}
-              className=" my-[10px h-[44px] w-full bg-transparent focus:outline-none"
+              className=" my-[10px h-[44px] w-full  focus:outline-none"
               // type="text"
             ></div>
             <button >

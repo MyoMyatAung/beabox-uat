@@ -58,7 +58,7 @@ const More: React.FC<MoreProps> = () => {
         {/* Header */}
         <div className=" flex justify-between pb-[12px]">
           <ChevronLeft
-            onClick={() => navigate("/explore")}
+            onClick={() => navigate("/")}
             className="rec_exp_more_btn px-[2px]"
           />
           <h1 className=" w-2/3 text-white text-[18px] font-[500]">{title}</h1>
