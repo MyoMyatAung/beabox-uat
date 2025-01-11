@@ -3,8 +3,14 @@ import { Play, NoVideo } from "@/assets/profile";
 import VideoGrid from "./video-grid";
 import { FaHeart } from "react-icons/fa";
 import { MdWatchLater } from "react-icons/md";
+import { useSelector } from "react-redux";
+import { useGetLikedPostQuery } from "@/store/api/profileApi";
 
 const VideoTabs = ({ login }: any) => {
+  const user = useSelector((state: any) => state.persist.user);
+  const { data } = useGetLikedPostQuery(user?.id);
+  console.log(data, "liked videos");
+
   return (
     <Tabs defaultValue="liked" className="my-5">
       <TabsList className="grid w-full grid-cols-3 bg-transparent">
