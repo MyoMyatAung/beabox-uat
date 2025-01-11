@@ -128,6 +128,12 @@ export const profileApi = createApi({
         method: "GET",
       }),
     }),
+    getSecurityQuestions: builder.mutation<any, string>({
+      query: () => ({
+        url: `/get-security-question`,
+        method: "Post",
+      }),
+    }),
   }),
 });
 
@@ -146,4 +152,5 @@ export const {
   useChangeRegionMutation,
   useChangeNicknameMutation,
   useGetLikedPostQuery,
+  useGetSecurityQuestionsMutation,
 } = profileApi;

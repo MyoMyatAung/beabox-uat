@@ -18,12 +18,11 @@ const SecurityQuestion = () => {
   const navigate = useNavigate();
   const registerUser = useSelector((state: any) => state.persist.registerUser);
 
-  const [storeSecurityQues, { data, isLoading }] =
-    useStoreSecurityQuesMutation();
+  const [storeSecurityQues, { isLoading }] = useStoreSecurityQuesMutation();
 
   const onSubmitHandler = async (e: any) => {
     e.preventDefault();
-    await storeSecurityQues({
+    const { data } = await storeSecurityQues({
       security_question: ques,
       answer: ans,
       rtoken: registerUser?.token,

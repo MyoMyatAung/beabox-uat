@@ -1,10 +1,16 @@
+import { useGetSecurityQuestionsMutation } from "@/store/api/profileApi";
 import { ShieldAlert } from "lucide-react";
-import React from "react";
+import React, { useEffect } from "react";
 import { FaAngleRight } from "react-icons/fa";
 import { useSelector } from "react-redux";
 
 const EditSecurity = () => {
   const securityQues = useSelector((state: any) => state.persist.securityQues);
+  const [getSecurityQuestions, { data }] = useGetSecurityQuestionsMutation();
+  useEffect(() => {
+    getSecurityQuestions();
+  }, []);
+  console.log(data, securityQues, "sq");
   return (
     <div>
       <div
