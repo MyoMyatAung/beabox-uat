@@ -7,6 +7,7 @@ import { useGetExploreTagQuery } from "@/store/api/explore/exploreApi";
 import { useDispatch } from "react-redux";
 import { setDetails } from "@/store/slices/exploreSlice";
 import VodDetails from "./VodDetails";
+import { paths } from "@/routes/paths";
 
 interface MoreProps {}
 
@@ -46,12 +47,13 @@ const More: React.FC<MoreProps> = () => {
 
   const showDetailsVod = (file: any) => {
     dispatch(setDetails(file));
-    setshow(true);
+    navigate(paths.vod_details)
+    // setshow(true);
   };
-console.log(list)
+// console.log(list)
   return (
     <>
-      {show && <VodDetails setshow={setshow} />}
+      {/* {show && <VodDetails setshow={setshow} />} */}
       <div className=" p-[20px]">
         {/* Header */}
         <div className=" flex justify-between pb-[12px]">
