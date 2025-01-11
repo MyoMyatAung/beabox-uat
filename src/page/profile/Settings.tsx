@@ -23,7 +23,7 @@ const Settings = ({
   const user = useSelector((state: any) => state.persist.user);
 
   return (
-    <div className="w-full h-screen px-5 flex flex-col items-center justify-between">
+    <div className="w-full h-screen px-5 flex flex-col items-center justify-between bg-[#16131C]">
       <div className="top flex flex-col gap-5 w-full">
         <div className="flex justify-between items-center py-5">
           <Link to={paths.profile}>
