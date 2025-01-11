@@ -5,9 +5,12 @@ import "../../home/home.css";
 import { ChevronLeft } from "lucide-react";
 import search from "../../../assets/explore/search.svg";
 import cmt from "../../../assets/explore/cmt.svg";
-import VideoSidebar from "@/page/home/components/VideoSidebar";
-import { useGetConfigQuery } from "@/page/home/services/homeApi";
-import ShowHeart from "@/page/home/components/ShowHeart";
+import VideoSidebar from "./VideoSidebar";
+import {
+  useCommentListMutation,
+  useGetConfigQuery,
+} from "@/page/home/services/homeApi";
+import ShowHeart from "./ShowHeart";
 import { usePostCommentExpMutation } from "@/store/api/explore/exploreApi";
 import { useNavigate } from "react-router-dom";
 
@@ -15,7 +18,8 @@ interface VodDetailsProps {
   // setshow: (value: boolean) => void;
 }
 
-const VodDetails: React.FC<VodDetailsProps> = ({  }) => {
+const VodDetails: React.FC<VodDetailsProps> = ({}) => {
+  const [commentsVisible, setCommentsVisible] = useState(false);
   const [showHeart, setShowHeart] = useState(false);
   const { files } = useSelector((state: any) => state.explore);
   const [showFullTitle, setShowFullTitle] = useState(false);
@@ -26,6 +30,9 @@ const VodDetails: React.FC<VodDetailsProps> = ({  }) => {
   const [postComment] = usePostCommentExpMutation();
   const [showTip, setShowTip] = useState(false);
   const navigate = useNavigate();
+  const [comments, setComments] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [getComments, { data: commentData }] = useCommentListMutation();
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -40,30 +47,22 @@ const VodDetails: React.FC<VodDetailsProps> = ({  }) => {
   };
 
   const handleCommentPost = async () => {
-    // e.preventDefault()
-    if (!content.trim()) return;
-    console.log(content);
-
+    setCommentsVisible(true);
+    setIsLoading(true);
     try {
-      const { data }: any = await postComment({
-        post_id: files.post_id,
-        content: content,
-      }).unwrap();
-      // console.log(data);
-      if (data?.data) {
-        setShowTip(true);
-        setTimeout(() => {
-          setShowTip(false);
-        }, 2000);
+      const response = await getComments({ post_id : files.post_id });
+      if (response && response.data) {
+        setComments(response && ((response as any).data.data as any[]));
       }
     } catch (error) {
-      console.error("Failed to post reply:", error);
+      console.error("Error fetching comment list:", error);
+    } finally {
+      setIsLoading(false); // End loading
     }
-    setContent("");
   };
-
+  // console.log(files);
   return (
-    <div className=" top-0 inset-0 z-[99999] bg-black w-screen overflow-hidden">
+    <div className="  z-[99999] bg-black w-screen ">
       {/* tip */}
       {showTip && (
         <div className="absolute top-[100px] z-[999991] w-screen flex justify-center">
@@ -89,12 +88,16 @@ const VodDetails: React.FC<VodDetailsProps> = ({  }) => {
       </div>
 
       {/* Video Player */}
-      <div className="app__videos h-fit">
+      <div className="app__videos">
         <Player
           thumbnail={files.files[0].thumbnail}
           src={files.files[0].resourceURL}
         />
         <VideoSidebar
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
+          comments={comments}
+          setComments={setComments}
           likes={files?.like_count}
           is_liked={files?.is_liked}
           messages={files?.comment_count}
@@ -106,44 +109,54 @@ const VodDetails: React.FC<VodDetailsProps> = ({  }) => {
           countdown={countdown}
           config={config?.data}
           image={files?.preview_image}
+          commentsVisible={commentsVisible}
+          setCommentsVisible={setCommentsVisible}
         />
         {showHeart && <ShowHeart countNumber={countNumber} />}
 
         {/* Footer */}
-        <div className="absolute bottom-[50px] z-[979191] flex flex-col pl-[20px] pr-[40px] text-white">
-          <span className="font-bold">{files.user.name}</span>
-          <span>
-            {showFullTitle ? (
-              <>
-                {files.title}{" "}
-                <button className="text-white/70 " onClick={handleToggleTitle}>
-                  see less
-                </button>
-              </>
-            ) : (
-              <>
-                {files.title.length > 80
-                  ? `${files.title.slice(0, 80)}... `
-                  : files.title}{" "}
-                {files.title.length > 80 && (
-                  <button className="text-white/70" onClick={handleToggleTitle}>
-                    see more
+        <div className="absolute bottom-[50px] z-[979191] flex flex-col text-white px-[10px]">
+          <div className=" pr-[40px]">
+            <span className="font-bold">{files.user.name}</span>
+            <span>
+              {showFullTitle ? (
+                <>
+                  {files.title}{" "}
+                  <button
+                    className="text-white/70 "
+                    onClick={handleToggleTitle}
+                  >
+                    see less
                   </button>
-                )}
-              </>
-            )}
-          </span>
-        </div>
-        <div className=" mx-[10px] mb-[20px] bg-white/20 flex gap-[10px] rounded-[12px] px-[20px] py-[6px]">
-          <input
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className=" my-[10px] w-full bg-transparent focus:outline-none"
-            type="text"
-          />
-          <button onClick={handleCommentPost}>
-            <img src={cmt} alt="" />
-          </button>
+                </>
+              ) : (
+                <>
+                  {files.title.length > 80
+                    ? `${files.title.slice(0, 80)}... `
+                    : files.title}{" "}
+                  {files.title.length > 80 && (
+                    <button
+                      className="text-white/70"
+                      onClick={handleToggleTitle}
+                    >
+                      see more
+                    </button>
+                  )}
+                </>
+              )}
+            </span>
+          </div>
+          <div onClick={handleCommentPost} className=" mb-[5px] mt-[10px] bg-white/20 flex gap-[10px] rounded-[12px] px-[20px] py-[6px]">
+            <div
+              // value={content}
+              // onChange={(e) => setContent(e.target.value)}
+              className=" my-[10px h-[44px] w-full bg-transparent focus:outline-none"
+              // type="text"
+            ></div>
+            <button >
+              <img src={cmt} alt="" />
+            </button>
+          </div>
         </div>
       </div>
       {/* cmt */}

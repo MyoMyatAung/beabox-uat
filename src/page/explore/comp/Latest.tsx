@@ -129,7 +129,7 @@ const Latest: React.FC<LatestPorp> = ({}) => {
               endMessage={
                 <div className="flex bg-whit pt-20 justify-center items-center  w-screen absolute bottom-[-20px] left-[-20px]">
                   <p className="py-10" style={{ textAlign: "center" }}>
-                    <b>No more yet!</b>
+                    {/* <b>No more yet!</b> */}
                   </p>
                 </div>
               }
