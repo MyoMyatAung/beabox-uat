@@ -8,7 +8,7 @@ export const exploreApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "http://107.148.47.94:8800/api/v1",
     prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).persist.user.token; // Adjust 'auth.token' to match your Redux slice structure
+      const token = (getState() as RootState).persist?.user?.token; // Adjust 'auth.token' to match your Redux slice structure
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
       }
