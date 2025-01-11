@@ -7,19 +7,54 @@ import { Link } from "react-router-dom";
 import { paths } from "@/routes/paths";
 import { useGetMyProfileQuery } from "@/store/api/profileApi";
 import { useSelector } from "react-redux";
-import { ChevronRight, UserPen, Bell } from "lucide-react";
+import { ChevronRight, UserPen, Bell, Cross, X } from "lucide-react";
 import { BsPatchCheckFill } from "react-icons/bs";
 import { Button } from "@/components/ui/button";
 import SettingBtn from "@/components/profile/setting-btn";
 import ProfileAvatar from "@/components/profile/profile-avatar";
+import phoneImg from "@/assets/profile/phone-img.png";
+import { useState } from "react";
 
 const Profile = () => {
   const { data } = useGetMyProfileQuery("");
+  const [show, setShow] = useState(false);
   const user = useSelector((state: any) => state.persist.user);
-  // console.log(data, user);
+  console.log("user", user);
 
   return (
     <div className="px-5 max-h-screen no-scrollbar profile-bg">
+      {show ? (
+        <div className="absolute top-0 z-[1100] left-0 w-full h-full mx-auto flex flex-col justify-center items-center bg-[#161619CC]">
+          <div className="px-10">
+            <div className="h-[250px] gradient-bg rounded-lg relative">
+              <div className="w-full absolute -top-20 flex justify-center items-center">
+                <img src={phoneImg} className={`w-[180px]`} alt="" />
+              </div>
+            </div>
+            <div className="flex flex-col justify-center items-center gap-4 bg-[#161619] p-5 rounded-bl-lg rounded-br-lg">
+              <h1 className="text-[18px] font-semibold text-white">
+                Creator Centre
+              </h1>
+              <p className="text-[14px] text-[#FFFFFFCC]">
+                Introducing Creator Centers: your new hub to discover top
+                creators, view rankings, watch the most popular videos, and
+                explore fresh content—all in one place.{" "}
+              </p>
+              <Button className="bg-[#FFFFFF14] hover:bg-[#FFFFFF14]">
+                Coming soon, stay tuned!
+              </Button>
+            </div>
+          </div>
+          <div
+            onClick={() => setShow(false)}
+            className="bg-[#FFFFFF29] p-2 rounded-full mt-5"
+          >
+            <X />
+          </div>
+        </div>
+      ) : (
+        ""
+      )}
       <div className="flex gap-3 my-5 justify-end">
         <Link
           to={paths.noti}
@@ -27,7 +62,7 @@ const Profile = () => {
         >
           <Bell />
         </Link>
-        <SettingBtn />
+        <SettingBtn setShow={setShow} />
       </div>
       {/* login  */}
       <div className="w-full flex items-center gap-3 py-5">
@@ -101,7 +136,6 @@ const Profile = () => {
       ) : (
         <></>
       )}
-
       {/* Action Cards */}
       {/* <div className="grid grid-cols-2 gap-5">
         <MenuCard Icon={Wallet} title="My Wallet" />

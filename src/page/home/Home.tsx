@@ -70,6 +70,8 @@ const Home = () => {
     { skip: currentTab !== 2 }
   );
 
+  console.log(forYouData, "followData");
+
   const isLoading =
     (currentTab === 0 && isFollowFetching) ||
     (currentTab === 1 && isLatestFetching) ||

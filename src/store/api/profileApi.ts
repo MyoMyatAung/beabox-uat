@@ -7,7 +7,7 @@ export const profileApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "http://107.148.47.94:8800/api/v1",
     prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).persist?.user?.token; // Adjust 'auth.token' to match your Redux slice structure
+      const token = (getState() as RootState).persist?.user?.token;
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
       }
@@ -122,6 +122,12 @@ export const profileApi = createApi({
         body: region,
       }),
     }),
+    getLikedPost: builder.query<any, string>({
+      query: (user_id) => ({
+        url: `/user/liked-post?user_id=${user_id}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -139,4 +145,5 @@ export const {
   useGetRegionQuery,
   useChangeRegionMutation,
   useChangeNicknameMutation,
+  useGetLikedPostQuery,
 } = profileApi;
