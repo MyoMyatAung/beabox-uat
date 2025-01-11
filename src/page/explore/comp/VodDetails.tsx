@@ -50,7 +50,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
     setCommentsVisible(true);
     setIsLoading(true);
     try {
-      const response = await getComments({ post_id : files.post_id });
+      const response = await getComments({ post_id: files.post_id });
       if (response && response.data) {
         setComments(response && ((response as any).data.data as any[]));
       }
@@ -78,7 +78,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
         </button>
         <div
           onClick={() => navigate("/search_overlay")}
-          className="bg-[#77777760 bg-zinc-700 rounded-[100px] w-full flex justify-centr py-[8px] px-[15px] items-center gap-[12px]"
+          className="bg-[#77777760 bg-neutral-800 rounded-[100px] w-full flex justify-centr py-[8px] px-[15px] items-center gap-[12px]"
         >
           <img className="w-[22px] h-[22px]" src={search} alt="" />
           <span className="text-[14px] font-[400] text-white/40">
@@ -146,14 +146,19 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
               )}
             </span>
           </div>
-          <div onClick={handleCommentPost} className=" mb-[5px mt-[10px] bg-[#77777790 bg-zinc-700 flex gap-[10px] rounded-[12px] px-[20px] py-[6px]">
+          <div
+            onClick={handleCommentPost}
+            className=" mb-[5px mt-[10px] bg-[#77777790 bg-neutral-800 flex gap-[10px] rounded-[12px] px-[20px] py-[6px]"
+          >
             <div
               // value={content}
               // onChange={(e) => setContent(e.target.value)}
-              className=" my-[10px h-[44px] w-full  focus:outline-none"
+              className=" my-[10px h-[44px] w-full flex items-center text-[#777] text-[16px] font-[400] leading-[20px]"
               // type="text"
-            ></div>
-            <button >
+            >
+              Write a comment
+            </div>
+            <button>
               <img src={cmt} alt="" />
             </button>
           </div>
