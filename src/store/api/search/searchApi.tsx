@@ -5,7 +5,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const searchApi = createApi({
   reducerPath: "searchApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://107.148.47.94:8800/api/v1",
+    baseUrl: "https://77eewm.qdhgtch.com/api/v1",
   }),
   endpoints: (builder) => ({
     getTabList: builder.query<any, string>({
