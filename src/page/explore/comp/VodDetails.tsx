@@ -12,10 +12,10 @@ import { usePostCommentExpMutation } from "@/store/api/explore/exploreApi";
 import { useNavigate } from "react-router-dom";
 
 interface VodDetailsProps {
-  setshow: (value: boolean) => void;
+  // setshow: (value: boolean) => void;
 }
 
-const VodDetails: React.FC<VodDetailsProps> = ({ setshow }) => {
+const VodDetails: React.FC<VodDetailsProps> = ({  }) => {
   const [showHeart, setShowHeart] = useState(false);
   const { files } = useSelector((state: any) => state.explore);
   const [showFullTitle, setShowFullTitle] = useState(false);
@@ -63,7 +63,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({ setshow }) => {
   };
 
   return (
-    <div className="fixed top-0 inset-0 z-[99999] bg-black w-screen overflow-hidden">
+    <div className=" top-0 inset-0 z-[99999] bg-black w-screen overflow-hidden">
       {/* tip */}
       {showTip && (
         <div className="absolute top-[100px] z-[999991] w-screen flex justify-center">
@@ -74,7 +74,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({ setshow }) => {
       )}
       {/* Header */}
       <div className="absolute top-0 z-[979191] flex gap-[6px] py-[30px] px-[20px] w-full">
-        <button className="text-white" onClick={() => setshow(false)}>
+        <button className="text-white" onClick={() => navigate(-1)}>
           <ChevronLeft />
         </button>
         <div
@@ -134,7 +134,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({ setshow }) => {
             )}
           </span>
         </div>
-        <div className=" mx-[10px] bg-white/20 flex gap-[10px] rounded-[12px] px-[20px] py-[6px]">
+        <div className=" mx-[10px] mb-[20px] bg-white/20 flex gap-[10px] rounded-[12px] px-[20px] py-[6px]">
           <input
             value={content}
             onChange={(e) => setContent(e.target.value)}

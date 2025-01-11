@@ -16,7 +16,7 @@ import { searchApi } from "./api/search/searchApi";
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["persist","history"], // Reducers you want to persist
+  whitelist: ["persist","history","explore"], // Reducers you want to persist
 };
 
 const rootReducer = combineReducers({
