@@ -1,10 +1,12 @@
 import SubmitButton from "@/components/shared/submit-button";
 import { paths } from "@/routes/paths";
+import { useStoreSecurityQuesMutation } from "@/store/api/authApi";
 import { setSecurityQues } from "@/store/slices/persistSlice";
+import { RootState } from "@reduxjs/toolkit/query";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { FaAngleLeft } from "react-icons/fa";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 
 const SecurityQuestion = () => {
@@ -14,10 +16,26 @@ const SecurityQuestion = () => {
   const [ans, setAns] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const registerUser = useSelector((state: any) => state.persist.registerUser);
 
-  const onSubmitHandler = (e: any) => {
+  const [storeSecurityQues, { data, isLoading }] =
+    useStoreSecurityQuesMutation();
+
+  const onSubmitHandler = async (e: any) => {
     e.preventDefault();
-    dispatch(setSecurityQues({ ques, ans }));
+    await storeSecurityQues({
+      security_question: ques,
+      answer: ans,
+      rtoken: registerUser?.token,
+    });
+    if (data?.status) {
+      dispatch(
+        setSecurityQues({
+          ques: data?.data?.security_question,
+          ans: data?.datat?.answer,
+        })
+      );
+    }
     navigate(paths.login);
   };
 
@@ -93,7 +111,7 @@ const SecurityQuestion = () => {
           <>
             <SubmitButton
               text="Confirm"
-              isLoading={false}
+              isLoading={isLoading}
               condition={ans.length > 1 && ques?.length > 1}
             />
           </>
