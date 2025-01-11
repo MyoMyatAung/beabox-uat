@@ -45,7 +45,7 @@ const EditSecurity = () => {
             !securityQues ? "text-[#C23033]" : "text-[#888]"
           }  ml-auto`}
           onClick={() =>
-            !securityQues ? navigate(paths.question) : navigate(paths.manage)
+            !securityQues ? navigate(paths.security_questions) : navigate(paths.manage)
           }
         >
           {!securityQues ? "Set Now" : "Manage"} <FaAngleRight />
