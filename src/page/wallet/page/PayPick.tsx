@@ -54,7 +54,7 @@ const PayPick: React.FC<PayPickProps> = ({
         </SelectTrigger>
         <SelectContent className="payment_select_content p-[8px]">
           <SelectGroup className=" flex flex-col gap-[10px] bg-black">
-            {payment.map((pp: any) => (
+            {payment?.map((pp: any) => (
               <SelectItem
                 key={pp.id}
                 value={pp.name}
