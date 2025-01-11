@@ -96,7 +96,7 @@ const EditRegion = () => {
               </Button>
               <Button
                 onClick={() => changeRegionHandler()}
-                className="w-full rounded-lg bg-[#89C6FF1F] hover:bg-[#89C6FF1F] text-[#1B91FF]"
+                className="w-full rounded-lg bg-[#CD3EFF1F] hover:bg-[#CD3EFF1F] text-[#CD3EFF]"
               >
                 Save
               </Button>
