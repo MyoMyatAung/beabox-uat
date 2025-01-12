@@ -28,6 +28,9 @@ const Register = lazy(() => import("../page/auth/Register"));
 const OTP = lazy(() => import("../page/auth/OTP"));
 const UploadComponent = lazy(() => import("../page/upload/Upload"));
 const UploadProcess = lazy(() => import("../page/upload/UploadProcess"));
+const Question = lazy(() => import("../page/profile/security/Question"));
+const Answer = lazy(() => import("../page/profile/security/Answer"));
+const Manage = lazy(() => import("../page/profile/security/Manage"));
 
 const Routing = () => {
   const router = createBrowserRouter([
@@ -78,6 +81,30 @@ const Routing = () => {
       element: (
         <Suspense fallback={<Loader />}>
           <SecurityQuestion />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.question,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <Question />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.answer,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <Answer />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.manage,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <Manage />
         </Suspense>
       ),
     },

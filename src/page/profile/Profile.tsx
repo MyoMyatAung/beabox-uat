@@ -19,7 +19,7 @@ const Profile = () => {
   const { data } = useGetMyProfileQuery("");
   const [show, setShow] = useState(false);
   const user = useSelector((state: any) => state.persist.user);
-  console.log("user", user);
+  // console.log("data", data);
 
   return (
     <div className="px-5 max-h-screen no-scrollbar profile-bg">

@@ -1,9 +1,19 @@
+import { paths } from "@/routes/paths";
+import { setDetails } from "@/store/slices/exploreSlice";
 import { FaHeart } from "react-icons/fa";
 import { FaEarthAmericas } from "react-icons/fa6";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const VideoCard = ({ videoData }: any) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+    const showDetailsVod = (file: any) => {
+      dispatch(setDetails(file));
+      navigate(paths.vod_details);
+    };
   return (
-    <div className="bg-gradient-to-r h-[153px] rounded relative">
+    <div className="bg-gradient-to-r h-[153px] rounded relative" onClick={() => showDetailsVod(videoData)}>
       <img
         src={videoData?.preview_image}
         alt=""

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   useGetConfigQuery,
   useGetFollowedPostsQuery,
@@ -14,10 +14,11 @@ import VideoFooter from "./components/VideoFooter";
 import ShowHeart from "./components/ShowHeart";
 import Top20Movies from "./components/Top20Movies";
 import TopNavbar from "./components/TopNavbar";
-// import TwoColumns from "./components/TwoColumns";
 import Explorer from "../explore/Explore";
 
 import { Swiper, SwiperSlide } from "swiper/react";
+import { useDispatch, useSelector } from "react-redux";
+import { setCurrentTab } from "./services/homeSlice";
 
 const Home = () => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
@@ -28,7 +29,10 @@ const Home = () => {
   const [countdown, setCountdown] = useState(3);
   const [countNumber, setCountNumber] = useState(0); // New state for counting clicks
   const [topmovies, setTopMovies] = useState(false);
-  const [currentTab, setCurrentTab] = useState(2);
+  const currentTab = useSelector((state: any) => state.home.currentTab);
+  const user = useSelector((state: any) => state.persist.user);
+  const dispatch = useDispatch();
+  // const [currentTab, setCurrentTab] = useState(2);
   const swiperRef = useRef<any>(null);
 
   const { data: config } = useGetConfigQuery({});
@@ -182,24 +186,11 @@ const Home = () => {
     return <Top20Movies setTopMovies={setTopMovies} />;
   }
 
-  // useEffect(() => {
-  //   if (swiperRef.current) {
-  //     const index = tabs?.indexOf(activeTab);
-  //     if (index >= 0) {
-  //       swiperRef.current.slideTo(index);
-  //     }
-  //   }
-  // }, [activeTab, tabs]);
-
-  // const handleSlideChange = (swiper: any) => {
-  //   const newActiveTab = tabs[swiper.activeIndex] || currentTab; // Fallback to current activeTab
-  //   setCurrentTab(newActiveTab);
-  // };
-
   const handleSlideChange = (swiper: any) => {
     const newTab = swiper.activeIndex; // Get the active slide index
     if (currentTab !== newTab) {
-      setCurrentTab(newTab); // Update the current tab
+      dispatch(setCurrentTab(newTab));
+      // setCurrentTab(newTab); // Update the current tab
       setPage(1);
       setVideos([]);
     }
@@ -207,7 +198,8 @@ const Home = () => {
 
   const handleTabClick = (tab: number) => {
     if (currentTab !== tab) {
-      setCurrentTab(tab); // Update the current tab
+      dispatch(setCurrentTab(tab));
+      // setCurrentTab(tab); // Update the current tab
       setPage(1);
       setVideos([]);
 
@@ -219,250 +211,264 @@ const Home = () => {
   };
 
   return (
-    <>
-      <TopNavbar currentTab={currentTab} onTabClick={handleTabClick} />
-      <Swiper
-        initialSlide={2} // Start from the third slide (index 2)
-        onSlideChange={handleSlideChange}
-        onSwiper={(swiper) => (swiperRef.current = swiper)}
-        slidesPerView={1}
-        spaceBetween={10}
-      >
-        <div className="app bg-black">
-          <SwiperSlide>
-            {currentTab === 0 &&
-              (isLoading && videos.length === 0 ? (
-                <div className="app bg-black">
-                  <div
-                    style={{
-                      textAlign: "center",
-                      padding: "20px",
-                    }}
-                  >
-                    <div className="heart">
-                      <img
-                        src={loader}
-                        className="w-[100px] h-[100px]"
-                        alt="Loading"
-                      />
+    <div className="flex justify-center items-center">
+      <div className="max-w-[1024px] home-main w-full">
+        <TopNavbar currentTab={currentTab} onTabClick={handleTabClick} />
+        <Swiper
+          initialSlide={2} // Start from the third slide (index 2)
+          onSlideChange={handleSlideChange}
+          onSwiper={(swiper) => (swiperRef.current = swiper)}
+          slidesPerView={1}
+          spaceBetween={10}
+        >
+          <div className="app bg-black">
+            <SwiperSlide>
+              {currentTab === 0 &&
+                (isLoading && videos.length === 0 ? (
+                  <div className="app bg-black">
+                    <div
+                      style={{
+                        textAlign: "center",
+                        padding: "20px",
+                      }}
+                    >
+                      <div className="heart">
+                        <img
+                          src={loader}
+                          className="w-[100px] h-[100px]"
+                          alt="Loading"
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-              ) : !isError ? (
-                <>
-                  <div
-                    ref={videoContainerRef}
-                    className={`app__videos pb-[55px] `}
-                  >
-                    {videos.map((video, index) => (
-                      <div
-                        key={index}
-                        className="video mt-[20px]"
-                        data-post-id={video.post_id} // Add post ID to the container
-                      >
-                        <Player
-                          src={video.files[0].resourceURL}
-                          thumbnail={
-                            video.files[0].thumbnail ||
-                            "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg"
-                          }
-                        />
-                        <VideoSidebar
-                          likes={video?.like_count}
-                          is_liked={video?.is_liked}
-                          messages={video?.comment_count}
-                          post_id={video?.post_id}
-                          setCountNumber={setCountNumber}
-                          setCountdown={setCountdown}
-                          setShowHeart={setShowHeart}
-                          showHeart={showHeart}
-                          countdown={countdown}
-                          config={config?.data}
-                          image={video?.preview_image}
-                        />
-                        <VideoFooter
-                          tags={video?.tag}
-                          title={video?.title}
-                          username={video?.user?.name}
-                          city={video?.city}
-                        />
-                        {showHeart && <ShowHeart countNumber={countNumber} />}
-                      </div>
-                    ))}
-                  </div>
-
-                  {(!followData?.data?.length ||
-                    !latestData?.data?.length ||
-                    !forYouData?.data?.length) && (
-                    <p style={{ textAlign: "center" }}>
-                      <b>You have seen all videos</b>
-                    </p>
-                  )}
-                </>
-              ) : (
-                <div className="app bg-black">
-                  <div style={{ textAlign: "center", padding: "20px" }}>
-                    <div className="text-white flex flex-col justify-center items-center  gap-2">
-                      <div>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="33"
-                          height="33"
-                          viewBox="0 0 33 33"
-                          fill="none"
+                ) : !isError ? (
+                  <>
+                    <div
+                      ref={videoContainerRef}
+                      className={`app__videos pb-[55px] `}
+                    >
+                      {videos.map((video, index) => (
+                        <div
+                          key={index}
+                          className="video mt-[20px]"
+                          data-post-id={video.post_id} // Add post ID to the container
                         >
-                          <path
-                            d="M24.4993 28.7502C24.4993 25.9212 23.3755 23.2081 21.3752 21.2077C19.3748 19.2073 16.6617 18.0835 13.8327 18.0835C11.0037 18.0835 8.2906 19.2073 6.29021 21.2077C4.28982 23.2081 3.16602 25.9212 3.16602 28.7502"
-                            stroke="#888888"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
+                          <Player
+                            src={video.files[0].resourceURL}
+                            thumbnail={
+                              video.files[0].thumbnail ||
+                              "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg"
+                            }
                           />
-                          <path
-                            d="M13.8327 18.0833C17.5146 18.0833 20.4993 15.0986 20.4993 11.4167C20.4993 7.73477 17.5146 4.75 13.8327 4.75C10.1508 4.75 7.16602 7.73477 7.16602 11.4167C7.16602 15.0986 10.1508 18.0833 13.8327 18.0833Z"
-                            stroke="#888888"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
+                          <VideoSidebar
+                            likes={video?.like_count}
+                            is_liked={video?.is_liked}
+                            messages={video?.comment_count}
+                            post_id={video?.post_id}
+                            setCountNumber={setCountNumber}
+                            setCountdown={setCountdown}
+                            setShowHeart={setShowHeart}
+                            countNumber={countNumber}
+                            showHeart={showHeart}
+                            countdown={countdown}
+                            config={config?.data}
+                            image={video?.preview_image}
                           />
-                          <path
-                            d="M29.8337 27.4164C29.8337 22.9231 27.1671 18.7498 24.5004 16.7498C25.3769 16.0921 26.0779 15.2286 26.5411 14.2355C27.0044 13.2424 27.2157 12.1504 27.1564 11.0562C27.0971 9.96195 26.7689 8.89922 26.201 7.96204C25.6331 7.02486 24.8429 6.24212 23.9004 5.68311"
-                            stroke="#888888"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
+                          <VideoFooter
+                            tags={video?.tag}
+                            title={video?.title}
+                            username={video?.user?.name}
+                            city={video?.city}
                           />
-                        </svg>
-                      </div>
-                      <div className="follow-error">
-                        Follow the creator you love
-                      </div>
+                          {showHeart && (
+                            <ShowHeart
+                              countNumber={countNumber}
+                              username={user?.nickname}
+                            />
+                          )}
+                        </div>
+                      ))}
                     </div>
-                  </div>
-                </div>
-              ))}
-          </SwiperSlide>
-          <SwiperSlide>
-            {currentTab == 1 && (
-              <div className="w-screen">
-                <Explorer />
-              </div>
-            )}
-          </SwiperSlide>
-          <SwiperSlide>
-            {currentTab == 2 &&
-              (isLoading && videos.length === 0 ? (
-                <div className="app bg-black">
-                  <div
-                    style={{
-                      textAlign: "center",
-                      padding: "20px",
-                    }}
-                  >
-                    <div className="heart">
-                      <img
-                        src={loader}
-                        className="w-[100px] h-[100px]"
-                        alt="Loading"
-                      />
-                    </div>
-                  </div>
-                </div>
-              ) : !isError ? (
-                <>
-                  <div
-                    ref={videoContainerRef}
-                    className={`app__videos pb-[55px] `}
-                  >
-                    {videos.map((video, index) => (
-                      <div
-                        key={index}
-                        className="video mt-[20px]"
-                        data-post-id={video.post_id} // Add post ID to the container
-                      >
-                        <Player
-                          src={video.files[0].resourceURL}
-                          thumbnail={
-                            video.files[0].thumbnail ||
-                            "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg"
-                          }
-                        />
-                        <VideoSidebar
-                          likes={video?.like_count}
-                          is_liked={video?.is_liked}
-                          messages={video?.comment_count}
-                          post_id={video?.post_id}
-                          setCountNumber={setCountNumber}
-                          setCountdown={setCountdown}
-                          setShowHeart={setShowHeart}
-                          showHeart={showHeart}
-                          countdown={countdown}
-                          config={config?.data}
-                          image={video?.preview_image}
-                        />
-                        <VideoFooter
-                          tags={video?.tag}
-                          title={video?.title}
-                          username={video?.user?.name}
-                          city={video?.city}
-                        />
-                        {showHeart && <ShowHeart countNumber={countNumber} />}
-                      </div>
-                    ))}
-                  </div>
 
-                  {(!followData?.data?.length ||
-                    !latestData?.data?.length ||
-                    !forYouData?.data?.length) && (
-                    <p style={{ textAlign: "center" }}>
-                      <b>You have seen all videos</b>
-                    </p>
-                  )}
-                </>
-              ) : (
-                <div className="app bg-black">
-                  <div style={{ textAlign: "center", padding: "20px" }}>
-                    <div className="text-white flex flex-col justify-center items-center  gap-2">
-                      <div>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="33"
-                          height="33"
-                          viewBox="0 0 33 33"
-                          fill="none"
-                        >
-                          <path
-                            d="M24.4993 28.7502C24.4993 25.9212 23.3755 23.2081 21.3752 21.2077C19.3748 19.2073 16.6617 18.0835 13.8327 18.0835C11.0037 18.0835 8.2906 19.2073 6.29021 21.2077C4.28982 23.2081 3.16602 25.9212 3.16602 28.7502"
-                            stroke="#888888"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                          <path
-                            d="M13.8327 18.0833C17.5146 18.0833 20.4993 15.0986 20.4993 11.4167C20.4993 7.73477 17.5146 4.75 13.8327 4.75C10.1508 4.75 7.16602 7.73477 7.16602 11.4167C7.16602 15.0986 10.1508 18.0833 13.8327 18.0833Z"
-                            stroke="#888888"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                          <path
-                            d="M29.8337 27.4164C29.8337 22.9231 27.1671 18.7498 24.5004 16.7498C25.3769 16.0921 26.0779 15.2286 26.5411 14.2355C27.0044 13.2424 27.2157 12.1504 27.1564 11.0562C27.0971 9.96195 26.7689 8.89922 26.201 7.96204C25.6331 7.02486 24.8429 6.24212 23.9004 5.68311"
-                            stroke="#888888"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                        </svg>
+                    {(!followData?.data?.length ||
+                      !latestData?.data?.length ||
+                      !forYouData?.data?.length) && (
+                      <p style={{ textAlign: "center" }}>
+                        <b>You have seen all videos</b>
+                      </p>
+                    )}
+                  </>
+                ) : (
+                  <div className="app bg-black">
+                    <div style={{ textAlign: "center", padding: "20px" }}>
+                      <div className="text-white flex flex-col justify-center items-center  gap-2">
+                        <div>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="33"
+                            height="33"
+                            viewBox="0 0 33 33"
+                            fill="none"
+                          >
+                            <path
+                              d="M24.4993 28.7502C24.4993 25.9212 23.3755 23.2081 21.3752 21.2077C19.3748 19.2073 16.6617 18.0835 13.8327 18.0835C11.0037 18.0835 8.2906 19.2073 6.29021 21.2077C4.28982 23.2081 3.16602 25.9212 3.16602 28.7502"
+                              stroke="#888888"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                            <path
+                              d="M13.8327 18.0833C17.5146 18.0833 20.4993 15.0986 20.4993 11.4167C20.4993 7.73477 17.5146 4.75 13.8327 4.75C10.1508 4.75 7.16602 7.73477 7.16602 11.4167C7.16602 15.0986 10.1508 18.0833 13.8327 18.0833Z"
+                              stroke="#888888"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                            <path
+                              d="M29.8337 27.4164C29.8337 22.9231 27.1671 18.7498 24.5004 16.7498C25.3769 16.0921 26.0779 15.2286 26.5411 14.2355C27.0044 13.2424 27.2157 12.1504 27.1564 11.0562C27.0971 9.96195 26.7689 8.89922 26.201 7.96204C25.6331 7.02486 24.8429 6.24212 23.9004 5.68311"
+                              stroke="#888888"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                          </svg>
+                        </div>
+                        <div className="follow-error">
+                          Follow the creator you love
+                        </div>
                       </div>
-                      <div className="follow-error">Videos Error</div>
                     </div>
                   </div>
+                ))}
+            </SwiperSlide>
+            <SwiperSlide>
+              {currentTab == 1 && (
+                <div className="w-screen">
+                  <Explorer />
                 </div>
-              ))}
-          </SwiperSlide>
-        </div>
-      </Swiper>
-    </>
+              )}
+            </SwiperSlide>
+            <SwiperSlide>
+              {currentTab == 2 &&
+                (isLoading && videos.length === 0 ? (
+                  <div className="app bg-black">
+                    <div
+                      style={{
+                        textAlign: "center",
+                        padding: "20px",
+                      }}
+                    >
+                      <div className="heart">
+                        <img
+                          src={loader}
+                          className="w-[100px] h-[100px]"
+                          alt="Loading"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ) : !isError ? (
+                  <>
+                    <div
+                      ref={videoContainerRef}
+                      className={`app__videos pb-[55px] `}
+                    >
+                      {videos.map((video, index) => (
+                        <div
+                          key={index}
+                          className="video mt-[20px]"
+                          data-post-id={video.post_id} // Add post ID to the container
+                        >
+                          <Player
+                            src={video.files[0].resourceURL}
+                            thumbnail={
+                              video.files[0].thumbnail ||
+                              "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg"
+                            }
+                          />
+                          <VideoSidebar
+                            likes={video?.like_count}
+                            is_liked={video?.is_liked}
+                            messages={video?.comment_count}
+                            post_id={video?.post_id}
+                            setCountNumber={setCountNumber}
+                            setCountdown={setCountdown}
+                            setShowHeart={setShowHeart}
+                            countNumber={countNumber}
+                            showHeart={showHeart}
+                            countdown={countdown}
+                            config={config?.data}
+                            image={video?.preview_image}
+                          />
+                          <VideoFooter
+                            tags={video?.tag}
+                            title={video?.title}
+                            username={video?.user?.name}
+                            city={video?.city}
+                          />
+                          {showHeart && (
+                            <ShowHeart
+                              countNumber={countNumber}
+                              username={user?.nickname}
+                            />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                    {(!followData?.data?.length ||
+                      !latestData?.data?.length ||
+                      !forYouData?.data?.length) && (
+                      <p style={{ textAlign: "center" }}>
+                        <b>You have seen all videos</b>
+                      </p>
+                    )}
+                  </>
+                ) : (
+                  <div className="app bg-black">
+                    <div style={{ textAlign: "center", padding: "20px" }}>
+                      <div className="text-white flex flex-col justify-center items-center  gap-2">
+                        <div>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="33"
+                            height="33"
+                            viewBox="0 0 33 33"
+                            fill="none"
+                          >
+                            <path
+                              d="M24.4993 28.7502C24.4993 25.9212 23.3755 23.2081 21.3752 21.2077C19.3748 19.2073 16.6617 18.0835 13.8327 18.0835C11.0037 18.0835 8.2906 19.2073 6.29021 21.2077C4.28982 23.2081 3.16602 25.9212 3.16602 28.7502"
+                              stroke="#888888"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                            <path
+                              d="M13.8327 18.0833C17.5146 18.0833 20.4993 15.0986 20.4993 11.4167C20.4993 7.73477 17.5146 4.75 13.8327 4.75C10.1508 4.75 7.16602 7.73477 7.16602 11.4167C7.16602 15.0986 10.1508 18.0833 13.8327 18.0833Z"
+                              stroke="#888888"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                            <path
+                              d="M29.8337 27.4164C29.8337 22.9231 27.1671 18.7498 24.5004 16.7498C25.3769 16.0921 26.0779 15.2286 26.5411 14.2355C27.0044 13.2424 27.2157 12.1504 27.1564 11.0562C27.0971 9.96195 26.7689 8.89922 26.201 7.96204C25.6331 7.02486 24.8429 6.24212 23.9004 5.68311"
+                              stroke="#888888"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                          </svg>
+                        </div>
+                        <div className="follow-error">Videos Error</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </SwiperSlide>
+          </div>
+        </Swiper>
+      </div>
+    </div>
   );
 };
 

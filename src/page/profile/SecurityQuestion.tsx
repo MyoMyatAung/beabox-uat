@@ -17,13 +17,13 @@ const SecurityQuestion = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const registerUser = useSelector((state: any) => state.persist.registerUser);
+  const user = useSelector((state: any) => state.persist.user);
 
-  const [storeSecurityQues, { data, isLoading }] =
-    useStoreSecurityQuesMutation();
+  const [storeSecurityQues, { isLoading }] = useStoreSecurityQuesMutation();
 
   const onSubmitHandler = async (e: any) => {
     e.preventDefault();
-    await storeSecurityQues({
+    const { data } = await storeSecurityQues({
       security_question: ques,
       answer: ans,
       rtoken: registerUser?.token,
@@ -36,7 +36,7 @@ const SecurityQuestion = () => {
         })
       );
     }
-    navigate(paths.login);
+    user?.token ? navigate(paths.settings) : navigate(paths.login);
   };
 
   return (

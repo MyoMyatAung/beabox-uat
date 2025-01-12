@@ -12,6 +12,7 @@ import { homeApi } from "../page/home/services/homeApi";
 import exploreSlice from "./slices/exploreSlice";
 import HistorySlice from "@/page/search/slice/HistorySlice";
 import { searchApi } from "./api/search/searchApi";
+import homeSlice from "../page/home/services/homeSlice";
 
 const persistConfig = {
   key: "root",
@@ -24,13 +25,14 @@ const rootReducer = combineReducers({
   [homeApi.reducerPath]: homeApi.reducer,
   profile: profileSlice,
   persist: persistSlice,
-  explore : exploreSlice,
-  history : HistorySlice,
+  explore: exploreSlice,
+  history: HistorySlice,
+  home: homeSlice,
   [profileApi.reducerPath]: profileApi.reducer,
   [authApi.reducerPath]: authApi.reducer,
   [walletApi.reducerPath]: walletApi.reducer,
   [exploreApi.reducerPath]: exploreApi.reducer,
-  [searchApi.reducerPath] : searchApi.reducer
+  [searchApi.reducerPath]: searchApi.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

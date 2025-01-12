@@ -44,13 +44,18 @@ const Login = () => {
     }
   }
 
+  const handleGoBack = () => {
+    navigate(-1); // Navigate to the previous page
+  };
+
   return (
     <div className="px-5">
       {isLoading ? <Loader /> : <></>}
       <div className="flex justify-between items-center py-5">
-        <Link to={paths.profile}>
+        <button onClick={handleGoBack}>
           <ChevronLeft />
-        </Link>
+        </button>
+        {/* <Link to={paths.profile}></Link> */}
         <p className="text-[16px]">Login</p>
         <div></div>
       </div>
