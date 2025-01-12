@@ -94,8 +94,8 @@ const Recommand: React.FC<RecommandProps> = ({ title }) => {
                     </div>
                   </div>
                   <h1 className="text-white text-[14px] font-[500] leading-[20px] py-[4px]">
-                    {card.title.length > 20
-                      ? `${card.title.slice(0, 20)}...`
+                    {card.title.length > 10
+                      ? `${card.title.slice(0, 10)}...`
                       : card.title}
                   </h1>
                   {/* uploader */}
