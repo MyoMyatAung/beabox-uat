@@ -131,7 +131,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
       setIsLoading(false); // End loading
     }
   };
-  // console.log(files);
+  console.log(files);
   return (
     <div className="app bg-black">
       {/* tip */}
@@ -217,7 +217,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
               </div>
               <input
                 className="feed-input w-full pl-[45px] py-[8px]"
-                placeholder=""
+                placeholder={files.tag[0]}
                 onClick={handleSearch}
               />
             </div>
