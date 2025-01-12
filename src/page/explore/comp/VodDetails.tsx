@@ -100,6 +100,11 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
           content: content,
         }).unwrap();
         setContent("");
+        setShowTip(true);
+
+      setTimeout(() => {
+        setShowTip(false);
+      }, 2000);
       } catch (error) {
         console.error("Failed to post reply:", error);
       }
@@ -117,21 +122,8 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
     navigate("/search_overlay");
   };
 
-  const handleCommentPost = async () => {
-    setCommentsVisible(true);
-    setIsLoading(true);
-    try {
-      const response = await getComments({ post_id: files.post_id });
-      if (response && response.data) {
-        setComments(response && ((response as any).data.data as any[]));
-      }
-    } catch (error) {
-      console.error("Error fetching comment list:", error);
-    } finally {
-      setIsLoading(false); // End loading
-    }
-  };
-  console.log(files);
+
+  // console.log(files);
   return (
     <div className="app bg-black">
       {/* tip */}
@@ -226,7 +218,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
           {showHeart && (
             <ShowHeart countNumber={countNumber} username={user?.nickname} />
           )}
-          <div className="absolute bottom-0 add_comment w-full  py-3 ">
+          <div className="absolute bottom-0 add_comment w-full  py-3 z-10 ">
             <div className="flex items-center gap-2 px-4">
               <input
                 type="text"
