@@ -18,7 +18,7 @@ import ModelSlice from "./slices/ModelSlice";
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["persist","history","explore"], // Reducers you want to persist
+  whitelist: ["persist","history","explore","home"], // Reducers you want to persist
 };
 
 const rootReducer = combineReducers({

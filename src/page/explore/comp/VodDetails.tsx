@@ -110,7 +110,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
 
   const handleBack = () => {
     setCurrentTab(1)
-    navigate("/")
+    navigate(-1)
   }
 
   const handleSearch = () => {
@@ -133,7 +133,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
   };
   // console.log(files);
   return (
-    <div className="app bg-black  ">
+    <div className="app bg-black">
       {/* tip */}
       {showTip && (
         <div className="absolute top-[100px] z-[999991] w-screen flex justify-center">
@@ -146,7 +146,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
         <div
           // key={index}
           className="video mt-[20px] pb-[48px]"
-          data-post-id={files.files[0].post_id} // Add post ID to the container
+          data-post-id={files.post_id} 
         >
           <Player
             src={files.files[0].resourceURL}
