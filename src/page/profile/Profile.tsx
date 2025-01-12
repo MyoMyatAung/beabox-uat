@@ -14,12 +14,15 @@ import SettingBtn from "@/components/profile/setting-btn";
 import ProfileAvatar from "@/components/profile/profile-avatar";
 import phoneImg from "@/assets/profile/phone-img.png";
 import { useState } from "react";
+import Loader from "@/components/shared/loader";
 
 const Profile = () => {
-  const { data } = useGetMyProfileQuery("");
+  const { data, isLoading } = useGetMyProfileQuery("");
   const [show, setShow] = useState(false);
   const user = useSelector((state: any) => state.persist.user);
   // console.log("data", data);
+
+  if (isLoading) return <Loader />;
 
   return (
     <div className="px-5 max-h-screen no-scrollbar profile-bg">
