@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setPanding } from "../store/slices/ModelSlice";
 
-import ad1 from "../assets/explore/Spl.png";
+import ad1 from "../assets/explore/spl.png";
 // import { Link } from "react-router-dom";
 // import splash from "../assets/explore/splash.mp4";
 
