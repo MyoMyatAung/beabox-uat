@@ -43,7 +43,8 @@ const EditReferral = ({ referral_code }: any) => {
                 className="w-full bg-transparent border-0 border-b py-3 outline-0 border-[#888]"
                 placeholder="Referral Code"
                 onChange={(e: any) => setValue(e.target.value)}
-                value={value}
+                // value={value}
+                defaultValue={referral_code}
               />
               <div className="bg-[#FFFFFF1F] w-5 h-5 flex justify-center items-center rounded-full absolute right-0 bottom-5">
                 <X className="w-2" />

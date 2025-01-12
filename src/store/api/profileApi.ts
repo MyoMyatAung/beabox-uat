@@ -134,6 +134,18 @@ export const profileApi = createApi({
         method: "Post",
       }),
     }),
+    getFollowerList: builder.query<any, string>({
+      query: () => ({
+        url: `/follower/follower-list`,
+        method: "GET",
+      }),
+    }),
+    getFollowingList: builder.query<any, string>({
+      query: () => ({
+        url: `/follower/following-list`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -153,4 +165,6 @@ export const {
   useChangeNicknameMutation,
   useGetLikedPostQuery,
   useGetSecurityQuestionsMutation,
+  useGetFollowerListQuery,
+  useGetFollowingListQuery,
 } = profileApi;
