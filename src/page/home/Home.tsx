@@ -214,9 +214,9 @@ const Home = () => {
     <div className="flex justify-center items-center">
       <div className="max-w-[1024px] home-main w-full">
         <TopNavbar currentTab={currentTab} onTabClick={handleTabClick} />
-        {/* <Swiper
-          initialSlide={2} // Start from the third slide (index 2)
-          // onSlideChange={handleSlideChange}
+        {/*<Swiper
+          initialSlide={currentTab} // Start from the third slide (index 2)
+          onSlideChange={handleSlideChange}
           onSwiper={(swiper) => (swiperRef.current = swiper)}
           slidesPerView={1}
           spaceBetween={10}
