@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useGetExploreTagQuery } from "@/store/api/explore/exploreApi";
 import { Person } from "@/assets/profile";
 import { useDispatch } from "react-redux";
-import { setDetails } from "@/store/slices/exploreSlice";
+import { setDetails, setTitle } from "@/store/slices/exploreSlice";
 import { paths } from "@/routes/paths";
 
 interface RecommandProps {
@@ -39,7 +39,11 @@ const Recommand: React.FC<RecommandProps> = ({ title }) => {
     dispatch(setDetails(file));
     navigate(paths.vod_details);
   };
-  // console.log(data.data)
+
+  const showMore = () => {
+    dispatch(setTitle(title));
+    navigate(paths.recommand_more, { state: { title } });
+  };
   return (
     <div className=" pb-[20px] px-[10px] pt-[10px] flex flex-col items-center">
       {/* header */}
@@ -47,13 +51,9 @@ const Recommand: React.FC<RecommandProps> = ({ title }) => {
         <h1 className=" text-white text-[14px] font-[500] leading-[20px]">
           {title}
         </h1>
-        {/* <ChevronRight
-        color="#E8B9FF"
-          onClick={() => navigate("/rec_more", { state: { title } })}
-          className="rec_exp_more_btn px-[2px]"
-        /> */}
         <div
-          onClick={() => navigate("/rec_more", { state: { title } })}
+          // onClick={() => navigate(paths.recommand_more, { state: { title } })}
+          onClick={showMore}
           className="rec_exp_more_btn"
         >
           <img src={uiLeft} alt="" />

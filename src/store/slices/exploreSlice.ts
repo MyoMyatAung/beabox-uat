@@ -1,8 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 // Define the initial state using that type
 const initialState: any = {
- files : [],
- tabs : 1
+  files: [],
+  title: "",
+  more_tab : ""
 };
 
 export const exploreSlice = createSlice({
@@ -12,9 +13,15 @@ export const exploreSlice = createSlice({
     setDetails: (state, { payload }) => {
       state.files = payload;
     },
+    setTitle: (state, { payload }) => {
+      state.title = payload;
+    },
+    setMoreTab: (state, { payload }) => {
+      state.more_tab = payload;
+    },
   },
 });
 
-export const { setDetails } = exploreSlice.actions;
+export const { setDetails , setTitle , setMoreTab} = exploreSlice.actions;
 
 export default exploreSlice.reducer;

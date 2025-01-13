@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./ss.css";
-import "react-responsive-carousel/lib/styles/carousel.min.css"; 
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
 import { useGetExploreHeaderQuery } from "@/store/api/explore/exploreApi";
 
@@ -58,7 +58,7 @@ const Banner: React.FC = () => {
               ))}
             </Carousel>
             {/* Custom Dots */}
-            <ul className="flex items-center gap-[10px] w-screen justify-center mt-2 absolute bottom-0">
+            <ul className="flex justify-center items-center gap-[10px] w-full  mt-2 absolute bottom-0 left-0">
               {ad.map((_, dotIndex) => (
                 <li
                   key={dotIndex}

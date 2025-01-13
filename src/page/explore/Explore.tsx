@@ -11,7 +11,7 @@ import "swiper/css";
 import { SwiperSlide } from "swiper/react";
 import { useGetExploreHeaderQuery } from "@/store/api/explore/exploreApi";
 import VodDetails from "./comp/VodDetails";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 
 const Explore = () => {
   const [activeTab, setActiveTab] = useState("Recommend");
@@ -20,6 +20,11 @@ const Explore = () => {
   const { data, isLoading } = useGetExploreHeaderQuery("");
   const swiperRef = useRef<any>(null);
   const [show, setshow] = useState<boolean>(false);
+  const location = useLocation()
+
+  useEffect(() => {
+    setSearchParams({});
+  }, [location.pathname]);
 
   useEffect(() => {
     const queryTab = searchParams.get("query");
@@ -108,7 +113,9 @@ const Explore = () => {
               <SwiperSlide>
                 {activeTab === "Latest" && (
                   <div className="">
-                    <Latest />
+                    {/* <Latest /> */}
+                    <Recommand title="Chinese Drama" />
+                    <Recommand title="Latest Drama" />
                   </div>
                 )}
               </SwiperSlide>

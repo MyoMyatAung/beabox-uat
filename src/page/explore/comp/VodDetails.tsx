@@ -20,7 +20,7 @@ interface VodDetailsProps {
 
 const VodDetails: React.FC<VodDetailsProps> = ({}) => {
   const currentTab = useSelector((state: any) => state.home.currentTab);
-  console.log(currentTab);
+  // console.log(currentTab);
   const [commentsVisible, setCommentsVisible] = useState(false);
   const [showHeart, setShowHeart] = useState(false);
   const { files } = useSelector((state: any) => state.explore);
@@ -115,7 +115,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
 
   const handleBack = () => {
     setCurrentTab(1)
-    navigate(-1)
+    navigate(-2)
   }
 
   const handleSearch = () => {

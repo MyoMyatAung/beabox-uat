@@ -1,11 +1,11 @@
 import { ChevronLeft } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import more from "../../../assets/explore/more.png";
 import "../explore.css";
 import { useGetExploreTagQuery } from "@/store/api/explore/exploreApi";
-import { useDispatch } from "react-redux";
-import { setDetails } from "@/store/slices/exploreSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { setDetails, setMoreTab } from "@/store/slices/exploreSlice";
 import VodDetails from "./VodDetails";
 import { paths } from "@/routes/paths";
 
@@ -13,19 +13,24 @@ interface MoreProps {}
 
 const More: React.FC<MoreProps> = () => {
   const [show, setshow] = useState<boolean>(false);
+  const {title,more_tab} = useSelector((state : any) => state.explore)
+  console.log(more_tab    )
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { title } = location.state || {};
+  // const { title } = location.state || {};
+  // console.log(location)
   const [list, setList] = useState([]);
   const [activeTab, setActiveTab] = useState("popular");
+  const [searchParams, setSearchParams] = useSearchParams();
   const { data, isLoading, refetch } = useGetExploreTagQuery({
     order: activeTab,
     tag: title,
   });
   useEffect(() => {
+    dispatch(setMoreTab("Popular"))
     if (data?.data) {
       setList(data?.data.list);
 
@@ -35,6 +40,10 @@ const More: React.FC<MoreProps> = () => {
     }
     refetch();
   }, [data, list, activeTab]);
+
+  useEffect(() => {
+    setSearchParams({});
+  }, [location.state]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -50,6 +59,7 @@ const More: React.FC<MoreProps> = () => {
   const latestItems: any[] = []; // Empty for "Latest"
 
   const renderItems = activeTab === "popular" ? popularItems : latestItems;
+  console.log(renderItems)
 
   const fetchMoreData = () => {
     setPage((prevPage) => prevPage + 1);
@@ -59,7 +69,7 @@ const More: React.FC<MoreProps> = () => {
     dispatch(setDetails(file));
     navigate(paths.vod_details)
   };
-console.log(data)
+// console.log(data)
   return (
     <>
       {/* {show && <VodDetails setshow={setshow} />} */}
@@ -99,7 +109,7 @@ console.log(data)
 
         {/* List */}
         <div className=" py-[20px] flex flex-col gap-[20px] w-full">
-          {renderItems.length > 0
+          {activeTab === "popular"
             ? list.map((item: any, index) => (
                 <div
                 onClick={() => showDetailsVod(item)}
