@@ -135,15 +135,22 @@ export const profileApi = createApi({
       }),
     }),
     getFollowerList: builder.query<any, string>({
-      query: () => ({
-        url: `/follower/follower-list`,
+      query: (user_id) => ({
+        url: `/follower/follower-list?user_id=${user_id}`,
         method: "GET",
       }),
     }),
     getFollowingList: builder.query<any, string>({
-      query: () => ({
-        url: `/follower/following-list`,
+      query: (user_id) => ({
+        url: `/follower/following-list?user_id=${user_id}`,
         method: "GET",
+      }),
+    }),
+    changeFollowStatus: builder.mutation<any, string>({
+      query: ({ follow_user_id, status }: any) => ({
+        url: `/follower/change-follow-status`,
+        method: "Post",
+        body: { follow_user_id, status },
       }),
     }),
   }),
@@ -167,4 +174,5 @@ export const {
   useGetSecurityQuestionsMutation,
   useGetFollowerListQuery,
   useGetFollowingListQuery,
+  useChangeFollowStatusMutation,
 } = profileApi;

@@ -20,7 +20,7 @@ const Profile = () => {
   const { data, isLoading } = useGetMyProfileQuery("");
   const [show, setShow] = useState(false);
   const user = useSelector((state: any) => state.persist.user);
-  // console.log("data", data);
+  console.log("data", data);
 
   if (isLoading) return <Loader />;
 
@@ -74,7 +74,7 @@ const Profile = () => {
             <Person />
           </div>
         ) : (
-          <ProfileAvatar />
+          <ProfileAvatar progress={data?.data?.level_progress} />
         )}
         {!user?.token ? (
           <Link to={paths.login} className="flex items-center gap-2 flex-1">
@@ -124,11 +124,7 @@ const Profile = () => {
         ""
       )}
       {/* Stats */}
-      <Stats
-        follower={user?.token ? stats.follower : 0}
-        following={user?.token ? stats.following : 0}
-        like={user?.token ? stats.like : 0}
-      />
+      <Stats />
 
       {user?.token ? (
         <Link to={paths.profileDetail}>
