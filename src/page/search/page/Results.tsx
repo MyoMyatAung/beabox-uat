@@ -12,6 +12,8 @@ import {
 import Header from "./Header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import VideoFeed from "@/page/home/components/VideoFeed";
+import lozad from "lozad";
+import ImageWithPlaceholder from "../comp/imgPlaceholder";
 
 interface ResultsProps {}
 
@@ -122,9 +124,30 @@ const Results: React.FC<ResultsProps> = ({}) => {
               value={query}
               onChange={(e) => setQuery(e.target.value)} // Update the query state on input change
               placeholder="Search Videos"
-              className=" bg-transparent focus:outline-none text-[16px] font-[400] text-[#888] w-full"
+              className=" bg-transparent focus:outline-none text-[16px] font-[400] text-white w-full"
               type="text"
             />
+            {query?.length > 0 && (
+              <button
+                type="button"
+                className="cross-circle"
+                onClick={() => setQuery("")}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="8"
+                  height="8"
+                  viewBox="0 0 8 8"
+                  fill="none"
+                >
+                  <path
+                    d="M4 3.1668L6.9168 0.25L7.75 1.0832L4.8332 4L7.75 6.9168L6.9168 7.75L4 4.8332L1.0832 7.75L0.25 6.9168L3.1668 4L0.25 1.0832L1.0832 0.25L4 3.1668Z"
+                    fill="white"
+                    fill-opacity="0.8"
+                  />
+                </svg>
+              </button>
+            )}
           </div>
           <button type="submit" className="search_btn">
             Search
@@ -168,18 +191,17 @@ const Results: React.FC<ResultsProps> = ({}) => {
                           }}
                         >
                           <div className="relative bg-gray-800 rounded-lg overflow-hidden">
-                            <img
-                              src={
-                                video?.preview_image ||
-                                "https://via.placeholder.com/150"
-                              }
+                            <ImageWithPlaceholder
+                              src={video?.preview_image}
                               alt={video.title || "Video"}
-                              className="w-full h-full object-cover"
-                              style={{ minHeight: "240px", maxHeight: "340px" }}
+                              width={"240px"}
+                              height={"240px"}
+                              className="lozad w-full h-full object-cover"
+                              // style={{ minHeight: "240px", maxHeight: "340px" }}
                             />
                           </div>
                           <div className="mt-2">
-                            <p className="search_text line-clamp-2 text-left">
+                            <p className="search_text font-cnFont line-clamp-2 text-left">
                               {video.title}
                             </p>
                           </div>
@@ -189,7 +211,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
                                 <AvatarImage src="https://i.pinimg.com/236x/64/bf/60/64bf60f08e226ae662e83a459a28a9bf.jpg" />
                                 <AvatarFallback>SM</AvatarFallback>
                               </Avatar>
-                              <div className="mt-1 text-[14px] text-left text-[#bfbfbf] mb-1">
+                              <div className="mt-1 text-[14px] font-cnFont text-left text-[#bfbfbf] mb-1">
                                 {video?.user?.name}
                               </div>
                             </div>
@@ -253,7 +275,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
                                   </filter>
                                 </defs>
                               </svg>
-                              <span className="like_count">
+                              <span className="like_count font-cnFont">
                                 {video.like_count || 283}
                               </span>
                             </div>
@@ -281,14 +303,13 @@ const Results: React.FC<ResultsProps> = ({}) => {
                           }}
                         >
                           <div className="relative bg-gray-800 rounded-lg overflow-hidden">
-                            <img
-                              src={
-                                video?.preview_image ||
-                                "https://via.placeholder.com/150"
-                              }
+                            <ImageWithPlaceholder
+                              src={video?.preview_image}
                               alt={video.title || "Video"}
-                              className="w-full h-full object-cover"
-                              style={{ minHeight: "240px", maxHeight: "340px" }}
+                              width={"240px"}
+                              height={"240px"}
+                              className="lozad w-full h-full object-cover"
+                              // style={{ minHeight: "240px", maxHeight: "340px" }}
                             />
                           </div>
                           <div className="mt-2">

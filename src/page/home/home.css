@@ -165,7 +165,7 @@ html {
 .side_text {
   color: #e9e7e7;
   text-align: center;
-  font-family: "Helvetica Neue";
+
   font-size: 11px;
   font-style: normal;
   font-weight: 700;
@@ -174,7 +174,7 @@ html {
 
 .footer_head_text {
   color: var(--White, #fff);
-  font-family: "Helvetica Neue";
+
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -185,7 +185,7 @@ html {
 .footer_title {
   /* display: flex; */
   color: #fff;
-  font-family: "Helvetica Neue";
+
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -201,7 +201,7 @@ html {
   align-items: center;
   gap: 0px;
   color: var(--White, #fff);
-  font-family: "Helvetica Neue";
+
   font-size: 14px;
   font-style: normal;
   font-weight: 500;
@@ -211,7 +211,7 @@ html {
 
 .collect_text {
   color: var(--White, #fff);
-  font-family: "Helvetica Neue";
+  font-family: cnFont, sans-serif;
   font-size: 12px;
   font-style: normal;
   font-weight: 700;
@@ -220,7 +220,7 @@ html {
 }
 .collect_text_sec {
   color: var(--White, #fff);
-  font-family: "Helvetica Neue";
+  font-family: cnFont, sans-serif;
   font-size: 12px;
   font-style: normal;
   font-weight: 400;
@@ -230,7 +230,7 @@ html {
 
 .count_x {
   color: var(--White, #fff);
-  font-family: "Helvetica Neue";
+  font-family: cnFont, sans-serif;
   font-size: 16px;
   font-style: italic;
   font-weight: 900;
@@ -240,7 +240,7 @@ html {
 
 .like_user {
   color: var(--White, #fff);
-  font-family: "Helvetica Neue";
+  font-family: cnFont, sans-serif;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -268,7 +268,7 @@ html {
   gap: 10px;
   flex: 1 0 0;
   color: var(--White, #fff);
-  font-family: "Helvetica Neue";
+  font-family: cnFont, sans-serif;
   font-size: 12px;
   font-style: normal;
   font-weight: 500;
@@ -278,7 +278,7 @@ html {
 
 .qr_text1 {
   color: rgba(255, 255, 255, 0.6);
-  font-family: "Helvetica Neue";
+  font-family: cnFont, sans-serif;
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -287,7 +287,7 @@ html {
 }
 .qr_text2 {
   color: #f2cdff;
-  font-family: "Helvetica Neue";
+  font-family: cnFont, sans-serif;
   font-size: 12px;
   font-style: normal;
   font-weight: 400;
@@ -297,7 +297,7 @@ html {
 
 .qr_text3 {
   color: #fff;
-  font-family: "Helvetica Neue";
+  font-family: cnFont, sans-serif;
   font-size: 12px;
   font-style: normal;
   font-weight: 400;
@@ -308,7 +308,7 @@ html {
 .share_text {
   color: #f2cdff;
   text-align: center;
-  font-family: "Helvetica Neue";
+  font-family: cnFont, sans-serif;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -417,7 +417,7 @@ html {
 
 .comment_name {
   color: #fff;
-  /* font-family: Inter; */
+  font-family: cnFont, sans-serif;
   font-size: 12px;
   font-style: normal;
   font-weight: 500;
@@ -426,7 +426,7 @@ html {
 
 .comment_content {
   color: #fff;
-  /* font-family: Inter; */
+  font-family: cnFont, sans-serif;
   font-size: 12px;
   font-style: normal;
   font-weight: 400;
@@ -435,7 +435,7 @@ html {
 
 .created_at_comment {
   color: #777;
-  /* font-family: Inter; */
+  font-family: cnFont, sans-serif;
   font-size: 10px;
   font-style: normal;
   font-weight: 400;
@@ -456,7 +456,7 @@ html {
   align-items: center;
   gap: 4px;
   color: #fff;
-  /* font-family: Inter; */
+  font-family: cnFont, sans-serif;
   font-size: 10px;
   font-style: normal;
   font-weight: 400;
@@ -472,7 +472,7 @@ html {
   color: rgba(255, 255, 255, 0.6);
   font-variant-numeric: lining-nums proportional-nums;
   font-feature-settings: "dlig" on;
-  font-family: "PingFang SC";
+  font-family: cnFont, sans-serif;
   font-size: 12px;
   font-style: normal;
   font-weight: 400;
@@ -538,7 +538,7 @@ html {
 
 .top-text {
   color: var(--White, #fff);
-  font-family: "Helvetica Neue";
+  font-family: cnFont, sans-serif;
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -548,7 +548,7 @@ html {
 .top-number {
   color: #fff;
   text-align: center;
-  font-family: "Helvetica Neue";
+  font-family: cnFont, sans-serif;
   font-size: 16px;
   font-style: normal;
   font-weight: 700;
@@ -567,10 +567,9 @@ html {
 
 .nav_text {
   color: var(--White, #fff);
-  font-family: "Helvetica Neue";
+  font-family: cnFont, sans-serif;
   font-size: 16px;
   font-style: normal;
-  font-weight: 700;
   line-height: 20px; /* 125% */
   letter-spacing: 0.25px;
 }
@@ -590,7 +589,7 @@ html {
 .follow-error {
   color: #888;
   text-align: center;
-  font-family: "Helvetica Neue";
+  font-family: cnFont, sans-serif;
   font-size: 12px;
   font-style: normal;
   font-weight: 400;
@@ -599,7 +598,7 @@ html {
 
 .more_text {
   color: rgba(255, 255, 255, 0.9);
-  font-family: "Helvetica Neue";
+  font-family: cnFont, sans-serif;
   font-size: 14px;
   font-style: normal;
   font-weight: 500;
@@ -612,7 +611,7 @@ html {
   text-align: center;
   font-variant-numeric: lining-nums proportional-nums;
   font-feature-settings: "dlig" on;
-  font-family: "Helvetica Neue";
+  font-family: cnFont, sans-serif;
   font-size: 11px;
   font-style: normal;
   font-weight: 500;

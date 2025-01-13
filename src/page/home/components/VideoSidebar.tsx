@@ -325,7 +325,7 @@ function VideoSidebar({
             </svg>
           </button>
         )}
-        <p className="side_text mt-2">{likeCount}</p>
+        <p className="side_text font-cnFont mt-2">{likeCount}</p>
       </div>
 
       <div className="videoSidebar__button">
@@ -345,7 +345,7 @@ function VideoSidebar({
             />
           </svg>
         </button>
-        <p className="side_text mt-2">{messages}</p>
+        <p className="side_text font-cnFont mt-2">{messages}</p>
       </div>
       <div className="videoSidebar__button">
         <button onClick={handleShareClick}>
@@ -362,7 +362,7 @@ function VideoSidebar({
             />
           </svg>
 
-          <p className="side_text mt-2">Share</p>
+          <p className="side_text font-cnFont mt-2">Share</p>
         </button>
       </div>
       {/* Alert Box */}

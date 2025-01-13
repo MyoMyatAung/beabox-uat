@@ -207,7 +207,7 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
                 src={comment.user.avatar || "/default-avatar.png"}
                 alt={comment.user.name}
               />
-              <AvatarFallback className="text-white bg-black">
+              <AvatarFallback className="text-white bg-black font-cnFont">
                 {comment.user.name.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
@@ -269,7 +269,7 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
             )}
           </div>
         </div>
-        <p className="mt-2 ml-[48px] comment_content text-white">
+        <p className="mt-2 ml-[48px] comment_content font-cnFont text-white">
           {comment.content}
         </p>
         <button
@@ -491,7 +491,7 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
         }`}
       >
         <div>
-          <div className="text-white text-center pt-[14px]">
+          <div className="text-white text-center font-cnFont pt-[14px]">
             <span className="mr-1"> {comments?.length}</span>Comments
           </div>
           <button
