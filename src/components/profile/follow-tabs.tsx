@@ -1,8 +1,9 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import FollowCard from "./follow-card";
 import { Input } from "../ui/input";
 import { FaSearch } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import FollowerList from "./follow/follower-list";
+import FollowingList from "./follow/following-list";
 
 const FollowTabs = () => {
   const defaultFollowTab = useSelector(
@@ -32,36 +33,10 @@ const FollowTabs = () => {
         />
       </div>
       <TabsContent value="follower">
-        <div className="flex flex-col gap-4 w-full no-scrollbar h-screen pb-20">
-          <FollowCard following={true} />
-          <FollowCard />
-          <FollowCard />
-          <FollowCard />
-          <FollowCard />
-          <FollowCard />
-          <FollowCard />
-          <FollowCard />
-          <FollowCard />
-          <FollowCard />
-          <FollowCard />
-          <FollowCard />
-          <FollowCard />
-          <FollowCard />
-        </div>
+        <FollowerList />
       </TabsContent>
       <TabsContent value="following">
-        <div className="flex flex-col gap-4 w-full no-scrollbar h-screen pb-20">
-          <FollowCard following={true} />
-          <FollowCard following={true} />
-          <FollowCard following={true} />
-          <FollowCard following={true} />
-          <FollowCard following={true} />
-          <FollowCard following={true} />
-          <FollowCard following={true} />
-          <FollowCard following={true} />
-          <FollowCard following={true} />
-          <FollowCard following={true} />
-        </div>
+        <FollowingList />
       </TabsContent>
     </Tabs>
   );

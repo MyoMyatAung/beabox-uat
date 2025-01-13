@@ -6,15 +6,8 @@ import {
   setDefaultFollowTab,
   setIsDrawerOpen,
 } from "@/store/slices/profileSlice";
-const Stats = ({
-  follower,
-  following,
-  like,
-}: {
-  follower: number;
-  following: number;
-  like: number;
-}) => {
+import withFollowData from "@/hocs/withFollowData";
+const Stats = ({ followers, following, nickname }: any) => {
   const isDrawerOpen = useSelector((state: any) => state.profile.isDrawerOpen);
   const dispatch = useDispatch();
   return (
@@ -29,7 +22,9 @@ const Stats = ({
             onClick={() => dispatch(setDefaultFollowTab("follower"))}
           >
             <div>
-              <div className="text-[14px] font-semibold">{follower}</div>
+              <div className="text-[14px] font-semibold">
+                {followers?.length ? followers?.length : 0}
+              </div>
               <div className="text-gray-400 text-[14px]">Follower</div>
             </div>
           </DrawerTrigger>
@@ -41,14 +36,16 @@ const Stats = ({
             onClick={() => dispatch(setDefaultFollowTab("following"))}
           >
             <div>
-              <div className="text-[14px] font-semibold">{following}</div>
+              <div className="text-[14px] font-semibold">
+                {following?.length ? following?.length : 0}
+              </div>
               <div className="text-gray-400 text-[14px]">Following</div>
             </div>
           </DrawerTrigger>
         </div>
         <span className="text-gray-500">|</span>
         <div className="text-center">
-          <div className="text-[14px] font-semibold">{like}</div>
+          <div className="text-[14px] font-semibold">0</div>
           <div className="text-gray-400 text-[14px]">Like</div>
         </div>
       </div>
@@ -58,7 +55,7 @@ const Stats = ({
             <button onClick={() => dispatch(setIsDrawerOpen(false))}>
               <FaAngleLeft size={18} />
             </button>
-            <p className="text-[16px]">Kimmy</p>
+            <p className="text-[16px]">{nickname}</p>
             <div></div>
           </div>
 
@@ -69,4 +66,4 @@ const Stats = ({
   );
 };
 
-export default Stats;
+export default withFollowData(Stats);

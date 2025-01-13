@@ -7,7 +7,7 @@ export const loginSchema = z.object({
   // ),
   password: z
     .string()
-    .min(8, "Password must be 8-25 characters")
+    .min(7, "Password must be 7-25 characters")
     .max(25, "Password must be 8-25 characters"),
 });
 
