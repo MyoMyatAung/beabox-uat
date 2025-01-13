@@ -26,8 +26,10 @@ import {
 import { useDispatch } from "react-redux";
 import { setRegisterUser } from "@/store/slices/persistSlice";
 import Shield from "@/assets/profile/shield.png";
+import Loader from "@/components/shared/loader";
 
 const Register = () => {
+  const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [code, setCode] = useState("");
   const [showVerification, setShowVerification] = useState(false);
@@ -50,8 +52,9 @@ const Register = () => {
     // await getCaptcha();
     setShowVerification(true);
   }
-  const handleVerify = async () => {
+  const handleVerify = async (e: any) => {
     // Add verification logic here
+    e.stopPropagation();
     const { emailOrPhone, password } = form.getValues();
     const { data: registerData } = await register({
       username: emailOrPhone,
@@ -59,175 +62,190 @@ const Register = () => {
       captcha,
       captcha_key: data?.data?.captcha_key,
     });
+    console.log(registerData, "registerData");
     if (registerData?.status) {
       dispatch(setRegisterUser(registerData?.data));
-      // navigate(paths.login);
+      setShowVerification(false);
+      setShowSecurity(true);
+    } else {
+      setShowVerification(false);
+      setShowSecurity(false);
+      setError("Something went wrong!");
     }
-    setShowVerification(false);
-    setShowSecurity(true);
   };
   return (
-    <div className="px-5">
-      <div className="flex justify-between items-center py-5">
-        <Link to={paths.login}>
-          <ChevronLeft />
-        </Link>
-        <p className="text-[16px]">Create Account</p>
-        <div></div>
-      </div>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-8 py-10"
-        >
-          <FormField
-            control={form.control}
-            name="emailOrPhone"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <div className="relative">
-                    <input
-                      className="block w-full px-3 py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none "
-                      placeholder="Enter User Name"
-                      {...field}
-                    />
-                    {field.value && (
-                      <div
-                        className="w-6 h-6 rounded-full flex justify-center items-center bg-[#FFFFFF1F] absolute right-0 bottom-2"
-                        onClick={() => {
-                          field.onChange("");
+    <>
+      {registerLoading || isLoading ? <Loader /> : <></>}
+      <div className="px-5 bg-[#FFFFFF1F] h-screen">
+        <div className="flex justify-between items-center py-5">
+          <Link to={paths.login}>
+            <ChevronLeft />
+          </Link>
+          <p className="text-[16px]">Create Account</p>
+          <div></div>
+        </div>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-8 py-10"
+          >
+            <FormField
+              control={form.control}
+              name="emailOrPhone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <div className="relative">
+                      <input
+                        className="block w-full px-3 py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none "
+                        placeholder="Enter User Name"
+                        {...field}
+                      />
+                      {field.value && (
+                        <div
+                          className="w-6 h-6 rounded-full flex justify-center items-center bg-[#FFFFFF1F] absolute right-0 bottom-2"
+                          onClick={() => {
+                            field.onChange("");
+                          }}
+                        >
+                          <X size={9} />
+                        </div>
+                      )}
+                      <div className="w-full h-[1px] bg-[#FFFFFF0A]"></div>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem className="relative">
+                  <FormControl>
+                    <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        className="block w-full px-3 py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none "
+                        placeholder="Password must be 8-25 character"
+                        {...field}
+                      />
+                      <button
+                        className=" absolute right-0 bottom-2"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setShowPassword(!showPassword);
                         }}
                       >
-                        <X size={9} />
-                      </div>
-                    )}
-                    <div className="w-full h-[1px] bg-[#FFFFFF0A]"></div>
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                        {showPassword ? (
+                          <Eye className="w-[18px]" />
+                        ) : (
+                          <EyeOff className="w-[18px]" />
+                        )}
+                      </button>
+                      <div className="w-full h-[1px] bg-[#FFFFFF0A]"></div>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                  <FormMessage asChild>{error}</FormMessage>
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem className="relative">
-                <FormControl>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      className="block w-full px-3 py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none "
-                      placeholder="Password must be 8-25 character"
-                      {...field}
-                    />
-                    <button
-                      className=" absolute right-0 bottom-2"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setShowPassword(!showPassword);
-                      }}
+            <input
+              type="text"
+              placeholder="Enter Promotion Code (Optional)"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              className="bg-[#1F1C25] border-0 rounded-lg text-white placeholder:text-gray-600 px-4 py-4 text-center placeholder:text-center w-full outline-none"
+            />
+
+            <div className="">
+              <Button
+                // type="submit"
+                // disabled={isLoading ? true : false}
+                onClick={async () => await getCaptcha("")}
+                className="w-full gradient-bg rounded-lg hover:gradient-bg"
+              >
+                {/* {isLoading ? "loading..." : "Continue"} */}
+                Continue
+              </Button>
+            </div>
+            <Dialog open={showVerification} onOpenChange={setShowVerification}>
+              {!isLoading ? (
+                <DialogContent className="bg-[#16131C] border-0 shadow-lg rounded-lg max-w-[290px]">
+                  <DialogHeader>
+                    <DialogTitle className="text-white text-[16px]">
+                      Verification
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-6">
+                    <div className="flex justify-center items-center gap-1 h-[36px]">
+                      <input
+                        value={captcha}
+                        onChange={(e) => setCaptcha(e.target.value)}
+                        placeholder="Type Captcha"
+                        className="bg-[#2D2738] px-[10px] h-full outline-none"
+                      />
+
+                      <img
+                        src={data?.data?.img}
+                        className="w-[80px]  h-full  object-center outline-none border-gray-400"
+                        alt=""
+                      />
+                    </div>
+                    <Button
+                      onClick={handleVerify}
+                      disabled={registerLoading ? true : false}
+                      type="submit"
+                      className="w-full gradient-bg hover:gradient-bg text-white rounded-lg"
                     >
-                      {showPassword ? (
-                        <Eye className="w-[18px]" />
-                      ) : (
-                        <EyeOff className="w-[18px]" />
-                      )}
-                    </button>
-                    <div className="w-full h-[1px] bg-[#FFFFFF0A]"></div>
+                      {/* {registerLoading ? "loading..." : "Verify"} */}
+                      Verify
+                    </Button>
                   </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <input
-            type="text"
-            placeholder="Enter Promotion Code (Optional)"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            className="bg-[#121012] border-0 rounded-lg text-white placeholder:text-gray-600 px-4 py-4 text-center placeholder:text-center w-full outline-none"
-          />
-
-          <div className="">
-            <Button
-              // type="submit"
-              onClick={async () => await getCaptcha("")}
-              className="w-full gradient-bg rounded-lg hover:gradient-bg"
-            >
-              {isLoading ? "loading..." : "Continue"}
-            </Button>
-          </div>
-          <Dialog open={showVerification} onOpenChange={setShowVerification}>
-            {!isLoading ? (
-              <DialogContent className="bg-[#333333] border-0 shadow-lg rounded-lg max-w-[290px]">
+                </DialogContent>
+              ) : (
+                <></>
+              )}
+            </Dialog>
+            <Dialog open={showSecurity} onOpenChange={setShowSecurity}>
+              <DialogContent className="bg-[#242424] max-w-[340px] border-0 rounded-[16px]">
                 <DialogHeader>
                   <DialogTitle className="text-white text-[16px]">
-                    Verification
+                    Security Question
                   </DialogTitle>
                 </DialogHeader>
                 <div className="space-y-6">
-                  <img
-                    src={data?.data?.img}
-                    className="w-full h-[56px] object-cover object-center"
-                    alt=""
-                  />
-                  <input
-                    value={captcha}
-                    onChange={(e) => setCaptcha(e.target.value)}
-                    placeholder="Type Captcha"
-                    className="bg-[#424040] w-full px-[10px] py-4 rounded-lg outline-none"
-                  />
-                  <Button
-                    onClick={handleVerify}
-                    type="submit"
-                    className="w-full gradient-bg hover:gradient-bg text-white rounded-lg"
-                  >
-                    {registerLoading ? "loading..." : "Verify"}
-                  </Button>
+                  <img src={Shield} className="w-[77px] mx-auto" alt="" />
+                  <p className="text-[14px]">
+                    Set up security question to protect your account from lost
+                    or forgotten passwords and theft. You can also choose to do
+                    this later.
+                  </p>
+                  <div className="space-y-2">
+                    <Button
+                      onClick={() => navigate(paths.security_questions)}
+                      className="w-full gradient-bg rounded-[16px] hover:gradient-bg"
+                    >
+                      Continue
+                    </Button>
+                    <Button
+                      onClick={() => navigate(paths.login)}
+                      className="w-full bg-[#444444] rounded-[16px] hover:bg-[#444444]"
+                    >
+                      Later
+                    </Button>
+                  </div>
                 </div>
               </DialogContent>
-            ) : (
-              <></>
-            )}
-          </Dialog>
-          <Dialog open={showSecurity} onOpenChange={setShowSecurity}>
-            <DialogContent className="bg-[#242424] max-w-[340px] border-0 rounded-[16px]">
-              <DialogHeader>
-                <DialogTitle className="text-white text-[16px]">
-                  Security Question
-                </DialogTitle>
-              </DialogHeader>
-              <div className="space-y-6">
-                <img src={Shield} className="w-[77px] mx-auto" alt="" />
-                <p className="text-[14px]">
-                  Set up security question to protect your account from lost or
-                  forgotten passwords and theft. You can also choose to do this
-                  later.
-                </p>
-                <div className="space-y-2">
-                  <Button
-                    onClick={() => navigate(paths.security_questions)}
-                    className="w-full gradient-bg rounded-[16px] hover:gradient-bg"
-                  >
-                    Continue
-                  </Button>
-                  <Button
-                    onClick={() => navigate(paths.login)}
-                    className="w-full bg-[#444444] rounded-[16px] hover:bg-[#444444]"
-                  >
-                    Later
-                  </Button>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </form>
-      </Form>
-    </div>
+            </Dialog>
+          </form>
+        </Form>
+      </div>
+    </>
   );
 };
 

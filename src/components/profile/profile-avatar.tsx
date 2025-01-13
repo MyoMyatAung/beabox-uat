@@ -1,7 +1,7 @@
 import { Person } from "@/assets/profile";
 
-const ProfileAvatar = () => {
-  const progress = 75;
+const ProfileAvatar = ({}) => {
+  const progress = 70;
   const circleRadius = 30; // Adjusted radius to fit within 60px
   const strokeWidth = 4; // Stroke width
   const normalizedRadius = circleRadius - strokeWidth / 2;
