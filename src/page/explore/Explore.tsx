@@ -11,13 +11,22 @@ import "swiper/css";
 import { SwiperSlide } from "swiper/react";
 import { useGetExploreHeaderQuery } from "@/store/api/explore/exploreApi";
 import VodDetails from "./comp/VodDetails";
+import { useSearchParams } from "react-router-dom";
 
 const Explore = () => {
   const [activeTab, setActiveTab] = useState("Recommend");
+  const [searchParams, setSearchParams] = useSearchParams();
   const [tabs, setTabs] = useState(["Recommend", "Latest", "Hollywood"]);
   const { data, isLoading } = useGetExploreHeaderQuery("");
   const swiperRef = useRef<any>(null);
   const [show, setshow] = useState<boolean>(false);
+
+  useEffect(() => {
+    const queryTab = searchParams.get("query");
+    if (queryTab && tabs.includes(queryTab)) {
+      setActiveTab(queryTab);
+    }
+  }, [searchParams, tabs]);
 
   useEffect(() => {
     if (data?.data?.tabs) {
@@ -38,6 +47,36 @@ const Explore = () => {
   const handleSlideChange = (swiper: any) => {
     const newActiveTab = tabs[swiper.activeIndex] || activeTab; // Fallback to current activeTab
     setActiveTab(newActiveTab);
+    setSearchParams({ query: tabToQuery(newActiveTab) }); // Convert tab to query value
+  };
+
+  useEffect(() => {
+    const queryTab = searchParams.get("query");
+    const formattedTab = formatQueryToTab(queryTab); // Converts `rec` to `Recommend`, etc.
+    if (formattedTab && tabs.includes(formattedTab)) {
+      setActiveTab(formattedTab);
+    }
+  }, [searchParams, tabs]);
+
+  // Convert query values to tab names
+  const formatQueryToTab = (query: string | null) => {
+    if (!query) return null;
+    const map: Record<string, string> = {
+      rec: "Recommend",
+      latest: "Latest",
+      hollywood: "Hollywood",
+    };
+    return map[query.toLowerCase()] || null;
+  };
+
+  // Convert tab names to query values
+  const tabToQuery = (tab: string) => {
+    const map: Record<string, string> = {
+      Recommend: "rec",
+      Latest: "latest",
+      Hollywood: "hollywood",
+    };
+    return map[tab] || "";
   };
 
   return (
@@ -61,22 +100,22 @@ const Explore = () => {
               <SwiperSlide>
                 {activeTab === "Recommend" && (
                   <div className="">
-                    <Recommand  title="Chinese Drama" />
-                    <Recommand  title="Latest Drama" />
+                    <Recommand title="Chinese Drama" />
+                    <Recommand title="Latest Drama" />
                   </div>
                 )}
               </SwiperSlide>
               <SwiperSlide>
                 {activeTab === "Latest" && (
                   <div className="">
-                    <Latest  />
+                    <Latest />
                   </div>
                 )}
               </SwiperSlide>
               <SwiperSlide>
                 {activeTab === "Hollywood" && (
                   <div className="">
-                    <Latest  />
+                    <Latest />
                   </div>
                 )}
               </SwiperSlide>

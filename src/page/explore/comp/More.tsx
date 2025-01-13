@@ -128,6 +128,7 @@ console.log(data)
               ))
             : list.map((item: any, index) => (
                 <div
+                onClick={() => showDetailsVod(item)}
                   key={index}
                   className=" flex w-full justify-center items-center gap-[16px]"
                 >

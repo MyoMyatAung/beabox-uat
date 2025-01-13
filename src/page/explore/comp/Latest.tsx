@@ -7,14 +7,15 @@ import { Person } from "@/assets/profile";
 import Loader from "../../../page/home/vod_loader.gif";
 import { useDispatch, useSelector } from "react-redux";
 import { setDetails } from "@/store/slices/exploreSlice";
-import { useNavigate } from "react-router-dom";
+import { replace, useNavigate, useSearchParams } from "react-router-dom";
 import { paths } from "@/routes/paths";
 
 interface LatestPorp {
-  // setshow: any;
+
 }
 
 const Latest: React.FC<LatestPorp> = ({}) => {
+  // const [searchParams, setSearchParams] = useSearchParams();
   const dispatch = useDispatch();
   const [waterfall, setWaterFall] = useState<any[]>([]);
   const [hasMore, setHasMore] = useState(true);
@@ -47,7 +48,7 @@ const Latest: React.FC<LatestPorp> = ({}) => {
 
   const showDetailsVod = (file: any) => {
     dispatch(setDetails(file));
-    navigate(paths.vod_details);
+    navigate("/vod_details",{replace : true});
   };
   return (
     <div className=" flex w-full justify-around items-cente">
