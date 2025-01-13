@@ -31,7 +31,7 @@ const Banner: React.FC = () => {
             clickable: true,
           }}
           autoplay={{
-            delay: 1000,
+            delay: 3000,
             disableOnInteraction: false,
           }}
           spaceBetween={"1px"}

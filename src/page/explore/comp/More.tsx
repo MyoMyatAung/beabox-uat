@@ -13,6 +13,8 @@ interface MoreProps {}
 
 const More: React.FC<MoreProps> = () => {
   const [show, setshow] = useState<boolean>(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -26,6 +28,10 @@ const More: React.FC<MoreProps> = () => {
   useEffect(() => {
     if (data?.data) {
       setList(data?.data.list);
+
+      // const loadedItems =
+      //   data.pagination.current_page * data.pagination.per_page;
+      // setHasMore(loadedItems < data.pagination.total);
     }
     refetch();
   }, [data, list, activeTab]);
@@ -45,12 +51,15 @@ const More: React.FC<MoreProps> = () => {
 
   const renderItems = activeTab === "popular" ? popularItems : latestItems;
 
+  const fetchMoreData = () => {
+    setPage((prevPage) => prevPage + 1);
+  };
+
   const showDetailsVod = (file: any) => {
     dispatch(setDetails(file));
     navigate(paths.vod_details)
-    // setshow(true);
   };
-// console.log(list)
+console.log(data)
   return (
     <>
       {/* {show && <VodDetails setshow={setshow} />} */}

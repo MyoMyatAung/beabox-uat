@@ -4,9 +4,9 @@ export const homeApi = createApi({
   reducerPath: "homeApi",
   baseQuery: fetchBaseQuery({
     baseUrl: "https://77eewm.qdhgtch.com/api/v1",
-    prepareHeaders: (headers) => {
-      const storedAuth = JSON.parse(localStorage.getItem("authToken") || "{}");
-      const accessToken = storedAuth?.data?.access_token;
+    prepareHeaders: (headers, { getState }) => {
+      const state = getState() as any;
+      const accessToken = state.persist?.user?.token;
       headers.set("Accept-Language", "en");
       if (accessToken) {
         headers.set("Authorization", `Bearer ${accessToken}`);
@@ -35,12 +35,13 @@ export const homeApi = createApi({
       query: () => `posts/following`,
     }),
 
-    likePost: builder.mutation<void, { post_id: any }>({
-      query: ({ post_id }) => ({
+    likePost: builder.mutation<void, { post_id: any; count: any }>({
+      query: ({ post_id, count }) => ({
         url: `post/like`,
         method: "POST",
         body: {
           post_id,
+          count,
         },
       }),
     }),

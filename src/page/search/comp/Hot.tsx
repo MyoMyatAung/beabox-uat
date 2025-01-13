@@ -2,21 +2,17 @@ import React from "react";
 import { setHistoryData } from "../slice/HistorySlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import "../search.css"
+import "../search.css";
+import { useGetConfigQuery } from "@/page/home/services/homeApi";
 
 interface HotProps {}
 
 const Hot: React.FC<HotProps> = ({}) => {
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const hot = [
-    "Spider Man",
-    "Disney",
-    "Scooby-Doo",
-    "Mulan",
-    "Dead-pool",
-    "Moana",
-  ];
+  const { data, isLoading } = useGetConfigQuery({});
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const hot = data?.data?.hot_search?.split(",");
 
   const handleSearch = (query: any) => {
     if (query.trim()) {
