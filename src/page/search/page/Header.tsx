@@ -4,14 +4,23 @@ interface HeaderProps {
   tabs: any;
   activeTab: any;
   setActiveTab: any;
+  setCurrentPage: any;
 }
 
-const Header: React.FC<HeaderProps> = ({ tabs, activeTab, setActiveTab }) => {
+const Header: React.FC<HeaderProps> = ({
+  tabs,
+  activeTab,
+  setActiveTab,
+  setCurrentPage,
+}) => {
   return (
-    <div className=" flex mb-[26px]">
+    <div className=" flex mb-[26px] px-[16px]">
       {tabs?.map((tt: any, index: number) => (
         <div
-          onClick={() => setActiveTab(tt)}
+          onClick={() => {
+            setCurrentPage(1);
+            setActiveTab(tt);
+          }}
           key={index}
           className=" px-[10px] py-[8px] flex flex-col justify-center items-center"
         >

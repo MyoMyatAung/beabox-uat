@@ -45,6 +45,16 @@ export const homeApi = createApi({
         },
       }),
     }),
+    followStatus: builder.mutation<void, { follow_user_id: any; status: any }>({
+      query: ({ follow_user_id, status }) => ({
+        url: `follower/change-follow-status`,
+        method: "POST",
+        body: {
+          follow_user_id,
+          status,
+        },
+      }),
+    }),
     commentList: builder.mutation<void, { post_id: any }>({
       query: ({ post_id }) => ({
         url: `comments/list`,
@@ -118,6 +128,7 @@ export const homeApi = createApi({
 });
 
 export const {
+  useFollowStatusMutation,
   useGetLatestPostsQuery,
   useGetFollowedPostsQuery,
   useTop20PostsQuery,

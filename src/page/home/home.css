@@ -25,13 +25,14 @@
   opacity: 1 !important;
 } */
 .art-progress {
+  padding-bottom: 0px !important;
   transform: none !important;
 }
 
 .art-bottom {
   padding-left: 0px !important;
   padding-right: 0px !important;
-  padding-bottom: 14px !important;
+  padding-bottom: 5px !important;
   background-image: none !important;
   opacity: 1 !important;
   /* margin-bottom: 50px !important; */
@@ -95,7 +96,7 @@ html {
 
   position: absolute;
   color: white;
-  bottom: 40px;
+  bottom: 25px;
   margin-left: 10px;
   display: flex;
 }
@@ -395,6 +396,18 @@ html {
 .add_comment {
   background: #191721;
   backdrop-filter: blur(16px);
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.feed_add_comment {
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+
+  /* padding: 6px 12px 6px 20px; */
+  /* justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0; */
 }
 
 .comment_arrow {
