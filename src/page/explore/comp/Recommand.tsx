@@ -64,10 +64,10 @@ const Recommand: React.FC<RecommandProps> = ({ title }) => {
         <>
           {isLoading || refresh ? (
             <>
-              <div className="w-[175px] h-[140px] bg-white/20"></div>
-              <div className="w-[175px] h-[140px] bg-white/20"></div>
-              <div className="w-[175px] h-[140px] bg-white/20"></div>
-              <div className="w-[175px] h-[140px] bg-white/20"></div>
+              <div className="w-[175px] rounded-[8px] h-[140px] bg-white/20"></div>
+              <div className="w-[175px] rounded-[8px] h-[140px] bg-white/20"></div>
+              <div className="w-[175px] rounded-[8px] h-[140px] bg-white/20"></div>
+              <div className="w-[175px] rounded-[8px] h-[140px] bg-white/20"></div>
             </>
           ) : (
             <>

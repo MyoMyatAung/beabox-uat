@@ -54,7 +54,7 @@ const Latest: React.FC<LatestPorp> = ({}) => {
       <div
         className="columns-2 gap-1 relative"
         style={{
-          columnGap: "20px",
+          columnGap: "10px",
         }}
       >
         {isLoading ? (

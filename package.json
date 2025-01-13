@@ -36,6 +36,7 @@
     "react-infinite-scroll-component": "^6.1.0",
     "react-loading-skeleton": "^3.5.0",
     "react-redux": "^9.2.0",
+    "react-responsive-carousel": "^3.2.23",
     "react-router-dom": "^7.0.2",
     "redux-persist": "^6.0.0",
     "swiper": "^11.1.15",
