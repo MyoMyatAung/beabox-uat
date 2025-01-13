@@ -1,68 +1,58 @@
 import React, { useEffect, useState } from "react";
-// import { Swiper, SwiperSlide } from "swiper/react";
-// import "swiper/css";
-// import "swiper/css/pagination";
 import "./ss.css";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; 
 import { Carousel } from "react-responsive-carousel";
-
-// import { Autoplay, Pagination } from "swiper/modules";
 import { useGetExploreHeaderQuery } from "@/store/api/explore/exploreApi";
 
 const Banner: React.FC = () => {
   const [ad, setAd] = useState([]);
-  const [activeIndex, setActiveIndex] = useState(0); // Track the active slide index
-  const { data, isLoading } = useGetExploreHeaderQuery("");
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const { data, isLoading } = useGetExploreHeaderQuery("");
 
   useEffect(() => {
     if (data?.data) {
       const cur = data?.data?.ads?.carousel;
-      setAd(cur);
+      setAd(cur || []);
     }
   }, [data]);
 
-  const handleOnChange = (index: any) => {
+  const handleOnChange = (index: number) => {
     setSelectedIndex(index);
   };
 
   return (
-    <>
-      <div className="py-[20px] relative">
-        {isLoading ? (
-          <div className="w-full h-[194px] bg-white/20 rounded-md animate-pulse"></div>
-        ) : (
+    <div className="py-[20px] relative">
+      {isLoading ? (
+        <div className="w-full h-[194px] bg-white/20 rounded-md animate-pulse"></div>
+      ) : (
+        ad.length > 0 && ( // Only render when ads are available
           <>
             <Carousel
               showThumbs={false}
               showArrows={false}
               showStatus={false}
               showIndicators={false}
-              className=" bg-transparent"
               autoPlay={true}
               infiniteLoop={true}
               centerMode
               centerSlidePercentage={90}
               selectedItem={selectedIndex}
               onChange={handleOnChange}
+              interval={3000} // Set autoplay interval
             >
               {ad.map((cc: any, index: number) => (
                 <div
                   key={index}
-                  className={` justify-center h-[172px] items-center px-[8px] flex flex-col relative bg-black`}
-                  // href={cc.url}
-                  // target="_blank"
+                  className={`justify-center h-[172px] items-center px-[8px] flex flex-col relative bg-black`}
                 >
                   <img
-                    className={`rounded-md transition-all duration-300
-                   ${
-                     selectedIndex == index
-                       ? "w-[332px] h-[162px]" // Active slide size
-                       : "w-[290px] h-[148px]" // Non-active slide size
-                   }
-                  `}
+                    className={`rounded-md transition-all duration-300 ${
+                      selectedIndex === index
+                        ? "w-[332px] h-[162px]" // Active slide size
+                        : "w-[290px] h-[148px]" // Non-active slide size
+                    }`}
                     src={cc.image}
-                    alt="Slide"
+                    alt={`Slide ${index + 1}`}
                   />
                 </div>
               ))}
@@ -82,9 +72,9 @@ const Banner: React.FC = () => {
               ))}
             </ul>
           </>
-        )}
-      </div>
-    </>
+        )
+      )}
+    </div>
   );
 };
 
