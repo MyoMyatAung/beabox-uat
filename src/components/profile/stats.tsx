@@ -23,7 +23,7 @@ const Stats = ({ followers, following, nickname }: any) => {
           >
             <div>
               <div className="text-[14px] font-semibold">
-                {followers?.length}
+                {followers?.length ? followers?.length : 0}
               </div>
               <div className="text-gray-400 text-[14px]">Follower</div>
             </div>
@@ -37,7 +37,7 @@ const Stats = ({ followers, following, nickname }: any) => {
           >
             <div>
               <div className="text-[14px] font-semibold">
-                {following?.length}
+                {following?.length ? following?.length : 0}
               </div>
               <div className="text-gray-400 text-[14px]">Following</div>
             </div>

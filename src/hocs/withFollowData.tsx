@@ -9,13 +9,14 @@ const withFollowData = (WrapperCompo: any) => {
   const HOC = (props: any) => {
     const dispatch = useDispatch();
     const user_code = useSelector(
-      (state: any) => state.persist.profileData.user_code
+      (state: any) => state.persist.profileData?.user_code
     );
-    const nickname = useSelector((state: any) => state.persist.user.nickname);
+    const user_id = useSelector((state: any) => state.persist.user?.id);
+    const nickname = useSelector((state: any) => state.persist.user?.nickname);
     const { data: followers, isLoading: followersLoading } =
       useGetFollowerListQuery(user_code);
     const { data: following, isLoading: followingLoading } =
-      useGetFollowingListQuery(user_code);
+      useGetFollowingListQuery(user_id);
     return (
       <WrapperCompo
         {...props}

@@ -4,7 +4,7 @@ import { useGetFollowerListQuery } from "@/store/api/profileApi";
 
 const FollowerList = () => {
   const user_code = useSelector(
-    (state: any) => state.persist.profileData.user_code
+    (state: any) => state.persist.profileData?.user_code
   );
 
   const { data } = useGetFollowerListQuery(user_code);
