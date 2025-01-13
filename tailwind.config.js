@@ -6,6 +6,7 @@ export default {
     extend: {
       fontFamily: {
         headerFont: ["HeaderFont", "sans-serif"], // Add your custom font
+        cnFont: ["cnFont", "sans-serif"], // Add your custom font
       },
       borderRadius: {
         lg: "var(--radius)",

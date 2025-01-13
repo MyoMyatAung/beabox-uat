@@ -117,7 +117,7 @@ const VideoFeed = ({
         {videos.map((video: any, index: any) => (
           <div
             key={index}
-            className="video mt-[20px] pb-[48px]"
+            className="video mt-[20px] pb-[68px]"
             data-post-id={video.post_id} // Add post ID to the container
           >
             <Player
@@ -140,6 +140,7 @@ const VideoFeed = ({
               countdown={countdown}
               config={config?.data}
               image={video?.preview_image}
+              post={video}
             />
             <FeedFooter
               tags={video?.tag}
@@ -199,7 +200,7 @@ const VideoFeed = ({
               <ShowHeart countNumber={countNumber} username={user?.nickname} />
             )}
             <div className="absolute bottom-0 add_comment w-full  py-3 ">
-              <div className="flex items-center gap-2 px-4">
+              <div className="flex items-center feed_add_comment gap-2 px-4">
                 <input
                   type="text"
                   className="w-full p-[6px] bg-transparent border-none outline-none"
@@ -208,7 +209,7 @@ const VideoFeed = ({
                   placeholder="Write a comment"
                 />
                 <button
-                  className="comment_arrow p-3"
+                  className="p-3"
                   onClick={() => handleComment(video?.post_id)}
                 >
                   <svg

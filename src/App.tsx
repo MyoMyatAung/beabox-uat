@@ -8,6 +8,7 @@ const App = () => {
   const { panding } = useSelector((state: any) => state.model);
   console.log(panding);
   const dispatch = useDispatch();
+
   useEffect(() => {
     const hasSeenLanding = sessionStorage.getItem("hasSeenLanding");
     if (!hasSeenLanding) {

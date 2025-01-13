@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   useLikePostMutation,
   useCommentListMutation,
+  useFollowStatusMutation,
 } from "../services/homeApi";
 import qr from "../qr.png";
 import spider from "../spider.png";
@@ -24,6 +25,7 @@ function VideoSidebar({
   countdown,
   config,
   image,
+  post,
 }: {
   likes: any;
   messages: any;
@@ -37,6 +39,7 @@ function VideoSidebar({
   countNumber: any;
   config: any;
   image: any;
+  post: any;
 }) {
   const [alertVisible, setAlertVisible] = useState(false);
   const [likeCount, setLikeCount] = useState(likes);
@@ -44,6 +47,7 @@ function VideoSidebar({
 
   const [likePost] = useLikePostMutation();
   const [getComments, { data: commentData }] = useCommentListMutation();
+  const [followStatus] = useFollowStatusMutation();
   const [isLoading, setIsLoading] = useState(false);
   const [commentsVisible, setCommentsVisible] = useState(false);
   const [comments, setComments] = useState<any[]>([]);
@@ -51,6 +55,7 @@ function VideoSidebar({
   const user = useSelector((state: any) => state.persist.user);
   const navigate = useNavigate();
   const alertRef = useRef<HTMLDivElement>(null); // Reference to the alert box
+  const [follow, setFollow] = useState(post?.is_followed);
 
   console.log(user);
 
@@ -82,6 +87,8 @@ function VideoSidebar({
       console.error("Error refetching comment list:", error);
     }
   };
+
+  console.log(post);
 
   // Handle like click
   // const handleLike = async () => {
@@ -227,20 +234,63 @@ function VideoSidebar({
     setCommentsVisible(false);
   };
 
+  const handleFollow = async () => {
+    try {
+      const res = await followStatus({
+        follow_user_id: post?.user?.id,
+        status: follow ? "unfollow" : "follow",
+      });
+      setFollow(!follow);
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+    console.log("see");
+  };
+
   return (
     <div className="videoSidebar z-[999]">
       <div className="videoSidebar__button">
-        <div className="flex flex-col items-center relative mb-2">
-          <Avatar className="w-[35.25px] h-[35.25px] border-2 border-white ">
-            <AvatarImage src="https://i.pinimg.com/236x/64/bf/60/64bf60f08e226ae662e83a459a28a9bf.jpg" />
-            <AvatarFallback>SM</AvatarFallback>
-          </Avatar>
-          <button className="flex justify-center items-center absolute -bottom-2">
-            <span className="bg-red-500 py-[0.3px] px-1.5 rounded-full text-xs">
-              +
-            </span>
-          </button>
-        </div>
+        <button
+          className="flex flex-col items-center relative mb-2"
+          onClick={handleFollow}
+        >
+          {post?.user?.avatar ? (
+            <Avatar className="w-[35.25px] h-[35.25px] border-2 border-white ">
+              <AvatarImage src={post?.user?.avatar} />
+              <AvatarFallback>SM</AvatarFallback>
+            </Avatar>
+          ) : (
+            <Avatar className="w-[35.25px] h-[35.25px] border-2 border-white ">
+              <AvatarImage src="https://i.pinimg.com/236x/64/bf/60/64bf60f08e226ae662e83a459a28a9bf.jpg" />
+              <AvatarFallback>SM</AvatarFallback>
+            </Avatar>
+          )}
+
+          <div className="flex justify-center items-center absolute -bottom-2">
+            {follow ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="17"
+                height="17"
+                viewBox="0 0 17 17"
+                fill="none"
+              >
+                <circle cx="8.5" cy="8.29657" r="7.875" fill="#F70F2D" />
+                <path
+                  d="M11.6667 6L7.08333 10.5833L5 8.5"
+                  stroke="white"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            ) : (
+              <span className="bg-red-500 py-[0.3px] px-1.5 rounded-full text-xs">
+                +
+              </span>
+            )}
+          </div>
+        </button>
       </div>
 
       <div className="videoSidebar__button">
@@ -275,7 +325,7 @@ function VideoSidebar({
             </svg>
           </button>
         )}
-        <p className="side_text mt-2">{likeCount}</p>
+        <p className="side_text font-cnFont mt-2">{likeCount}</p>
       </div>
 
       <div className="videoSidebar__button">
@@ -295,7 +345,7 @@ function VideoSidebar({
             />
           </svg>
         </button>
-        <p className="side_text mt-2">{messages}</p>
+        <p className="side_text font-cnFont mt-2">{messages}</p>
       </div>
       <div className="videoSidebar__button">
         <button onClick={handleShareClick}>
@@ -312,7 +362,7 @@ function VideoSidebar({
             />
           </svg>
 
-          <p className="side_text mt-2">Share</p>
+          <p className="side_text font-cnFont mt-2">Share</p>
         </button>
       </div>
       {/* Alert Box */}

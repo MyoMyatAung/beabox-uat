@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { setHistoryData } from "../slice/HistorySlice";
@@ -12,6 +12,8 @@ import {
 import Header from "./Header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import VideoFeed from "@/page/home/components/VideoFeed";
+import lozad from "lozad";
+import ImageWithPlaceholder from "../comp/imgPlaceholder";
 
 interface ResultsProps {}
 
@@ -22,14 +24,14 @@ const Results: React.FC<ResultsProps> = ({}) => {
   const [searchParams] = useSearchParams();
   const initialQuery = searchParams.get("query") || "";
   const [query, setQuery] = useState(initialQuery);
-  // const swiperRef = useRef<any>(null);
   const dispatch = useDispatch();
-  const [currentPage, setcurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const [movies, setMovies] = useState<any[]>([]);
   const navigate = useNavigate();
   const [postSearch, { data, isLoading }] = usePostSearchMutation();
   const [selectedMovieId, setSelectedMovieId] = useState(null);
   const [showVideoFeed, setShowVideoFeed] = useState(false);
+
   const handleSearch = () => {
     if (query.trim()) {
       dispatch(setHistoryData({ data: query.trim() }));
@@ -40,23 +42,20 @@ const Results: React.FC<ResultsProps> = ({}) => {
       });
     }
   };
+
   useEffect(() => {
     postSearch({
       search: query,
       tab: activeTab,
       page: currentPage,
     });
-  }, [activeTab]);
-
-  useEffect(() => {
-    if (initialQuery) {
-      handleSearch();
-    }
-  }, [initialQuery, tabs]);
+  }, [activeTab, currentPage]);
 
   useEffect(() => {
     if (data?.data) {
-      setMovies(data.data);
+      setMovies((prevMovies) =>
+        currentPage === 1 ? data.data : [...prevMovies, ...data.data]
+      );
     }
   }, [data]);
 
@@ -66,19 +65,34 @@ const Results: React.FC<ResultsProps> = ({}) => {
     }
   }, [TabsData]);
 
-  const handleSubmit = (event: any) => {
+  const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-
     if (query.trim()) {
       dispatch(setHistoryData({ data: query.trim() }));
       navigate(`/search?query=${encodeURIComponent(query.trim())}`);
+      handleSearch();
+      setCurrentPage(1); // Reset to page 1 for a new query
     }
   };
 
   const noData = !data || data?.data?.length === 0;
-  // console.log(noData)
 
-  // If a movie is selected, display the `VideoFeed` component
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop >=
+        document.documentElement.offsetHeight - 50
+      ) {
+        if (!isLoading && !noData) {
+          setCurrentPage((prevPage) => prevPage + 1);
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [data]);
+
   if (showVideoFeed && selectedMovieId) {
     return (
       <VideoFeed
@@ -91,33 +105,65 @@ const Results: React.FC<ResultsProps> = ({}) => {
   }
 
   return (
-    <div className="px-[16px]">
-      {/* header */}
-      <div className=" pb-[32px] pt-[20px] flex justify-between items-center gap-[10px]">
-        <img
-          onClick={() => navigate("/search_overlay")}
-          className=" pt-[6px]"
-          src={back}
-          alt=""
-        />
-        <div className=" w-full px-[10px] py-[8px] search_input flex gap-[12px]">
-          <img src={sc} alt="" />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)} // Update the query state on input change
-            placeholder="Search Videos"
-            className=" bg-transparent focus:outline-none text-[16px] font-[400] text-[#888] w-full"
-            type="text"
+    <div className="">
+      <div className="fixed top-0 z-[99999] bg-black w-full">
+        {/* header */}
+        <form
+          onSubmit={handleSubmit}
+          className="px-[16px] pb-[20px] pt-[20px] flex justify-between items-center gap-[10px]"
+        >
+          <img
+            onClick={() => navigate("/search_overlay")}
+            className=" pt-[6px]"
+            src={back}
+            alt=""
           />
-        </div>
-        <button onClick={handleSubmit} className="search_btn">
-          Search
-        </button>
+          <div className=" w-full px-[10px] py-[8px] search_input flex gap-[12px]">
+            <img src={sc} alt="" />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)} // Update the query state on input change
+              placeholder="Search Videos"
+              className=" bg-transparent focus:outline-none text-[16px] font-[400] text-white w-full"
+              type="text"
+            />
+            {query?.length > 0 && (
+              <button
+                type="button"
+                className="cross-circle"
+                onClick={() => setQuery("")}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="8"
+                  height="8"
+                  viewBox="0 0 8 8"
+                  fill="none"
+                >
+                  <path
+                    d="M4 3.1668L6.9168 0.25L7.75 1.0832L4.8332 4L7.75 6.9168L6.9168 7.75L4 4.8332L1.0832 7.75L0.25 6.9168L3.1668 4L0.25 1.0832L1.0832 0.25L4 3.1668Z"
+                    fill="white"
+                    fill-opacity="0.8"
+                  />
+                </svg>
+              </button>
+            )}
+          </div>
+          <button type="submit" className="search_btn">
+            Search
+          </button>
+        </form>
+        {/* tabs */}
+        <Header
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          tabs={tabs}
+          setCurrentPage={setCurrentPage}
+        />
       </div>
-      {/* tabs */}
-      <Header activeTab={activeTab} setActiveTab={setActiveTab} tabs={tabs} />
-      <div className="">
-        {isLoading ? (
+
+      <div className="mt-[150px] px-[16px]">
+        {isLoading && currentPage === 1 ? (
           <div className=" flex justify-center items-center py-[200px]">
             <div className="heart">
               <img src={loader} className="w-[100px] h-[100px]" alt="Loading" />
@@ -125,12 +171,6 @@ const Results: React.FC<ResultsProps> = ({}) => {
           </div>
         ) : (
           <>
-            {noData && (
-              <div className="flex justify-center items-center py-[200px]">
-                <h1 className="">No Video yet!</h1>
-              </div>
-            )}
-
             {movies?.length > 0 && (
               <div className="flex gap-2 inner_div">
                 {/* First Column */}
@@ -151,18 +191,17 @@ const Results: React.FC<ResultsProps> = ({}) => {
                           }}
                         >
                           <div className="relative bg-gray-800 rounded-lg overflow-hidden">
-                            <img
-                              src={
-                                video?.preview_image ||
-                                "https://via.placeholder.com/150"
-                              }
+                            <ImageWithPlaceholder
+                              src={video?.preview_image}
                               alt={video.title || "Video"}
-                              className="w-full h-full object-cover"
-                              style={{ minHeight: "240px", maxHeight: "340px" }}
+                              width={"240px"}
+                              height={"240px"}
+                              className="lozad w-full h-full object-cover"
+                              // style={{ minHeight: "240px", maxHeight: "340px" }}
                             />
                           </div>
                           <div className="mt-2">
-                            <p className="search_text line-clamp-2 text-left">
+                            <p className="search_text font-cnFont line-clamp-2 text-left">
                               {video.title}
                             </p>
                           </div>
@@ -172,7 +211,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
                                 <AvatarImage src="https://i.pinimg.com/236x/64/bf/60/64bf60f08e226ae662e83a459a28a9bf.jpg" />
                                 <AvatarFallback>SM</AvatarFallback>
                               </Avatar>
-                              <div className="mt-1 text-[14px] text-left text-[#bfbfbf] mb-1">
+                              <div className="mt-1 text-[14px] font-cnFont text-left text-[#bfbfbf] mb-1">
                                 {video?.user?.name}
                               </div>
                             </div>
@@ -236,7 +275,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
                                   </filter>
                                 </defs>
                               </svg>
-                              <span className="like_count">
+                              <span className="like_count font-cnFont">
                                 {video.like_count || 283}
                               </span>
                             </div>
@@ -264,14 +303,13 @@ const Results: React.FC<ResultsProps> = ({}) => {
                           }}
                         >
                           <div className="relative bg-gray-800 rounded-lg overflow-hidden">
-                            <img
-                              src={
-                                video?.preview_image ||
-                                "https://via.placeholder.com/150"
-                              }
+                            <ImageWithPlaceholder
+                              src={video?.preview_image}
                               alt={video.title || "Video"}
-                              className="w-full h-full object-cover"
-                              style={{ minHeight: "240px", maxHeight: "340px" }}
+                              width={"240px"}
+                              height={"240px"}
+                              className="lozad w-full h-full object-cover"
+                              // style={{ minHeight: "240px", maxHeight: "340px" }}
                             />
                           </div>
                           <div className="mt-2">
@@ -359,19 +397,29 @@ const Results: React.FC<ResultsProps> = ({}) => {
                     )}
                 </div>
               </div>
-              // <div className="grid grid-cols-2 gap-[8px] mt-2">
-              //   {movies?.map((movie, index) => (
-              //     <div key={index} className="h-full w-full overflow-hidden">
-              //       <img
-              //         src={movie?.preview_image}
-              //         className="w-full h-auto object-cover"
-              //       />
-              //     </div>
-              //   ))}
-              // </div>
+            )}
+
+            {isLoading && (
+              <div className="flex justify-center items-center py-4">
+                <img
+                  src={loader}
+                  className="w-[50px] h-[50px]"
+                  alt="Loading more"
+                />
+              </div>
+            )}
+            {data?.data?.length === 0 && (
+              <div
+                className={`flex justify-center items-center ${
+                  currentPage === 1 ? "py-[200px]" : "py-[20px]"
+                } `}
+              >
+                <h1 className="">No Video yet!</h1>
+              </div>
             )}
           </>
         )}
+        {/* <div ref={observerRef} className="h-[1px]" /> */}
       </div>
     </div>
   );
