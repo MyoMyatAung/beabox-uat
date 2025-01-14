@@ -7,31 +7,34 @@ import Recommand from "./comp/Recommand";
 import Latest from "./comp/Latest";
 import { Swiper } from "swiper/react";
 import "swiper/css";
-
 import { SwiperSlide } from "swiper/react";
 import { useGetExploreHeaderQuery } from "@/store/api/explore/exploreApi";
 import VodDetails from "./comp/VodDetails";
 import { useLocation, useSearchParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setExpHeader } from "@/store/slices/exploreSlice";
 
 const Explore = () => {
   const [activeTab, setActiveTab] = useState("Recommend");
+  const { exp_header } = useSelector((state: any) => state.explore);
+  console.log(exp_header);
   const [searchParams, setSearchParams] = useSearchParams();
   const [tabs, setTabs] = useState(["Recommend", "Latest", "Hollywood"]);
   const { data, isLoading } = useGetExploreHeaderQuery("");
   const swiperRef = useRef<any>(null);
   const [show, setshow] = useState<boolean>(false);
-  const location = useLocation()
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setSearchParams({});
   }, [location.pathname]);
 
-  useEffect(() => {
-    const queryTab = searchParams.get("query");
-    if (queryTab && tabs.includes(queryTab)) {
-      setActiveTab(queryTab);
-    }
-  }, [searchParams, tabs]);
+  // useEffect(() => {
+  //   const queryTab = searchParams.get("query");
+  //   if (queryTab && tabs.includes(queryTab)) {
+  //     setActiveTab(queryTab);
+  //   }
+  // }, [searchParams, tabs]);
 
   useEffect(() => {
     if (data?.data?.tabs) {
@@ -42,47 +45,48 @@ const Explore = () => {
 
   useEffect(() => {
     if (swiperRef.current) {
-      const index = tabs?.indexOf(activeTab);
+      const index = tabs?.indexOf(exp_header);
       if (index >= 0) {
         swiperRef.current.slideTo(index);
       }
     }
-  }, [activeTab, tabs]);
+  }, [exp_header, tabs]);
 
   const handleSlideChange = (swiper: any) => {
-    const newActiveTab = tabs[swiper.activeIndex] || activeTab; // Fallback to current activeTab
-    setActiveTab(newActiveTab);
-    setSearchParams({ query: tabToQuery(newActiveTab) }); // Convert tab to query value
+    const newActiveTab = tabs[swiper.activeIndex] || exp_header; // Fallback to current activeTab
+    // setActiveTab(newActiveTab);
+    dispatch(setExpHeader(newActiveTab));
+    // setSearchParams({ query: tabToQuery(newActiveTab) }); // Convert tab to query value
   };
 
-  useEffect(() => {
-    const queryTab = searchParams.get("query");
-    const formattedTab = formatQueryToTab(queryTab); // Converts `rec` to `Recommend`, etc.
-    if (formattedTab && tabs.includes(formattedTab)) {
-      setActiveTab(formattedTab);
-    }
-  }, [searchParams, tabs]);
+  // useEffect(() => {
+  //   const queryTab = searchParams.get("query");
+  //   const formattedTab = formatQueryToTab(queryTab); // Converts `rec` to `Recommend`, etc.
+  //   if (formattedTab && tabs.includes(formattedTab)) {
+  //     setActiveTab(formattedTab);
+  //   }
+  // }, [searchParams, tabs]);
 
-  // Convert query values to tab names
-  const formatQueryToTab = (query: string | null) => {
-    if (!query) return null;
-    const map: Record<string, string> = {
-      rec: "Recommend",
-      latest: "Latest",
-      hollywood: "Hollywood",
-    };
-    return map[query.toLowerCase()] || null;
-  };
+  // // Convert query values to tab names
+  // const formatQueryToTab = (query: string | null) => {
+  //   if (!query) return null;
+  //   const map: Record<string, string> = {
+  //     rec: "Recommend",
+  //     latest: "Latest",
+  //     hollywood: "Hollywood",
+  //   };
+  //   return map[query.toLowerCase()] || null;
+  // };
 
-  // Convert tab names to query values
-  const tabToQuery = (tab: string) => {
-    const map: Record<string, string> = {
-      Recommend: "rec",
-      Latest: "latest",
-      Hollywood: "hollywood",
-    };
-    return map[tab] || "";
-  };
+  // // Convert tab names to query values
+  // const tabToQuery = (tab: string) => {
+  //   const map: Record<string, string> = {
+  //     Recommend: "rec",
+  //     Latest: "latest",
+  //     Hollywood: "hollywood",
+  //   };
+  //   return map[tab] || "";
+  // };
 
   return (
     <>
@@ -103,7 +107,7 @@ const Explore = () => {
               loop={true}
             >
               <SwiperSlide>
-                {activeTab === "Recommend" && (
+                {exp_header === "Recommend" && (
                   <div className="">
                     <Recommand title="Chinese Drama" />
                     <Recommand title="Latest Drama" />
@@ -111,7 +115,7 @@ const Explore = () => {
                 )}
               </SwiperSlide>
               <SwiperSlide>
-                {activeTab === "Latest" && (
+                {exp_header === "Latest" && (
                   <div className="">
                     {/* <Latest /> */}
                     <Recommand title="Chinese Drama" />
@@ -120,7 +124,7 @@ const Explore = () => {
                 )}
               </SwiperSlide>
               <SwiperSlide>
-                {activeTab === "Hollywood" && (
+                {exp_header === "Hollywood" && (
                   <div className="">
                     <Latest />
                   </div>

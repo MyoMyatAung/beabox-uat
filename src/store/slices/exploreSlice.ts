@@ -3,7 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState: any = {
   files: [],
   title: "",
-  more_tab : ""
+  more_tab: "",
+  exp_header: "",
 };
 
 export const exploreSlice = createSlice({
@@ -19,9 +20,13 @@ export const exploreSlice = createSlice({
     setMoreTab: (state, { payload }) => {
       state.more_tab = payload;
     },
+    setExpHeader: (state, { payload }) => {
+      state.exp_header = payload;
+    },
   },
 });
 
-export const { setDetails , setTitle , setMoreTab} = exploreSlice.actions;
+export const { setDetails, setTitle, setMoreTab, setExpHeader } =
+  exploreSlice.actions;
 
 export default exploreSlice.reducer;

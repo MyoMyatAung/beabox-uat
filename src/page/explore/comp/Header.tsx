@@ -1,5 +1,7 @@
 import { useGetExploreHeaderQuery } from "@/store/api/explore/exploreApi";
+import { setExpHeader } from "@/store/slices/exploreSlice";
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 interface HeaderProps {
   activeTab: string;
@@ -7,6 +9,9 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
+  const { exp_header } = useSelector((state: any) => state.explore);
+
+  const dispatch = useDispatch();
   const [hd, sethd] = useState([]);
   const { data, isLoading } = useGetExploreHeaderQuery("");
   useEffect(() => {
@@ -29,17 +34,18 @@ const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
             >
               <h1
                 className={`cursor-pointer transition duration-300 ${
-                  activeTab !== tab.title
+                  exp_header !== tab.title
                     ? "text-white/60 font-[500] text-[15px] leading-[20px]"
                     : "text-[16px] font-[700] leading-[20px] text-white"
                 }`}
-                onClick={() => setActiveTab(tab?.title)}
+                // onClick={() => setActiveTab(tab?.title)}
+                onClick={() => dispatch(setExpHeader(tab?.title))}
               >
                 {tab.title}
               </h1>
               <span
                 className={`${
-                  activeTab !== tab.title ? "opacity-0" : "opacity-100"
+                  exp_header !== tab.title ? "opacity-0" : "opacity-100"
                 } w-[24px] h-[4px] bg-white rounded-full`}
               ></span>
             </div>
