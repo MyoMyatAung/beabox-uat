@@ -23,12 +23,18 @@ const Application: React.FC<any> = () => {
   }, [data, ad]);
 
   return (
-    <SkeletonTheme baseColor="rgba(255, 255, 255, 0.2)" highlightColor="rgba(255, 255, 255, 0.2)">
+    <SkeletonTheme
+      baseColor="rgba(255, 255, 255, 0.2)"
+      highlightColor="rgba(255, 255, 255, 0.2)"
+    >
       <div className="px-[10px] py-[10px]">
         {isLoading && (
           <>
             {/* Skeleton for Carousel */}
-            <Skeleton height={174} className="rounded-md w-screen xl:w-[600px]" />
+            <Skeleton
+              height={174}
+              className="rounded-md w-screen xl:w-[600px]"
+            />
 
             {/* Skeleton for Header */}
             <div className="mt-[20px] grid grid-rows-4 gap-[5px]">
@@ -44,8 +50,15 @@ const Application: React.FC<any> = () => {
                   <Skeleton height={20} width={150} className="mt-5" />
                   <div className="grid grid-cols-5 gap-[20px] mt-[12px]">
                     {[...Array(5)].map((_, appIndex) => (
-                      <div key={appIndex} className="flex flex-col items-center gap-[4px]">
-                        <Skeleton height={53} width={56} className="rounded-[6px]" />
+                      <div
+                        key={appIndex}
+                        className="flex flex-col items-center gap-[4px]"
+                      >
+                        <Skeleton
+                          height={53}
+                          width={56}
+                          className="rounded-[6px]"
+                        />
                         <Skeleton height={10} width={40} />
                       </div>
                     ))}
@@ -67,7 +80,10 @@ const Application: React.FC<any> = () => {
           <>
             <Swiper
               modules={[Autoplay, Pagination]}
-              pagination={{}}
+              pagination={{
+                el: ".custom-pagination",
+                clickable: true,
+              }}
               autoplay={{
                 delay: 3000,
                 disableOnInteraction: false,
@@ -87,22 +103,25 @@ const Application: React.FC<any> = () => {
                     </a>
                   </SwiperSlide>
                 ))}
-              <div className="swiper-pagination"></div>
+              <div className="custom-pagination mt-4 flex justify-center"></div>
             </Swiper>
 
             <div className="mt-[20px]">
               {
                 <div className="grid grid-rows-4 gap-[5px]">
                   {applicationData?.header?.length > 0 &&
-                    applicationData?.header.slice().reverse().map((header: any) => (
-                      <a href={header.url} target="_blank" key={header.id}>
-                        <img
-                          className=" w-full h-auto rounded-[6px] border-[#222]"
-                          src={header.image}
-                          alt=""
-                        />
-                      </a>
-                    ))}
+                    applicationData?.header
+                      .slice()
+                      .reverse()
+                      .map((header: any) => (
+                        <a href={header.url} target="_blank" key={header.id}>
+                          <img
+                            className=" w-full h-auto rounded-[6px] border-[#222]"
+                            src={header.image}
+                            alt=""
+                          />
+                        </a>
+                      ))}
                 </div>
               }
             </div>

@@ -65,3 +65,21 @@
   background: rgba(16, 16, 16, 0.6);
   backdrop-filter: blur(4px);
 }
+
+.custom-pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px; /* Adjust the spacing from the image */
+}
+
+.custom-pagination .swiper-pagination-bullet {
+  width: 6px;
+  height: 6px;
+  background-color: #888;
+  opacity: 1;
+  transition: background-color 0.3s;
+}
+
+.custom-pagination .swiper-pagination-bullet-active {
+  background-color: #fff; 
+}
