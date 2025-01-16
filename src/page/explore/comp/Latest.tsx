@@ -81,8 +81,8 @@ const Latest: React.FC<LatestPorp> = ({}) => {
           <>
             {waterfall?.map((card: any, index: number) => (
               <div
-                key={card.id}
-                className="rounded-lg shadow-lg h-fit mb-4 w-[172px] relative bg-whit"
+                key={index}
+                className="rounded-lg shadow-lg h-fit mb-4 w-[172px] relative"
                 style={{ breakInside: "avoid" }}
               >
                 <img

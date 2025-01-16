@@ -2,6 +2,7 @@ import { ChevronLeft } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import more from "../../../assets/explore/more.png";
+import Loader from "../../../page/home/vod_loader.gif";
 import "../explore.css";
 import { useGetExploreTagQuery } from "@/store/api/explore/exploreApi";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,12 +22,12 @@ const More: React.FC<MoreProps> = () => {
   const location = useLocation();
   const [list, setList] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
-  const { data, isLoading, refetch } = useGetExploreTagQuery({
+  const { data, isLoading, isFetching,refetch } = useGetExploreTagQuery({
     order: more_tab, // Use more_tab directly
     tag: title,
   });
 
-  console.log(more_tab);
+  // console.log(isFetching);
 
   useEffect(() => {
     // dispatch(setMoreTab("Popular")); // Set default tab if needed
@@ -101,30 +102,48 @@ const More: React.FC<MoreProps> = () => {
 
         {/* List */}
         <div className="py-[20px] flex flex-col gap-[20px] w-full">
-          {(more_tab === "Popular" ? list : list).map((item: any, index) => (
-            <div
-              onClick={() => showDetailsVod(item)}
-              key={index}
-              className="flex w-full justify-center items-center gap-[16px]"
-            >
-              <img
-                className="w-[107px] h-[69px] rounded-[8px] object-cover object-center"
-                src={item.preview_image}
-                alt="More"
-              />
-              <div className="w-2/3 flex flex-col h-[70px] justify-between">
-                <span className="text-white text-[14px] font-[400]">
-                  {item.title.length > 20
-                    ? `${item.title.slice(0, 30)}...`
-                    : item.title}{" "}
-                </span>
-                <div className="flex justify-between text-[#AAA] text-[12px] font-[400] leading-[15px]">
-                  <span>{item.view_count ? item.view_count : "0"} views</span>
-                  <span>{item.like_count} likes</span>
-                </div>
+          {isLoading && isFetching ? (
+            <div className=" flex justify-center w-screen py-[200px]">
+              <div className="">
+                <img
+                  src={Loader}
+                  className="w-[100px] h-[100px]"
+                  alt="Loading"
+                />
               </div>
             </div>
-          ))}
+          ) : (
+            <>
+              {(more_tab === "Popular" ? list : list).map(
+                (item: any, index) => (
+                  <div
+                    onClick={() => showDetailsVod(item)}
+                    key={index}
+                    className="flex w-full justify-center items-center gap-[16px]"
+                  >
+                    <img
+                      className="w-[107px] h-[69px] rounded-[8px] object-cover object-center"
+                      src={item.preview_image}
+                      alt="More"
+                    />
+                    <div className="w-2/3 flex flex-col h-[70px] justify-between">
+                      <span className="text-white text-[14px] font-[400]">
+                        {item.title.length > 20
+                          ? `${item.title.slice(0, 30)}...`
+                          : item.title}{" "}
+                      </span>
+                      <div className="flex justify-between text-[#AAA] text-[12px] font-[400] leading-[15px]">
+                        <span>
+                          {item.view_count ? item.view_count : "0"} views
+                        </span>
+                        <span>{item.like_count} likes</span>
+                      </div>
+                    </div>
+                  </div>
+                )
+              )}
+            </>
+          )}
         </div>
       </div>
     </>
