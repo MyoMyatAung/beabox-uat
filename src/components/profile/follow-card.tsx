@@ -21,11 +21,11 @@ const FollowCard = ({ data }: { data: any }) => {
   const navigate = useNavigate();
 
   return (
-    <Link
-      to={paths.getUserProfileId(data?.id)}
-      className="w-full flex justify-between items-center py-1"
-    >
-      <div className="flex items-center gap-4">
+    <div className="w-full flex justify-between items-center py-1">
+      <Link
+        to={paths.getUserProfileId(data?.id)}
+        className="flex items-center gap-4"
+      >
         <Avatar className="border-2">
           <AvatarImage src={data?.photo} alt="@shadcn" />
         </Avatar>
@@ -33,7 +33,7 @@ const FollowCard = ({ data }: { data: any }) => {
           <h1>{data?.nickname}</h1>
           <h1 className="text-[#888]">ID : {data?.user_code}</h1>
         </div>
-      </div>
+      </Link>
       <Button
         onClick={() => changeFollowStatusHandler(data?.user_code)}
         className={`${
@@ -43,7 +43,7 @@ const FollowCard = ({ data }: { data: any }) => {
       >
         {data?.follows_back ? "Following" : "Follow"}
       </Button>
-    </Link>
+    </div>
   );
 };
 

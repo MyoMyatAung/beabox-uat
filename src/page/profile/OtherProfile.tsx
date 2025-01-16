@@ -14,6 +14,8 @@ const OtherProfile = () => {
   );
   const navigate = useNavigate();
 
+  console.log(userData);
+
   if (userLoading) return <Loader />;
   return (
     <div className="px-5 max-h-screen no-scrollbar profile-bg">
