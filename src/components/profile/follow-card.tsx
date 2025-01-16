@@ -1,6 +1,8 @@
 import { useChangeFollowStatusMutation } from "@/store/api/profileApi";
 import { AvatarImage, Avatar } from "../ui/avatar";
 import { Button } from "../ui/button";
+import { Link, useNavigate } from "react-router-dom";
+import { paths } from "@/routes/paths";
 
 const FollowCard = ({ data }: { data: any }) => {
   const [changeFollowStatus, { data: statusData, isLoading }] =
@@ -16,8 +18,13 @@ const FollowCard = ({ data }: { data: any }) => {
       console.log(error);
     }
   };
+  const navigate = useNavigate();
+
   return (
-    <div className="w-full flex justify-between items-center py-1">
+    <Link
+      to={paths.getUserProfileId(data?.id)}
+      className="w-full flex justify-between items-center py-1"
+    >
       <div className="flex items-center gap-4">
         <Avatar className="border-2">
           <AvatarImage src={data?.photo} alt="@shadcn" />
@@ -36,7 +43,7 @@ const FollowCard = ({ data }: { data: any }) => {
       >
         {data?.follows_back ? "Following" : "Follow"}
       </Button>
-    </div>
+    </Link>
   );
 };
 

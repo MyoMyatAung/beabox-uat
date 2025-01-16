@@ -21,6 +21,12 @@ export const profileApi = createApi({
         method: "GET",
       }),
     }),
+    getUserProfile: builder.query<any, string>({
+      query: (id) => ({
+        url: `/profile/get-profile?user_id=${id}`,
+        method: "GET",
+      }),
+    }),
     getRegion: builder.query<any, string>({
       // query: () => `/pcities-and-provinces`,
       query: () => ({
@@ -175,4 +181,5 @@ export const {
   useGetFollowerListQuery,
   useGetFollowingListQuery,
   useChangeFollowStatusMutation,
+  useGetUserProfileQuery
 } = profileApi;
