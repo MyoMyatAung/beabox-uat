@@ -23,8 +23,8 @@ export const exploreApi = createApi({
       }),
     }),
     getExploreTag: builder.query<any, any>({
-      query: ({ order, tag }) => ({
-        url: `/post/search/tag?tag=${tag}&order=${order}&pageSize=10`,
+      query: ({ order, tag ,page }) => ({
+        url: `/post/search/tag?tag=${tag}&order=${order}&pageSize=10&page=${page}`,
         method: "GET",
       }),
     }),

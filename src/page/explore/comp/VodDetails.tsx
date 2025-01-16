@@ -115,7 +115,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
 
   const handleBack = () => {
     setCurrentTab(1);
-    navigate(-2);
+    navigate(-1);
   };
 
   const handleSearch = () => {

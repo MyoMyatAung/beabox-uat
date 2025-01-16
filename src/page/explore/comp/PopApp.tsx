@@ -9,19 +9,19 @@ interface PoppizzaProps {}
 const Poppizza: React.FC<PoppizzaProps> = ({}) => {
   const [ad, setad] = useState([]);
   const { data, isLoading } = useGetExploreHeaderQuery("");
-  const { data: gg } = useGetApplicationAdsQuery("");
+  // const { data: gg } = useGetApplicationAdsQuery("");
   // console.log(gg)
   useEffect(() => {
-    // if (data?.data) {
-    //   const cur = data?.data?.ads?.application?.apps;
-    //   setad(cur);
-    // }
-    if (gg?.data) {
-      const cur = gg?.data.application[2].apps;
-      // console.log(cur , "cur")
+    if (data?.data) {
+      const cur = data?.data?.ads?.application?.apps;
       setad(cur);
     }
-  }, [gg, ad]);
+    // if (gg?.data) {
+    //   const cur = gg?.data.application[2].apps;
+    //   // console.log(cur , "cur")
+    //   setad(cur);
+    // }
+  }, [ad]);
 
   return (
     <div className=" pt-[20px]">

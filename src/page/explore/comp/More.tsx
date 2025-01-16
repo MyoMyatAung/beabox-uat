@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setDetails, setMoreTab } from "@/store/slices/exploreSlice";
 import VodDetails from "./VodDetails";
 import { paths } from "@/routes/paths";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 interface MoreProps {}
 
@@ -20,11 +21,11 @@ const More: React.FC<MoreProps> = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const [list, setList] = useState([]);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const { data, isLoading, isFetching,refetch } = useGetExploreTagQuery({
+  const [list, setList] = useState<any[]>([]);
+  const { data, isLoading, isFetching, refetch } = useGetExploreTagQuery({
     order: more_tab, // Use more_tab directly
     tag: title,
+    page: page,
   });
 
   // console.log(isFetching);
@@ -32,14 +33,11 @@ const More: React.FC<MoreProps> = () => {
   useEffect(() => {
     // dispatch(setMoreTab("Popular")); // Set default tab if needed
     if (data?.data) {
-      setList(data?.data.list);
+      // setList(data?.data.list);
+      setList((prev) => [...prev, ...data.data.list]);
     }
     refetch();
-  }, [data, more_tab]); // Depend on more_tab
-
-  useEffect(() => {
-    setSearchParams({});
-  }, [location.state]);
+  }, [data, more_tab, hasMore]); // Depend on more_tab
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -142,6 +140,32 @@ const More: React.FC<MoreProps> = () => {
                   </div>
                 )
               )}
+              <InfiniteScroll
+                className="py-[20px]"
+                dataLength={list.length}
+                next={fetchMoreData}
+                hasMore={hasMore}
+                loader={
+                  <div className=" flex justify-center py-[10px]">
+                    <div className="">
+                      <img
+                        src={Loader}
+                        className="w-[100px] h-[100px]"
+                        alt="Loading"
+                      />
+                    </div>
+                  </div>
+                }
+                endMessage={
+                  <div className="flex bg-whit pt-20 justify-center items-center  w-screen">
+                    <p className="py-10" style={{ textAlign: "center" }}>
+                      {/* <b>No more yet!</b> */}
+                    </p>
+                  </div>
+                }
+              >
+                <></>
+              </InfiniteScroll>
             </>
           )}
         </div>
