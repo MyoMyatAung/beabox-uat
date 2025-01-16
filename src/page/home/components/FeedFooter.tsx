@@ -22,7 +22,7 @@ function FeedFooter({
       <div className="">
         <div className="flex items-center gap-3 mb-2">
           <div className="flex items-center gap-2">
-            <span className="footer_head_text">{username}</span>
+            <span className="footer_head_text font-cnFont">{username}</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="18"

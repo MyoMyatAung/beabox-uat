@@ -20,9 +20,11 @@ const TopNavbar = ({
         {TABS.map((tab, index) => (
           <button
             key={index}
-            className={`px-2 py-1 nav_text flex flex-col items-center justify-center ${
-              currentTab === tab.id ? "opacity-100" : "opacity-50"
-            }`}
+            className={`px-2 py-1   flex flex-col items-center justify-center ${
+              currentTab === tab.id
+                ? "opacity-100 font-semibold"
+                : "opacity-50 font-normal"
+            } nav_text`}
             onClick={() => onTabClick(tab.id)}
           >
             <div className="mb-1 capitalize">

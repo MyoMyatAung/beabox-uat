@@ -22,7 +22,7 @@ function VideoFooter({
       <div className="">
         <div className="flex items-center gap-3 mb-2">
           <div className="flex items-center gap-2">
-            <span className="footer_head_text">{username}</span>
+            <span className="footer_head_text font-cnFont">{username}</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="18"
@@ -65,7 +65,7 @@ function VideoFooter({
           {title.length > 30 || tags.length > 3 ? (
             <div
               onClick={toggleExpand}
-              className={`footer_title  transition-all ${
+              className={`footer_title font-cnFont  transition-all ${
                 isExpanded ? "max-h-full" : "line-clamp-2"
               } w-[80%] flex flex-wrap`}
             >
@@ -78,7 +78,7 @@ function VideoFooter({
             </div>
           ) : (
             <div
-              className={`footer_title  transition-all max-h-full w-[80%] flex flex-wrap`}
+              className={`footer_title  font-cnFont  transition-all max-h-full w-[80%] flex flex-wrap`}
             >
               <span className="mr-2">{title}</span>
               {tags?.map((tag: any, index: number) => (
@@ -91,7 +91,10 @@ function VideoFooter({
 
           {/* More/Less Button Inline */}
           {(title.length > 30 || tags.length > 3) && (
-            <button className="more_text inline ml-2" onClick={toggleExpand}>
+            <button
+              className="more_text font-cnFont inline ml-2"
+              onClick={toggleExpand}
+            >
               {isExpanded ? "less" : "more"}
             </button>
           )}

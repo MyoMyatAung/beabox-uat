@@ -245,7 +245,7 @@ const Home = () => {
               <>
                 <div
                   ref={videoContainerRef}
-                  className={`app__videos pb-[55px] `}
+                  className={`app__videos pb-[74px] `}
                 >
                   {videos.map((video, index) => (
                     <div
@@ -256,7 +256,7 @@ const Home = () => {
                       <Player
                         src={video.files[0].resourceURL}
                         thumbnail={
-                          video.files[0].thumbnail ||
+                          video?.preview_image ||
                           "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg"
                         }
                       />
@@ -273,6 +273,7 @@ const Home = () => {
                         countdown={countdown}
                         config={config?.data}
                         image={video?.preview_image}
+                        post={video}
                       />
                       <VideoFooter
                         tags={video?.tag}
@@ -371,7 +372,7 @@ const Home = () => {
               <>
                 <div
                   ref={videoContainerRef}
-                  className={`app__videos pb-[55px] `}
+                  className={`app__videos pb-[74px]`}
                 >
                   {videos.map((video, index) => (
                     <div
@@ -382,7 +383,7 @@ const Home = () => {
                       <Player
                         src={video.files[0].resourceURL}
                         thumbnail={
-                          video.files[0].thumbnail ||
+                          video?.preview_image ||
                           "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg"
                         }
                       />
@@ -399,6 +400,7 @@ const Home = () => {
                         countdown={countdown}
                         config={config?.data}
                         image={video?.preview_image}
+                        post={video}
                       />
                       <VideoFooter
                         tags={video?.tag}

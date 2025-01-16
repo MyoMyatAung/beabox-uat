@@ -122,9 +122,9 @@
 //         //   observer.disconnect();
 //         // }
 //         // Use lozad's custom API for cleanup
-//         if (observer) {
-//           observer = null; // Safely nullify; lozad has no explicit `disconnect`
-//         }
+//         // if (observer) {
+//         //   observer = null; // Safely nullify; lozad has no explicit `disconnect`
+//         // }
 //       };
 //     }
 //   }, [src, thumbnail]);
