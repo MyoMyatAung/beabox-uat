@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 // import sp from "../../../assets/explore/sp.png";
 import { FaHeart } from "react-icons/fa";
 import { useGetExploreListQuery } from "@/store/api/explore/exploreApi";
@@ -22,6 +22,16 @@ const Latest: React.FC<LatestPorp> = ({}) => {
   const [page, setPage] = useState(1);
   const { data, isLoading } = useGetExploreListQuery({ id: 3, page });
   const navigate = useNavigate();
+  const scrollPositionRef = useRef<number>(0);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+
+  useEffect(() => {
+    if (contentRef.current) {
+      contentRef.current.scrollTop = scrollPositionRef.current;
+    }
+  }, []);
+
 
   useEffect(() => {
     if (data?.data) {
@@ -47,15 +57,17 @@ const Latest: React.FC<LatestPorp> = ({}) => {
   };
 
   const showDetailsVod = (file: any) => {
+    scrollPositionRef.current = contentRef.current?.scrollTop || 0; 
     dispatch(setDetails(file));
     navigate("/vod_details",{replace : true});
   };
   return (
-    <div className=" flex w-full justify-around items-cente">
+    <div className=" flex w-full justify-center">
       <div
-        className="columns-2 gap-1 relative"
+        className="columns-2 gap-1 relative "
+        ref={contentRef}
         style={{
-          columnGap: "10px",
+          columnGap: "20px",
         }}
       >
         {isLoading ? (

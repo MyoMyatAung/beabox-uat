@@ -102,9 +102,9 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
         setContent("");
         setShowTip(true);
 
-      setTimeout(() => {
-        setShowTip(false);
-      }, 2000);
+        setTimeout(() => {
+          setShowTip(false);
+        }, 2000);
       } catch (error) {
         console.error("Failed to post reply:", error);
       }
@@ -114,14 +114,13 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
   };
 
   const handleBack = () => {
-    setCurrentTab(1)
-    navigate(-2)
-  }
+    setCurrentTab(1);
+    navigate(-2);
+  };
 
   const handleSearch = () => {
     navigate("/search_overlay");
   };
-
 
   // console.log(files);
   return (
@@ -137,8 +136,8 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
       <div ref={videoContainerRef} className={`app__videos`}>
         <div
           // key={index}
-          className="video mt-[20px] pb-[48px]"
-          data-post-id={files.post_id} 
+          className="video mt-[10px] pb-[68px]"
+          data-post-id={files.post_id}
         >
           <Player
             src={files.files[0].resourceURL}
@@ -148,6 +147,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
             }
           />
           <VideoSidebar
+            post={files.files[0]}
             likes={files?.files[0].like_count}
             is_liked={files?.files[0].is_liked}
             messages={files?.files[0].comment_count}
@@ -218,7 +218,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
           {showHeart && (
             <ShowHeart countNumber={countNumber} username={user?.nickname} />
           )}
-          <div className="absolute bottom-0 add_comment w-full  py-3 z-10 ">
+          <div className="absolute mt- bottom-0 add_comment w-full  py-3 z-10 ">
             <div className="flex items-center gap-2 px-4">
               <input
                 type="text"
@@ -248,6 +248,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
           </div>
         </div>
       </div>
+      <p></p>
     </div>
   );
 };

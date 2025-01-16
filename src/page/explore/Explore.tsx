@@ -17,7 +17,6 @@ import { setExpHeader } from "@/store/slices/exploreSlice";
 const Explore = () => {
   const [activeTab, setActiveTab] = useState("Recommend");
   const { exp_header } = useSelector((state: any) => state.explore);
-  console.log(exp_header);
   const [searchParams, setSearchParams] = useSearchParams();
   const [tabs, setTabs] = useState(["Recommend", "Latest", "Hollywood"]);
   const { data, isLoading } = useGetExploreHeaderQuery("");
