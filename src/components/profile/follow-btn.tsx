@@ -20,7 +20,7 @@ const FollowBtn = ({ id, followBack }: any) => {
       disabled={isLoading}
       onClick={handleChangeFollowStatus}
       className={`w-[88px] ${
-        followBack
+        follow
           ? "bg-[#FFFFFF0F] hover:bg-[#FFFFFF0F]"
           : "gradient-bg hover:gradient-bg"
       }`}

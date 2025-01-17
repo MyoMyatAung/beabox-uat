@@ -140,6 +140,12 @@ export const profileApi = createApi({
         method: "Post",
       }),
     }),
+    removeSecurityQuestion: builder.mutation<any, string>({
+      query: () => ({
+        url: `/profile/remove-security-question`,
+        method: "Post",
+      }),
+    }),
     getFollowerList: builder.query<any, string>({
       query: (user_id) => ({
         url: `/follower/follower-list?user_id=${user_id}`,
@@ -161,7 +167,7 @@ export const profileApi = createApi({
     }),
     getNoti: builder.query<any, string>({
       query: () => ({
-        url: `/notification/list?type=general`,
+        url: `/notification/list?type=general&pageSize=3&page=1`,
         method: "GET",
       }),
     }),
@@ -189,4 +195,5 @@ export const {
   useChangeFollowStatusMutation,
   useGetUserProfileQuery,
   useGetNotiQuery,
+  useRemoveSecurityQuestionMutation,
 } = profileApi;

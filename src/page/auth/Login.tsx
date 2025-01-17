@@ -34,7 +34,7 @@ const Login = () => {
   const [getCaptcha, { data, isLoading: captchaLoading }] =
     useGetCaptchaMutation();
   const [showVerification, setShowVerification] = useState(false);
-
+  console.log(data);
   const [captcha, setCaptcha] = useState("");
   const [error, setError] = useState("");
 
@@ -57,10 +57,10 @@ const Login = () => {
   //   }
   // }
 
-  async function onSubmit(data: LoginFormData) {
+  async function onSubmit() {
     // Handle form submission
     // await getCaptcha();
-    setShowVerification(true);
+    if (data?.status) setShowVerification(true);
   }
   const handleVerify = async (e: any) => {
     // Add verification logic here
@@ -175,7 +175,10 @@ const Login = () => {
               <Button
                 disabled={isLoading || captchaLoading}
                 // type="submit"
-                onClick={async () => await getCaptcha("")}
+                onClick={async () => {
+                  await getCaptcha("");
+                  setShowVerification(true);
+                }}
                 className="w-full gradient-bg rounded-lg hover:gradient-bg"
               >
                 {/* {isLoading ? "loading..." : "Login"} */}
