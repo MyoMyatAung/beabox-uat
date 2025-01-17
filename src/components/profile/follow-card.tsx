@@ -3,8 +3,10 @@ import { AvatarImage, Avatar } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { paths } from "@/routes/paths";
+import FollowBtn from "./follow-btn";
 
 const FollowCard = ({ data }: { data: any }) => {
+  console.log(data, "follow card");
   const [changeFollowStatus, { data: statusData, isLoading }] =
     useChangeFollowStatusMutation();
   const changeFollowStatusHandler = async () => {
@@ -34,7 +36,8 @@ const FollowCard = ({ data }: { data: any }) => {
           <h1 className="text-[#888]">ID : {data?.user_code}</h1>
         </div>
       </Link>
-      <Button
+      <FollowBtn id={data?.id} followBack={data?.follows_back} />
+      {/* <Button
         onClick={() => changeFollowStatusHandler(data?.user_code)}
         className={`${
           data?.follows_back ? "bg-[#FFFFFF17]" : "gradient-bg"
@@ -42,7 +45,7 @@ const FollowCard = ({ data }: { data: any }) => {
         size={"sm"}
       >
         {data?.follows_back ? "Following" : "Follow"}
-      </Button>
+      </Button> */}
     </div>
   );
 };

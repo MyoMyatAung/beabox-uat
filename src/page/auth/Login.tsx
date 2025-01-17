@@ -177,7 +177,7 @@ const Login = () => {
                 // type="submit"
                 onClick={async () => await getCaptcha("")}
                 className="w-full gradient-bg rounded-lg hover:gradient-bg"
-              >1d74fd37-930a-44c5-9c2a-99cf8eed87f3
+              >
                 {/* {isLoading ? "loading..." : "Login"} */}
                 Login
               </Button>

@@ -159,6 +159,12 @@ export const profileApi = createApi({
         body: { follow_user_id, status },
       }),
     }),
+    getNoti: builder.query<any, string>({
+      query: () => ({
+        url: `/notification/list?type=general`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -181,5 +187,6 @@ export const {
   useGetFollowerListQuery,
   useGetFollowingListQuery,
   useChangeFollowStatusMutation,
-  useGetUserProfileQuery
+  useGetUserProfileQuery,
+  useGetNotiQuery,
 } = profileApi;

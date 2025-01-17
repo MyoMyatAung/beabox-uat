@@ -4,8 +4,11 @@ import { Link } from "react-router-dom";
 import SystemNotiLink from "@/components/profile/noti/system-noti-link";
 import BalanceNotiLink from "@/components/profile/noti/balance-noti-link";
 import OtherNoti from "@/components/profile/noti/other-noti";
+import { useGetNotiQuery } from "@/store/api/profileApi";
 
 const Noti = () => {
+  const { data } = useGetNotiQuery("");
+  console.log(data, "notis");
   return (
     <div className="w-full h-screen px-5 flex flex-col items-center justify-between no-scrollbar">
       <div className="w-full">
