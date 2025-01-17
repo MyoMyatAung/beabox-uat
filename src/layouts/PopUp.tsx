@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import header from "../assets/explore/Header.png";
-import { useGetExploreHeaderQuery } from "@/store/api/explore/exploreApi";
+import {
+  useGetApplicationAdsQuery,
+  useGetExploreHeaderQuery,
+} from "@/store/api/explore/exploreApi";
 import "../page/explore/explore.css";
 interface PopUpProps {
   setShowAd: any;
@@ -8,9 +11,8 @@ interface PopUpProps {
 
 const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
   const [ad, setad] = useState([]);
-  const { data, isLoading } = useGetExploreHeaderQuery("");
-
-
+  // const { data, isLoading } = useGetExploreHeaderQuery("");
+  const { data, isLoading } = useGetApplicationAdsQuery("");
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -21,11 +23,13 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
   }, []);
 
   useEffect(() => {
-    if (data?.data) {
-      const cur = data?.data?.ads?.application?.apps;
-      setad(cur);
+    if (data?.data?.application) {
+      const flattenedApps = data.data.application.flatMap((dd: any) => dd.apps);
+      console.log(flattenedApps); // Debugging: Ensure this contains the expected data
+      setad(flattenedApps);
     }
   }, [data]);
+
   return (
     <div className=" h-screen bg-black/80 w-screen flex flex-col gap-[20px] justify-center items-center fixed top-0 z-[9999]">
       <div className="w-[330px] flex flex-col gap-0 justify-center items-center ">
@@ -61,41 +65,6 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
                   </h1>
                 </a>
               ))}
-               {ad?.map((app: any) => (
-                <a
-                  key={app.id}
-                  href={app.url}
-                  target="_blink"
-                  className=" flex flex-col justify-center items-center gap-[4px]"
-                >
-                  <img
-                    className=" w-[56px] h-[53px] rounded-[6px] border-[#222]"
-                    src={app.image}
-                    alt=""
-                  />
-                  <h1 className=" text-white text-[10px] font-[400]">
-                    {app.title}
-                  </h1>
-                </a>
-              ))}
-               {ad?.map((app: any) => (
-                <a
-                  key={app.id}
-                  href={app.url}
-                  target="_blink"
-                  className=" flex flex-col justify-center items-center gap-[4px]"
-                >
-                  <img
-                    className=" w-[56px] h-[53px] rounded-[6px] border-[#222]"
-                    src={app.image}
-                    alt=""
-                  />
-                  <h1 className=" text-white text-[10px] font-[400]">
-                    {app.title}
-                  </h1>
-                </a>
-              ))}
-              
             </div>
           )}
         </div>
