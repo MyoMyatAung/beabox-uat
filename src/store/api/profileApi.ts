@@ -171,6 +171,20 @@ export const profileApi = createApi({
         method: "GET",
       }),
     }),
+    settingUpload: builder.mutation<any, any>({
+      query: ({ filedata }: any) => ({
+        url: `/storage/upload`,
+        method: "Post",
+        body: { filePath: "profile", file: filedata },
+      }),
+    }),
+    profileUpload: builder.mutation<any, any>({
+      query: ({ file_url }: any) => ({
+        url: `/profile/upload`,
+        method: "Post",
+        body: { file_url },
+      }),
+    }),
   }),
 });
 
@@ -196,4 +210,6 @@ export const {
   useGetUserProfileQuery,
   useGetNotiQuery,
   useRemoveSecurityQuestionMutation,
+  useSettingUploadMutation,
+  useProfileUploadMutation,
 } = profileApi;
