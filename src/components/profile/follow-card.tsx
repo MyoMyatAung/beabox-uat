@@ -1,12 +1,10 @@
 import { useChangeFollowStatusMutation } from "@/store/api/profileApi";
 import { AvatarImage, Avatar } from "../ui/avatar";
-import { Button } from "../ui/button";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { paths } from "@/routes/paths";
 import FollowBtn from "./follow-btn";
 
 const FollowCard = ({ data }: { data: any }) => {
-  console.log(data, "follow card");
   const [changeFollowStatus, { data: statusData, isLoading }] =
     useChangeFollowStatusMutation();
   const changeFollowStatusHandler = async () => {
@@ -20,7 +18,6 @@ const FollowCard = ({ data }: { data: any }) => {
       console.log(error);
     }
   };
-  const navigate = useNavigate();
 
   return (
     <div className="w-full flex justify-between items-center py-1">
