@@ -17,7 +17,7 @@ const VideoCard = ({ videoData }: any) => {
       <img
         src={videoData?.preview_image}
         alt=""
-        className="h-full rounded w-full object-cover"
+        className="h-full rounded w-full object-cover object-center"
       />
       <div className="absolute bottom-0 flex justify-between items-center px-2 w-full">
         <div className="flex items-center gap-1">
