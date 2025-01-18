@@ -4,7 +4,7 @@ import {
 } from "@/store/api/profileApi";
 import { Camera } from "lucide-react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const ImageUpload = () => {
   const [image, setImage] = useState<string | null>(null);
@@ -27,13 +27,18 @@ const ImageUpload = () => {
         setImage(e.target.result);
         console.log("1");
         await settingUpload({ filedata: e.target.result });
-        console.log(settingUploadData);
-        await profileUpload({ file_url: settingUploadData?.data?.url });
-        console.log(profileUploadData);
+        // if (settingUploadData?.status)
+        // await profileUpload({ file_url: settingUploadData?.data?.url });
       }
     };
     reader.readAsDataURL(file);
   };
+
+  useEffect(() => {
+    if (settingUploadData?.status)
+      profileUpload({ file_url: settingUploadData?.data?.url });
+    // console.log(settingUploadData?.data?.url, "storage uploaded");
+  }, [settingUploadData]);
 
   return (
     <div className="">

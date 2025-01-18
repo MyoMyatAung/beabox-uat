@@ -15,11 +15,14 @@ import ProfileAvatar from "@/components/profile/profile-avatar";
 import phoneImg from "@/assets/profile/phone-img.png";
 import { useState } from "react";
 import Loader from "@/components/shared/loader";
+import MaleSVG from "@/assets/profile/male";
+import FemaleSVG from "@/assets/profile/female";
 
 const Profile = () => {
   const { data, isLoading } = useGetMyProfileQuery("");
   const [show, setShow] = useState(false);
   const user = useSelector((state: any) => state.persist.user);
+  const gender = useSelector((state: any) => state.persist.gender);
   console.log("data", data);
 
   if (isLoading) return <Loader />;
@@ -74,7 +77,11 @@ const Profile = () => {
             <Person />
           </div>
         ) : (
-          <ProfileAvatar progress={data?.data?.level_progress} />
+          <ProfileAvatar
+            progress={data?.data?.level_progress}
+            levelImage={data?.data?.level}
+            photo={data?.data?.profile_photo}
+          />
         )}
         {!user?.token ? (
           <Link to={paths.login} className="flex items-center gap-2 flex-1">
@@ -83,11 +90,12 @@ const Profile = () => {
           </Link>
         ) : (
           <div className="flex-1">
-            <p className="text-[18px] flex items-center gap-2">
+            <p className="text-[18px] flex items-center gap-1">
               {data?.data?.nickname}
-              <span>
+              <span>{gender == "Male" ? <MaleSVG /> : <FemaleSVG />}</span>
+              {/* <span>
                 <BsPatchCheckFill className="text-[#888]" />
-              </span>{" "}
+              </span>{" "} */}
             </p>
             <div className="flex items-start gap-2 mt-1">
               <img src={data?.data?.level} className="w-14" alt="" />

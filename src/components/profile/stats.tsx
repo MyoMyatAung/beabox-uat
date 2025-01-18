@@ -25,7 +25,7 @@ const Stats = ({ followers, following, nickname }: any) => {
               <div className="text-[14px] font-semibold">
                 {followers?.length ? followers?.length : 0}
               </div>
-              <div className="text-gray-400 text-[14px]">Follower</div>
+              <div className="text-gray-400 text-[14px]">粉丝</div>
             </div>
           </DrawerTrigger>
         </div>
@@ -39,14 +39,14 @@ const Stats = ({ followers, following, nickname }: any) => {
               <div className="text-[14px] font-semibold">
                 {following?.length ? following?.length : 0}
               </div>
-              <div className="text-gray-400 text-[14px]">Following</div>
+              <div className="text-gray-400 text-[14px]">已关注</div>
             </div>
           </DrawerTrigger>
         </div>
         <span className="text-gray-500">|</span>
         <div className="text-center">
           <div className="text-[14px] font-semibold">0</div>
-          <div className="text-gray-400 text-[14px]">Like</div>
+          <div className="text-gray-400 text-[14px]">点赞</div>
         </div>
       </div>
       <DrawerContent className="border-0 z-[1000]">
