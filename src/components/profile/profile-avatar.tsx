@@ -1,7 +1,7 @@
 import { Person } from "@/assets/profile";
 
 const ProfileAvatar = ({ progressData, levelImage, photo }: any) => {
-  const progress = progressData;
+  const progress = progressData || 0;
   const circleRadius = 30; // Adjusted radius to fit within 60px
   const strokeWidth = 4; // Stroke width
   const normalizedRadius = circleRadius - strokeWidth / 2;

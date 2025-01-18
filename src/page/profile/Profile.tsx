@@ -23,8 +23,6 @@ const Profile = () => {
   const [show, setShow] = useState(false);
   const user = useSelector((state: any) => state.persist.user);
   const gender = useSelector((state: any) => state.persist.gender);
-  console.log("data", data);
-
   if (isLoading) return <Loader />;
 
   return (
