@@ -5,6 +5,7 @@ export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({
     baseUrl: "https://77eewm.qdhgtch.com/api/v1",
+    // baseUrl: "http://107.148.47.94:8800/api/v1",
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).persist?.user?.token;
       // const rtoken = (getState() as RootState).persist?.registerUser?.token;
@@ -27,10 +28,10 @@ export const authApi = createApi({
       }),
     }),
     login: builder.mutation<any, string>({
-      query: ({ username, password }: any) => ({
+      query: ({ username, password, captcha, captcha_key }: any) => ({
         url: "/login",
         method: "POST",
-        body: { username, password },
+        body: { username, password, captcha, captcha_key },
       }),
     }),
     storeSecurityQues: builder.mutation<any, string>({

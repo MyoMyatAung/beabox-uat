@@ -7,7 +7,14 @@ import { Link } from "react-router-dom";
 import { paths } from "@/routes/paths";
 import { useGetMyProfileQuery } from "@/store/api/profileApi";
 import { useSelector } from "react-redux";
-import { ChevronRight, UserPen, Bell, Cross, X } from "lucide-react";
+import {
+  ChevronRight,
+  UserPen,
+  Bell,
+  Cross,
+  X,
+  PencilLine,
+} from "lucide-react";
 import { BsPatchCheckFill } from "react-icons/bs";
 import { Button } from "@/components/ui/button";
 import SettingBtn from "@/components/profile/setting-btn";
@@ -15,14 +22,17 @@ import ProfileAvatar from "@/components/profile/profile-avatar";
 import phoneImg from "@/assets/profile/phone-img.png";
 import { useState } from "react";
 import Loader from "@/components/shared/loader";
+import MaleSVG from "@/assets/profile/male";
+import FemaleSVG from "@/assets/profile/female";
 
 const Profile = () => {
   const { data, isLoading } = useGetMyProfileQuery("");
   const [show, setShow] = useState(false);
   const user = useSelector((state: any) => state.persist.user);
-  console.log("data", data);
-
+  const gender = useSelector((state: any) => state.persist.gender);
+  const region = useSelector((state: any) => state.persist.region);
   if (isLoading) return <Loader />;
+  console.log(region?.city?.length + region?.province?.length);
 
   return (
     <div className="px-5 max-h-screen no-scrollbar profile-bg">
@@ -58,14 +68,20 @@ const Profile = () => {
       ) : (
         ""
       )}
-      <div className="flex gap-3 my-5 justify-end">
-        <Link
-          to={paths.noti}
-          className="bg-[#FFFFFF12] w-10 h-10 rounded-full flex items-center justify-center"
-        >
-          <Bell />
-        </Link>
-        <SettingBtn setShow={setShow} />
+      <div className="flex my-5 justify-between items-center">
+        <div className="flex gap-2 bg-[#FFFFFF14] px-4 justify-center py-1 rounded-lg items-center">
+          <PencilLine size={14} />
+          <p className="text-[12px]">Edit Cover</p>
+        </div>
+        <div className="flex gap-3 items-center">
+          <Link
+            to={paths.noti}
+            className="bg-[#FFFFFF12] w-10 h-10 rounded-full flex items-center justify-center"
+          >
+            <Bell />
+          </Link>
+          <SettingBtn setShow={setShow} />
+        </div>
       </div>
       {/* login  */}
       <div className="w-full flex items-center gap-3 py-5">
@@ -74,7 +90,11 @@ const Profile = () => {
             <Person />
           </div>
         ) : (
-          <ProfileAvatar progress={data?.data?.level_progress} />
+          <ProfileAvatar
+            progress={data?.data?.level_progress}
+            levelImage={data?.data?.level}
+            photo={data?.data?.profile_photo}
+          />
         )}
         {!user?.token ? (
           <Link to={paths.login} className="flex items-center gap-2 flex-1">
@@ -82,38 +102,31 @@ const Profile = () => {
             <ChevronRight size={18} />
           </Link>
         ) : (
-          <div className="flex-1">
-            <p className="text-[18px] flex items-center gap-2">
+          <div className="flex-1 flex flex-col gap-0.5">
+            <p className="text-[18px] flex items-center gap-1">
               {data?.data?.nickname}
-              <span>
+              <span>{gender == "Male" ? <MaleSVG /> : <FemaleSVG />}</span>
+              {/* <span>
                 <BsPatchCheckFill className="text-[#888]" />
-              </span>{" "}
+              </span>{" "} */}
             </p>
-            <div className="flex items-start gap-2 mt-1">
-              <img src={data?.data?.level} className="w-14" alt="" />
-              {/* <p className="flex items-center bg-[#F9DDF5] text-[#625386] text-[12px] font-bold py-[0.3px] px-5 rounded-full relative">
-                <div className="absolute -left-3">
-                  <Level />
+            <p className="text-[14px] text-[#BBBBBB]">
+              ID - {data?.data?.user_code}
+            </p>
+            {region ? (
+              <div className="flex">
+                <div className="text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 pt-1 rounded-full justify-center shrink-0">
+                  <span>{region?.city}</span>,<span>{region?.province}</span>
                 </div>
-                <span>Lv 1</span>
-              </p> */}
+              </div>
+            ) : (
+              <></>
+            )}
+            {/* <div className="flex items-start gap-2 mt-1">
+              <img src={data?.data?.level} className="w-14" alt="" />
               <p className="text-[14px]">(ID {data?.data?.user_code})</p>
-            </div>
+            </div> */}
           </div>
-          // <button
-          //   // onClick={() => dispatch(logOutUser())}
-          //   className="bg-gradient-to-r from-[#FFB2E038] to-[#CD3EFF38] px-4 py-1 rounded-full shadow-md flex gap-1 items-center"
-          // >
-          //   <span className="mr-3 text-[14px] flex items-center gap-1">
-          //     <span>{data?.data?.username}</span> <FaAngleRight />
-          //   </span>
-          //   <p className="flex items-center bg-[#F9DDF5] text-[#625386] text-[12px] font-bold py-[2px] px-3 rounded-full relative">
-          //     <div className="absolute -left-3">
-          //       <Level />
-          //     </div>
-          //     <span>Lv 1</span>
-          //   </p>
-          // </button>
         )}
       </div>
       {user?.token ? (
@@ -135,11 +148,6 @@ const Profile = () => {
       ) : (
         <></>
       )}
-      {/* Action Cards */}
-      {/* <div className="grid grid-cols-2 gap-5">
-        <MenuCard Icon={Wallet} title="My Wallet" />
-        <MenuCard Icon={Creater} title="Creator Account" />
-      </div> */}
       <VideoTabs login={user?.token} />
     </div>
   );

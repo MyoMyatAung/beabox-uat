@@ -13,6 +13,7 @@ import { useEffect } from "react";
 import { setProfileData } from "@/store/slices/persistSlice";
 import EditNickName from "@/components/profile/edit-nickname";
 import EditRegion from "@/components/profile/edit-region";
+import ImageUpload from "@/components/profile/image-upload";
 
 const ProfileDetail = () => {
   const user = useSelector((state: any) => state.persist.user);
@@ -45,9 +46,7 @@ const ProfileDetail = () => {
         <p className="text-[16px] mr-5">Profile</p>
         <div></div>
       </div>
-      <div className="w-[80px] h-[80px] rounded-full bg-[#FFFFFF12] flex justify-center items-center mx-auto">
-        <Camera />
-      </div>
+      <ImageUpload />
       <div className="flex flex-col gap-7 my-7">
         <h1 className="text-[12px] text-[#888]">About you</h1>
         <EditUsername

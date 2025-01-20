@@ -13,10 +13,24 @@ const withFollowData = (WrapperCompo: any) => {
     );
     const user_id = useSelector((state: any) => state.persist.user?.id);
     const nickname = useSelector((state: any) => state.persist.user?.nickname);
-    const { data: followers, isLoading: followersLoading } =
-      useGetFollowerListQuery(user_code);
-    const { data: following, isLoading: followingLoading } =
-      useGetFollowingListQuery(user_id);
+    const isDrawerOpen = useSelector(
+      (state: any) => state.profile.isDrawerOpen
+    );
+
+    const {
+      data: followers,
+      isLoading: followersLoading,
+      refetch: followerRefetch,
+    } = useGetFollowerListQuery(user_code);
+    const {
+      data: following,
+      isLoading: followingLoading,
+      refetch: followingRefetch,
+    } = useGetFollowingListQuery(user_id);
+    useEffect(() => {
+      followerRefetch();
+      followingRefetch();
+    }, [isDrawerOpen]);
     return (
       <WrapperCompo
         {...props}

@@ -21,9 +21,11 @@ export const paths = {
   wallet: "/wallet",
   wallet_invite: "/wallet/invite",
   wallet_history: "/wallet/Transition",
-  wallet_recharge : '/wallet/recharge',
-  wallet_withdraw : '/wallet/withdraw',
-  search : "/search_overlay",
-  search_result : "/search",
-  vod_details : "/vod_details"
+  wallet_recharge: "/wallet/recharge",
+  wallet_withdraw: "/wallet/withdraw",
+  search: "/search_overlay",
+  search_result: "/search",
+  vod_details: "/vod_details",
+  user_profile: "/user/:id",
+  getUserProfileId: (id: any) => `/user/${id}`,
 };

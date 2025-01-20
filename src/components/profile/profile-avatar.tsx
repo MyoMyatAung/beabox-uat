@@ -1,7 +1,7 @@
 import { Person } from "@/assets/profile";
 
-const ProfileAvatar = ({}) => {
-  const progress = 70;
+const ProfileAvatar = ({ progressData, levelImage, photo }: any) => {
+  const progress = progressData || 0;
   const circleRadius = 30; // Adjusted radius to fit within 60px
   const strokeWidth = 4; // Stroke width
   const normalizedRadius = circleRadius - strokeWidth / 2;
@@ -9,6 +9,11 @@ const ProfileAvatar = ({}) => {
   const strokeDashoffset = circumference - (progress / 100) * circumference;
 
   return (
+    // <img
+    //   className="w-[58px] h-[58px] rounded-full object-cover object-center"
+    //   src={photo}
+    //   alt=""
+    // />
     <div className="w-[60px] h-[60px] rounded-full bg-[#FFFFFF12] flex justify-center items-center relative">
       <svg
         height={circleRadius * 2}
@@ -49,9 +54,19 @@ const ProfileAvatar = ({}) => {
           cy={circleRadius}
         />
       </svg>
-      <div className="w-[58px] h-[58px] rounded-full bg-[#FFFFFF12] flex justify-center items-center p-2">
-        <Person />
-      </div>
+      {photo ? (
+        <img
+          className="w-[58px] h-[58px] rounded-full object-cover object-center"
+          src={photo}
+          alt=""
+        />
+      ) : (
+        <div className="w-[58px] h-[58px] rounded-full bg-[#FFFFFF12] flex justify-center items-center p-2">
+          <Person />
+        </div>
+      )}
+
+      <img src={levelImage} className="absolute -bottom-3 right-1" alt="" />
     </div>
   );
 };

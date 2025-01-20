@@ -1,3 +1,5 @@
+import { dateForamtter } from "@/lib/utils";
+
 const demodata = [
   { name: "Dee", msg: "Started following you" },
   { name: "Dee Dee", msg: "posted a video" },
@@ -15,28 +17,28 @@ const demodata = [
   { name: "Doe", msg: "Started following you" },
 ];
 
-const OtherNoti = () => {
+const OtherNoti = ({ item }: any) => {
   return (
     <>
-      {demodata.map((item) => (
-        <div className="flex items-start gap-2" key={item.name}>
-          <img
-            src="https://i.pinimg.com/236x/5a/ee/d9/5aeed9e9e4bcc16503f5c982e649fee0.jpg"
-            className="w-10 h-10 object-cover rounded-full"
-            alt=""
-          />
-          <div className="w-full">
-            <div className="flex items-center text-[14px] justify-between">
-              <p>{item.name}</p>
-              {/* <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div> */}
-            </div>
-            <div className="flex items-end justify-between w-full ">
-              <p className="text-[10px] w-[80%] text-[#888]">{item.msg}</p>
-              <p className="text-[10px] text-[#888]">1 day</p>
-            </div>
+      <div className="flex items-start gap-2">
+        <img
+          src={item?.metadata?.image}
+          className="w-10 h-10 object-cover rounded-full"
+          alt=""
+        />
+        <div className="w-full">
+          <div className="flex items-center text-[14px] justify-between">
+            <p>{item.title}</p>
+            {/* <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div> */}
+          </div>
+          <div className="flex items-end justify-between w-full ">
+            <p className="text-[10px] w-[80%] text-[#888]">{item.message}</p>
+            <p className="text-[10px] text-[#888]">
+              {dateForamtter(item?.created_at)}
+            </p>
           </div>
         </div>
-      ))}
+      </div>
     </>
   );
 };

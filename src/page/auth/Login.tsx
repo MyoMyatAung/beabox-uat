@@ -13,17 +13,30 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { useLoginMutation } from "@/store/api/authApi";
+import { useGetCaptchaMutation, useLoginMutation } from "@/store/api/authApi";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/store/slices/persistSlice";
 import SubmitButton from "@/components/shared/submit-button";
 import Loader from "@/components/shared/loader";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [login, { isLoading }] = useLoginMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const [getCaptcha, { data, isLoading: captchaLoading }] =
+    useGetCaptchaMutation();
+  const [showVerification, setShowVerification] = useState(false);
+  console.log(data);
+  const [captcha, setCaptcha] = useState("");
+  const [error, setError] = useState("");
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -32,21 +45,48 @@ const Login = () => {
       password: "",
     },
   });
-  async function onSubmit(values: LoginFormData) {
+  // async function onSubmit(values: LoginFormData) {
+  //   // Handle form submission
+  //   const { data } = await login({
+  //     username: values?.emailOrPhone,
+  //     password: values?.password,
+  //   });
+  //   if (data?.status) {
+  //     dispatch(setUser(data?.data));
+  //     navigate(paths.profile);
+  //   }
+  // }
+
+  async function onSubmit() {
     // Handle form submission
-    const { data } = await login({
-      username: values?.emailOrPhone,
-      password: values?.password,
-    });
-    if (data?.status) {
-      dispatch(setUser(data?.data));
-      navigate(paths.profile);
-    }
+    // await getCaptcha();
+    if (data?.status) setShowVerification(true);
   }
+  const handleVerify = async (e: any) => {
+    // Add verification logic here
+    e.stopPropagation();
+    const { emailOrPhone, password } = form.getValues();
+    console.log(emailOrPhone, password);
+    const { data: loginData } = await login({
+      username: emailOrPhone,
+      password,
+      captcha,
+      captcha_key: data?.data?.captcha_key,
+    });
+    console.log(loginData, "loginData");
+    if (loginData?.status) {
+      dispatch(setUser(loginData?.data));
+      setShowVerification(false);
+      navigate(paths.profile);
+    } else {
+      setShowVerification(false);
+      setError("Something went wrong!");
+    }
+  };
 
   return (
     <>
-      {isLoading ? <Loader /> : <></>}
+      {isLoading || captchaLoading ? <Loader /> : <></>}
       <div className="px-5 h-screen bg-[#FFFFFF1F]">
         <div className="flex justify-between items-center py-5">
           <Link to={paths.profile}>
@@ -105,7 +145,10 @@ const Login = () => {
                       />
                       <button
                         className=" absolute right-0 bottom-2"
-                        onClick={() => setShowPassword(!showPassword)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowPassword(!showPassword);
+                        }}
                       >
                         {showPassword ? (
                           <Eye className="w-[18px]" />
@@ -113,30 +156,76 @@ const Login = () => {
                           <EyeOff className="w-[18px]" />
                         )}
                       </button>
+
                       <div className="w-full h-[1px] bg-[#FFFFFF0A]"></div>
                     </div>
                   </FormControl>
                   <FormMessage />
+                  <FormMessage>{error}</FormMessage>
                 </FormItem>
               )}
             />
 
             <div className="">
-              <SubmitButton
+              {/* <SubmitButton
                 isLoading={isLoading}
                 condition={true}
                 text={"Login"}
-              />
-              {/* <Button
-              type="submit"
-              className="w-full gradient-bg rounded-lg hover:gradient-bg"
-            >
-              {isLoading ? "loading..." : "Login"}
-            </Button> */}
+              /> */}
+              <Button
+                disabled={isLoading || captchaLoading}
+                // type="submit"
+                onClick={async () => {
+                  await getCaptcha("");
+                  setShowVerification(true);
+                }}
+                className="w-full gradient-bg rounded-lg hover:gradient-bg"
+              >
+                {/* {isLoading ? "loading..." : "Login"} */}
+                Login
+              </Button>
               <Link to="/">
                 <p className="text-center text-[14px] mt-5">Forgot Password?</p>
               </Link>
             </div>
+            <Dialog open={showVerification} onOpenChange={setShowVerification}>
+              {!captchaLoading ? (
+                <DialogContent className="bg-[#16131C] border-0 shadow-lg rounded-lg max-w-[290px]">
+                  <DialogHeader>
+                    <DialogTitle className="text-white text-[16px]">
+                      Verification
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-6">
+                    <div className="flex justify-center items-center gap-1 h-[36px]">
+                      <input
+                        value={captcha}
+                        onChange={(e) => setCaptcha(e.target.value)}
+                        placeholder="Type Captcha"
+                        className="bg-[#2D2738] px-[10px] h-full outline-none"
+                      />
+
+                      <img
+                        src={data?.data?.img}
+                        className="w-[80px]  h-full  object-center outline-none border-gray-400"
+                        alt=""
+                      />
+                    </div>
+                    <Button
+                      onClick={handleVerify}
+                      disabled={isLoading ? true : false}
+                      type="submit"
+                      className="w-full gradient-bg hover:gradient-bg text-white rounded-lg"
+                    >
+                      {/* {registerLoading ? "loading..." : "Verify"} */}
+                      Verify
+                    </Button>
+                  </div>
+                </DialogContent>
+              ) : (
+                <></>
+              )}
+            </Dialog>
             <div className="w-full flex flex-col items-center">
               <p className="text-[14px] text-[#333333] text-center mb-5">OR</p>
               <Link to={paths.regiter}>
