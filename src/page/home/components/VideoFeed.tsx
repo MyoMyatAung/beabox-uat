@@ -32,6 +32,7 @@ const VideoFeed = ({
   const { data: config } = useGetConfigQuery({});
   const user = useSelector((state: any) => state.persist.user);
   const [postComment] = usePostCommentMutation();
+  const [mute, setMute] = useState(true);
   const navigate = useNavigate();
 
   // Scroll to the first current post when the component is mounted
@@ -126,6 +127,7 @@ const VideoFeed = ({
                 video?.preview_image ||
                 "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg"
               }
+              mute={mute}
             />
             <VideoSidebar
               likes={video?.like_count}
@@ -141,6 +143,8 @@ const VideoFeed = ({
               config={config?.data}
               image={video?.preview_image}
               post={video}
+              mute={mute}
+              setMute={setMute}
             />
             <FeedFooter
               tags={video?.tag}

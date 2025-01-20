@@ -144,10 +144,12 @@ const Player = ({
   src,
   thumbnail,
   onPlay,
+  mute,
 }: {
   src: any;
   thumbnail: any;
   onPlay?: () => void; // Add an optional onPlay callback
+  mute: any;
 }) => {
   const playerContainerRef = useRef(null);
   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
@@ -162,7 +164,7 @@ const Player = ({
           container: playerContainerRef.current,
           url: src,
           volume: 0.5,
-          muted: false,
+          muted: mute,
           autoplay: true,
           moreVideoAttr: {
             playsInline: true,
@@ -228,6 +230,12 @@ const Player = ({
       };
     }
   }, [src, thumbnail, onPlay]);
+  useEffect(() => {
+    // Update the mute state if the prop changes
+    if (artPlayerInstanceRef.current) {
+      artPlayerInstanceRef.current.muted = mute;
+    }
+  }, [mute]); // This effect runs whenever `mute` changes
 
   return <div ref={playerContainerRef} className="video_player w-full" />;
 };

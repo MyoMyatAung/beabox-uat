@@ -34,6 +34,7 @@ const Home = () => {
   const dispatch = useDispatch();
   // const [currentTab, setCurrentTab] = useState(2);
   const swiperRef = useRef<any>(null);
+  const [mute, setMute] = useState(true);
 
   const { data: config } = useGetConfigQuery({});
 
@@ -259,6 +260,7 @@ const Home = () => {
                           video?.preview_image ||
                           "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg"
                         }
+                        mute={mute}
                       />
                       <VideoSidebar
                         likes={video?.like_count}
@@ -274,6 +276,8 @@ const Home = () => {
                         config={config?.data}
                         image={video?.preview_image}
                         post={video}
+                        setMute={setMute}
+                        mute={mute}
                       />
                       <VideoFooter
                         tags={video?.tag}
@@ -386,6 +390,7 @@ const Home = () => {
                           video?.preview_image ||
                           "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg"
                         }
+                        mute={mute}
                       />
                       <VideoSidebar
                         likes={video?.like_count}
@@ -401,6 +406,8 @@ const Home = () => {
                         config={config?.data}
                         image={video?.preview_image}
                         post={video}
+                        setMute={setMute}
+                        mute={mute}
                       />
                       <VideoFooter
                         tags={video?.tag}
