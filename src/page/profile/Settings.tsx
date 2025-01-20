@@ -10,13 +10,10 @@ import { useLogoutMutation } from "@/store/api/profileApi";
 import withProfileData from "@/hocs/withProfileData";
 import ChangePassword from "@/components/profile/change-password";
 import EditSecurity from "@/components/profile/edit-security";
+import PrivateProfile from "@/components/profile/private-profile";
+import ContentVisibility from "@/components/profile/content-visibility";
 
-const Settings = ({
-  private_profile,
-  changePrivateProfileStatsHandler,
-  liked_video_visibility,
-  changeVisibilityHandler,
-}: any) => {
+const Settings = ({ liked_video_visibility, changeVisibilityHandler }: any) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [logout] = useLogoutMutation();
@@ -49,6 +46,34 @@ const Settings = ({
           <></>
         )}
 
+        {user?.token ? (
+          <>
+            <div className="flex flex-col gap-4">
+              <h1 className="text-[12px] text-[#888]">Account Privacy</h1>
+            </div>
+            <ContentVisibility
+              liked_video_visibility={liked_video_visibility}
+              changeVisibilityHandler={changeVisibilityHandler}
+            />
+            <div className="border-b border-white/10"></div>
+            <div className="flex justify-between items-center">
+              <p className="flex items-center gap-1 text-[14px]">
+                Privacy Settings
+              </p>
+              <Link
+                to={paths.privacy_settings}
+                className="flex items-center gap-1 text-[14px]"
+              >
+                <ChevronRight size={15} className="text-[#777777]" />
+              </Link>
+            </div>
+          </>
+        ) : (
+          <></>
+        )}
+
+        <div className="border-b border-white/10"></div>
+
         <div className="flex justify-between items-center">
           <p className="flex items-center gap-1 text-[14px]">Current Version</p>
           <p className="flex items-center gap-1 text-[14px]">
@@ -62,47 +87,6 @@ const Settings = ({
             V 8.0.4 <ChevronRight size={15} className="text-[#777777]" />
           </p>
         </div>
-        <div className="border-b border-white/10"></div>
-        {user?.token ? (
-          <>
-            <div className="flex justify-between items-start">
-              <div className="">
-                <p className="text-[14px]">Private Profile</p>
-                <p className="text-[12px] w-[230px] text-[#888]">
-                  No one can see your posts and alos followers, or following
-                  list
-                </p>
-              </div>
-              <label className="switch">
-                <input
-                  type="checkbox"
-                  defaultChecked={private_profile == "on" ? true : false}
-                  onChange={changePrivateProfileStatsHandler}
-                />
-                <span className="slider round"></span>
-              </label>
-            </div>
-            <div className="border-b border-white/10"></div>
-            <div className="flex justify-between items-start">
-              <div className="">
-                <p className="text-[14px]">Allowed Liked video Visibility</p>
-                <p className="text-[12px] w-[230px] text-[#888]">
-                  public can see the videos you've liked.
-                </p>
-              </div>
-              <label className="switch">
-                <input
-                  type="checkbox"
-                  defaultChecked={liked_video_visibility}
-                  onChange={changeVisibilityHandler}
-                />
-                <span className="slider round"></span>
-              </label>
-            </div>
-          </>
-        ) : (
-          <></>
-        )}
       </div>
       {user?.token ? (
         <div className="bot w-full py-5">
@@ -110,9 +94,9 @@ const Settings = ({
             onClick={async () => {
               dispatch(logOutUser());
               await logout("");
-              navigate(paths.profile);
+              // navigate(paths.profile);
             }}
-            className="w-full rounded-lg bg-[#1C1A22] hover:bg-[#1C1A22]"
+            className="w-full rounded-xl bg-[#1C1A22] hover:bg-[#1C1A22]"
           >
             Log Out
           </Button>

@@ -20,6 +20,7 @@ const Profile = lazy(() => import("../page/profile/Profile"));
 const OtherProfile = lazy(() => import("../page/profile/OtherProfile"));
 const ProfileDetail = lazy(() => import("../page/profile/ProfileDetail"));
 const Settings = lazy(() => import("../page/profile/Settings"));
+const PrivacySettings = lazy(() => import("../page/profile/PrivacySettings"));
 const Noti = lazy(() => import("../page/profile/noti/Noti"));
 const NotiDetail = lazy(() => import("../page/profile/noti/NotiDetail"));
 const SystemNoti = lazy(() => import("../page/profile/noti/SystemNoti"));
@@ -173,6 +174,14 @@ const Routing = () => {
       element: (
         <Suspense fallback={<Loader />}>
           <Settings />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.privacy_settings,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <PrivacySettings />
         </Suspense>
       ),
     },
