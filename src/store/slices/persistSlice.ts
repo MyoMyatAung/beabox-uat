@@ -11,6 +11,7 @@ const initialState: any = {
   visibility: "off",
   securityQues: null,
   region: null,
+  cover: null,
 };
 
 export const persistSlice = createSlice({
@@ -48,6 +49,9 @@ export const persistSlice = createSlice({
     setRegion: (state, { payload }) => {
       state.region = payload;
     },
+    setCover: (state, { payload }) => {
+      state.cover = payload;
+    },
   },
 });
 
@@ -62,6 +66,7 @@ export const {
   setVisibility,
   setSecurityQues,
   setRegion,
+  setCover,
 } = persistSlice.actions;
 
 export default persistSlice.reducer;

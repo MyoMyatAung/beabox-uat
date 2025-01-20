@@ -24,6 +24,7 @@ import { useState } from "react";
 import Loader from "@/components/shared/loader";
 import MaleSVG from "@/assets/profile/male";
 import FemaleSVG from "@/assets/profile/female";
+import EditCover from "@/components/profile/edit-cover";
 
 const Profile = () => {
   const { data, isLoading } = useGetMyProfileQuery("");
@@ -32,7 +33,7 @@ const Profile = () => {
   const gender = useSelector((state: any) => state.persist.gender);
   const region = useSelector((state: any) => state.persist.region);
   if (isLoading) return <Loader />;
-  console.log(region?.city?.length + region?.province?.length);
+  console.log(data);
 
   return (
     <div className="px-5 max-h-screen no-scrollbar profile-bg">
@@ -69,10 +70,7 @@ const Profile = () => {
         ""
       )}
       <div className="flex my-5 justify-between items-center">
-        <div className="flex gap-2 bg-[#FFFFFF14] px-4 justify-center py-1 rounded-lg items-center">
-          <PencilLine size={14} />
-          <p className="text-[12px]">Edit Cover</p>
-        </div>
+        <EditCover />
         <div className="flex gap-3 items-center">
           <Link
             to={paths.noti}
