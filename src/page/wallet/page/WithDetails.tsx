@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import "../wallet.css";
 import PayPick from "./PayPick";
+import { usePostWalletWithdrawlMutation } from "@/store/api/wallet/walletApi";
+import { useGetMyProfileQuery } from "@/store/api/profileApi";
+import { Toaster } from "@/components/ui/toaster";
+import { toast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 
 interface WithDetailsProps {
   payment: any;
@@ -11,20 +16,47 @@ const WithDetails: React.FC<WithDetailsProps> = ({ payment }) => {
   const [bankAccountNumber, setBankAccountNumber] = useState<string>("");
   const [bankAccountName, setBankAccountName] = useState<string>("");
   const [selectedPayment, setSelectedPayment] = useState<string>("");
+  const [selectedPaymentID, setSelectedPaymentID] = useState<any>();
+  const [postWalletWithdrawl] = usePostWalletWithdrawlMutation();
+  const { data } = useGetMyProfileQuery("");
+  // console.log(data)
+
+  // console.log(selectedPaymentID)
 
   const isFormValid = amount !== "" && bankAccountNumber !== "";
   bankAccountName.length !== 0 && selectedPayment !== "";
 
-  const submitHandler = (e: { preventDefault: () => void }) => {
+  const submitHandler = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    if (isFormValid) {
-      console.log(amount, selectedPayment, bankAccountName, bankAccountNumber);
+    if (!isFormValid) {
+      return;
+    } else {
+      const formData = {
+        amount: amount,
+        payment_method_id: selectedPaymentID,
+        reference_id: data?.data.id,
+      };
+      // console.log(formData);
+      try {
+        const { data } = await postWalletWithdrawl({ formData });
+        console.log(data);
+        if (!data) {
+          throw new Error();
+        }
+      } catch (error) {
+        console.log(error);
+         toast({
+            description:
+              "nternal server error occurred. Please try again later.",
+          });
+      }
     }
   };
 
-
   return (
     <div>
+      <Toaster />
+
       <form onSubmit={submitHandler} className="flex flex-col gap-[32px]">
         {/* amount */}
         <div>
@@ -51,10 +83,12 @@ const WithDetails: React.FC<WithDetailsProps> = ({ payment }) => {
             Payment Method
           </label>
           <PayPick
+            selectedPaymentID={selectedPaymentID}
             payment={payment}
             selectedPayment={selectedPayment}
             setSelectedPayment={setSelectedPayment}
-            onSelect={setSelectedPayment}
+            setSelectedPaymentID={setSelectedPaymentID}
+            // onSelect={setSelectedPayment}
           />
         </div>
         {/* bank info */}
@@ -104,7 +138,9 @@ const WithDetails: React.FC<WithDetailsProps> = ({ payment }) => {
         <button
           type="submit"
           className={`rounded-[16px] py-[12px] px-[16px] text-white text-[14px] font-[600] leading-[22px] w-full ${
-            isFormValid ? " bg-gradient-to-tl from-[#CD3EFF] to-[#FFB2E0]" : "bg-white/10"
+            isFormValid
+              ? " bg-gradient-to-tl from-[#CD3EFF] to-[#FFB2E0]"
+              : "bg-white/10"
           }`}
           //   disabled={!isFormValid}
         >

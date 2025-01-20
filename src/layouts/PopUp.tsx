@@ -25,7 +25,7 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
   useEffect(() => {
     if (data?.data?.application) {
       const flattenedApps = data.data.application.flatMap((dd: any) => dd.apps);
-      console.log(flattenedApps); // Debugging: Ensure this contains the expected data
+      // console.log(flattenedApps); // Debugging: Ensure this contains the expected data
       setad(flattenedApps);
     }
   }, [data]);

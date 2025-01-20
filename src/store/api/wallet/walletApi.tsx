@@ -39,6 +39,13 @@ export const walletApi = createApi({
         method: "GET",
       }),
     }),
+    postWalletWithdrawl: builder.mutation<any, any>({
+      query: ({ formData }) => ({
+        url: "/wallet/withdrawl",
+        method: "POST",
+        body: formData,
+      }),
+    }),
   }),
 });
 
@@ -46,5 +53,6 @@ export const {
   useGetInviteQuery,
   useGetTransitionHistoryQuery,
   useGetCoinListQuery,
-  useGetPaymentMethodQuery
+  useGetPaymentMethodQuery,
+  usePostWalletWithdrawlMutation,
 } = walletApi;

@@ -11,6 +11,8 @@ import "../wallet.css";
 import ggpay from "../../../assets/wallet/ggpay.svg";
 
 interface PayPickProps {
+  selectedPaymentID: any;
+  setSelectedPaymentID: any;
   payment: {
     id: number;
     name: string;
@@ -26,22 +28,35 @@ const PayPick: React.FC<PayPickProps> = ({
   payment,
   selectedPayment,
   setSelectedPayment,
+  selectedPaymentID,
+  setSelectedPaymentID,
 }) => {
   const [selectedValue, setSelectedValue] = useState<string>(
     (payment && payment?.find((p) => p.name === "Credit Card")?.name) || ""
   );
-
+  // console.log(payment);
   useEffect(() => {
     if (selectedValue) {
       setSelectedPayment(selectedValue);
     }
   }, [selectedValue]);
 
+  const valueHandler = (selectedName: string) => {
+    // console.log(selectedName);
+    const selectedPaymentObj = payment.find((p) => p.name === selectedName); // Find payment by name
+    setSelectedValue(selectedName);
+    if (selectedPaymentObj) {
+      setSelectedPaymentID(selectedPaymentObj.id); // Set the ID from the payment object
+    } else {
+      console.error("Selected payment method not found");
+    }
+  };
+
   return (
     <div className="w-ful py-[20px]">
       <Select
         value={selectedValue}
-        onValueChange={(value) => setSelectedValue(value)}
+        onValueChange={(value) => valueHandler(value)}
       >
         <SelectTrigger className="w-full payment_select_box">
           <span className=" text-white text-[16px] font-[400] leading-[20px]">
