@@ -22,6 +22,12 @@ export const exploreApi = createApi({
         method: "GET",
       }),
     }),
+    getAdsPopUp: builder.query<any, string>({
+      query: () => ({
+        url: `/app/ads`,
+        method: "GET",
+      }),
+    }),
     getExploreTag: builder.query<any, any>({
       query: ({ order, tag ,page }) => ({
         url: `/post/search/tag?tag=${tag}&order=${order}&pageSize=10&page=${page}`,
@@ -77,5 +83,6 @@ export const {
   useGetExploreTagQuery,
   useGetApplicationAdsQuery,
   useGetExploreListQuery,
-  usePostCommentExpMutation
+  usePostCommentExpMutation,
+  useGetAdsPopUpQuery
 } = exploreApi;

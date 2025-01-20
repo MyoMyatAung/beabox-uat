@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import header from "../assets/explore/Header.png";
-import {
-  useGetApplicationAdsQuery,
-  useGetExploreHeaderQuery,
-} from "@/store/api/explore/exploreApi";
+import { useGetAdsPopUpQuery } from "@/store/api/explore/exploreApi";
 import "../page/explore/explore.css";
 interface PopUpProps {
   setShowAd: any;
@@ -12,7 +9,9 @@ interface PopUpProps {
 const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
   const [ad, setad] = useState([]);
   // const { data, isLoading } = useGetExploreHeaderQuery("");
-  const { data, isLoading } = useGetApplicationAdsQuery("");
+  // const { data, isLoading } = useGetApplicationAdsQuery("");
+  const { data, isLoading } = useGetAdsPopUpQuery("");
+  console.log(data);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -23,12 +22,12 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
   }, []);
 
   useEffect(() => {
-    if (data?.data?.application) {
-      const flattenedApps = data.data.application.flatMap((dd: any) => dd.apps);
-      // console.log(flattenedApps); // Debugging: Ensure this contains the expected data
-      setad(flattenedApps);
+    if (data?.data?.popup_application) {
+      // const flattenedApps = data.data.application.flatMap((dd: any) => dd.apps);
+      setad(data.data.popup_application.apps);
     }
   }, [data]);
+  console.log(ad)
 
   return (
     <div className=" h-screen bg-black/80 w-screen flex flex-col gap-[20px] justify-center items-center fixed top-0 z-[9999]">
@@ -47,13 +46,13 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
               <div className="w-[56px] h-[53px] rounded-md bg-white/20 animate-pulse"></div>
             </div>
           ) : (
-            <div className=" grid grid-cols-4 gap-[10px] h-[304px] overflow-scroll scrollbar-hide">
+            <div className=" grid grid-cols-4 gap-[10px] h-[304px overflow-scroll scrollbar-hide">
               {ad?.map((app: any) => (
                 <a
                   key={app.id}
                   href={app.url}
                   target="_blink"
-                  className=" flex flex-col justify-center items-center gap-[4px]"
+                  className=" flex h-[75px] flex-col justify-center items-center gap-[4px]"
                 >
                   <img
                     className=" w-[56px] h-[53px] rounded-[6px] border-[#222]"
