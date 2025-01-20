@@ -40,6 +40,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [getComments, { data: commentData }] = useCommentListMutation();
   const videoContainerRef = useRef<HTMLDivElement>(null);
+  const [mute, setMute] = useState(false);
 
   useEffect(() => {
     const container = videoContainerRef.current;
@@ -145,6 +146,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
               files?.files[0].preview_image ||
               "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg"
             }
+            mute={mute}
           />
           <VideoSidebar
             post={files.files[0]}
@@ -160,6 +162,8 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
             countdown={countdown}
             config={config?.data}
             image={files?.files[0].preview_image}
+            setMute={setMute}
+            mute={mute}
           />
           <FeedFooter
             tags={files?.tag}
