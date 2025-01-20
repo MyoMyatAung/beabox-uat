@@ -6,11 +6,12 @@ import {
   useRemoveCoverMutation,
   useSettingUploadMutation,
 } from "@/store/api/profileApi";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setCover } from "@/store/slices/persistSlice";
 
 const EditCover = () => {
   const dispatch = useDispatch();
+  const cover = useSelector((state: any) => state.persist.cover);
   const [isOpen, setIsOpen] = useState(false);
   const [image, setImage] = useState<string | null>(null);
   const [settingUpload, { data: settingUploadData }] =
@@ -18,7 +19,7 @@ const EditCover = () => {
   const [changeCover, { data: changeCoverData }] = useChangeCoverMutation();
   const [removeCover] = useRemoveCoverMutation();
   const removeHandler = async () => {
-    await removeCover("");
+    await removeCover(cover);
     dispatch(setCover(null));
     setIsOpen(false);
   };
@@ -44,9 +45,10 @@ const EditCover = () => {
   };
 
   useEffect(() => {
-    if (settingUploadData?.status)
+    if (settingUploadData?.status) {
       changeCover({ file_url: settingUploadData?.data?.url });
-    dispatch(setCover(changeCoverData?.data?.cover_photo));
+      dispatch(setCover(settingUploadData?.data?.url));
+    }
     setIsOpen(false);
     // console.log(settingUploadData?.data?.url, "storage uploaded");
   }, [settingUploadData]);
@@ -56,7 +58,7 @@ const EditCover = () => {
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>
-        <div className="flex gap-2 bg-[#FFFFFF14] px-4 justify-center py-1 rounded-lg items-center">
+        <div className="flex gap-2 z-[1200] bg-[#FFFFFF14] px-4 justify-center py-1 rounded-lg items-center">
           <PencilLine size={14} />
           <p className="text-[12px]">Edit Cover</p>
         </div>
