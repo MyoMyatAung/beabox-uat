@@ -1,6 +1,8 @@
 import { useChangeFollowStatusMutation } from "@/store/api/profileApi";
 import { AvatarImage, Avatar } from "../ui/avatar";
-import { Button } from "../ui/button";
+import { Link } from "react-router-dom";
+import { paths } from "@/routes/paths";
+import FollowBtn from "./follow-btn";
 
 const FollowCard = ({ data }: { data: any }) => {
   const [changeFollowStatus, { data: statusData, isLoading }] =
@@ -16,9 +18,13 @@ const FollowCard = ({ data }: { data: any }) => {
       console.log(error);
     }
   };
+
   return (
     <div className="w-full flex justify-between items-center py-1">
-      <div className="flex items-center gap-4">
+      <Link
+        to={paths.getUserProfileId(data?.id)}
+        className="flex items-center gap-4"
+      >
         <Avatar className="border-2">
           <AvatarImage src={data?.photo} alt="@shadcn" />
         </Avatar>
@@ -26,8 +32,9 @@ const FollowCard = ({ data }: { data: any }) => {
           <h1>{data?.nickname}</h1>
           <h1 className="text-[#888]">ID : {data?.user_code}</h1>
         </div>
-      </div>
-      <Button
+      </Link>
+      <FollowBtn id={data?.id} followBack={data?.follows_back} />
+      {/* <Button
         onClick={() => changeFollowStatusHandler(data?.user_code)}
         className={`${
           data?.follows_back ? "bg-[#FFFFFF17]" : "gradient-bg"
@@ -35,7 +42,7 @@ const FollowCard = ({ data }: { data: any }) => {
         size={"sm"}
       >
         {data?.follows_back ? "Following" : "Follow"}
-      </Button>
+      </Button> */}
     </div>
   );
 };

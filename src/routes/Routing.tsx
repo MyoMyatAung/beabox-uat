@@ -17,6 +17,7 @@ const Home = lazy(() => import("../page/home/Home"));
 const Explore = lazy(() => import("../page/explore/Explore"));
 const Application = lazy(() => import("../page/application/Application"));
 const Profile = lazy(() => import("../page/profile/Profile"));
+const OtherProfile = lazy(() => import("../page/profile/OtherProfile"));
 const ProfileDetail = lazy(() => import("../page/profile/ProfileDetail"));
 const Settings = lazy(() => import("../page/profile/Settings"));
 const Noti = lazy(() => import("../page/profile/noti/Noti"));
@@ -144,6 +145,16 @@ const Routing = () => {
         <Suspense fallback={<Loader />}>
           <RootLayout>
             <Profile />
+          </RootLayout>
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.user_profile,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <RootLayout>
+            <OtherProfile />
           </RootLayout>
         </Suspense>
       ),

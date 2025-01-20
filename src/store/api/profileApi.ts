@@ -21,6 +21,12 @@ export const profileApi = createApi({
         method: "GET",
       }),
     }),
+    getUserProfile: builder.query<any, string>({
+      query: (id) => ({
+        url: `/profile/get-profile?user_id=${id}`,
+        method: "GET",
+      }),
+    }),
     getRegion: builder.query<any, string>({
       // query: () => `/pcities-and-provinces`,
       query: () => ({
@@ -134,6 +140,12 @@ export const profileApi = createApi({
         method: "Post",
       }),
     }),
+    removeSecurityQuestion: builder.mutation<any, string>({
+      query: () => ({
+        url: `/profile/remove-security-question`,
+        method: "Post",
+      }),
+    }),
     getFollowerList: builder.query<any, string>({
       query: (user_id) => ({
         url: `/follower/follower-list?user_id=${user_id}`,
@@ -151,6 +163,26 @@ export const profileApi = createApi({
         url: `/follower/change-follow-status`,
         method: "Post",
         body: { follow_user_id, status },
+      }),
+    }),
+    getNoti: builder.query<any, string>({
+      query: () => ({
+        url: `/notification/list?type=general&pageSize=3&page=1`,
+        method: "GET",
+      }),
+    }),
+    settingUpload: builder.mutation<any, any>({
+      query: ({ filedata }: any) => ({
+        url: `/storage/upload`,
+        method: "Post",
+        body: { filePath: "profile", file: filedata },
+      }),
+    }),
+    profileUpload: builder.mutation<any, any>({
+      query: ({ file_url }: any) => ({
+        url: `/profile/upload`,
+        method: "Post",
+        body: { file_url },
       }),
     }),
   }),
@@ -175,4 +207,9 @@ export const {
   useGetFollowerListQuery,
   useGetFollowingListQuery,
   useChangeFollowStatusMutation,
+  useGetUserProfileQuery,
+  useGetNotiQuery,
+  useRemoveSecurityQuestionMutation,
+  useSettingUploadMutation,
+  useProfileUploadMutation,
 } = profileApi;

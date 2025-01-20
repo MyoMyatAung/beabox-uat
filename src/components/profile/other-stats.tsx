@@ -6,64 +6,49 @@ import {
   setDefaultFollowTab,
   setIsDrawerOpen,
 } from "@/store/slices/profileSlice";
-import withFollowData from "@/hocs/withFollowData";
-const Stats = ({ followers, following, nickname }: any) => {
+const OtherStats = ({ followers, following, nickname }: any) => {
   const isDrawerOpen = useSelector((state: any) => state.profile.isDrawerOpen);
   const dispatch = useDispatch();
   return (
-    <Drawer
-      open={isDrawerOpen}
-      onOpenChange={() => dispatch(setIsDrawerOpen(true))}
-    >
+    // <Drawer
+    //   open={isDrawerOpen}
+    //   onOpenChange={() => dispatch(setIsDrawerOpen(true))}
+    // >
       <div className="flex justify-between w-full max-w-xs my-4 items-center mx-auto">
         <div className="text-center">
-          <DrawerTrigger
+          {/* <DrawerTrigger
             asChild
             onClick={() => dispatch(setDefaultFollowTab("follower"))}
-          >
+          > */}
             <div>
               <div className="text-[14px] font-semibold">
-                {followers?.length ? followers?.length : 0}
+                {followers ? followers : 0}
               </div>
-              <div className="text-gray-400 text-[14px]">粉丝</div>
+              <div className="text-gray-400 text-[14px]">Follower</div>
             </div>
-          </DrawerTrigger>
+          {/* </DrawerTrigger> */}
         </div>
         <span className="text-gray-500">|</span>
         <div className="text-center">
-          <DrawerTrigger
+          {/* <DrawerTrigger
             asChild
             onClick={() => dispatch(setDefaultFollowTab("following"))}
-          >
+          > */}
             <div>
               <div className="text-[14px] font-semibold">
-                {following?.length ? following?.length : 0}
+                {following ? following : 0}
               </div>
-              <div className="text-gray-400 text-[14px]">已关注</div>
+              <div className="text-gray-400 text-[14px]">Following</div>
             </div>
-          </DrawerTrigger>
+          {/* </DrawerTrigger> */}
         </div>
         <span className="text-gray-500">|</span>
         <div className="text-center">
           <div className="text-[14px] font-semibold">0</div>
-          <div className="text-gray-400 text-[14px]">点赞</div>
+          <div className="text-gray-400 text-[14px]">Like</div>
         </div>
       </div>
-      <DrawerContent className="border-0 z-[1000]">
-        <div className="w-full h-screen px-5">
-          <div className="flex justify-between items-center py-5">
-            <button onClick={() => dispatch(setIsDrawerOpen(false))}>
-              <FaAngleLeft size={18} />
-            </button>
-            <p className="text-[16px]">{nickname}</p>
-            <div></div>
-          </div>
-
-          <FollowTabs />
-        </div>
-      </DrawerContent>
-    </Drawer>
   );
 };
 
-export default withFollowData(Stats);
+export default OtherStats;

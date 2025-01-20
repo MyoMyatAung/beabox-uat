@@ -1,7 +1,11 @@
 import SubmitButton from "@/components/shared/submit-button";
+import { Button } from "@/components/ui/button";
 import { paths } from "@/routes/paths";
 import { useStoreSecurityQuesMutation } from "@/store/api/authApi";
-import { useGetMyProfileQuery } from "@/store/api/profileApi";
+import {
+  useGetMyProfileQuery,
+  useRemoveSecurityQuestionMutation,
+} from "@/store/api/profileApi";
 import { setSecurityQues } from "@/store/slices/persistSlice";
 import { RootState } from "@reduxjs/toolkit/query";
 import { Eye, EyeOff } from "lucide-react";
@@ -17,7 +21,9 @@ const Manage = () => {
   const [ques, setQues] = useState(
     data?.data?.security_question?.security_question || ""
   );
-  const [ans, setAns] = useState("");
+  const [storeSecurityQues] = useStoreSecurityQuesMutation();
+  const [removeSecurityQuestion] = useRemoveSecurityQuestionMutation();
+  const [ans, setAns] = useState(data?.data?.security_question?.answer || "");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const registerUser = useSelector((state: any) => state.persist.registerUser);
@@ -41,6 +47,15 @@ const Manage = () => {
     }
     navigate(paths.settings);
   };
+
+  const removeHandler = async () => {
+    const { data } = await removeSecurityQuestion("");
+    console.log(data);
+    if (data?.status) dispatch(setSecurityQues(null));
+
+    navigate(paths.settings);
+  };
+
   return (
     <div className="w-full h-screen px-5 flex flex-col items-center">
       <div className="flex justify-between items-center py-5 w-full">
@@ -121,6 +136,12 @@ const Manage = () => {
                 isLoading={false}
                 condition={ans.length > 1 && ques?.length > 1}
               />
+              <Button
+                onClick={removeHandler}
+                className="w-full rounded-xl bg-[#FFFFFF0A] hover:bg-[#FFFFFF0A] mt-5"
+              >
+                Remove
+              </Button>
             </>
           </form>
         )}
