@@ -10,7 +10,7 @@ import spider from "../spider.png";
 import CommentOverlay from "./CommentOverlay";
 import ShareOverlay from "./ShareOverlay";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function VideoSidebar({
   likes,
@@ -60,6 +60,10 @@ function VideoSidebar({
   const navigate = useNavigate();
   const alertRef = useRef<HTMLDivElement>(null); // Reference to the alert box
   const [follow, setFollow] = useState(post?.is_followed);
+
+  const location = useLocation()
+  const isHome = location.pathname === "/"
+  console.log(isHome)
 
   // Handle comment list fetching and visibility
   const handleCommentList = async () => {
@@ -251,7 +255,7 @@ function VideoSidebar({
   };
 
   return (
-    <div className="videoSidebar z-[999]">
+    <div className={`${isHome ? "videoSidebar" : "videoSidebar_exp"} z-[999]`}>
       <div className="videoSidebar__button">
         <button
           className="flex flex-col items-center relative mb-2"
