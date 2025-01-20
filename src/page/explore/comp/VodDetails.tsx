@@ -123,7 +123,6 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
     navigate("/search_overlay");
   };
 
-  // console.log(files);
   return (
     <div className="app bg-black">
       {/* tip */}
@@ -143,17 +142,21 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
           <Player
             src={files.files[0].resourceURL}
             thumbnail={
-              files?.files[0].preview_image ||
+              files?.preview_image ||
               "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg"
             }
             mute={mute}
           />
           <VideoSidebar
             post={files.files[0]}
-            likes={files?.files[0].like_count}
-            is_liked={files?.files[0].is_liked}
-            messages={files?.files[0].comment_count}
-            post_id={files?.files[0].post_id}
+            likes={files?.like_count}
+            is_liked={files?.is_liked}
+            messages={files?.comment_count}
+            post_id={files?.post_id}
+            // likes={files?.files[0].like_count}
+            // is_liked={files?.files[0].is_liked}
+            // messages={files?.files[0].comment_count}
+            // post_id={files?.files[0].post_id}
             setCountNumber={setCountNumber}
             setCountdown={setCountdown}
             setShowHeart={setShowHeart}
@@ -161,7 +164,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
             showHeart={showHeart}
             countdown={countdown}
             config={config?.data}
-            image={files?.files[0].preview_image}
+            image={files?.preview_image}
             setMute={setMute}
             mute={mute}
           />
@@ -233,7 +236,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
               />
               <button
                 className="comment_arrow p-3"
-                onClick={() => handleComment(files.files[0]?.post_id)}
+                onClick={() => handleComment(files?.post_id)}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

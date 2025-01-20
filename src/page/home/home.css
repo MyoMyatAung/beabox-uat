@@ -139,14 +139,14 @@ html {
 .videoSidebar {
   position: absolute;
   bottom: 20px;
-  right: 15px;
+  right: 10px;
   color: white;
 }
 
 .videoSidebar_exp {
   position: absolute;
   bottom: 90px;
-  right: 15px;
+  right: 10px;
   color: white;
 }
 

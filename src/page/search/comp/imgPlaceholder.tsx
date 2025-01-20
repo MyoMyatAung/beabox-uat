@@ -57,7 +57,7 @@ const ImageWithPlaceholder = ({
   return (
     <div
       ref={containerRef}
-      className="image-container bg-gray-800"
+      className="image-container bg-search-img"
       //   style={{ minWidth: width, minHeight: height }}
     >
       <img
