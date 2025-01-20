@@ -15,6 +15,7 @@ export const paths = {
   upload_process: "/upload/process",
   otp: "/otp",
   noti: "/notifications",
+  noti_detail: "/notifications/:id",
   system_noti: "/notifications/system",
   balance_noti: "/notifications/balance",
   recommand_more: "/rec_more",

@@ -26,7 +26,11 @@ const Noti = () => {
               return <OtherNoti item={item} key={item?.id} />;
             } else if (item?.type == "balance_alert") {
               return (
-                <div className="flex items-start gap-2">
+                <Link
+                  to={`/notifications/${item?.id}`}
+                  state={{ data: item, main: "Balance Alert" }}
+                  className="flex items-start gap-2"
+                >
                   <img
                     src={item?.metadata?.image}
                     className="w-10 h-10 mt-1"
@@ -46,11 +50,15 @@ const Noti = () => {
                       </p>
                     </div>
                   </div>
-                </div>
+                </Link>
               );
             } else if (item?.type == "system") {
               return (
-                <div className="system flex items-start gap-2">
+                <Link
+                  to={`/notifications/${item?.id}`}
+                  state={{ data: item, main: "Beabox Team" }}
+                  className="system flex items-start gap-2"
+                >
                   <img
                     src={item?.metadata?.image}
                     className="w-10 h-10 mt-1"
@@ -68,7 +76,7 @@ const Noti = () => {
                       </p>
                     </div>
                   </div>
-                </div>
+                </Link>
               );
             }
           })}
