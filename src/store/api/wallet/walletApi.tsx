@@ -46,6 +46,13 @@ export const walletApi = createApi({
         body: formData,
       }),
     }),
+    postWalletRecharge: builder.mutation<any, any>({
+      query: ({ formData }) => ({
+        url: "/wallet/buy",
+        method: "POST",
+        body: formData,
+      }),
+    }),
   }),
 });
 
@@ -55,4 +62,5 @@ export const {
   useGetCoinListQuery,
   useGetPaymentMethodQuery,
   usePostWalletWithdrawlMutation,
+  usePostWalletRechargeMutation
 } = walletApi;

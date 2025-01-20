@@ -1,26 +1,60 @@
 import React, { useEffect, useState } from "react";
 import ggpay from "../../../assets/wallet/ggpay.svg";
 import "../wallet.css";
+import { useGetMyProfileQuery } from "@/store/api/profileApi";
+import { usePostWalletRechargeMutation } from "@/store/api/wallet/walletApi";
+import { DrawerClose } from "@/components/ui/drawer";
+import { Drawer as DrawerPrimitive } from "vaul"
+
 
 interface PaymentProps {
   paymentMeth: any;
   total: string;
+  selectedCoinId: any;
+  setOpen:any
 }
 
-const Payment: React.FC<PaymentProps> = ({ paymentMeth, total }) => {
+const Payment: React.FC<PaymentProps> = ({
+  paymentMeth,
+  total,
+  selectedCoinId,
+  setOpen
+}) => {
   const [imgError, setImgError] = useState(false);
   const [pay, setPay] = useState([]);
   const [selectedId, setSelectedId] = useState<number | null>(1);
+  const { data } = useGetMyProfileQuery("");
+  const [postWalletRecharge] = usePostWalletRechargeMutation();
+  const DrawerClose = DrawerPrimitive.Close
 
   useEffect(() => {
     if (paymentMeth.data) {
       setPay(paymentMeth.data);
+      // setSelectedId(paymentMeth.id)
     }
   }, [paymentMeth]);
 
   const handleSelection = (id: number) => {
     setSelectedId(id);
   };
+
+  const handleSubmit = async () => {
+    if (selectedId === 1) {
+      return;
+    }
+    const formData = {
+      coin_id: selectedCoinId,
+      amount: total,
+      payment_method_id: selectedId,
+      reference_id: data?.data.id,
+    };
+    try {
+      const data = await postWalletRecharge({ formData });
+      console.log(data);
+      setOpen(false)
+    } catch (error) {}
+  };
+  // console.log(pay);
 
   return (
     <div className="flex flex-col py-[30px] px-[16px] justify-center items-center">
@@ -62,7 +96,13 @@ const Payment: React.FC<PaymentProps> = ({ paymentMeth, total }) => {
                   </svg>
                 )}
               </span>
-              <h1 className={`${selectedId === pp.id ? " text-white" : "text-[#888]"} text-[14px] font-[400]`}>{pp.name}</h1>
+              <h1
+                className={`${
+                  selectedId === pp.id ? " text-white" : "text-[#888]"
+                } text-[14px] font-[400]`}
+              >
+                {pp.name}
+              </h1>
             </div>
             <div>
               <img
@@ -78,7 +118,10 @@ const Payment: React.FC<PaymentProps> = ({ paymentMeth, total }) => {
       <span className="text-white text-[16px] font-[700] leading-[15px] py-[20px]">
         Total: <span className="total_pay_text"> $ {total}</span>
       </span>
-      <button className="comfirm_butoon w-full py-[16px] text-white text-[16px] font-[500]">
+      <button
+        onClick={handleSubmit}
+        className="comfirm_butoon w-full py-[16px] text-white text-[16px] font-[500]"
+      >
         Confirm Payment
       </button>
     </div>

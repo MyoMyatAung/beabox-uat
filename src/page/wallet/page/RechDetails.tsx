@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "../wallet.css";
 import transit from "../../../assets/wallet/transit.png";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
@@ -10,13 +10,37 @@ interface RechDetailsProps {
 }
 
 const RechDetails: React.FC<RechDetailsProps> = ({ coin, paymentMeth }) => {
+  const [open, setOpen] = useState(false);
+
   const [total, setTotal] = useState("");
+  const [selectedId, setSelectedId] = useState<any>();
   // const lastRoom = coin[coin.length - 1];
   const lastRoom = coin?.length > 0 ? coin[0] : [];
+  const drawerRef = useRef()
+  // console.log(coin);
+  const showBox = (cc: any) => {
+    setTotal(cc.amount);
+    setSelectedId(cc.id);
+    setOpen(true)
+  };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (drawerRef.current && !drawerRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+    if (open) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [open]);
+  // console.log(selectedId)
   return (
     <div>
-      <Drawer>
+      <Drawer open={open}>
         {/* head */}
         <div className="pb-[20px]">
           <h1 className="text-white text-[16px] font-[500] leading-[15px]">
@@ -36,7 +60,7 @@ const RechDetails: React.FC<RechDetailsProps> = ({ coin, paymentMeth }) => {
             .map((cc: any) => (
               <DrawerTrigger key={cc.id}>
                 <div
-                  onClick={() => setTotal(cc.amount)}
+                  onClick={() => showBox(cc)}
                   className={` ${
                     lastRoom.id === cc.id ? "popular_box" : "coin_list_box"
                   } flex flex-col justify-center items-center relative overflow-hidden`}
@@ -118,7 +142,12 @@ const RechDetails: React.FC<RechDetailsProps> = ({ coin, paymentMeth }) => {
 
         <div className="flex justify-between items-center">
           <DrawerContent className=" border-none">
-            <Payment total={total} paymentMeth={paymentMeth} />
+            <Payment
+              total={total}
+              selectedCoinId={selectedId}
+              paymentMeth={paymentMeth}
+              setOpen={setOpen}
+            />
           </DrawerContent>
         </div>
       </Drawer>
