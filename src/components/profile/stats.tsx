@@ -49,7 +49,7 @@ const Stats = ({ followers, following, nickname }: any) => {
           <div className="z-[1200] text-gray-400 text-[14px]">点赞</div>
         </div>
       </div>
-      <DrawerContent className="z-[1200] border-0 z-[1000]">
+      <DrawerContent className="z-[1300] border-0">
         <div className="z-[1200] w-full h-screen px-5">
           <div className="z-[1200] flex justify-between items-center py-5">
             <button onClick={() => dispatch(setIsDrawerOpen(false))}>
