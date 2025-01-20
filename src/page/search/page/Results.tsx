@@ -190,7 +190,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
                             setShowVideoFeed(true);
                           }}
                         >
-                          <div className="relative bg-gray-800 rounded-lg overflow-hidden">
+                          <div className="relative bg-search-img rounded-lg overflow-hidden">
                             <ImageWithPlaceholder
                               src={video?.preview_image}
                               alt={video.title || "Video"}

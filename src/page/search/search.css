@@ -78,3 +78,7 @@
 .image-loaded {
   opacity: 1;
 }
+
+.bg-search-img {
+  background: linear-gradient(151deg, #1d1a22 8.06%, #221d2b 95.37%);
+}
