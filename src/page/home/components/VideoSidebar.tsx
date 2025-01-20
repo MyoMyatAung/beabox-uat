@@ -61,9 +61,9 @@ function VideoSidebar({
   const alertRef = useRef<HTMLDivElement>(null); // Reference to the alert box
   const [follow, setFollow] = useState(post?.is_followed);
 
-  const location = useLocation()
-  const isHome = location.pathname === "/"
-  console.log(isHome)
+  const location = useLocation();
+  const isHome = location.pathname === "/";
+  console.log(isHome);
 
   // Handle comment list fetching and visibility
   const handleCommentList = async () => {
@@ -255,8 +255,12 @@ function VideoSidebar({
   };
 
   return (
-    <div className={`${isHome ? "videoSidebar" : "videoSidebar_exp"} z-[999]`}>
-      <div className="videoSidebar__button">
+    <div
+      className={`${
+        isHome ? "videoSidebar" : "videoSidebar_exp"
+      } z-[999] w-[50px]`}
+    >
+      <div className="videoSidebar__button ">
         <button
           className="flex flex-col items-center relative mb-2"
           onClick={handleFollow}
@@ -299,7 +303,7 @@ function VideoSidebar({
         </button>
       </div>
 
-      <div className="videoSidebar__button">
+      <div className="videoSidebar__button ">
         {isLiked ? (
           <button onClick={handleLike}>
             <svg
@@ -334,7 +338,7 @@ function VideoSidebar({
         <p className="side_text font-cnFont mt-2">{likeCount}</p>
       </div>
 
-      <div className="videoSidebar__button">
+      <div className="videoSidebar__button ">
         <button onClick={handleCommentList}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -353,7 +357,7 @@ function VideoSidebar({
         </button>
         <p className="side_text font-cnFont mt-2">{messages}</p>
       </div>
-      <div className="videoSidebar__button">
+      <div className="videoSidebar__button ">
         <button onClick={handleShareClick}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -371,10 +375,10 @@ function VideoSidebar({
           <p className="side_text font-cnFont mt-2">Share</p>
         </button>
       </div>
-      <div className="videoSidebar__button">
+      <div className="videoSidebar__button ">
         <button onClick={handleVoice}>
           {mute ? (
-            <>
+            <div className="flex flex-col items-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="25"
@@ -394,10 +398,10 @@ function VideoSidebar({
                   stroke-linejoin="round"
                 />
               </svg>
-              <p className="side_text font-cnFont mt-2">Mute</p>
-            </>
+              <p className="side_text font-cnFont mt-2">Unmute</p>
+            </div>
           ) : (
-            <>
+            <div className="flex flex-col items-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="25"
@@ -418,7 +422,7 @@ function VideoSidebar({
                 />
               </svg>
               <p className="side_text font-cnFont mt-2">Mute</p>
-            </>
+            </div>
           )}
         </button>
       </div>
