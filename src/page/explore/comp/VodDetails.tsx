@@ -8,7 +8,7 @@ import {
   useGetConfigQuery,
   usePostCommentMutation,
 } from "@/page/home/services/homeApi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import VideoSidebar from "@/page/home/components/VideoSidebar";
 import FeedFooter from "@/page/home/components/FeedFooter";
 import ShowHeart from "@/page/home/components/ShowHeart";
@@ -115,8 +115,8 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
   };
 
   const handleBack = () => {
-    setCurrentTab(1);
-    navigate(-2);
+    // setCurrentTab(1);
+    navigate(-1);
   };
 
   const handleSearch = () => {

@@ -24,9 +24,7 @@ const Explore = () => {
   const [show, setshow] = useState<boolean>(false);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    setSearchParams({});
-  }, [location.pathname]);
+
 
   // useEffect(() => {
   //   const queryTab = searchParams.get("query");
