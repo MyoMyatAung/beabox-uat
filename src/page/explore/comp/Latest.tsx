@@ -147,7 +147,7 @@ const Latest: React.FC<LatestPorp> = ({}) => {
                   <div className="">
                     <img
                       src={Loader}
-                      className="w-[100px] h-[100px]"
+                      className="w-[70px] h-[70px]"
                       alt="Loading"
                     />
                   </div>
