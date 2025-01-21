@@ -11,11 +11,11 @@ const SettingBtn = ({ setShow }: any) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const data = [
-    {
-      title: "Balance",
-      icon: <Wallet size={14} />,
-      link: paths.wallet,
-    },
+    // {
+    //   title: "Balance",
+    //   icon: <Wallet size={14} />,
+    //   link: paths.wallet,
+    // },
     {
       title: "Creator Centre",
       icon: <UserPen size={14} />,
@@ -38,11 +38,11 @@ const SettingBtn = ({ setShow }: any) => {
     },
   ];
   const data2 = [
-    {
-      title: "Balance",
-      icon: <Wallet size={14} />,
-      link: user?.token ? paths.login : paths.wallet,
-    },
+    // {
+    //   title: "Balance",
+    //   icon: <Wallet size={14} />,
+    //   link: user?.token ? paths.login : paths.wallet,
+    // },
     {
       title: "Creator Centre",
       icon: <UserPen size={14} />,
