@@ -46,7 +46,7 @@ const Profile = () => {
       />
       <div className="z-[1200] px-5 max-h-screen no-scrollbar profile-bg">
         {show ? (
-          <div className="absolute top-0 z-[1100] left-0 w-full h-full mx-auto flex flex-col justify-center items-center bg-[#161619CC]">
+          <div className="absolute top-0 z-[1500] left-0 w-full h-full mx-auto flex flex-col justify-center items-center bg-[#161619CC]">
             <div className="z-[1200] px-10">
               <div className="z-[1200] h-[250px] gradient-bg rounded-lg relative">
                 <div className="z-[1200] w-full absolute -top-20 flex justify-center items-center">
