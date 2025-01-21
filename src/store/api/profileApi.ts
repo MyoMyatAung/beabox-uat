@@ -198,10 +198,17 @@ export const profileApi = createApi({
         method: "Post",
       }),
     }),
+    getlikePostList: builder.query<any, any>({
+      query: (id) => ({
+        url: `/user/liked-post?user_id=${id}`,
+        method: "Get",
+      }),
+    }),
   }),
 });
 
 export const {
+  useGetlikePostListQuery,
   useGetMyProfileQuery,
   useChangeUsernameMutation,
   useChangeGenderMutation,

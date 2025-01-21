@@ -29,7 +29,7 @@ const FollowTabs = () => {
         <FaSearch />
         <Input
           placeholder="Search User"
-          className="bg-[#111111] rounded-full border-0  "
+          className="bg-[#111111] rounded-full border-0 focus:border-transparent focus-visible:ring-0"
         />
       </div>
       <TabsContent value="follower">

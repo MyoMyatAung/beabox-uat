@@ -7,7 +7,10 @@ import VideoTabs from "@/components/profile/video-tabs";
 import { stats } from "./data";
 import { Link } from "react-router-dom";
 import { paths } from "@/routes/paths";
-import { useGetMyProfileQuery } from "@/store/api/profileApi";
+import {
+  useGetlikePostListQuery,
+  useGetMyProfileQuery,
+} from "@/store/api/profileApi";
 import { useDispatch, useSelector } from "react-redux";
 import {
   ChevronRight,
@@ -38,6 +41,8 @@ const Profile = () => {
   const region = useSelector((state: any) => state.persist.region);
   const cover = useSelector((state: any) => state.persist.cover);
   console.log(data, "profile data");
+
+  // const { data: likePosts } = useGetlikePostListQuery(data?.data?.id);
 
   // useEffect(() => {
   //   dispatch(setUser(data?.data));
@@ -135,12 +140,12 @@ const Profile = () => {
               </span>{" "} */}
                 </p>
                 <p className="z-[1200] text-[14px] text-[#BBBBBB]">
-                  ID - {data?.data?.user_code}
+                  B号 : {data?.data?.user_code}
                 </p>
                 {region ? (
                   <div className="z-[1200] flex">
                     <div className="z-[1200] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 pt-1 rounded-full justify-center shrink-0">
-                      <span>{region?.city}</span>,
+                      <span>{region?.city}</span>:
                       <span>{region?.province}</span>
                     </div>
                   </div>
@@ -171,7 +176,7 @@ const Profile = () => {
         {user?.token ? (
           <Link to={paths.profileDetail}>
             <Button className="z-[1200] w-full bg-[#FFFFFF0F] hover:bg-[#FFFFFF0F] relative rounded-[12px]">
-              <UserPen /> Edit Profile
+              <UserPen /> 编辑资料
             </Button>
           </Link>
         ) : (

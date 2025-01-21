@@ -6,9 +6,11 @@ import BalanceNotiLink from "@/components/profile/noti/balance-noti-link";
 import OtherNoti from "@/components/profile/noti/other-noti";
 import { useGetNotiQuery } from "@/store/api/profileApi";
 import { dateForamtter } from "@/lib/utils";
+import Loader from "@/components/shared/loader";
 
 const Noti = () => {
-  const { data } = useGetNotiQuery("");
+  const { data, isLoading } = useGetNotiQuery("");
+  if (isLoading) return <Loader />;
   console.log(data, "notis");
   return (
     <div className="w-full h-screen bg-[#16131C] px-5 flex flex-col items-center justify-between no-scrollbar">
