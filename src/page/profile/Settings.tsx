@@ -13,7 +13,11 @@ import EditSecurity from "@/components/profile/edit-security";
 import PrivateProfile from "@/components/profile/private-profile";
 import ContentVisibility from "@/components/profile/content-visibility";
 
-const Settings = ({ liked_video_visibility, changeVisibilityHandler }: any) => {
+const Settings = ({
+  liked_video_visibility,
+  changeVisibilityHandler,
+  visibilityLoading,
+}: any) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [logout] = useLogoutMutation();
@@ -54,6 +58,7 @@ const Settings = ({ liked_video_visibility, changeVisibilityHandler }: any) => {
             <ContentVisibility
               liked_video_visibility={liked_video_visibility}
               changeVisibilityHandler={changeVisibilityHandler}
+              visibilityLoading={visibilityLoading}
             />
             <div className="border-b border-white/10"></div>
             <div className="flex justify-between items-center">

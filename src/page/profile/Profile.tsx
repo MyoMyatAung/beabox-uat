@@ -8,7 +8,7 @@ import { stats } from "./data";
 import { Link } from "react-router-dom";
 import { paths } from "@/routes/paths";
 import { useGetMyProfileQuery } from "@/store/api/profileApi";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   ChevronRight,
   UserPen,
@@ -22,20 +22,28 @@ import { Button } from "@/components/ui/button";
 import SettingBtn from "@/components/profile/setting-btn";
 import ProfileAvatar from "@/components/profile/profile-avatar";
 import phoneImg from "@/assets/profile/phone-img.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Loader from "@/components/shared/loader";
 import MaleSVG from "@/assets/profile/male";
 import FemaleSVG from "@/assets/profile/female";
 import EditCover from "@/components/profile/edit-cover";
+import { setUser, setVisibility } from "@/store/slices/persistSlice";
 
 const Profile = () => {
   const { data, isLoading } = useGetMyProfileQuery("");
+  const dispatch = useDispatch();
   const [show, setShow] = useState(false);
   const user = useSelector((state: any) => state.persist.user);
   const gender = useSelector((state: any) => state.persist.gender);
   const region = useSelector((state: any) => state.persist.region);
   const cover = useSelector((state: any) => state.persist.cover);
-  console.log(cover, "cover img");
+  console.log(data, "profile data");
+
+  // useEffect(() => {
+  //   dispatch(setUser(data?.data));
+  //   dispatch(setVisibility(data?.data))
+  // }, [data]);
+
   if (isLoading) return <Loader />;
 
   return (

@@ -11,9 +11,9 @@ const Noti = () => {
   const { data } = useGetNotiQuery("");
   console.log(data, "notis");
   return (
-    <div className="w-full h-screen px-5 flex flex-col items-center justify-between no-scrollbar">
+    <div className="w-full h-screen bg-[#16131C] px-5 flex flex-col items-center justify-between no-scrollbar">
       <div className="w-full">
-        <div className="flex justify-between items-center py-5 sticky top-0 bg-black z-50">
+        <div className="flex justify-between items-center py-5 sticky top-0 bg-[#16131C00] z-50">
           <Link to={paths.profile}>
             <FaAngleLeft size={18} />
           </Link>

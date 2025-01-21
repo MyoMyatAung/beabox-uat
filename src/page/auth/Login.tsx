@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { useGetCaptchaMutation, useLoginMutation } from "@/store/api/authApi";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/store/slices/persistSlice";
-import SubmitButton from "@/components/shared/submit-button";
+import loader from "@/page/home/vod_loader.gif";
 import Loader from "@/components/shared/loader";
 import {
   Dialog,
@@ -218,7 +218,11 @@ const Login = () => {
                       className="w-full gradient-bg hover:gradient-bg text-white rounded-lg"
                     >
                       {/* {registerLoading ? "loading..." : "Verify"} */}
-                      Verify
+                      {isLoading ? (
+                        <img src={loader} alt="" className="w-12" />
+                      ) : (
+                        "Verify"
+                      )}
                     </Button>
                   </div>
                 </DialogContent>
