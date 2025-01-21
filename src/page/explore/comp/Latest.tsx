@@ -59,7 +59,7 @@ const Latest: React.FC<LatestPorp> = ({}) => {
   const showDetailsVod = (file: any) => {
     scrollPositionRef.current = contentRef.current?.scrollTop || 0; 
     dispatch(setDetails(file));
-    navigate("/vod_details",{replace : true});
+    navigate("/vod_details");
   };
   return (
     <div className=" flex w-full justify-center">
