@@ -185,6 +185,19 @@ export const profileApi = createApi({
         body: { file_url },
       }),
     }),
+    changeCover: builder.mutation<any, any>({
+      query: ({ file_url }: any) => ({
+        url: `/profile/change-cover-photo`,
+        method: "Post",
+        body: { file_url },
+      }),
+    }),
+    removeCover: builder.mutation<any, any>({
+      query: () => ({
+        url: `/profile/remove-cover-photo`,
+        method: "Post",
+      }),
+    }),
   }),
 });
 
@@ -212,4 +225,6 @@ export const {
   useRemoveSecurityQuestionMutation,
   useSettingUploadMutation,
   useProfileUploadMutation,
+  useChangeCoverMutation,
+  useRemoveCoverMutation,
 } = profileApi;

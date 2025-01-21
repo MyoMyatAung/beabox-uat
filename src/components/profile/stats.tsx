@@ -15,47 +15,47 @@ const Stats = ({ followers, following, nickname }: any) => {
       open={isDrawerOpen}
       onOpenChange={() => dispatch(setIsDrawerOpen(true))}
     >
-      <div className="flex justify-between w-full max-w-xs my-4 items-center mx-auto">
-        <div className="text-center">
+      <div className="z-[1200] flex justify-between w-full max-w-xs my-4 items-center mx-auto">
+        <div className="z-[1200] text-center">
           <DrawerTrigger
             asChild
             onClick={() => dispatch(setDefaultFollowTab("follower"))}
           >
             <div>
-              <div className="text-[14px] font-semibold">
+              <div className="z-[1200] text-[14px] font-semibold">
                 {followers?.length ? followers?.length : 0}
               </div>
-              <div className="text-gray-400 text-[14px]">粉丝</div>
+              <div className="z-[1200] text-gray-400 text-[14px]">粉丝</div>
             </div>
           </DrawerTrigger>
         </div>
-        <span className="text-gray-500">|</span>
-        <div className="text-center">
+        <span className="z-[1200] text-gray-500">|</span>
+        <div className="z-[1200] text-center">
           <DrawerTrigger
             asChild
             onClick={() => dispatch(setDefaultFollowTab("following"))}
           >
             <div>
-              <div className="text-[14px] font-semibold">
+              <div className="z-[1200] text-[14px] font-semibold">
                 {following?.length ? following?.length : 0}
               </div>
-              <div className="text-gray-400 text-[14px]">已关注</div>
+              <div className="z-[1200] text-gray-400 text-[14px]">已关注</div>
             </div>
           </DrawerTrigger>
         </div>
-        <span className="text-gray-500">|</span>
-        <div className="text-center">
-          <div className="text-[14px] font-semibold">0</div>
-          <div className="text-gray-400 text-[14px]">点赞</div>
+        <span className="z-[1200] text-gray-500">|</span>
+        <div className="z-[1200] text-center">
+          <div className="z-[1200] text-[14px] font-semibold">0</div>
+          <div className="z-[1200] text-gray-400 text-[14px]">点赞</div>
         </div>
       </div>
-      <DrawerContent className="border-0 z-[1000]">
-        <div className="w-full h-screen px-5">
-          <div className="flex justify-between items-center py-5">
+      <DrawerContent className="z-[1300] border-0">
+        <div className="z-[1200] w-full h-screen px-5">
+          <div className="z-[1200] flex justify-between items-center py-5">
             <button onClick={() => dispatch(setIsDrawerOpen(false))}>
               <FaAngleLeft size={18} />
             </button>
-            <p className="text-[16px]">{nickname}</p>
+            <p className="z-[1200] text-[16px]">{nickname}</p>
             <div></div>
           </div>
 

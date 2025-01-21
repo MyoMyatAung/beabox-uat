@@ -187,12 +187,12 @@ const Register = () => {
                         value={captcha}
                         onChange={(e) => setCaptcha(e.target.value)}
                         placeholder="Type Captcha"
-                        className="bg-[#2D2738] px-[10px] h-full outline-none"
+                        className="bg-[#2D2738] w-[70%] px-[10px] h-full outline-none"
                       />
 
                       <img
                         src={data?.data?.img}
-                        className="w-[80px]  h-full  object-center outline-none border-gray-400"
+                        className="w-[30%]  h-full  object-center outline-none border-gray-400"
                         alt=""
                       />
                     </div>

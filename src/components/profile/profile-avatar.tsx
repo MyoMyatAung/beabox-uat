@@ -14,7 +14,7 @@ const ProfileAvatar = ({ progressData, levelImage, photo }: any) => {
     //   src={photo}
     //   alt=""
     // />
-    <div className="w-[60px] h-[60px] rounded-full bg-[#FFFFFF12] flex justify-center items-center relative">
+    <div className="w-[60px] z-[1200] h-[60px] rounded-full bg-[#FFFFFF12] flex justify-center items-center relative">
       <svg
         height={circleRadius * 2}
         width={circleRadius * 2}

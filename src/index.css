@@ -158,12 +158,13 @@ input:checked + .slider:before {
 }
 
 .profile-bg {
-  background: linear-gradient(
+  background: #16131C;
+  /* background: linear-gradient(
     205deg,
     rgba(195, 54, 194, 0.8) 5.18%,
     #271e42 40.61%,
     rgba(13, 12, 12, 0) 92.3%
-  );
+  ); */
   height: 100vh;
 }
 
