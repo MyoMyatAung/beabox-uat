@@ -9,10 +9,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { setDetails } from "@/store/slices/exploreSlice";
 import { replace, useNavigate, useSearchParams } from "react-router-dom";
 import { paths } from "@/routes/paths";
+import ImageWithPlaceholder from "@/page/search/comp/imgPlaceholder";
 
-interface LatestPorp {
-
-}
+interface LatestPorp {}
 
 const Latest: React.FC<LatestPorp> = ({}) => {
   // const [searchParams, setSearchParams] = useSearchParams();
@@ -24,14 +23,13 @@ const Latest: React.FC<LatestPorp> = ({}) => {
   const navigate = useNavigate();
   const scrollPositionRef = useRef<number>(0);
   const contentRef = useRef<HTMLDivElement>(null);
-
+  
 
   useEffect(() => {
     if (contentRef.current) {
       contentRef.current.scrollTop = scrollPositionRef.current;
     }
   }, []);
-
 
   useEffect(() => {
     if (data?.data) {
@@ -57,7 +55,7 @@ const Latest: React.FC<LatestPorp> = ({}) => {
   };
 
   const showDetailsVod = (file: any) => {
-    scrollPositionRef.current = contentRef.current?.scrollTop || 0; 
+    scrollPositionRef.current = contentRef.current?.scrollTop || 0;
     dispatch(setDetails(file));
     navigate("/vod_details");
   };
@@ -85,9 +83,25 @@ const Latest: React.FC<LatestPorp> = ({}) => {
                 className="rounded-lg shadow-lg h-fit mb-4 w-[172px] relative"
                 style={{ breakInside: "avoid" }}
               >
+                <div
+                onClick={() => showDetailsVod(card)}
+                  style={{
+                    height: index % 2 === 0 ? "216px" : "272px",
+                  }}
+                  className=""
+                >
+                  <ImageWithPlaceholder
+                    src={card?.preview_image}
+                    alt={card.title || "Video"}
+                    width={"100%"}
+                    height={"100%"}
+                    className={`lozad w-full ${index % 2 === 0 ? "h-[216px]" : "h-[272px]"}  object-cover`}
+                    // style={{ minHeight: "240px", maxHeight: "340px" }}
+                  />
+                </div>
                 <img
                   onClick={() => showDetailsVod(card)}
-                  className="w-full object-cover rounded-[6px] bg-white/20"
+                  className="w-full object-cover hidden rounded-[6px] bg-white/20"
                   src={card.preview_image}
                   alt=""
                   style={{
@@ -133,7 +147,7 @@ const Latest: React.FC<LatestPorp> = ({}) => {
                   <div className="">
                     <img
                       src={Loader}
-                      className="w-[100px] h-[100px]"
+                      className="w-[70px] h-[70px]"
                       alt="Loading"
                     />
                   </div>
