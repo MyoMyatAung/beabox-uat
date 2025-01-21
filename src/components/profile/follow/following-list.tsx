@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { useGetFollowingListQuery } from "@/store/api/profileApi";
 
 const FollowingList = () => {
-  const user_code = useSelector((state: any) => state.persist?.user.id);
+  const user_code = useSelector((state: any) => state.persist?.user?.id);
   const { data, isLoading } = useGetFollowingListQuery(user_code);
   console.log(data?.data?.length, "following");
   return (

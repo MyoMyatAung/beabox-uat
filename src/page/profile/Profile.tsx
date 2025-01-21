@@ -1,6 +1,7 @@
 import Stats from "@/components/profile/stats";
 import { Person } from "@/assets/profile";
 import defaultCover from "@/assets/cover.jpg";
+import enimg from "@/assets/profile/enimg.jpg";
 
 import VideoTabs from "@/components/profile/video-tabs";
 import { stats } from "./data";
@@ -43,7 +44,7 @@ const Profile = () => {
       <img
         src={cover ? cover : defaultCover}
         alt=""
-        className="absolute top-0 left-0 w-full h-[40vh] object-cover object-center"
+        className="absolute top-0 left-0 w-full h-[23vh] object-cover object-center"
       />
       <div className="z-[1200] px-5 max-h-screen no-scrollbar profile-bg">
         {show ? (
@@ -83,7 +84,7 @@ const Profile = () => {
           ""
         )}
         <div className="z-[1200] flex my-5 justify-between items-center">
-          <EditCover />
+          {user?.token ? <EditCover /> : <div></div>}
           <div className="z-[1200] flex gap-3 items-center">
             <Link
               to={paths.noti}
