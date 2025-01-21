@@ -8,7 +8,7 @@ const initialState: any = {
   bio: "",
   profileData: null,
   private_profile: "off",
-  visibility: "off",
+  visibility: "",
   securityQues: null,
   region: null,
   cover: null,
@@ -33,6 +33,10 @@ export const persistSlice = createSlice({
     logOutUser: (state) => {
       state.user = null;
       state.securityQues = null;
+      state.profileData = null;
+      state.gender = "Other";
+      state.cover = null;
+      state.visibility = "";
     },
     setProfileData: (state, { payload }) => {
       state.profileData = payload;

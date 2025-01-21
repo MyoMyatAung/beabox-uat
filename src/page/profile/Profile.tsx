@@ -7,8 +7,11 @@ import VideoTabs from "@/components/profile/video-tabs";
 import { stats } from "./data";
 import { Link } from "react-router-dom";
 import { paths } from "@/routes/paths";
-import { useGetMyProfileQuery } from "@/store/api/profileApi";
-import { useSelector } from "react-redux";
+import {
+  useGetlikePostListQuery,
+  useGetMyProfileQuery,
+} from "@/store/api/profileApi";
+import { useDispatch, useSelector } from "react-redux";
 import {
   ChevronRight,
   UserPen,
@@ -22,20 +25,30 @@ import { Button } from "@/components/ui/button";
 import SettingBtn from "@/components/profile/setting-btn";
 import ProfileAvatar from "@/components/profile/profile-avatar";
 import phoneImg from "@/assets/profile/phone-img.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Loader from "@/components/shared/loader";
 import MaleSVG from "@/assets/profile/male";
 import FemaleSVG from "@/assets/profile/female";
 import EditCover from "@/components/profile/edit-cover";
+import { setUser, setVisibility } from "@/store/slices/persistSlice";
 
 const Profile = () => {
   const { data, isLoading } = useGetMyProfileQuery("");
+  const dispatch = useDispatch();
   const [show, setShow] = useState(false);
   const user = useSelector((state: any) => state.persist.user);
   const gender = useSelector((state: any) => state.persist.gender);
   const region = useSelector((state: any) => state.persist.region);
   const cover = useSelector((state: any) => state.persist.cover);
-  console.log(cover, "cover img");
+  console.log(data, "profile data");
+
+  // const { data: likePosts } = useGetlikePostListQuery(data?.data?.id);
+
+  // useEffect(() => {
+  //   dispatch(setUser(data?.data));
+  //   dispatch(setVisibility(data?.data))
+  // }, [data]);
+
   if (isLoading) return <Loader />;
 
   return (
@@ -127,12 +140,12 @@ const Profile = () => {
               </span>{" "} */}
                 </p>
                 <p className="z-[1200] text-[14px] text-[#BBBBBB]">
-                  ID - {data?.data?.user_code}
+                  B号 : {data?.data?.user_code}
                 </p>
                 {region ? (
                   <div className="z-[1200] flex">
                     <div className="z-[1200] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 pt-1 rounded-full justify-center shrink-0">
-                      <span>{region?.city}</span>,
+                      <span>{region?.city}</span>:
                       <span>{region?.province}</span>
                     </div>
                   </div>
@@ -163,7 +176,7 @@ const Profile = () => {
         {user?.token ? (
           <Link to={paths.profileDetail}>
             <Button className="z-[1200] w-full bg-[#FFFFFF0F] hover:bg-[#FFFFFF0F] relative rounded-[12px]">
-              <UserPen /> Edit Profile
+              <UserPen /> 编辑资料
             </Button>
           </Link>
         ) : (

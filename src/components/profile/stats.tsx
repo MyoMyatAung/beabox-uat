@@ -7,7 +7,7 @@ import {
   setIsDrawerOpen,
 } from "@/store/slices/profileSlice";
 import withFollowData from "@/hocs/withFollowData";
-const Stats = ({ followers, following, nickname }: any) => {
+const Stats = ({ followers, following, nickname, likeCount }: any) => {
   const isDrawerOpen = useSelector((state: any) => state.profile.isDrawerOpen);
   const user = useSelector((state: any) => state.persist.user);
 

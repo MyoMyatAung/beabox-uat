@@ -25,7 +25,7 @@ const VideoTabs = ({ login }: any) => {
           value="liked"
         >
           <span className="flex items-center gap-1">
-            <FaHeart /> Liked Videos
+            <FaHeart /> 已点赞视频
           </span>
         </TabsTrigger>
         <TabsTrigger
@@ -33,7 +33,7 @@ const VideoTabs = ({ login }: any) => {
           value="history"
         >
           <span className="flex items-center gap-1">
-            <MdWatchLater /> Watch History
+            <MdWatchLater /> 观看历史
           </span>
         </TabsTrigger>
       </TabsList>
@@ -43,7 +43,7 @@ const VideoTabs = ({ login }: any) => {
         ) : (
           <div className="flex flex-col justify-center items-center w-full mt-[150px]">
             <NoVideo />
-            <p className="text-[12px] text-[#888]">Oops! No videos here</p>
+            <p className="text-[12px] text-[#888]"> 这里空空如也～</p>
           </div>
         )}
       </TabsContent> */}
@@ -51,7 +51,7 @@ const VideoTabs = ({ login }: any) => {
         {!login || data?.data?.length <= 0 ? (
           <div className="flex flex-col justify-center items-center w-full mt-[150px]">
             <NoVideo />
-            <p className="text-[12px] text-[#888]">Oops! No videos here</p>
+            <p className="text-[12px] text-[#888]">这里空空如也～</p>
           </div>
         ) : (
           <VideoGrid data={data?.data} />
@@ -61,7 +61,7 @@ const VideoTabs = ({ login }: any) => {
         {!login || data?.data?.length <= 0 ? (
           <div className="flex flex-col justify-center items-center w-full mt-[150px]">
             <NoVideo />
-            <p className="text-[12px] text-[#888]">Oops! No videos here</p>
+            <p className="text-[12px] text-[#888]">这里空空如也～</p>
           </div>
         ) : (
           <VideoGrid data={data?.data} />
