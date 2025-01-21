@@ -33,15 +33,17 @@ import EditCover from "@/components/profile/edit-cover";
 import { setUser, setVisibility } from "@/store/slices/persistSlice";
 
 const Profile = () => {
-  const { data, isLoading } = useGetMyProfileQuery("");
+  const { data, isLoading, refetch } = useGetMyProfileQuery("");
   const dispatch = useDispatch();
   const [show, setShow] = useState(false);
   const user = useSelector((state: any) => state.persist.user);
   const gender = useSelector((state: any) => state.persist.gender);
   const region = useSelector((state: any) => state.persist.region);
   const cover = useSelector((state: any) => state.persist.cover);
-  console.log(data, "profile data");
 
+  useEffect(() => {
+    refetch();
+  }, []);
   // const { data: likePosts } = useGetlikePostListQuery(data?.data?.id);
 
   // useEffect(() => {
