@@ -9,6 +9,8 @@ import {
 import withFollowData from "@/hocs/withFollowData";
 const Stats = ({ followers, following, nickname }: any) => {
   const isDrawerOpen = useSelector((state: any) => state.profile.isDrawerOpen);
+  const user = useSelector((state: any) => state.persist.user);
+
   const dispatch = useDispatch();
   return (
     <Drawer
@@ -17,31 +19,49 @@ const Stats = ({ followers, following, nickname }: any) => {
     >
       <div className="z-[1200] flex justify-between w-full max-w-xs my-4 items-center mx-auto">
         <div className="z-[1200] text-center">
-          <DrawerTrigger
-            asChild
-            onClick={() => dispatch(setDefaultFollowTab("follower"))}
-          >
+          {user?.token ? (
+            <DrawerTrigger
+              asChild
+              onClick={() => dispatch(setDefaultFollowTab("follower"))}
+            >
+              <div>
+                <div className="z-[1200] text-[14px] font-semibold">
+                  {followers?.length ? followers?.length : 0}
+                </div>
+                <div className="z-[1200] text-gray-400 text-[14px]">粉丝</div>
+              </div>
+            </DrawerTrigger>
+          ) : (
             <div>
               <div className="z-[1200] text-[14px] font-semibold">
                 {followers?.length ? followers?.length : 0}
               </div>
               <div className="z-[1200] text-gray-400 text-[14px]">粉丝</div>
             </div>
-          </DrawerTrigger>
+          )}
         </div>
         <span className="z-[1200] text-gray-500">|</span>
         <div className="z-[1200] text-center">
-          <DrawerTrigger
-            asChild
-            onClick={() => dispatch(setDefaultFollowTab("following"))}
-          >
+          {user?.token ? (
+            <DrawerTrigger
+              asChild
+              onClick={() => dispatch(setDefaultFollowTab("following"))}
+            >
+              <div>
+                <div className="z-[1200] text-[14px] font-semibold">
+                  {following?.length ? following?.length : 0}
+                </div>
+                <div className="z-[1200] text-gray-400 text-[14px]">已关注</div>
+              </div>
+            </DrawerTrigger>
+          ) : (
             <div>
               <div className="z-[1200] text-[14px] font-semibold">
                 {following?.length ? following?.length : 0}
               </div>
               <div className="z-[1200] text-gray-400 text-[14px]">已关注</div>
             </div>
-          </DrawerTrigger>
+          )}
         </div>
         <span className="z-[1200] text-gray-500">|</span>
         <div className="z-[1200] text-center">
