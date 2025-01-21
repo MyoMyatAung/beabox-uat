@@ -34,11 +34,13 @@ const ProfileDetail = () => {
     refetch();
   }, [private_profile]);
 
+  // console.log(data?.data?.profile_photo);
+
   // useEffect(() => {
   //   refetch();
   // }, [bio, refetch, gender]);
   return (
-    <div className="w-full h-screen px-5">
+    <div className="w-full h-screen px-5 bg-[#16131C]">
       <div className="flex justify-between items-center py-5">
         <Link to={paths.profile}>
           <FaAngleLeft size={18} />
@@ -46,7 +48,7 @@ const ProfileDetail = () => {
         <p className="text-[16px] mr-5">Profile</p>
         <div></div>
       </div>
-      <ImageUpload />
+      <ImageUpload imgurl={data?.data?.profile_photo} />
       <div className="flex flex-col gap-7 my-7">
         <h1 className="text-[12px] text-[#888]">About you</h1>
         <EditUsername
