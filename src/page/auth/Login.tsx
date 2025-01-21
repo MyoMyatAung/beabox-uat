@@ -190,24 +190,24 @@ const Login = () => {
             </div>
             <Dialog open={showVerification} onOpenChange={setShowVerification}>
               {!captchaLoading ? (
-                <DialogContent className="bg-[#16131C] border-0 shadow-lg rounded-lg max-w-[290px]">
+                <DialogContent className="bg-[#16131C] border-0 shadow-lg rounded-lg max-w-[320px]">
                   <DialogHeader>
                     <DialogTitle className="text-white text-[16px]">
                       Verification
                     </DialogTitle>
                   </DialogHeader>
-                  <div className="space-y-6">
+                  <div className="space-y-6 w-full">
                     <div className="flex justify-center items-center gap-1 h-[36px]">
                       <input
                         value={captcha}
                         onChange={(e) => setCaptcha(e.target.value)}
                         placeholder="Type Captcha"
-                        className="bg-[#2D2738] px-[10px] h-full outline-none"
+                        className="bg-[#2D2738] w-[70%] px-[10px] h-full outline-none"
                       />
 
                       <img
                         src={data?.data?.img}
-                        className="w-[80px]  h-full  object-center outline-none border-gray-400"
+                        className="w-[30%]  h-full  object-center outline-none border-gray-400"
                         alt=""
                       />
                     </div>

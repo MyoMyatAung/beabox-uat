@@ -9,6 +9,7 @@ import Top20Movies from "./Top20Movies";
 import { useSelector } from "react-redux";
 import FeedFooter from "./FeedFooter";
 import { useNavigate } from "react-router-dom";
+import SearchPlayer from "./SearchPlayer";
 
 const VideoFeed = ({
   videos,
@@ -121,7 +122,7 @@ const VideoFeed = ({
             className="video mt-[20px] pb-[68px]"
             data-post-id={video.post_id} // Add post ID to the container
           >
-            <Player
+            <SearchPlayer
               src={video.files[0].resourceURL}
               thumbnail={
                 video?.preview_image ||

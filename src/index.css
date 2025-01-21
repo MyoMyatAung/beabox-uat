@@ -158,12 +158,13 @@ input:checked + .slider:before {
 }
 
 .profile-bg {
-  background: linear-gradient(
+  background: #16131C;
+  /* background: linear-gradient(
     205deg,
     rgba(195, 54, 194, 0.8) 5.18%,
     #271e42 40.61%,
     rgba(13, 12, 12, 0) 92.3%
-  );
+  ); */
   height: 100vh;
 }
 
@@ -174,4 +175,15 @@ input:checked + .slider:before {
     #271e42 40.61%,
     rgba(13, 12, 12, 0) 92.3%
   );
+}
+
+.gradient-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 23vh;
+  background: linear-gradient(to bottom, rgba(40, 40, 40, 0.5), rgba(30, 30, 35, 0.8), rgb(21, 19, 28));
+  pointer-events: none;
+  z-index: 99;
 }

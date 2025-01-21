@@ -18,17 +18,23 @@ const withProfileData = (WrapperCompo: any) => {
     const { data, refetch, isLoading } = useGetMyProfileQuery("");
     const [changePrivateProfileStats] = useChangePrivateProfileStatsMutation();
     const [changeVisibility] = useChangeVisibilityMutation();
-    const changePrivateProfileStatsHandler = async (e: any) => {
+    const changePrivateProfileStatsHandler = async (data: any) => {
       await changePrivateProfileStats({
-        status: e.target.checked ? "on" : "off",
+        // status: e.target.checked ? "on" : "off",
+        status: data,
       });
-      dispatch(setPrivateProfile(e.target.checked ? "on" : "off"));
+      dispatch(
+        setPrivateProfile(
+          data
+          // e.target.checked ? "on" : "off"
+        )
+      );
     };
-    const changeVisibilityHandler = async (e: any) => {
+    const changeVisibilityHandler = async (visibility: any) => {
       await changeVisibility({
-        status: e.target.checked ? "on" : "off",
+        status: visibility,
       });
-      dispatch(setVisibility(e.target.checked ? "on" : "off"));
+      dispatch(setVisibility(visibility));
     };
     useEffect(() => {
       dispatch(setProfileData(data?.data));
