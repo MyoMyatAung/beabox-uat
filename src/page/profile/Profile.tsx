@@ -39,10 +39,11 @@ const Profile = () => {
 
   return (
     <>
+      <div className="gradient-overlay"></div>
       <img
         src={cover ? cover : defaultCover}
         alt=""
-        className="absolute top-0 left-0 brightness-50  w-full h-[230px] object-cover object-center backdrop-contrast-200"
+        className="absolute top-0 left-0 w-full h-[40vh] object-cover object-center"
       />
       <div className="z-[1200] px-5 max-h-screen no-scrollbar profile-bg">
         {show ? (
@@ -160,7 +161,7 @@ const Profile = () => {
 
         {user?.token ? (
           <Link to={paths.profileDetail}>
-            <Button className="z-[1200] w-full bg-[#FFFFFF0F] hover:bg-[#FFFFFF0F] rounded-[12px]">
+            <Button className="z-[1200] w-full bg-[#FFFFFF0F] hover:bg-[#FFFFFF0F] relative rounded-[12px]">
               <UserPen /> Edit Profile
             </Button>
           </Link>
