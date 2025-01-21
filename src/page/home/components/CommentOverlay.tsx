@@ -191,7 +191,6 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
   };
 
   const renderComment = (comment: any) => {
-    console.log(comment);
     const areRepliesVisible = repliesVisible[comment.comment_id] || false;
 
     return (

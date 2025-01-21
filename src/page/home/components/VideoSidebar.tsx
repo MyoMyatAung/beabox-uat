@@ -63,7 +63,6 @@ function VideoSidebar({
 
   const location = useLocation();
   const isHome = location.pathname === "/";
-  console.log(isHome);
 
   // Handle comment list fetching and visibility
   const handleCommentList = async () => {
