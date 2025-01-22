@@ -24,8 +24,6 @@ const Explore = () => {
   const [show, setshow] = useState<boolean>(false);
   const dispatch = useDispatch();
 
-
-
   // useEffect(() => {
   //   const queryTab = searchParams.get("query");
   //   if (queryTab && tabs.includes(queryTab)) {
@@ -56,35 +54,6 @@ const Explore = () => {
     // setSearchParams({ query: tabToQuery(newActiveTab) }); // Convert tab to query value
   };
 
-  // useEffect(() => {
-  //   const queryTab = searchParams.get("query");
-  //   const formattedTab = formatQueryToTab(queryTab); // Converts `rec` to `Recommend`, etc.
-  //   if (formattedTab && tabs.includes(formattedTab)) {
-  //     setActiveTab(formattedTab);
-  //   }
-  // }, [searchParams, tabs]);
-
-  // // Convert query values to tab names
-  // const formatQueryToTab = (query: string | null) => {
-  //   if (!query) return null;
-  //   const map: Record<string, string> = {
-  //     rec: "Recommend",
-  //     latest: "Latest",
-  //     hollywood: "Hollywood",
-  //   };
-  //   return map[query.toLowerCase()] || null;
-  // };
-
-  // // Convert tab names to query values
-  // const tabToQuery = (tab: string) => {
-  //   const map: Record<string, string> = {
-  //     Recommend: "rec",
-  //     Latest: "latest",
-  //     Hollywood: "hollywood",
-  //   };
-  //   return map[tab] || "";
-  // };
-
   return (
     <>
       {/* {show && <VodDetails  />} */}
@@ -95,23 +64,23 @@ const Explore = () => {
           <PopApp />
           <div className="mt-[20px] relative">
             <Header activeTab={activeTab} setActiveTab={setActiveTab} />
-            <Swiper
+            {/* <Swiper
               className=""
               onSlideChange={handleSlideChange}
               onSwiper={(swiper) => (swiperRef.current = swiper)}
               slidesPerView={1}
-              spaceBetween={10}
+              spaceBetween={1}
               loop={true}
             >
-              <SwiperSlide>
+              <SwiperSlide> */}
                 {exp_header === "Recommend" && (
                   <div className="">
                     <Recommand title="Chinese Drama" />
                     <Recommand title="Latest Drama" />
                   </div>
                 )}
-              </SwiperSlide>
-              <SwiperSlide>
+              {/* </SwiperSlide>
+              <SwiperSlide> */}
                 {exp_header === "Latest" && (
                   <div className="">
                     {/* <Latest /> */}
@@ -119,15 +88,15 @@ const Explore = () => {
                     <Recommand title="Latest Drama" />
                   </div>
                 )}
-              </SwiperSlide>
-              <SwiperSlide>
+              {/* </SwiperSlide>
+              <SwiperSlide> */}
                 {exp_header === "Hollywood" && (
                   <div className="">
                     <Latest />
                   </div>
                 )}
-              </SwiperSlide>
-            </Swiper>
+              {/* </SwiperSlide>
+            </Swiper> */}
           </div>
         </div>
       </div>
