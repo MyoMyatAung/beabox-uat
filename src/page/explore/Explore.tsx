@@ -26,12 +26,7 @@ const Explore = () => {
   const [show, setshow] = useState<boolean>(false);
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   const queryTab = searchParams.get("query");
-  //   if (queryTab && tabs.includes(queryTab)) {
-  //     setActiveTab(queryTab);
-  //   }
-  // }, [searchParams, tabs]);
+ 
 
   useEffect(() => {
     if (data?.data?.tabs) {
@@ -83,7 +78,7 @@ const Explore = () => {
               {data?.data?.tabs.map((gg: any) => (
                 <SwiperSlide>
                   {exp_header === gg.name && (
-                    <div className=" h-screen text-white">
+                    <div className=" min-h-screen text-white">
                       {gg.type === "topic" ? (
                         <Recommand title="Chinese Drama" />
                       ) : (
@@ -103,28 +98,5 @@ const Explore = () => {
 
 export default Explore;
 
-{
-  /* <SwiperSlide>
-{exp_header === "Recommend" && (
-  <div className=" h-screen">
-    <Recommand title="Chinese Drama" />
-    <Recommand title="Latest Drama" />
-  </div>
-)}
-</SwiperSlide>
-<SwiperSlide>
-{exp_header === "Latest" && (
-  <div className=" h-screen">
-    <Recommand title="Chinese Drama" />
-    <Recommand title="Latest Drama" />
-  </div>
-)}
-</SwiperSlide>
-<SwiperSlide>
-{exp_header === "Hollywood" && (
-  <div className=" min-h-screen">
-    <Latest />
-  </div>
-)}
-</SwiperSlide> */
-}
+
+
