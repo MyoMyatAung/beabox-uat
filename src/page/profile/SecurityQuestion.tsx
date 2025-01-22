@@ -40,9 +40,9 @@ const SecurityQuestion = () => {
   };
 
   return (
-    <div className="w-full h-screen px-5 flex flex-col items-center">
+    <div className="w-full h-screen px-5 flex flex-col items-center bg-[#16131C]">
       <div className="flex justify-between items-center py-5 w-full">
-        <Link to={paths.profile}>
+        <Link to={paths.settings}>
           <FaAngleLeft size={18} />
         </Link>
         <p className="text-[16px]">Security Question</p>

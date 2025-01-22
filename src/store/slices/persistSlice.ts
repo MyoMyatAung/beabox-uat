@@ -14,12 +14,16 @@ const initialState: any = {
   cover: null,
   forgotData: null,
   forgotToken: null,
+  authToggle: true,
 };
 
 export const persistSlice = createSlice({
   name: "persist",
   initialState,
   reducers: {
+    setAuthToggle: (state, { payload }) => {
+      state.authToggle = payload;
+    },
     setRegisterUser: (state, { payload }) => {
       state.registerUser = payload;
     },
@@ -68,6 +72,7 @@ export const persistSlice = createSlice({
 });
 
 export const {
+  setAuthToggle,
   setForgotToken,
   setForgotData,
   setRegisterUser,
