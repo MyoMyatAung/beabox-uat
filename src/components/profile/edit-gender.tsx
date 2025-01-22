@@ -1,7 +1,12 @@
 import { FaAngleRight } from "react-icons/fa";
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import { Button } from "../ui/button";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setGender } from "@/store/slices/persistSlice";
 import { useChangeGenderMutation } from "@/store/api/profileApi";
@@ -13,11 +18,12 @@ const EditGender = () => {
   const dispatch = useDispatch();
   // const [gender, setGender] = useState("Other");
   const [isOpen, setIsOpen] = useState(false);
+    const closeRef = useRef<HTMLButtonElement>(null);
+  
   const [changeGender, { data, isLoading }] = useChangeGenderMutation();
 
-
   return (
-    <Drawer open={isOpen} onOpenChange={() => setIsOpen(true)}>
+    <Drawer>
       <div className="text-[14px] flex items-center justify-between">
         <h1>Gender</h1>
         <DrawerTrigger asChild>
@@ -35,7 +41,7 @@ const EditGender = () => {
                 onClick={async () => {
                   dispatch(setGender("Other"));
                   await changeGender({ gender: "Other" });
-                  setIsOpen(false);
+                  closeRef.current?.click();
                 }}
                 className={`${
                   gender == "Other" ? "text-white" : "text-[#999]"
@@ -54,7 +60,7 @@ const EditGender = () => {
                 onClick={async () => {
                   dispatch(setGender("Male"));
                   await changeGender({ gender: "Male" });
-                  setIsOpen(false);
+                  closeRef.current?.click();
                 }}
                 className={`${
                   gender == "Male" ? "text-white" : "text-[#999]"
@@ -73,7 +79,7 @@ const EditGender = () => {
                 onClick={async () => {
                   dispatch(setGender("Female"));
                   await changeGender({ gender: "Female" });
-                  setIsOpen(false);
+                  closeRef.current?.click();
                 }}
                 className={`${
                   gender == "Female" ? "text-white" : "text-[#999]"
@@ -87,13 +93,13 @@ const EditGender = () => {
                 }`}
               ></span>
             </div>
-            <Button
-              onClick={() => setIsOpen(false)}
-              className="w-full rounded-lg bg-[#FFFFFF0A] hover:bg-[#FFFFFF0A]"
-            >
-              Cancel
-            </Button>
+            <DrawerClose asChild>
+              <Button className="w-full rounded-lg bg-[#FFFFFF0A] hover:bg-[#FFFFFF0A]">
+                Cancel
+              </Button>
+            </DrawerClose>
           </div>
+          <DrawerClose ref={closeRef} className="hidden" />
         </div>
       </DrawerContent>
     </Drawer>

@@ -1,4 +1,9 @@
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import { FaAngleLeft } from "react-icons/fa";
 import FollowTabs from "./follow-tabs";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,8 +19,8 @@ const Stats = ({ followers, following, nickname, likeCount }: any) => {
   const dispatch = useDispatch();
   return (
     <Drawer
-      open={isDrawerOpen}
-      onOpenChange={() => dispatch(setIsDrawerOpen(true))}
+    // open={isDrawerOpen}
+    // onOpenChange={() => dispatch(setIsDrawerOpen(true))}
     >
       <div className="z-[1200] flex justify-between w-full max-w-xs my-4 items-center mx-auto">
         <div className="z-[1200] text-center">
@@ -72,9 +77,11 @@ const Stats = ({ followers, following, nickname, likeCount }: any) => {
       <DrawerContent className="z-[1300] border-0">
         <div className="z-[1200] w-full h-screen px-5">
           <div className="z-[1200] flex justify-between items-center py-5">
-            <button onClick={() => dispatch(setIsDrawerOpen(false))}>
-              <FaAngleLeft size={18} />
-            </button>
+            <DrawerClose asChild>
+              <button onClick={() => dispatch(setIsDrawerOpen(false))}>
+                <FaAngleLeft size={18} />
+              </button>
+            </DrawerClose>
             <p className="z-[1200] text-[16px]">{nickname}</p>
             <div></div>
           </div>

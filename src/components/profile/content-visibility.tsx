@@ -3,14 +3,17 @@ import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import SmallLoader from "../shared/small-loader";
+import { useSelector } from "react-redux";
 
 const ContentVisibility = ({
   changeVisibilityHandler,
   liked_video_visibility,
   visibilityLoading,
+  content_visibility,
 }: any) => {
+  const test = useSelector((state: any) => state.persist.content_visibility);
   const [isOpen, setIsOpen] = useState(false);
-  const [status, setStatus] = useState(liked_video_visibility);
+  const [status, setStatus] = useState(test);
 
   const handler = async (sdata: any) => {
     await changeVisibilityHandler(sdata);
@@ -30,8 +33,8 @@ const ContentVisibility = ({
           </p>
         </div>
         <DrawerTrigger asChild>
-          <p className="flex items-center gap-1 text-[14px]">
-            {status == "on" ? "Public" : "Private"}{" "}
+          <p className="flex items-center gap-1 text-[14px] capitalize">
+            {status}
             <ChevronRight size={15} className="text-[#777777]" />
           </p>
         </DrawerTrigger>

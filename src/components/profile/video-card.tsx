@@ -8,12 +8,15 @@ import { useNavigate } from "react-router-dom";
 const VideoCard = ({ videoData }: any) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-    const showDetailsVod = (file: any) => {
-      dispatch(setDetails(file));
-      navigate(paths.vod_details);
-    };
+  const showDetailsVod = (file: any) => {
+    dispatch(setDetails(file));
+    navigate(paths.vod_details);
+  };
   return (
-    <div className="bg-gradient-to-r h-[153px] rounded relative" onClick={() => showDetailsVod(videoData)}>
+    <div
+      className="bg-gradient-to-r h-[153px] rounded relative"
+      onClick={() => showDetailsVod(videoData)}
+    >
       <img
         src={videoData?.preview_image}
         alt=""

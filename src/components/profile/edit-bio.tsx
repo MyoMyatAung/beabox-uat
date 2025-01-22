@@ -1,7 +1,12 @@
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import { Button } from "../ui/button";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useChangeBioMutation } from "@/store/api/profileApi";
 import { useDispatch, useSelector } from "react-redux";
 import { setBio } from "@/store/slices/persistSlice";
@@ -9,6 +14,7 @@ import SubmitButton from "../shared/submit-button";
 import Loader from "../shared/loader";
 
 const EditBio = ({ bio, refetchHandler }: any) => {
+  const closeRef = useRef<HTMLButtonElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState("");
   // const [text, setText] = useState("");
@@ -21,9 +27,10 @@ const EditBio = ({ bio, refetchHandler }: any) => {
     await changeBio({ bio: value });
     await refetchHandler();
     setIsOpen(false);
+    closeRef.current?.click();
   };
   return (
-    <Drawer open={isOpen} onOpenChange={() => setIsOpen(true)}>
+    <Drawer>
       <div className="text-[14px] flex items-center justify-between">
         <h1>Bio</h1>
         <DrawerTrigger asChild>
@@ -35,11 +42,13 @@ const EditBio = ({ bio, refetchHandler }: any) => {
       </div>
       <DrawerContent className="border-0">
         {isLoading ? <Loader /> : <></>}
-        <div className="w-full h-screen px-5">
+        <div className="w-full h-screen px-5 bg-[#16131C]">
           <div className="flex justify-between items-center py-5">
-            <button onClick={() => setIsOpen(false)}>
-              <FaAngleLeft size={18} />
-            </button>
+            <DrawerClose asChild>
+              <button>
+                <FaAngleLeft size={18} />
+              </button>
+            </DrawerClose>
             <p className="text-[16px]">Bio</p>
             <div></div>
           </div>
@@ -50,7 +59,7 @@ const EditBio = ({ bio, refetchHandler }: any) => {
                   value={value}
                   onChange={(e: any) => setValue(e.target.value)}
                   placeholder="Enter your profile bio"
-                  className="min-h-[100px] w-full resize-none  bg-black p-3 text-white placeholder:text-gray-400  border-b border-[#888] focus:outline-none focus:ring-0 focus:border-[#888]"
+                  className="min-h-[100px] w-full resize-none  bg-transparent p-3 text-white placeholder:text-gray-400  border-b border-[#888] focus:outline-none focus:ring-0 focus:border-[#888]"
                 />
                 <span className="absolute bottom-2 right-2 text-sm text-gray-400">
                   {value.length}/{maxLength}
@@ -84,6 +93,7 @@ const EditBio = ({ bio, refetchHandler }: any) => {
               {isLoading ? "loading..." : "Save"}
             </Button> */}
           </form>
+          <DrawerClose ref={closeRef} className="hidden" />
         </div>
       </DrawerContent>
     </Drawer>

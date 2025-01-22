@@ -45,21 +45,8 @@ const Login = () => {
       password: "",
     },
   });
-  // async function onSubmit(values: LoginFormData) {
-  //   // Handle form submission
-  //   const { data } = await login({
-  //     username: values?.emailOrPhone,
-  //     password: values?.password,
-  //   });
-  //   if (data?.status) {
-  //     dispatch(setUser(data?.data));
-  //     navigate(paths.profile);
-  //   }
-  // }
 
   async function onSubmit() {
-    // Handle form submission
-    // await getCaptcha();
     if (data?.status) setShowVerification(true);
   }
   const handleVerify = async (e: any) => {
@@ -184,7 +171,7 @@ const Login = () => {
                 {/* {isLoading ? "loading..." : "Login"} */}
                 Login
               </Button>
-              <Link to="/">
+              <Link to={paths.forgot_password}>
                 <p className="text-center text-[14px] mt-5">Forgot Password?</p>
               </Link>
             </div>

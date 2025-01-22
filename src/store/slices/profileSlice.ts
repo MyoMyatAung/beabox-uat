@@ -3,12 +3,16 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState: any = {
   isDrawerOpen: false,
   defaultFollowTab: "follower",
+  authToggle: true,
 };
 
 export const profileSlice = createSlice({
   name: "profile",
   initialState,
   reducers: {
+    setAuthToggle: (state, { payload }) => {
+      state.authToggle = payload;
+    },
     setIsDrawerOpen: (state, { payload }) => {
       state.isDrawerOpen = payload;
     },
@@ -18,6 +22,6 @@ export const profileSlice = createSlice({
   },
 });
 
-export const { setIsDrawerOpen, setDefaultFollowTab } = profileSlice.actions;
+export const { setIsDrawerOpen, setDefaultFollowTab, setAuthToggle } = profileSlice.actions;
 
 export default profileSlice.reducer;

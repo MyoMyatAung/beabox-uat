@@ -31,6 +31,7 @@ import MaleSVG from "@/assets/profile/male";
 import FemaleSVG from "@/assets/profile/female";
 import EditCover from "@/components/profile/edit-cover";
 import { setUser, setVisibility } from "@/store/slices/persistSlice";
+import AuthDrawer from "@/components/profile/auth/auth-drawer";
 
 const Profile = () => {
   const { data, isLoading, refetch } = useGetMyProfileQuery("");
@@ -40,10 +41,13 @@ const Profile = () => {
   const gender = useSelector((state: any) => state.persist.gender);
   const region = useSelector((state: any) => state.persist.region);
   const cover = useSelector((state: any) => state.persist.cover);
-
+  console.log(data);
   useEffect(() => {
     refetch();
   }, []);
+  useEffect(() => {
+    refetch();
+  }, [user]);
   // const { data: likePosts } = useGetlikePostListQuery(data?.data?.id);
 
   // useEffect(() => {
@@ -125,18 +129,20 @@ const Profile = () => {
               />
             )}
             {!user?.token ? (
-              <Link
-                to={paths.login}
-                className="z-[1200] flex items-center gap-2 flex-1"
-              >
-                <span className="z-[1200] text-[18px] ">Login Or Sign Up</span>
-                <ChevronRight size={18} />
-              </Link>
+              <AuthDrawer />
             ) : (
+              // <Link
+              //   to={paths.login}
+              //   className="z-[1200] flex items-center gap-2 flex-1"
+              // >
+              //   <span className="z-[1200] text-[18px] ">Login Or Sign Up</span>
+              //   <ChevronRight size={18} />
+              // </Link>
               <div className="z-[1200] flex-1 flex flex-col gap-0.5">
                 <p className="z-[1200] text-[18px] flex items-center gap-1">
                   {data?.data?.nickname}
-                  <span>{gender == "Male" ? <MaleSVG /> : <FemaleSVG />}</span>
+                  <span>{gender == "Male" ? <MaleSVG /> : <></>}</span>
+                  <span>{gender == "Feale" ? <FemaleSVG /> : <></>}</span>
                   {/* <span>
                 <BsPatchCheckFill className="z-[1200] text-[#888]" />
               </span>{" "} */}

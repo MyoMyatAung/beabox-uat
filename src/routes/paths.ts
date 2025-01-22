@@ -29,5 +29,8 @@ export const paths = {
   search_result: "/search",
   vod_details: "/vod_details",
   user_profile: "/user/:id",
+  forgot_password: "/forgot-password",
+  check_answer: "/check-answer",
+  reset_password: "/reset-password",
   getUserProfileId: (id: any) => `/user/${id}`,
 };

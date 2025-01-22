@@ -1,7 +1,12 @@
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import { Button } from "../ui/button";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useChangePasswordMutation } from "@/store/api/profileApi";
 import Loader from "../shared/loader";
@@ -15,6 +20,7 @@ const ChangePassword = () => {
   const [show, setShow] = useState(false);
   const [show2, setShow2] = useState(false);
   const [changePassword, { data, isLoading }] = useChangePasswordMutation();
+  const closeRef = useRef<HTMLButtonElement>(null);
 
   const changePassWordHandler = async (e: any) => {
     e.preventDefault();
@@ -22,9 +28,10 @@ const ChangePassword = () => {
       await changePassword({ current_password, new_password });
     }
     setIsOpen(false);
+    closeRef.current?.click();
   };
   return (
-    <Drawer open={isOpen} onOpenChange={() => setIsOpen(true)}>
+    <Drawer>
       <div className="text-[14px] flex items-center justify-between">
         <h1>更改密码</h1>
         <DrawerTrigger asChild>
@@ -35,11 +42,13 @@ const ChangePassword = () => {
       </div>
       <DrawerContent className="border-0">
         {isLoading ? <Loader /> : <></>}
-        <div className="w-full h-screen px-5">
+        <div className="w-full h-screen px-5 bg-[#16131C]">
           <div className="flex justify-between items-center py-5">
-            <button onClick={() => setIsOpen(false)}>
-              <FaAngleLeft size={18} />
-            </button>
+            <DrawerClose asChild>
+              <button onClick={() => setIsOpen(false)}>
+                <FaAngleLeft size={18} />
+              </button>
+            </DrawerClose>
             <p className="text-[16px]">Change Password</p>
             <div></div>
           </div>
@@ -95,6 +104,7 @@ const ChangePassword = () => {
               text="Continue"
             />
           </form>
+          <DrawerClose ref={closeRef} className="hidden" />
         </div>
       </DrawerContent>
     </Drawer>
