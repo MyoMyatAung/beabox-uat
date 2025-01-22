@@ -20,7 +20,19 @@ export const searchApi = createApi({
         method: "POST",
       }),
     }),
+    getSuggestions: builder.query<any, string>({
+      query: (query: any) => ({
+        url: `/post-suggestions?search=${query}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useGetTabListQuery, usePostSearchMutation } = searchApi;
+export const {
+  useGetTabListQuery,
+  usePostSearchMutation,
+  useGetSuggestionsQuery,
+  useLazyGetSuggestionsQuery,
+} = searchApi;
+// post-suggestions?search=a

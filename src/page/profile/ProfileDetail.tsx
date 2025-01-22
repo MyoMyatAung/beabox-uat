@@ -14,6 +14,7 @@ import { setProfileData } from "@/store/slices/persistSlice";
 import EditNickName from "@/components/profile/edit-nickname";
 import EditRegion from "@/components/profile/edit-region";
 import ImageUpload from "@/components/profile/image-upload";
+import TranLoader from "@/components/shared/tran-loader";
 
 const ProfileDetail = () => {
   const user = useSelector((state: any) => state.persist.user);
@@ -34,54 +35,59 @@ const ProfileDetail = () => {
     refetch();
   }, [private_profile]);
 
+  // console.log(data?.data?.profile_photo);
+
   // useEffect(() => {
   //   refetch();
   // }, [bio, refetch, gender]);
   return (
-    <div className="w-full h-screen px-5">
-      <div className="flex justify-between items-center py-5">
-        <Link to={paths.profile}>
-          <FaAngleLeft size={18} />
-        </Link>
-        <p className="text-[16px] mr-5">Profile</p>
-        <div></div>
-      </div>
-      <ImageUpload />
-      <div className="flex flex-col gap-7 my-7">
-        <h1 className="text-[12px] text-[#888]">About you</h1>
-        <EditUsername
-          username={data?.data?.username}
-          refetchHandler={refetchHandler}
-        />
-        <EditNickName
-          nickname={data?.data?.nickname}
-          refetchHandler={refetchHandler}
-        />
-        <EditGender />
-        <EditRegion />
-        {/* <div className="text-[14px] flex items-center justify-between">
+    <>
+      {/* <TranLoader /> */}
+      <div className="w-full h-screen px-5 bg-[#16131C]">
+        <div className="flex justify-between items-center py-5">
+          <Link to={paths.profile}>
+            <FaAngleLeft size={18} />
+          </Link>
+          <p className="text-[16px] mr-5">Profile</p>
+          <div></div>
+        </div>
+        <ImageUpload imgurl={data?.data?.profile_photo} />
+        <div className="flex flex-col gap-7 my-7">
+          <h1 className="text-[12px] text-[#888]">About you</h1>
+          <EditUsername
+            username={data?.data?.username}
+            refetchHandler={refetchHandler}
+          />
+          <EditNickName
+            nickname={data?.data?.nickname}
+            refetchHandler={refetchHandler}
+          />
+          <EditGender />
+          <EditRegion />
+          {/* <div className="text-[14px] flex items-center justify-between">
           <h1>Region</h1>
           <p className="flex items-center gap-1 text-[#888]">
             Bangkok,Thailand <FaAngleRight />
           </p>
         </div> */}
-        <div className="text-[14px] flex items-center justify-between">
-          <h1>User ID</h1>
-          <p className="flex items-center gap-1 text-[#888]">{user?.id}</p>
+          <div className="text-[14px] flex items-center justify-between">
+            <h1>User ID</h1>
+            <p className="flex items-center gap-1 text-[#888]">{user?.id}</p>
+          </div>
+          <EditBio bio={data?.data?.bio} refetchHandler={refetchHandler} />
         </div>
-        <EditBio bio={data?.data?.bio} refetchHandler={refetchHandler} />
-      </div>
-      <div className="w-full h-[0.08px] bg-[#FFFFFF0A]"></div>
-      <div className="flex flex-col gap-7 my-7">
-        <h1 className="text-[12px] text-[#888]">Invitation</h1>
-        <EditReferral referral_code={data?.data?.referral_code} />
-      </div>
-      <div className="w-full h-[0.08px] bg-[#FFFFFF0A]"></div>
-      {/* <div className="flex flex-col gap-7 my-7">
+        <div className="w-full h-[0.08px] bg-[#FFFFFF0A]"></div>
+        <div className="flex flex-col gap-7 my-7">
+          <h1 className="text-[12px] text-[#888]">Invitation</h1>
+          <EditReferral referral_code={data?.data?.referral_code} />
+        </div>
+        <div className="w-full h-[0.08px] bg-[#FFFFFF0A]"></div>
+        {/* <div className="flex flex-col gap-7 my-7">
         <h1 className="text-[12px] text-[#888]">Account Security</h1>
         <ChangePassword />
       </div> */}
-    </div>
+      </div>
+    </>
   );
 };
 

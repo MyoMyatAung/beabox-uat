@@ -5,13 +5,15 @@ import {
 import { Camera } from "lucide-react";
 
 import { useEffect, useState } from "react";
+import Loader from "../shared/loader";
+import TranLoader from "../shared/tran-loader";
 
-const ImageUpload = () => {
+const ImageUpload = ({ imgurl }: any) => {
   const [image, setImage] = useState<string | null>(null);
-  const [settingUpload, { data: settingUploadData }] =
+  const [settingUpload, { data: settingUploadData, isLoading: loading1 }] =
     useSettingUploadMutation();
 
-  const [profileUpload, { data: profileUploadData }] =
+  const [profileUpload, { data: profileUploadData, isLoading: loading2 }] =
     useProfileUploadMutation();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,37 +42,57 @@ const ImageUpload = () => {
     // console.log(settingUploadData?.data?.url, "storage uploaded");
   }, [settingUploadData]);
 
+
   return (
-    <div className="">
-      <div>
-        {image && (
-          <div className="flex justify-center items-center relative">
-            <img
-              src={image || "/placeholder.svg"}
-              alt="Preview"
-              className="w-[80px] h-[80px] rounded-full bg-[#FFFFFF12] flex justify-center items-center object-cover object-center filter saturate-50 brightness-75"
-            />
-            <div className="absolute">
-              <Camera />
-            </div>
-          </div>
-        )}
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-          className="hidden"
-          id="image-upload"
-        />
-        {!image && (
-          <label htmlFor="image-upload" className="">
-            <div className="w-[80px] h-[80px] rounded-full bg-[#FFFFFF12] flex justify-center items-center mx-auto">
-              <Camera />
-            </div>
-          </label>
-        )}
+    <>
+      <div className="relative">
+        {loading1 || loading2 ? <TranLoader /> : <></>}
+        <div>
+          {image && (
+            <label htmlFor="image-upload" className="">
+              <div className="flex justify-center items-center relative">
+                <img
+                  src={image || "/placeholder.svg"}
+                  alt="Preview"
+                  className="w-[80px] h-[80px] rounded-full bg-[#FFFFFF12] flex justify-center items-center object-cover object-center filter saturate-50 brightness-75"
+                />
+                <div className="absolute">
+                  <Camera />
+                </div>
+              </div>
+            </label>
+          )}
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="hidden"
+            id="image-upload"
+          />
+          {!image && !imgurl?.length && (
+            <label htmlFor="image-upload" className="">
+              <div className="w-[80px] h-[80px] rounded-full bg-[#FFFFFF12] flex justify-center items-center mx-auto">
+                <Camera />
+              </div>
+            </label>
+          )}
+          {!image && imgurl?.length && (
+            <label htmlFor="image-upload" className="">
+              <div className="flex justify-center items-center relative">
+                <img
+                  src={imgurl}
+                  alt="Preview"
+                  className="w-[80px] h-[80px] rounded-full bg-[#FFFFFF12] flex justify-center items-center object-cover object-center filter saturate-50 brightness-75"
+                />
+                <div className="absolute">
+                  <Camera />
+                </div>
+              </div>
+            </label>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

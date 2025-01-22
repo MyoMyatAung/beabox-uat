@@ -6,6 +6,7 @@ import {
 import {
   setPrivateProfile,
   setProfileData,
+  setSecurityQues,
   setVisibility,
 } from "@/store/slices/persistSlice";
 import { useEffect } from "react";
@@ -17,7 +18,9 @@ const withProfileData = (WrapperCompo: any) => {
     const persistState = useSelector((state: any) => state.persist);
     const { data, refetch, isLoading } = useGetMyProfileQuery("");
     const [changePrivateProfileStats] = useChangePrivateProfileStatsMutation();
-    const [changeVisibility] = useChangeVisibilityMutation();
+    const [changeVisibility, { isLoading: visibilityLoading }] =
+      useChangeVisibilityMutation();
+
     const changePrivateProfileStatsHandler = async (data: any) => {
       await changePrivateProfileStats({
         // status: e.target.checked ? "on" : "off",
@@ -40,6 +43,12 @@ const withProfileData = (WrapperCompo: any) => {
       dispatch(setProfileData(data?.data));
       dispatch(setPrivateProfile(data?.data?.private_profile));
       dispatch(setVisibility(data?.data?.liked_video_visibility));
+      dispatch(
+        setSecurityQues({
+          ques: data?.data?.security_question,
+          ans: data?.datat?.answer,
+        })
+      );
     }, [data]);
     useEffect(() => {
       refetch();
@@ -51,6 +60,7 @@ const withProfileData = (WrapperCompo: any) => {
         liked_video_visibility={persistState.visibility}
         changePrivateProfileStatsHandler={changePrivateProfileStatsHandler}
         changeVisibilityHandler={changeVisibilityHandler}
+        visibilityLoading={visibilityLoading}
       />
     );
   };

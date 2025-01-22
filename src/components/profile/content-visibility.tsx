@@ -2,10 +2,12 @@ import { ChevronRight } from "lucide-react";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { useState } from "react";
 import { Button } from "../ui/button";
+import SmallLoader from "../shared/small-loader";
 
 const ContentVisibility = ({
   changeVisibilityHandler,
   liked_video_visibility,
+  visibilityLoading,
 }: any) => {
   const [isOpen, setIsOpen] = useState(false);
   const [status, setStatus] = useState(liked_video_visibility);
@@ -41,13 +43,13 @@ const ContentVisibility = ({
             <div className="space-y-2">
               {/* public  */}
               <div
-                onClick={() => setStatus("on")}
+                onClick={() => setStatus("public")}
                 className="flex items-start justify-between bg-[#FFFFFF0A] p-3 rounded-xl"
               >
                 <div className="">
                   <p
                     className={`text-[14px] ${
-                      status == "on" ? "text-white" : "text-[#888]"
+                      status == "public" ? "text-white" : "text-[#888]"
                     }`}
                   >
                     Public
@@ -58,19 +60,19 @@ const ContentVisibility = ({
                 </div>
                 <div
                   className={`w-3 h-3 ${
-                    status == "on" ? "bg-[#CD3EFF]" : "bg-[#FFFFFF52]"
+                    status == "public" ? "bg-[#CD3EFF]" : "bg-[#FFFFFF52]"
                   } rounded-full`}
                 ></div>
               </div>
               {/* private  */}
               <div
-                onClick={() => setStatus("off")}
+                onClick={() => setStatus("private")}
                 className="flex items-start justify-between bg-[#FFFFFF0A] p-3 rounded-xl"
               >
                 <div className="">
                   <p
                     className={`text-[14px] ${
-                      status == "off" ? "text-white" : "text-[#888]"
+                      status == "private" ? "text-white" : "text-[#888]"
                     }`}
                   >
                     Private
@@ -81,19 +83,32 @@ const ContentVisibility = ({
                 </div>
                 <div
                   className={`w-3 h-3 ${
-                    status == "off" ? "bg-[#CD3EFF]" : "bg-[#FFFFFF52]"
+                    status == "private" ? "bg-[#CD3EFF]" : "bg-[#FFFFFF52]"
                   } rounded-full`}
                 ></div>
               </div>
               {/* follower  */}
-              <div className="flex items-start justify-between bg-[#FFFFFF0A] p-3 rounded-xl">
+              <div
+                onClick={() => setStatus("follower")}
+                className="flex items-start justify-between bg-[#FFFFFF0A] p-3 rounded-xl"
+              >
                 <div className="">
-                  <p className="text-[14px] text-[#888]">Follower</p>
+                  <p
+                    className={`text-[14px] ${
+                      status == "follower" ? "text-white" : "text-[#888]"
+                    }`}
+                  >
+                    Follower
+                  </p>
                   <p className="text-[10px] text-[#888]">
                     Only people followed you on the platform can see your work.
                   </p>
                 </div>
-                <div className="w-3 h-3 bg-[#FFFFFF52] rounded-full"></div>
+                <div
+                  className={`w-3 h-3 ${
+                    status == "follower" ? "bg-[#CD3EFF]" : "bg-[#FFFFFF52]"
+                  } rounded-full`}
+                ></div>
               </div>
             </div>
 
@@ -101,7 +116,7 @@ const ContentVisibility = ({
               onClick={() => handler(status)}
               className="bg-[#CD3EFF1F] hover:bg-[#CD3EFF1F] text-[#CD3EFF] w-full"
             >
-              Save
+              {visibilityLoading ? <SmallLoader /> : "Save"}
             </Button>
           </div>
         </div>

@@ -26,7 +26,7 @@ const ChangePassword = () => {
   return (
     <Drawer open={isOpen} onOpenChange={() => setIsOpen(true)}>
       <div className="text-[14px] flex items-center justify-between">
-        <h1>Change Password</h1>
+        <h1>更改密码</h1>
         <DrawerTrigger asChild>
           <p className="flex items-center gap-1 text-[#888]">
             <FaAngleRight />

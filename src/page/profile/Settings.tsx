@@ -13,7 +13,11 @@ import EditSecurity from "@/components/profile/edit-security";
 import PrivateProfile from "@/components/profile/private-profile";
 import ContentVisibility from "@/components/profile/content-visibility";
 
-const Settings = ({ liked_video_visibility, changeVisibilityHandler }: any) => {
+const Settings = ({
+  liked_video_visibility,
+  changeVisibilityHandler,
+  visibilityLoading,
+}: any) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [logout] = useLogoutMutation();
@@ -27,7 +31,8 @@ const Settings = ({ liked_video_visibility, changeVisibilityHandler }: any) => {
             <FaAngleLeft size={18} />
           </Link>
           <p className="text-[16px]">
-            {user?.token ? "Setting & Privacy" : "Setting"}
+            {/* {user?.token ? "Setting & Privacy" : "Setting"} */}
+            设置和隐私
           </p>
           <div></div>
         </div>
@@ -37,7 +42,7 @@ const Settings = ({ liked_video_visibility, changeVisibilityHandler }: any) => {
             {/* <EditLanguage />
             <div className="border-b border-white/10"></div> */}
             <div className="flex flex-col gap-4">
-              <h1 className="text-[12px] text-[#888]">Account Security</h1>
+              <h1 className="text-[12px] text-[#888]">账户安全</h1>
               <ChangePassword />
               <EditSecurity />
             </div>
@@ -54,6 +59,7 @@ const Settings = ({ liked_video_visibility, changeVisibilityHandler }: any) => {
             <ContentVisibility
               liked_video_visibility={liked_video_visibility}
               changeVisibilityHandler={changeVisibilityHandler}
+              visibilityLoading={visibilityLoading}
             />
             <div className="border-b border-white/10"></div>
             <div className="flex justify-between items-center">
@@ -75,14 +81,14 @@ const Settings = ({ liked_video_visibility, changeVisibilityHandler }: any) => {
         <div className="border-b border-white/10"></div>
 
         <div className="flex justify-between items-center">
-          <p className="flex items-center gap-1 text-[14px]">Current Version</p>
+          <p className="flex items-center gap-1 text-[14px]">当前版本</p>
           <p className="flex items-center gap-1 text-[14px]">
             V 8.0.4 <ChevronRight size={15} className="text-[#777777]" />
           </p>
         </div>
         <div className="border-b border-white/10"></div>
         <div className="flex justify-between items-center">
-          <p className="flex items-center gap-1 text-[14px]">Clear Cache</p>
+          <p className="flex items-center gap-1 text-[14px]">清除缓存</p>
           <p className="flex items-center gap-1 text-[14px]">
             V 8.0.4 <ChevronRight size={15} className="text-[#777777]" />
           </p>

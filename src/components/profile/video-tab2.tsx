@@ -22,7 +22,7 @@ const VideoTab2 = ({ id }: any) => {
           value="liked"
         >
           <span className="flex items-center gap-1">
-            <FaHeart /> Liked Videos
+            <FaHeart /> 已点赞视频
           </span>
         </TabsTrigger>
         {/* <TabsTrigger
