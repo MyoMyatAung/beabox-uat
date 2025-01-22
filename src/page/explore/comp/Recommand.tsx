@@ -28,6 +28,7 @@ const Recommand: React.FC<RecommandProps> = ({ title }) => {
       setList(data?.data.list);
     }
   }, [data, list, isLoading]);
+  console.log(list)
   const navigate = useNavigate();
   const [refresh, setRefresh] = useState<boolean>(false);
   const refreshCard = async () => {

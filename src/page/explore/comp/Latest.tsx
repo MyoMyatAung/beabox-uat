@@ -19,7 +19,7 @@ const Latest: React.FC<LatestPorp> = ({}) => {
   const [waterfall, setWaterFall] = useState<any[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
-  const { data, isLoading } = useGetExploreListQuery({ id: 3, page });
+  const { data, isLoading } = useGetExploreListQuery({ id: "c229126d-7605-4760-9001-d14759de7c51", page });
   const navigate = useNavigate();
   const scrollPositionRef = useRef<number>(0);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -42,6 +42,7 @@ const Latest: React.FC<LatestPorp> = ({}) => {
       setHasMore(false);
     }
   }, [data]);
+  // console.log(data)
 
   const formatNumber = (num: number) => {
     if (num >= 1000) {

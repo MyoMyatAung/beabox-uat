@@ -20,6 +20,7 @@ const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
       sethd(cur);
     }
   }, [data, hd]);
+  // console.log(hd)
 
   return (
     <div className="bg-black z-[99] py-[5px] sticky top-0 w-screen">
@@ -34,18 +35,18 @@ const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
             >
               <h1
                 className={`cursor-pointer transition duration-300 ${
-                  exp_header !== tab.title
+                  exp_header !== tab.name
                     ? "text-white/60 font-[500] text-[15px] leading-[20px]"
                     : "text-[16px] font-[700] leading-[20px] text-white"
                 }`}
                 // onClick={() => setActiveTab(tab?.title)}
-                onClick={() => dispatch(setExpHeader(tab?.title))}
+                onClick={() => dispatch(setExpHeader(tab?.name))}
               >
-                {tab.title}
+                {tab.name}
               </h1>
               <span
                 className={`${
-                  exp_header !== tab.title ? "opacity-0" : "opacity-100"
+                  exp_header !== tab.name ? "opacity-0" : "opacity-100"
                 } w-[24px] h-[4px] bg-white rounded-full`}
               ></span>
             </div>
