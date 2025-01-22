@@ -186,7 +186,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
             username={files?.user?.name}
             city={files?.city}
           />
-          {+files.files[0].width > +files.files[0].height ? (
+          {/* {+files.files[0].width > +files.files[0].height ? (
             <>
               <button
                 onClick={() => handleFullscreen(files.post_id)}
@@ -246,7 +246,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
             </>
           ) : (
             <></>
-          )}
+          )} */}
           <div className="absolute top-3 left-0 z-50 flex gap-2 items-center w-full">
             <button onClick={handleBack} className="p-3">
               <svg

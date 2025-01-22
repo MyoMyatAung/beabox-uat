@@ -303,7 +303,7 @@ const Home = () => {
                           username={user?.nickname}
                         />
                       )}
-                      {+video.files[0].width > +video.files[0].height ? (
+                      {/* {+video.files[0].width > +video.files[0].height ? (
                         <>
                           <button
                             onClick={() => handleFullscreen(video.post_id)}
@@ -363,7 +363,7 @@ const Home = () => {
                         </>
                       ) : (
                         <></>
-                      )}
+                      )} */}
                     </div>
                   ))}
                 </div>
@@ -487,7 +487,7 @@ const Home = () => {
                         username={video?.user?.name}
                         city={video?.city}
                       />
-                      {+video.files[0].width > +video.files[0].height ? (
+                      {/* {+video.files[0].width > +video.files[0].height ? (
                         <>
                           <button
                             onClick={() => handleFullscreen(video.post_id)}
@@ -547,7 +547,7 @@ const Home = () => {
                         </>
                       ) : (
                         <></>
-                      )}
+                      )} */}
 
                       {showHeart && (
                         <ShowHeart

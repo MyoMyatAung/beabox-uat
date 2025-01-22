@@ -159,7 +159,7 @@ const VideoFeed = ({
               mute={mute}
               setMute={setMute}
             />
-            {+video.files[0].width > +video.files[0].height ? (
+            {/* {+video.files[0].width > +video.files[0].height ? (
               <>
                 <button
                   onClick={() => handleFullscreen(video.post_id)}
@@ -219,7 +219,7 @@ const VideoFeed = ({
               </>
             ) : (
               <></>
-            )}
+            )} */}
             <FeedFooter
               tags={video?.tag}
               title={video?.title}
