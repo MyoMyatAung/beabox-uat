@@ -17,6 +17,7 @@ import { setExpHeader } from "@/store/slices/exploreSlice";
 const Explore = () => {
   const [activeTab, setActiveTab] = useState("Recommend");
   const { exp_header } = useSelector((state: any) => state.explore);
+  console.log(exp_header)
   const [searchParams, setSearchParams] = useSearchParams();
   const [tabs, setTabs] = useState(["Recommend", "Latest", "Hollywood"]);
   const { data, isLoading } = useGetExploreHeaderQuery("");
@@ -64,39 +65,41 @@ const Explore = () => {
           <PopApp />
           <div className="mt-[20px] relative">
             <Header activeTab={activeTab} setActiveTab={setActiveTab} />
-            {/* <Swiper
+            <Swiper
               className=""
+              allowTouchMove={false}
+              // allowSlideNext={false}
               onSlideChange={handleSlideChange}
               onSwiper={(swiper) => (swiperRef.current = swiper)}
               slidesPerView={1}
               spaceBetween={1}
-              loop={true}
+              // loop={true}
             >
-              <SwiperSlide> */}
+              <SwiperSlide>
                 {exp_header === "Recommend" && (
-                  <div className="">
+                  <div className=" h-screen">
                     <Recommand title="Chinese Drama" />
                     <Recommand title="Latest Drama" />
                   </div>
                 )}
-              {/* </SwiperSlide>
-              <SwiperSlide> */}
+              </SwiperSlide>
+              <SwiperSlide>
                 {exp_header === "Latest" && (
-                  <div className="">
+                  <div className=" h-screen">
                     {/* <Latest /> */}
                     <Recommand title="Chinese Drama" />
                     <Recommand title="Latest Drama" />
                   </div>
                 )}
-              {/* </SwiperSlide>
-              <SwiperSlide> */}
+              </SwiperSlide>
+              <SwiperSlide>
                 {exp_header === "Hollywood" && (
-                  <div className="">
+                  <div className=" min-h-screen">
                     <Latest />
                   </div>
                 )}
-              {/* </SwiperSlide>
-            </Swiper> */}
+              </SwiperSlide>
+            </Swiper>
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@ import "./ss.css";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
 import { useGetExploreHeaderQuery } from "@/store/api/explore/exploreApi";
+import ImageWithPlaceholder from "@/page/search/comp/imgPlaceholder";
 
 const Banner: React.FC = () => {
   const [ad, setAd] = useState([]);
@@ -35,7 +36,7 @@ const Banner: React.FC = () => {
               autoPlay={true}
               infiniteLoop={true}
               centerMode
-              centerSlidePercentage={90}
+              centerSlidePercentage={87}
               selectedItem={selectedIndex}
               onChange={handleOnChange}
               interval={3000} // Set autoplay interval
@@ -45,15 +46,27 @@ const Banner: React.FC = () => {
                   key={index}
                   className={`justify-center h-[172px] items-center px-[8px] flex flex-col relative bg-black`}
                 >
-                  <img
-                    className={`rounded-md transition-all duration-300 ${
+               
+                    <ImageWithPlaceholder
+                      src={cc.image}
+                      alt={`Slide ${index + 1}`}
+                      width={"100%"}
+                      className={`rounded-md hidden transition-all duration-300  ${
+                        selectedIndex === index
+                          ? "w-[332px] h-[162px]" // Active slide size
+                          : "w-[290px] h-[148px]" // Non-active slide size
+                      }`}
+                      height={"100%"}
+                    />
+                  {/* <img
+                    className={`rounded-md hidden transition-all duration-300  ${
                       selectedIndex === index
                         ? "w-[332px] h-[162px]" // Active slide size
                         : "w-[290px] h-[148px]" // Non-active slide size
                     }`}
                     src={cc.image}
                     alt={`Slide ${index + 1}`}
-                  />
+                  /> */}
                 </div>
               ))}
             </Carousel>

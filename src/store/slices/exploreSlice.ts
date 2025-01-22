@@ -4,7 +4,7 @@ const initialState: any = {
   files: [],
   title: "",
   more_tab: "",
-  exp_header: "",
+  exp_header: "Recommend",
 };
 
 export const exploreSlice = createSlice({
