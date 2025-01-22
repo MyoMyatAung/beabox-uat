@@ -3,6 +3,8 @@ import ReactDOM from "react-dom";
 import qr from "../qr.png";
 import { useGetConfigQuery } from "../services/homeApi";
 import { QRCodeSVG } from "qrcode.react";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const ShareOverlay: React.FC<any> = ({
   alertVisible,
@@ -11,6 +13,8 @@ const ShareOverlay: React.FC<any> = ({
   post,
 }) => {
   const [isClosing, setIsClosing] = useState(false);
+  const user = useSelector((state: any) => state.persist.user);
+  const navigate = useNavigate();
 
   // const dispatch = useDispatch();
   const handleClose = () => {
@@ -59,6 +63,14 @@ const ShareOverlay: React.FC<any> = ({
   //   dispatch(setUnLike(post_id));
   //   console.log(post_id);
   // };
+
+  const handleReport = () => {
+    if (user?.token) {
+      navigate(`/reports/post/${post?.post_id}`);
+    } else {
+      navigate("/login");
+    }
+  };
 
   return ReactDOM.createPortal(
     <div className="fixed inset-0 z-[999999] flex justify-center items-end">
@@ -163,7 +175,10 @@ const ShareOverlay: React.FC<any> = ({
                 </svg>
                 <span className="download-text">不感兴趣</span>
               </button>
-              <div className="flex flex-col items-center">
+              <button
+                onClick={handleReport}
+                className="flex flex-col items-center"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="41"
@@ -199,7 +214,7 @@ const ShareOverlay: React.FC<any> = ({
                   />
                 </svg>
                 <span className="download-text">举报</span>
-              </div>
+              </button>
             </div>
             <div className="flex mb-4 justify-center items-center my-10 p-0">
               <div className="text-right">

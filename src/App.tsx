@@ -3,6 +3,7 @@ import Landing from "./components/Landing";
 import Routing from "./routes/Routing";
 import { useDispatch, useSelector } from "react-redux";
 import { setPanding } from "./store/slices/ModelSlice";
+import ErrorToast from "./page/home/services/errorToast";
 
 const App = () => {
   const { panding } = useSelector((state: any) => state.model);
@@ -16,7 +17,19 @@ const App = () => {
       dispatch(setPanding(true));
     }
   }, [dispatch]);
-  return <>{panding ? <Landing /> : <Routing />}</>;
+  return (
+    <>
+      {panding ? (
+        <Landing />
+      ) : (
+        <>
+          {" "}
+          <Routing />
+          <ErrorToast />
+        </>
+      )}
+    </>
+  );
 };
 
 export default App;

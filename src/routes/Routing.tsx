@@ -12,6 +12,7 @@ import Withdraw from "@/page/wallet/page/Withdraw";
 import Search from "@/page/search/Search";
 import Results from "@/page/search/page/Results";
 import VodDetails from "@/page/explore/comp/VodDetails";
+import Report from "@/page/report/Report";
 
 const Home = lazy(() => import("../page/home/Home"));
 const Explore = lazy(() => import("../page/explore/Explore"));
@@ -306,6 +307,14 @@ const Routing = () => {
       element: (
         <Suspense fallback={<Loader />}>
           <VodDetails />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.reports,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <Report />
         </Suspense>
       ),
     },
