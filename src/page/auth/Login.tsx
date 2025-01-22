@@ -184,7 +184,7 @@ const Login = () => {
                 {/* {isLoading ? "loading..." : "Login"} */}
                 Login
               </Button>
-              <Link to="/">
+              <Link to={paths.forgot_password}>
                 <p className="text-center text-[14px] mt-5">Forgot Password?</p>
               </Link>
             </div>

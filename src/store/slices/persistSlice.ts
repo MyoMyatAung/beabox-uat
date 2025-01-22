@@ -12,6 +12,8 @@ const initialState: any = {
   securityQues: null,
   region: null,
   cover: null,
+  forgotData: null,
+  forgotToken: null,
 };
 
 export const persistSlice = createSlice({
@@ -56,10 +58,18 @@ export const persistSlice = createSlice({
     setCover: (state, { payload }) => {
       state.cover = payload;
     },
+    setForgotData: (state, { payload }) => {
+      state.forgotData = payload;
+    },
+    setForgotToken: (state, { payload }) => {
+      state.forgotToken = payload;
+    },
   },
 });
 
 export const {
+  setForgotToken,
+  setForgotData,
   setRegisterUser,
   setUser,
   logOutUser,

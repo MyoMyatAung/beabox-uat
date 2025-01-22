@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { paths } from "@/routes/paths";
 import { useSelector } from "react-redux";
 import { useState } from "react";
+import Divider from "../shared/divider";
 
 const SettingBtn = ({ setShow }: any) => {
   const navigate = useNavigate();
@@ -63,25 +64,35 @@ const SettingBtn = ({ setShow }: any) => {
       </DrawerTrigger>
       <DrawerContent className="border-0 bg-[#121012] z-[1000]">
         <div className="w-full px-5 py-7">
-          <div className="space-y-6">
-            {(user?.token ? data : data2)?.map(({ title, icon, link }: any) => (
-              <div
-                key={title}
-                onClick={() => {
-                  if (title === "Creator Centre") {
-                    setIsOpen(false);
-                    setShow(true);
-                  } else {
-                    navigate(link);
-                  }
-                }}
-              >
-                <p className="text-[14px] flex items-center gap-2">
-                  {icon}
-                  {title}
-                </p>
-              </div>
-            ))}
+          <div className="space-y-3">
+            {(user?.token ? data : data2)?.map(
+              ({ title, icon, link }, index: any) => (
+                <>
+                  <div
+                    key={title}
+                    onClick={() => {
+                      if (title === "Creator Centre") {
+                        setIsOpen(false);
+                        setShow(true);
+                      } else {
+                        navigate(link);
+                      }
+                    }}
+                  >
+                    <p className="text-[14px] flex items-center gap-2">
+                      {icon}
+                      {title}
+                    </p>
+                  </div>
+                  {index ===
+                  (user?.token ? data?.length : data2?.length) - 1 ? (
+                    <></>
+                  ) : (
+                    <Divider show={true} />
+                  )}
+                </>
+              )
+            )}
           </div>
         </div>
       </DrawerContent>
