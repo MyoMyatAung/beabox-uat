@@ -50,7 +50,7 @@ const ForgotPassword = () => {
     <div className="w-full h-screen px-5 flex flex-col items-center justify-between bg-[#16131C]">
       <div className="w-full">
         <div className="flex justify-between items-center py-5">
-          <Link to={paths.login}>
+          <Link to={paths.profile}>
             <FaAngleLeft size={18} />
           </Link>
           <p className="text-[16px]">
