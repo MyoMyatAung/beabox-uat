@@ -34,7 +34,6 @@ const LoginForm = ({ setIsOpen }: any) => {
   const [getCaptcha, { data, isLoading: captchaLoading }] =
     useGetCaptchaMutation();
   const [showVerification, setShowVerification] = useState(false);
-  console.log(data);
   const [captcha, setCaptcha] = useState("");
   const [error, setError] = useState("");
 
@@ -60,7 +59,7 @@ const LoginForm = ({ setIsOpen }: any) => {
       captcha,
       captcha_key: data?.data?.captcha_key,
     });
-    console.log(loginData, "loginData");
+    // console.log(loginData, "loginData");
     if (loginData?.status) {
       dispatch(setUser(loginData?.data));
       setShowVerification(false);
@@ -162,7 +161,7 @@ const LoginForm = ({ setIsOpen }: any) => {
                   </>
                 </FormControl>
                 <FormMessage />
-                {/* <FormMessage>{error}</FormMessage> */}
+                <FormMessage>{error}</FormMessage>
               </FormItem>
             )}
           />
