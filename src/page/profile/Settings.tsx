@@ -17,11 +17,15 @@ const Settings = ({
   liked_video_visibility,
   changeVisibilityHandler,
   visibilityLoading,
+  content_visibility,
+  changeCVisHandler,
+  cvLoading,
 }: any) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [logout] = useLogoutMutation();
   const user = useSelector((state: any) => state.persist.user);
+  console.log(content_visibility);
 
   return (
     <div className="w-full h-screen px-5 flex flex-col items-center justify-between bg-[#16131C]">
@@ -57,9 +61,9 @@ const Settings = ({
               <h1 className="text-[12px] text-[#888]">Account Privacy</h1>
             </div>
             <ContentVisibility
-              liked_video_visibility={liked_video_visibility}
-              changeVisibilityHandler={changeVisibilityHandler}
-              visibilityLoading={visibilityLoading}
+              content_visibility={content_visibility}
+              changeVisibilityHandler={changeCVisHandler}
+              visibilityLoading={cvLoading}
             />
             <div className="border-b border-white/10"></div>
             <div className="flex justify-between items-center">

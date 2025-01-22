@@ -3,34 +3,42 @@ import {
   useGetRegionQuery,
 } from "@/store/api/profileApi";
 import { FaAngleRight } from "react-icons/fa";
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import { Button } from "../ui/button";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../shared/loader";
 import { setRegion } from "@/store/slices/persistSlice";
+import SmallLoader from "../shared/small-loader";
 
 const EditRegion = () => {
   const { data } = useGetRegionQuery("");
 
   const dispatch = useDispatch();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState<any>(false);
   const region = useSelector((state: any) => state.persist.region);
   const [selectedRegion, setSelectedRegion] = useState<any>(region);
   //   const [changeGender] = useChangeGenderMutation();
   const [changeRegion, { isLoading }] = useChangeRegionMutation();
   const selectedRegionRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
 
   const changeRegionHandler = async () => {
     const { data } = await changeRegion(selectedRegion);
     if (data?.status) {
-      setIsOpen(false);
+      closeRef.current?.click();
       dispatch(setRegion(selectedRegion));
     }
+    setIsOpen(false);
   };
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen == true) {
       setSelectedRegion(region);
       setTimeout(() => {
         if (selectedRegionRef.current) {
@@ -44,11 +52,14 @@ const EditRegion = () => {
   }, [isOpen, region]);
 
   return (
-    <Drawer open={isOpen} onOpenChange={() => setIsOpen(true)}>
+    <Drawer onOpenChange={() => setIsOpen(true)}>
       <div className="text-[14px] flex items-center justify-between">
         <h1>Region</h1>
         <DrawerTrigger asChild>
-          <p className="flex items-center gap-1 text-[#888]">
+          <p
+            onClick={() => setIsOpen(true)}
+            className="flex items-center gap-1 text-[#888]"
+          >
             {region?.province}, {region?.city} <FaAngleRight />
           </p>
         </DrawerTrigger>
@@ -88,20 +99,27 @@ const EditRegion = () => {
               ))}
             </div>
             <div className="flex gap-5 w-full">
+              {/* <DrawerClose asChild> */}
               <Button
-                onClick={() => setIsOpen(false)}
+                onClick={() => {
+                  closeRef.current?.click();
+                  setIsOpen(false);
+                }}
                 className="w-full rounded-lg bg-[#FFFFFF0A] hover:bg-[#FFFFFF0A]"
               >
                 Cancel
               </Button>
+              {/* </DrawerClose> */}
               <Button
                 onClick={() => changeRegionHandler()}
                 className="w-full rounded-lg bg-[#CD3EFF1F] hover:bg-[#CD3EFF1F] text-[#CD3EFF]"
               >
-                Save
+                {isLoading ? <SmallLoader /> : "Save"}
+                {/* Save */}
               </Button>
             </div>
           </div>
+          <DrawerClose ref={closeRef} className="hidden" />
         </div>
       </DrawerContent>
     </Drawer>

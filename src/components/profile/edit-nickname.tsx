@@ -1,7 +1,12 @@
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import { Button } from "../ui/button";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { X } from "lucide-react";
 import { useSelector } from "react-redux";
 import { useChangeNicknameMutation } from "@/store/api/profileApi";
@@ -20,16 +25,18 @@ const EditNickName = ({
   const [value, setValue] = useState("");
   const [changeNickname, { data, isLoading }] = useChangeNicknameMutation();
   const navigate = useNavigate();
+  const closeRef = useRef<HTMLButtonElement>(null);
 
   const onSubmitHandler = async (e: any) => {
     e.preventDefault();
     await changeNickname({ nickname: value });
     await refetchHandler();
     setIsOpen(false);
+    closeRef.current?.click();
   };
 
   return (
-    <Drawer open={isOpen} onOpenChange={() => setIsOpen(true)}>
+    <Drawer>
       <div className="text-[14px] flex items-center justify-between">
         <h1>Nickname</h1>
         <DrawerTrigger asChild>
@@ -40,11 +47,13 @@ const EditNickName = ({
       </div>
       <DrawerContent className="border-0">
         {isLoading ? <Loader /> : <></>}
-        <div className="w-full h-screen px-5">
+        <div className="w-full h-screen px-5 bg-[#16131C]">
           <div className="flex justify-between items-center py-5">
-            <button onClick={() => setIsOpen(false)}>
-              <FaAngleLeft size={18} />
-            </button>
+            <DrawerClose>
+              <button>
+                <FaAngleLeft size={18} />
+              </button>
+            </DrawerClose>
             <p className="text-[16px]">Nickname</p>
             <div></div>
           </div>
@@ -76,6 +85,7 @@ const EditNickName = ({
               text="Save"
             />
           </form>
+          <DrawerClose ref={closeRef} className="hidden" />
         </div>
       </DrawerContent>
     </Drawer>

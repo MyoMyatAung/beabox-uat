@@ -121,6 +121,15 @@ export const profileApi = createApi({
         },
       }),
     }),
+    changeCVis: builder.mutation({
+      query: ({ status }) => ({
+        url: `/profile/content-visibility`,
+        method: "POST",
+        body: {
+          status,
+        },
+      }),
+    }),
     changeRegion: builder.mutation({
       query: (region) => ({
         url: `/profile/change-region`,
@@ -239,6 +248,7 @@ export const profileApi = createApi({
 });
 
 export const {
+  useChangeCVisMutation,
   useSetPasswordMutation,
   useCheckAnswerMutation,
   useCheckUsernameMutation,

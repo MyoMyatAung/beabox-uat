@@ -1,7 +1,12 @@
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import { Button } from "../ui/button";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { X } from "lucide-react";
 import { useSelector } from "react-redux";
 import { useChangeUsernameMutation } from "@/store/api/profileApi";
@@ -20,19 +25,19 @@ const EditUsername = ({
   const [value, setValue] = useState("");
   const [changeUsername, { data, isLoading }] = useChangeUsernameMutation();
   const navigate = useNavigate();
-
-
+  const closeRef = useRef<HTMLButtonElement>(null);
 
   const onSubmitHandler = async (e: any) => {
     e.preventDefault();
-  
+
     await changeUsername({ username: value });
     await refetchHandler();
     setIsOpen(false);
+    closeRef.current?.click();
   };
 
   return (
-    <Drawer open={isOpen} onOpenChange={() => setIsOpen(true)}>
+    <Drawer>
       <div className="text-[14px] flex items-center justify-between">
         <h1>User Name</h1>
         <DrawerTrigger asChild>
@@ -43,11 +48,13 @@ const EditUsername = ({
       </div>
       <DrawerContent className="border-0">
         {isLoading ? <Loader /> : <></>}
-        <div className="w-full h-screen px-5">
+        <div className="w-full h-screen px-5 bg-[#16131C]">
           <div className="flex justify-between items-center py-5">
-            <button onClick={() => setIsOpen(false)}>
-              <FaAngleLeft size={18} />
-            </button>
+            <DrawerClose asChild>
+              <button>
+                <FaAngleLeft size={18} />
+              </button>
+            </DrawerClose>
             <p className="text-[16px]">User Name</p>
             <div></div>
           </div>
@@ -79,6 +86,7 @@ const EditUsername = ({
               text="Save"
             />
           </form>
+          <DrawerClose ref={closeRef} className="hidden" />
         </div>
       </DrawerContent>
     </Drawer>

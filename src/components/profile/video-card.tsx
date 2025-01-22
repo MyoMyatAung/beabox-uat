@@ -6,7 +6,6 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const VideoCard = ({ videoData }: any) => {
-  console.log(videoData, "vd");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const showDetailsVod = (file: any) => {

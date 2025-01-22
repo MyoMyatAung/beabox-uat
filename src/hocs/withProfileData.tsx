@@ -1,9 +1,11 @@
 import {
+  useChangeCVisMutation,
   useChangePrivateProfileStatsMutation,
   useChangeVisibilityMutation,
   useGetMyProfileQuery,
 } from "@/store/api/profileApi";
 import {
+  setCVisibility,
   setPrivateProfile,
   setProfileData,
   setSecurityQues,
@@ -18,6 +20,7 @@ const withProfileData = (WrapperCompo: any) => {
     const persistState = useSelector((state: any) => state.persist);
     const { data, refetch, isLoading } = useGetMyProfileQuery("");
     const [changePrivateProfileStats] = useChangePrivateProfileStatsMutation();
+    const [changeCVis, { isLoading: cvLoading }] = useChangeCVisMutation();
     const [changeVisibility, { isLoading: visibilityLoading }] =
       useChangeVisibilityMutation();
 
@@ -39,10 +42,17 @@ const withProfileData = (WrapperCompo: any) => {
       });
       dispatch(setVisibility(visibility));
     };
+    const changeCVisHandler = async (visibility: any) => {
+      await changeCVis({
+        status: visibility,
+      });
+      dispatch(setCVisibility(visibility));
+    };
     useEffect(() => {
       dispatch(setProfileData(data?.data));
       dispatch(setPrivateProfile(data?.data?.private_profile));
       dispatch(setVisibility(data?.data?.liked_video_visibility));
+      dispatch(setCVisibility(data?.data?.content_visibility));
       dispatch(
         setSecurityQues({
           ques: data?.data?.security_question,
@@ -61,6 +71,9 @@ const withProfileData = (WrapperCompo: any) => {
         changePrivateProfileStatsHandler={changePrivateProfileStatsHandler}
         changeVisibilityHandler={changeVisibilityHandler}
         visibilityLoading={visibilityLoading}
+        content_visibility={persistState.content_visibility}
+        changeCVisHandler={changeCVisHandler}
+        cvLoading={cvLoading}
       />
     );
   };

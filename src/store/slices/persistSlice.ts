@@ -15,12 +15,16 @@ const initialState: any = {
   forgotData: null,
   forgotToken: null,
   authToggle: true,
+  content_visibility: "",
 };
 
 export const persistSlice = createSlice({
   name: "persist",
   initialState,
   reducers: {
+    setCVisibility: (state, { payload }) => {
+      state.content_visibility = payload;
+    },
     setAuthToggle: (state, { payload }) => {
       state.authToggle = payload;
     },
@@ -72,6 +76,7 @@ export const persistSlice = createSlice({
 });
 
 export const {
+  setCVisibility,
   setAuthToggle,
   setForgotToken,
   setForgotData,

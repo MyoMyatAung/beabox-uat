@@ -41,7 +41,7 @@ const Profile = () => {
   const gender = useSelector((state: any) => state.persist.gender);
   const region = useSelector((state: any) => state.persist.region);
   const cover = useSelector((state: any) => state.persist.cover);
-
+  console.log(data);
   useEffect(() => {
     refetch();
   }, []);
@@ -141,7 +141,8 @@ const Profile = () => {
               <div className="z-[1200] flex-1 flex flex-col gap-0.5">
                 <p className="z-[1200] text-[18px] flex items-center gap-1">
                   {data?.data?.nickname}
-                  <span>{gender == "Male" ? <MaleSVG /> : <FemaleSVG />}</span>
+                  <span>{gender == "Male" ? <MaleSVG /> : <></>}</span>
+                  <span>{gender == "Feale" ? <FemaleSVG /> : <></>}</span>
                   {/* <span>
                 <BsPatchCheckFill className="z-[1200] text-[#888]" />
               </span>{" "} */}
