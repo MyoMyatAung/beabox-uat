@@ -21,7 +21,8 @@ const Poppizza: React.FC<PoppizzaProps> = ({}) => {
     //   // console.log(cur , "cur")
     //   setad(cur);
     // }
-  }, [ad]);
+  }, [ad,data]);
+  // console.log(ad)
 
   return (
     <div className=" pt-[20px]">
