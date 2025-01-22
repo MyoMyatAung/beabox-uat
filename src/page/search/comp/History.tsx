@@ -13,7 +13,7 @@ interface HistoryProps {}
 const History: React.FC<HistoryProps> = ({}) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const [ref,setRef] = useState(false)
+  const [ref, setRef] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const historys = useSelector(selectHistoryData);
@@ -42,13 +42,13 @@ const History: React.FC<HistoryProps> = ({}) => {
       {/* header */}
       <div className=" flex justify-between items-center">
         <h1 className=" text-white text-[14px] font-[700] leading-[16px]">
-          History
+          搜索记录
         </h1>
         <span
           onClick={handleDelete}
           className=" text-white/60 text-[12px] font-[500] leading-[18px]"
         >
-          Clear
+          清除
         </span>
       </div>
       <div className=" flex gap-[8px] py-[20px] flex-wrap">

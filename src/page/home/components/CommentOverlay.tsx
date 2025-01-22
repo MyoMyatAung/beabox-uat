@@ -135,6 +135,13 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
     }
   };
 
+  const handleReport = (id: any) => {
+    if (user?.token) {
+      navigate(`/reports/comment/${id}`);
+    } else {
+      navigate("/login");
+    }
+  };
   const toggleRepliesVisibility = (commentId: number) => {
     setRepliesVisible((prev) => ({
       ...prev,
@@ -217,8 +224,28 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
               <span className="created_at_comment">{comment.created_at}</span>
             </div>
           </div>
-          <div>
+          <div className="flex items-center gap-4">
             {/* Like Button */}
+            <button
+              className={`mt-1 text-center flex flex-col justify-center items-center gap-1 text-xs font-medium transition duration-300 `}
+              onClick={() => handleReport(comment?.comment_id)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="15"
+                height="13"
+                viewBox="0 0 15 13"
+                fill="none"
+              >
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M7.42523 1.47217L1.57937 11.6002L13.2731 11.5995L7.42523 1.47217ZM1.35261 12.3866C1.23757 12.3866 1.12456 12.3563 1.02494 12.2988C0.925312 12.2413 0.842582 12.1586 0.785064 12.0589C0.727545 11.9593 0.697265 11.8463 0.697266 11.7313C0.697266 11.6162 0.727548 11.5032 0.785068 11.4036L6.85768 0.882341C6.9152 0.782721 6.99793 0.699996 7.09756 0.642481C7.19718 0.584966 7.31019 0.554688 7.42523 0.554688C7.54026 0.554688 7.65327 0.584966 7.7529 0.642481C7.85252 0.699996 7.93525 0.782721 7.99277 0.882341L14.068 11.4029C14.1255 11.5025 14.1558 11.6156 14.1558 11.7306C14.1558 11.8456 14.1255 11.9586 14.068 12.0583C14.0105 12.1579 13.9278 12.2406 13.8281 12.2982C13.7285 12.3557 13.6155 12.386 13.5005 12.386L1.35261 12.3866ZM7.01497 5.11207H7.83745L7.77388 8.2067H7.07919L7.01562 5.11207H7.01497ZM7.42523 9.794C7.36478 9.79504 7.30473 9.78405 7.24856 9.76168C7.19239 9.73931 7.14124 9.70599 7.09806 9.66367C7.05489 9.62135 7.02056 9.57087 6.99707 9.51516C6.97358 9.45945 6.96139 9.39963 6.96123 9.33917C6.96123 9.08686 7.1657 8.88828 7.42523 8.88828C7.68737 8.88828 7.89185 9.08686 7.89185 9.33917C7.8916 9.39983 7.87927 9.45983 7.85559 9.51567C7.83191 9.57152 7.79734 9.62208 7.7539 9.66442C7.71046 9.70676 7.65903 9.74002 7.6026 9.76227C7.54617 9.78452 7.48587 9.7953 7.42523 9.794Z"
+                  fill="#777777"
+                />
+              </svg>
+              <span className="like_text">举报</span>
+            </button>
 
             {comment?.is_liked ? (
               <button
@@ -343,7 +370,7 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
                 )
               }
             >
-              Load more
+              展开条回复
             </button>
           </div>
         )}
@@ -374,7 +401,28 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
               <span className="created_at_comment">{reply.created_at}</span>
             </div>
           </div>
-          <div>
+          <div className="flex items-center gap-4">
+            <button
+              className={`mt-1 text-center flex flex-col justify-center items-center gap-1 text-xs font-medium transition duration-300 `}
+              onClick={() => handleReport(reply?.reply_id)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="15"
+                height="13"
+                viewBox="0 0 15 13"
+                fill="none"
+              >
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M7.42523 1.47217L1.57937 11.6002L13.2731 11.5995L7.42523 1.47217ZM1.35261 12.3866C1.23757 12.3866 1.12456 12.3563 1.02494 12.2988C0.925312 12.2413 0.842582 12.1586 0.785064 12.0589C0.727545 11.9593 0.697265 11.8463 0.697266 11.7313C0.697266 11.6162 0.727548 11.5032 0.785068 11.4036L6.85768 0.882341C6.9152 0.782721 6.99793 0.699996 7.09756 0.642481C7.19718 0.584966 7.31019 0.554688 7.42523 0.554688C7.54026 0.554688 7.65327 0.584966 7.7529 0.642481C7.85252 0.699996 7.93525 0.782721 7.99277 0.882341L14.068 11.4029C14.1255 11.5025 14.1558 11.6156 14.1558 11.7306C14.1558 11.8456 14.1255 11.9586 14.068 12.0583C14.0105 12.1579 13.9278 12.2406 13.8281 12.2982C13.7285 12.3557 13.6155 12.386 13.5005 12.386L1.35261 12.3866ZM7.01497 5.11207H7.83745L7.77388 8.2067H7.07919L7.01562 5.11207H7.01497ZM7.42523 9.794C7.36478 9.79504 7.30473 9.78405 7.24856 9.76168C7.19239 9.73931 7.14124 9.70599 7.09806 9.66367C7.05489 9.62135 7.02056 9.57087 6.99707 9.51516C6.97358 9.45945 6.96139 9.39963 6.96123 9.33917C6.96123 9.08686 7.1657 8.88828 7.42523 8.88828C7.68737 8.88828 7.89185 9.08686 7.89185 9.33917C7.8916 9.39983 7.87927 9.45983 7.85559 9.51567C7.83191 9.57152 7.79734 9.62208 7.7539 9.66442C7.71046 9.70676 7.65903 9.74002 7.6026 9.76227C7.54617 9.78452 7.48587 9.7953 7.42523 9.794Z"
+                  fill="#777777"
+                />
+              </svg>
+              <span className="like_text">举报</span>
+            </button>
+
             {reply?.is_liked ? (
               <button
                 onClick={() =>
@@ -430,7 +478,7 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
           className="reply_btn"
           onClick={() => handleReplyClick(commentId, reply.reply_id)}
         >
-          Reply
+          回复
         </button>
 
         {/* Render Reply Input for Replies */}
@@ -491,7 +539,7 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
       >
         <div>
           <div className="text-white text-center font-cnFont pt-[14px]">
-            <span className="mr-1"> {comments?.length}</span>Comments
+            <span className="mr-1"> {comments?.length}</span>条评论
           </div>
           <button
             className="absolute top-4 right-4 text-gray-700 text-2xl"
@@ -538,7 +586,7 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
               </div>
 
               <div className="text-center text-[14px] text-gray-500 italic">
-                No Comments
+                评论空空如也～
               </div>
             </div>
           ) : (
@@ -552,7 +600,7 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
               className="w-full p-[6px] bg-transparent border-none outline-none"
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder="Write a comment"
+              placeholder="我来说两句～"
             />
             <button className="comment_arrow p-3" onClick={handleComment}>
               <svg

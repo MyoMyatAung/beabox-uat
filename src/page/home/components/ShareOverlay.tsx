@@ -1,13 +1,22 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import qr from "../qr.png";
+import { useGetConfigQuery } from "../services/homeApi";
+import { QRCodeSVG } from "qrcode.react";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const ShareOverlay: React.FC<any> = ({
   alertVisible,
   config,
   setAlertVisible,
+  post,
 }) => {
   const [isClosing, setIsClosing] = useState(false);
+  const user = useSelector((state: any) => state.persist.user);
+  const navigate = useNavigate();
+
+  // const dispatch = useDispatch();
   const handleClose = () => {
     setIsClosing(true); // Trigger the closing animation
     setTimeout(() => {
@@ -17,6 +26,51 @@ const ShareOverlay: React.FC<any> = ({
   };
 
   if (!alertVisible && !isClosing) return null;
+
+  const shareUrl = config?.share_link;
+  const appDownloadLink = config?.app_download_link;
+
+  const sendEventToNative = (name: string, text: string) => {
+    if (
+      (window as any).webkit &&
+      (window as any).webkit.messageHandlers &&
+      (window as any).webkit.messageHandlers.jsBridge
+    ) {
+      (window as any).webkit.messageHandlers.jsBridge.postMessage({
+        eventName: name,
+        value: text,
+      });
+    }
+  };
+
+  const onDownload = () => {
+    sendEventToNative("saveVideo", post?.files[0].resourceURL);
+  };
+
+  const handleShare = () => {
+    sendEventToNative("saveImage", shareUrl);
+  };
+
+  const handleAppCopy = () => {
+    sendEventToNative("copyAppdownloadUrl", appDownloadLink);
+  };
+
+  const handleLinkCopy = () => {
+    sendEventToNative("copyShareUrl", shareUrl);
+  };
+
+  // const handleUnlike = () => {
+  //   dispatch(setUnLike(post_id));
+  //   console.log(post_id);
+  // };
+
+  const handleReport = () => {
+    if (user?.token) {
+      navigate(`/reports/post/${post?.post_id}`);
+    } else {
+      navigate("/login");
+    }
+  };
 
   return ReactDOM.createPortal(
     <div className="fixed inset-0 z-[999999] flex justify-center items-end">
@@ -36,8 +90,11 @@ const ShareOverlay: React.FC<any> = ({
 
         <div className="flex justify-center items-center mt-5">
           <div>
-            <div className="flex items-center justify-between mt-3">
-              <div className="flex flex-col items-center">
+            <div className="flex items-center gap-10 justify-between mt-3">
+              <button
+                onClick={onDownload}
+                className="flex flex-col items-center"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="41"
@@ -59,9 +116,12 @@ const ShareOverlay: React.FC<any> = ({
                     fill="white"
                   />
                 </svg>
-                <span className="download-text">Save Video</span>
-              </div>
-              <div className="flex flex-col items-center">
+                <span className="download-text">保存视频</span>
+              </button>
+              <button
+                onClick={handleLinkCopy}
+                className="flex flex-col items-center"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="41"
@@ -83,9 +143,9 @@ const ShareOverlay: React.FC<any> = ({
                     fill="white"
                   />
                 </svg>
-                <span className="download-text">Copy Link</span>
-              </div>
-              <div className="flex flex-col items-center">
+                <span className="download-text">复制链接</span>
+              </button>
+              <button className="flex flex-col items-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="41"
@@ -113,9 +173,12 @@ const ShareOverlay: React.FC<any> = ({
                     stroke-linejoin="round"
                   />
                 </svg>
-                <span className="download-text">Unlike</span>
-              </div>
-              <div className="flex flex-col items-center">
+                <span className="download-text">不感兴趣</span>
+              </button>
+              <button
+                onClick={handleReport}
+                className="flex flex-col items-center"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="41"
@@ -150,12 +213,13 @@ const ShareOverlay: React.FC<any> = ({
                     stroke-linejoin="round"
                   />
                 </svg>
-                <span className="download-text">Report</span>
-              </div>
+                <span className="download-text">举报</span>
+              </button>
             </div>
             <div className="flex mb-4 justify-center items-center my-10 p-0">
               <div className="text-right">
-                <img src={qr} alt="" width={150} height={150} />
+                <QRCodeSVG value={shareUrl} size={150} />
+                {/* <img src={qr} alt="" width={150} height={150} /> */}
               </div>
               {/* <div>
             <h1 className="qr_text1 mb-2">Scan Qr Code</h1>
@@ -166,17 +230,11 @@ const ShareOverlay: React.FC<any> = ({
           </div> */}
             </div>
             <div className="grid grid-cols-2 gap-2 mt-10 py-2 px-5">
-              <button className="share_btn">Save img to share</button>
-              <button
-                className="share_btn"
-                onClick={() => {
-                  const shareUrl = config?.app_download_link;
-                  navigator.clipboard.writeText(shareUrl).catch((err) => {
-                    console.error("Failed to copy the share link: ", err);
-                  });
-                }}
-              >
-                Copy share link
+              <button onClick={handleShare} className="share_btn">
+                保存二维码
+              </button>
+              <button className="share_btn" onClick={handleAppCopy}>
+                复制邀请链接
               </button>
             </div>
           </div>

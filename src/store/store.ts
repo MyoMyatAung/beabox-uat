@@ -14,11 +14,13 @@ import HistorySlice from "@/page/search/slice/HistorySlice";
 import { searchApi } from "./api/search/searchApi";
 import homeSlice from "../page/home/services/homeSlice";
 import ModelSlice from "./slices/ModelSlice";
+import errorSlice from "@/page/home/services/errorSlice";
+import unlikeSlice from "@/page/home/services/unlikeSlice";
 
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["persist","history","explore","home"], // Reducers you want to persist
+  whitelist: ["persist", "history", "explore", "home", "unlike"], // Reducers you want to persist
 };
 
 const rootReducer = combineReducers({
@@ -29,7 +31,9 @@ const rootReducer = combineReducers({
   explore: exploreSlice,
   history: HistorySlice,
   home: homeSlice,
-  model : ModelSlice,
+  model: ModelSlice,
+  unlike: unlikeSlice,
+  errorslice: errorSlice,
   [profileApi.reducerPath]: profileApi.reducer,
   [authApi.reducerPath]: authApi.reducer,
   [walletApi.reducerPath]: walletApi.reducer,
