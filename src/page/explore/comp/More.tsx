@@ -16,6 +16,7 @@ interface MoreProps {}
 const More: React.FC<MoreProps> = () => {
   const [show, setshow] = useState<boolean>(false);
   const { title, more_tab } = useSelector((state: any) => state.explore);
+  console.log(more_tab)
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const dispatch = useDispatch();
@@ -24,7 +25,7 @@ const More: React.FC<MoreProps> = () => {
   const [list, setList] = useState<any[]>([]);
   const { data, isLoading, isFetching, refetch } = useGetExploreTagQuery({
     order: more_tab, // Use more_tab directly
-    tag: title,
+    tag: title? title : "Latest Drama",
     page: page,
   });
 
@@ -78,21 +79,21 @@ const More: React.FC<MoreProps> = () => {
         <div className="flex gap-[8px]">
           <button
             className={`text-white text-[14px] font-[400] leading-[16px] px-[16px] py-[8px] ${
-              more_tab === "Popular"
+              more_tab === "popular"
                 ? "more_tabs_buttons_active"
                 : "more_tabs_buttons"
             }`}
-            onClick={() => dispatch(setMoreTab("Popular"))} // Update more_tab
+            onClick={() => dispatch(setMoreTab("popular"))} // Update more_tab
           >
             Popular
           </button>
           <button
             className={`text-white text-[14px] font-[400] leading-[16px] px-[16px] py-[8px] ${
-              more_tab === "Latest"
+              more_tab === "latest"
                 ? "more_tabs_buttons_active"
                 : "more_tabs_buttons"
             }`}
-            onClick={() => dispatch(setMoreTab("Latest"))} // Update more_tab
+            onClick={() => dispatch(setMoreTab("latest"))} // Update more_tab
           >
             Latest
           </button>

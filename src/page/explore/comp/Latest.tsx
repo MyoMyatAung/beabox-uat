@@ -11,15 +11,17 @@ import { replace, useNavigate, useSearchParams } from "react-router-dom";
 import { paths } from "@/routes/paths";
 import ImageWithPlaceholder from "@/page/search/comp/imgPlaceholder";
 
-interface LatestPorp {}
+interface LatestPorp {
+  list_id : string
+}
 
-const Latest: React.FC<LatestPorp> = ({}) => {
+const Latest: React.FC<LatestPorp> = ({list_id}) => {
   // const [searchParams, setSearchParams] = useSearchParams();
   const dispatch = useDispatch();
   const [waterfall, setWaterFall] = useState<any[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
-  const { data, isLoading } = useGetExploreListQuery({ id: "c229126d-7605-4760-9001-d14759de7c51", page });
+  const { data, isLoading } = useGetExploreListQuery({ id: list_id, page });
   const navigate = useNavigate();
   const scrollPositionRef = useRef<number>(0);
   const contentRef = useRef<HTMLDivElement>(null);

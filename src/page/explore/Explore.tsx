@@ -59,7 +59,7 @@ const Explore = () => {
     <>
       {/* {show && <VodDetails  />} */}
 
-      <div className="flex justify-center items-center w-screen overflow-clip	">
+      <div className="flex justify-center items-center w-screen overflow-clip">
         <div className="explore_sec w-screen xl:w-[800px] flex flex-col justify-center items-cente px-[10px] pb-[100px] mt-14">
           <Banner />
           <PopApp />
@@ -80,9 +80,9 @@ const Explore = () => {
                   {exp_header === gg.name && (
                     <div className=" min-h-screen text-white">
                       {gg.type === "topic" ? (
-                        <Recommand title="Chinese Drama" />
+                        <Recommand  list_id={gg.id} title="Chinese Drama" />
                       ) : (
-                        <Latest />
+                        <Latest list_id={gg.id} />
                       )}
                     </div>
                   )}
