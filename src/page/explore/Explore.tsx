@@ -26,8 +26,6 @@ const Explore = () => {
   const [show, setshow] = useState<boolean>(false);
   const dispatch = useDispatch();
 
- 
-
   useEffect(() => {
     if (data?.data?.tabs) {
       const tt = data?.data?.tabs.map((t: any) => t.name);
@@ -36,7 +34,7 @@ const Explore = () => {
       setDyId([...ii, dyId]);
     }
   }, [data]);
-  console.log(dyId);
+  // console.log(dyId);
 
   useEffect(() => {
     if (swiperRef.current) {
@@ -53,7 +51,7 @@ const Explore = () => {
     dispatch(setExpHeader(newActiveTab));
     // setSearchParams({ query: tabToQuery(newActiveTab) }); // Convert tab to query value
   };
-  console.log(data?.data?.tabs);
+  // console.log(data?.data?.tabs);
 
   return (
     <>
