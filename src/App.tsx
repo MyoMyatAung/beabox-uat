@@ -6,7 +6,7 @@ import { setPanding } from "./store/slices/ModelSlice";
 
 const App = () => {
   const { panding } = useSelector((state: any) => state.model);
-  console.log(panding);
+
   const dispatch = useDispatch();
 
   useEffect(() => {

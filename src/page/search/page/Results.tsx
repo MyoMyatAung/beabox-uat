@@ -179,7 +179,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)} // Update the query state on input change
-              placeholder="Search Videos"
+              placeholder="搜索影片"
               onFocus={() => setIsFocused(true)}
               onBlur={() => setTimeout(() => setIsFocused(false), 200)} // Delay to allow clicks on suggestions
               className=" bg-transparent focus:outline-none text-[16px] font-[400] text-white w-full"
@@ -207,8 +207,8 @@ const Results: React.FC<ResultsProps> = ({}) => {
               </button>
             )}
           </div>
-          <button type="submit" className="search_btn">
-            Search
+          <button type="submit" className="search_btn w-[45px]">
+            搜索
           </button>
         </form>
         {/* tabs */}
@@ -481,7 +481,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
       </div>
 
       {isFocused && suggestions.length > 0 && (
-        <ul className="fixed top-[60px] px-[16px] left-0 pt-[20px] pb-[80px] h-screen w-full bg-[#16131C] text-white z-[99999] overflow-y-auto">
+        <ul className="fixed top-[60px] px-[16px] left-0 pt-[20px] pb-[80px] h-screen w-full bg-black text-white z-[99999] overflow-y-auto">
           {suggestions.map((suggestion: any, index) => (
             <li
               key={index}

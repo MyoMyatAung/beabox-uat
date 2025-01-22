@@ -84,14 +84,18 @@ const Login = () => {
     }
   };
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   return (
     <>
       {isLoading || captchaLoading ? <Loader /> : <></>}
       <div className="px-5 h-screen bg-[#FFFFFF1F]">
         <div className="flex justify-between items-center py-5">
-          <Link to={paths.profile}>
+          <button onClick={handleBack}>
             <ChevronLeft />
-          </Link>
+          </button>
           <p className="text-[16px]">Login</p>
           <div></div>
         </div>

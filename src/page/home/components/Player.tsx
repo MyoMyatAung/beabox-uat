@@ -9,11 +9,13 @@ const Player = ({
   thumbnail,
   onPlay,
   mute,
+  rotate,
 }: {
   src: any;
   thumbnail: any;
   onPlay?: () => void; // Add an optional onPlay callback
   mute: any;
+  rotate: any;
 }) => {
   const playerContainerRef = useRef(null);
   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
@@ -26,6 +28,7 @@ const Player = ({
         Artplayer.MOBILE_CLICK_PLAY = true;
         artPlayerInstanceRef.current = new Artplayer({
           container: playerContainerRef.current,
+          autoOrientation: true,
           url: src,
           volume: 0.5,
           muted: mute,
@@ -34,6 +37,10 @@ const Player = ({
             playsInline: true,
             preload: "metadata",
           },
+          fullscreenWeb: true,
+
+          // fastForward: true,
+
           flip: true,
           aspectRatio: true,
           fullscreen: false,
@@ -101,7 +108,18 @@ const Player = ({
     }
   }, [mute]); // This effect runs whenever `mute` changes
 
-  return <div ref={playerContainerRef} className="video_player w-full" />;
+  useEffect(() => {
+    if (artPlayerInstanceRef.current) {
+      artPlayerInstanceRef.current.fullscreenWeb = rotate;
+    }
+  }, [rotate]); // This effect runs whenever `mute` changes
+
+  return (
+    <div
+      ref={playerContainerRef}
+      className={`video_player w-full ${rotate && "fullscreen"}`}
+    />
+  );
 };
 
 export default Player;

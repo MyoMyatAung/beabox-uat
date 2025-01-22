@@ -343,7 +343,7 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
                 )
               }
             >
-              Load more
+              展开条回复
             </button>
           </div>
         )}
@@ -430,7 +430,7 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
           className="reply_btn"
           onClick={() => handleReplyClick(commentId, reply.reply_id)}
         >
-          Reply
+          回复
         </button>
 
         {/* Render Reply Input for Replies */}
@@ -491,7 +491,7 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
       >
         <div>
           <div className="text-white text-center font-cnFont pt-[14px]">
-            <span className="mr-1"> {comments?.length}</span>Comments
+            <span className="mr-1"> {comments?.length}</span>条评论
           </div>
           <button
             className="absolute top-4 right-4 text-gray-700 text-2xl"
@@ -538,7 +538,7 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
               </div>
 
               <div className="text-center text-[14px] text-gray-500 italic">
-                No Comments
+                评论空空如也～
               </div>
             </div>
           ) : (
@@ -552,7 +552,7 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
               className="w-full p-[6px] bg-transparent border-none outline-none"
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder="Write a comment"
+              placeholder="我来说两句～"
             />
             <button className="comment_arrow p-3" onClick={handleComment}>
               <svg

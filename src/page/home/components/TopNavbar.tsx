@@ -8,9 +8,9 @@ const TopNavbar = ({
   onTabClick: (tab: number) => void;
 }) => {
   const TABS = [
-    { text: "follow", id: 0 },
-    { text: "explore", id: 1 },
-    { text: "for_you", id: 2 },
+    { text: "关注", id: 0 },
+    { text: "探索", id: 1 },
+    { text: "推荐", id: 2 },
   ];
 
   return (
