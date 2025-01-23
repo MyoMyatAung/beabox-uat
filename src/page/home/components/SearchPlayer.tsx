@@ -20,6 +20,7 @@ const SearchPlayer = ({
 }) => {
   const playerContainerRef = useRef(null);
   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
+  const hlsRef = useRef<Hls | null>(null); // Store the Hls instance
 
   useEffect(() => {
     if (playerContainerRef.current) {
@@ -51,9 +52,13 @@ const SearchPlayer = ({
               customType: {
                 m3u8: (videoElement, url) => {
                   if (Hls.isSupported()) {
-                    const hls = new Hls();
+                    const hls = new Hls({
+                      maxBufferLength: 30, // Limit buffer to 30 seconds of video
+                      // maxBufferSize: 30 * 1000 * 1000, // Limit buffer size to 60 MB
+                    });
                     hls.loadSource(url);
                     hls.attachMedia(videoElement);
+                    hlsRef.current = hls; // Store the Hls instance
                   } else if (
                     videoElement.canPlayType("application/vnd.apple.mpegurl")
                   ) {
@@ -115,6 +120,11 @@ const SearchPlayer = ({
       // };
 
       return () => {
+        // Clean up the Hls instance
+        if (hlsRef.current) {
+          hlsRef.current.destroy();
+          hlsRef.current = null;
+        }
         // Clean up the Artplayer instance and observers
         if (artPlayerInstanceRef.current) {
           artPlayerInstanceRef.current.destroy();
@@ -128,9 +138,9 @@ const SearchPlayer = ({
         //   observer.disconnect();
         // }
         // Use lozad's custom API for cleanup
-        // if (observer) {
-        //   observer = null; // Safely nullify; lozad has no explicit `disconnect`
-        // }
+        if (observer) {
+          observer = null; // Safely nullify; lozad has no explicit `disconnect`
+        }
       };
     }
   }, [src, thumbnail]);

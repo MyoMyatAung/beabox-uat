@@ -43,8 +43,10 @@ const ShareOverlay: React.FC<any> = ({
     }
   };
 
+  console.log(post?.files[0]);
+
   const onDownload = () => {
-    sendEventToNative("saveVideo", post?.files[0].resourceURL);
+    sendEventToNative("saveVideo", post?.files[0].downloadURL);
   };
 
   const handleShare = () => {
