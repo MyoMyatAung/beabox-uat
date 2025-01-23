@@ -74,6 +74,8 @@ const withProfileData = (WrapperCompo: any) => {
         content_visibility={persistState.content_visibility}
         changeCVisHandler={changeCVisHandler}
         cvLoading={cvLoading}
+        disallow_follow_request={data?.data?.disallow_follow_request}
+        profileRefetch={refetch}
       />
     );
   };

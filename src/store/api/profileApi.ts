@@ -244,10 +244,40 @@ export const profileApi = createApi({
         },
       }),
     }),
+    changeFollowReq: builder.mutation<any, any>({
+      query: (status) => ({
+        url: `/profile/disallow-follow-request`,
+        method: "Post",
+        body: {
+          status,
+        },
+      }),
+    }),
+    changeHideBio: builder.mutation<any, any>({
+      query: (status) => ({
+        url: `/profile/hide-bio`,
+        method: "Post",
+        body: {
+          status,
+        },
+      }),
+    }),
+    changeShareRegion: builder.mutation<any, any>({
+      query: (status) => ({
+        url: `/profile/share-region`,
+        method: "Post",
+        body: {
+          status,
+        },
+      }),
+    }),
   }),
 });
 
 export const {
+  useChangeShareRegionMutation,
+  useChangeHideBioMutation,
+  useChangeFollowReqMutation,
   useChangeCVisMutation,
   useSetPasswordMutation,
   useCheckAnswerMutation,

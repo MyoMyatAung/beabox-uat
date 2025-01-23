@@ -25,7 +25,7 @@ const ResetPassword = () => {
       password,
     });
     if (!data?.status) setError("Something went wrong");
-    navigate(paths.login);
+    navigate(paths.profile);
   };
   return (
     <div className="w-full h-screen px-5 flex flex-col items-center bg-[#16131C]">

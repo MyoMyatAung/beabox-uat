@@ -1,23 +1,40 @@
 import withProfileData from "@/hocs/withProfileData";
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import { MonitorPlay, UserX, UserX2 } from "lucide-react";
 import { Button } from "../ui/button";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import {
+  useChangePrivateProfileStatsMutation,
+  useGetMyProfileQuery,
+} from "@/store/api/profileApi";
+import SmallLoader from "../shared/small-loader";
 
-const PrivateProfile = ({
-  private_profile,
-  changePrivateProfileStatsHandler,
-}: any) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [value, setValue] = useState(private_profile);
-
+const PrivateProfile = () => {
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const { data, refetch, isLoading } = useGetMyProfileQuery("");
+  const [checked, setChecked] = useState<any>(null);
+  const [status, setStatus] = useState("");
+  const [changePrivateProfileStats, { data: data1, isLoading: loading1 }] =
+    useChangePrivateProfileStatsMutation();
   const handler = async () => {
-    await changePrivateProfileStatsHandler(value === "on" ? "off" : "on");
-    setIsOpen(false);
+    await changePrivateProfileStats({
+      status: status === "off" ? "on" : "off",
+    });
+    await refetch();
+    closeRef.current?.click();
   };
 
+  useEffect(() => {
+    setStatus(data?.data?.private_profile);
+    data?.data?.private_profile == "on" ? setChecked(true) : setChecked(false);
+  }, [data]);
   return (
-    <Drawer open={isOpen} onOpenChange={setIsOpen}>
+    <Drawer>
       <div className="flex justify-between items-start">
         <div className="">
           <p className="text-[14px]">Private Profile</p>
@@ -28,12 +45,7 @@ const PrivateProfile = ({
         </div>
         <DrawerTrigger asChild>
           <label className="switch">
-            <input
-              disabled
-              type="checkbox"
-              defaultChecked={value == "on" ? true : false}
-              // onChange={changePrivateProfileStatsHandler}
-            />
+            <input type="checkbox" disabled defaultChecked={checked} />
             <span className="slider round"></span>
           </label>
         </DrawerTrigger>
@@ -59,23 +71,23 @@ const PrivateProfile = ({
             </div>
           </div>
           <div className="flex gap-2">
-            <Button
-              onClick={() => setIsOpen(false)}
-              className="bg-[#F5F5F50A] hover:bg-[#F5F5F50A] w-full"
-            >
-              Cancel
-            </Button>
+            <DrawerClose asChild>
+              <Button className="bg-[#F5F5F50A] hover:bg-[#F5F5F50A] w-full">
+                Cancel
+              </Button>
+            </DrawerClose>
             <Button
               onClick={handler}
               className="bg-[#CD3EFF1F] text-[#CD3EFF] hover:bg-[#CD3EFF1F] w-full"
             >
-              Switch
+              {loading1 ? <SmallLoader /> : "Switch"}
             </Button>
           </div>
+          <DrawerClose ref={closeRef} className="hidden" />
         </div>
       </DrawerContent>
     </Drawer>
   );
 };
 
-export default withProfileData(PrivateProfile);
+export default PrivateProfile;
