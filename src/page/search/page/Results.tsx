@@ -162,7 +162,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
 
   return (
     <div className="">
-      <div className="fixed top-0 z-[99999] bg-black w-full">
+      <div className="fixed top-0 z-[99999] bg-[#15131c] w-full">
         {/* header */}
         <form
           onSubmit={handleSubmit}
