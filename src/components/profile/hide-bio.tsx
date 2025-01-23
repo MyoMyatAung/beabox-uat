@@ -1,11 +1,36 @@
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import { Button } from "../ui/button";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import {
+  useChangeHideBioMutation,
+  useGetMyProfileQuery,
+} from "@/store/api/profileApi";
+import SmallLoader from "../shared/small-loader";
 const HideBio = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const { data, refetch, isLoading } = useGetMyProfileQuery("");
+  const [checked, setChecked] = useState<any>(null);
+  const [hideBio, setHideBio] = useState("");
+  const [changeHideBio, { data: data1, isLoading: loading1 }] =
+    useChangeHideBioMutation();
+  const handler = async () => {
+    await changeHideBio(hideBio === "off" ? "on" : "off");
+    await refetch();
+    closeRef.current?.click();
+  };
+
+  useEffect(() => {
+    setHideBio(data?.data?.hide_bio);
+    data?.data?.hide_bio == "on" ? setChecked(true) : setChecked(false);
+  }, [data]);
 
   return (
-    <Drawer open={isOpen} onOpenChange={setIsOpen}>
+    <Drawer>
       <div className="flex justify-between items-start">
         <div className="">
           <p className="text-[14px]">Hide Bio</p>
@@ -14,14 +39,9 @@ const HideBio = () => {
             turn on.{" "}
           </p>
         </div>
-        <DrawerTrigger>
+        <DrawerTrigger asChild>
           <label className="switch">
-            <input
-              type="checkbox"
-              disabled
-              //   defaultChecked={private_profile == "on" ? true : false}
-              // onChange={changePrivateProfileStatsHandler}
-            />
+            <input type="checkbox" disabled defaultChecked={checked} />
             <span className="slider round"></span>
           </label>
         </DrawerTrigger>
@@ -40,16 +60,19 @@ const HideBio = () => {
             </div>
           </div>
           <div className="flex gap-2">
+            <DrawerClose asChild>
+              <Button className="bg-[#F5F5F50A] hover:bg-[#F5F5F50A] w-full">
+                Cancel
+              </Button>
+            </DrawerClose>
             <Button
-              onClick={() => setIsOpen(false)}
-              className="bg-[#F5F5F50A] hover:bg-[#F5F5F50A] w-full"
+              onClick={handler}
+              className="bg-[#CD3EFF1F] text-[#CD3EFF] hover:bg-[#CD3EFF1F] w-full"
             >
-              Cancel
-            </Button>
-            <Button className="bg-[#CD3EFF1F] text-[#CD3EFF] hover:bg-[#CD3EFF1F] w-full">
-              Turn on
+              {loading1 ? <SmallLoader /> : "Turn on"}
             </Button>
           </div>
+          <DrawerClose ref={closeRef} className="hidden" />
         </div>
       </DrawerContent>
     </Drawer>

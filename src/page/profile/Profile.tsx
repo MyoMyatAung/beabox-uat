@@ -150,7 +150,7 @@ const Profile = () => {
                 <p className="z-[1200] text-[14px] text-[#BBBBBB]">
                   B号 : {data?.data?.user_code}
                 </p>
-                {region ? (
+                {data?.data?.share_region == "on" && region ? (
                   <div className="z-[1200] flex">
                     <div className="z-[1200] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 pt-1 rounded-full justify-center shrink-0">
                       <span>{region?.city}</span>:
