@@ -16,13 +16,13 @@ const FollowTabs = () => {
           className="text-[#888888] data-[state=active]:text-white text-[15px] flex items-center"
           value="follower"
         >
-          <span className="">Follower</span>
+          <span className="">粉丝</span>
         </TabsTrigger>
         <TabsTrigger
           className="text-[#888888] data-[state=active]:text-white text-[12px] flex items-center"
           value="following"
         >
-          Following
+          关注列表
         </TabsTrigger>
       </TabsList>
       <div className="bg-[#111111] w-full rounded-full shadow-md my-5 flex items-center pl-4">

@@ -1,4 +1,4 @@
-import { Menu, Wallet, Settings, QrCode, UserPen } from "lucide-react";
+import { Menu, Wallet, Settings, QrCode, UserPen, UserCog } from "lucide-react";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { Link, useNavigate } from "react-router-dom";
 import { paths } from "@/routes/paths";
@@ -18,22 +18,22 @@ const SettingBtn = ({ setShow }: any) => {
     //   link: paths.wallet,
     // },
     {
-      title: "Creator Centre",
-      icon: <UserPen size={14} />,
+      title: "创作者中心",
+      icon: <UserCog size={14} />,
       // link: paths.settings,
     },
     {
-      title: "Edit Profile",
+      title: "编辑资料",
       icon: <UserPen size={14} />,
       link: paths.profileDetail,
     },
     {
-      title: "Invitation QR",
+      title: "邀请码",
       icon: <QrCode size={14} />,
       link: paths.wallet_invite,
     },
     {
-      title: "Setting & Privacy",
+      title: "设置和隐私",
       icon: <Settings size={14} />,
       link: paths.settings,
     },
@@ -45,12 +45,12 @@ const SettingBtn = ({ setShow }: any) => {
     //   link: user?.token ? paths.login : paths.wallet,
     // },
     {
-      title: "Creator Centre",
+      title: "创作者中心",
       icon: <UserPen size={14} />,
       link: paths.settings,
     },
     {
-      title: "Setting & Privacy",
+      title: "设置和隐私",
       icon: <Settings size={14} />,
       link: paths.settings,
     },
@@ -71,7 +71,7 @@ const SettingBtn = ({ setShow }: any) => {
                   <div
                     key={title}
                     onClick={() => {
-                      if (title === "Creator Centre") {
+                      if (title === "创作者中心") {
                         setIsOpen(false);
                         setShow(true);
                       } else {
