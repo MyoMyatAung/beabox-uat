@@ -13,7 +13,7 @@ const AuthDrawer = () => {
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>
         <div className="z-[1200] flex items-center gap-2 flex-1">
-          <span className="z-[1200] text-[18px] ">Login Or Sign Up</span>
+          <span className="z-[1200] text-[18px] ">点击登陆</span>
           <ChevronRight size={18} />
         </div>
       </DrawerTrigger>
