@@ -42,10 +42,29 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
     navigate(paths.vod_details);
   };
 
-  const showMore = (tt:any) => {
+  const showMore = (tt: any) => {
     dispatch(setTitle(tt));
     navigate(paths.recommand_more, { state: { tt } });
   };
+
+  function formatDuration(duration: any) {
+    const hours = Math.floor(duration / 3600); // Get the hours
+    const minutes = Math.floor((duration % 3600) / 60); // Get the remaining minutes
+    const seconds = duration % 60; // Get the remaining seconds
+
+    // Ensure all values are padded to 2 digits
+    const formattedMinutes = minutes.toString().padStart(2, "0");
+    const formattedSeconds = seconds.toString().padStart(2, "0");
+
+    if (hours > 0) {
+      const formattedHours = hours.toString().padStart(2, "0");
+      return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+    } else {
+      return `${formattedMinutes}:${formattedSeconds}`;
+    }
+  }
+
+  // console.log(list);
   return (
     <div className=" pb-[20px] px-[10px] pt-[10px] ">
       {isLoading ? (
@@ -93,10 +112,10 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
                         <div className=" absolute left-0 mx-auto right-0 bottom-0 flex justify-around items-center w-full bg-blac">
                           <div className=" flex w-full justify-between px-2">
                             <span className=" text-white text-[11px]  left-">
-                              29.3k views
+                              {card?.view_count} 次观看
                             </span>
                             <span className=" text-white text-[11px]  right-0">
-                              00:23
+                              {formatDuration(card.files[0].duration)}
                             </span>
                           </div>
                         </div>

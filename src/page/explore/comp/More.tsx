@@ -16,7 +16,7 @@ interface MoreProps {}
 const More: React.FC<MoreProps> = () => {
   const [show, setshow] = useState<boolean>(false);
   const { title, more_tab } = useSelector((state: any) => state.explore);
-  console.log(more_tab)
+  console.log(more_tab);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const dispatch = useDispatch();
@@ -25,7 +25,7 @@ const More: React.FC<MoreProps> = () => {
   const [list, setList] = useState<any[]>([]);
   const { data, isLoading, isFetching, refetch } = useGetExploreTagQuery({
     order: more_tab, // Use more_tab directly
-    tag: title? title : "Latest Drama",
+    tag: title ? title : "Latest Drama",
     page: page,
   });
 
@@ -37,12 +37,9 @@ const More: React.FC<MoreProps> = () => {
       // setList(data?.data.list);
       setList((prev) => [...prev, ...data.data.list]);
     }
-    refetch();
-  }, [data, more_tab, hasMore]); // Depend on more_tab
+    // refetch();
+  }, [data]); // Depend on more_tab
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
   const popularItems = Array.from({ length: 10 }, (_, i) => ({
     title: `My Boss (2021) - ${i + 1}`,
@@ -63,6 +60,8 @@ const More: React.FC<MoreProps> = () => {
     navigate(paths.vod_details);
   };
 
+  
+console.log(list)
   return (
     <>
       <div className="p-[20px]">
@@ -85,7 +84,7 @@ const More: React.FC<MoreProps> = () => {
             }`}
             onClick={() => dispatch(setMoreTab("popular"))} // Update more_tab
           >
-            Popular
+            最热门
           </button>
           <button
             className={`text-white text-[14px] font-[400] leading-[16px] px-[16px] py-[8px] ${
@@ -95,7 +94,7 @@ const More: React.FC<MoreProps> = () => {
             }`}
             onClick={() => dispatch(setMoreTab("latest"))} // Update more_tab
           >
-            Latest
+            最新
           </button>
         </div>
 
@@ -133,9 +132,9 @@ const More: React.FC<MoreProps> = () => {
                       </span>
                       <div className="flex justify-between text-[#AAA] text-[12px] font-[400] leading-[15px]">
                         <span>
-                          {item.view_count ? item.view_count : "0"} views
+                          {item.view_count ? item.view_count : "11"} 次观看
                         </span>
-                        <span>{item.like_count} likes</span>
+                        <span>{item.like_count} 人喜欢</span>
                       </div>
                     </div>
                   </div>
