@@ -28,7 +28,7 @@ const ImageUpload = ({ imgurl }: any) => {
       if (e.target && typeof e.target.result === "string") {
         setImage(e.target.result);
         console.log("1");
-        await settingUpload({ filedata: e.target.result });
+        await settingUpload({ filedata: e.target.result, filePath: "profile" });
         // if (settingUploadData?.status)
         // await profileUpload({ file_url: settingUploadData?.data?.url });
       }
@@ -41,7 +41,6 @@ const ImageUpload = ({ imgurl }: any) => {
       profileUpload({ file_url: settingUploadData?.data?.url });
     // console.log(settingUploadData?.data?.url, "storage uploaded");
   }, [settingUploadData]);
-
 
   return (
     <>

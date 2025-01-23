@@ -98,22 +98,24 @@ const Settings = ({
           </p>
         </div>
       </div>
-      {user?.token ? (
-        <div className="bot w-full py-5">
-          <Button
-            onClick={async () => {
-              dispatch(logOutUser());
-              await logout("");
-              // navigate(paths.profile);
-            }}
-            className="w-full rounded-xl bg-[#1C1A22] hover:bg-[#1C1A22]"
-          >
-            Log Out
-          </Button>
-        </div>
-      ) : (
-        <></>
-      )}
+      <div className="w-full">
+        {user?.token ? (
+          <div className="bot w-full py-5">
+            <Button
+              onClick={async () => {
+                dispatch(logOutUser());
+                await logout("");
+                // navigate(paths.profile);
+              }}
+              className="w-full rounded-xl bg-[#1C1A22] hover:bg-[#1C1A22]"
+            >
+              Log Out
+            </Button>
+          </div>
+        ) : (
+          <></>
+        )}
+      </div>
     </div>
   );
 };
