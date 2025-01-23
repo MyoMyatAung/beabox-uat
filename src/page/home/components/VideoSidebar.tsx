@@ -253,6 +253,10 @@ function VideoSidebar({
     setMute(!mute);
   };
 
+  const handleProfile = (id: any) => {
+    navigate(`/user/${id}`);
+  };
+
   return (
     <div
       className={`${
@@ -260,23 +264,44 @@ function VideoSidebar({
       } z-[999] w-[50px]`}
     >
       <div className="videoSidebar__button ">
-        <button
-          className="flex flex-col items-center relative mb-2"
-          onClick={handleFollow}
-        >
-          {post?.user?.avatar ? (
-            <Avatar className="w-[35.25px] h-[35.25px] border-2 border-white ">
-              <AvatarImage src={post?.user?.avatar} />
-              <AvatarFallback>SM</AvatarFallback>
-            </Avatar>
-          ) : (
-            <Avatar className="w-[35.25px] h-[35.25px] border-2 border-white ">
-              <AvatarImage src="https://i.pinimg.com/236x/64/bf/60/64bf60f08e226ae662e83a459a28a9bf.jpg" />
-              <AvatarFallback>SM</AvatarFallback>
-            </Avatar>
-          )}
+        <div className="flex flex-col items-center relative mb-2">
+          <button onClick={() => handleProfile(post?.user?.id)}>
+            {post?.user?.avatar ? (
+              <Avatar className="w-[35.25px] h-[35.25px] border-2 border-white ">
+                <AvatarImage src={post?.user?.avatar} />
+                <AvatarFallback>SM</AvatarFallback>
+              </Avatar>
+            ) : (
+              <Avatar className="w-[40.25px] p-3 bg-[#3a374d] flex justify-center items-center h-[40.25px] ">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="21"
+                  height="30"
+                  viewBox="0 0 21 30"
+                  fill="none"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M10.3206 17.5712C4.82551 17.5712 0.00585938 20.804 0.00585938 24.4875C0.00585938 29.2271 7.77035 29.2271 10.3206 29.2271C12.8709 29.2271 20.634 29.2271 20.634 24.4566C20.634 20.7885 15.8143 17.5712 10.3206 17.5712Z"
+                    fill="white"
+                  />
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M10.2666 14.4974H10.3102C14.0948 14.4974 17.1731 11.4191 17.1731 7.63443C17.1731 3.85117 14.0948 0.772888 10.3102 0.772888C6.52559 0.772888 3.4473 3.85117 3.4473 7.63162C3.43467 11.4036 6.49188 14.4834 10.2666 14.4974Z"
+                    fill="white"
+                  />
+                </svg>
+                {/* <AvatarFallback>SM</AvatarFallback> */}
+              </Avatar>
+            )}
+          </button>
 
-          <div className="flex justify-center items-center absolute -bottom-2">
+          <button
+            className="flex justify-center items-center absolute -bottom-2"
+            onClick={handleFollow}
+          >
             {follow ? (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -298,8 +323,8 @@ function VideoSidebar({
                 +
               </span>
             )}
-          </div>
-        </button>
+          </button>
+        </div>
       </div>
 
       <div className="videoSidebar__button ">
