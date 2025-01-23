@@ -21,10 +21,10 @@ const EditReferral = ({ referral_code }: any) => {
   return (
     <Drawer open={isOpen} onOpenChange={() => setIsOpen(true)}>
       <div className="text-[14px] flex items-center justify-between">
-        <h1>Referral Code</h1>
+        <h1>邀请码</h1>
         <DrawerTrigger asChild>
           <p className="flex items-center gap-1 text-[#888]">
-            {referral_code} 
+            {referral_code}
             {/* <FaAngleRight /> */}
           </p>
         </DrawerTrigger>

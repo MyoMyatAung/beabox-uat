@@ -35,6 +35,7 @@ const ProfileDetail = () => {
     refetch();
   }, [private_profile]);
 
+  // console.log(profileData)
   // console.log(data?.data?.profile_photo);
 
   // useEffect(() => {
@@ -48,12 +49,12 @@ const ProfileDetail = () => {
           <Link to={paths.profile}>
             <FaAngleLeft size={18} />
           </Link>
-          <p className="text-[16px] mr-5">Profile</p>
+          <p className="text-[16px] mr-5">资料</p>
           <div></div>
         </div>
         <ImageUpload imgurl={data?.data?.profile_photo} />
         <div className="flex flex-col gap-7 my-7">
-          <h1 className="text-[12px] text-[#888]">About you</h1>
+          <h1 className="text-[12px] text-[#888]">关于你</h1>
           <EditUsername
             username={data?.data?.username}
             refetchHandler={refetchHandler}
@@ -71,14 +72,14 @@ const ProfileDetail = () => {
           </p>
         </div> */}
           <div className="text-[14px] flex items-center justify-between">
-            <h1>User ID</h1>
-            <p className="flex items-center gap-1 text-[#888]">{user?.id}</p>
+            <h1>用户身份</h1>
+            <p className="flex items-center gap-1 text-[#888]">{profileData?.user_code}</p>
           </div>
           <EditBio bio={data?.data?.bio} refetchHandler={refetchHandler} />
         </div>
         <div className="w-full h-[0.08px] bg-[#FFFFFF0A]"></div>
         <div className="flex flex-col gap-7 my-7">
-          <h1 className="text-[12px] text-[#888]">Invitation</h1>
+          <h1 className="text-[12px] text-[#888]">邀请函</h1>
           <EditReferral referral_code={data?.data?.referral_code} />
         </div>
         <div className="w-full h-[0.08px] bg-[#FFFFFF0A]"></div>

@@ -80,15 +80,13 @@ const Profile = () => {
               </div>
               <div className="z-[1200] flex flex-col justify-center items-center gap-4 bg-[#161619] p-5 rounded-bl-lg rounded-br-lg">
                 <h1 className="z-[1200] text-[18px] font-semibold text-white">
-                  Creator Centre
+                  创作者中心
                 </h1>
-                <p className="z-[1200] text-[14px] text-[#FFFFFFCC]">
-                  Introducing Creator Centers: your new hub to discover top
-                  creators, view rankings, watch the most popular videos, and
-                  explore fresh content—all in one place.{" "}
+                <p className="z-[1200] text-[14px] text-center text-[#FFFFFFCC]">
+                  查看创作者排名，洞察顶尖创作者的风采，观看最受欢迎视频，掌握流行趋势，发现精彩瞬间，探索全新内容。
                 </p>
                 <Button className="z-[1200] bg-[#FFFFFF14] hover:bg-[#FFFFFF14]">
-                  Coming soon, stay tuned!
+                即将上线，敬请期待！
                 </Button>
               </div>
             </div>

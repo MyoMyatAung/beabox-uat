@@ -39,7 +39,7 @@ const EditUsername = ({
   return (
     <Drawer>
       <div className="text-[14px] flex items-center justify-between">
-        <h1>User Name</h1>
+        <h1>用户名</h1>
         <DrawerTrigger asChild>
           <p className="flex items-center gap-1 text-[#888]">
             {username} <FaAngleRight />

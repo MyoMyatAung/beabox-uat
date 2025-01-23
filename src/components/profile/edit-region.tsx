@@ -54,7 +54,7 @@ const EditRegion = () => {
   return (
     <Drawer onOpenChange={() => setIsOpen(true)}>
       <div className="text-[14px] flex items-center justify-between">
-        <h1>Region</h1>
+        <h1>地区</h1>
         <DrawerTrigger asChild>
           <p
             onClick={() => setIsOpen(true)}

@@ -38,7 +38,7 @@ const EditNickName = ({
   return (
     <Drawer>
       <div className="text-[14px] flex items-center justify-between">
-        <h1>Nickname</h1>
+        <h1>昵称</h1>
         <DrawerTrigger asChild>
           <p className="flex items-center gap-1 text-[#888]">
             {nickname} <FaAngleRight />

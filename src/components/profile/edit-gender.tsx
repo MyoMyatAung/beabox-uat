@@ -25,7 +25,7 @@ const EditGender = () => {
   return (
     <Drawer>
       <div className="text-[14px] flex items-center justify-between">
-        <h1>Gender</h1>
+        <h1>性别</h1>
         <DrawerTrigger asChild>
           <p className="flex items-center gap-1 text-[#888]">
             {gender} <FaAngleRight />
