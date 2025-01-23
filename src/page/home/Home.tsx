@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, memo, useRef, useState } from "react";
 import {
   useGetConfigQuery,
   useGetFollowedPostsQuery,
@@ -19,12 +19,19 @@ import Explorer from "../explore/Explore";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentTab } from "./services/homeSlice";
+import { setCurrentActivePost } from "./services/activeSlice";
+import { setVideos } from "./services/videosSlice";
+import { setPage } from "./services/pageSlice";
 
 const Home = () => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
-  const [videos, setVideos] = useState<any[]>([]);
-  const [page, setPage] = useState(1);
-  const [currentActivePost, setCurrentActivePost] = useState<any>(null); // Active post ID
+  // const [videos, setVideos] = useState<any[]>([]);
+  //const [page, setPage] = useState(1);
+  const { currentActivePost } = useSelector((state: any) => state.activeslice);
+  const { videos } = useSelector((state: any) => state.videoSlice);
+  const { page } = useSelector((state: any) => state.pageSlice);
+
+  //const [currentActivePost, setCurrentActivePost] = useState<any>(null); // Active post ID
   const [showHeart, setShowHeart] = useState(false);
   const [countdown, setCountdown] = useState(3);
   const [countNumber, setCountNumber] = useState(0); // New state for counting clicks
@@ -78,6 +85,8 @@ const Home = () => {
     { skip: currentTab !== 2 }
   );
 
+  console.log(videos);
+
   const isLoading =
     (currentTab === 0 && isFollowFetching) ||
     (currentTab === 1 && isLatestFetching) ||
@@ -85,27 +94,135 @@ const Home = () => {
 
   const isError = latestError || ForyouError || followError;
 
+  console.log(page);
+
+  // useEffect(() => {
+  //   // Populate videos based on the current tab and fetched data
+  //   const currentData =
+  //     currentTab === 0
+  //       ? followData
+  //       : currentTab === 1
+  //       ? latestData
+  //       : forYouData;
+
+  //   console.log("win");
+
+  //   if (currentData?.data) {
+  //     // Filter out posts with duplicate `post_id`
+  //     const filteredData = currentData.data.filter(
+  //       (newPost: any) =>
+  //         !videos.some((video: any) => video.post_id === newPost.post_id)
+  //     );
+
+  //     if (filteredData.length > 0) {
+  //       if (page === 1) {
+  //         console.log("ha1");
+  //         dispatch(setVideos(filteredData)); // Set the filtered videos if page is 1
+  //       } else {
+  //         console.log("ha2");
+  //         dispatch(setVideos([...videos, ...filteredData])); // Append filtered videos otherwise
+  //       }
+  //     } else {
+  //       console.log("No new videos to add");
+  //     }
+  //   }
+  // }, [followData, forYouData, latestData, currentTab, videos]);
+
   useEffect(() => {
-    // Populate videos based on the current tab and fetched data
+    // Determine which data corresponds to the current tab
     const currentData =
-      currentTab === 0
-        ? followData
-        : currentTab === 1
-        ? latestData
-        : forYouData;
+      currentTab === 0 ? followData : currentTab === 2 ? forYouData : null; // Add other tabs if necessary
+
+    console.log("win");
 
     if (currentData?.data) {
-      if (page === 1) {
-        setVideos(currentData.data);
+      // Determine the key in the videos object based on the current tab
+      const videoKey =
+        currentTab === 0 ? "follow" : currentTab === 2 ? "foryou" : "";
+
+      // Filter out posts with duplicate `post_id`
+      const filteredData = currentData.data.filter(
+        (newPost: any) =>
+          !videos[videoKey]?.some(
+            (video: any) => video.post_id === newPost.post_id
+          )
+      );
+
+      if (filteredData.length > 0) {
+        if (page === 1) {
+          console.log("ha1");
+          // Replace videos for the current tab
+          dispatch(
+            setVideos({
+              ...videos,
+              [videoKey]: filteredData, // Update only the current tab
+            })
+          );
+        } else {
+          console.log("ha2");
+          // Append filtered videos for the current tab
+          dispatch(
+            setVideos({
+              ...videos,
+              [videoKey]: [...videos[videoKey], ...filteredData], // Append to the current tab
+            })
+          );
+        }
       } else {
-        setVideos((prev) => [...prev, ...currentData.data]);
+        console.log("No new videos to add");
       }
     }
-  }, [followData, latestData, forYouData, currentTab]);
+  }, [followData, forYouData, currentTab, videos, page]);
+
+  // useEffect(() => {
+  //   // Populate videos based on the current tab and fetched data
+  //   const currentData =
+  //     currentTab === 0
+  //       ? followData
+  //       : currentTab === 1
+  //       ? latestData
+  //       : forYouData;
+
+  //   console.log("win");
+
+  //   if (currentData?.data) {
+  //     if (page === 1) {
+  //       console.log("ha1");
+  //       dispatch(setVideos(currentData.data));
+
+  //       // setVideos(currentData.data);
+  //     } else {
+  //       console.log("ha2");
+  //       dispatch(setVideos([...videos, ...currentData.data]));
+
+  //       // dispatch(setVideos((prev: any) => [...prev, ...currentData.data]));
+  //       //setVideos((prev: any) => [...prev, ...currentData.data]);
+  //     }
+  //   }
+  // }, [followData, forYouData, latestData, currentTab]);
+
+  // Scroll to the first current post when the component is mounted
+  useEffect(() => {
+    const container = videoContainerRef.current;
+    if (container && currentActivePost) {
+      const activeElement = container.querySelector(
+        `[data-post-id="${currentActivePost}"]`
+      );
+      if (activeElement) {
+        activeElement.scrollIntoView({ block: "center" });
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const container = videoContainerRef.current;
-    if (!container || videos.length === 0) return;
+    console.log("active");
+    console.log(videos);
+    if (
+      !container ||
+      videos[currentTab === 2 ? "foryou" : "follow"].length === 0
+    )
+      return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -114,7 +231,7 @@ const Home = () => {
             // Get the post ID of the currently visible video
             const postId = entry.target.getAttribute("data-post-id");
             if (postId) {
-              setCurrentActivePost(postId);
+              dispatch(setCurrentActivePost(postId));
             }
           }
         });
@@ -130,7 +247,7 @@ const Home = () => {
     return () => {
       observer.disconnect();
     };
-  }, [videos]);
+  }, [videos[currentTab === 2 ? "foryou" : "follow"]]);
 
   useEffect(() => {
     if (currentActivePost) {
@@ -150,14 +267,16 @@ const Home = () => {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setPage((prevPage) => prevPage + 1);
+            // dispatch(setPage((prevPage: any) => prevPage + 1));
+            dispatch(setPage(page + 1));
+            // setPage((prevPage) => prevPage + 1);
           }
         });
       },
       { rootMargin: "100px", threshold: 0.5 }
     );
 
-    if (videos.length > 1) {
+    if (videos[currentTab === 2 ? "foryou" : "follow"].length > 1) {
       const secondLastVideo = container.children[container.children.length - 3];
       if (secondLastVideo) observer.observe(secondLastVideo);
     }
@@ -201,14 +320,17 @@ const Home = () => {
   const handleTabClick = (tab: number) => {
     if (currentTab !== tab) {
       dispatch(setCurrentTab(tab));
+      dispatch(setCurrentActivePost(null));
       // setCurrentTab(tab); // Update the current tab
-      setPage(1);
-      setVideos([]);
+      dispatch(setPage(1));
+      // dispatch(setVideos([]));
 
-      // Update the Swiper active index
-      if (swiperRef.current) {
-        swiperRef.current.slideTo(tab); // Change the Swiper index to match the clicked tab
-      }
+      //setVideos([]);
+
+      // // Update the Swiper active index
+      // if (swiperRef.current) {
+      //   swiperRef.current.slideTo(tab); // Change the Swiper index to match the clicked tab
+      // }
     }
   };
 
@@ -221,6 +343,8 @@ const Home = () => {
       setRotateVideoId(postId);
     }
   };
+
+  console.log(currentActivePost);
 
   return (
     <div className="flex justify-center items-center">
@@ -236,7 +360,7 @@ const Home = () => {
         <div className="app bg-black">
           {/* <SwiperSlide> */}
           {currentTab === 0 &&
-            (isLoading && videos.length === 0 ? (
+            (isLoading && videos["follow"]?.length === 0 ? (
               <div className="app bg-black">
                 <div
                   style={{
@@ -259,7 +383,7 @@ const Home = () => {
                   ref={videoContainerRef}
                   className={`app__videos pb-[74px] `}
                 >
-                  {videos.map((video, index) => (
+                  {videos["follow"]?.map((video: any, index: any) => (
                     <div
                       key={index}
                       className="video mt-[20px]"
@@ -426,7 +550,7 @@ const Home = () => {
           {/* </SwiperSlide>
           <SwiperSlide> */}
           {currentTab == 2 &&
-            (isLoading && videos.length === 0 ? (
+            (isLoading && videos["foryou"]?.length === 0 ? (
               <div className="app bg-black">
                 <div
                   style={{
@@ -449,7 +573,7 @@ const Home = () => {
                   ref={videoContainerRef}
                   className={`app__videos pb-[74px]`}
                 >
-                  {videos.map((video, index) => (
+                  {videos["foryou"]?.map((video: any, index: any) => (
                     <div
                       key={index}
                       className="video mt-[20px]"
@@ -615,7 +739,7 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default memo(Home);
 
 {
   /* {video?.related.length > 0 && (
