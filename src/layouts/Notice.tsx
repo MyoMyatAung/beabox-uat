@@ -1,0 +1,110 @@
+import React, { useState } from "react";
+
+interface NoticeProps {
+  notice: any;
+  handleNoticeClose: any;
+}
+
+const Notice: React.FC<NoticeProps> = ({ notice, handleNoticeClose }) => {
+  const [activeIndex, setActiveIndex] = useState<number>(0);
+  const [activeTextIndex, setActiveTextIndex] = useState<number>(0);
+  console.log(activeIndex);
+  const test: any = notice[activeIndex].notices[activeTextIndex];
+
+  const handleClick = (index: number) => {
+    setActiveIndex(index);
+  };
+
+  const handleTextClick = (index: number) => {
+    setActiveTextIndex(index);
+  };
+  console.log(notice[activeIndex]);
+  return (
+    <div className="">
+      <div className="w-[330px] flex flex-col gap-0 justify-center items-center">
+        <div className="initial_popup_ad_box_notice w-full h-[500px] overflow-hidde p-[10px]">
+          <div className="flex flex-col justify-center scrollbar-hide">
+            <div className=" w-full flex">
+              {notice?.map((app: any, index: number) => (
+                <div
+                  key={index}
+                  className="flex flex-col w-full justify-center items-center cursor-pointer"
+                  onClick={() => handleClick(index)} // Handle click to set active
+                >
+                  <h1
+                    className={`text-center text-white text-[18px] font-[600] `}
+                  >
+                    {app.title}
+                  </h1>
+                  {activeIndex === index && (
+                    <span className="initial_popup_ad_box_notice_active"></span>
+                  )}
+                </div>
+              ))}
+            </div>
+            <div className=" grid grid-cols-5 gap-2 justify-center items-center pt-[20px]">
+              {/* titles */}
+              <div className=" col-span-2 flex flex-col gap-[8px] initial_popup_ad_box_notice_title_box px-[4px] py-[6px]">
+                {notice[activeIndex] &&
+                  notice[activeIndex].notices?.map((nn: any, index: number) => (
+                    <div
+                      onClick={() => setActiveTextIndex(index)}
+                      key={nn.id}
+                      className={`${
+                        activeTextIndex === index
+                          ? "initial_popup_ad_box_notice_title_box_gg_active"
+                          : "initial_popup_ad_box_notice_title_box_gg"
+                      }`}
+                    >
+                      <h1 className="text-white text-center px-[12px] py-[8px]  text-[12px] font-[500] leading-[14px]">
+                        {nn.title}
+                      </h1>
+                    </div>
+                  ))}
+              </div>
+              {/* texts */}
+              <div className=" col-span-3 flex flex-col gap-[8px] text-white h-full pt-2">
+                <h1 className=" text-white text-[12px] font-[500] leading-[12px]">
+                  {" "}
+                  {test.title}
+                </h1>
+                <p className=" text-[#888] text-[10px] font-[500]">
+                  {test.content}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          onClick={handleNoticeClose}
+          className="initial_popup_ad_box_close p-[9px] mt-4"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="23"
+            viewBox="0 0 24 23"
+            fill="none"
+          >
+            <path
+              d="M17.75 5.75L6.25 17.25"
+              stroke="white"
+              strokeWidth="1.49593"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M6.25 5.75L17.75 17.25"
+              stroke="white"
+              strokeWidth="1.49593"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Notice;

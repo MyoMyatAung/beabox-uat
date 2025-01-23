@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 import header from "../assets/explore/Header.png";
-import { useGetAdsPopUpQuery } from "@/store/api/explore/exploreApi";
+import {
+  useGetAdsNoticeQuery,
+  useGetAdsPopUpQuery,
+} from "@/store/api/explore/exploreApi";
 import "../page/explore/explore.css";
 import ImageWithPlaceholder from "@/page/search/comp/imgPlaceholder";
+import Notice from "./Notice";
 
 interface PopUpProps {
   setShowAd: any;
@@ -11,10 +15,13 @@ interface PopUpProps {
 const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
   const [ad, setAd] = useState([]);
   const [start, setStart] = useState<any>();
-  const [showStart, setShowStart] = useState(true); // State to handle start image visibility
-  const [showAdContent, setShowAdContent] = useState(false); // State to handle ad content visibility
+  const [showStart, setShowStart] = useState(true);
+  const [showAppContent, setShowAppContent] = useState(false);
+  const [showNotice, setShowNotice] = useState(false);
+  const [NotList, setNotList] = useState<any>();
 
   const { data, isLoading } = useGetAdsPopUpQuery("");
+  const { data: notice, isLoading: noticeLoading } = useGetAdsNoticeQuery("");
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -29,17 +36,26 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
       setAd(data.data.popup_application.apps);
       setStart(data?.data.app_start_popup);
     }
-  }, [data]);
+    if (notice?.data) {
+      setNotList(notice?.data);
+    }
+  }, [data,notice]);
 
   const handleStartClose = () => {
     setShowStart(false);
-    setShowAdContent(true);
+    setShowAppContent(true);
   };
 
-  const handleAdClose = () => {
-    setShowAdContent(false);
-    setShowAd(false);
+  const handleAppClose = () => {
+    setShowAppContent(false);
+    setShowNotice(true);
+   
   };
+
+  const handleNoticeClose = () => {
+    setShowNotice(false)
+     setShowAd(false);
+  }
 
   return (
     <div className="h-screen bg-black/80 w-screen flex flex-col gap-[20px] justify-center items-center fixed top-0 z-[9999]">
@@ -95,8 +111,8 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
         </>
       )}
 
-      {/* Ad Content */}
-      {!showStart && showAdContent && (
+      {/* apps */}
+      {!showStart && showAppContent && (
         <div className="w-[330px] flex flex-col gap-0 justify-center items-center">
           <img src={header} alt="" />
           <div className="initial_popup_ad_box w-full h-[304px] overflow-hidde p-[10px]">
@@ -133,7 +149,7 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
             )}
           </div>
           <div
-            onClick={handleAdClose}
+            onClick={handleAppClose}
             className="initial_popup_ad_box_close p-[9px] mt-4"
           >
             <svg
@@ -161,6 +177,7 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
           </div>
         </div>
       )}
+      {!showStart && !showAppContent && showNotice && <Notice handleNoticeClose={handleNoticeClose} notice={NotList} />}
     </div>
   );
 };

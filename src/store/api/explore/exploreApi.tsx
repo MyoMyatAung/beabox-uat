@@ -28,8 +28,14 @@ export const exploreApi = createApi({
         method: "GET",
       }),
     }),
+    getAdsNotice: builder.query<any, string>({
+      query: () => ({
+        url: `/notice/list`,
+        method: "GET",
+      }),
+    }),
     getExploreTag: builder.query<any, any>({
-      query: ({ order, tag ,page }) => ({
+      query: ({ order, tag, page }) => ({
         url: `/post/search/tag?tag=${tag}&order=${order}&pageSize=10&page=${page}`,
         method: "GET",
       }),
@@ -41,40 +47,39 @@ export const exploreApi = createApi({
       }),
     }),
     getExploreList: builder.query<any, any>({
-      query: ({ id , page }) => ({
+      query: ({ id, page }) => ({
         url: `explore/list?id=${id}&page=${page}`,
         method: "GET",
       }),
     }),
     postCommentExp: builder.mutation<
-    void,
-    { post_id: any; content: any; comment_id?: any; reply_id?: any }
-  >({
-    query: ({ post_id, content, comment_id, reply_id }) => {
+      void,
+      { post_id: any; content: any; comment_id?: any; reply_id?: any }
+    >({
+      query: ({ post_id, content, comment_id, reply_id }) => {
+        const body: {
+          post_id: any;
+          content: any;
+          comment_id?: any;
+          reply_id?: any;
+        } = {
+          post_id,
+          content,
+        };
 
-      const body: {
-        post_id: any;
-        content: any;
-        comment_id?: any;
-        reply_id?: any;
-      } = {
-        post_id,
-        content,
-      };
-
-      if (comment_id != null) {
-        body.comment_id = comment_id;
-      }
-      if (reply_id != null) {
-        body.reply_id = reply_id;
-      }
-      return {
-        url: `/post/comment`,
-        method: "POST",
-        body, 
-      };
-    },
-  }),
+        if (comment_id != null) {
+          body.comment_id = comment_id;
+        }
+        if (reply_id != null) {
+          body.reply_id = reply_id;
+        }
+        return {
+          url: `/post/comment`,
+          method: "POST",
+          body,
+        };
+      },
+    }),
   }),
 });
 
@@ -84,5 +89,6 @@ export const {
   useGetApplicationAdsQuery,
   useGetExploreListQuery,
   usePostCommentExpMutation,
-  useGetAdsPopUpQuery
+  useGetAdsPopUpQuery,
+  useGetAdsNoticeQuery,
 } = exploreApi;

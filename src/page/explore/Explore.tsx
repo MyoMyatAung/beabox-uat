@@ -17,7 +17,7 @@ import { setExpHeader } from "@/store/slices/exploreSlice";
 const Explore = () => {
   const [activeTab, setActiveTab] = useState("Recommend");
   const { exp_header } = useSelector((state: any) => state.explore);
-  console.log(exp_header);
+  // console.log(exp_header);
   const [searchParams, setSearchParams] = useSearchParams();
   const [tabs, setTabs] = useState(["Recommend", "Latest", "Hollywood"]);
   const [dyId, setDyId] = useState<any>("");
@@ -30,6 +30,8 @@ const Explore = () => {
     if (data?.data?.tabs) {
       const tt = data?.data?.tabs.map((t: any) => t.name);
       const ii = data?.data?.tabs.map((t: any) => t.id);
+      // console.log(tt[0]);
+      dispatch(setExpHeader(tt[0]));
       setTabs([...tt, tabs]);
       setDyId([...ii, dyId]);
     }
@@ -78,7 +80,7 @@ const Explore = () => {
                   {exp_header === gg.name && (
                     <div className=" min-h-screen text-white">
                       {gg.type === "topic" ? (
-                        <Recommand  list_id={gg.id} title="Chinese Drama" />
+                        <Recommand list_id={gg.id} title="Chinese Drama" />
                       ) : (
                         <Latest list_id={gg.id} />
                       )}
@@ -95,6 +97,3 @@ const Explore = () => {
 };
 
 export default Explore;
-
-
-
