@@ -12,12 +12,22 @@ const initialState: any = {
   securityQues: null,
   region: null,
   cover: null,
+  forgotData: null,
+  forgotToken: null,
+  authToggle: true,
+  content_visibility: "",
 };
 
 export const persistSlice = createSlice({
   name: "persist",
   initialState,
   reducers: {
+    setCVisibility: (state, { payload }) => {
+      state.content_visibility = payload;
+    },
+    setAuthToggle: (state, { payload }) => {
+      state.authToggle = payload;
+    },
     setRegisterUser: (state, { payload }) => {
       state.registerUser = payload;
     },
@@ -56,10 +66,20 @@ export const persistSlice = createSlice({
     setCover: (state, { payload }) => {
       state.cover = payload;
     },
+    setForgotData: (state, { payload }) => {
+      state.forgotData = payload;
+    },
+    setForgotToken: (state, { payload }) => {
+      state.forgotToken = payload;
+    },
   },
 });
 
 export const {
+  setCVisibility,
+  setAuthToggle,
+  setForgotToken,
+  setForgotData,
   setRegisterUser,
   setUser,
   logOutUser,

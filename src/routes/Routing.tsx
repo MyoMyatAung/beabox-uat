@@ -12,6 +12,7 @@ import Withdraw from "@/page/wallet/page/Withdraw";
 import Search from "@/page/search/Search";
 import Results from "@/page/search/page/Results";
 import VodDetails from "@/page/explore/comp/VodDetails";
+import Report from "@/page/report/Report";
 
 const Home = lazy(() => import("../page/home/Home"));
 const Explore = lazy(() => import("../page/explore/Explore"));
@@ -34,7 +35,12 @@ const UploadProcess = lazy(() => import("../page/upload/UploadProcess"));
 const Question = lazy(() => import("../page/profile/security/Question"));
 const Answer = lazy(() => import("../page/profile/security/Answer"));
 const Manage = lazy(() => import("../page/profile/security/Manage"));
-
+const ForgotPassword = lazy(
+  () => import("../components/profile/auth/forgot-password")
+);
+const ResetPassword = lazy(
+  () => import("../components/profile/auth/reset-password")
+);
 const Routing = () => {
   const router = createBrowserRouter([
     {
@@ -50,6 +56,22 @@ const Routing = () => {
       element: (
         <Suspense fallback={<Loader />}>
           <Register />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.forgot_password,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <ForgotPassword />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.reset_password,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <ResetPassword />
         </Suspense>
       ),
     },
@@ -88,7 +110,7 @@ const Routing = () => {
       ),
     },
     {
-      path: paths.question,
+      path: paths.check_answer,
       element: (
         <Suspense fallback={<Loader />}>
           <Question />
@@ -306,6 +328,14 @@ const Routing = () => {
       element: (
         <Suspense fallback={<Loader />}>
           <VodDetails />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.reports,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <Report />
         </Suspense>
       ),
     },

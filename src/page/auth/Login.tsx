@@ -45,21 +45,8 @@ const Login = () => {
       password: "",
     },
   });
-  // async function onSubmit(values: LoginFormData) {
-  //   // Handle form submission
-  //   const { data } = await login({
-  //     username: values?.emailOrPhone,
-  //     password: values?.password,
-  //   });
-  //   if (data?.status) {
-  //     dispatch(setUser(data?.data));
-  //     navigate(paths.profile);
-  //   }
-  // }
 
   async function onSubmit() {
-    // Handle form submission
-    // await getCaptcha();
     if (data?.status) setShowVerification(true);
   }
   const handleVerify = async (e: any) => {
@@ -84,14 +71,18 @@ const Login = () => {
     }
   };
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   return (
     <>
       {isLoading || captchaLoading ? <Loader /> : <></>}
       <div className="px-5 h-screen bg-[#FFFFFF1F]">
         <div className="flex justify-between items-center py-5">
-          <Link to={paths.profile}>
+          <button onClick={handleBack}>
             <ChevronLeft />
-          </Link>
+          </button>
           <p className="text-[16px]">Login</p>
           <div></div>
         </div>
@@ -184,7 +175,7 @@ const Login = () => {
                 {/* {isLoading ? "loading..." : "Login"} */}
                 Login
               </Button>
-              <Link to="/">
+              <Link to={paths.forgot_password}>
                 <p className="text-center text-[14px] mt-5">Forgot Password?</p>
               </Link>
             </div>

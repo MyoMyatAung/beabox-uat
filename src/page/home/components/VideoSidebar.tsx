@@ -371,7 +371,7 @@ function VideoSidebar({
             />
           </svg>
 
-          <p className="side_text font-cnFont mt-2">Share</p>
+          <p className="side_text font-cnFont mt-2">分享</p>
         </button>
       </div>
       <div className="videoSidebar__button ">
@@ -397,7 +397,7 @@ function VideoSidebar({
                   stroke-linejoin="round"
                 />
               </svg>
-              <p className="side_text font-cnFont mt-2">Unmute</p>
+              <p className="side_text font-cnFont mt-2">取消静音</p>
             </div>
           ) : (
             <div className="flex flex-col items-center">
@@ -420,7 +420,7 @@ function VideoSidebar({
                   stroke-linejoin="round"
                 />
               </svg>
-              <p className="side_text font-cnFont mt-2">Mute</p>
+              <p className="side_text font-cnFont mt-2">沉默的</p>
             </div>
           )}
         </button>
@@ -511,6 +511,7 @@ function VideoSidebar({
         alertVisible={alertVisible}
         setAlertVisible={setAlertVisible}
         config={config}
+        post={post}
       />
 
       <CommentOverlay

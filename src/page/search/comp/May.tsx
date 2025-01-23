@@ -32,13 +32,13 @@ const May: React.FC<MayProps> = ({}) => {
       {/* header */}
       <div className=" flex justify-between items-center">
         <h1 className=" text-white text-[14px] font-[700] leading-[16px]">
-          You may like
+          猜你喜欢
         </h1>
         <span
           // onClick={handleDelete}
           className=" text-white/60 text-[12px] font-[500] leading-[18px]"
         >
-          Refresh
+          刷新
         </span>
       </div>
       <div className=" flex flex-col gap-[8px] py-[20px] flex-wrap">

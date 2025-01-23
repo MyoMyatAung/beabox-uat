@@ -121,6 +121,15 @@ export const profileApi = createApi({
         },
       }),
     }),
+    changeCVis: builder.mutation({
+      query: ({ status }) => ({
+        url: `/profile/content-visibility`,
+        method: "POST",
+        body: {
+          status,
+        },
+      }),
+    }),
     changeRegion: builder.mutation({
       query: (region) => ({
         url: `/profile/change-region`,
@@ -204,10 +213,45 @@ export const profileApi = createApi({
         method: "Get",
       }),
     }),
+    checkUsername: builder.mutation<any, any>({
+      query: ({ username, captcha, captcha_key }) => ({
+        url: `/check-username`,
+        method: "Post",
+        body: {
+          username,
+          captcha,
+          captcha_key,
+        },
+      }),
+    }),
+    checkAnswer: builder.mutation<any, any>({
+      query: ({ token, answer }) => ({
+        url: `/check-security-answer`,
+        method: "Post",
+        body: {
+          token,
+          answer,
+        },
+      }),
+    }),
+    setPassword: builder.mutation<any, any>({
+      query: ({ token, password }) => ({
+        url: `/set-password`,
+        method: "Post",
+        body: {
+          token,
+          password,
+        },
+      }),
+    }),
   }),
 });
 
 export const {
+  useChangeCVisMutation,
+  useSetPasswordMutation,
+  useCheckAnswerMutation,
+  useCheckUsernameMutation,
   useGetlikePostListQuery,
   useGetMyProfileQuery,
   useChangeUsernameMutation,

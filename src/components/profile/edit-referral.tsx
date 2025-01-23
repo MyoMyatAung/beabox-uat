@@ -24,7 +24,8 @@ const EditReferral = ({ referral_code }: any) => {
         <h1>Referral Code</h1>
         <DrawerTrigger asChild>
           <p className="flex items-center gap-1 text-[#888]">
-            {referral_code} <FaAngleRight />
+            {referral_code} 
+            {/* <FaAngleRight /> */}
           </p>
         </DrawerTrigger>
       </div>

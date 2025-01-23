@@ -1,3 +1,4 @@
+import SmallLoader from "@/components/shared/small-loader";
 import SubmitButton from "@/components/shared/submit-button";
 import { Button } from "@/components/ui/button";
 import { paths } from "@/routes/paths";
@@ -21,8 +22,10 @@ const Manage = () => {
   const [ques, setQues] = useState(
     data?.data?.security_question?.security_question || ""
   );
-  const [storeSecurityQues] = useStoreSecurityQuesMutation();
-  const [removeSecurityQuestion] = useRemoveSecurityQuestionMutation();
+  const [storeSecurityQues, { isLoading: isLoading1 }] =
+    useStoreSecurityQuesMutation();
+  const [removeSecurityQuestion, { isLoading: isLoading2 }] =
+    useRemoveSecurityQuestionMutation();
   const [ans, setAns] = useState(data?.data?.security_question?.answer || "");
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -57,7 +60,7 @@ const Manage = () => {
   };
 
   return (
-    <div className="w-full h-screen px-5 flex flex-col items-center">
+    <div className="w-full h-screen px-5 flex flex-col items-center bg-[#16131C]">
       <div className="flex justify-between items-center py-5 w-full">
         <Link to={paths.settings}>
           <FaAngleLeft size={18} />
@@ -132,15 +135,16 @@ const Manage = () => {
             </p>
             <>
               <SubmitButton
-                text="Save"
-                isLoading={false}
+                text={isLoading1 ? <SmallLoader /> : "Save"}
+                isLoading={isLoading1}
                 condition={ans.length > 1 && ques?.length > 1}
               />
               <Button
                 onClick={removeHandler}
                 className="w-full rounded-xl bg-[#FFFFFF0A] hover:bg-[#FFFFFF0A] mt-5"
               >
-                Remove
+                {isLoading2 ? <SmallLoader /> : "Remove"}
+                {/* Remove */}
               </Button>
             </>
           </form>

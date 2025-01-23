@@ -25,7 +25,7 @@ const Hot: React.FC<HotProps> = ({}) => {
       {/* header */}
       <div className=" flex justify-between items-center">
         <h1 className=" text-white text-[14px] font-[700] leading-[16px]">
-          Hot Search
+          热门搜索
         </h1>
       </div>
       <div className=" flex gap-[8px] py-[20px] flex-wrap">

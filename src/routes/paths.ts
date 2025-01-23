@@ -26,8 +26,12 @@ export const paths = {
   wallet_recharge: "/wallet/recharge",
   wallet_withdraw: "/wallet/withdraw",
   search: "/search_overlay",
+  reports: "/reports/:type/:id",
   search_result: "/search",
   vod_details: "/vod_details",
   user_profile: "/user/:id",
+  forgot_password: "/forgot-password",
+  check_answer: "/check-answer",
+  reset_password: "/reset-password",
   getUserProfileId: (id: any) => `/user/${id}`,
 };

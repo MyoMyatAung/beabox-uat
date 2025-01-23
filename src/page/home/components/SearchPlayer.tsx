@@ -10,11 +10,13 @@ const SearchPlayer = ({
   thumbnail,
   onPlay,
   mute,
+  rotate,
 }: {
   src: any;
   thumbnail: any;
   onPlay?: () => void; // Add an optional onPlay callback
   mute: any;
+  rotate: any;
 }) => {
   const playerContainerRef = useRef(null);
   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
@@ -31,11 +33,13 @@ const SearchPlayer = ({
             Artplayer.MOBILE_DBCLICK_PLAY = false;
             Artplayer.MOBILE_CLICK_PLAY = true;
             artPlayerInstanceRef.current = new Artplayer({
+              autoOrientation: true,
               container: el,
               url: src,
               volume: 0.5,
               muted: mute,
               autoplay: true,
+              fullscreenWeb: true,
               moreVideoAttr: {
                 playsInline: true,
                 preload: "metadata",
@@ -137,6 +141,11 @@ const SearchPlayer = ({
       artPlayerInstanceRef.current.muted = mute;
     }
   }, [mute]); // This effect runs whenever `mute` changes
+  useEffect(() => {
+    if (artPlayerInstanceRef.current) {
+      artPlayerInstanceRef.current.fullscreenWeb = rotate;
+    }
+  }, [rotate]); // This effect runs whenever `mute` changes
 
   return <div ref={playerContainerRef} className="video_player w-full" />;
 };

@@ -9,7 +9,7 @@ const ShowHeart = ({
   username: any;
 }) => {
   return (
-    <div className="absolute bottom-[200px] left-[10px]  z-[99]">
+    <div className="absolute bottom-[240px] left-[10px]  z-[999999]">
       <div className="">
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-2">

@@ -29,6 +29,12 @@
   transform: none !important;
 }
 
+.fullscreen .art-bottom {
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+  padding-bottom: 10px !important;
+}
+
 .art-bottom {
   padding-left: 0px !important;
   padding-right: 0px !important;

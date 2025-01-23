@@ -124,6 +124,23 @@ export const homeApi = createApi({
     top20Posts: builder.query({
       query: () => `posts/top?pageSize=20&page=1`,
     }),
+    getReports: builder.query({
+      query: () => `report-content/list`,
+    }),
+    storeReport: builder.mutation<
+      void,
+      { model_id: any; type: any; report_content: any }
+    >({
+      query: ({ model_id, type, report_content }) => ({
+        url: `report/store`,
+        method: "POST",
+        body: {
+          model_id,
+          type,
+          report_content,
+        },
+      }),
+    }),
   }),
 });
 
@@ -141,4 +158,6 @@ export const {
   useGetExplorePostsQuery,
   useGetFollowPostsQuery,
   useLikePostMutation,
+  useGetReportsQuery,
+  useStoreReportMutation,
 } = homeApi;
