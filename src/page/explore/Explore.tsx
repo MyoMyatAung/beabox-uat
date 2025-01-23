@@ -19,7 +19,7 @@ const Explore = () => {
   const { exp_header } = useSelector((state: any) => state.explore);
   // console.log(exp_header);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [tabs, setTabs] = useState(["Recommend", "Latest", "Hollywood"]);
+  const [tabs, setTabs] = useState<any[]>([]);
   const [dyId, setDyId] = useState<any>("");
   const { data, isLoading } = useGetExploreHeaderQuery("");
   const swiperRef = useRef<any>(null);
@@ -29,14 +29,18 @@ const Explore = () => {
   useEffect(() => {
     if (data?.data?.tabs) {
       const tt = data?.data?.tabs.map((t: any) => t.name);
-      const ii = data?.data?.tabs.map((t: any) => t.id);
+      // const ii = data?.data?.tabs.map((t: any) => t.id);
       // console.log(tt[0]);
-      dispatch(setExpHeader(tt[0]));
-      setTabs([...tt, tabs]);
-      setDyId([...ii, dyId]);
+      setTabs(tt);
+      if (tabs.length > 0) {
+        dispatch(setExpHeader(tt[0]));
+      }
+      if(!exp_header){
+        dispatch(setExpHeader(tt[0]));
+      }
+      // setDyId([...ii, dyId]);
     }
-  }, [data]);
-  // console.log(dyId);
+  }, [data?.data?.tabs,exp_header]);
 
   useEffect(() => {
     if (swiperRef.current) {
