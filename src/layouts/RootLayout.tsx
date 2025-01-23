@@ -4,7 +4,7 @@ import PopUp from "./PopUp";
 import { useEffect, useState } from "react";
 
 const RootLayout = ({ children }: any) => {
-  const [showAd, setShowAd] = useState(false);
+  const [showAd, setShowAd] = useState(true);
   useEffect(() => {
     const hasSeenAdPopUp = sessionStorage.getItem("hasSeenAdPopUp");
     if (!hasSeenAdPopUp) {

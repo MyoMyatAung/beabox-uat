@@ -23,7 +23,7 @@ const Notice: React.FC<NoticeProps> = ({ notice, handleNoticeClose }) => {
     <div className="">
       <div className="w-[330px] flex flex-col gap-0 justify-center items-center">
         <div className="initial_popup_ad_box_notice w-full h-[500px] overflow-hidde p-[10px]">
-          <div className="flex flex-col justify-center scrollbar-hide">
+          <div className="flex flex-col justify-cente scrollbar-hide h-full">
             <div className=" w-full flex">
               {notice?.map((app: any, index: number) => (
                 <div
@@ -42,7 +42,7 @@ const Notice: React.FC<NoticeProps> = ({ notice, handleNoticeClose }) => {
                 </div>
               ))}
             </div>
-            <div className=" grid grid-cols-5 gap-2 justify-center items-center pt-[20px]">
+            <div className=" grid grid-cols-5 h-full pb-[20px] gap-2 pt-[20px]">
               {/* titles */}
               <div className=" col-span-2 flex flex-col gap-[8px] initial_popup_ad_box_notice_title_box px-[4px] py-[6px]">
                 {notice[activeIndex] &&
