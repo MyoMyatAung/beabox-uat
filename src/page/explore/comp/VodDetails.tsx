@@ -160,15 +160,11 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
             mute={mute}
           />
           <VideoSidebar
-            post={files.files[0]}
+            post={files}
             likes={files?.like_count}
             is_liked={files?.is_liked}
             messages={files?.comment_count}
             post_id={files?.post_id}
-            // likes={files?.files[0].like_count}
-            // is_liked={files?.files[0].is_liked}
-            // messages={files?.files[0].comment_count}
-            // post_id={files?.files[0].post_id}
             setCountNumber={setCountNumber}
             setCountdown={setCountdown}
             setShowHeart={setShowHeart}

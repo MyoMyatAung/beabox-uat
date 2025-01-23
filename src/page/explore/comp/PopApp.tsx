@@ -54,7 +54,7 @@ const Poppizza: React.FC<PoppizzaProps> = ({}) => {
               className=" flex flex-col justify-center items-center gap-[4px]"
             >
               <img
-                className=" w-[56px] h-[53px] rounded-[6px] border-[#222]"
+                className=" w-[52px] h-[52px] rounded-[6px] border-[#222]"
                 src={app.image}
                 alt=""
               />
