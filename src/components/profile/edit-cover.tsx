@@ -36,7 +36,7 @@ const EditCover = () => {
       if (e.target && typeof e.target.result === "string") {
         setImage(e.target.result);
         console.log("1");
-        await settingUpload({ filedata: e.target.result });
+        await settingUpload({ filedata: e.target.result, filePath: "cover_photo" });
         // if (settingUploadData?.status)
         // await profileUpload({ file_url: settingUploadData?.data?.url });
       }

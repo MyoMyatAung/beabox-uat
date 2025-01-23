@@ -17,7 +17,7 @@ const AuthDrawer = () => {
           <ChevronRight size={18} />
         </div>
       </DrawerTrigger>
-      <DrawerContent className="border-0 bg-[#262429] h-[65vh] z-[2000]">
+      <DrawerContent className="border-0 bg-[#262429] min-h-[65vh] z-[2000]">
         <div className="w-full px-5 py-7">
           {authToggle ? (
             <LoginForm setIsOpen={setIsOpen} />

@@ -78,7 +78,7 @@ const RegisterForm = ({ setIsOpen }: any) => {
   };
   return (
     <div className="px-5">
-      <div className="flex justify-between items-center py-4">
+      <div className="flex justify-between items-center">
         <div className="px-3"></div>
         <p className="text-[18px]">
           创建账户
@@ -97,7 +97,7 @@ const RegisterForm = ({ setIsOpen }: any) => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-8 py-10"
+          className="space-y-8 pt-5 pb-10"
         >
           <FormField
             control={form.control}

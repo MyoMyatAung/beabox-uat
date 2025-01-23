@@ -181,10 +181,10 @@ export const profileApi = createApi({
       }),
     }),
     settingUpload: builder.mutation<any, any>({
-      query: ({ filedata }: any) => ({
+      query: ({ filedata, filePath }: any) => ({
         url: `/storage/upload`,
         method: "Post",
-        body: { filePath: "profile", file: filedata },
+        body: { filePath, file: filedata },
       }),
     }),
     profileUpload: builder.mutation<any, any>({
