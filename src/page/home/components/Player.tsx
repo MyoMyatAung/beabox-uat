@@ -146,13 +146,17 @@ const Player = ({
   thumbnail,
   onPlay,
   mute,
-  rotate,
+
+  setWidth,
+  setHeight,
 }: {
   src: any;
   thumbnail: any;
   onPlay?: () => void; // Add an optional onPlay callback
   mute: any;
-  rotate: any;
+
+  setHeight: any;
+  setWidth: any;
 }) => {
   const playerContainerRef = useRef(null);
   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
@@ -211,6 +215,10 @@ const Player = ({
             // Trigger the onPlay callback when playback starts
             artPlayerInstanceRef.current.on("play", () => {
               if (onPlay) onPlay();
+            });
+            artPlayerInstanceRef.current.on("video:loadedmetadata", () => {
+              setWidth(artPlayerInstanceRef?.current?.video?.videoWidth);
+              setHeight(artPlayerInstanceRef?.current?.video?.videoHeight);
             });
           }
         },
@@ -287,11 +295,6 @@ const Player = ({
       artPlayerInstanceRef.current.muted = mute;
     }
   }, [mute]); // This effect runs whenever `mute` changes
-  useEffect(() => {
-    if (artPlayerInstanceRef.current) {
-      artPlayerInstanceRef.current.fullscreenWeb = rotate;
-    }
-  }, [rotate]); // This effect runs whenever `mute` changes
 
   return <div ref={playerContainerRef} className="video_player w-full" />;
 };

@@ -39,9 +39,10 @@ const Home = () => {
   const currentTab = useSelector((state: any) => state.home.currentTab);
   const user = useSelector((state: any) => state.persist.user);
   const [refresh, setRefresh] = useState(false);
-  const [rotateVideoId, setRotateVideoId] = useState<string | null>(null); // For controlling fullscreen per video
   const dispatch = useDispatch();
   const [hearts, setHearts] = useState<number[]>([]); // Manage heart IDs
+  const [width, setWidth] = useState(0);
+  const [height, setHeight] = useState(0);
 
   const removeHeart = (id: number) => {
     setHearts((prev) => prev.filter((heartId) => heartId !== id)); // Remove the heart by ID
@@ -375,14 +376,32 @@ const Home = () => {
     }
   };
 
-  const handleFullscreen = (postId: string) => {
-    if (rotateVideoId === postId) {
-      // If the clicked video is already in fullscreen, exit fullscreen
-      setRotateVideoId(null);
-    } else {
-      // Otherwise, set the clicked video to fullscreen
-      setRotateVideoId(postId);
+  const sendEventToNative = (name: string, text: any) => {
+    if (
+      (window as any).webkit &&
+      (window as any).webkit.messageHandlers &&
+      (window as any).webkit.messageHandlers.jsBridge
+    ) {
+      (window as any).webkit.messageHandlers.jsBridge.postMessage({
+        eventName: name,
+        value: text,
+      });
     }
+  };
+
+  // console.log(config?.data);
+
+  const handleFullscreen = (video: any) => {
+    sendEventToNative("beabox_fullscreen", {
+      post_id: video?.post_id,
+      like_api_url: "https://77eewm.qdhgtch.com/api/v1/post/like",
+      token: `Bearer ${user?.token}`,
+      video_url: video?.files[0].resourceURL,
+      share_link: config?.data?.share_link,
+      title: video.title,
+      like_count: video?.like_count,
+      is_like: video?.is_liked,
+    });
   };
 
   const handleRefresh = () => {
@@ -448,13 +467,14 @@ const Home = () => {
                       data-post-id={video.post_id} // Add post ID to the container
                     >
                       <Player
-                        rotate={rotateVideoId === video.post_id}
                         src={video.files[0].resourceURL}
                         thumbnail={
                           video?.preview_image ||
                           "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg"
                         }
                         mute={mute}
+                        setWidth={setWidth}
+                        setHeight={setHeight}
                       />
                       <VideoSidebar
                         likes={video?.like_count}
@@ -482,67 +502,46 @@ const Home = () => {
                         <HeartCount id={id} key={id} remove={removeHeart} />
                       ))}
 
-                      {/* {+video.files[0].width > +video.files[0].height ? (
+                      {width > height && (
                         <>
                           <button
-                            onClick={() => handleFullscreen(video.post_id)}
-                            className={`absolute ${
-                              rotateVideoId === video.post_id
-                                ? " top-[10px] right-[10px] w-[40px] bg-transparent"
-                                : "left-[37%] top-[70%] bottom-0 right-0 w-[120px] bg-[#101010]"
-                            }   h-[35px] rounded-md flex justify-center items-center z-[9999] text-center  text-white `}
+                            onClick={() => handleFullscreen(video)}
+                            className={`absolute 
+                                left-[37%] top-[70%] bottom-0 right-0 w-[100px] bg-[#101010]
+                            h-[35px] rounded-md flex justify-center items-center z-[99] text-center  text-white `}
                           >
-                            {rotateVideoId === video.post_id ? (
-                              <>
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="14"
-                                  height="10"
-                                  viewBox="0 0 14 10"
-                                  fill="none"
-                                >
-                                  <path
-                                    d="M13.4595 8.9178C13.5429 8.81955 13.6091 8.70284 13.6543 8.57434C13.6994 8.44584 13.7227 8.30808 13.7227 8.16896C13.7227 8.02983 13.6994 7.89208 13.6543 7.76358C13.6091 7.63508 13.5429 7.51836 13.4595 7.42011L7.50487 0.388566C7.43858 0.310125 7.35984 0.247892 7.27315 0.205431C7.18647 0.16297 7.09354 0.141113 6.99969 0.141113C6.90585 0.141113 6.81292 0.16297 6.72623 0.205431C6.63955 0.247892 6.56081 0.310125 6.49452 0.388566L0.539875 7.42011C0.188759 7.83473 0.188759 8.50319 0.539875 8.9178C0.89099 9.33242 1.45708 9.33242 1.80819 8.9178L7.00328 2.79164L12.1984 8.92626C12.5423 9.33242 13.1156 9.33242 13.4595 8.9178Z"
-                                    fill="white"
-                                  />
-                                </svg>
-                              </>
-                            ) : (
-                              <div className=" flex items-center p-1 gap-2">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="14"
-                                  height="13"
-                                  viewBox="0 0 14 13"
-                                  fill="none"
-                                >
-                                  <path
-                                    d="M11.9279 4.03607L10.664 2.68779C10.6123 2.63272 10.5969 2.55002 10.6249 2.47798C10.6528 2.40611 10.7186 2.35917 10.7916 2.35917L11.3304 2.35917C11.2894 1.07625 10.8481 0.573193 10.8434 0.568154L10.8434 0.567974C10.7879 0.507124 10.7764 0.414495 10.815 0.340101C10.8537 0.265707 10.9335 0.227068 11.0113 0.245124C11.0284 0.249096 12.6563 0.655005 12.7714 2.35915L13.3195 2.35915C13.3925 2.35915 13.4583 2.4061 13.4863 2.47796C13.5142 2.55001 13.4988 2.63271 13.4471 2.68778L12.1832 4.03606C12.1493 4.07217 12.1035 4.09257 12.0556 4.09257C12.0077 4.09257 11.9618 4.07218 11.9279 4.03607Z"
-                                    fill="white"
-                                  />
-                                  <rect
-                                    x="0.9"
-                                    y="0.640723"
-                                    width="7.38519"
-                                    height="11.7185"
-                                    rx="1.6"
-                                    stroke="white"
-                                    stroke-width="0.8"
-                                  />
-                                  <path
-                                    d="M9.16667 6.01855L11.5 6.01855C12.6046 6.01855 13.5 6.91399 13.5 8.01855L13.5 10.2778C13.5 11.3824 12.6046 12.2778 11.5 12.2778L9.16667 12.2778"
-                                    stroke="white"
-                                    stroke-width="0.8"
-                                  />
-                                </svg>
-                                <span>全屏</span>
-                              </div>
-                            )}
+                            <div className=" flex items-center p-1 gap-2">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="14"
+                                height="13"
+                                viewBox="0 0 14 13"
+                                fill="none"
+                              >
+                                <path
+                                  d="M11.9279 4.03607L10.664 2.68779C10.6123 2.63272 10.5969 2.55002 10.6249 2.47798C10.6528 2.40611 10.7186 2.35917 10.7916 2.35917L11.3304 2.35917C11.2894 1.07625 10.8481 0.573193 10.8434 0.568154L10.8434 0.567974C10.7879 0.507124 10.7764 0.414495 10.815 0.340101C10.8537 0.265707 10.9335 0.227068 11.0113 0.245124C11.0284 0.249096 12.6563 0.655005 12.7714 2.35915L13.3195 2.35915C13.3925 2.35915 13.4583 2.4061 13.4863 2.47796C13.5142 2.55001 13.4988 2.63271 13.4471 2.68778L12.1832 4.03606C12.1493 4.07217 12.1035 4.09257 12.0556 4.09257C12.0077 4.09257 11.9618 4.07218 11.9279 4.03607Z"
+                                  fill="white"
+                                />
+                                <rect
+                                  x="0.9"
+                                  y="0.640723"
+                                  width="7.38519"
+                                  height="11.7185"
+                                  rx="1.6"
+                                  stroke="white"
+                                  stroke-width="0.8"
+                                />
+                                <path
+                                  d="M9.16667 6.01855L11.5 6.01855C12.6046 6.01855 13.5 6.91399 13.5 8.01855L13.5 10.2778C13.5 11.3824 12.6046 12.2778 11.5 12.2778L9.16667 12.2778"
+                                  stroke="white"
+                                  stroke-width="0.8"
+                                />
+                              </svg>
+                              <span>全屏</span>
+                            </div>
                           </button>
                         </>
-                      ) : (
-                        <></>
-                      )} */}
+                      )}
                     </div>
                   ))}
                 </div>
@@ -635,13 +634,14 @@ const Home = () => {
                       data-post-id={video.post_id} // Add post ID to the container
                     >
                       <Player
-                        rotate={rotateVideoId === video.post_id}
                         src={video.files[0].resourceURL}
                         thumbnail={
                           video?.preview_image ||
                           "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg"
                         }
                         mute={mute}
+                        setWidth={setWidth}
+                        setHeight={setHeight}
                       />
                       <VideoSidebar
                         likes={video?.like_count}
@@ -665,68 +665,46 @@ const Home = () => {
                         username={video?.user?.name}
                         city={video?.city}
                       />
-                      {/* {+video.files[0].width > +video.files[0].height ? (
+                      {width > height && (
                         <>
                           <button
-                            onClick={() => handleFullscreen(video.post_id)}
-                            className={`absolute ${
-                              rotateVideoId === video.post_id
-                                ? " top-[10px] right-[10px] w-[40px] bg-transparent"
-                                : "left-[37%] top-[70%] bottom-0 right-0 w-[120px] bg-[#101010]"
-                            }   h-[35px] rounded-md flex justify-center items-center z-[9999] text-center  text-white `}
+                            onClick={() => handleFullscreen(video)}
+                            className={`absolute 
+                                left-[37%] top-[70%] bottom-0 right-0 w-[100px] bg-[#101010]
+                            h-[35px] rounded-md flex justify-center items-center z-[99] text-center  text-white `}
                           >
-                            {rotateVideoId === video.post_id ? (
-                              <>
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="14"
-                                  height="10"
-                                  viewBox="0 0 14 10"
-                                  fill="none"
-                                >
-                                  <path
-                                    d="M13.4595 8.9178C13.5429 8.81955 13.6091 8.70284 13.6543 8.57434C13.6994 8.44584 13.7227 8.30808 13.7227 8.16896C13.7227 8.02983 13.6994 7.89208 13.6543 7.76358C13.6091 7.63508 13.5429 7.51836 13.4595 7.42011L7.50487 0.388566C7.43858 0.310125 7.35984 0.247892 7.27315 0.205431C7.18647 0.16297 7.09354 0.141113 6.99969 0.141113C6.90585 0.141113 6.81292 0.16297 6.72623 0.205431C6.63955 0.247892 6.56081 0.310125 6.49452 0.388566L0.539875 7.42011C0.188759 7.83473 0.188759 8.50319 0.539875 8.9178C0.89099 9.33242 1.45708 9.33242 1.80819 8.9178L7.00328 2.79164L12.1984 8.92626C12.5423 9.33242 13.1156 9.33242 13.4595 8.9178Z"
-                                    fill="white"
-                                  />
-                                </svg>
-                              </>
-                            ) : (
-                              <div className=" flex items-center p-1 gap-2">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="14"
-                                  height="13"
-                                  viewBox="0 0 14 13"
-                                  fill="none"
-                                >
-                                  <path
-                                    d="M11.9279 4.03607L10.664 2.68779C10.6123 2.63272 10.5969 2.55002 10.6249 2.47798C10.6528 2.40611 10.7186 2.35917 10.7916 2.35917L11.3304 2.35917C11.2894 1.07625 10.8481 0.573193 10.8434 0.568154L10.8434 0.567974C10.7879 0.507124 10.7764 0.414495 10.815 0.340101C10.8537 0.265707 10.9335 0.227068 11.0113 0.245124C11.0284 0.249096 12.6563 0.655005 12.7714 2.35915L13.3195 2.35915C13.3925 2.35915 13.4583 2.4061 13.4863 2.47796C13.5142 2.55001 13.4988 2.63271 13.4471 2.68778L12.1832 4.03606C12.1493 4.07217 12.1035 4.09257 12.0556 4.09257C12.0077 4.09257 11.9618 4.07218 11.9279 4.03607Z"
-                                    fill="white"
-                                  />
-                                  <rect
-                                    x="0.9"
-                                    y="0.640723"
-                                    width="7.38519"
-                                    height="11.7185"
-                                    rx="1.6"
-                                    stroke="white"
-                                    stroke-width="0.8"
-                                  />
-                                  <path
-                                    d="M9.16667 6.01855L11.5 6.01855C12.6046 6.01855 13.5 6.91399 13.5 8.01855L13.5 10.2778C13.5 11.3824 12.6046 12.2778 11.5 12.2778L9.16667 12.2778"
-                                    stroke="white"
-                                    stroke-width="0.8"
-                                  />
-                                </svg>
-                                <span>全屏</span>
-                              </div>
-                            )}
+                            <div className=" flex items-center p-1 gap-2">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="14"
+                                height="13"
+                                viewBox="0 0 14 13"
+                                fill="none"
+                              >
+                                <path
+                                  d="M11.9279 4.03607L10.664 2.68779C10.6123 2.63272 10.5969 2.55002 10.6249 2.47798C10.6528 2.40611 10.7186 2.35917 10.7916 2.35917L11.3304 2.35917C11.2894 1.07625 10.8481 0.573193 10.8434 0.568154L10.8434 0.567974C10.7879 0.507124 10.7764 0.414495 10.815 0.340101C10.8537 0.265707 10.9335 0.227068 11.0113 0.245124C11.0284 0.249096 12.6563 0.655005 12.7714 2.35915L13.3195 2.35915C13.3925 2.35915 13.4583 2.4061 13.4863 2.47796C13.5142 2.55001 13.4988 2.63271 13.4471 2.68778L12.1832 4.03606C12.1493 4.07217 12.1035 4.09257 12.0556 4.09257C12.0077 4.09257 11.9618 4.07218 11.9279 4.03607Z"
+                                  fill="white"
+                                />
+                                <rect
+                                  x="0.9"
+                                  y="0.640723"
+                                  width="7.38519"
+                                  height="11.7185"
+                                  rx="1.6"
+                                  stroke="white"
+                                  stroke-width="0.8"
+                                />
+                                <path
+                                  d="M9.16667 6.01855L11.5 6.01855C12.6046 6.01855 13.5 6.91399 13.5 8.01855L13.5 10.2778C13.5 11.3824 12.6046 12.2778 11.5 12.2778L9.16667 12.2778"
+                                  stroke="white"
+                                  stroke-width="0.8"
+                                />
+                              </svg>
+                              <span>全屏</span>
+                            </div>
                           </button>
                         </>
-                      ) : (
-                        <></>
-                      )} */}
-
+                      )}
                       {hearts.map((id: any) => (
                         <HeartCount id={id} key={id} remove={removeHeart} />
                       ))}
