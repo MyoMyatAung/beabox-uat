@@ -5,12 +5,12 @@ import {
   useCommentListMutation,
   useFollowStatusMutation,
 } from "../services/homeApi";
-import qr from "../qr.png";
-import spider from "../spider.png";
+
 import CommentOverlay from "./CommentOverlay";
 import ShareOverlay from "./ShareOverlay";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+import { setVideos } from "../services/videosSlice";
 
 function VideoSidebar({
   likes,
@@ -48,6 +48,7 @@ function VideoSidebar({
   const [alertVisible, setAlertVisible] = useState(false);
   const [likeCount, setLikeCount] = useState(likes);
   const [isLiked, setIsLiked] = useState(is_liked);
+  const currentTab = useSelector((state: any) => state.home.currentTab);
 
   const [likePost] = useLikePostMutation();
   const [getComments, { data: commentData }] = useCommentListMutation();
@@ -60,6 +61,8 @@ function VideoSidebar({
   const navigate = useNavigate();
   const alertRef = useRef<HTMLDivElement>(null); // Reference to the alert box
   const [follow, setFollow] = useState(post?.is_followed);
+  const dispatch = useDispatch();
+  const { videos } = useSelector((state: any) => state.videoSlice);
 
   const location = useLocation();
   const isHome = location.pathname === "/";
@@ -133,10 +136,25 @@ function VideoSidebar({
           clearTimeout(likeTimeout.current);
         }
 
+        console.log("likes", likes);
+
         // Set up a new debounce timer
         likeTimeout.current = setTimeout(async () => {
           try {
             await likePost({ post_id, count: countNumber + 1 }); // Pass the accumulated count to the API
+
+            dispatch(
+              setVideos({
+                ...videos,
+                [currentTab === 2 ? "foryou" : "follow"]: videos[
+                  currentTab === 2 ? "foryou" : "follow"
+                ]?.map((video: any) =>
+                  video.post_id === post_id
+                    ? { ...video, is_liked: true, like_count: +likeCount + 1 }
+                    : video
+                ),
+              })
+            );
             setCountNumber(0); // Reset pending likes after a successful API call
           } catch (error) {
             console.error("Error liking the post:", error);
@@ -238,14 +256,31 @@ function VideoSidebar({
   };
 
   const handleFollow = async () => {
-    try {
-      const res = await followStatus({
-        follow_user_id: post?.user?.id,
-        status: follow ? "unfollow" : "follow",
-      });
-      setFollow(!follow);
-    } catch (error) {
-      console.log(error);
+    if (user?.token) {
+      try {
+        const res = await followStatus({
+          follow_user_id: post?.user?.id,
+          status: follow ? "unfollow" : "follow",
+        });
+        setFollow(!follow);
+        // Update the follow status in the videos state
+        dispatch(
+          setVideos({
+            ...videos,
+            [currentTab === 2 ? "foryou" : "follow"]: videos[
+              currentTab === 2 ? "foryou" : "follow"
+            ]?.map((video: any) =>
+              video.post_id === post_id
+                ? { ...video, is_followed: !follow }
+                : video
+            ),
+          })
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      navigate("/login");
     }
   };
 
@@ -450,87 +485,6 @@ function VideoSidebar({
           )}
         </button>
       </div>
-      {/* Alert Box */}
-      {/* {alertVisible && (
-        <div
-          ref={alertRef} // Attach the ref to the alert box
-          className={`fixed bottom-0 left-1/2 transform -translate-x-1/2 p-5 w-full z-[999] share ${
-            isClosingAlert ? "animate-fade-out" : "animate-fade-in"
-          }`}
-        >
-          <h1 className="share_text mb-4">
-            Share your thoughts & favorite moments with others
-          </h1>
-          <div className="mb-4">
-            <img src={image} alt="" className="h-[150px] w-full object-fill" />
-          </div>
-          <div className="grid grid-cols-2 mb-4 justify-items-center items-center">
-            <div className="text-right">
-              <img src={qr} alt="" width={100} height={100} />
-            </div>
-            <div>
-              <h1 className="qr_text1 mb-2">Scan Qr Code</h1>
-              <p className="qr_text2 mb-2">
-                If the qr code cannot be open, please enter the link
-              </p>
-              <p className="qr_text3">{config?.app_download_link}</p>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <button className="share_btn">Save img to share</button>
-            <button
-              className="share_btn"
-              onClick={() => {
-                const shareUrl = config?.app_download_link;
-                navigator.clipboard.writeText(shareUrl).catch((err) => {
-                  console.error("Failed to copy the share link: ", err);
-                });
-              }}
-            >
-              Copy share link
-            </button>
-          </div>
-        </div>
-        // <div
-        //   ref={alertRef} // Attach the ref to the alert box
-        //   className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-5 w-[320px] z-50 share ${
-        //     isClosingAlert ? "animate-fade-out" : "animate-fade-in"
-        //   }`}
-        // >
-        //   <h1 className="share_text mb-4">
-        //     Share your thoughts & favorite moments with others
-        //   </h1>
-        //   <div className="mb-4">
-        //     <img src={image} alt="" className="h-[150px] w-full object-fill" />
-        //   </div>
-        //   <div className="grid grid-cols-2 mb-4 justify-items-center items-center">
-        //     <div className="text-right">
-        //       <img src={qr} alt="" width={100} height={100} />
-        //     </div>
-        //     <div>
-        //       <h1 className="qr_text1 mb-2">Scan Qr Code</h1>
-        //       <p className="qr_text2 mb-2">
-        //         If the qr code cannot be open, please enter the link
-        //       </p>
-        //       <p className="qr_text3">{config?.app_download_link}</p>
-        //     </div>
-        //   </div>
-        //   <div className="grid grid-cols-2 gap-2">
-        //     <button className="share_btn">Save img to share</button>
-        //     <button
-        //       className="share_btn"
-        //       onClick={() => {
-        //         const shareUrl = config?.app_download_link;
-        //         navigator.clipboard.writeText(shareUrl).catch((err) => {
-        //           console.error("Failed to copy the share link: ", err);
-        //         });
-        //       }}
-        //     >
-        //       Copy share link
-        //     </button>
-        //   </div>
-        // </div>
-      )} */}
 
       <ShareOverlay
         alertVisible={alertVisible}
