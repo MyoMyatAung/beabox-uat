@@ -107,14 +107,14 @@ const EditRegion = () => {
                 }}
                 className="w-full rounded-lg bg-[#FFFFFF0A] hover:bg-[#FFFFFF0A]"
               >
-                Cancel
+                取消
               </Button>
               {/* </DrawerClose> */}
               <Button
                 onClick={() => changeRegionHandler()}
                 className="w-full rounded-lg bg-[#CD3EFF1F] hover:bg-[#CD3EFF1F] text-[#CD3EFF]"
               >
-                {isLoading ? <SmallLoader /> : "Save"}
+                {isLoading ? <SmallLoader /> : "节省"}
                 {/* Save */}
               </Button>
             </div>

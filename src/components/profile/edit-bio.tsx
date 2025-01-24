@@ -49,16 +49,19 @@ const EditBio = ({ bio, refetchHandler }: any) => {
                 <FaAngleLeft size={18} />
               </button>
             </DrawerClose>
-            <p className="text-[16px]">Bio</p>
+            <p className="text-[16px]">个性签名</p>
             <div></div>
           </div>
           <form onSubmit={onSubmitHandler}>
+            <label htmlFor="" className="text-[14px] text-[#888] pt-10">
+              个人简介
+            </label>
             <div className="relative">
               <div className="relative">
                 <textarea
                   value={value}
                   onChange={(e: any) => setValue(e.target.value)}
-                  placeholder="Enter your profile bio"
+                  placeholder="请输入您的个性签名"
                   className="min-h-[100px] w-full resize-none  bg-transparent p-3 text-white placeholder:text-gray-400  border-b border-[#888] focus:outline-none focus:ring-0 focus:border-[#888]"
                 />
                 <span className="absolute bottom-2 right-2 text-sm text-gray-400">
@@ -80,7 +83,7 @@ const EditBio = ({ bio, refetchHandler }: any) => {
             <SubmitButton
               isLoading={isLoading}
               condition={value.length > 1}
-              text="Save"
+              text="保存"
             />
             {/* <Button
               type="submit"

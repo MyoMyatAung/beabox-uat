@@ -49,14 +49,17 @@ const ChangePassword = () => {
                 <FaAngleLeft size={18} />
               </button>
             </DrawerClose>
-            <p className="text-[16px]">Change Password</p>
+            <p className="text-[16px]">更改密码</p>
             <div></div>
           </div>
           <form onSubmit={changePassWordHandler}>
+            <label htmlFor="" className="text-[14px] text-[#888] pt-10">
+              当前密码
+            </label>
             <div className="relative">
               <input
                 className="w-full bg-transparent border-0 border-b py-3 outline-0 border-[#888]"
-                placeholder="Enter your current password"
+                placeholder="输入您当前的密码"
                 onChange={(e: any) => setCurrentPassword(e.target.value)}
                 value={current_password}
                 type={show ? "text" : "password"}
@@ -69,10 +72,14 @@ const ChangePassword = () => {
                 )}
               </div>
             </div>
+
             <div className="relative mt-5">
+              <label htmlFor="" className="text-[14px] text-[#888] pt-10">
+                新密码
+              </label>
               <input
                 className="w-full bg-transparent border-0 border-b py-3 outline-0 border-[#888]"
-                placeholder="Enter your current password"
+                placeholder="输入您的新密码"
                 onChange={(e: any) => setNewPassword(e.target.value)}
                 value={new_password}
                 type={show2 ? "text" : "password"}
@@ -101,7 +108,7 @@ const ChangePassword = () => {
               condition={
                 current_password.length > 1 && new_password?.length > 1
               }
-              text="Continue"
+              text="设置新密码"
             />
           </form>
           <DrawerClose ref={closeRef} className="hidden" />
