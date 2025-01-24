@@ -5,6 +5,7 @@ import {
   useGetMyProfileQuery,
 } from "@/store/api/profileApi";
 import {
+  setCover,
   setCVisibility,
   setPrivateProfile,
   setProfileData,
@@ -50,6 +51,7 @@ const withProfileData = (WrapperCompo: any) => {
     };
     useEffect(() => {
       dispatch(setProfileData(data?.data));
+      // dispatch(setCover(data?.data?.cover_photo));
       dispatch(setPrivateProfile(data?.data?.private_profile));
       dispatch(setVisibility(data?.data?.liked_video_visibility));
       dispatch(setCVisibility(data?.data?.content_visibility));

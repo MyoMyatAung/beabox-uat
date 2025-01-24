@@ -152,11 +152,11 @@ const Register = () => {
                     </div>
                   </FormControl>
                   <FormMessage />
-                  <FormMessage>{error}</FormMessage>
+                  {/* <FormMessage>{error}</FormMessage> */}
                 </FormItem>
               )}
             />
-
+            <div className="text-sm text-red-500">{error}</div>
             <input
               type="text"
               placeholder="Enter Promotion Code (Optional)"
