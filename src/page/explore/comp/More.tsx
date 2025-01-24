@@ -23,23 +23,26 @@ const More: React.FC<MoreProps> = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [list, setList] = useState<any[]>([]);
+  const [filter, setFilter] = useState<any[]>([]);
   const { data, isLoading, isFetching, refetch } = useGetExploreTagQuery({
-    order: more_tab, // Use more_tab directly
+    order: more_tab || "latest",
     tag: title ? title : "Latest Drama",
     page: page,
   });
-
+  // console.log(data);
   // console.log(isFetching);
 
   useEffect(() => {
     // dispatch(setMoreTab("Popular")); // Set default tab if needed
     if (data?.data) {
-      // setList(data?.data.list);
+      setFilter(data?.data.filter);
       setList((prev) => [...prev, ...data.data.list]);
+      if(!more_tab){
+        dispatch(setMoreTab(filter[0]?.key))
+      }
     }
     // refetch();
   }, [data]); // Depend on more_tab
-
 
   const popularItems = Array.from({ length: 10 }, (_, i) => ({
     title: `My Boss (2021) - ${i + 1}`,
@@ -60,8 +63,7 @@ const More: React.FC<MoreProps> = () => {
     navigate(paths.vod_details);
   };
 
-  
-console.log(list)
+  // console.log(more_tab);
   return (
     <>
       <div className="p-[20px]">
@@ -76,26 +78,19 @@ console.log(list)
 
         {/* Tabs */}
         <div className="flex gap-[8px]">
-          <button
-            className={`text-white text-[14px] font-[400] leading-[16px] px-[16px] py-[8px] ${
-              more_tab === "popular"
-                ? "more_tabs_buttons_active"
-                : "more_tabs_buttons"
-            }`}
-            onClick={() => dispatch(setMoreTab("popular"))} // Update more_tab
-          >
-            最热门
-          </button>
-          <button
-            className={`text-white text-[14px] font-[400] leading-[16px] px-[16px] py-[8px] ${
-              more_tab === "latest"
-                ? "more_tabs_buttons_active"
-                : "more_tabs_buttons"
-            }`}
-            onClick={() => dispatch(setMoreTab("latest"))} // Update more_tab
-          >
-            最新
-          </button>
+          {filter?.map((ff: any, index) => (
+            <button
+            key={index}
+              className={`text-white text-[14px] font-[400] leading-[16px] px-[16px] py-[8px] ${
+                ff.active
+                  ? "more_tabs_buttons_active"
+                  : "more_tabs_buttons"
+              }`}
+              onClick={() => dispatch(setMoreTab(ff.key))} // Update more_tab
+            >
+              {ff.title}
+            </button>
+          ))}
         </div>
 
         {/* List */}

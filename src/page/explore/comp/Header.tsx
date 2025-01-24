@@ -25,7 +25,7 @@ const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
   return (
     <div className="bg-black z-[99] py-[5px] sticky top-0 w-screen overscroll-auto">
       {isLoading ? (
-        <div className=" w-[330px] bg-white/20 h-[50px] animate-pulse"></div>
+        <div className=" w-[330px] bg-white/20 rounded-md h-[50px] animate-pulse"></div>
       ) : (
         <div className="flex gap-[16px] pr-[25px] scrollbar w-screen overflow-x-auto whitespace-nowrap">
           {hd.map((tab: any, index) => (

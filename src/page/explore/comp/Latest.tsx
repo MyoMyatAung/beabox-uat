@@ -73,10 +73,10 @@ const Latest: React.FC<LatestPorp> = ({list_id}) => {
       >
         {isLoading ? (
           <>
-            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[220px]"></div>
-            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[220px]"></div>
-            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[220px]"></div>
-            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[220px]"></div>
+            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[272px]"></div>
+            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[272px]"></div>
+            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[272px]"></div>
+            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[272px]"></div>
           </>
         ) : (
           <>
