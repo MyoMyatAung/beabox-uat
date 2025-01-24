@@ -54,14 +54,17 @@ const EditNickName = ({
                 <FaAngleLeft size={18} />
               </button>
             </DrawerClose>
-            <p className="text-[16px]">Nickname</p>
+            <p className="text-[16px]">昵称</p>
             <div></div>
           </div>
           <form onSubmit={onSubmitHandler}>
+          <label htmlFor="" className="text-[14px] text-[#888] pt-10">
+              昵称
+            </label>
             <div className="relative">
               <input
                 className="w-full bg-transparent border-0 border-b py-3 outline-0 border-[#888]"
-                placeholder="Enter nickname"
+                placeholder="请输入您的昵称"
                 onChange={(e: any) => setValue(e.target.value)}
                 value={value}
               />
@@ -82,7 +85,7 @@ const EditNickName = ({
             <SubmitButton
               isLoading={isLoading}
               condition={value.length > 1}
-              text="Save"
+              text="保存"
             />
           </form>
           <DrawerClose ref={closeRef} className="hidden" />

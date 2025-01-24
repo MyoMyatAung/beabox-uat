@@ -50,23 +50,29 @@ const EditUsername = ({
         {isLoading ? <Loader /> : <></>}
         <div className="w-full h-screen px-5 bg-[#16131C]">
           <div className="flex justify-between items-center py-5">
-            <DrawerClose asChild>
+            <DrawerClose>
               <button>
                 <FaAngleLeft size={18} />
               </button>
             </DrawerClose>
-            <p className="text-[16px]">User Name</p>
+            <p className="text-[16px]">用户名</p>
             <div></div>
           </div>
           <form onSubmit={onSubmitHandler}>
+            <label htmlFor="" className="text-[14px] text-[#888] pt-10">
+              用户名
+            </label>
             <div className="relative">
               <input
                 className="w-full bg-transparent border-0 border-b py-3 outline-0 border-[#888]"
-                placeholder="Enter user name"
+                placeholder="请输入您的用户名"
                 onChange={(e: any) => setValue(e.target.value)}
                 value={value}
               />
-              <div className="bg-[#FFFFFF1F] w-5 h-5 flex justify-center items-center rounded-full absolute right-0 bottom-5">
+              <div
+                onClick={() => setValue("")}
+                className="bg-[#FFFFFF1F] w-5 h-5 flex justify-center items-center rounded-full absolute right-0 bottom-5"
+              >
                 <X className="w-2" />
               </div>
             </div>
@@ -83,7 +89,7 @@ const EditUsername = ({
             <SubmitButton
               isLoading={isLoading}
               condition={value.length > 1}
-              text="Save"
+              text="保存"
             />
           </form>
           <DrawerClose ref={closeRef} className="hidden" />
