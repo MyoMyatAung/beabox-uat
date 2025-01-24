@@ -47,6 +47,9 @@ const Register = () => {
       password: "",
     },
   });
+  const { watch } = form;
+  const emailOrPhoneValue = watch("emailOrPhone");
+  const passwordValue = watch("password");
   async function onSubmit(data: LoginFormData) {
     // Handle form submission
     // await getCaptcha();
@@ -70,7 +73,7 @@ const Register = () => {
     } else {
       setShowVerification(false);
       setShowSecurity(false);
-      setError("Something went wrong!");
+      setError("出了点问题");
     }
   };
   return (
@@ -149,11 +152,11 @@ const Register = () => {
                     </div>
                   </FormControl>
                   <FormMessage />
-                  <FormMessage asChild>{error}</FormMessage>
+                  {/* <FormMessage>{error}</FormMessage> */}
                 </FormItem>
               )}
             />
-
+            <div className="text-sm text-red-500">{error}</div>
             <input
               type="text"
               placeholder="Enter Promotion Code (Optional)"
@@ -165,7 +168,11 @@ const Register = () => {
             <div className="">
               <Button
                 // type="submit"
-                // disabled={isLoading ? true : false}
+                disabled={
+                  isLoading
+                    ? true
+                    : false || !emailOrPhoneValue || !passwordValue
+                }
                 onClick={async () => await getCaptcha("")}
                 className="w-full gradient-bg rounded-lg hover:gradient-bg"
               >
@@ -198,7 +205,9 @@ const Register = () => {
                     </div>
                     <Button
                       onClick={handleVerify}
-                      disabled={registerLoading ? true : false}
+                      disabled={
+                        registerLoading ? true : false || !captcha?.length
+                      }
                       type="submit"
                       className="w-full gradient-bg hover:gradient-bg text-white rounded-lg"
                     >

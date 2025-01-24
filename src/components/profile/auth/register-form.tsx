@@ -49,6 +49,9 @@ const RegisterForm = ({ setIsOpen }: any) => {
       password: "",
     },
   });
+  const { watch } = form;
+  const emailOrPhoneValue = watch("emailOrPhone");
+  const passwordValue = watch("password");
   async function onSubmit(data: LoginFormData) {
     // Handle form submission
     // await getCaptcha();
@@ -73,7 +76,7 @@ const RegisterForm = ({ setIsOpen }: any) => {
     } else {
       setShowVerification(false);
       // setShowSecurity(false);
-      setError("Something went wrong!");
+      setError("出了点问题");
     }
   };
   return (
@@ -186,7 +189,7 @@ const RegisterForm = ({ setIsOpen }: any) => {
           <div className="">
             <Button
               // type="submit"
-              disabled={isLoading}
+              disabled={isLoading || !emailOrPhoneValue || !passwordValue}
               onClick={async () => {
                 await getCaptcha("");
                 setShowVerification(true);
@@ -223,7 +226,9 @@ const RegisterForm = ({ setIsOpen }: any) => {
                   </div>
                   <Button
                     onClick={handleVerify}
-                    disabled={registerLoading ? true : false}
+                    disabled={
+                      registerLoading ? true : false || !captcha?.length
+                    }
                     type="submit"
                     className="w-full gradient-bg hover:gradient-bg text-white rounded-lg"
                   >

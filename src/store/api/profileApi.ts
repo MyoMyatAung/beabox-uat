@@ -271,10 +271,17 @@ export const profileApi = createApi({
         },
       }),
     }),
+    getConfig: builder.query<any, any>({
+      query: (os) => ({
+        url: `/app/version?platform=${os}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
 export const {
+  useGetConfigQuery,
   useChangeShareRegionMutation,
   useChangeHideBioMutation,
   useChangeFollowReqMutation,

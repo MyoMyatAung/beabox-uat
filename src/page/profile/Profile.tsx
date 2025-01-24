@@ -47,6 +47,9 @@ const Profile = () => {
   }, []);
   useEffect(() => {
     refetch();
+  }, [data]);
+  useEffect(() => {
+    refetch();
   }, [user]);
   // const { data: likePosts } = useGetlikePostListQuery(data?.data?.id);
 
@@ -61,7 +64,7 @@ const Profile = () => {
     <>
       <div className="gradient-overlay"></div>
       <img
-        src={cover ? cover : defaultCover}
+        src={data?.data?.cover_photo ? data?.data?.cover_photo : defaultCover}
         alt=""
         className="absolute top-0 left-0 w-full h-[23vh] object-cover object-center"
       />
@@ -86,7 +89,7 @@ const Profile = () => {
                   查看创作者排名，洞察顶尖创作者的风采，观看最受欢迎视频，掌握流行趋势，发现精彩瞬间，探索全新内容。
                 </p>
                 <Button className="z-[1200] bg-[#FFFFFF14] hover:bg-[#FFFFFF14]">
-                即将上线，敬请期待！
+                  即将上线，敬请期待！
                 </Button>
               </div>
             </div>

@@ -46,6 +46,10 @@ const Login = () => {
     },
   });
 
+  const { watch } = form;
+  const emailOrPhoneValue = watch("emailOrPhone");
+  const passwordValue = watch("password");
+
   async function onSubmit() {
     if (data?.status) setShowVerification(true);
   }
@@ -67,7 +71,7 @@ const Login = () => {
       navigate(paths.profile);
     } else {
       setShowVerification(false);
-      setError("Something went wrong!");
+      setError("出了点问题");
     }
   };
 
@@ -164,7 +168,12 @@ const Login = () => {
                 text={"Login"}
               /> */}
               <Button
-                disabled={isLoading || captchaLoading}
+                disabled={
+                  isLoading ||
+                  captchaLoading ||
+                  !emailOrPhoneValue ||
+                  !passwordValue
+                }
                 // type="submit"
                 onClick={async () => {
                   await getCaptcha("");
@@ -204,7 +213,7 @@ const Login = () => {
                     </div>
                     <Button
                       onClick={handleVerify}
-                      disabled={isLoading ? true : false}
+                      disabled={isLoading ? true : false || !captcha?.length}
                       type="submit"
                       className="w-full gradient-bg hover:gradient-bg text-white rounded-lg"
                     >

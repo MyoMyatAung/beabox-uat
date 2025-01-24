@@ -92,10 +92,10 @@ function VideoFooter({
           {/* More/Less Button Inline */}
           {(title.length > 30 || tags.length > 3) && (
             <button
-              className="more_text font-cnFont inline ml-2"
+              className="more_text font-cnFont inline ml-[-3px]"
               onClick={toggleExpand}
             >
-              {isExpanded ? "less" : "more"}
+              {isExpanded ? "收起" : "更多"}
             </button>
           )}
         </div>

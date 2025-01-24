@@ -3,7 +3,7 @@ import VideoCard from "./video-card";
 
 const VideoGrid = ({ isUpload, data }: any) => {
   return (
-    <div className="py-4 pb-28">
+    <div className="py-4 pb-28 absolute">
       <div className="grid grid-cols-3 gap-2">
         {isUpload ? <Upload /> : <></>}
         {data?.map((item: any) => (

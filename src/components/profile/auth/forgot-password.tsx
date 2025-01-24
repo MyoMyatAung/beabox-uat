@@ -39,7 +39,7 @@ const ForgotPassword = () => {
       captcha_key: captchaData?.data?.captcha_key,
     });
     if (!data?.status) {
-      setError("Something went wrong!");
+      setError("出了点问题");
       setShowVerification(false);
     }
     dispatch(setForgotData(data?.data));
