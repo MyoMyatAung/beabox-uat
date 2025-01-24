@@ -76,11 +76,12 @@ const SearchPlayer = ({
               },
             });
 
-            // Trigger the onPlay callback when playback starts
             artPlayerInstanceRef.current.on("play", () => {
               if (onPlay) onPlay();
+              setWidth(artPlayerInstanceRef?.current?.video?.videoWidth);
+              setHeight(artPlayerInstanceRef?.current?.video?.videoHeight);
             });
-            artPlayerInstanceRef.current.on("video:loadedmetadata", () => {
+            artPlayerInstanceRef?.current?.on("ready", () => {
               setWidth(artPlayerInstanceRef?.current?.video?.videoWidth);
               setHeight(artPlayerInstanceRef?.current?.video?.videoHeight);
             });

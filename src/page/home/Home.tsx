@@ -389,7 +389,7 @@ const Home = () => {
     }
   };
 
-  // console.log(config?.data);
+  console.log(width, height);
 
   const handleFullscreen = (video: any) => {
     sendEventToNative("beabox_fullscreen", {

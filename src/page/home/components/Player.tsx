@@ -215,11 +215,17 @@ const Player = ({
             // Trigger the onPlay callback when playback starts
             artPlayerInstanceRef.current.on("play", () => {
               if (onPlay) onPlay();
-            });
-            artPlayerInstanceRef.current.on("video:loadedmetadata", () => {
               setWidth(artPlayerInstanceRef?.current?.video?.videoWidth);
               setHeight(artPlayerInstanceRef?.current?.video?.videoHeight);
             });
+            artPlayerInstanceRef?.current?.on("ready", () => {
+              setWidth(artPlayerInstanceRef?.current?.video?.videoWidth);
+              setHeight(artPlayerInstanceRef?.current?.video?.videoHeight);
+            });
+            // artPlayerInstanceRef?.current?.on("loading", () => {
+            //   setWidth(0);
+            //   setHeight(0);
+            // });
           }
         },
       });
