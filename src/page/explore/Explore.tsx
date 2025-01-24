@@ -63,7 +63,7 @@ const Explore = () => {
     <>
       {/* {show && <VodDetails  />} */}
 
-      <div className="flex justify-center items-center w-screen overflow-clip">
+      <div className="flex bg-[#16131C] justify-center items-center w-screen overflow-clip">
         <div className="explore_sec w-screen xl:w-[800px] flex flex-col justify-center items-cente px-[10px] pb-[100px] mt-14">
           <Banner />
           <PopApp />
@@ -76,7 +76,8 @@ const Explore = () => {
               onSlideChange={handleSlideChange}
               onSwiper={(swiper) => (swiperRef.current = swiper)}
               slidesPerView={1}
-              spaceBetween={1}
+              spaceBetween={10}
+              centeredSlides={true}
               // loop={true}
             >
               {data?.data?.tabs.map((gg: any) => (
