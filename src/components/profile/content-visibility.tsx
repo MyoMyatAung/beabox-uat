@@ -22,27 +22,34 @@ const ContentVisibility = ({
 
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
-      <div className="flex justify-between items-start">
-        <div className="">
+      <div className="flex justify-between items-start w-full">
+        <div className="w-[70%] ">
           <p className="flex items-center gap-1 text-[14px]">
-            Content Visibility
+            {/* Content Visibility */}
+            内容可见
           </p>
-          <p className="text-[14px] text-[#888888] w-[300px] mt-1">
-            Control who can view your content. Choose between Public, Private or
-            Follower
+          <p className="text-[10px] text-[#888888] w-full mt-1">
+            {/* Control who can view your content. Choose between Public, Private or
+            Follower */}
+            设置谁可以查看您的内容，公开/私密/仅粉丝可见
           </p>
         </div>
-        <DrawerTrigger asChild>
-          <p className="flex items-center gap-1 text-[14px] capitalize">
-            {status}
-            <ChevronRight size={15} className="text-[#777777]" />
-          </p>
-        </DrawerTrigger>
+        <div className=" flex-1">
+          <DrawerTrigger asChild>
+            <p className="flex items-center justify-end gap-1 text-[14px] capitalize">
+              {status == "public" ? "公开" : '私密'}
+              <ChevronRight size={15} className="text-[#777777]" />
+            </p>
+          </DrawerTrigger>
+        </div>
       </div>
       <DrawerContent className="border-0 bg-[#121012] z-[1000]">
         <div className="w-full px-5 py-7">
           <div className="space-y-6">
-            <h1 className="text-[18px]">Who can see your Works?</h1>
+            <h1 className="text-[18px]">
+              {/* Who can see your Works? */}
+              谁可以看到您的作品
+            </h1>
             <div className="space-y-2">
               {/* public  */}
               <div
@@ -55,10 +62,12 @@ const ContentVisibility = ({
                       status == "public" ? "text-white" : "text-[#888]"
                     }`}
                   >
-                    Public
+                    {/* Public */}
+                    公开
                   </p>
                   <p className="text-[10px] text-[#888]">
-                    Your work is visible to everyone on the platform.
+                    {/* Your work is visible to everyone on the platform. */}
+                    您的作品可以被所有用户观看
                   </p>
                 </div>
                 <div
@@ -78,10 +87,12 @@ const ContentVisibility = ({
                       status == "private" ? "text-white" : "text-[#888]"
                     }`}
                   >
-                    Private
+                    {/* Private */}
+                    私密
                   </p>
                   <p className="text-[10px] text-[#888]">
-                    Only you can see your work.
+                    {/* Only you can see your work. */}
+                    除了您，没人可以看到您的作品
                   </p>
                 </div>
                 <div
@@ -91,7 +102,7 @@ const ContentVisibility = ({
                 ></div>
               </div>
               {/* follower  */}
-              <div
+              {/* <div
                 onClick={() => setStatus("follower")}
                 className="flex items-start justify-between bg-[#FFFFFF0A] p-3 rounded-xl"
               >
@@ -112,14 +123,14 @@ const ContentVisibility = ({
                     status == "follower" ? "bg-[#CD3EFF]" : "bg-[#FFFFFF52]"
                   } rounded-full`}
                 ></div>
-              </div>
+              </div> */}
             </div>
 
             <Button
               onClick={() => handler(status)}
               className="bg-[#CD3EFF1F] hover:bg-[#CD3EFF1F] text-[#CD3EFF] w-full"
             >
-              {visibilityLoading ? <SmallLoader /> : "Save"}
+              {visibilityLoading ? <SmallLoader /> : "保存"}
             </Button>
           </div>
         </div>

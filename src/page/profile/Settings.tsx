@@ -58,7 +58,10 @@ const Settings = ({
         {user?.token ? (
           <>
             <div className="flex flex-col gap-4">
-              <h1 className="text-[12px] text-[#888]">Account Privacy</h1>
+              <h1 className="text-[12px] text-[#888]">
+                {/* Account Privacy */}
+                账号隐私设置
+              </h1>
             </div>
             <ContentVisibility
               content_visibility={content_visibility}
@@ -68,7 +71,8 @@ const Settings = ({
             <div className="border-b border-white/10"></div>
             <div className="flex justify-between items-center">
               <p className="flex items-center gap-1 text-[14px]">
-                Privacy Settings
+                {/* Privacy Settings */}
+                隐私设置
               </p>
               <Link
                 to={paths.privacy_settings}
