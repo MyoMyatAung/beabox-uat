@@ -4,12 +4,12 @@ import Player from "./Player";
 
 import VideoSidebar from "./VideoSidebar";
 
-import ShowHeart from "./ShowHeart";
 import Top20Movies from "./Top20Movies";
 import { useSelector } from "react-redux";
 import FeedFooter from "./FeedFooter";
 import { useNavigate } from "react-router-dom";
 import SearchPlayer from "./SearchPlayer";
+import HeartCount from "./Heart";
 
 const VideoFeed = ({
   videos,
@@ -26,7 +26,7 @@ const VideoFeed = ({
   const [content, setContent] = useState("");
   const [currentActivePost, setCurrentActivePost] =
     useState<any>(currentActiveId); // Active post ID
-  const [showHeart, setShowHeart] = useState(false);
+
   const [countdown, setCountdown] = useState(3);
   const [countNumber, setCountNumber] = useState(0); // New state for counting clicks
   const [topmovies, setTopMovies] = useState(false);
@@ -36,6 +36,11 @@ const VideoFeed = ({
   const [mute, setMute] = useState(true);
   const navigate = useNavigate();
   const [rotateVideoId, setRotateVideoId] = useState<string | null>(null); // For controlling fullscreen per video
+  const [hearts, setHearts] = useState<number[]>([]); // Manage heart IDs
+
+  const removeHeart = (id: number) => {
+    setHearts((prev) => prev.filter((heartId) => heartId !== id)); // Remove the heart by ID
+  };
 
   // Scroll to the first current post when the component is mounted
   useEffect(() => {
@@ -84,7 +89,6 @@ const VideoFeed = ({
       // Reset state when the active post changes
       setCountdown(3);
       setCountNumber(0);
-      setShowHeart(false);
     }
   }, [currentActivePost]);
 
@@ -149,15 +153,14 @@ const VideoFeed = ({
               post_id={video?.post_id}
               setCountNumber={setCountNumber}
               setCountdown={setCountdown}
-              setShowHeart={setShowHeart}
               countNumber={countNumber}
-              showHeart={showHeart}
               countdown={countdown}
               config={config?.data}
               image={video?.preview_image}
               post={video}
               mute={mute}
               setMute={setMute}
+              setHearts={setHearts}
             />
             {/* {+video.files[0].width > +video.files[0].height ? (
               <>
@@ -274,9 +277,9 @@ const VideoFeed = ({
               </div>
             </div>
 
-            {showHeart && (
-              <ShowHeart countNumber={countNumber} username={user?.nickname} />
-            )}
+            {hearts.map((id: any) => (
+              <HeartCount id={id} key={id} remove={removeHeart} />
+            ))}
             <div className="absolute bottom-0 add_comment w-full  py-3 ">
               <div className="flex items-center feed_add_comment gap-2 px-4">
                 <input

@@ -11,7 +11,6 @@ import loader from "./vod_loader.gif";
 import VideoSidebar from "./components/VideoSidebar";
 import "./home.css";
 import VideoFooter from "./components/VideoFooter";
-import ShowHeart from "./components/ShowHeart";
 import Top20Movies from "./components/Top20Movies";
 import TopNavbar from "./components/TopNavbar";
 import Explorer from "../explore/Explore";
@@ -22,6 +21,7 @@ import { setCurrentTab } from "./services/homeSlice";
 import { setCurrentActivePost } from "./services/activeSlice";
 import { setVideos } from "./services/videosSlice";
 import { setPage } from "./services/pageSlice";
+import HeartCount from "./components/Heart";
 
 const Home = () => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
@@ -32,7 +32,7 @@ const Home = () => {
   const { page } = useSelector((state: any) => state.pageSlice);
 
   //const [currentActivePost, setCurrentActivePost] = useState<any>(null); // Active post ID
-  const [showHeart, setShowHeart] = useState(false);
+
   const [countdown, setCountdown] = useState(3);
   const [countNumber, setCountNumber] = useState(0); // New state for counting clicks
   const [topmovies, setTopMovies] = useState(false);
@@ -41,6 +41,11 @@ const Home = () => {
   const [refresh, setRefresh] = useState(false);
   const [rotateVideoId, setRotateVideoId] = useState<string | null>(null); // For controlling fullscreen per video
   const dispatch = useDispatch();
+  const [hearts, setHearts] = useState<number[]>([]); // Manage heart IDs
+
+  const removeHeart = (id: number) => {
+    setHearts((prev) => prev.filter((heartId) => heartId !== id)); // Remove the heart by ID
+  };
 
   // const [currentTab, setCurrentTab] = useState(2);
   const swiperRef = useRef<any>(null);
@@ -85,16 +90,12 @@ const Home = () => {
     { skip: currentTab !== 2 }
   );
 
-  console.log(videos);
-
   const isLoading =
     (currentTab === 0 && isFollowFetching) ||
     (currentTab === 1 && isLatestFetching) ||
     (currentTab === 2 && isForYouFetching);
 
   const isError = latestError || ForyouError || followError;
-
-  console.log(page);
 
   // useEffect(() => {
   //   // Populate videos based on the current tab and fetched data
@@ -133,8 +134,6 @@ const Home = () => {
     const currentData =
       currentTab === 0 ? followData : currentTab === 2 ? forYouData : null; // Add other tabs if necessary
 
-    console.log("win");
-
     if (currentData?.data) {
       // Determine the key in the videos object based on the current tab
       const videoKey =
@@ -158,7 +157,6 @@ const Home = () => {
             })
           );
         } else {
-          console.log("ha2");
           // Append filtered videos for the current tab
           dispatch(
             setVideos({
@@ -251,7 +249,6 @@ const Home = () => {
       // Reset state when the active post changes
       setCountdown(3);
       setCountNumber(0);
-      setShowHeart(false);
     }
   }, [currentActivePost]);
 
@@ -313,10 +310,8 @@ const Home = () => {
   //     setVideos([]);
   //   }
   // };
-  console.log(refresh);
 
   useEffect(() => {
-    console.log("re");
     if (refresh) {
       const fetchData = async () => {
         if (currentTab === 2) {
@@ -333,7 +328,7 @@ const Home = () => {
             [videoKey]: [], // Append to the current tab
           })
         );
-        // console.log(currentActivePost);
+
         const currentData =
           currentTab === 0 ? followData : currentTab === 2 ? forYouData : null; // Add other tabs if necessary
 
@@ -391,7 +386,6 @@ const Home = () => {
   };
 
   const handleRefresh = () => {
-    console.log("refresh");
     const videoKey =
       currentTab === 2 ? "foryou" : currentTab === 0 ? "follow" : "";
     dispatch(setPage(1));
@@ -469,15 +463,14 @@ const Home = () => {
                         post_id={video?.post_id}
                         setCountNumber={setCountNumber}
                         setCountdown={setCountdown}
-                        setShowHeart={setShowHeart}
                         countNumber={countNumber}
-                        showHeart={showHeart}
                         countdown={countdown}
                         config={config?.data}
                         image={video?.preview_image}
                         post={video}
                         setMute={setMute}
                         mute={mute}
+                        setHearts={setHearts}
                       />
                       <VideoFooter
                         tags={video?.tag}
@@ -485,12 +478,10 @@ const Home = () => {
                         username={video?.user?.name}
                         city={video?.city}
                       />
-                      {showHeart && (
-                        <ShowHeart
-                          countNumber={countNumber}
-                          username={user?.nickname}
-                        />
-                      )}
+                      {hearts.map((id: any) => (
+                        <HeartCount id={id} key={id} remove={removeHeart} />
+                      ))}
+
                       {/* {+video.files[0].width > +video.files[0].height ? (
                         <>
                           <button
@@ -659,15 +650,14 @@ const Home = () => {
                         post_id={video?.post_id}
                         setCountNumber={setCountNumber}
                         setCountdown={setCountdown}
-                        setShowHeart={setShowHeart}
                         countNumber={countNumber}
-                        showHeart={showHeart}
                         countdown={countdown}
                         config={config?.data}
                         image={video?.preview_image}
                         post={video}
                         setMute={setMute}
                         mute={mute}
+                        setHearts={setHearts}
                       />
                       <VideoFooter
                         tags={video?.tag}
@@ -737,12 +727,9 @@ const Home = () => {
                         <></>
                       )} */}
 
-                      {showHeart && (
-                        <ShowHeart
-                          countNumber={countNumber}
-                          username={user?.nickname}
-                        />
-                      )}
+                      {hearts.map((id: any) => (
+                        <HeartCount id={id} key={id} remove={removeHeart} />
+                      ))}
                     </div>
                   ))}
                 </div>

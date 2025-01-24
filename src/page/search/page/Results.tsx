@@ -21,7 +21,7 @@ interface ResultsProps {}
 
 const Results: React.FC<ResultsProps> = ({}) => {
   const [tabs, setTabs] = useState([]);
-  const [activeTab, setActiveTab] = useState("Top");
+  const [activeTab, setActiveTab] = useState("综合");
   const { data: TabsData } = useGetTabListQuery("");
   const [searchParams] = useSearchParams();
   const initialQuery = searchParams.get("query") || "";
@@ -48,6 +48,8 @@ const Results: React.FC<ResultsProps> = ({}) => {
       });
     }
   };
+
+  // console.log(activeTab);
 
   useEffect(() => {
     postSearch({

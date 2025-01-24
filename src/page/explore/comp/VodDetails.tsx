@@ -11,8 +11,9 @@ import {
 import { useNavigate, useSearchParams } from "react-router-dom";
 import VideoSidebar from "@/page/home/components/VideoSidebar";
 import FeedFooter from "@/page/home/components/FeedFooter";
-import ShowHeart from "@/page/home/components/ShowHeart";
+
 import { setCurrentTab } from "@/page/home/services/homeSlice";
+import HeartCount from "@/page/home/components/Heart";
 
 interface VodDetailsProps {
   // setshow: (value: boolean) => void;
@@ -22,7 +23,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
   const currentTab = useSelector((state: any) => state.home.currentTab);
   // console.log(currentTab);
   const [commentsVisible, setCommentsVisible] = useState(false);
-  const [showHeart, setShowHeart] = useState(false);
+
   const { files } = useSelector((state: any) => state.explore);
   const [currentActivePost, setCurrentActivePost] = useState<any>(
     files?.post_id
@@ -42,6 +43,11 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
   const [mute, setMute] = useState(false);
   const [rotateVideoId, setRotateVideoId] = useState<string | null>(null); // For controlling fullscreen per video
+  const [hearts, setHearts] = useState<number[]>([]); // Manage heart IDs
+
+  const removeHeart = (id: number) => {
+    setHearts((prev) => prev.filter((heartId) => heartId !== id)); // Remove the heart by ID
+  };
 
   useEffect(() => {
     const container = videoContainerRef.current;
@@ -167,21 +173,24 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
             post_id={files?.post_id}
             setCountNumber={setCountNumber}
             setCountdown={setCountdown}
-            setShowHeart={setShowHeart}
             countNumber={countNumber}
-            showHeart={showHeart}
             countdown={countdown}
             config={config?.data}
             image={files?.preview_image}
             setMute={setMute}
             mute={mute}
+            setHearts={setHearts}
           />
+
           <FeedFooter
             tags={files?.tag}
             title={files?.title}
             username={files?.user?.name}
             city={files?.city}
           />
+          {hearts.map((id: any) => (
+            <HeartCount id={id} key={id} remove={removeHeart} />
+          ))}
           {/* {+files.files[0].width > +files.files[0].height ? (
             <>
               <button
@@ -291,9 +300,6 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
             </div>
           </div>
 
-          {showHeart && (
-            <ShowHeart countNumber={countNumber} username={user?.nickname} />
-          )}
           <div className="absolute mt- bottom-0 add_comment w-full  py-3 z-10 ">
             <div className="flex items-center gap-2 px-4">
               <input

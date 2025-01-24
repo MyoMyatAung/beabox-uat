@@ -19,15 +19,17 @@ function VideoSidebar({
   post_id,
   setCountdown,
   setCountNumber,
-  setShowHeart,
+
   countNumber,
-  showHeart,
+
   countdown,
   config,
   image,
   post,
   mute,
   setMute,
+
+  setHearts,
 }: {
   likes: any;
   messages: any;
@@ -35,8 +37,7 @@ function VideoSidebar({
   post_id: any;
   setCountdown: any;
   setCountNumber: any;
-  setShowHeart: any;
-  showHeart: any;
+
   countdown: any;
   countNumber: any;
   config: any;
@@ -44,6 +45,8 @@ function VideoSidebar({
   post: any;
   mute: any;
   setMute: any;
+
+  setHearts: any;
 }) {
   const [alertVisible, setAlertVisible] = useState(false);
   const [likeCount, setLikeCount] = useState(likes);
@@ -96,35 +99,18 @@ function VideoSidebar({
     }
   };
 
-  // Handle like click
-  // const handleLike = async () => {
-  //   if (user?.token) {
-  //     try {
-  //       setLikeCount((prev: any) => +prev + 1);
-  //       setIsLiked(true);
-  // setCountNumber((prev: any) => prev + 1);
-
-  // // Show the heart animation
-  // setShowHeart(true);
-  // setCountdown(3); // Reset countdown
-  //       await likePost({ post_id });
-  //     } catch (error) {
-  //       console.error("Error liking the post:", error);
-  //     }
-  //   } else {
-  //     navigate("/login");
-  //   }
-  // };
-
   const handleLike = (() => {
     const likeTimeout = useRef<NodeJS.Timeout | null>(null); // Track the debounce timeout
     const [pendingLike, setPendingLike] = useState(false); // Flag to indicate pending like action
+    const [nextId, setNextId] = useState(0); // Generate unique IDs for hearts
 
     const handleLikeClick = () => {
       if (user?.token) {
-        if (pendingLike) return; // Prevent further actions if a like is already pending
+        // if (pendingLike) return; // Prevent further actions if a like is already pending
+        const newId = nextId;
+        setNextId((prev: any) => prev + 1); // Increment the next ID
+        setHearts((prev: any) => [...prev, newId]); // Add the new heart
 
-        setShowHeart(true);
         setCountdown(3); // Reset countdown
 
         setIsLiked(true);
@@ -138,34 +124,34 @@ function VideoSidebar({
           clearTimeout(likeTimeout.current);
         }
 
-        console.log("likes", likes);
-
         // Set up a new debounce timer
         likeTimeout.current = setTimeout(async () => {
-          try {
-            await likePost({ post_id, count: 1 }); // Pass the accumulated count to the API
-            setLikeCount((prev: any) => +prev + 1);
-            dispatch(
-              setVideos({
-                ...videos,
-                [currentTab === 2 ? "foryou" : "follow"]: videos[
-                  currentTab === 2 ? "foryou" : "follow"
-                ]?.map((video: any) =>
-                  video.post_id === post_id
-                    ? {
-                        ...video,
-                        is_liked: true,
-                        like_count: +video.like_count + 1,
-                      }
-                    : video
-                ),
-              })
-            );
-            setCountNumber(0); // Reset pending likes after a successful API call
-          } catch (error) {
-            console.error("Error liking the post:", error);
-          } finally {
-            setPendingLike(false); // Reset pending flag
+          if (!pendingLike) {
+            try {
+              await likePost({ post_id, count: 1 }); // Pass the accumulated count to the API
+              setLikeCount((prev: any) => +prev + 1);
+              dispatch(
+                setVideos({
+                  ...videos,
+                  [currentTab === 2 ? "foryou" : "follow"]: videos[
+                    currentTab === 2 ? "foryou" : "follow"
+                  ]?.map((video: any) =>
+                    video.post_id === post_id
+                      ? {
+                          ...video,
+                          is_liked: true,
+                          like_count: +video.like_count + 1,
+                        }
+                      : video
+                  ),
+                })
+              );
+              setCountNumber(0); // Reset pending likes after a successful API call
+            } catch (error) {
+              console.error("Error liking the post:", error);
+            } finally {
+              setPendingLike(true); // Reset pending flag
+            }
           }
         }, 1000); // Call API 1 second after the last click
       } else {
@@ -236,26 +222,6 @@ function VideoSidebar({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
-  // Handle heart animation with countdown
-  useEffect(() => {
-    if (showHeart) {
-      let currentCountdown = countdown; // Use a local variable to avoid state delays
-      const interval = setInterval(() => {
-        if (currentCountdown <= 1) {
-          clearInterval(interval); // Stop the interval when countdown reaches 0
-          setShowHeart(false); // Hide the heart animation
-        } else {
-          currentCountdown -= 1; // Decrement the local countdown
-          setCountdown(currentCountdown); // Update state
-        }
-      }, 1000);
-
-      return () => {
-        clearInterval(interval); // Clear the interval on unmount or cleanup
-      };
-    }
-  }, [showHeart, countdown]);
 
   // Close the comment list
 
@@ -488,7 +454,7 @@ function VideoSidebar({
                   stroke-linejoin="round"
                 />
               </svg>
-              <p className="side_text font-cnFont mt-2">沉默的</p>
+              <p className="side_text font-cnFont mt-2">静音</p>
             </div>
           )}
         </button>
