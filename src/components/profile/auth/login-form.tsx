@@ -26,6 +26,8 @@ import {
 import { setAuthToggle } from "@/store/slices/profileSlice";
 import SmallLoader from "@/components/shared/small-loader";
 const LoginForm = ({ setIsOpen }: any) => {
+  const [name, setName] = useState("");
+  const [pass, setPass] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [login, { isLoading }] = useLoginMutation();
   const navigate = useNavigate();
@@ -44,6 +46,9 @@ const LoginForm = ({ setIsOpen }: any) => {
       password: "",
     },
   });
+  const { watch } = form;
+  const emailOrPhoneValue = watch("emailOrPhone");
+  const passwordValue = watch("password");
 
   async function onSubmit() {
     if (data?.status) setShowVerification(true);
@@ -67,7 +72,7 @@ const LoginForm = ({ setIsOpen }: any) => {
       setIsOpen(false);
     } else {
       setShowVerification(false);
-      setError("Something went wrong!");
+      setError("出了点问题");
     }
   };
   return (
@@ -97,7 +102,7 @@ const LoginForm = ({ setIsOpen }: any) => {
               <FormItem>
                 <FormControl>
                   <>
-                  <label htmlFor="" className="text-[14px] text-[#888]">
+                    <label htmlFor="" className="text-[14px] text-[#888]">
                       密码
                     </label>
                     <div className="relative">
@@ -173,7 +178,12 @@ const LoginForm = ({ setIsOpen }: any) => {
           text={"Login"}
         /> */}
             <Button
-              disabled={isLoading || captchaLoading}
+              disabled={
+                isLoading ||
+                captchaLoading ||
+                !emailOrPhoneValue ||
+                !passwordValue
+              }
               // type="submit"
               onClick={async () => {
                 await getCaptcha("");
@@ -214,7 +224,7 @@ const LoginForm = ({ setIsOpen }: any) => {
                   </div>
                   <Button
                     onClick={handleVerify}
-                    disabled={isLoading ? true : false}
+                    disabled={isLoading ? true : false || !captcha?.length}
                     type="submit"
                     className="w-full gradient-bg hover:gradient-bg text-white rounded-lg"
                   >
@@ -239,7 +249,7 @@ const LoginForm = ({ setIsOpen }: any) => {
                   e.stopPropagation();
                   dispatch(setAuthToggle(false));
                 }}
-                className="w-[320px] bg-transparent border-[#555555]"
+                className="w-[60vw] bg-transparent border-[#555555]"
                 variant={"outline"}
               >
                 创建新帐户
