@@ -642,3 +642,15 @@ html {
   display: flex;
   justify-content: center;
 }
+
+.refreshBtn {
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--White, #fff);
+  text-align: center;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 160%; /* 22.4px */
+  letter-spacing: 0.2px;
+}
