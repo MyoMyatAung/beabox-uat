@@ -32,6 +32,7 @@ const Explore = () => {
       // const ii = data?.data?.tabs.map((t: any) => t.id);
       // console.log(tt[0]);
       setTabs(tt);
+      // console.log(tt)
       if (tabs.length > 0) {
         dispatch(setExpHeader(tt[0]));
       }
@@ -41,6 +42,7 @@ const Explore = () => {
       // setDyId([...ii, dyId]);
     }
   }, [data?.data?.tabs,exp_header]);
+  // console.log(exp_header)
 
   useEffect(() => {
     if (swiperRef.current) {
@@ -80,7 +82,7 @@ const Explore = () => {
               centeredSlides={true}
               // loop={true}
             >
-              {data?.data?.tabs.map((gg: any) => (
+              {data?.data?.tabs?.map((gg: any) => (
                 <SwiperSlide>
                   {exp_header === gg.name && (
                     <div className=" min-h-screen text-white">

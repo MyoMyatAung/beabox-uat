@@ -12,15 +12,18 @@ const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
   const { exp_header } = useSelector((state: any) => state.explore);
 
   const dispatch = useDispatch();
-  const [hd, sethd] = useState([]);
+  const [hd, sethd] = useState<any[]>([]);
   const { data, isLoading } = useGetExploreHeaderQuery("");
   useEffect(() => {
     if (data?.data) {
       const cur = data?.data?.tabs;
       sethd(cur);
+      if (hd.length > 0) {
+        dispatch(setExpHeader(hd[0]?.name));
+      }
     }
   }, [data, hd]);
-  // console.log(hd)
+  // console.log(hd);
 
   return (
     <div className="bg-[#16131C] px-2 z-[99] py-[5px] sticky top-0 w-screen overscroll-auto">
