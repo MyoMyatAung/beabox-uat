@@ -6,7 +6,7 @@ import "../wallet.css";
 import { Link } from "lucide-react";
 import { useGetMyProfileQuery } from "@/store/api/profileApi";
 import { toPng } from "html-to-image";
-
+import shareLogo from '../../../assets/share-logo.svg'
 interface InviteProps {}
 
 const Invite: React.FC<InviteProps> = ({}) => {
@@ -45,11 +45,11 @@ const Invite: React.FC<InviteProps> = ({}) => {
   return (
     <div className=" flex justify-center items-center">
       <div className="w-screen xl:w-[800px]">
-        <Header lv={false} title="Invite Friends" />
+        <Header lv={false} title="我要分享" />
         {copied && (
           <div className="absolute flex justify-center items-cente w-full h-ful ">
             <p className="text-[#fff] text-[12px] font-[400] leading-[14px] text-center px-[20px] py-[12px] copy_btn">
-              Copied
+            已复制
             </p>
           </div>
         )}
@@ -60,10 +60,10 @@ const Invite: React.FC<InviteProps> = ({}) => {
               ref={imageRef}
               className=" mt-[100px] p-10 rounded-lg flex flex-col gap-[30px] justify-center items-center img-bg"
             >
+              <img src={shareLogo} className="h-[40px]"/>
               <img className=" w-[180px] h-[180px]" src={qr} alt="" />
               <p className=" text-[#888] text-[12px] font-[400] leading-[14px] text-center">
-                Invite your friends by sharing this QR code during account
-                registration and earn Bebit coins!
+              分享此邀请码邀请您的朋友下载app，即可领取 Bebit 币！
               </p>
               <button
                 onClick={handleCopyCode}
@@ -89,13 +89,13 @@ const Invite: React.FC<InviteProps> = ({}) => {
           {/* two buttons */}
           <div className=" flex justify-center items-center gap-[24px]">
             <button className="px-[20px] py-[12px] copy_btn text-white text-[12px] font-[400] leading-[20px]">
-              Share QR
+              保存邀请码
             </button>
             <button
               onClick={handleSaveAsImage}
               className="px-[20px] py-[12px] copy_btn text-white text-[12px] font-[400] leading-[20px]"
             >
-              Save QR Image
+              复制邀请链接
             </button>
           </div>
         </div>

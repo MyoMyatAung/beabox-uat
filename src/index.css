@@ -169,12 +169,14 @@ input:checked + .slider:before {
 }
 
 .img-bg {
-  background: linear-gradient(
+  background: linear-gradient(90deg, rgba(255, 178, 224, 0.22) 0%, rgba(205, 62, 255, 0.22) 100%);
+
+  /* background: linear-gradient(
     205deg,
     rgba(195, 54, 194, 0.8) 5.18%,
     #271e42 40.61%,
     rgba(13, 12, 12, 0) 92.3%
-  );
+  ); */
 }
 
 .gradient-overlay {
