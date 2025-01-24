@@ -18,7 +18,7 @@ const Notice: React.FC<NoticeProps> = ({ notice, handleNoticeClose }) => {
   const handleTextClick = (index: number) => {
     setActiveTextIndex(index);
   };
-  console.log(notice[activeIndex]);
+  // console.log(notice[activeIndex]);
   return (
     <div className="">
       <div className="w-[330px] flex flex-col gap-0 justify-center items-center">
