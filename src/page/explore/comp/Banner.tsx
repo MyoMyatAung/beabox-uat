@@ -44,7 +44,7 @@ const Banner: React.FC = () => {
               {ad.map((cc: any, index: number) => (
                 <div
                   key={index}
-                  className={`justify-center h-[172px] items-center px-[8px] flex flex-col relative bg-black`}
+                  className={`justify-center h-[172px] items-center px-[8px] flex flex-col relative bg-[#16131C]`}
                 >
                   <ImageWithPlaceholder
                     src={cc.image}

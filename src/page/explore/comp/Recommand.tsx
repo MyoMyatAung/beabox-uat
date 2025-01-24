@@ -115,7 +115,7 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
                               {card?.view_count} 次观看
                             </span>
                             <span className=" text-white text-[11px]  right-0">
-                              {formatDuration(card.files[0].duration)}
+                              {formatDuration(card?.files[0].duration)}
                             </span>
                           </div>
                         </div>

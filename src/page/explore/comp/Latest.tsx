@@ -73,10 +73,10 @@ const Latest: React.FC<LatestPorp> = ({list_id}) => {
       >
         {isLoading ? (
           <>
-            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[220px]"></div>
-            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[220px]"></div>
-            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[220px]"></div>
-            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[220px]"></div>
+            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[216px]"></div>
+            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[216px]"></div>
+            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[216px]"></div>
+            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[216px]"></div>
           </>
         ) : (
           <>
@@ -98,7 +98,7 @@ const Latest: React.FC<LatestPorp> = ({list_id}) => {
                     alt={card.title || "Video"}
                     width={"100%"}
                     height={"100%"}
-                    className={`lozad w-full ${index % 2 === 0 ? "h-[216px]" : "h-[272px]"}  object-cover`}
+                    className={` w-full ${index % 2 === 0 ? "h-[216px]" : "h-[272px]"}  object-cover`}
                     // style={{ minHeight: "240px", maxHeight: "340px" }}
                   />
                 </div>

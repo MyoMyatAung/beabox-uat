@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState: any = {
   files: [],
   title: "",
-  more_tab: "popular",
+  more_tab: "",
   exp_header: "",
 };
 

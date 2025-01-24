@@ -12,6 +12,8 @@ export const exploreApi = createApi({
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
       }
+      headers.set("Accept-Language", "cn");
+
       return headers;
     },
   }),
