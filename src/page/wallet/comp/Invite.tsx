@@ -58,7 +58,7 @@ const Invite: React.FC<InviteProps> = ({}) => {
           {ppdaata && data ? (
             <div
               ref={imageRef}
-              className=" mt-[100px] p-10 rounded-lg flex flex-col gap-[30px] justify-center items-center img-bg"
+              className=" mt-[60px] p-10 rounded-lg flex flex-col gap-[30px] justify-center items-center img-bg"
             >
               <img src={shareLogo} className="h-[40px]"/>
               <img className=" w-[180px] h-[180px]" src={qr} alt="" />
