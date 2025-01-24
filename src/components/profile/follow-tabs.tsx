@@ -10,8 +10,8 @@ const FollowTabs = () => {
   const defaultFollowTab = useSelector(
     (state: any) => state.profile.defaultFollowTab
   );
-  console.log(defaultFollowTab);
   const [active, setActive] = useState(defaultFollowTab);
+  const [searchTerm, setSearchTerm] = useState("");
   // const dispatch = useDispatch();
   return (
     <Tabs defaultValue={defaultFollowTab} className="my-5">
@@ -48,6 +48,7 @@ const FollowTabs = () => {
       <div className="bg-[#1E1C28] w-full rounded-full shadow-md my-5 flex items-center pl-4">
         <FaSearch />
         <Input
+          onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="搜索用户"
           className="bg-[#1E1C28] rounded-full border-0 focus:border-transparent focus-visible:ring-0"
         />
