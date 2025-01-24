@@ -14,7 +14,10 @@ const PrivacySettings = () => {
           <Link to={paths.settings}>
             <FaAngleLeft size={18} />
           </Link>
-          <p className="text-[16px]">Privacy Settings</p>
+          <p className="text-[16px]">
+            {/* Privacy Settings */}
+            隐私设置
+          </p>
           <div></div>
         </div>
         <div className="space-y-6">

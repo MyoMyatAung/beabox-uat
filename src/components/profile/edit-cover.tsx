@@ -78,7 +78,7 @@ const EditCover = () => {
                 <div className="bg-[#FFFFFF1F] p-2 rounded-full">
                   <Image size={16} />
                 </div>
-                <p className="text-[14px]">Upload Cover Photo</p>
+                <p className="text-[14px]">上传封面</p>
               </label>
             </div>
             <div className="w-full h-[1px] bg-[#FFFFFF0A]"></div>
@@ -86,7 +86,7 @@ const EditCover = () => {
               <div className="bg-[#FFFFFF1F] p-2 rounded-full">
                 <X size={16} />
               </div>
-              <p className="text-[14px]">Remove Cover Photo</p>
+              <p className="text-[14px]">移除封面</p>
             </div>
           </div>
         </div>

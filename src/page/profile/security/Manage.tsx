@@ -65,13 +65,12 @@ const Manage = () => {
         <Link to={paths.settings}>
           <FaAngleLeft size={18} />
         </Link>
-        <p className="text-[16px]">Manage Security</p>
+        <p className="text-[16px]">管理安全</p>
         <div></div>
       </div>
       <div className="">
         <p className="text-[14px]">
-          Create a custom security question to verify your identity and reset
-          your password if needed.
+          创建自定义安全问题来验证您的身份并在需要时重置您的密码。
         </p>
         {isLoading ? (
           <></>
@@ -79,7 +78,7 @@ const Manage = () => {
           <form onSubmit={onSubmitHandler}>
             <div className="relative my-8">
               <label htmlFor="" className="text-[#888] text-[14px]">
-                Question
+                问题
               </label>
               <input
                 defaultValue={data?.data?.security_question?.security_question}
@@ -105,7 +104,7 @@ const Manage = () => {
             </div>
             <div className="relative">
               <label htmlFor="" className="text-[#888] text-[14px]">
-                Answer
+                回答
               </label>
               <input
                 defaultValue={data?.data?.security_question?.answer}
@@ -130,12 +129,11 @@ const Manage = () => {
               <div className="w-full h-[1px] bg-[#FFFFFF0A]"></div>
             </div>
             <p className="text-[14px] text-[#888] mt-3">
-              Avoid using simple answers for security questions, as it increases
-              the risk of account theft!
+              避免使用简单的答案作为安全问题，因为这会增加帐户被盗的风险！
             </p>
             <>
               <SubmitButton
-                text={isLoading1 ? <SmallLoader /> : "Save"}
+                text={isLoading1 ? <SmallLoader /> : "节省"}
                 isLoading={isLoading1}
                 condition={ans.length > 1 && ques?.length > 1}
               />
@@ -143,7 +141,7 @@ const Manage = () => {
                 onClick={removeHandler}
                 className="w-full rounded-xl bg-[#FFFFFF0A] hover:bg-[#FFFFFF0A] mt-5"
               >
-                {isLoading2 ? <SmallLoader /> : "Remove"}
+                {isLoading2 ? <SmallLoader /> : "消除"}
                 {/* Remove */}
               </Button>
             </>

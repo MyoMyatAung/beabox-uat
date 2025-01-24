@@ -30,9 +30,9 @@ const FollowStatusBtn = ({ userData, id, refetch, userLoading }: any) => {
       {isLoading ? (
         <img src={loader} alt="" className="w-12" />
       ) : follow ? (
-        "Following"
+        "已关注"
       ) : (
-        "Follow"
+        "关注"
       )}
     </Button>
   );

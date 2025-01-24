@@ -50,7 +50,7 @@ const EditSecurity = () => {
               : navigate(paths.manage)
           }
         >
-          {!securityQues?.ans && !securityQues?.ques ? "Set Now" : "Manage"} <FaAngleRight />
+          {!securityQues?.ans && !securityQues?.ques ? "立即设置" : "管理"} <FaAngleRight />
         </p>
       </div>
     </div>

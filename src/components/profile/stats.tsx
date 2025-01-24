@@ -75,7 +75,7 @@ const Stats = ({ followers, following, nickname, likeCount }: any) => {
         </div>
       </div>
       <DrawerContent className="z-[1300] border-0">
-        <div className="z-[1200] w-full h-screen px-5">
+        <div className="z-[1200] w-full h-screen px-5 bg-[#16131C]">
           <div className="z-[1200] flex justify-between items-center py-5">
             <DrawerClose asChild>
               <button onClick={() => dispatch(setIsDrawerOpen(false))}>

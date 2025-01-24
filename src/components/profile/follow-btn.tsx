@@ -25,7 +25,7 @@ const FollowBtn = ({ id, followBack }: any) => {
           : "gradient-bg hover:gradient-bg"
       }`}
     >
-      {follow ? "Following" : "Follow"}
+      {follow ? "已关注" : "关注"}
     </Button>
   );
 };
