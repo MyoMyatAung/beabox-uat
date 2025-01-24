@@ -118,13 +118,15 @@ function VideoSidebar({
 
   const handleLike = (() => {
     const likeTimeout = useRef<NodeJS.Timeout | null>(null); // Track the debounce timeout
-    //const [pendingLikes, setPendingLikes] = useState(0); // Track pending likes locally
+    const [pendingLike, setPendingLike] = useState(false); // Flag to indicate pending like action
 
     const handleLikeClick = () => {
       if (user?.token) {
+        if (pendingLike) return; // Prevent further actions if a like is already pending
+
         setShowHeart(true);
         setCountdown(3); // Reset countdown
-        setLikeCount((prev: any) => +prev + 1);
+
         setIsLiked(true);
         // setPendingLikes((prev) => prev + 1);
         setCountNumber((prev: any) => prev + 1);
@@ -141,8 +143,8 @@ function VideoSidebar({
         // Set up a new debounce timer
         likeTimeout.current = setTimeout(async () => {
           try {
-            await likePost({ post_id, count: countNumber + 1 }); // Pass the accumulated count to the API
-
+            await likePost({ post_id, count: 1 }); // Pass the accumulated count to the API
+            setLikeCount((prev: any) => +prev + 1);
             dispatch(
               setVideos({
                 ...videos,
@@ -150,7 +152,11 @@ function VideoSidebar({
                   currentTab === 2 ? "foryou" : "follow"
                 ]?.map((video: any) =>
                   video.post_id === post_id
-                    ? { ...video, is_liked: true, like_count: +likeCount + 1 }
+                    ? {
+                        ...video,
+                        is_liked: true,
+                        like_count: +video.like_count + 1,
+                      }
                     : video
                 ),
               })
@@ -158,6 +164,8 @@ function VideoSidebar({
             setCountNumber(0); // Reset pending likes after a successful API call
           } catch (error) {
             console.error("Error liking the post:", error);
+          } finally {
+            setPendingLike(false); // Reset pending flag
           }
         }, 1000); // Call API 1 second after the last click
       } else {

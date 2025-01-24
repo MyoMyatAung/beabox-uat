@@ -45,24 +45,23 @@ const SecurityQuestion = () => {
         <Link to={paths.settings}>
           <FaAngleLeft size={18} />
         </Link>
-        <p className="text-[16px]">Security Question</p>
+        <p className="text-[16px]">安全问题</p>
         <div></div>
       </div>
       <div className="">
         <p className="text-[14px]">
-          Create a custom security question to verify your identity and reset
-          your password if needed.
+          创建自定义安全问题来验证您的身份并根据需要重置密码。
         </p>
         <form onSubmit={onSubmitHandler}>
           <div className="relative my-8">
             <label htmlFor="" className="text-[#888] text-[14px]">
-              Question
+            问题
             </label>
             <input
               type={showQues ? "text" : "password"}
               onChange={(e) => setQues(e.target.value)}
               className="block w-full py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none mt-2"
-              placeholder="Please set up a questiontion"
+              placeholder="请提出问题"
             />
             <button
               className=" absolute right-0 bottom-2"
@@ -81,13 +80,13 @@ const SecurityQuestion = () => {
           </div>
           <div className="relative">
             <label htmlFor="" className="text-[#888] text-[14px]">
-              Answer
+            回答
             </label>
             <input
               onChange={(e) => setAns(e.target.value)}
               type={showAns ? "text" : "password"}
               className="block w-full py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none mt-2"
-              placeholder="Please Enter Your Answer"
+              placeholder="请输入您的答案"
             />
             <button
               className=" absolute right-0 bottom-2"
@@ -105,12 +104,11 @@ const SecurityQuestion = () => {
             <div className="w-full h-[1px] bg-[#FFFFFF0A]"></div>
           </div>
           <p className="text-[14px] text-[#888] mt-3">
-            Avoid using simple answers for security questions, as it increases
-            the risk of account theft!
+          避免对安全问题使用简单的答案，因为这会增加帐户被盗的风险！
           </p>
           <>
             <SubmitButton
-              text="Confirm"
+              text="确认"
               isLoading={isLoading}
               condition={ans.length > 1 && ques?.length > 1}
             />

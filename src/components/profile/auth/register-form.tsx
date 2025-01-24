@@ -199,7 +199,7 @@ const RegisterForm = ({ setIsOpen }: any) => {
           </div>
           <Dialog open={showVerification} onOpenChange={setShowVerification}>
             {!isLoading ? (
-              <DialogContent className="bg-[#393641] z-[3000] border-0 shadow-lg rounded-lg max-w-[340px]">
+              <DialogContent className="bg-[#393641] z-[3000] border-0 shadow-lg rounded-lg max-w-[300px]">
                 <DialogHeader>
                   <DialogTitle className="text-white text-[16px]">
                     {/* Verification */}

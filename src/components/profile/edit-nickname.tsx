@@ -47,25 +47,28 @@ const EditNickName = ({
       </div>
       <DrawerContent className="border-0">
         {isLoading ? <Loader /> : <></>}
-        <div className="w-full h-screen px-5 bg-[#16131C]">
+        <div className="w-full c-height px-5 bg-[#16131C]">
           <div className="flex justify-between items-center py-5">
             <DrawerClose>
               <button>
                 <FaAngleLeft size={18} />
               </button>
             </DrawerClose>
-            <p className="text-[16px]">Nickname</p>
+            <p className="text-[16px]">昵称</p>
             <div></div>
           </div>
           <form onSubmit={onSubmitHandler}>
+          <label htmlFor="" className="text-[14px] text-[#888] pt-10">
+              昵称
+            </label>
             <div className="relative">
               <input
                 className="w-full bg-transparent border-0 border-b py-3 outline-0 border-[#888]"
-                placeholder="Enter nickname"
+                placeholder="请输入您的昵称"
                 onChange={(e: any) => setValue(e.target.value)}
                 value={value}
               />
-              <div className="bg-[#FFFFFF1F] w-5 h-5 flex justify-center items-center rounded-full absolute right-0 bottom-5">
+              <div onClick={() => setValue("")} className="bg-[#FFFFFF1F] w-5 h-5 flex justify-center items-center rounded-full absolute right-0 bottom-5">
                 <X className="w-2" />
               </div>
             </div>
@@ -82,7 +85,7 @@ const EditNickName = ({
             <SubmitButton
               isLoading={isLoading}
               condition={value.length > 1}
-              text="Save"
+              text="保存"
             />
           </form>
           <DrawerClose ref={closeRef} className="hidden" />

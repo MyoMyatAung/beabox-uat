@@ -95,7 +95,7 @@ const EditGender = () => {
             </div>
             <DrawerClose asChild>
               <Button className="w-full rounded-lg bg-[#FFFFFF0A] hover:bg-[#FFFFFF0A]">
-                Cancel
+              取消
               </Button>
             </DrawerClose>
           </div>
