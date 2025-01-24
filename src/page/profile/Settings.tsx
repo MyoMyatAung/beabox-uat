@@ -6,12 +6,13 @@ import { Button } from "@/components/ui/button";
 import EditLanguage from "@/components/profile/edit-language";
 import { logOutUser } from "@/store/slices/persistSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { useLogoutMutation } from "@/store/api/profileApi";
+import { useGetConfigQuery, useLogoutMutation } from "@/store/api/profileApi";
 import withProfileData from "@/hocs/withProfileData";
 import ChangePassword from "@/components/profile/change-password";
 import EditSecurity from "@/components/profile/edit-security";
 import PrivateProfile from "@/components/profile/private-profile";
 import ContentVisibility from "@/components/profile/content-visibility";
+import { useEffect, useState } from "react";
 
 const Settings = ({
   liked_video_visibility,
@@ -25,7 +26,58 @@ const Settings = ({
   const navigate = useNavigate();
   const [logout] = useLogoutMutation();
   const user = useSelector((state: any) => state.persist.user);
-  console.log(content_visibility);
+  const [device, setDevice] = useState("android");
+  const [cacheSize, setCacheSize] = useState(null);
+
+  useEffect(() => {
+    const calculateCacheSize = async () => {
+      if ("caches" in window) {
+        try {
+          const cacheNames = await caches.keys();
+          let totalSize = 0;
+
+          for (const cacheName of cacheNames) {
+            const cache = await caches.open(cacheName);
+            const cachedRequests = await cache.keys();
+
+            for (const request of cachedRequests) {
+              const response = await cache.match(request);
+              if (response) {
+                const blob = await response.blob();
+                totalSize += blob.size;
+              }
+            }
+          }
+
+          // Convert total size from bytes to megabytes (MB) and round to nearest integer
+          const sizeInMB = Math.round(totalSize / (1024 * 1024));
+          setCacheSize(sizeInMB);
+        } catch (error) {
+          console.error("Error calculating cache size:", error);
+          setCacheSize("Error");
+        }
+      } else {
+        setCacheSize("Caches API not supported");
+      }
+    };
+
+    calculateCacheSize();
+  }, []);
+
+  const { data } = useGetConfigQuery(device);
+  console.log(cacheSize);
+
+  useEffect(() => {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+    if (/android/i.test(userAgent)) {
+      setDevice("android");
+    } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+      setDevice("ios");
+    } else {
+      setDevice("other");
+    }
+  }, []);
 
   return (
     <div className="w-full h-screen px-5 flex flex-col items-center justify-between bg-[#16131C]">
@@ -91,14 +143,16 @@ const Settings = ({
         <div className="flex justify-between items-center">
           <p className="flex items-center gap-1 text-[14px]">当前版本</p>
           <p className="flex items-center gap-1 text-[14px]">
-            V 8.0.4 <ChevronRight size={15} className="text-[#777777]" />
+            V {data?.data[0]?.version_number}{" "}
+            <ChevronRight size={15} className="text-[#777777]" />
           </p>
         </div>
         <div className="border-b border-white/10"></div>
         <div className="flex justify-between items-center">
           <p className="flex items-center gap-1 text-[14px]">清除缓存</p>
           <p className="flex items-center gap-1 text-[14px]">
-            V 8.0.4 <ChevronRight size={15} className="text-[#777777]" />
+            {Math.round(cacheSize)} MB{" "}
+            <ChevronRight size={15} className="text-[#777777]" />
           </p>
         </div>
       </div>
