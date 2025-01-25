@@ -1,11 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { RootState } from "@/store/store";
+
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const searchApi = createApi({
   reducerPath: "searchApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://77eewm.qdhgtch.com/api/v1",
+    baseUrl: import.meta.env.VITE_API_URL,
+    prepareHeaders: (headers) => {
+      headers.set("Accept-Language", "cn");
+    },
   }),
   endpoints: (builder) => ({
     getTabList: builder.query<any, string>({
