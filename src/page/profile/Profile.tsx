@@ -65,8 +65,8 @@ const Profile = () => {
     <>
       <div className="gradient-overlay"></div>
       <img
-        // src={data?.data?.cover_photo ? data?.data?.cover_photo : defaultCover}
-        src={defaultCover}
+        src={data?.data?.cover_photo ? data?.data?.cover_photo : defaultCover}
+        // src={defaultCover}
         alt=""
         className="absolute top-0 left-0 w-full h-[23vh] object-cover object-center"
       />
