@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./ss.css";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
@@ -20,7 +20,6 @@ const Banner: React.FC = () => {
   const handleOnChange = (index: number) => {
     setSelectedIndex(index);
   };
-
   return (
     <div className="py-[20px] relative">
       {isLoading ? (
@@ -39,17 +38,18 @@ const Banner: React.FC = () => {
               centerSlidePercentage={87}
               selectedItem={selectedIndex}
               onChange={handleOnChange}
-              transitionTime={500}
-              swipeable={true}
               interval={3000} // Set autoplay interval
             >
               {ad.map((cc: any, index: number) => (
-                <div
+                <a
+                href={cc.url}
+                target="_blink"
                   key={index}
                   className={`justify-center h-[172px] items-center px-[8px] flex flex-col relative bg-[#16131C]`}
                 >
-                  <ImageWithPlaceholder
-                    src={cc.image}
+                  {/* <ImageWithPlaceholder
+                    ref={imgRef}
+                    src={"cc.image"}
                     alt={`Slide ${index + 1}`}
                     width={"100%"}
                     className={`rounded-md hidden transition-all duration-300  ${
@@ -58,8 +58,8 @@ const Banner: React.FC = () => {
                         : "w-[290px] h-[148px]" // Non-active slide size
                     }`}
                     height={"100%"}
-                  />
-                  {/* <img
+                  /> */}
+                  <img
                     className={`rounded-md hidden transition-all duration-300  ${
                       selectedIndex === index
                         ? "w-[332px] h-[162px]" // Active slide size
@@ -67,8 +67,8 @@ const Banner: React.FC = () => {
                     }`}
                     src={cc.image}
                     alt={`Slide ${index + 1}`}
-                  /> */}
-                </div>
+                  />
+                </a>
               ))}
             </Carousel>
             {/* Custom Dots */}
