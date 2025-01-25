@@ -103,7 +103,7 @@ const VideoTabs = ({ login }: any) => {
             )}
           </TabsContent>
           <TabsContent value="history">
-            {!login || data?.data?.length <= 0 ? (
+            {!login || history?.data?.length <= 0 ? (
               <div className="flex flex-col justify-center items-center w-full mt-[150px]">
                 <NoVideo />
                 <p className="text-[12px] text-[#888]">这里空空如也～</p>
