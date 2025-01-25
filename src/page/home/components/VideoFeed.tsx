@@ -137,7 +137,7 @@ const VideoFeed = ({
   const handleFullscreen = (video: any) => {
     sendEventToNative("beabox_fullscreen", {
       post_id: video?.post_id,
-      like_api_url: "https://77eewm.qdhgtch.com/api/v1/post/like",
+      like_api_url: `${import.meta.env.VITE_API_URL}/post/like`,
       token: `Bearer ${user?.token}`,
       video_url: video?.files[0].resourceURL,
       share_link: config?.data?.share_link,

@@ -6,7 +6,7 @@ export const exploreApi = createApi({
   reducerPath: "exploreApi",
   // baseQuery: fetchBaseQuery({ baseUrl: "https://77eewm.qdhgtch.com/api/v1" }),
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://77eewm.qdhgtch.com/api/v1",
+    baseUrl: import.meta.env.VITE_API_URL,
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).persist?.user?.token; // Adjust 'auth.token' to match your Redux slice structure
       if (token) {
