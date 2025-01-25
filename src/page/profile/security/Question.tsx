@@ -37,7 +37,7 @@ const Question = () => {
         <Link to={paths.forgot_password}>
           <FaAngleLeft size={18} />
         </Link>
-        <p className="text-[16px]">Security Question</p>
+        <p className="text-[16px]">您最喜欢的艺术家是谁?</p>
         <div></div>
       </div>
 
@@ -48,13 +48,13 @@ const Question = () => {
         <form onSubmit={onSubmitHandler} className="w-full">
           <div className="relative w-full">
             <label htmlFor="" className="text-[#888] text-[14px]">
-              Answer
+              回答
             </label>
             <input
               onChange={(e) => setAns(e.target.value)}
               type={showAns ? "text" : "password"}
               className="block w-full py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none mt-2"
-              placeholder="Please Enter Your Answer"
+              placeholder="请输入您的答案"
             />
             <button
               className=" absolute right-0 bottom-2"
@@ -75,7 +75,7 @@ const Question = () => {
 
           <>
             <SubmitButton
-              text={isLoading ? <SmallLoader /> : "Confirm"}
+              text={isLoading ? <SmallLoader /> : "继续"}
               isLoading={isLoading}
               condition={ans.length > 1}
             />
