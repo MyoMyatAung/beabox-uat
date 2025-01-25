@@ -137,9 +137,9 @@ export const profileApi = createApi({
         body: region,
       }),
     }),
-    getLikedPost: builder.query<any, string>({
-      query: (user_id) => ({
-        url: `/user/liked-post?user_id=${user_id}`,
+    getLikedPost: builder.query<any, any>({
+      query: ({ user_id, page }) => ({
+        url: `/user/liked-post?user_id=${user_id}&page=${page}`,
         method: "GET",
       }),
     }),
@@ -208,8 +208,8 @@ export const profileApi = createApi({
       }),
     }),
     getlikePostList: builder.query<any, any>({
-      query: (id) => ({
-        url: `/user/liked-post?user_id=${id}`,
+      query: ({ id, page }) => ({
+        url: `/user/liked-post?user_id=${id}&page=${page}`,
         method: "Get",
       }),
     }),
@@ -277,6 +277,12 @@ export const profileApi = createApi({
         method: "GET",
       }),
     }),
+    getWatchHistory: builder.query<any, any>({
+      query: ({ page }) => ({
+        url: `/watch-history?pageSize=10&page=${page}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -315,4 +321,5 @@ export const {
   useProfileUploadMutation,
   useChangeCoverMutation,
   useRemoveCoverMutation,
+  useGetWatchHistoryQuery
 } = profileApi;
