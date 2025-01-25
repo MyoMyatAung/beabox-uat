@@ -33,7 +33,7 @@ const ResetPassword = () => {
         <Link to={paths.check_answer}>
           <FaAngleLeft size={18} />
         </Link>
-        <p className="text-[16px]">Reset Password</p>
+        <p className="text-[16px]">重置密码</p>
         <div></div>
       </div>
 
@@ -41,7 +41,7 @@ const ResetPassword = () => {
         <form onSubmit={onSubmitHandler} className="w-full">
           <div className="relative w-full">
             <label htmlFor="" className="text-[#888] text-[14px]">
-              Password
+              密码
             </label>
             <input
               onChange={(e) => setPassword1(e.target.value)}
@@ -67,7 +67,7 @@ const ResetPassword = () => {
 
           <div className="relative w-full mt-5">
             <label htmlFor="" className="text-[#888] text-[14px]">
-              Retype Password
+              重新输入密码
             </label>
             <input
               onChange={(e) => setRetypePassword(e.target.value)}

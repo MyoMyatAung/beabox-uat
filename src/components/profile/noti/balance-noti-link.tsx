@@ -1,4 +1,4 @@
-import Balance from "@/assets/profile/balance.png";
+import Balance from "@/assets/profile/balance1.png";
 import { paths } from "@/routes/paths";
 import { useNavigate } from "react-router-dom";
 

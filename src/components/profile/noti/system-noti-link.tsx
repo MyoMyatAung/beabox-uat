@@ -1,4 +1,4 @@
-import System from "@/assets/profile/system.png";
+import System from "@/assets/profile/system1.png";
 import { paths } from "@/routes/paths";
 import { useNavigate } from "react-router-dom";
 
