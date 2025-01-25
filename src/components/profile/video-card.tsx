@@ -1,3 +1,4 @@
+import ImageWithPlaceholder from "@/page/search/comp/imgPlaceholder";
 import { paths } from "@/routes/paths";
 import { setDetails } from "@/store/slices/exploreSlice";
 import { FaHeart } from "react-icons/fa";
@@ -17,11 +18,21 @@ const VideoCard = ({ videoData }: any) => {
       className="bg-gradient-to-r h-[153px] rounded relative"
       onClick={() => showDetailsVod(videoData)}
     >
-      <img
+      {/* <img
         src={videoData?.preview_image}
         alt=""
         className="h-full rounded w-full object-cover object-center"
-      />
+      /> */}
+      {/* remove if not work ;( */}
+      <div className=" h-[300px]">
+        <ImageWithPlaceholder
+          src={videoData?.preview_image}
+          alt={videoData.title || "Video"}
+          width={""}
+          height={""}
+          className="h-[153px] object-cover rounded w-full object-center"
+        />
+      </div>
       <div className="absolute bottom-0 flex justify-between items-center px-2 w-full">
         <div className="flex items-center gap-1">
           <FaHeart size={10} />

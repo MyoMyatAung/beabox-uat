@@ -4,13 +4,44 @@ import VideoGrid from "./video-grid";
 import { FaHeart } from "react-icons/fa";
 import { MdWatchLater } from "react-icons/md";
 import { useSelector } from "react-redux";
-import { useGetLikedPostQuery } from "@/store/api/profileApi";
+import {
+  useGetLikedPostQuery,
+  useGetWatchHistoryQuery,
+} from "@/store/api/profileApi";
+import { useEffect, useState } from "react";
+import Loader from "../../page/home/vod_loader.gif";
 
 const VideoTabs = ({ login }: any) => {
   const user = useSelector((state: any) => state.persist.user);
-  const { data } = useGetLikedPostQuery(user?.id);
-  console.log(data?.data, "liked videos");
+  const [page, setPage] = useState(1);
+  const [Hispage, setHisPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [waterfall, setWaterFall] = useState<any[]>([]);
+  const [HistoryList, setHistoryList] = useState<any[]>([]);
+  const { data, isLoading } = useGetLikedPostQuery({ user_id: user?.id, page });
+  const { data: history, isLoading: historyLoading } = useGetWatchHistoryQuery({
+    page: Hispage,
+  });
+  console.log(HistoryList);
 
+  useEffect(() => {
+    if (data?.data) {
+      setWaterFall((prev) => [...prev, ...data.data]);
+
+      const loadedItems =
+        data.pagination.current_page * data.pagination.per_page;
+      setHasMore(loadedItems < data.pagination.total);
+    } else {
+      setHasMore(false);
+    }
+
+    if (history?.data) {
+      setHistoryList(history.data);
+    }
+  }, [data, history]);
+  const fetchMoreData = () => {
+    setPage((prevPage) => prevPage + 1);
+  };
   return (
     <Tabs defaultValue="liked" className="my-5">
       <TabsList className="grid w-full grid-cols-3 bg-transparent">
@@ -47,26 +78,44 @@ const VideoTabs = ({ login }: any) => {
           </div>
         )}
       </TabsContent> */}
-      <TabsContent value="liked">
-        {!login || data?.data?.length <= 0 ? (
-          <div className="flex flex-col justify-center items-center w-full mt-[150px]">
-            <NoVideo />
-            <p className="text-[12px] text-[#888]">这里空空如也～</p>
+      {isLoading || historyLoading ? (
+        <div className=" flex justify-center w-screen py-[200px]">
+          <div className="">
+            <img src={Loader} className="w-[70px] h-[70px]" alt="Loading" />
           </div>
-        ) : (
-          <VideoGrid data={data?.data} />
-        )}
-      </TabsContent>
-      <TabsContent value="history">
-        {!login || data?.data?.length <= 0 ? (
-          <div className="flex flex-col justify-center items-center w-full mt-[150px]">
-            <NoVideo />
-            <p className="text-[12px] text-[#888]">这里空空如也～</p>
-          </div>
-        ) : (
-          <VideoGrid data={data?.data} />
-        )}
-      </TabsContent>
+        </div>
+      ) : (
+        <>
+          <TabsContent value="liked">
+            {!login || data?.data?.length <= 0 ? (
+              <div className="flex flex-col justify-center items-center w-full mt-[150px]">
+                <NoVideo />
+                <p className="text-[12px] text-[#888]">这里空空如也～</p>
+              </div>
+            ) : (
+              <VideoGrid
+                hasMore={hasMore}
+                fetchMoreData={fetchMoreData}
+                data={waterfall}
+              />
+            )}
+          </TabsContent>
+          <TabsContent value="history">
+            {!login || data?.data?.length <= 0 ? (
+              <div className="flex flex-col justify-center items-center w-full mt-[150px]">
+                <NoVideo />
+                <p className="text-[12px] text-[#888]">这里空空如也～</p>
+              </div>
+            ) : (
+              <VideoGrid
+                hasMore={hasMore}
+                fetchMoreData={fetchMoreData}
+                data={HistoryList}
+              />
+            )}
+          </TabsContent>
+        </>
+      )}
     </Tabs>
   );
 };
