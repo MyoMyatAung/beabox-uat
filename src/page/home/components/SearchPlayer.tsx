@@ -10,7 +10,6 @@ const SearchPlayer = ({
   src,
   thumbnail,
   onPlay,
-
   setWidth,
   setHeight,
 }: {
@@ -78,13 +77,11 @@ const SearchPlayer = ({
 
             artPlayerInstanceRef.current.on("play", () => {
               if (onPlay) onPlay();
-              setWidth(artPlayerInstanceRef?.current?.video?.videoWidth);
-              setHeight(artPlayerInstanceRef?.current?.video?.videoHeight);
             });
-            artPlayerInstanceRef?.current?.on("ready", () => {
-              setWidth(artPlayerInstanceRef?.current?.video?.videoWidth);
-              setHeight(artPlayerInstanceRef?.current?.video?.videoHeight);
-            });
+            // artPlayerInstanceRef?.current?.on("ready", () => {
+            //   setWidth(artPlayerInstanceRef?.current?.video?.videoWidth);
+            //   setHeight(artPlayerInstanceRef?.current?.video?.videoHeight);
+            // });
           }
         },
       });
@@ -96,6 +93,14 @@ const SearchPlayer = ({
       const handleIntersection = (entries: any) => {
         entries.forEach((entry: any) => {
           if (entry.isIntersecting) {
+            artPlayerInstanceRef?.current?.on("ready", () => {
+              setWidth(artPlayerInstanceRef?.current?.video?.videoWidth);
+              setHeight(artPlayerInstanceRef?.current?.video?.videoHeight);
+            });
+            artPlayerInstanceRef?.current?.on("play", () => {
+              setWidth(artPlayerInstanceRef?.current?.video?.videoWidth);
+              setHeight(artPlayerInstanceRef?.current?.video?.videoHeight);
+            });
             artPlayerInstanceRef.current?.play();
           } else {
             artPlayerInstanceRef.current?.pause();
