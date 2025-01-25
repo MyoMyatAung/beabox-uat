@@ -10,6 +10,7 @@ import FeedFooter from "./FeedFooter";
 import { useNavigate } from "react-router-dom";
 import SearchPlayer from "./SearchPlayer";
 import HeartCount from "./Heart";
+import VideoContainer from "./VideoContainer";
 
 const VideoFeed = ({
   videos,
@@ -156,7 +157,18 @@ const VideoFeed = ({
             className="video mt-[20px] pb-[68px]"
             data-post-id={video.post_id} // Add post ID to the container
           >
-            <SearchPlayer
+            <VideoContainer
+              countNumber={countNumber}
+              video={video}
+              setCountNumber={setCountNumber}
+              config={config}
+              countdown={countdown}
+              setWidth={setWidth}
+              setHeight={setHeight}
+              setHearts={setHearts}
+              setCountdown={setCountdown}
+            />
+            {/* <SearchPlayer
               src={video.files[0].resourceURL}
               thumbnail={
                 video?.preview_image ||
@@ -178,7 +190,7 @@ const VideoFeed = ({
               image={video?.preview_image}
               post={video}
               setHearts={setHearts}
-            />
+            /> */}
             {width > height && (
               <>
                 <button

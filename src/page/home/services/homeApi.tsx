@@ -45,6 +45,17 @@ export const homeApi = createApi({
         },
       }),
     }),
+
+    unlikePost: builder.mutation<void, { post_id: any }>({
+      query: ({ post_id }) => ({
+        url: `post/unlike`,
+        method: "POST",
+        body: {
+          post_id,
+        },
+      }),
+    }),
+
     followStatus: builder.mutation<void, { follow_user_id: any; status: any }>({
       query: ({ follow_user_id, status }) => ({
         url: `follower/change-follow-status`,
@@ -160,4 +171,5 @@ export const {
   useLikePostMutation,
   useGetReportsQuery,
   useStoreReportMutation,
+  useUnlikePostMutation,
 } = homeApi;

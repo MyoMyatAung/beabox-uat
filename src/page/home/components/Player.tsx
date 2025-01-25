@@ -148,12 +148,16 @@ const Player = ({
   onPlay,
   setWidth,
   setHeight,
+
+  handleLike,
 }: {
   src: any;
   thumbnail: any;
   onPlay?: () => void; // Add an optional onPlay callback
   setHeight: any;
   setWidth: any;
+
+  handleLike: any;
 }) => {
   const playerContainerRef = useRef(null);
   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
@@ -210,6 +214,17 @@ const Player = ({
               },
             });
 
+            // Handle double-click for like
+            // artPlayerInstanceRef.current.on("dblclick", () => {
+            //   handleLike();
+            // });
+
+            if (artPlayerInstanceRef.current) {
+              artPlayerInstanceRef.current.on("dblclick", () => {
+                handleLike();
+              });
+            }
+
             // // Trigger the onPlay callback when playback starts
             artPlayerInstanceRef.current.on("play", () => {
               if (onPlay) onPlay();
@@ -241,6 +256,7 @@ const Player = ({
               setWidth(artPlayerInstanceRef?.current?.video?.videoWidth);
               setHeight(artPlayerInstanceRef?.current?.video?.videoHeight);
             });
+
             artPlayerInstanceRef.current?.play();
           } else {
             artPlayerInstanceRef.current?.pause();
@@ -298,6 +314,10 @@ const Player = ({
       };
     }
   }, [src, thumbnail]);
+
+  // useEffect(() => {
+
+  // }, []);
 
   useEffect(() => {
     // Update the mute state if the prop changes
