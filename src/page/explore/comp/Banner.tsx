@@ -35,10 +35,12 @@ const Banner: React.FC = () => {
               showIndicators={false}
               autoPlay={true}
               infiniteLoop={true}
-              centerMode={true}
+              centerMode
               centerSlidePercentage={87}
               selectedItem={selectedIndex}
               onChange={handleOnChange}
+              transitionTime={500}
+              swipeable={true}
               interval={3000} // Set autoplay interval
             >
               {ad.map((cc: any, index: number) => (

@@ -11,7 +11,7 @@ import Explore1SVG from "@/assets/icons/Explore1.svg";
 import App1SVG from "@/assets/icons/App1.svg";
 
 const navItems = [
-  { name: "Home", selectedIcon: Home1SVG, icon: HomeSVG, href: "/" },
+  { name: "首页", selectedIcon: Home1SVG, icon: HomeSVG, href: "/" },
   // {
   //   name: "Explore",
   //   selectedIcon: Explore1SVG,
@@ -20,13 +20,13 @@ const navItems = [
   // },
   // { name: "", selectedIcon: PlusSVG, icon: PlusSVG, href: "/upload" },
   {
-    name: "Application",
+    name: "应用推荐",
     selectedIcon: App1SVG,
     icon: AppSVG,
     href: "/application",
   },
   {
-    name: "Profile",
+    name: "我的",
     selectedIcon: Profile1SVG,
     icon: ProfileSVG,
     href: "/profile",

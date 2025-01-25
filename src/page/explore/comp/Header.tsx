@@ -31,7 +31,7 @@ const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
         <div className=" w-[330px] bg-white/20 rounded-md h-[50px] animate-pulse"></div>
       ) : (
         <div className="flex gap-[16px] pr-[25px] scrollbar w-screen overflow-x-auto whitespace-nowrap">
-          {hd.map((tab: any, index) => (
+          {hd?.map((tab: any, index) => (
             <div
               key={index}
               className="flex flex-col justify-center items-center py-[10px] gap-[3px]"

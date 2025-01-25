@@ -28,7 +28,7 @@ const Explore = () => {
 
   useEffect(() => {
     if (data?.data?.tabs) {
-      const tt = data?.data?.tabs.map((t: any) => t.name);
+      const tt = data?.data?.tabs?.map((t: any) => t.name);
       // const ii = data?.data?.tabs.map((t: any) => t.id);
       // console.log(tt[0]);
       setTabs(tt);
@@ -41,7 +41,7 @@ const Explore = () => {
       }
       // setDyId([...ii, dyId]);
     }
-  }, [data?.data?.tabs,exp_header]);
+  }, [data?.data,exp_header]);
   // console.log(exp_header)
 
   useEffect(() => {
@@ -65,7 +65,7 @@ const Explore = () => {
     <>
       {/* {show && <VodDetails  />} */}
 
-      <div className="flex bg-[#16131C] justify-center items-center w-screen overflow-clip">
+      <div className="flex bg-[#16131C] justify-center items-center min-h-screen w-screen overflow-clip">
         <div className="explore_sec w-screen xl:w-[800px] flex flex-col justify-center items-cente px-[10px] pb-[100px] mt-14">
           <Banner />
           <PopApp />
