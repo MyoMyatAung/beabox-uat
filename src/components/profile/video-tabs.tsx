@@ -79,7 +79,7 @@ const VideoTabs = ({ login }: any) => {
         )}
       </TabsContent> */}
       {isLoading || historyLoading ? (
-        <div className=" flex justify-center w-screen py-[200px]">
+        <div className=" flex justify-center w-full py-[200px]">
           <div className="">
             <img src={Loader} className="w-[70px] h-[70px]" alt="Loading" />
           </div>

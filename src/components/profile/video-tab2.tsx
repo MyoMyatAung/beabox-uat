@@ -5,8 +5,10 @@ import { FaHeart } from "react-icons/fa";
 import { MdWatchLater } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { useGetLikedPostQuery } from "@/store/api/profileApi";
+import Loader from "../../page/home/vod_loader.gif";
+
 const VideoTab2 = ({ id }: any) => {
-  const { data } = useGetLikedPostQuery(id);
+  const { data, isLoading } = useGetLikedPostQuery(id);
 
   return (
     <Tabs defaultValue="liked" className="my-5">
@@ -35,6 +37,15 @@ const VideoTab2 = ({ id }: any) => {
         </TabsTrigger> */}
       </TabsList>
       <TabsContent value="liked">
+        {isLoading ? (
+          <div className=" flex justify-center w-full py-[200px]">
+            <div className="">
+              <img src={Loader} className="w-[70px] h-[70px]" alt="Loading" />
+            </div>
+          </div>
+        ) : (
+          <></>
+        )}
         {data?.data?.length <= 0 ? (
           <div className="flex flex-col justify-center items-center w-full mt-[150px]">
             <NoVideo />

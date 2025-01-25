@@ -85,7 +85,9 @@ const OtherProfile = () => {
           refetch={refetch}
           userLoading={userLoading}
         />
-        <VideoTab2 id={id} />
+        <div className="z-[1200] relative">
+          <VideoTab2 id={id} />
+        </div>
       </div>
     </>
   );
