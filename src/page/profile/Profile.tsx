@@ -65,7 +65,8 @@ const Profile = () => {
     <>
       <div className="gradient-overlay"></div>
       <img
-        src={data?.data?.cover_photo ? data?.data?.cover_photo : defaultCover}
+        // src={data?.data?.cover_photo ? data?.data?.cover_photo : defaultCover}
+        src={defaultCover}
         alt=""
         className="absolute top-0 left-0 w-full h-[23vh] object-cover object-center"
       />
@@ -74,11 +75,11 @@ const Profile = () => {
           <div className="absolute top-0 z-[1500] left-0 w-full h-full mx-auto flex flex-col justify-center items-center bg-black/80">
             <div className="z-[1200] px-10">
               <div className="z-[1200] h-[250px] gradient-b  rounded-lg relative">
-                  <img
-                    src={center}
-                    className=" absolute h-[250px h-full w-full "
-                    alt=""
-                  />
+                <img
+                  src={center}
+                  className=" absolute h-[250px h-full w-full "
+                  alt=""
+                />
                 <div className="z-[1200] w-full absolute -top-20 flex justify-center items-center">
                   <img
                     src={phoneImg}
@@ -186,7 +187,9 @@ const Profile = () => {
         </div>
 
         {/* Stats */}
-        <Stats />
+        <div className="">
+          <Stats />
+        </div>
 
         {user?.token ? (
           <Link to={paths.profileDetail}>
@@ -197,7 +200,9 @@ const Profile = () => {
         ) : (
           <></>
         )}
-        <VideoTabs login={user?.token} />
+        <div className="z-[1200] relative">
+          <VideoTabs login={user?.token} />
+        </div>
       </div>
     </>
   );
