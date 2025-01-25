@@ -8,6 +8,8 @@ import { useGetNotiQuery } from "@/store/api/profileApi";
 import { dateForamtter } from "@/lib/utils";
 import Loader from "@/components/shared/loader";
 import Divider from "@/components/shared/divider";
+import System from "@/assets/profile/system1.png";
+import Balance from "@/assets/profile/balance1.png";
 
 const Noti = () => {
   const { data, isLoading } = useGetNotiQuery("");
@@ -41,7 +43,8 @@ const Noti = () => {
                     className="flex items-start gap-2"
                   >
                     <img
-                      src={item?.metadata?.image}
+                      // src={item?.metadata?.image }
+                      src={Balance}
                       className="w-10 h-10 mt-1"
                       alt=""
                     />
@@ -72,7 +75,8 @@ const Noti = () => {
                     className="system flex items-start gap-2"
                   >
                     <img
-                      src={item?.metadata?.image}
+                      // src={item?.metadata?.image}
+                      src={System}
                       className="w-10 h-10 mt-1"
                       alt=""
                     />
