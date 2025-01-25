@@ -33,7 +33,7 @@ const VideoFeed = ({
   const { data: config } = useGetConfigQuery({});
   const user = useSelector((state: any) => state.persist.user);
   const [postComment] = usePostCommentMutation();
-  const [mute, setMute] = useState(true);
+
   const navigate = useNavigate();
   const [hearts, setHearts] = useState<number[]>([]); // Manage heart IDs
   const [width, setWidth] = useState(0);
@@ -162,7 +162,6 @@ const VideoFeed = ({
                 video?.preview_image ||
                 "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg"
               }
-              mute={mute}
               setWidth={setWidth}
               setHeight={setHeight}
             />
@@ -178,8 +177,6 @@ const VideoFeed = ({
               config={config?.data}
               image={video?.preview_image}
               post={video}
-              mute={mute}
-              setMute={setMute}
               setHearts={setHearts}
             />
             {width > height && (

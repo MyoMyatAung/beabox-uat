@@ -4,12 +4,12 @@ import Hls from "hls.js"; // Import HLS.js for handling m3u8 streams
 import lozad from "lozad"; // Import lozad library for lazy loading
 import indicator from "../indicator.svg";
 import vod_loader from "../vod_loader.gif";
+import { useSelector } from "react-redux";
 
 const SearchPlayer = ({
   src,
   thumbnail,
   onPlay,
-  mute,
 
   setWidth,
   setHeight,
@@ -17,7 +17,6 @@ const SearchPlayer = ({
   src: any;
   thumbnail: any;
   onPlay?: () => void; // Add an optional onPlay callback
-  mute: any;
 
   setWidth: any;
   setHeight: any;
@@ -25,6 +24,7 @@ const SearchPlayer = ({
   const playerContainerRef = useRef(null);
   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
   const hlsRef = useRef<Hls | null>(null); // Store the Hls instance
+  const { mute } = useSelector((state: any) => state.muteSlice);
 
   useEffect(() => {
     if (playerContainerRef.current) {

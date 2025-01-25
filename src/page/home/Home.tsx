@@ -50,7 +50,6 @@ const Home = () => {
 
   // const [currentTab, setCurrentTab] = useState(2);
   const swiperRef = useRef<any>(null);
-  const [mute, setMute] = useState(true);
 
   const { data: config } = useGetConfigQuery({});
 
@@ -472,7 +471,6 @@ const Home = () => {
                           video?.preview_image ||
                           "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg"
                         }
-                        mute={mute}
                         setWidth={setWidth}
                         setHeight={setHeight}
                       />
@@ -488,8 +486,6 @@ const Home = () => {
                         config={config?.data}
                         image={video?.preview_image}
                         post={video}
-                        setMute={setMute}
-                        mute={mute}
                         setHearts={setHearts}
                       />
                       <VideoFooter
@@ -639,7 +635,6 @@ const Home = () => {
                           video?.preview_image ||
                           "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg"
                         }
-                        mute={mute}
                         setWidth={setWidth}
                         setHeight={setHeight}
                       />
@@ -655,8 +650,6 @@ const Home = () => {
                         config={config?.data}
                         image={video?.preview_image}
                         post={video}
-                        setMute={setMute}
-                        mute={mute}
                         setHearts={setHearts}
                       />
                       <VideoFooter

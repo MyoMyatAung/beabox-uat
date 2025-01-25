@@ -11,6 +11,7 @@ import ShareOverlay from "./ShareOverlay";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { setVideos } from "../services/videosSlice";
+import { setMute } from "../services/muteSlice";
 
 function VideoSidebar({
   likes,
@@ -19,15 +20,11 @@ function VideoSidebar({
   post_id,
   setCountdown,
   setCountNumber,
-
   countNumber,
-
   countdown,
   config,
   image,
   post,
-  mute,
-  setMute,
 
   setHearts,
 }: {
@@ -37,14 +34,11 @@ function VideoSidebar({
   post_id: any;
   setCountdown: any;
   setCountNumber: any;
-
   countdown: any;
   countNumber: any;
   config: any;
   image: any;
   post: any;
-  mute: any;
-  setMute: any;
 
   setHearts: any;
 }) {
@@ -61,6 +55,7 @@ function VideoSidebar({
   const [comments, setComments] = useState<any[]>([]);
   const [isClosingAlert, setIsClosingAlert] = useState(false); // Tracks the closing animation state
   const user = useSelector((state: any) => state.persist.user);
+  const { mute } = useSelector((state: any) => state.muteSlice);
   const navigate = useNavigate();
   const alertRef = useRef<HTMLDivElement>(null); // Reference to the alert box
   const [follow, setFollow] = useState(post?.is_followed);
@@ -259,7 +254,7 @@ function VideoSidebar({
   };
 
   const handleVoice = () => {
-    setMute(!mute);
+    dispatch(setMute(!mute));
   };
 
   const handleProfile = (id: any) => {
