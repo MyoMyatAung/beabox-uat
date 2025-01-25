@@ -220,8 +220,8 @@ const ShareOverlay: React.FC<any> = ({
               </button>
             </div>
             <div className="flex mb-4 justify-center items-center my-10 p-0">
-              <div className="text-right">
-                <QRCodeSVG value={shareUrl} size={150} />
+              <div className="text-right bg-white p-3 rounded-xl">
+                <QRCodeSVG value={shareUrl} size={100} />
                 {/* <img src={qr} alt="" width={150} height={150} /> */}
               </div>
               {/* <div>

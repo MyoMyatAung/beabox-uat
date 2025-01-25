@@ -65,7 +65,7 @@ const EditBio = ({ bio, refetchHandler }: any) => {
                   className="min-h-[100px] w-full resize-none  bg-transparent p-3 text-white placeholder:text-gray-400  border-b border-[#888] focus:outline-none focus:ring-0 focus:border-[#888]"
                 />
                 <span className="absolute bottom-2 right-2 text-sm text-gray-400">
-                  {value.length}/{maxLength}
+                  {value?.length}/{maxLength}
                 </span>
               </div>
               {/* <textarea
@@ -82,13 +82,13 @@ const EditBio = ({ bio, refetchHandler }: any) => {
             </div>
             <SubmitButton
               isLoading={isLoading}
-              condition={value.length > 1}
+              condition={value?.length > 1}
               text="保存"
             />
             {/* <Button
               type="submit"
               className={`w-full ${
-                value.length > 1
+                value?.length > 1
                   ? "gradient-bg hover:gradient-bg"
                   : "bg-[#FFFFFF0A] hover:bg-[#FFFFFF0A]"
               } bg-[#FFFFFF0A]  mt-10 rounded-xl`}

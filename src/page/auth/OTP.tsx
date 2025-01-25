@@ -10,7 +10,7 @@ const OTP = () => {
 
   // Handle input change
   const handleChange = (index: number, value: string) => {
-    if (value.length > 1) return; // Prevent multiple character input
+    if (value?.length > 1) return; // Prevent multiple character input
 
     const newOtp = [...otp];
     newOtp[index] = value;

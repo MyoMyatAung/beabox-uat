@@ -54,7 +54,7 @@ const EditReferral = ({ referral_code }: any) => {
             <Button
               type="submit"
               className={`w-full ${
-                value.length > 1
+                value?.length > 1
                   ? "gradient-bg hover:gradient-bg"
                   : "bg-[#FFFFFF0A] hover:bg-[#FFFFFF0A]"
               } bg-[#FFFFFF0A]   mt-10 rounded-xl`}
