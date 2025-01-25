@@ -93,7 +93,7 @@ const VideoTabs = ({ login }: any) => {
                 <p className="text-[12px] text-[#888]">这里空空如也～</p>
               </div>
             ) : (
-              <div className="w-full relative">
+              <div className="w-full relative z-[1200]">
                 <VideoGrid
                   hasMore={hasMore}
                   fetchMoreData={fetchMoreData}
@@ -109,7 +109,7 @@ const VideoTabs = ({ login }: any) => {
                 <p className="text-[12px] text-[#888]">这里空空如也～</p>
               </div>
             ) : (
-              <div className="w-full relative">
+              <div className="w-full relative  z-[1200]">
                 <VideoGrid
                   hasMore={hasMore}
                   fetchMoreData={fetchMoreData}
