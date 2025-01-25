@@ -18,7 +18,7 @@ const RootLayout = ({ children }: any) => {
       {children}
       {/* <RightSideActions /> */}
       {showAd && <PopUp setShowAd={setShowAd} />}
-      <div className="fixed bottom-0 left-0 w-full z-[9999]">
+      <div className="fixed bottom-0 left-0 w-full z-[1300]">
         <BottomNav />
       </div>
     </div>
