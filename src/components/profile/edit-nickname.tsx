@@ -75,7 +75,7 @@ const EditNickName = ({
             {/* <Button
               type="submit"
               className={`w-full ${
-                value.length > 1
+                value?.length > 1
                   ? "gradient-bg hover:gradient-bg"
                   : "bg-[#FFFFFF0A] hover:bg-[#FFFFFF0A]"
               } bg-[#FFFFFF0A]   mt-10 rounded-xl`}
@@ -84,7 +84,7 @@ const EditNickName = ({
             </Button> */}
             <SubmitButton
               isLoading={isLoading}
-              condition={value.length > 1}
+              condition={value?.length > 1}
               text="保存"
             />
           </form>
