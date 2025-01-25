@@ -22,7 +22,7 @@ const EditNickName = ({
   refetchHandler: any;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(nickname);
   const [changeNickname, { data, isLoading }] = useChangeNicknameMutation();
   const navigate = useNavigate();
   const closeRef = useRef<HTMLButtonElement>(null);
