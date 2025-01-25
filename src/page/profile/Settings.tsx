@@ -24,7 +24,7 @@ const Settings = ({
 }: any) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [logout] = useLogoutMutation();
+  const [logout, { data: lgdata }] = useLogoutMutation();
   const user = useSelector((state: any) => state.persist.user);
   const [device, setDevice] = useState("android");
   const [cacheSize, setCacheSize] = useState(null);
@@ -163,6 +163,7 @@ const Settings = ({
               onClick={async () => {
                 dispatch(logOutUser());
                 await logout("");
+                console.log(lgdata);
                 // navigate(paths.profile);
               }}
               className="w-full rounded-xl bg-[#1C1A22] hover:bg-[#1C1A22]"

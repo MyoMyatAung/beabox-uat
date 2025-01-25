@@ -41,7 +41,9 @@ const VideoTab2 = ({ id }: any) => {
             <p className="text-[12px] text-[#888]">Oops! No videos here</p>
           </div>
         ) : (
-          <VideoGrid data={data?.data} />
+          <div className="w-full relative">
+            <VideoGrid data={data?.data} />
+          </div>
         )}
       </TabsContent>
       {/* <TabsContent value="history">

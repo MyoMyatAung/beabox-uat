@@ -93,11 +93,13 @@ const VideoTabs = ({ login }: any) => {
                 <p className="text-[12px] text-[#888]">这里空空如也～</p>
               </div>
             ) : (
-              <VideoGrid
-                hasMore={hasMore}
-                fetchMoreData={fetchMoreData}
-                data={waterfall}
-              />
+              <div className="w-full relative">
+                <VideoGrid
+                  hasMore={hasMore}
+                  fetchMoreData={fetchMoreData}
+                  data={waterfall}
+                />
+              </div>
             )}
           </TabsContent>
           <TabsContent value="history">
@@ -107,11 +109,13 @@ const VideoTabs = ({ login }: any) => {
                 <p className="text-[12px] text-[#888]">这里空空如也～</p>
               </div>
             ) : (
-              <VideoGrid
-                hasMore={hasMore}
-                fetchMoreData={fetchMoreData}
-                data={HistoryList}
-              />
+              <div className="w-full relative">
+                <VideoGrid
+                  hasMore={hasMore}
+                  fetchMoreData={fetchMoreData}
+                  data={HistoryList}
+                />
+              </div>
             )}
           </TabsContent>
         </>

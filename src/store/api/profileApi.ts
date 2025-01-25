@@ -91,6 +91,7 @@ export const profileApi = createApi({
     logout: builder.mutation({
       query: () => ({
         url: `/profile/logout`,
+        method: "POST",
       }),
     }),
     changePassword: builder.mutation({
@@ -321,5 +322,5 @@ export const {
   useProfileUploadMutation,
   useChangeCoverMutation,
   useRemoveCoverMutation,
-  useGetWatchHistoryQuery
+  useGetWatchHistoryQuery,
 } = profileApi;

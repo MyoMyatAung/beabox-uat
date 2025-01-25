@@ -20,7 +20,7 @@ const ForgotPassword = () => {
   const [value, setValue] = useState("");
   const [captcha, setCaptcha] = useState("");
   const [error, setError] = useState("");
-  const [showVerification, setShowVerification] = useState(false);
+  const [show验证码, setShow验证码] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [getCaptcha, { data: captchaData, isLoading: captchaLoading }] =
@@ -29,7 +29,7 @@ const ForgotPassword = () => {
 
   const showHandler = async () => {
     const { data } = await getCaptcha("");
-    setShowVerification(true);
+    setShow验证码(true);
   };
 
   const handleVerify = async () => {
@@ -40,7 +40,7 @@ const ForgotPassword = () => {
     });
     if (!data?.status) {
       setError("出了点问题");
-      setShowVerification(false);
+      setShow验证码(false);
     }
     dispatch(setForgotData(data?.data));
     navigate(paths.check_answer);
@@ -98,12 +98,12 @@ const ForgotPassword = () => {
           </Button>
         </div>
       </div>
-      <Dialog open={showVerification} onOpenChange={setShowVerification}>
-        {showVerification ? (
+      <Dialog open={show验证码} onOpenChange={setShow验证码}>
+        {show验证码 ? (
           <DialogContent className="bg-[#16131C] border-0 shadow-lg rounded-lg max-w-[290px]">
             <DialogHeader>
               <DialogTitle className="text-white text-[16px]">
-                Verification
+                验证码
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-6">
