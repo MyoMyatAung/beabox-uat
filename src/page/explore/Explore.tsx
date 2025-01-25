@@ -36,12 +36,12 @@ const Explore = () => {
       if (tabs.length > 0) {
         dispatch(setExpHeader(tt[0]));
       }
-      if(!exp_header){
+      if (!exp_header) {
         dispatch(setExpHeader(tt[0]));
       }
       // setDyId([...ii, dyId]);
     }
-  }, [data?.data,exp_header]);
+  }, [data?.data, exp_header]);
   // console.log(exp_header)
 
   useEffect(() => {
@@ -71,31 +71,37 @@ const Explore = () => {
           <PopApp />
           <div className="mt-[20px] relative">
             <Header activeTab={activeTab} setActiveTab={setActiveTab} />
-            <Swiper
-              className=""
-              allowTouchMove={false}
-              // allowSlideNext={false}
-              onSlideChange={handleSlideChange}
-              onSwiper={(swiper) => (swiperRef.current = swiper)}
-              slidesPerView={1}
-              spaceBetween={10}
-              centeredSlides={true}
-              // loop={true}
-            >
-              {data?.data?.tabs?.map((gg: any) => (
-                <SwiperSlide>
-                  {exp_header === gg.name && (
-                    <div className=" min-h-screen text-white">
-                      {gg.type === "topic" ? (
-                        <Recommand list_id={gg.id} title="Chinese Drama" />
-                      ) : (
-                        <Latest list_id={gg.id} />
-                      )}
-                    </div>
-                  )}
-                </SwiperSlide>
-              ))}
-            </Swiper>
+            {isLoading ? (
+              <div className=" min-h-screen bg-white/20 rounded-md animate-pulse p-2">
+                {" "}
+              </div>
+            ) : (
+              <Swiper
+                className=""
+                allowTouchMove={false}
+                // allowSlideNext={false}
+                onSlideChange={handleSlideChange}
+                onSwiper={(swiper) => (swiperRef.current = swiper)}
+                slidesPerView={1}
+                spaceBetween={10}
+                centeredSlides={true}
+                // loop={true}
+              >
+                {data?.data?.tabs?.map((gg: any) => (
+                  <SwiperSlide>
+                    {exp_header === gg.name && (
+                      <div className=" min-h-screen text-white">
+                        {gg.type === "topic" ? (
+                          <Recommand list_id={gg.id} title="Chinese Drama" />
+                        ) : (
+                          <Latest list_id={gg.id} />
+                        )}
+                      </div>
+                    )}
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            )}
           </div>
         </div>
       </div>

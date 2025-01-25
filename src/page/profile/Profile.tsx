@@ -2,6 +2,7 @@ import Stats from "@/components/profile/stats";
 import { Person } from "@/assets/profile";
 import defaultCover from "@/assets/cover.jpg";
 import enimg from "@/assets/profile/enimg.jpg";
+import center from "@/assets/profile/center3.png";
 
 import VideoTabs from "@/components/profile/video-tabs";
 import { stats } from "./data";
@@ -70,9 +71,14 @@ const Profile = () => {
       />
       <div className="z-[1200] px-5 max-h-screen no-scrollbar profile-bg">
         {show ? (
-          <div className="absolute top-0 z-[1500] left-0 w-full h-full mx-auto flex flex-col justify-center items-center bg-[#161619CC]">
+          <div className="absolute top-0 z-[1500] left-0 w-full h-full mx-auto flex flex-col justify-center items-center bg-black/80">
             <div className="z-[1200] px-10">
-              <div className="z-[1200] h-[250px] gradient-bg rounded-lg relative">
+              <div className="z-[1200] h-[250px] gradient-b  rounded-lg relative">
+                  <img
+                    src={center}
+                    className=" absolute h-[250px h-full w-full "
+                    alt=""
+                  />
                 <div className="z-[1200] w-full absolute -top-20 flex justify-center items-center">
                   <img
                     src={phoneImg}
@@ -88,7 +94,7 @@ const Profile = () => {
                 <p className="z-[1200] text-[14px] text-center text-[#FFFFFFCC]">
                   查看创作者排名，洞察顶尖创作者的风采，观看最受欢迎视频，掌握流行趋势，发现精彩瞬间，探索全新内容。
                 </p>
-                <Button className="z-[1200] bg-[#FFFFFF14] hover:bg-[#FFFFFF14]">
+                <Button className="z-[1200] mt-2 mb-4 rounded-[16px] px-[26px] py-[12px] bg-[#FFFFFF14] hover:bg-[#FFFFFF14]">
                   即将上线，敬请期待！
                 </Button>
               </div>
