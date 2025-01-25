@@ -14,6 +14,7 @@ import FeedFooter from "@/page/home/components/FeedFooter";
 
 import { setCurrentTab } from "@/page/home/services/homeSlice";
 import HeartCount from "@/page/home/components/Heart";
+import VideoContainer from "@/page/home/components/VideoContainer";
 
 interface VodDetailsProps {
   // setshow: (value: boolean) => void;
@@ -175,7 +176,19 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
           className="video mt-[10px] pb-[68px]"
           data-post-id={files.post_id}
         >
-          <Player
+          <VideoContainer
+            countNumber={countNumber}
+            video={files}
+            setCountNumber={setCountNumber}
+            config={config}
+            countdown={countdown}
+            setWidth={setWidth}
+            setHeight={setHeight}
+            setHearts={setHearts}
+            setCountdown={setCountdown}
+          />
+
+          {/* <Player
             src={files.files[0].resourceURL}
             thumbnail={
               files?.preview_image ||
@@ -200,7 +213,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
             setMute={setMute}
             mute={mute}
             setHearts={setHearts}
-          />
+          /> */}
 
           <FeedFooter
             tags={files?.tag}

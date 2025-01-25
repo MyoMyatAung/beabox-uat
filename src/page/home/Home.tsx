@@ -22,6 +22,7 @@ import { setCurrentActivePost } from "./services/activeSlice";
 import { setVideos } from "./services/videosSlice";
 import { setPage } from "./services/pageSlice";
 import HeartCount from "./components/Heart";
+import VideoContainer from "./components/VideoContainer";
 
 const Home = () => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
@@ -471,7 +472,18 @@ const Home = () => {
                           className="video mt-[20px]"
                           data-post-id={video.post_id} // Add post ID to the container
                         >
-                          <Player
+                          <VideoContainer
+                            countNumber={countNumber}
+                            video={video}
+                            setCountNumber={setCountNumber}
+                            config={config}
+                            countdown={countdown}
+                            setWidth={setWidth}
+                            setHeight={setHeight}
+                            setHearts={setHearts}
+                            setCountdown={setCountdown}
+                          />
+                          {/* <Player
                             src={video.files[0].resourceURL}
                             thumbnail={
                               video?.preview_image ||
@@ -479,8 +491,8 @@ const Home = () => {
                             }
                             setWidth={setWidth}
                             setHeight={setHeight}
-                          />
-                          <VideoSidebar
+                          /> */}
+                          {/* <VideoSidebar
                             likes={video?.like_count}
                             is_liked={video?.is_liked}
                             messages={video?.comment_count}
@@ -493,7 +505,7 @@ const Home = () => {
                             image={video?.preview_image}
                             post={video}
                             setHearts={setHearts}
-                          />
+                          /> */}
                           <VideoFooter
                             tags={video?.tag}
                             title={video?.title}
@@ -635,29 +647,18 @@ const Home = () => {
                           className="video mt-[20px]"
                           data-post-id={video.post_id} // Add post ID to the container
                         >
-                          <Player
-                            src={video.files[0].resourceURL}
-                            thumbnail={
-                              video?.preview_image ||
-                              "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg"
-                            }
+                          <VideoContainer
+                            countNumber={countNumber}
+                            video={video}
+                            setCountNumber={setCountNumber}
+                            config={config}
+                            countdown={countdown}
                             setWidth={setWidth}
                             setHeight={setHeight}
-                          />
-                          <VideoSidebar
-                            likes={video?.like_count}
-                            is_liked={video?.is_liked}
-                            messages={video?.comment_count}
-                            post_id={video?.post_id}
-                            setCountNumber={setCountNumber}
-                            setCountdown={setCountdown}
-                            countNumber={countNumber}
-                            countdown={countdown}
-                            config={config?.data}
-                            image={video?.preview_image}
-                            post={video}
                             setHearts={setHearts}
+                            setCountdown={setCountdown}
                           />
+
                           <VideoFooter
                             tags={video?.tag}
                             title={video?.title}
