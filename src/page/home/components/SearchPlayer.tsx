@@ -4,20 +4,18 @@ import Hls from "hls.js"; // Import HLS.js for handling m3u8 streams
 import lozad from "lozad"; // Import lozad library for lazy loading
 import indicator from "../indicator.svg";
 import vod_loader from "../vod_loader.gif";
+import { useSelector } from "react-redux";
 
 const SearchPlayer = ({
   src,
   thumbnail,
   onPlay,
-  mute,
-
   setWidth,
   setHeight,
 }: {
   src: any;
   thumbnail: any;
   onPlay?: () => void; // Add an optional onPlay callback
-  mute: any;
 
   setWidth: any;
   setHeight: any;
@@ -25,6 +23,7 @@ const SearchPlayer = ({
   const playerContainerRef = useRef(null);
   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
   const hlsRef = useRef<Hls | null>(null); // Store the Hls instance
+  const { mute } = useSelector((state: any) => state.muteSlice);
 
   useEffect(() => {
     if (playerContainerRef.current) {
@@ -78,13 +77,11 @@ const SearchPlayer = ({
 
             artPlayerInstanceRef.current.on("play", () => {
               if (onPlay) onPlay();
-              setWidth(artPlayerInstanceRef?.current?.video?.videoWidth);
-              setHeight(artPlayerInstanceRef?.current?.video?.videoHeight);
             });
-            artPlayerInstanceRef?.current?.on("ready", () => {
-              setWidth(artPlayerInstanceRef?.current?.video?.videoWidth);
-              setHeight(artPlayerInstanceRef?.current?.video?.videoHeight);
-            });
+            // artPlayerInstanceRef?.current?.on("ready", () => {
+            //   setWidth(artPlayerInstanceRef?.current?.video?.videoWidth);
+            //   setHeight(artPlayerInstanceRef?.current?.video?.videoHeight);
+            // });
           }
         },
       });
@@ -96,6 +93,14 @@ const SearchPlayer = ({
       const handleIntersection = (entries: any) => {
         entries.forEach((entry: any) => {
           if (entry.isIntersecting) {
+            artPlayerInstanceRef?.current?.on("ready", () => {
+              setWidth(artPlayerInstanceRef?.current?.video?.videoWidth);
+              setHeight(artPlayerInstanceRef?.current?.video?.videoHeight);
+            });
+            artPlayerInstanceRef?.current?.on("play", () => {
+              setWidth(artPlayerInstanceRef?.current?.video?.videoWidth);
+              setHeight(artPlayerInstanceRef?.current?.video?.videoHeight);
+            });
             artPlayerInstanceRef.current?.play();
           } else {
             artPlayerInstanceRef.current?.pause();

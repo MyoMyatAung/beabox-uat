@@ -91,8 +91,11 @@ function FeedFooter({
 
           {/* More/Less Button Inline */}
           {(title.length > 30 || tags.length > 3) && (
-            <button className="more_text inline ml-2" onClick={toggleExpand}>
-              {isExpanded ? "less" : "more"}
+            <button
+              className="more_text inline ml-[-3px]"
+              onClick={toggleExpand}
+            >
+              {isExpanded ? "收起" : "更多"}
             </button>
           )}
         </div>

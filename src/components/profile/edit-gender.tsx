@@ -18,9 +18,11 @@ const EditGender = () => {
   const dispatch = useDispatch();
   // const [gender, setGender] = useState("Other");
   const [isOpen, setIsOpen] = useState(false);
-    const closeRef = useRef<HTMLButtonElement>(null);
-  
+  const closeRef = useRef<HTMLButtonElement>(null);
+
   const [changeGender, { data, isLoading }] = useChangeGenderMutation();
+
+  console.log(gender);
 
   return (
     <Drawer>
@@ -28,7 +30,10 @@ const EditGender = () => {
         <h1>性别</h1>
         <DrawerTrigger asChild>
           <p className="flex items-center gap-1 text-[#888]">
-            {gender} <FaAngleRight />
+            {(gender === "Other" && "不方便透露") ||
+              (gender == "Male" && "男性") ||
+              (gender == "Female" && "女性")}{" "}
+            <FaAngleRight />
           </p>
         </DrawerTrigger>
       </div>
@@ -47,7 +52,7 @@ const EditGender = () => {
                   gender == "Other" ? "text-white" : "text-[#999]"
                 } text-[16px]`}
               >
-                Other
+                不方便透露,
               </h1>
               <span
                 className={`w-[6px] h-[6px] rounded-full gradient-bg ${
@@ -66,7 +71,7 @@ const EditGender = () => {
                   gender == "Male" ? "text-white" : "text-[#999]"
                 } text-[16px]`}
               >
-                Male
+                男性
               </h1>
               <span
                 className={`w-[6px] h-[6px] rounded-full gradient-bg ${
@@ -85,7 +90,7 @@ const EditGender = () => {
                   gender == "Female" ? "text-white" : "text-[#999]"
                 } text-[16px]`}
               >
-                Female
+                女性
               </h1>
               <span
                 className={`w-[6px] h-[6px] rounded-full gradient-bg ${
@@ -95,7 +100,7 @@ const EditGender = () => {
             </div>
             <DrawerClose asChild>
               <Button className="w-full rounded-lg bg-[#FFFFFF0A] hover:bg-[#FFFFFF0A]">
-              取消
+                取消
               </Button>
             </DrawerClose>
           </div>

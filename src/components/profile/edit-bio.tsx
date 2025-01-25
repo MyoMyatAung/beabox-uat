@@ -16,7 +16,7 @@ import Loader from "../shared/loader";
 const EditBio = ({ bio, refetchHandler }: any) => {
   const closeRef = useRef<HTMLButtonElement>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(bio);
   // const [text, setText] = useState("");
   const maxLength = 100;
   const [changeBio, { data, isLoading }] = useChangeBioMutation();
