@@ -3,11 +3,11 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const homeApi = createApi({
   reducerPath: "homeApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://77eewm.qdhgtch.com/api/v1",
+    baseUrl: import.meta.env.VITE_API_URL,
     prepareHeaders: (headers, { getState }) => {
       const state = getState() as any;
       const accessToken = state.persist?.user?.token;
-      headers.set("Accept-Language", "en");
+      headers.set("Accept-Language", "cn");
       if (accessToken) {
         headers.set("Authorization", `Bearer ${accessToken}`);
       }

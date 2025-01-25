@@ -5,7 +5,7 @@ export const profileApi = createApi({
   reducerPath: "profileApi",
   // baseQuery: fetchBaseQuery({ baseUrl: "https://77eewm.qdhgtch.com/api/v1" }),
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://77eewm.qdhgtch.com/api/v1",
+    baseUrl: import.meta.env.VITE_API_URL,
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).persist?.user?.token;
       if (token) {

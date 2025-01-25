@@ -167,7 +167,7 @@ const Settings = ({
               }}
               className="w-full rounded-xl bg-[#1C1A22] hover:bg-[#1C1A22]"
             >
-              Log Out
+              退出
             </Button>
           </div>
         ) : (
