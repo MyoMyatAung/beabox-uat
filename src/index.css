@@ -169,7 +169,11 @@ input:checked + .slider:before {
 }
 
 .img-bg {
-  background: linear-gradient(90deg, rgba(255, 178, 224, 0.22) 0%, rgba(205, 62, 255, 0.22) 100%);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 178, 224, 0.22) 0%,
+    rgba(205, 62, 255, 0.22) 100%
+  );
 
   /* background: linear-gradient(
     205deg,
@@ -196,5 +200,5 @@ input:checked + .slider:before {
 }
 
 .c-height {
-  height: calc(100vh - 24px);
+  height: calc(100vh - 96px);
 }

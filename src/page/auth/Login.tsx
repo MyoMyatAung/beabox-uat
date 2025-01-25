@@ -24,6 +24,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import SmallLoader from "@/components/shared/small-loader";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -33,7 +34,7 @@ const Login = () => {
 
   const [getCaptcha, { data, isLoading: captchaLoading }] =
     useGetCaptchaMutation();
-  const [showVerification, setShowVerification] = useState(false);
+  const [show验证码, setShow验证码] = useState(false);
   console.log(data);
   const [captcha, setCaptcha] = useState("");
   const [error, setError] = useState("");
@@ -51,10 +52,10 @@ const Login = () => {
   const passwordValue = watch("password");
 
   async function onSubmit() {
-    if (data?.status) setShowVerification(true);
+    if (data?.status) setShow验证码(true);
   }
   const handleVerify = async (e: any) => {
-    // Add verification logic here
+    // Add 验证码 logic here
     e.stopPropagation();
     const { emailOrPhone, password } = form.getValues();
     console.log(emailOrPhone, password);
@@ -67,10 +68,10 @@ const Login = () => {
     console.log(loginData, "loginData");
     if (loginData?.status) {
       dispatch(setUser(loginData?.data));
-      setShowVerification(false);
+      setShow验证码(false);
       navigate(paths.profile);
     } else {
-      setShowVerification(false);
+      setShow验证码(false);
       setError("出了点问题");
     }
   };
@@ -101,24 +102,29 @@ const Login = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <div className="relative">
-                      <input
-                        className="block w-full px-3 py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none "
-                        placeholder="Enter User Name"
-                        {...field}
-                      />
-                      {field.value && (
-                        <div
-                          className="w-6 h-6 rounded-full flex justify-center items-center bg-[#FFFFFF1F] absolute right-0 bottom-2"
-                          onClick={() => {
-                            field.onChange("");
-                          }}
-                        >
-                          <X size={9} />
-                        </div>
-                      )}
-                      <div className="w-full h-[1px] bg-[#FFFFFF0A]"></div>
-                    </div>
+                    <>
+                      <label htmlFor="" className="text-[14px] text-[#888]">
+                        密码
+                      </label>
+                      <div className="relative">
+                        <input
+                          className="block w-full py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none "
+                          placeholder="输入用户名"
+                          {...field}
+                        />
+                        {field.value && (
+                          <div
+                            className="w-6 h-6 rounded-full flex justify-center items-center bg-[#FFFFFF1F] absolute right-0 bottom-2"
+                            onClick={() => {
+                              field.onChange("");
+                            }}
+                          >
+                            <X size={9} />
+                          </div>
+                        )}
+                        <div className="w-full h-[1px] bg-[#FFFFFF0A]"></div>
+                      </div>
+                    </>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -131,35 +137,42 @@ const Login = () => {
               render={({ field }) => (
                 <FormItem className="relative">
                   <FormControl>
-                    <div className="relative">
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        className="block w-full px-3 py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none "
-                        placeholder="Enter Your Password"
-                        {...field}
-                      />
-                      <button
-                        className=" absolute right-0 bottom-2"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setShowPassword(!showPassword);
-                        }}
-                      >
-                        {showPassword ? (
-                          <Eye className="w-[18px]" />
-                        ) : (
-                          <EyeOff className="w-[18px]" />
-                        )}
-                      </button>
+                    <>
+                      <label htmlFor="" className="text-[14px] text-[#888]">
+                        密码
+                      </label>
+                      <div className="relative">
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          className="block w-full py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none "
+                          placeholder="输入您的密码"
+                          {...field}
+                        />
+                        <button
+                          className=" absolute right-0 bottom-2"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowPassword(!showPassword);
+                          }}
+                        >
+                          {showPassword ? (
+                            <Eye className="w-[18px]" />
+                          ) : (
+                            <EyeOff className="w-[18px]" />
+                          )}
+                        </button>
 
-                      <div className="w-full h-[1px] bg-[#FFFFFF0A]"></div>
-                    </div>
+                        <div className="w-full h-[1px] bg-[#FFFFFF0A]"></div>
+                      </div>
+                    </>
                   </FormControl>
                   <FormMessage />
-                  <FormMessage>{error}</FormMessage>
+                  {/* <FormMessage>{error}</FormMessage> */}
                 </FormItem>
               )}
             />
+
+            <h1 className="mt-4 text-red-500 text-sm">{error}</h1>
 
             <div className="">
               {/* <SubmitButton
@@ -177,23 +190,23 @@ const Login = () => {
                 // type="submit"
                 onClick={async () => {
                   await getCaptcha("");
-                  setShowVerification(true);
+                  setShow验证码(true);
                 }}
                 className="w-full gradient-bg rounded-lg hover:gradient-bg"
               >
                 {/* {isLoading ? "loading..." : "Login"} */}
-                Login
+                {captchaLoading ? <SmallLoader /> : "登录"}
               </Button>
               <Link to={paths.forgot_password}>
                 <p className="text-center text-[14px] mt-5">Forgot Password?</p>
               </Link>
             </div>
-            <Dialog open={showVerification} onOpenChange={setShowVerification}>
+            <Dialog open={show验证码} onOpenChange={setShow验证码}>
               {!captchaLoading ? (
                 <DialogContent className="bg-[#16131C] border-0 shadow-lg rounded-lg max-w-[320px]">
                   <DialogHeader>
                     <DialogTitle className="text-white text-[16px]">
-                      Verification
+                      验证码
                     </DialogTitle>
                   </DialogHeader>
                   <div className="space-y-6 w-full">

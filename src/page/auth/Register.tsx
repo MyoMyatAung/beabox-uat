@@ -32,7 +32,7 @@ const Register = () => {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [code, setCode] = useState("");
-  const [showVerification, setShowVerification] = useState(false);
+  const [show验证码, setShow验证码] = useState(false);
   const [showSecurity, setShowSecurity] = useState(false);
   const [captcha, setCaptcha] = useState("");
   const [getCaptcha, { data, isLoading }] = useGetCaptchaMutation();
@@ -53,10 +53,10 @@ const Register = () => {
   async function onSubmit(data: LoginFormData) {
     // Handle form submission
     // await getCaptcha();
-    setShowVerification(true);
+    setShow验证码(true);
   }
   const handleVerify = async (e: any) => {
-    // Add verification logic here
+    // Add 验证码 logic here
     e.stopPropagation();
     const { emailOrPhone, password } = form.getValues();
     const { data: registerData } = await register({
@@ -68,10 +68,10 @@ const Register = () => {
     console.log(registerData, "registerData");
     if (registerData?.status) {
       dispatch(setRegisterUser(registerData?.data));
-      setShowVerification(false);
+      setShow验证码(false);
       setShowSecurity(true);
     } else {
-      setShowVerification(false);
+      setShow验证码(false);
       setShowSecurity(false);
       setError("出了点问题");
     }
@@ -98,24 +98,29 @@ const Register = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <div className="relative">
-                      <input
-                        className="block w-full px-3 py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none "
-                        placeholder="Enter User Name"
-                        {...field}
-                      />
-                      {field.value && (
-                        <div
-                          className="w-6 h-6 rounded-full flex justify-center items-center bg-[#FFFFFF1F] absolute right-0 bottom-2"
-                          onClick={() => {
-                            field.onChange("");
-                          }}
-                        >
-                          <X size={9} />
-                        </div>
-                      )}
-                      <div className="w-full h-[1px] bg-[#FFFFFF0A]"></div>
-                    </div>
+                    <>
+                      <label htmlFor="" className="text-[14px] text-[#888]">
+                        姓名
+                      </label>
+                      <div className="relative">
+                        <input
+                          className="block w-full  py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none "
+                          placeholder="输入用户名"
+                          {...field}
+                        />
+                        {field.value && (
+                          <div
+                            className="w-6 h-6 rounded-full flex justify-center items-center bg-[#FFFFFF1F] absolute right-0 bottom-2"
+                            onClick={() => {
+                              field.onChange("");
+                            }}
+                          >
+                            <X size={9} />
+                          </div>
+                        )}
+                        <div className="w-full h-[1px] bg-[#FFFFFF0A]"></div>
+                      </div>
+                    </>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -128,28 +133,33 @@ const Register = () => {
               render={({ field }) => (
                 <FormItem className="relative">
                   <FormControl>
-                    <div className="relative">
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        className="block w-full px-3 py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none "
-                        placeholder="Password must be 8-25 character"
-                        {...field}
-                      />
-                      <button
-                        className=" absolute right-0 bottom-2"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setShowPassword(!showPassword);
-                        }}
-                      >
-                        {showPassword ? (
-                          <Eye className="w-[18px]" />
-                        ) : (
-                          <EyeOff className="w-[18px]" />
-                        )}
-                      </button>
-                      <div className="w-full h-[1px] bg-[#FFFFFF0A]"></div>
-                    </div>
+                    <>
+                      <label htmlFor="" className="text-[14px] text-[#888]">
+                        密码
+                      </label>
+                      <div className="relative">
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          className="block w-full  py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none "
+                          placeholder="密码必须是8-25个字符"
+                          {...field}
+                        />
+                        <button
+                          className=" absolute right-0 bottom-2"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setShowPassword(!showPassword);
+                          }}
+                        >
+                          {showPassword ? (
+                            <Eye className="w-[18px]" />
+                          ) : (
+                            <EyeOff className="w-[18px]" />
+                          )}
+                        </button>
+                        <div className="w-full h-[1px] bg-[#FFFFFF0A]"></div>
+                      </div>
+                    </>
                   </FormControl>
                   <FormMessage />
                   {/* <FormMessage>{error}</FormMessage> */}
@@ -177,15 +187,15 @@ const Register = () => {
                 className="w-full gradient-bg rounded-lg hover:gradient-bg"
               >
                 {/* {isLoading ? "loading..." : "Continue"} */}
-                Continue
+                确认
               </Button>
             </div>
-            <Dialog open={showVerification} onOpenChange={setShowVerification}>
+            <Dialog open={show验证码} onOpenChange={setShow验证码}>
               {!isLoading ? (
                 <DialogContent className="bg-[#16131C] border-0 shadow-lg rounded-lg max-w-[290px]">
                   <DialogHeader>
                     <DialogTitle className="text-white text-[16px]">
-                      Verification
+                      验证码
                     </DialogTitle>
                   </DialogHeader>
                   <div className="space-y-6">

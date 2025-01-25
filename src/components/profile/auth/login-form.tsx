@@ -35,7 +35,7 @@ const LoginForm = ({ setIsOpen }: any) => {
 
   const [getCaptcha, { data, isLoading: captchaLoading }] =
     useGetCaptchaMutation();
-  const [showVerification, setShowVerification] = useState(false);
+  const [show验证码, setShow验证码] = useState(false);
   const [captcha, setCaptcha] = useState("");
   const [error, setError] = useState("");
 
@@ -51,10 +51,10 @@ const LoginForm = ({ setIsOpen }: any) => {
   const passwordValue = watch("password");
 
   async function onSubmit() {
-    if (data?.status) setShowVerification(true);
+    if (data?.status) setShow验证码(true);
   }
   const handleVerify = async (e: any) => {
-    // Add verification logic here
+    // Add 验证码 logic here
     e.stopPropagation();
     const { emailOrPhone, password } = form.getValues();
     console.log(emailOrPhone, password);
@@ -67,11 +67,11 @@ const LoginForm = ({ setIsOpen }: any) => {
     // console.log(loginData, "loginData");
     if (loginData?.status) {
       dispatch(setUser(loginData?.data));
-      setShowVerification(false);
+      setShow验证码(false);
       // navigate(paths.profile);
       setIsOpen(false);
     } else {
-      setShowVerification(false);
+      setShow验证码(false);
       setError("出了点问题");
     }
   };
@@ -166,10 +166,12 @@ const LoginForm = ({ setIsOpen }: any) => {
                   </>
                 </FormControl>
                 <FormMessage />
-                <FormMessage>{error}</FormMessage>
+                {/* <FormMessage>{error}</FormMessage> */}
               </FormItem>
             )}
           />
+
+          <h1 className="mt-4 text-red-500 text-sm">{error}</h1>
 
           <div className="">
             {/* <SubmitButton
@@ -187,7 +189,7 @@ const LoginForm = ({ setIsOpen }: any) => {
               // type="submit"
               onClick={async () => {
                 await getCaptcha("");
-                setShowVerification(true);
+                setShow验证码(true);
               }}
               className="w-full gradient-bg rounded-lg hover:gradient-bg"
             >
@@ -198,12 +200,12 @@ const LoginForm = ({ setIsOpen }: any) => {
               <p className="text-center text-[14px] mt-5">忘记密码？</p>
             </Link>
           </div>
-          <Dialog open={showVerification} onOpenChange={setShowVerification}>
+          <Dialog open={show验证码} onOpenChange={setShow验证码}>
             {!captchaLoading ? (
               <DialogContent className="bg-[#393641] z-[3000] border-0 shadow-lg rounded-lg max-w-[300px]">
                 <DialogHeader>
                   <DialogTitle className="text-white text-[16px]">
-                    {/* Verification */}
+                    {/* 验证码 */}
                     验证码
                   </DialogTitle>
                 </DialogHeader>

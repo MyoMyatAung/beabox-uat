@@ -60,7 +60,10 @@ const EditRegion = () => {
             onClick={() => setIsOpen(true)}
             className="flex items-center gap-1 text-[#888]"
           >
-            {region?.province}, {region?.city} <FaAngleRight />
+            {region?.province?.length && region.city?.length
+              ? `${region?.province}, ${region?.city}`
+              : ""}
+            <FaAngleRight />
           </p>
         </DrawerTrigger>
       </div>
