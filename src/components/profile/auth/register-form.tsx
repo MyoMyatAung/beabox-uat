@@ -34,7 +34,7 @@ const RegisterForm = ({ setIsOpen }: any) => {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [code, setCode] = useState("");
-  const [showVerification, setShowVerification] = useState(false);
+  const [show验证码, setShow验证码] = useState(false);
   const [showSecurity, setShowSecurity] = useState(false);
   const [captcha, setCaptcha] = useState("");
   const [getCaptcha, { data, isLoading }] = useGetCaptchaMutation();
@@ -55,10 +55,10 @@ const RegisterForm = ({ setIsOpen }: any) => {
   async function onSubmit(data: LoginFormData) {
     // Handle form submission
     // await getCaptcha();
-    // setShowVerification(true);
+    // setShow验证码(true);
   }
   const handleVerify = async (e: any) => {
-    // Add verification logic here
+    // Add 验证码 logic here
     e.stopPropagation();
     const { emailOrPhone, password } = form.getValues();
     const { data: registerData } = await register({
@@ -70,11 +70,11 @@ const RegisterForm = ({ setIsOpen }: any) => {
     console.log(registerData, "registerData");
     if (registerData?.status) {
       dispatch(setRegisterUser(registerData?.data));
-      setShowVerification(false);
+      setShow验证码(false);
       dispatch(setAuthToggle(true));
       // setShowSecurity(true);
     } else {
-      setShowVerification(false);
+      setShow验证码(false);
       // setShowSecurity(false);
       setError("出了点问题");
     }
@@ -172,10 +172,12 @@ const RegisterForm = ({ setIsOpen }: any) => {
                   </>
                 </FormControl>
                 <FormMessage />
-                <FormMessage>{error}</FormMessage>
+                {/* <FormMessage>{error}</FormMessage> */}
               </FormItem>
             )}
           />
+
+          <h1 className="mt-4 text-red-500 text-sm">{error}</h1>
 
           <input
             type="text"
@@ -192,7 +194,7 @@ const RegisterForm = ({ setIsOpen }: any) => {
               disabled={isLoading || !emailOrPhoneValue || !passwordValue}
               onClick={async () => {
                 await getCaptcha("");
-                setShowVerification(true);
+                setShow验证码(true);
               }}
               className="w-full gradient-bg rounded-lg hover:gradient-bg"
             >
@@ -200,12 +202,12 @@ const RegisterForm = ({ setIsOpen }: any) => {
               {/* Continue */}
             </Button>
           </div>
-          <Dialog open={showVerification} onOpenChange={setShowVerification}>
+          <Dialog open={show验证码} onOpenChange={setShow验证码}>
             {!isLoading ? (
               <DialogContent className="bg-[#393641] z-[3000] border-0 shadow-lg rounded-lg max-w-[300px]">
                 <DialogHeader>
                   <DialogTitle className="text-white text-[16px]">
-                    {/* Verification */}
+                    {/* 验证码 */}
                     验证码
                   </DialogTitle>
                 </DialogHeader>

@@ -29,14 +29,13 @@ const OTP = () => {
     }
   };
 
-
   return (
     <div className="px-5">
       <div className="flex justify-between items-center py-5">
         <Link to={paths.profile}>
           <ChevronLeft />
         </Link>
-        <p className="text-[16px]">OTP Verification</p>
+        <p className="text-[16px]">OTP 验证码</p>
         <div></div>
       </div>
       <form className="space-y-8 py-5">
@@ -57,7 +56,7 @@ const OTP = () => {
           ))}
         </div>
         <p className="text-[#888] text-[14px] w-full">
-          Verification code sent to{" "}
+          验证码 code sent to{" "}
           <span className="text-white">starx@gmail.com</span>. Please check your
           messages and be sure to check your spam folder.
         </p>
