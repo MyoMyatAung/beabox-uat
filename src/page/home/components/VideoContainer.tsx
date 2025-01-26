@@ -113,24 +113,6 @@ const VideoContainer = ({
 
     return handleLikeClick;
   })();
-
-  useEffect(() => {
-    const handleIosEvent = (event: CustomEvent) => {
-      if (event.detail.isLiked === "true" && event.detail.post_id === post_id) {
-        console.log("iOS Event Triggered: Liking the video");
-        handleLike(); // Call the handleLike function
-      }
-    };
-
-    // Listen for the `iosEvent`
-    window.addEventListener("iosEvent", handleIosEvent as EventListener);
-
-    // Cleanup the event listener when the component unmounts
-    return () => {
-      window.removeEventListener("iosEvent", handleIosEvent as EventListener);
-    };
-  }, []);
-
   const unLike = (() => {
     const likeTimeout = useRef<NodeJS.Timeout | null>(null); // Track the debounce timeout
     // const [nextId, setNextId] = useState(0); // Generate unique IDs for hearts
@@ -192,6 +174,26 @@ const VideoContainer = ({
 
     return handleUnLikeClick;
   })();
+
+  useEffect(() => {
+    const handleIosEvent = (event: CustomEvent) => {
+      if (event.detail.post_id === post_id) {
+        if (event.detail.isLiked === "true") {
+          handleLike(); // Call the handleLike function
+        } else if (event.detail.isLiked === "false") {
+          unLike();
+        }
+      }
+    };
+
+    // Listen for the `iosEvent`
+    window.addEventListener("iosEvent", handleIosEvent as EventListener);
+
+    // Cleanup the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("iosEvent", handleIosEvent as EventListener);
+    };
+  }, []);
 
   const sendEventToNative = (name: string, text: any) => {
     if (
