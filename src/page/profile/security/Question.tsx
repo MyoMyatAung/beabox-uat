@@ -37,7 +37,7 @@ const Question = () => {
         <Link to={paths.forgot_password}>
           <FaAngleLeft size={18} />
         </Link>
-        <p className="text-[16px]">您最喜欢的艺术家是谁?</p>
+        <p className="text-[16px]">安全问题</p>
         <div></div>
       </div>
 

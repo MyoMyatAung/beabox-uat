@@ -63,13 +63,28 @@ const Profile = () => {
 
   return (
     <>
-      <div className="gradient-overlay"></div>
-      <img
-        src={data?.data?.cover_photo ? data?.data?.cover_photo : defaultCover}
-        // src={defaultCover}
-        alt=""
-        className="absolute top-0 left-0 w-full h-[23vh] object-cover object-center"
-      />
+      {user?.toke ? (
+        <>
+          <div className="gradient-overlay"></div>
+          <img
+            src={
+              data?.data?.cover_photo ? data?.data?.cover_photo : defaultCover
+            }
+            // src={defaultCover}
+            alt=""
+            className="absolute top-0 left-0 w-full h-[23vh] object-cover object-center"
+          />
+        </>
+      ) : (
+        <>
+          <div className="gradient-overlay"></div>
+          <img
+            src={defaultCover}
+            alt=""
+            className="absolute top-0 left-0 w-full h-[23vh] object-cover object-center"
+          />
+        </>
+      )}
       <div className="z-[1200] px-5 max-h-screen no-scrollbar profile-bg">
         {show ? (
           <div className="absolute top-0 z-[1500] left-0 w-full h-full mx-auto flex flex-col justify-center items-center bg-black/80">

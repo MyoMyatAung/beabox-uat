@@ -43,8 +43,8 @@ const Noti = () => {
                     className="flex items-start gap-2"
                   >
                     <img
-                      src={item?.metadata?.image}
-                      // src={Balance}
+                      // src={item?.metadata?.image}
+                      src={Balance}
                       className="w-10 h-10 mt-1"
                       alt=""
                     />
@@ -75,8 +75,8 @@ const Noti = () => {
                     className="system flex items-start gap-2"
                   >
                     <img
-                      src={item?.metadata?.image}
-                      // src={System}
+                      // src={item?.metadata?.image}
+                      src={System}
                       className="w-10 h-10 mt-1"
                       alt=""
                     />
