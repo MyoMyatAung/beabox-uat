@@ -52,7 +52,7 @@ const EditGender = () => {
                   gender == "Other" ? "text-white" : "text-[#999]"
                 } text-[16px]`}
               >
-                不方便透露,
+                不方便透露
               </h1>
               <span
                 className={`w-[6px] h-[6px] rounded-full gradient-bg ${
