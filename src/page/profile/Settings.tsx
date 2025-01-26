@@ -65,7 +65,7 @@ const Settings = ({
   }, []);
 
   const { data } = useGetConfigQuery(device);
-  console.log(cacheSize);
+  // console.log(cacheSize);
 
   useEffect(() => {
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
