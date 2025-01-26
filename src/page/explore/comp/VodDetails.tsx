@@ -132,33 +132,33 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
     navigate("/search_overlay");
   };
 
-  const sendEventToNative = (name: string, text: any) => {
-    if (
-      (window as any).webkit &&
-      (window as any).webkit.messageHandlers &&
-      (window as any).webkit.messageHandlers.jsBridge
-    ) {
-      (window as any).webkit.messageHandlers.jsBridge.postMessage({
-        eventName: name,
-        value: text,
-      });
-    }
-  };
+  // const sendEventToNative = (name: string, text: any) => {
+  //   if (
+  //     (window as any).webkit &&
+  //     (window as any).webkit.messageHandlers &&
+  //     (window as any).webkit.messageHandlers.jsBridge
+  //   ) {
+  //     (window as any).webkit.messageHandlers.jsBridge.postMessage({
+  //       eventName: name,
+  //       value: text,
+  //     });
+  //   }
+  // };
 
   // console.log(config?.data);
 
-  const handleFullscreen = (video: any) => {
-    sendEventToNative("beabox_fullscreen", {
-      post_id: video?.post_id,
-      like_api_url: `${import.meta.env.VITE_API_URL}/post/like`,
-      token: `Bearer ${user?.token}`,
-      video_url: video?.files[0].resourceURL,
-      share_link: config?.data?.share_link,
-      title: video.title,
-      like_count: video?.like_count,
-      is_like: video?.is_liked,
-    });
-  };
+  // const handleFullscreen = (video: any) => {
+  //   sendEventToNative("beabox_fullscreen", {
+  //     post_id: video?.post_id,
+  //     like_api_url: `${import.meta.env.VITE_API_URL}/post/like`,
+  //     token: `Bearer ${user?.token}`,
+  //     video_url: video?.files[0].resourceURL,
+  //     share_link: config?.data?.share_link,
+  //     title: video.title,
+  //     like_count: video?.like_count,
+  //     is_like: video?.is_liked,
+  //   });
+  // };
 
   return (
     <div className="app bg-black">
@@ -177,6 +177,8 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
           data-post-id={files.post_id}
         >
           <VideoContainer
+            width={width}
+            height={height}
             status={false}
             countNumber={countNumber}
             video={files}
@@ -225,7 +227,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
           {hearts.map((id: any) => (
             <HeartCount id={id} key={id} remove={removeHeart} />
           ))}
-          {width > height && (
+          {/* {width > height && (
             <>
               <button
                 onClick={() => handleFullscreen(files)}
@@ -264,7 +266,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
                 </div>
               </button>
             </>
-          )}
+          )} */}
           <div className="absolute top-3 left-0 z-50 flex gap-2 items-center w-full">
             <button onClick={handleBack} className="p-3">
               <svg
