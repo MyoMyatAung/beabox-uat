@@ -116,7 +116,7 @@ const VideoContainer = ({
 
   useEffect(() => {
     const handleIosEvent = (event: CustomEvent) => {
-      if (event.detail.isLiked === "true") {
+      if (event.detail.isLiked === "true" && event.detail.post_id === post_id) {
         console.log("iOS Event Triggered: Liking the video");
         handleLike(); // Call the handleLike function
       }
