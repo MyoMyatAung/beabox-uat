@@ -22,7 +22,7 @@ const VideoTabs = ({ login }: any) => {
   const { data: history, isLoading: historyLoading } = useGetWatchHistoryQuery({
     page: Hispage,
   });
-  console.log(HistoryList);
+  // console.log(HistoryList);
 
   useEffect(() => {
     if (data?.data) {

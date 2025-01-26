@@ -37,8 +37,8 @@ const More: React.FC<MoreProps> = () => {
     if (data?.data) {
       setFilter(data?.data.filter);
       setList((prev) => [...prev, ...data.data.list]);
-      if(!more_tab){
-        dispatch(setMoreTab(filter[0]?.key))
+      if (!more_tab) {
+        dispatch(setMoreTab(filter[0]?.key));
       }
     }
     // refetch();
@@ -66,35 +66,35 @@ const More: React.FC<MoreProps> = () => {
   // console.log(more_tab);
   return (
     <>
-      <div className="p-[20px]">
+      <div className="px-[20px] flex flex-col relative min-h-scree bg-[#16131C]">
         {/* Header */}
-        <div className="flex justify-between pb-[12px]">
-          <ChevronLeft
-            onClick={() => navigate("/")}
-            className="rec_exp_more_btn px-[2px]"
-          />
-          <h1 className="w-2/3 text-white text-[18px] font-[500]">{title}</h1>
-        </div>
+        <div className=" fixed w-full bg-transparent bg-[#16131C]">
+          <div className="flex justify-between py-[12px] bg-[#16131C] ">
+            <ChevronLeft
+              onClick={() => navigate("/")}
+              className="rec_exp_more_btn px-[2px]"
+            />
+            <h1 className="w-2/3 text-white text-[18px] font-[500]">{title}</h1>
+          </div>
 
-        {/* Tabs */}
-        <div className="flex gap-[8px]">
-          {filter?.map((ff: any, index) => (
-            <button
-            key={index}
-              className={`text-white text-[14px] font-[400] leading-[16px] px-[16px] py-[8px] ${
-                ff.active
-                  ? "more_tabs_buttons_active"
-                  : "more_tabs_buttons"
-              }`}
-              onClick={() => dispatch(setMoreTab(ff.key))} // Update more_tab
-            >
-              {ff.title}
-            </button>
-          ))}
+          {/* Tabs */}
+          <div className="flex gap-[8px] bg-[#16131C] pb-[12px]">
+            {filter?.map((ff: any, index) => (
+              <button
+                key={index}
+                className={`text-white text-[14px] font-[400] leading-[16px] px-[16px] py-[8px] ${
+                  ff.active ? "more_tabs_buttons_active" : "more_tabs_buttons"
+                }`}
+                onClick={() => dispatch(setMoreTab(ff.key))} // Update more_tab
+              >
+                {ff.title}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* List */}
-        <div className="py-[20px] flex flex-col gap-[20px] w-full">
+        <div className="py-[20px] flex flex-col gap-[20px] w-full mt-[80px]">
           {isLoading && isFetching ? (
             <div className=" flex justify-center w-screen py-[200px]">
               <div className="">
@@ -145,7 +145,7 @@ const More: React.FC<MoreProps> = () => {
                     <div className="">
                       <img
                         src={Loader}
-                        className="w-[100px] h-[100px]"
+                        className="w-[70px] h-[70px]"
                         alt="Loading"
                       />
                     </div>

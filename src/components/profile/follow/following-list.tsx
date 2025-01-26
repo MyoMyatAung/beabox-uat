@@ -35,7 +35,7 @@ const FollowingList = ({ searchTerm }: any) => {
     console.log(page);
     setPage((prevPage) => prevPage + 1);
   };
-  console.log(data?.data, "following");
+  // console.log(data?.data, "following");
   return (
     <div className="flex flex-col gap-4 w-full no-scrollbar h-screen pb-20">
       {isLoading || isFetching ? (
