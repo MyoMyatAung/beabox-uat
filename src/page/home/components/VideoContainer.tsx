@@ -113,6 +113,7 @@ const VideoContainer = ({
 
     return handleLikeClick;
   })();
+
   const unLike = (() => {
     const likeTimeout = useRef<NodeJS.Timeout | null>(null); // Track the debounce timeout
     // const [nextId, setNextId] = useState(0); // Generate unique IDs for hearts
@@ -216,7 +217,7 @@ const VideoContainer = ({
       video_url: video?.files[0].resourceURL,
       share_link: config?.data?.share_link,
       title: video.title,
-      like_count: likeCount,
+      like_count: +likeCount,
       is_like: isLiked,
     });
   };

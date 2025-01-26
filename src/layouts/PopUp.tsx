@@ -39,7 +39,7 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
     if (notice?.data) {
       setNotList(notice?.data);
     }
-  }, [data,notice]);
+  }, [data, notice]);
   // console.log(data?.data)
 
   const handleStartClose = () => {
@@ -50,13 +50,12 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
   const handleAppClose = () => {
     setShowAppContent(false);
     setShowNotice(true);
-   
   };
 
   const handleNoticeClose = () => {
-    setShowNotice(false)
-     setShowAd(false);
-  }
+    setShowNotice(false);
+    setShowAd(false);
+  };
 
   return (
     <div className="h-screen bg-black/80 w-screen flex flex-col gap-[20px] justify-center items-center fixed top-0 z-[9999]">
@@ -120,7 +119,7 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
             {isLoading ? (
               <div className="grid grid-cols-4 gap-[20px]">
                 {/* Loading placeholders */}
-                {[...Array(8)].map((_, index) => (
+                {[...Array(8)]?.map((_, index) => (
                   <div
                     key={index}
                     className="w-[56px] h-[53px] rounded-md bg-white/20 animate-pulse"
@@ -178,7 +177,9 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
           </div>
         </div>
       )}
-      {!showStart && !showAppContent && showNotice && <Notice handleNoticeClose={handleNoticeClose} notice={NotList} />}
+      {!showStart && !showAppContent && showNotice && (
+        <Notice handleNoticeClose={handleNoticeClose} notice={NotList} />
+      )}
     </div>
   );
 };
