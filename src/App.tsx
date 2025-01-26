@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useCallback, useEffect, useState } from 'react'
 import Landing from "./components/Landing";
 import Routing from "./routes/Routing";
@@ -38,6 +39,26 @@ const App = () => {
       dispatch(setPanding(true));
     }
   }, [dispatch]);
+
+  const sendNativeEvent = (message: string) => {
+    if (
+      (window as any).webkit &&
+      (window as any).webkit.messageHandlers &&
+      (window as any).webkit.messageHandlers.jsBridge
+    ) {
+      (window as any).webkit.messageHandlers.jsBridge.postMessage(
+        message
+      );
+  }
+};
+
+useEffect(()=>{
+  if(panding) {
+    sendNativeEvent('beabox_ads_started');
+  } else {
+    sendNativeEvent('beabox_home_started');
+  }
+},[panding]);
   return (
     <>
       {panding ? (
