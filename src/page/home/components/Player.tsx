@@ -165,7 +165,6 @@ const Player = ({
 
   useEffect(() => {
     if (playerContainerRef.current) {
-      console.log("need ");
       let observer = lozad(playerContainerRef.current, {
         rootMargin: "200px 0px", // Adjust rootMargin as needed
         threshold: 0.01, // Adjust threshold as needed

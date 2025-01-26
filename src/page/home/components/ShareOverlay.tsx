@@ -124,15 +124,6 @@ const ShareOverlay: React.FC<any> = ({
             }
           }
 
-          // if (container) {
-          //   const activeElement = container.querySelector(
-          //     `[data-post-id="${next_two_post_id}"]`
-          //   );
-          //   if (activeElement) {
-          //     activeElement.scrollIntoView({ block: "center" });
-          //   }
-          // }
-
           const updatedVideos = {
             ...videos, // Spread the existing videos state
             [currentTab === 2 ? "foryou" : "follow"]: (
