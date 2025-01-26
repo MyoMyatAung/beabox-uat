@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Drawer,
   DrawerClose,
@@ -12,12 +14,16 @@ import {
   setIsDrawerOpen,
 } from "@/store/slices/profileSlice";
 import withFollowData from "@/hocs/withFollowData";
-import { useGetLikedPostQuery } from "@/store/api/profileApi";
+import { useGetMyOwnProfileQuery } from "@/store/api/profileApi";
 const Stats = ({ followers, following, nickname, likeCount }: any) => {
   const isDrawerOpen = useSelector((state: any) => state.profile.isDrawerOpen);
   const user = useSelector((state: any) => state.persist.user);
-  const { data } = useGetLikedPostQuery({ user_id: user?.id, page: "" });
-  console.log(data);
+  // console.log(user);
+
+  const { data } = useGetMyOwnProfileQuery("", {
+    skip: !user,
+  });
+  // console.log(data?.data);
   const dispatch = useDispatch();
   return (
     <Drawer
@@ -33,7 +39,10 @@ const Stats = ({ followers, following, nickname, likeCount }: any) => {
             >
               <div>
                 <div className="z-[1200] text-[14px] font-semibold">
-                  {followers?.length ? followers?.length : 0}
+                  {/* {followers?.length ? followers?.length : 0} */}
+                  {data?.data?.followers_count
+                    ? data?.data?.followers_count
+                    : "0"}
                 </div>
                 <div className="z-[1200] text-gray-400 text-[14px]">粉丝</div>
               </div>
@@ -41,7 +50,10 @@ const Stats = ({ followers, following, nickname, likeCount }: any) => {
           ) : (
             <div>
               <div className="z-[1200] text-[14px] font-semibold">
-                {followers?.length ? followers?.length : 0}
+                {/* {followers?.length ? followers?.length : 0} */}
+                {data?.data?.followers_count
+                  ? data?.data?.followers_count
+                  : "0"}
               </div>
               <div className="z-[1200] text-gray-400 text-[14px]">粉丝</div>
             </div>
@@ -56,7 +68,10 @@ const Stats = ({ followers, following, nickname, likeCount }: any) => {
             >
               <div>
                 <div className="z-[1200] text-[14px] font-semibold">
-                  {following?.length ? following?.length : 0}
+                  {/* {following?.length ? following?.length : 0} */}
+                  {data?.data?.following_count
+                    ? data?.data?.following_count
+                    : "0"}
                 </div>
                 <div className="z-[1200] text-gray-400 text-[14px]">已关注</div>
               </div>
@@ -64,7 +79,10 @@ const Stats = ({ followers, following, nickname, likeCount }: any) => {
           ) : (
             <div>
               <div className="z-[1200] text-[14px] font-semibold">
-                {following?.length ? following?.length : 0}
+                {/* {following?.length ? following?.length : 0} */}
+                {data?.data?.following_count
+                  ? data?.data?.following_count
+                  : "0"}
               </div>
               <div className="z-[1200] text-gray-400 text-[14px]">已关注</div>
             </div>
