@@ -91,7 +91,7 @@ const Stats = ({ followers, following, nickname, likeCount }: any) => {
         <span className="z-[1200] text-gray-500">|</span>
         <div className="z-[1200] text-center">
           <div className="z-[1200] text-[14px] font-semibold">
-            {data?.data?.length}
+            {data?.data?.likes_sum_count ? data?.data?.likes_sum_count : "0"}
           </div>
           <div className="z-[1200] text-gray-400 text-[14px]">点赞</div>
         </div>
