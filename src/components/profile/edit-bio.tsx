@@ -26,20 +26,27 @@ const EditBio = ({ bio, refetchHandler }: any) => {
     dispatch(setBio(value));
     await changeBio({ bio: value });
     await refetchHandler();
-    setIsOpen(false);
+    // setIsOpen(false);
     closeRef.current?.click();
   };
 
   const setValueHandler = (e) => {
     const inputValue = e.target.value;
-  
+
     // Only update the state if the text length is less than 100
     if (inputValue.length <= 100) {
       setValue(inputValue);
     }
   };
+
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (!open) {
+      setValue(bio);
+    }
+  };
   return (
-    <Drawer>
+    <Drawer open={isOpen} onOpenChange={handleOpenChange}>
       <div className="text-[14px] flex items-center justify-between">
         <h1>个性签名</h1>
         <DrawerTrigger asChild>
