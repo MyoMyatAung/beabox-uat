@@ -53,7 +53,8 @@ const VideoContainer = ({
         const newId = nextId;
         setNextId((prev: any) => prev + 1); // Increment the next ID
         setHearts((prev: any) => [...prev, newId]); // Add the new heart
-
+        setLikeCount(+likeCount + 1);
+        setIsLiked(true);
         // Clear any existing debounce timer
         if (likeTimeout.current) {
           clearTimeout(likeTimeout.current);
@@ -65,8 +66,6 @@ const VideoContainer = ({
         likeTimeout.current = setTimeout(async () => {
           try {
             await likePost({ post_id, count: 1 }); // Pass the accumulated count to the API
-            setLikeCount(+likeCount + 1);
-            setIsLiked(true);
 
             dispatch(
               setVideos({
@@ -86,6 +85,8 @@ const VideoContainer = ({
             );
             setCountNumber(0); // Reset pending likes after a successful API call
           } catch (error) {
+            setLikeCount(+likeCount - 1);
+            setIsLiked(false);
             console.error("Error liking the post:", error);
           }
         }, 1000); // Call API 1 second after the last click
@@ -116,6 +117,8 @@ const VideoContainer = ({
         // const newId = nextId;
         // setNextId((prev: any) => prev + 1); // Increment the next ID
         // setHearts((prev: any) => [...prev, newId]); // Add the new heart
+        setLikeCount(+likeCount - 1);
+        setIsLiked(false);
 
         // Clear any existing debounce timer
         if (likeTimeout.current) {
@@ -147,6 +150,9 @@ const VideoContainer = ({
             );
             setCountNumber(0); // Reset pending likes after a successful API call
           } catch (error) {
+            setLikeCount(+likeCount + 1);
+            setIsLiked(true);
+
             console.error("Error liking the post:", error);
           }
         }, 1000); // Call API 1 second after the last click
