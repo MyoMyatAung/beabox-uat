@@ -59,6 +59,7 @@ useEffect(()=>{
     sendNativeEvent('beabox_home_started');
   }
 },[panding]);
+
   return (
     <>
       {panding ? (
