@@ -1,5 +1,5 @@
 import { paths } from "@/routes/paths";
-import { ChevronLeft, Eye, EyeOff, X } from "lucide-react";
+import { ChevronLeft, Eye, EyeOff, RotateCcw, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
@@ -28,7 +28,7 @@ import SmallLoader from "@/components/shared/small-loader";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [login, { isLoading,  error: lerror }] = useLoginMutation();
+  const [login, { isLoading, error: lerror }] = useLoginMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -80,10 +80,9 @@ const Login = () => {
     navigate(-1);
   };
 
-    useEffect(() => {
-      setError(lerror?.data?.message);
-    }, [lerror]);
-  
+  useEffect(() => {
+    setError(lerror?.data?.message);
+  }, [lerror]);
 
   return (
     <>
@@ -203,7 +202,7 @@ const Login = () => {
                 {captchaLoading ? <SmallLoader /> : "登录"}
               </Button>
               <Link to={paths.forgot_password}>
-                <p className="text-center text-[14px] mt-5">Forgot Password?</p>
+                <p className="text-center text-[14px] mt-5">忘记密码？</p>
               </Link>
             </div>
             <Dialog open={show验证码} onOpenChange={setShow验证码}>
@@ -229,6 +228,17 @@ const Login = () => {
                         alt=""
                       />
                     </div>
+                    <div
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        await getCaptcha("");
+                        console.log("get new");
+                      }}
+                      className="flex items-center gap-2"
+                    >
+                      <RotateCcw size={14} />
+                      <p className="text-[12px] text-[#bbb]">刷新</p>
+                    </div>
                     <Button
                       onClick={handleVerify}
                       disabled={isLoading ? true : false || !captcha?.length}
@@ -249,13 +259,13 @@ const Login = () => {
               )}
             </Dialog>
             <div className="w-full flex flex-col items-center">
-              <p className="text-[14px] text-[#333333] text-center mb-5">OR</p>
+              <p className="text-[14px] text-[#494848] text-center mb-5">或者</p>
               <Link to={paths.regiter}>
                 <Button
                   className="w-[320px] bg-transparent"
                   variant={"outline"}
                 >
-                  Create New Account
+                  创建新帐户
                 </Button>
               </Link>
             </div>
