@@ -202,3 +202,9 @@ input:checked + .slider:before {
 .c-height {
   height: calc(100vh - 60px);
 }
+
+.index_start_popup_img {
+  border-radius: 8px;
+  border: 8px solid rgba(255, 255, 255, 0.12);
+  /* background: url(<path-to-image>) lightgray 50% / cover no-repeat; */
+}
