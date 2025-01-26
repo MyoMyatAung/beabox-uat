@@ -29,6 +29,15 @@ const EditBio = ({ bio, refetchHandler }: any) => {
     setIsOpen(false);
     closeRef.current?.click();
   };
+
+  const setValueHandler = (e) => {
+    const inputValue = e.target.value;
+  
+    // Only update the state if the text length is less than 100
+    if (inputValue.length <= 100) {
+      setValue(inputValue);
+    }
+  };
   return (
     <Drawer>
       <div className="text-[14px] flex items-center justify-between">
@@ -60,7 +69,7 @@ const EditBio = ({ bio, refetchHandler }: any) => {
               <div className="relative">
                 <textarea
                   value={value}
-                  onChange={(e: any) => setValue(e.target.value)}
+                  onChange={setValueHandler}
                   placeholder="请输入您的个性签名"
                   className="min-h-[100px] w-full resize-none  bg-transparent p-3 text-white placeholder:text-gray-400  border-b border-[#888] focus:outline-none focus:ring-0 focus:border-[#888]"
                 />
