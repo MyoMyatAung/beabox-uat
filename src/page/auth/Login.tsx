@@ -1,6 +1,6 @@
 import { paths } from "@/routes/paths";
 import { ChevronLeft, Eye, EyeOff, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { LoginFormData, loginSchema } from "./schema";
@@ -28,7 +28,7 @@ import SmallLoader from "@/components/shared/small-loader";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [login, { isLoading }] = useLoginMutation();
+  const [login, { isLoading,  error: lerror }] = useLoginMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -79,6 +79,11 @@ const Login = () => {
   const handleBack = () => {
     navigate(-1);
   };
+
+    useEffect(() => {
+      setError(lerror?.data?.message);
+    }, [lerror]);
+  
 
   return (
     <>

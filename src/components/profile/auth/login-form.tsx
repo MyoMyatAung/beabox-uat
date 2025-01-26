@@ -1,6 +1,6 @@
 import { paths } from "@/routes/paths";
 import { ChevronLeft, Eye, EyeOff, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { LoginFormData, loginSchema } from "@/page/auth/schema";
@@ -29,7 +29,7 @@ const LoginForm = ({ setIsOpen }: any) => {
   const [name, setName] = useState("");
   const [pass, setPass] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [login, { isLoading }] = useLoginMutation();
+  const [login, { isLoading, error: lerror }] = useLoginMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -72,9 +72,18 @@ const LoginForm = ({ setIsOpen }: any) => {
       setIsOpen(false);
     } else {
       setShow验证码(false);
-      setError("出了点问题");
+      // setError("出了点问题");
     }
+    // if (lerror) {
+    //   setError(lerror?.data?.message);
+    // }
   };
+
+  useEffect(() => {
+    setError(lerror?.data?.message);
+  }, [lerror]);
+
+  console.log(lerror, "lerrror");
   return (
     <div className="px-5">
       <div className="flex justify-between items-center">
