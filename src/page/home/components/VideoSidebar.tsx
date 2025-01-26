@@ -14,9 +14,8 @@ import { setVideos } from "../services/videosSlice";
 import { setMute } from "../services/muteSlice";
 
 function VideoSidebar({
-  likes,
   messages,
-  is_liked,
+
   post_id,
   setCountdown,
   setCountNumber,
@@ -25,12 +24,22 @@ function VideoSidebar({
   config,
   image,
   post,
-
+  setLikeCount,
+  likeCount,
+  isLiked,
+  setIsLiked,
   setHearts,
+  handleLike,
+  unLike,
 }: {
-  likes: any;
+  unLike: any;
+  setLikeCount: any;
+  likeCount: any;
+  isLiked: any;
+  setIsLiked: any;
+
   messages: any;
-  is_liked: any;
+
   post_id: any;
   setCountdown: any;
   setCountNumber: any;
@@ -39,12 +48,12 @@ function VideoSidebar({
   config: any;
   image: any;
   post: any;
+  handleLike: any;
 
   setHearts: any;
 }) {
   const [alertVisible, setAlertVisible] = useState(false);
-  const [likeCount, setLikeCount] = useState(likes);
-  const [isLiked, setIsLiked] = useState(is_liked);
+
   const currentTab = useSelector((state: any) => state.home.currentTab);
 
   const [likePost] = useLikePostMutation();
@@ -94,77 +103,78 @@ function VideoSidebar({
     }
   };
 
-  const handleLike = (() => {
-    const likeTimeout = useRef<NodeJS.Timeout | null>(null); // Track the debounce timeout
-    const [pendingLike, setPendingLike] = useState(false); // Flag to indicate pending like action
-    const [nextId, setNextId] = useState(0); // Generate unique IDs for hearts
+  // const handleLike = (() => {
+  //   console.log("seewin");
+  //   const likeTimeout = useRef<NodeJS.Timeout | null>(null); // Track the debounce timeout
+  //   const [pendingLike, setPendingLike] = useState(false); // Flag to indicate pending like action
+  //   const [nextId, setNextId] = useState(0); // Generate unique IDs for hearts
 
-    const handleLikeClick = () => {
-      if (user?.token) {
-        // if (pendingLike) return; // Prevent further actions if a like is already pending
-        const newId = nextId;
-        setNextId((prev: any) => prev + 1); // Increment the next ID
-        setHearts((prev: any) => [...prev, newId]); // Add the new heart
+  //   const handleLikeClick = () => {
+  //     if (user?.token) {
+  //       // if (pendingLike) return; // Prevent further actions if a like is already pending
+  //       const newId = nextId;
+  //       setNextId((prev: any) => prev + 1); // Increment the next ID
+  //       setHearts((prev: any) => [...prev, newId]); // Add the new heart
 
-        setCountdown(3); // Reset countdown
+  //       setCountdown(3); // Reset countdown
 
-        setIsLiked(true);
-        // setPendingLikes((prev) => prev + 1);
-        setCountNumber((prev: any) => prev + 1);
+  //       setIsLiked(true);
+  //       // setPendingLikes((prev) => prev + 1);
+  //       setCountNumber((prev: any) => prev + 1);
 
-        // // Show the heart animation
+  //       // // Show the heart animation
 
-        // Clear any existing debounce timer
-        if (likeTimeout.current) {
-          clearTimeout(likeTimeout.current);
-        }
+  //       // Clear any existing debounce timer
+  //       if (likeTimeout.current) {
+  //         clearTimeout(likeTimeout.current);
+  //       }
 
-        // Set up a new debounce timer
-        likeTimeout.current = setTimeout(async () => {
-          if (!pendingLike) {
-            try {
-              await likePost({ post_id, count: 1 }); // Pass the accumulated count to the API
-              setLikeCount((prev: any) => +prev + 1);
-              dispatch(
-                setVideos({
-                  ...videos,
-                  [currentTab === 2 ? "foryou" : "follow"]: videos[
-                    currentTab === 2 ? "foryou" : "follow"
-                  ]?.map((video: any) =>
-                    video.post_id === post_id
-                      ? {
-                          ...video,
-                          is_liked: true,
-                          like_count: +video.like_count + 1,
-                        }
-                      : video
-                  ),
-                })
-              );
-              setCountNumber(0); // Reset pending likes after a successful API call
-            } catch (error) {
-              console.error("Error liking the post:", error);
-            } finally {
-              setPendingLike(true); // Reset pending flag
-            }
-          }
-        }, 1000); // Call API 1 second after the last click
-      } else {
-        navigate("/login");
-      }
-    };
+  //       // Set up a new debounce timer
+  //       likeTimeout.current = setTimeout(async () => {
+  //         if (!pendingLike) {
+  //           try {
+  //             await likePost({ post_id, count: 1 }); // Pass the accumulated count to the API
+  //             setLikeCount((prev: any) => +prev + 1);
+  //             dispatch(
+  //               setVideos({
+  //                 ...videos,
+  //                 [currentTab === 2 ? "foryou" : "follow"]: videos[
+  //                   currentTab === 2 ? "foryou" : "follow"
+  //                 ]?.map((video: any) =>
+  //                   video.post_id === post_id
+  //                     ? {
+  //                         ...video,
+  //                         is_liked: true,
+  //                         like_count: 1,
+  //                       }
+  //                     : video
+  //                 ),
+  //               })
+  //             );
+  //             setCountNumber(0); // Reset pending likes after a successful API call
+  //           } catch (error) {
+  //             console.error("Error liking the post:", error);
+  //           } finally {
+  //             setPendingLike(true); // Reset pending flag
+  //           }
+  //         }
+  //       }, 1000); // Call API 1 second after the last click
+  //     } else {
+  //       navigate("/login");
+  //     }
+  //   };
 
-    useEffect(() => {
-      // Cleanup on component unmount
-      return () => {
-        if (likeTimeout.current) {
-          clearTimeout(likeTimeout.current);
-        }
-      };
-    }, []);
+  //   useEffect(() => {
+  //     // Cleanup on component unmount
+  //     return () => {
+  //       if (likeTimeout.current) {
+  //         clearTimeout(likeTimeout.current);
+  //       }
+  //     };
+  //   }, []);
 
-    return handleLikeClick;
-  })();
+  //   return handleLikeClick;
+  // })();
 
   const handleShareClick = () => {
     setAlertVisible(true);
@@ -333,7 +343,7 @@ function VideoSidebar({
 
       <div className="videoSidebar__button ">
         {isLiked ? (
-          <button onClick={handleLike}>
+          <button onClick={unLike}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="27"

@@ -22,7 +22,10 @@ const OtherNoti = ({ item }: any) => {
     <>
       <div className="flex items-start gap-2">
         <img
-          src={item?.metadata?.image}
+          src={
+            item?.metadata?.image ||
+            "https://i.pinimg.com/236x/80/b6/b6/80b6b647fbd4929f1f5ad0affeab7e21.jpg"
+          }
           className="w-10 h-10 object-cover rounded-full"
           alt=""
         />

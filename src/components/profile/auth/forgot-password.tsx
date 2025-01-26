@@ -55,19 +55,19 @@ const ForgotPassword = () => {
           </Link>
           <p className="text-[16px]">
             {/* {user?.token ? "Setting & Privacy" : "Setting"} */}
-            Forgot Password
+            忘记密码
           </p>
           <div></div>
         </div>
         <div>
           <label htmlFor="" className="text-[14px] text-[#888888] my-3">
-            Name
+          用户名
           </label>
           <div className="relative">
             <input
               value={value}
               className="block w-full px-3 py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none "
-              placeholder="Enter User Name"
+              placeholder="输入用户名"
               onChange={(e) => setValue(e.target.value)}
               //   {...field}
             />
@@ -94,7 +94,7 @@ const ForgotPassword = () => {
                 : "bg-[#FFFFFF0A] hover:bg-[#FFFFFF0A]"
             }  bg-[#FFFFFF0A] mt-10 rounded-xl`}
           >
-            {captchaLoading ? <SmallLoader /> : "Continue"}
+            {captchaLoading ? <SmallLoader /> : "继续"}
           </Button>
         </div>
       </div>
@@ -111,7 +111,7 @@ const ForgotPassword = () => {
                 <input
                   value={captcha}
                   onChange={(e) => setCaptcha(e.target.value)}
-                  placeholder="Type Captcha"
+                  placeholder="输入验证码"
                   className="bg-[#2D2738] w-[70%] px-[10px] h-full outline-none"
                 />
 
@@ -127,7 +127,7 @@ const ForgotPassword = () => {
                 type="submit"
                 className="w-full gradient-bg hover:gradient-bg text-white rounded-lg"
               >
-                {isLoading ? <SmallLoader /> : "Verify"}
+                {isLoading ? <SmallLoader /> : "确认"}
               </Button>
             </div>
           </DialogContent>
