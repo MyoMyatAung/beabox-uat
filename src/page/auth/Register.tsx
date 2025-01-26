@@ -1,5 +1,5 @@
 import { paths } from "@/routes/paths";
-import { ChevronLeft, Eye, EyeOff, X } from "lucide-react";
+import { ChevronLeft, Eye, EyeOff, RotateCcw, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
@@ -218,6 +218,17 @@ const Register = () => {
                         alt=""
                       />
                     </div>
+                    <div
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        await getCaptcha("");
+                        console.log("get new");
+                      }}
+                      className="flex items-center gap-2"
+                    >
+                      <RotateCcw size={14} />
+                      <p className="text-[12px] text-[#bbb]">刷新</p>
+                    </div>
                     <Button
                       onClick={handleVerify}
                       disabled={
@@ -227,7 +238,7 @@ const Register = () => {
                       className="w-full gradient-bg hover:gradient-bg text-white rounded-lg"
                     >
                       {/* {registerLoading ? "loading..." : "Verify"} */}
-                      Verify
+                      确认
                     </Button>
                   </div>
                 </DialogContent>

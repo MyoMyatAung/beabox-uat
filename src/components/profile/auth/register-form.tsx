@@ -1,6 +1,6 @@
 import { setAuthToggle } from "@/store/slices/profileSlice";
 import { paths } from "@/routes/paths";
-import { ChevronLeft, Eye, EyeOff, X } from "lucide-react";
+import { ChevronLeft, Eye, EyeOff, RotateCcw, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
@@ -231,6 +231,17 @@ const RegisterForm = ({ setIsOpen }: any) => {
                       className="w-[30%]  h-full  object-center outline-none border-gray-400"
                       alt=""
                     />
+                  </div>
+                  <div
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      await getCaptcha("");
+                      console.log("get new");
+                    }}
+                    className="flex items-center gap-2"
+                  >
+                    <RotateCcw size={14} />
+                    <p className="text-[12px] text-[#bbb]">刷新</p>
                   </div>
                   <Button
                     onClick={handleVerify}

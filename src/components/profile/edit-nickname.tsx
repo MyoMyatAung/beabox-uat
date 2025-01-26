@@ -31,12 +31,19 @@ const EditNickName = ({
     e.preventDefault();
     await changeNickname({ nickname: value });
     await refetchHandler();
-    setIsOpen(false);
+    // setIsOpen(false);
     closeRef.current?.click();
   };
 
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (!open) {
+      setValue(nickname);
+    }
+  };
+
   return (
-    <Drawer>
+    <Drawer open={isOpen} onOpenChange={handleOpenChange}>
       <div className="text-[14px] flex items-center justify-between">
         <h1>昵称</h1>
         <DrawerTrigger asChild>
@@ -58,7 +65,7 @@ const EditNickName = ({
             <div></div>
           </div>
           <form onSubmit={onSubmitHandler}>
-          <label htmlFor="" className="text-[14px] text-[#888] pt-10">
+            <label htmlFor="" className="text-[14px] text-[#888] pt-10">
               昵称
             </label>
             <div className="relative">
@@ -68,7 +75,10 @@ const EditNickName = ({
                 onChange={(e: any) => setValue(e.target.value)}
                 value={value}
               />
-              <div onClick={() => setValue("")} className="bg-[#FFFFFF1F] w-5 h-5 flex justify-center items-center rounded-full absolute right-0 bottom-5">
+              <div
+                onClick={() => setValue("")}
+                className="bg-[#FFFFFF1F] w-5 h-5 flex justify-center items-center rounded-full absolute right-0 bottom-5"
+              >
                 <X className="w-2" />
               </div>
             </div>
