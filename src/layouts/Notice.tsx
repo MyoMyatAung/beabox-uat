@@ -46,21 +46,23 @@ const Notice: React.FC<NoticeProps> = ({ notice, handleNoticeClose }) => {
               {/* titles */}
               <div className=" col-span-2 flex flex-col gap-[8px] initial_popup_ad_box_notice_title_box px-[4px] py-[6px]">
                 {notice[activeIndex] &&
-                  notice[activeIndex].notices?.map((nn: any, index: number) => (
-                    <div
-                      onClick={() => setActiveTextIndex(index)}
-                      key={nn.id}
-                      className={`${
-                        activeTextIndex === index
-                          ? "initial_popup_ad_box_notice_title_box_gg_active"
-                          : "initial_popup_ad_box_notice_title_box_gg"
-                      }`}
-                    >
-                      <h1 className="text-white text-center px-[12px] py-[8px]  text-[12px] font-[500] leading-[14px]">
-                        {nn.title}
-                      </h1>
-                    </div>
-                  ))}
+                  notice[activeIndex]?.notices?.map(
+                    (nn: any, index: number) => (
+                      <div
+                        onClick={() => setActiveTextIndex(index)}
+                        key={nn.id}
+                        className={`${
+                          activeTextIndex === index
+                            ? "initial_popup_ad_box_notice_title_box_gg_active"
+                            : "initial_popup_ad_box_notice_title_box_gg"
+                        }`}
+                      >
+                        <h1 className="text-white text-center px-[12px] py-[8px]  text-[12px] font-[500] leading-[14px]">
+                          {nn.title}
+                        </h1>
+                      </div>
+                    )
+                  )}
               </div>
               {/* texts */}
               <div className=" col-span-3 flex flex-col gap-[8px] text-white h-full pt-2">

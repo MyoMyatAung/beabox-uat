@@ -262,7 +262,7 @@ const Player = ({
         });
       },
       {
-        rootMargin: "100px 0px", // Start initializing slightly before entering viewport
+        rootMargin: "0px", // Start initializing slightly before entering viewport
         threshold: 0.01, // Trigger when at least 1% of the element is visible
       }
     );

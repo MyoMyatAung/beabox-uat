@@ -62,8 +62,6 @@ const VideoContainer = ({
           clearTimeout(likeTimeout.current);
         }
 
-        console.log("aadad");
-
         // Set up a new debounce timer
         likeTimeout.current = setTimeout(async () => {
           try {
@@ -122,13 +120,13 @@ const VideoContainer = ({
         if (likeTimeout.current) {
           clearTimeout(likeTimeout.current);
         }
+        setLikeCount(+likeCount - 1);
+        setIsLiked(false);
 
         // Set up a new debounce timer
         likeTimeout.current = setTimeout(async () => {
           try {
             await unlikePost({ post_id }); // Pass the accumulated count to the API
-            setLikeCount(+likeCount - 1);
-            setIsLiked(false);
 
             if (status) {
               dispatch(
