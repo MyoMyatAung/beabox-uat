@@ -5,6 +5,7 @@ import { paths } from "@/routes/paths";
 import { useSelector } from "react-redux";
 import { useState } from "react";
 import Divider from "../shared/divider";
+import UserStar from "@/assets/user-star.png";
 
 const SettingBtn = ({ setShow }: any) => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const SettingBtn = ({ setShow }: any) => {
     // },
     {
       title: "创作者中心",
-      icon: <UserCog size={14} />,
+      icon: <img src={UserStar} className="w-3.5" />,
       // link: paths.settings,
     },
     {
