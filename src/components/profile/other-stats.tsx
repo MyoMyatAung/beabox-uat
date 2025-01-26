@@ -6,7 +6,7 @@ import {
   setDefaultFollowTab,
   setIsDrawerOpen,
 } from "@/store/slices/profileSlice";
-const OtherStats = ({ followers, following, nickname }: any) => {
+const OtherStats = ({ followers, following, nickname, likecount }: any) => {
   const isDrawerOpen = useSelector((state: any) => state.profile.isDrawerOpen);
   const dispatch = useDispatch();
   return (
@@ -44,7 +44,7 @@ const OtherStats = ({ followers, following, nickname }: any) => {
         </div>
         <span className="text-gray-500">|</span>
         <div className="text-center">
-          <div className="text-[14px] font-semibold">0</div>
+          <div className="text-[14px] font-semibold">{likecount}</div>
           <div className="text-gray-400 text-[14px]">点赞</div>
         </div>
       </div>
