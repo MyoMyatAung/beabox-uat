@@ -4,11 +4,10 @@ import { useGetFollowerListQuery } from "@/store/api/profileApi";
 import { Users, UsersRound } from "lucide-react";
 import Loader from "../../../page/home/vod_loader.gif";
 
-
 const FollowerList = ({ searchTerm }: any) => {
   const user_code = useSelector((state: any) => state.persist?.user?.id);
 
-  const { data, isLoading } = useGetFollowerListQuery({
+  const { data, isLoading, isFetching } = useGetFollowerListQuery({
     user_id: user_code,
     search: searchTerm,
   });
@@ -17,7 +16,7 @@ const FollowerList = ({ searchTerm }: any) => {
 
   return (
     <div className="flex flex-col gap-4 w-full no-scrollbar h-screen pb-20">
-      {isLoading ? (
+      {isLoading || isFetching ? (
         <div className=" flex justify-center w-full py-[200px]">
           <div className="">
             <img src={Loader} className="w-[70px] h-[70px]" alt="Loading" />
