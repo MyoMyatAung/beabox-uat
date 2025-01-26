@@ -19,7 +19,7 @@ const OtherProfile = () => {
     isLoading: userLoading,
     refetch,
   } = useGetUserProfileQuery(id || "");
-  console.log(userData, "userData");
+  // console.log(userData, "userData");
   if (userLoading) return <Loader />;
   return (
     <>

@@ -12,6 +12,7 @@ const FollowTabs = () => {
   );
   const [active, setActive] = useState(defaultFollowTab);
   const [searchTerm, setSearchTerm] = useState("");
+  console.log(searchTerm)
   // const dispatch = useDispatch();
   return (
     <Tabs defaultValue={defaultFollowTab} className="my-5">
@@ -54,10 +55,10 @@ const FollowTabs = () => {
         />
       </div>
       <TabsContent value="follower">
-        <FollowerList />
+        <FollowerList searchTerm={searchTerm} />
       </TabsContent>
       <TabsContent value="following">
-        <FollowingList />
+        <FollowingList searchTerm={searchTerm} />
       </TabsContent>
     </Tabs>
   );

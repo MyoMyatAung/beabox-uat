@@ -22,6 +22,12 @@ export const profileApi = createApi({
         method: "GET",
       }),
     }),
+    getMyOwnProfile: builder.query<any, string>({
+      query: () => ({
+        url: `/profile/get-own-profile`,
+        method: "GET",
+      }),
+    }),
     getUserProfile: builder.query<any, string>({
       query: (id) => ({
         url: `/profile/get-profile?user_id=${id}`,
@@ -157,19 +163,19 @@ export const profileApi = createApi({
         method: "Post",
       }),
     }),
-    getFollowerList: builder.query<any, string>({
-      query: (user_id) => ({
-        url: `/follower/follower-list?user_id=${user_id}`,
+    getFollowerList: builder.query<any, any>({
+      query: ({user_id,search}) => ({
+        url: `/follower/follower-list?user_id=${user_id}&search=${search}`,
         method: "GET",
       }),
     }),
-    getFollowingList: builder.query<any, string>({
-      query: (user_id) => ({
-        url: `/follower/following-list?user_id=${user_id}`,
+    getFollowingList: builder.query<any, any>({
+      query: ({user_id,search,page}) => ({
+        url: `/follower/following-list?user_id=${user_id}&search=${search}&page=${page}`,
         method: "GET",
       }),
     }),
-    changeFollowStatus: builder.mutation<any, string>({
+    changeFollowStatus: builder.mutation<any, any>({
       query: ({ follow_user_id, status }: any) => ({
         url: `/follower/change-follow-status`,
         method: "Post",
@@ -324,4 +330,5 @@ export const {
   useChangeCoverMutation,
   useRemoveCoverMutation,
   useGetWatchHistoryQuery,
+  useGetMyOwnProfileQuery
 } = profileApi;
