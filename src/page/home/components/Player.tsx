@@ -256,7 +256,6 @@ const Player = ({
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting && !artPlayerInstanceRef.current) {
-            console.log("Player is in the viewport. Initializing...");
             initializeArtplayer(); // Initialize Artplayer for the current video
           }
         });
@@ -272,30 +271,28 @@ const Player = ({
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            console.log("50% visible. Playing video...");
             // Handle ready and play events for dimension updates
-            (artPlayerInstanceRef.current as any).on("ready", () => {
+            (artPlayerInstanceRef.current as any)?.on("ready", () => {
               setWidth(
-                (artPlayerInstanceRef.current as Artplayer).video?.videoWidth ||
-                  0
+                (artPlayerInstanceRef.current as Artplayer)?.video
+                  ?.videoWidth || 0
               );
               setHeight(
-                (artPlayerInstanceRef.current as Artplayer).video
+                (artPlayerInstanceRef.current as Artplayer)?.video
                   ?.videoHeight || 0
               );
             });
 
-            (artPlayerInstanceRef.current as any).on("play", () => {
+            (artPlayerInstanceRef.current as any)?.on("play", () => {
               setWidth(
-                (artPlayerInstanceRef.current as Artplayer).video?.videoWidth
+                (artPlayerInstanceRef.current as Artplayer)?.video?.videoWidth
               );
               setHeight(
-                (artPlayerInstanceRef.current as Artplayer).video?.videoHeight
+                (artPlayerInstanceRef.current as Artplayer)?.video?.videoHeight
               );
             });
             (artPlayerInstanceRef.current as any)?.play();
           } else {
-            console.log("Less than 50% visible. Pausing video...");
             (artPlayerInstanceRef.current as any)?.pause();
           }
         });
