@@ -10,6 +10,7 @@ export const profileApi = createApi({
       const token = (getState() as RootState).persist?.user?.token;
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
+        headers.set("Accept-Language", "cn");
       }
       return headers;
     },
