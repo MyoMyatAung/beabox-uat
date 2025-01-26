@@ -1,7 +1,7 @@
 import { setAuthToggle } from "@/store/slices/profileSlice";
 import { paths } from "@/routes/paths";
 import { ChevronLeft, Eye, EyeOff, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { LoginFormData, loginSchema } from "@/page/auth/schema";
@@ -38,7 +38,8 @@ const RegisterForm = ({ setIsOpen }: any) => {
   const [showSecurity, setShowSecurity] = useState(false);
   const [captcha, setCaptcha] = useState("");
   const [getCaptcha, { data, isLoading }] = useGetCaptchaMutation();
-  const [register, { isLoading: registerLoading }] = useRegisterMutation();
+  const [register, { isLoading: registerLoading, error: rerror }] =
+    useRegisterMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -76,9 +77,14 @@ const RegisterForm = ({ setIsOpen }: any) => {
     } else {
       setShow验证码(false);
       // setShowSecurity(false);
-      setError("出了点问题");
+      // setError("出了点问题");
     }
   };
+
+  useEffect(() => {
+    setError(rerror?.data?.message);
+    console.log(rerror?.data?.message);
+  }, [rerror]);
   return (
     <div className="px-5">
       <div className="flex justify-between items-center">
