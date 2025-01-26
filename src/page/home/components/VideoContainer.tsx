@@ -20,7 +20,6 @@ const VideoContainer = ({
   countdown,
   setHearts,
   status,
-  container,
 }: {
   video: any;
   setWidth: any;
@@ -32,7 +31,6 @@ const VideoContainer = ({
   countdown: any;
   setHearts: any;
   status: any;
-  container: any;
 }) => {
   const [likeCount, setLikeCount] = useState(video?.like_count);
   const [isLiked, setIsLiked] = useState(video?.is_liked);
@@ -185,7 +183,6 @@ const VideoContainer = ({
         setHeight={setHeight}
       />
       <VideoSidebar
-        container={container}
         status={status}
         unLike={unLike}
         handleLike={handleLike}

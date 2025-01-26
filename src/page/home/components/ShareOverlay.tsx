@@ -18,7 +18,6 @@ const ShareOverlay: React.FC<any> = ({
   setAlertVisible,
   post,
   status,
-  container,
 }) => {
   const [isClosing, setIsClosing] = useState(false);
   const user = useSelector((state: any) => state.persist.user);
@@ -86,51 +85,18 @@ const ShareOverlay: React.FC<any> = ({
     }
   };
 
-  console.log(videos);
-
   const handleUninterest = async () => {
     if (user?.token) {
       try {
         const response = await unInterestPost({ post_id: post?.post_id }); // Pass the accumulated count to the API
         console.log(currentActivePost);
         if (status) {
-          const currentVideoList =
-            videos[currentTab === 2 ? "foryou" : "follow"];
-
-          // Find the index of the current post
-          const currentPostIndex = currentVideoList.findIndex(
-            (video: any) => video.post_id === post?.post_id
-          );
-
-          // If there are posts after the current post, find the next two posts
-          let nextPostIds: string[] = [];
-          if (currentPostIndex !== -1) {
-            const nextPosts = currentVideoList.slice(
-              currentPostIndex + 1,
-              currentPostIndex + 3
-            ); // Get the next two posts
-            nextPostIds = nextPosts.map((video: any) => video.post_id); // Collect their post IDs
-          }
-
-          console.log("Next Post IDs: ", nextPostIds);
-
-          // If there are valid next post IDs, scroll to the first next post
-          if (nextPostIds.length > 0) {
-            const activeElement = container?.querySelector(
-              `[data-post-id="${nextPostIds[1]}"]`
-            );
-            if (activeElement) {
-              activeElement.scrollIntoView({ block: "center" });
-            }
-          }
-
           const updatedVideos = {
             ...videos, // Spread the existing videos state
             [currentTab === 2 ? "foryou" : "follow"]: (
               videos[currentTab === 2 ? "foryou" : "follow"] || []
             ).filter((video: any) => video.post_id !== post?.post_id),
           };
-          console.log(updatedVideos);
           setCurrentActivePost(null);
           dispatch(setVideos(updatedVideos)); // Dispatch the updated videos
         }
