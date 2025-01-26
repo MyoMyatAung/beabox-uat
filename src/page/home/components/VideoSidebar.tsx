@@ -15,7 +15,7 @@ import { setMute } from "../services/muteSlice";
 
 function VideoSidebar({
   messages,
-
+  setCommentCount,
   post_id,
   setCountdown,
   setCountNumber,
@@ -31,15 +31,15 @@ function VideoSidebar({
   setHearts,
   handleLike,
   unLike,
+  status,
 }: {
+  setCommentCount: any;
   unLike: any;
   setLikeCount: any;
   likeCount: any;
   isLiked: any;
   setIsLiked: any;
-
   messages: any;
-
   post_id: any;
   setCountdown: any;
   setCountNumber: any;
@@ -49,8 +49,8 @@ function VideoSidebar({
   image: any;
   post: any;
   handleLike: any;
-
   setHearts: any;
+  status: any;
 }) {
   const [alertVisible, setAlertVisible] = useState(false);
 
@@ -470,9 +470,11 @@ function VideoSidebar({
         setAlertVisible={setAlertVisible}
         config={config}
         post={post}
+        status={status}
       />
 
       <CommentOverlay
+        setCommentCount={setCommentCount}
         post_id={post_id}
         commentsVisible={commentsVisible}
         comments={comments}

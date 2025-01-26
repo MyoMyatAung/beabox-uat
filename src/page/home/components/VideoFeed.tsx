@@ -5,12 +5,14 @@ import Player from "./Player";
 import VideoSidebar from "./VideoSidebar";
 
 import Top20Movies from "./Top20Movies";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import FeedFooter from "./FeedFooter";
 import { useNavigate } from "react-router-dom";
 import SearchPlayer from "./SearchPlayer";
 import HeartCount from "./Heart";
 import VideoContainer from "./VideoContainer";
+import { setVideos } from "../services/videosSlice";
+import { showToast } from "../services/errorSlice";
 
 const VideoFeed = ({
   videos,
@@ -39,6 +41,7 @@ const VideoFeed = ({
   const [hearts, setHearts] = useState<number[]>([]); // Manage heart IDs
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
+  const dispatch = useDispatch();
 
   const removeHeart = (id: number) => {
     setHearts((prev) => prev.filter((heartId) => heartId !== id)); // Remove the heart by ID
@@ -103,12 +106,24 @@ const VideoFeed = ({
       if (!content.trim()) return;
 
       try {
-        await postComment({
+        const response = await postComment({
           post_id: post_id, // Assuming all comments belong to the same post
           content: content,
         }).unwrap();
         setContent("");
+        dispatch(
+          showToast({
+            message: response?.message,
+            type: "success",
+          })
+        );
       } catch (error) {
+        dispatch(
+          showToast({
+            message: error?.data?.message,
+            type: "success",
+          })
+        );
         console.error("Failed to post reply:", error);
       }
     } else {
@@ -158,6 +173,7 @@ const VideoFeed = ({
             data-post-id={video.post_id} // Add post ID to the container
           >
             <VideoContainer
+              status={false}
               countNumber={countNumber}
               video={video}
               setCountNumber={setCountNumber}
