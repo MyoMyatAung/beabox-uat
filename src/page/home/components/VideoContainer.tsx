@@ -20,6 +20,7 @@ const VideoContainer = ({
   countdown,
   setHearts,
   status,
+  container,
 }: {
   video: any;
   setWidth: any;
@@ -31,16 +32,18 @@ const VideoContainer = ({
   countdown: any;
   setHearts: any;
   status: any;
+  container: any;
 }) => {
   const [likeCount, setLikeCount] = useState(video?.like_count);
   const [isLiked, setIsLiked] = useState(video?.is_liked);
   const [commentCount, setcommentCount] = useState(video?.comment_count);
-  const { videos } = useSelector((state: any) => state.videoSlice);
+
   const user = useSelector((state: any) => state.persist.user);
   const [likePost] = useLikePostMutation();
   const [unlikePost] = useUnlikePostMutation();
   const dispatch = useDispatch();
   const currentTab = useSelector((state: any) => state.home.currentTab);
+  const { videos } = useSelector((state: any) => state.videoSlice);
   const navigate = useNavigate();
   const post_id = video?.post_id;
 
@@ -182,6 +185,7 @@ const VideoContainer = ({
         setHeight={setHeight}
       />
       <VideoSidebar
+        container={container}
         status={status}
         unLike={unLike}
         handleLike={handleLike}

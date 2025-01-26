@@ -32,6 +32,7 @@ function VideoSidebar({
   handleLike,
   unLike,
   status,
+  container,
 }: {
   setCommentCount: any;
   unLike: any;
@@ -51,6 +52,7 @@ function VideoSidebar({
   handleLike: any;
   setHearts: any;
   status: any;
+  container: any;
 }) {
   const [alertVisible, setAlertVisible] = useState(false);
 
@@ -471,6 +473,7 @@ function VideoSidebar({
         config={config}
         post={post}
         status={status}
+        container={container}
       />
 
       <CommentOverlay

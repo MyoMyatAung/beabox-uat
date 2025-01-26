@@ -162,8 +162,6 @@ const Player = ({
   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
   const hlsRef = useRef<Hls | null>(null); // Store the Hls instance
   const { mute } = useSelector((state: any) => state.muteSlice);
-  const { videos } = useSelector((state: any) => state.videoSlice);
-  console.log("render");
 
   useEffect(() => {
     if (playerContainerRef.current) {
