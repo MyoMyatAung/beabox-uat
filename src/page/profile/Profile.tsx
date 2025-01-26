@@ -20,6 +20,7 @@ import {
   Cross,
   X,
   PencilLine,
+  Copy,
 } from "lucide-react";
 import { BsPatchCheckFill } from "react-icons/bs";
 import { Button } from "@/components/ui/button";
@@ -42,7 +43,20 @@ const Profile = () => {
   const gender = useSelector((state: any) => state.persist.gender);
   const region = useSelector((state: any) => state.persist.region);
   const cover = useSelector((state: any) => state.persist.cover);
-  console.log(data);
+  const [isCopied, setIsCopied] = useState(false); // State for feedback
+
+  const handleCopy = (text: any) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        setIsCopied(true); // Show feedback
+        setTimeout(() => setIsCopied(false), 2000); // Hide feedback after 2 seconds
+      })
+      .catch((err) => {
+        console.error("Failed to copy text: ", err);
+      });
+  };
+  // console.log(data);
   useEffect(() => {
     refetch();
   }, []);
@@ -63,7 +77,20 @@ const Profile = () => {
 
   return (
     <>
-      {user?.toke ? (
+      <div className="gradient-overlay"></div>
+      <img
+        src={
+          user?.token
+            ? data?.data?.cover_photo
+              ? data?.data?.cover_photo
+              : defaultCover
+            : defaultCover
+        }
+        // src={defaultCover}
+        alt=""
+        className="absolute top-0 left-0 w-full h-[23vh] object-cover object-center"
+      />
+      {/* {user?.toke ? (
         <>
           <div className="gradient-overlay"></div>
           <img
@@ -84,6 +111,15 @@ const Profile = () => {
             className="absolute top-0 left-0 w-full h-[23vh] object-cover object-center"
           />
         </>
+      )} */}
+      {isCopied ? (
+        <div className="w-full absolute top-[80vh] flex justify-center">
+          <p className="text-[14px] bg-[#FFFFFF14] px-2 py-1 rounded-lg w-[83px] text-center">
+            已复制 ID
+          </p>
+        </div>
+      ) : (
+        ""
       )}
       <div className="z-[1200] px-5 max-h-screen no-scrollbar profile-bg">
         {show ? (
@@ -170,18 +206,32 @@ const Profile = () => {
                 <BsPatchCheckFill className="z-[1200] text-[#888]" />
               </span>{" "} */}
                 </p>
-                <p className="z-[1200] text-[14px] text-[#BBBBBB]">
-                  B号 : {data?.data?.user_code}
+                <p className="z-[1200] text-[14px] text-[#BBBBBB] flex gap-1 items-center">
+                  B号 : {data?.data?.user_code}{" "}
+                  <Copy
+                    onClick={() => handleCopy(data?.data?.user_code)}
+                    size={14}
+                  />
                 </p>
                 {data?.data?.share_region == "on" && region ? (
                   <div className="z-[1200] flex">
                     <div className="z-[1200] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 pt-1 rounded-full justify-center shrink-0">
-                      <span>{region?.city}</span>:
-                      <span>{region?.province}</span>
+                      {!region?.city?.length && !region?.province?.length ? (
+                        <span>Unknown</span>
+                      ) : (
+                        <>
+                          <span>{region?.city}</span>:
+                          <span>{region?.province}</span>
+                        </>
+                      )}
                     </div>
                   </div>
                 ) : (
-                  <></>
+                  <div className="z-[1200] flex">
+                    <div className="z-[1200] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 pt-1 rounded-full justify-center shrink-0">
+                      <span>Unknown</span>
+                    </div>
+                  </div>
                 )}
                 {/* <div className="z-[1200] flex items-start gap-2 mt-1">
               <img src={data?.data?.level} className="z-[1200] w-14" alt="" />
@@ -190,22 +240,74 @@ const Profile = () => {
               </div>
             )}
           </div>
+
           <div className="z-[1200]">
+            {data?.data?.hide_bio == "on" ? (
+              <></>
+            ) : user?.token ? (
+              data?.data?.bio ? (
+                <div className="text-[12px] text-[#888] mb-5 italic">
+                  {data?.data?.bio ? data?.data?.bio : ""}
+                </div>
+              ) : (
+                <Link
+                  to={paths.add_bio}
+                  className="text-[12px] text-[#FFFFFFCC] bg-[#FFFFFF14] px-2 py-1 w-[91px] text-center rounded-full"
+                >
+                  + 个人简介
+                </Link>
+              )
+            ) : (
+              <></>
+            )}
+            {/* {user?.token ? (
+              data?.data?.bio ? (
+                <div className="text-[12px] text-[#888] mb-5 italic">
+                  {data?.data?.bio ? data?.data?.bio : ""}
+                </div>
+              ) : (
+                <Link
+                  to={paths.add_bio}
+                  className="text-[12px] text-[#FFFFFFCC] bg-[#FFFFFF14] px-2 py-1 w-[91px] text-center rounded-full"
+                >
+                  + 个人简介
+                </Link>
+              )
+            ) : (
+              <></>
+            )} */}
+            {/* {data?.data?.bio ? (
+              <div className="text-[12px] text-[#888] mb-5 italic">
+                {data?.data?.bio ? data?.data?.bio : ""}
+              </div>
+            ) : (
+              <Link
+                to={paths.add_bio}
+                className="text-[12px] text-[#FFFFFFCC] bg-[#FFFFFF14] px-2 py-1 w-[91px] text-center rounded-full"
+              >
+                + 个人简介
+              </Link>
+            )} */}
+            {/* <Link
+              to={paths.add_bio}
+              className="text-[12px] text-[#FFFFFFCC] bg-[#FFFFFF14] px-2 py-1 w-[91px] text-center rounded-full"
+            >
+              + 个人简介
+            </Link>
             {user?.token ? (
+              {data?.data?.bio? data?.data?.bio : }
               <div className="text-[12px] text-[#888] mb-5 italic">
                 {data?.data?.bio ? data?.data?.bio : ""}
               </div>
             ) : (
               ""
-            )}
+            )} */}
           </div>
         </div>
-
         {/* Stats */}
         <div className="">
           <Stats />
         </div>
-
         {user?.token ? (
           <Link to={paths.profileDetail}>
             <Button className="z-[1200] w-full bg-[#FFFFFF0F] hover:bg-[#FFFFFF0F] relative rounded-[12px]">
