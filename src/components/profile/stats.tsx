@@ -12,10 +12,12 @@ import {
   setIsDrawerOpen,
 } from "@/store/slices/profileSlice";
 import withFollowData from "@/hocs/withFollowData";
+import { useGetLikedPostQuery } from "@/store/api/profileApi";
 const Stats = ({ followers, following, nickname, likeCount }: any) => {
   const isDrawerOpen = useSelector((state: any) => state.profile.isDrawerOpen);
   const user = useSelector((state: any) => state.persist.user);
-
+  const { data } = useGetLikedPostQuery({ user_id: user?.id, page: "" });
+  console.log(data);
   const dispatch = useDispatch();
   return (
     <Drawer
@@ -70,7 +72,9 @@ const Stats = ({ followers, following, nickname, likeCount }: any) => {
         </div>
         <span className="z-[1200] text-gray-500">|</span>
         <div className="z-[1200] text-center">
-          <div className="z-[1200] text-[14px] font-semibold">0</div>
+          <div className="z-[1200] text-[14px] font-semibold">
+            {data?.data?.length}
+          </div>
           <div className="z-[1200] text-gray-400 text-[14px]">点赞</div>
         </div>
       </div>
