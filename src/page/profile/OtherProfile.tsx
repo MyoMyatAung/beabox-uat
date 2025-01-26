@@ -77,6 +77,7 @@ const OtherProfile = () => {
         <OtherStats
           follower={userData?.data?.followers_count}
           following={userData?.data?.following_count}
+          likecount={userData?.data?.likes_sum_count}
         />
 
         <FollowStatusBtn

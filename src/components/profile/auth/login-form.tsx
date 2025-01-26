@@ -1,5 +1,5 @@
 import { paths } from "@/routes/paths";
-import { ChevronLeft, Eye, EyeOff, X } from "lucide-react";
+import { ChevronLeft, Eye, EyeOff, RotateCcw, RotateCw, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
@@ -67,11 +67,11 @@ const LoginForm = ({ setIsOpen }: any) => {
     // console.log(loginData, "loginData");
     if (loginData?.status) {
       dispatch(setUser(loginData?.data));
-      setShow验证码(false);
+      // setShow验证码(false);
       // navigate(paths.profile);
       setIsOpen(false);
     } else {
-      setShow验证码(false);
+      // setShow验证码(false);
       // setError("出了点问题");
     }
     // if (lerror) {
@@ -232,6 +232,17 @@ const LoginForm = ({ setIsOpen }: any) => {
                       className="w-[30%]  h-full  object-center outline-none border-gray-400"
                       alt=""
                     />
+                  </div>
+                  <div
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      await getCaptcha("");
+                      console.log("get new");
+                    }}
+                    className="flex items-center gap-2"
+                  >
+                    <RotateCcw size={14} />
+                    <p className="text-[12px] text-[#bbb]">刷新</p>
                   </div>
                   <Button
                     onClick={handleVerify}

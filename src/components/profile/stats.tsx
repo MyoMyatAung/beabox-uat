@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Drawer,
   DrawerClose,
@@ -88,7 +90,9 @@ const Stats = ({ followers, following, nickname, likeCount }: any) => {
         </div>
         <span className="z-[1200] text-gray-500">|</span>
         <div className="z-[1200] text-center">
-          <div className="z-[1200] text-[14px] font-semibold">0</div>
+          <div className="z-[1200] text-[14px] font-semibold">
+            {data?.data?.length}
+          </div>
           <div className="z-[1200] text-gray-400 text-[14px]">点赞</div>
         </div>
       </div>

@@ -32,12 +32,18 @@ const EditUsername = ({
 
     await changeUsername({ username: value });
     await refetchHandler();
-    setIsOpen(false);
+    // setIsOpen(false);
     closeRef.current?.click();
+  };
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (!open) {
+      setValue(username);
+    }
   };
 
   return (
-    <Drawer>
+    <Drawer open={isOpen} onOpenChange={handleOpenChange}>
       <div className="text-[14px] flex items-center justify-between">
         <h1>用户名</h1>
         <DrawerTrigger asChild>
@@ -64,6 +70,7 @@ const EditUsername = ({
             </label>
             <div className="relative">
               <input
+                defaultValue={username}
                 className="w-full bg-transparent border-0 border-b py-3 outline-0 border-[#888]"
                 placeholder="请输入您的用户名"
                 onChange={(e: any) => setValue(e.target.value)}
