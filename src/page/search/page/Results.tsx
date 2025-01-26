@@ -13,7 +13,7 @@ import {
 import Header from "./Header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import VideoFeed from "@/page/home/components/VideoFeed";
-import lozad from "lozad";
+import empty from "../../home/empty.png";
 import ImageWithPlaceholder from "../comp/imgPlaceholder";
 import he from "he";
 
@@ -468,15 +468,21 @@ const Results: React.FC<ResultsProps> = ({}) => {
                 />
               </div>
             )}
-            {data?.data?.length === 0 && (
-              <div
-                className={`flex justify-center items-center ${
-                  currentPage === 1 ? "py-[200px]" : "py-[20px]"
-                } `}
-              >
-                <h1 className="">No Video yet!</h1>
-              </div>
-            )}
+            {data?.data?.length === 0 &&
+              (currentPage === 1 ? (
+                <div className={`flex justify-center items-center py-[200px]`}>
+                  <div className="flex flex-col items-center">
+                    <img src={empty} className="w-[80px]" alt="" />
+                    <h1 className="text-center">搜索结果为空</h1>
+                  </div>
+                </div>
+              ) : (
+                <div className={`flex justify-center items-center py-[20px]`}>
+                  <div>
+                    <h1 className="">搜索结果为空</h1>
+                  </div>
+                </div>
+              ))}
           </>
         )}
         {/* <div ref={observerRef} className="h-[1px]" /> */}

@@ -148,7 +148,6 @@ const Player = ({
   onPlay,
   setWidth,
   setHeight,
-
   handleLike,
 }: {
   src: any;
@@ -163,16 +162,22 @@ const Player = ({
   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
   const hlsRef = useRef<Hls | null>(null); // Store the Hls instance
   const { mute } = useSelector((state: any) => state.muteSlice);
+  const { videos } = useSelector((state: any) => state.videoSlice);
+  console.log("render");
 
   useEffect(() => {
     if (playerContainerRef.current) {
-      // Initialize Lozad for lazy loading
+      console.log("need ");
       let observer = lozad(playerContainerRef.current, {
         rootMargin: "200px 0px", // Adjust rootMargin as needed
         threshold: 0.01, // Adjust threshold as needed
         loaded: function (el: any) {
+          console.log("loaded");
+          console.log(artPlayerInstanceRef.current);
           if (!artPlayerInstanceRef.current) {
             // Initialize Artplayer with m3u8 support
+
+            Artplayer.DBCLICK_FULLSCREEN = false;
             Artplayer.MOBILE_DBCLICK_PLAY = false;
             Artplayer.MOBILE_CLICK_PLAY = true;
             artPlayerInstanceRef.current = new Artplayer({
@@ -214,29 +219,13 @@ const Player = ({
               },
             });
 
-            // Handle double-click for like
-            // artPlayerInstanceRef.current.on("dblclick", () => {
-            //   handleLike();
-            // });
-
-            if (artPlayerInstanceRef.current) {
-              artPlayerInstanceRef.current.on("dblclick", () => {
-                handleLike();
-              });
-            }
-
-            // // Trigger the onPlay callback when playback starts
-            artPlayerInstanceRef.current.on("play", () => {
-              if (onPlay) onPlay();
+            artPlayerInstanceRef.current.on("dblclick", (event) => {
+              handleLike(); // Custom double-click action
             });
-            // artPlayerInstanceRef?.current?.on("ready", () => {
-            //   setWidth(artPlayerInstanceRef?.current?.video?.videoWidth);
-            //   setHeight(artPlayerInstanceRef?.current?.video?.videoHeight);
-            // });
-            // artPlayerInstanceRef?.current?.on("loading", () => {
-            //   setWidth(0);
-            //   setHeight(0);
-            // });
+
+            artPlayerInstanceRef.current.on("error", () => {
+              console.log("error video");
+            });
           }
         },
       });
@@ -274,21 +263,6 @@ const Player = ({
 
       intersectionObserver.observe(playerContainerRef.current);
 
-      // return () => {
-      //   // Clean up the Artplayer instance and observers
-      //   if (artPlayerInstanceRef.current) {
-      //     artPlayerInstanceRef.current.destroy();
-      //     artPlayerInstanceRef.current = null;
-      //   }
-      //   // Safely clean up IntersectionObserver
-      //   if (intersectionObserver) intersectionObserver.disconnect();
-
-      //   // Safely clean up lozad observer
-      //   if (observer && observer.observe) {
-      //     observer.observe = () => {};
-      //   }
-      // };
-
       return () => {
         // Clean up the Hls instance
         if (hlsRef.current) {
@@ -314,10 +288,6 @@ const Player = ({
       };
     }
   }, [src, thumbnail]);
-
-  // useEffect(() => {
-
-  // }, []);
 
   useEffect(() => {
     // Update the mute state if the prop changes

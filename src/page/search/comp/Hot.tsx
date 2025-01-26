@@ -29,8 +29,9 @@ const Hot: React.FC<HotProps> = ({}) => {
         </h1>
       </div>
       <div className=" flex gap-[8px] py-[20px] flex-wrap">
-        {hot?.map((ht: any) => (
+        {hot?.map((ht: any, index: any) => (
           <button
+            key={index}
             onClick={() => handleSearch(ht)}
             className="history_box p-[12px] text-white font-[400]"
           >

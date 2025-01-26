@@ -177,6 +177,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
           data-post-id={files.post_id}
         >
           <VideoContainer
+            status={false}
             countNumber={countNumber}
             video={files}
             setCountNumber={setCountNumber}

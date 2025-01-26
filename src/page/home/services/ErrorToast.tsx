@@ -2,7 +2,7 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { hideToast } from "./errorSlice";
-// import logo from "../../../assets/logo.svg";
+import logo from "../../../assets/logo.svg";
 
 const ErrorToast: React.FC = () => {
   const dispatch = useDispatch();
@@ -24,10 +24,10 @@ const ErrorToast: React.FC = () => {
   return (
     <div className="flex justify-center items-center ">
       <div
-        className={`text-[8px] fixed w-fit bg-[#101010]  bottom-[200px] mx-auto left-0 right-0  py-3 px-5  flex items-center justify-center gap-1 rounded-full toast  text-white text-center z-[9999999999999999999]`}
+        className={`text-[8px] fixed w-fit bg-[#191721]  bottom-[200px] mx-auto left-0 right-0  py-3 px-5  flex items-center justify-center gap-1 rounded-full toast  text-white text-center z-[9999999999999999999]`}
       >
-        {/* <img src={logo} alt="" className="w-3 h-3" /> */}
-        <p className=" text-[13px]">{message}</p>
+        <img src={logo} alt="" className="w-5 h-5" />
+        <p className=" ml-1 text-[13px]">{message}</p>
       </div>
     </div>
   );

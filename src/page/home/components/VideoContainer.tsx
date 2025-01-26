@@ -19,6 +19,7 @@ const VideoContainer = ({
   config,
   countdown,
   setHearts,
+  status,
 }: {
   video: any;
   setWidth: any;
@@ -29,9 +30,11 @@ const VideoContainer = ({
   config: any;
   countdown: any;
   setHearts: any;
+  status: any;
 }) => {
   const [likeCount, setLikeCount] = useState(video?.like_count);
   const [isLiked, setIsLiked] = useState(video?.is_liked);
+  const [commentCount, setcommentCount] = useState(video?.comment_count);
   const { videos } = useSelector((state: any) => state.videoSlice);
   const user = useSelector((state: any) => state.persist.user);
   const [likePost] = useLikePostMutation();
@@ -40,8 +43,6 @@ const VideoContainer = ({
   const currentTab = useSelector((state: any) => state.home.currentTab);
   const navigate = useNavigate();
   const post_id = video?.post_id;
-
-  console.log("c", isLiked);
 
   const handleLike = (() => {
     const likeTimeout = useRef<NodeJS.Timeout | null>(null); // Track the debounce timeout
@@ -68,22 +69,25 @@ const VideoContainer = ({
             setLikeCount(+likeCount + 1);
             setIsLiked(true);
 
-            dispatch(
-              setVideos({
-                ...videos,
-                [currentTab === 2 ? "foryou" : "follow"]: videos[
-                  currentTab === 2 ? "foryou" : "follow"
-                ]?.map((video: any) =>
-                  video.post_id === post_id
-                    ? {
-                        ...video,
-                        is_liked: true,
-                        like_count: +likeCount + 1,
-                      }
-                    : video
-                ),
-              })
-            );
+            if (status) {
+              dispatch(
+                setVideos({
+                  ...videos,
+                  [currentTab === 2 ? "foryou" : "follow"]: videos[
+                    currentTab === 2 ? "foryou" : "follow"
+                  ]?.map((video: any) =>
+                    video.post_id === post_id
+                      ? {
+                          ...video,
+                          is_liked: true,
+                          like_count: +likeCount + 1,
+                        }
+                      : video
+                  ),
+                })
+              );
+            }
+
             setCountNumber(0); // Reset pending likes after a successful API call
           } catch (error) {
             console.error("Error liking the post:", error);
@@ -112,11 +116,6 @@ const VideoContainer = ({
 
     const handleUnLikeClick = () => {
       if (user?.token) {
-        // if (pendingLike) return; // Prevent further actions if a like is already pending
-        // const newId = nextId;
-        // setNextId((prev: any) => prev + 1); // Increment the next ID
-        // setHearts((prev: any) => [...prev, newId]); // Add the new heart
-
         // Clear any existing debounce timer
         if (likeTimeout.current) {
           clearTimeout(likeTimeout.current);
@@ -129,22 +128,25 @@ const VideoContainer = ({
             setLikeCount(+likeCount - 1);
             setIsLiked(false);
 
-            dispatch(
-              setVideos({
-                ...videos,
-                [currentTab === 2 ? "foryou" : "follow"]: videos[
-                  currentTab === 2 ? "foryou" : "follow"
-                ]?.map((video: any) =>
-                  video.post_id === post_id
-                    ? {
-                        ...video,
-                        is_liked: false,
-                        like_count: +likeCount - 1,
-                      }
-                    : video
-                ),
-              })
-            );
+            if (status) {
+              dispatch(
+                setVideos({
+                  ...videos,
+                  [currentTab === 2 ? "foryou" : "follow"]: videos[
+                    currentTab === 2 ? "foryou" : "follow"
+                  ]?.map((video: any) =>
+                    video.post_id === post_id
+                      ? {
+                          ...video,
+                          is_liked: false,
+                          like_count: +likeCount - 1,
+                        }
+                      : video
+                  ),
+                })
+              );
+            }
+
             setCountNumber(0); // Reset pending likes after a successful API call
           } catch (error) {
             console.error("Error liking the post:", error);
@@ -180,6 +182,7 @@ const VideoContainer = ({
         setHeight={setHeight}
       />
       <VideoSidebar
+        status={status}
         unLike={unLike}
         handleLike={handleLike}
         setLikeCount={setLikeCount}
@@ -188,7 +191,8 @@ const VideoContainer = ({
         setIsLiked={setIsLiked}
         // likes={video?.like_count}
         // is_liked={video?.is_liked}
-        messages={video?.comment_count}
+        setCommentCount={setcommentCount}
+        messages={commentCount}
         post_id={video?.post_id}
         setCountNumber={setCountNumber}
         setCountdown={setCountdown}

@@ -7,10 +7,12 @@ import {
   usePostCommentMutation,
   useReplyListMutation,
 } from "../services/homeApi";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { showToast } from "../services/errorSlice";
 
 interface CommentOverlayProps {
+  setCommentCount: any;
   commentsVisible: boolean;
   comments: any[];
   post_id: any;
@@ -21,6 +23,7 @@ interface CommentOverlayProps {
 }
 
 const CommentOverlay: React.FC<CommentOverlayProps> = ({
+  setCommentCount,
   commentsVisible,
   comments,
   post_id,
@@ -43,6 +46,7 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
   const [commentReaction] = useCommentReactionMutation();
   const [isClosing, setIsClosing] = useState(false); // Tracks whether the portal is closing
   const user = useSelector((state: any) => state.persist.user);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleReplyClick = (
     commentId: number,
@@ -153,13 +157,26 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
       if (!content.trim()) return;
 
       try {
-        await postComment({
+        const response = await postComment({
           post_id: post_id, // Assuming all comments belong to the same post
           content: content,
         }).unwrap();
         setContent("");
         refetchComments();
+        //  setCommentCount((prev: any) => +prev + 1);
+        dispatch(
+          showToast({
+            message: response?.message,
+            type: "success",
+          })
+        );
       } catch (error) {
+        dispatch(
+          showToast({
+            message: error?.data?.message,
+            type: "error",
+          })
+        );
         console.error("Failed to post reply:", error);
       }
     } else {
