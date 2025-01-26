@@ -40,6 +40,7 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
       setNotList(notice?.data);
     }
   }, [data,notice]);
+  // console.log(data?.data)
 
   const handleStartClose = () => {
     setShowStart(false);
@@ -67,7 +68,7 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
           {showStart && start && (
             <div className="w-[330px] flex flex-col gap-0 justify-center items-center">
               <a
-                className="flex justify-center items-center"
+                className="flex justify-center items-center index_start_popup_img"
                 target="_blank"
                 href={start.jump_url}
               >
