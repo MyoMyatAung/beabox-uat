@@ -68,7 +68,7 @@ const RegisterForm = ({ setIsOpen }: any) => {
       captcha,
       captcha_key: data?.data?.captcha_key,
     });
-    console.log(registerData, "registerData");
+    // console.log(registerData, "registerData");
     if (registerData?.status) {
       dispatch(setUser(registerData?.data));
       setIsOpen(false);
@@ -85,8 +85,8 @@ const RegisterForm = ({ setIsOpen }: any) => {
 
   useEffect(() => {
     // const error = rerror?.errors?.map((item) => item);
-    console.log(rerror);
-    setError(rerror?.data?.errors[0]);
+    // console.log(rerror);
+    if (rerror?.data) setError(rerror?.data?.errors[0]);
   }, [rerror]);
   return (
     <div className="px-5">

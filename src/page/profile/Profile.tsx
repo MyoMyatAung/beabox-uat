@@ -39,14 +39,14 @@ const Profile = () => {
   const { data, isLoading, refetch } = useGetMyProfileQuery("");
   const dispatch = useDispatch();
   const [show, setShow] = useState(false);
-  const user = useSelector((state: any) => state.persist.user);
-  const gender = useSelector((state: any) => state.persist.gender);
-  const region = useSelector((state: any) => state.persist.region);
-  const cover = useSelector((state: any) => state.persist.cover);
+  const user = useSelector((state: any) => state?.persist?.user);
+  const gender = useSelector((state: any) => state?.persist?.gender);
+  const region = useSelector((state: any) => state?.persist?.region);
+  const cover = useSelector((state: any) => state?.persist?.cover);
   const [isCopied, setIsCopied] = useState(false); // State for feedback
 
   const handleCopy = (text: any) => {
-    navigator.clipboard
+    navigator?.clipboard
       .writeText(text)
       .then(() => {
         setIsCopied(true); // Show feedback
@@ -207,7 +207,7 @@ const Profile = () => {
               </span>{" "} */}
                 </p>
                 <p className="z-[1200] text-[14px] text-[#BBBBBB] flex gap-1 items-center">
-                  B号 : {data?.data?.user_code}{" "}
+                  B号 : {data?.data?.user_code}
                   <Copy
                     onClick={() => handleCopy(data?.data?.user_code)}
                     size={14}
