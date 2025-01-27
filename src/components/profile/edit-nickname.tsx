@@ -4,7 +4,7 @@ import {
   DrawerClose,
   DrawerContent,
   DrawerTrigger,
-} from "@/components/ui/drawer";
+} from "@/components/shared/drawer";
 import { Button } from "../ui/button";
 import { useRef, useState } from "react";
 import { X } from "lucide-react";
@@ -46,7 +46,7 @@ const EditNickName = ({
     <Drawer open={isOpen} onOpenChange={handleOpenChange}>
       <div className="text-[14px] flex items-center justify-between">
         <h1>昵称</h1>
-        <DrawerTrigger asChild>
+        <DrawerTrigger>
           <p className="flex items-center gap-1 text-[#888]">
             {nickname} <FaAngleRight />
           </p>
@@ -54,9 +54,9 @@ const EditNickName = ({
       </div>
       <DrawerContent className="border-0">
         {isLoading ? <Loader /> : <></>}
-        <div className="w-full c-height px-5 bg-[#16131C]">
+        <div className="w-full px-5 bg-[#16131C]">
           <div className="flex justify-between items-center py-5">
-            <DrawerClose>
+            <DrawerClose className="z-[1200]">
               <button>
                 <FaAngleLeft size={18} />
               </button>
