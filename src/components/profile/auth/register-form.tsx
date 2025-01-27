@@ -73,7 +73,7 @@ const RegisterForm = ({ setIsOpen }: any) => {
       dispatch(setUser(registerData?.data));
       setIsOpen(false);
       // dispatch(setRegisterUser(registerData?.data));
-      // setShow验证码(false);
+      setShow验证码(false);
       // dispatch(setAuthToggle(true));
       // setShowSecurity(true);
     } else {
@@ -86,8 +86,11 @@ const RegisterForm = ({ setIsOpen }: any) => {
   useEffect(() => {
     // const error = rerror?.errors?.map((item) => item);
     // console.log(rerror);
-    if (rerror?.data) setError(rerror?.data?.errors[0]);
+    if (rerror) setError(rerror?.data?.message);
+    setShow验证码(false);
   }, [rerror]);
+
+  console.log(rerror);
   return (
     <div className="px-5">
       <div className="flex justify-between items-center">
@@ -212,56 +215,53 @@ const RegisterForm = ({ setIsOpen }: any) => {
             </Button>
           </div>
           <Dialog open={show验证码} onOpenChange={setShow验证码}>
-            {!isLoading ? (
-              <DialogContent className="bg-[#393641] z-[3000] border-0 shadow-lg rounded-lg max-w-[300px]">
-                <DialogHeader>
-                  <DialogTitle className="text-white text-[16px]">
-                    {/* 验证码 */}
-                    验证码
-                  </DialogTitle>
-                </DialogHeader>
-                <div className="space-y-6">
-                  <div className="flex justify-center items-center gap-1 h-[36px]">
-                    <input
-                      value={captcha}
-                      onChange={(e) => setCaptcha(e.target.value)}
-                      placeholder="输入验证码"
-                      className="bg-[#2D2738] w-[70%] px-[10px] h-full outline-none"
-                    />
+            <DialogContent className="bg-[#393641] z-[3000] border-0 shadow-lg rounded-lg max-w-[300px]">
+              <DialogHeader>
+                <DialogTitle className="text-white text-[16px]">
+                  {/* 验证码 */}
+                  验证码
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-6">
+                <div className="flex justify-center items-center gap-1 h-[36px]">
+                  <input
+                    value={captcha}
+                    onChange={(e) => setCaptcha(e.target.value)}
+                    placeholder="输入验证码"
+                    className="bg-[#2D2738] w-[70%] px-[10px] h-full outline-none"
+                  />
 
-                    <img
-                      src={data?.data?.img}
-                      className="w-[30%]  h-full  object-center outline-none border-gray-400"
-                      alt=""
-                    />
-                  </div>
-                  <div
-                    onClick={async (e) => {
-                      e.stopPropagation();
-                      await getCaptcha("");
-                      console.log("get new");
-                    }}
-                    className="flex items-center gap-2"
-                  >
-                    <RotateCcw size={14} />
-                    <p className="text-[12px] text-[#bbb]">刷新</p>
-                  </div>
-                  <Button
-                    onClick={handleVerify}
-                    disabled={
-                      registerLoading ? true : false || !captcha?.length
-                    }
-                    type="submit"
-                    className="w-full gradient-bg hover:gradient-bg text-white rounded-lg"
-                  >
-                    {registerLoading ? <SmallLoader /> : "确认"}
-                    {/* Verify */}
-                  </Button>
+                  <img
+                    src={data?.data?.img}
+                    className="w-[30%]  h-full  object-center outline-none border-gray-400"
+                    alt=""
+                  />
                 </div>
-              </DialogContent>
-            ) : (
-              <></>
-            )}
+                <div
+                  onClick={async (e) => {
+                    e.stopPropagation();
+                    await getCaptcha("");
+                    console.log("get new");
+                  }}
+                  className="flex items-center gap-2"
+                >
+                  <RotateCcw
+                    size={14}
+                    className={`${isLoading ? "animate-spin" : ""}`}
+                  />
+                  <p className="text-[12px] text-[#bbb]">刷新</p>
+                </div>
+                <Button
+                  onClick={handleVerify}
+                  disabled={registerLoading ? true : false || !captcha?.length}
+                  type="submit"
+                  className="w-full gradient-bg hover:gradient-bg text-white rounded-lg"
+                >
+                  {registerLoading ? <SmallLoader /> : "确认"}
+                  {/* Verify */}
+                </Button>
+              </div>
+            </DialogContent>
           </Dialog>
           <Dialog open={showSecurity} onOpenChange={setShowSecurity}>
             <DialogContent className="bg-[#242424] max-w-[340px] border-0 rounded-[16px]">
