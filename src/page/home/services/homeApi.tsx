@@ -55,6 +55,15 @@ export const homeApi = createApi({
         },
       }),
     }),
+    unInterestPost: builder.mutation<void, { post_id: any }>({
+      query: ({ post_id }) => ({
+        url: `post/uninterest`,
+        method: "POST",
+        body: {
+          post_id,
+        },
+      }),
+    }),
 
     followStatus: builder.mutation<void, { follow_user_id: any; status: any }>({
       query: ({ follow_user_id, status }) => ({
@@ -172,4 +181,5 @@ export const {
   useGetReportsQuery,
   useStoreReportMutation,
   useUnlikePostMutation,
+  useUnInterestPostMutation,
 } = homeApi;

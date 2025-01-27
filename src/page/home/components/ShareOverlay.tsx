@@ -1,20 +1,32 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
-import qr from "../qr.png";
-import { useGetConfigQuery } from "../services/homeApi";
+
+import {
+  useGetConfigQuery,
+  useUnInterestPostMutation,
+} from "../services/homeApi";
 import { QRCodeSVG } from "qrcode.react";
 import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { showToast } from "../services/errorSlice";
+import { setVideos } from "../services/videosSlice";
+import { setCurrentActivePost } from "../services/activeSlice";
 
 const ShareOverlay: React.FC<any> = ({
   alertVisible,
   config,
   setAlertVisible,
   post,
+  status,
 }) => {
   const [isClosing, setIsClosing] = useState(false);
   const user = useSelector((state: any) => state.persist.user);
   const navigate = useNavigate();
+  const [unInterestPost] = useUnInterestPostMutation();
+  const dispatch = useDispatch();
+  const currentTab = useSelector((state: any) => state.home.currentTab);
+  const { videos } = useSelector((state: any) => state.videoSlice);
+  const { currentActivePost } = useSelector((state: any) => state.activeslice);
 
   // const dispatch = useDispatch();
   const handleClose = () => {
@@ -43,8 +55,6 @@ const ShareOverlay: React.FC<any> = ({
     }
   };
 
-  console.log(post?.files[0]);
-
   const onDownload = () => {
     console.log("download");
     sendEventToNative("saveVideo", post?.files[0].downloadURL);
@@ -70,6 +80,41 @@ const ShareOverlay: React.FC<any> = ({
   const handleReport = () => {
     if (user?.token) {
       navigate(`/reports/post/${post?.post_id}`);
+    } else {
+      navigate("/login");
+    }
+  };
+
+  const handleUninterest = async () => {
+    if (user?.token) {
+      try {
+        const response = await unInterestPost({ post_id: post?.post_id }); // Pass the accumulated count to the API
+        console.log(currentActivePost);
+        if (status) {
+          const updatedVideos = {
+            ...videos, // Spread the existing videos state
+            [currentTab === 2 ? "foryou" : "follow"]: (
+              videos[currentTab === 2 ? "foryou" : "follow"] || []
+            ).filter((video: any) => video.post_id !== post?.post_id),
+          };
+          setCurrentActivePost(null);
+          dispatch(setVideos(updatedVideos)); // Dispatch the updated videos
+        }
+
+        dispatch(
+          showToast({
+            message: response?.data?.message,
+            type: "success",
+          })
+        );
+      } catch (error) {
+        dispatch(
+          showToast({
+            message: error?.data?.message,
+            type: "error",
+          })
+        );
+      }
     } else {
       navigate("/login");
     }
@@ -148,7 +193,10 @@ const ShareOverlay: React.FC<any> = ({
                 </svg>
                 <span className="download-text">复制链接</span>
               </button>
-              <button className="flex flex-col items-center">
+              <button
+                className="flex flex-col items-center"
+                onClick={handleUninterest}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="41"

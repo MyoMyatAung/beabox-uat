@@ -35,6 +35,7 @@ const UploadProcess = lazy(() => import("../page/upload/UploadProcess"));
 const Question = lazy(() => import("../page/profile/security/Question"));
 const Answer = lazy(() => import("../page/profile/security/Answer"));
 const Manage = lazy(() => import("../page/profile/security/Manage"));
+const AddBio = lazy(() => import("../components/profile/add-bio"));
 const ForgotPassword = lazy(
   () => import("../components/profile/auth/forgot-password")
 );
@@ -139,6 +140,16 @@ const Routing = () => {
         <Suspense fallback={<Loader />}>
           <RootLayout>
             <Home />
+          </RootLayout>
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.add_bio,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <RootLayout>
+            <AddBio />
           </RootLayout>
         </Suspense>
       ),

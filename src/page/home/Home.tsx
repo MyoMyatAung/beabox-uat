@@ -131,6 +131,7 @@ const Home = () => {
   // }, [followData, forYouData, latestData, currentTab, videos]);
 
   useEffect(() => {
+    console.log("winnnn");
     // Determine which data corresponds to the current tab
     const currentData =
       currentTab === 0 ? followData : currentTab === 2 ? forYouData : null; // Add other tabs if necessary
@@ -170,7 +171,7 @@ const Home = () => {
         console.log("No new videos to add");
       }
     }
-  }, [followData, forYouData, currentTab, videos, page]);
+  }, [followData, forYouData, currentTab, page]);
 
   // useEffect(() => {
   //   // Populate videos based on the current tab and fetched data
@@ -378,32 +379,6 @@ const Home = () => {
     }
   };
 
-  const sendEventToNative = (name: string, text: any) => {
-    if (
-      (window as any).webkit &&
-      (window as any).webkit.messageHandlers &&
-      (window as any).webkit.messageHandlers.jsBridge
-    ) {
-      (window as any).webkit.messageHandlers.jsBridge.postMessage({
-        eventName: name,
-        value: text,
-      });
-    }
-  };
-
-  const handleFullscreen = (video: any) => {
-    sendEventToNative("beabox_fullscreen", {
-      post_id: video?.post_id,
-      like_api_url: `${import.meta.env.VITE_API_URL}/post/like`,
-      token: `Bearer ${user?.token}`,
-      video_url: video?.files[0].resourceURL,
-      share_link: config?.data?.share_link,
-      title: video.title,
-      like_count: video?.like_count,
-      is_like: video?.is_liked,
-    });
-  };
-
   const handleRefresh = () => {
     const videoKey =
       currentTab === 2 ? "foryou" : currentTab === 0 ? "follow" : "";
@@ -473,6 +448,8 @@ const Home = () => {
                           data-post-id={video.post_id} // Add post ID to the container
                         >
                           <VideoContainer
+                            container={videoContainerRef.current}
+                            status={true}
                             countNumber={countNumber}
                             video={video}
                             setCountNumber={setCountNumber}
@@ -482,6 +459,8 @@ const Home = () => {
                             setHeight={setHeight}
                             setHearts={setHearts}
                             setCountdown={setCountdown}
+                            width={width}
+                            height={height}
                           />
                           {/* <Player
                             src={video.files[0].resourceURL}
@@ -515,47 +494,6 @@ const Home = () => {
                           {hearts.map((id: any) => (
                             <HeartCount id={id} key={id} remove={removeHeart} />
                           ))}
-
-                          {width > height && (
-                            <>
-                              <button
-                                onClick={() => handleFullscreen(video)}
-                                className={`absolute 
-                                left-[37%] top-[70%] bottom-0 right-0 w-[100px] bg-[#101010]
-                            h-[35px] rounded-md flex justify-center items-center z-[99] text-center  text-white `}
-                              >
-                                <div className=" flex items-center p-1 gap-2">
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="14"
-                                    height="13"
-                                    viewBox="0 0 14 13"
-                                    fill="none"
-                                  >
-                                    <path
-                                      d="M11.9279 4.03607L10.664 2.68779C10.6123 2.63272 10.5969 2.55002 10.6249 2.47798C10.6528 2.40611 10.7186 2.35917 10.7916 2.35917L11.3304 2.35917C11.2894 1.07625 10.8481 0.573193 10.8434 0.568154L10.8434 0.567974C10.7879 0.507124 10.7764 0.414495 10.815 0.340101C10.8537 0.265707 10.9335 0.227068 11.0113 0.245124C11.0284 0.249096 12.6563 0.655005 12.7714 2.35915L13.3195 2.35915C13.3925 2.35915 13.4583 2.4061 13.4863 2.47796C13.5142 2.55001 13.4988 2.63271 13.4471 2.68778L12.1832 4.03606C12.1493 4.07217 12.1035 4.09257 12.0556 4.09257C12.0077 4.09257 11.9618 4.07218 11.9279 4.03607Z"
-                                      fill="white"
-                                    />
-                                    <rect
-                                      x="0.9"
-                                      y="0.640723"
-                                      width="7.38519"
-                                      height="11.7185"
-                                      rx="1.6"
-                                      stroke="white"
-                                      stroke-width="0.8"
-                                    />
-                                    <path
-                                      d="M9.16667 6.01855L11.5 6.01855C12.6046 6.01855 13.5 6.91399 13.5 8.01855L13.5 10.2778C13.5 11.3824 12.6046 12.2778 11.5 12.2778L9.16667 12.2778"
-                                      stroke="white"
-                                      stroke-width="0.8"
-                                    />
-                                  </svg>
-                                  <span>全屏</span>
-                                </div>
-                              </button>
-                            </>
-                          )}
                         </div>
                       ))}
                     </div>
@@ -564,7 +502,7 @@ const Home = () => {
                       !latestData?.data?.length ||
                       !forYouData?.data?.length) && (
                       <p style={{ textAlign: "center" }}>
-                        <b>You have seen all videos</b>
+                        {/* <b>You have seen all videos</b> */}
                       </p>
                     )}
                   </>
@@ -648,6 +586,8 @@ const Home = () => {
                           data-post-id={video.post_id} // Add post ID to the container
                         >
                           <VideoContainer
+                            container={videoContainerRef.current}
+                            status={true}
                             countNumber={countNumber}
                             video={video}
                             setCountNumber={setCountNumber}
@@ -657,6 +597,8 @@ const Home = () => {
                             setHeight={setHeight}
                             setHearts={setHearts}
                             setCountdown={setCountdown}
+                            width={width}
+                            height={height}
                           />
 
                           <VideoFooter
@@ -666,46 +608,6 @@ const Home = () => {
                             city={video?.city}
                           />
 
-                          {width > height && (
-                            <>
-                              <button
-                                onClick={() => handleFullscreen(video)}
-                                className={`absolute 
-                                left-[37%] top-[70%] bottom-0 right-0 w-[100px] bg-[#101010]
-                            h-[35px] rounded-md flex justify-center items-center z-[99] text-center  text-white `}
-                              >
-                                <div className=" flex items-center p-1 gap-2">
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="14"
-                                    height="13"
-                                    viewBox="0 0 14 13"
-                                    fill="none"
-                                  >
-                                    <path
-                                      d="M11.9279 4.03607L10.664 2.68779C10.6123 2.63272 10.5969 2.55002 10.6249 2.47798C10.6528 2.40611 10.7186 2.35917 10.7916 2.35917L11.3304 2.35917C11.2894 1.07625 10.8481 0.573193 10.8434 0.568154L10.8434 0.567974C10.7879 0.507124 10.7764 0.414495 10.815 0.340101C10.8537 0.265707 10.9335 0.227068 11.0113 0.245124C11.0284 0.249096 12.6563 0.655005 12.7714 2.35915L13.3195 2.35915C13.3925 2.35915 13.4583 2.4061 13.4863 2.47796C13.5142 2.55001 13.4988 2.63271 13.4471 2.68778L12.1832 4.03606C12.1493 4.07217 12.1035 4.09257 12.0556 4.09257C12.0077 4.09257 11.9618 4.07218 11.9279 4.03607Z"
-                                      fill="white"
-                                    />
-                                    <rect
-                                      x="0.9"
-                                      y="0.640723"
-                                      width="7.38519"
-                                      height="11.7185"
-                                      rx="1.6"
-                                      stroke="white"
-                                      stroke-width="0.8"
-                                    />
-                                    <path
-                                      d="M9.16667 6.01855L11.5 6.01855C12.6046 6.01855 13.5 6.91399 13.5 8.01855L13.5 10.2778C13.5 11.3824 12.6046 12.2778 11.5 12.2778L9.16667 12.2778"
-                                      stroke="white"
-                                      stroke-width="0.8"
-                                    />
-                                  </svg>
-                                  <span>全屏</span>
-                                </div>
-                              </button>
-                            </>
-                          )}
                           {hearts.map((id: any) => (
                             <HeartCount id={id} key={id} remove={removeHeart} />
                           ))}
@@ -717,7 +619,7 @@ const Home = () => {
                       !latestData?.data?.length ||
                       !forYouData?.data?.length) && (
                       <p style={{ textAlign: "center" }}>
-                        <b>You have seen all videos</b>
+                        {/* <b>You have seen all videos</b> */}
                       </p>
                     )}
                   </>
@@ -766,111 +668,3 @@ const Home = () => {
 };
 
 export default memo(Home);
-
-{
-  /* {video?.related.length > 0 && (
-                      <button
-                        onClick={() => handleRelated(video?.related)}
-                        className="flex items-center py-1 justify-between px-4 absolute bottom-[-10px] left-0 z-50 w-full bg-black"
-                      >
-                        <div className="flex items-center text-[15px] gap-2">
-                          <div>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="17"
-                              height="18"
-                              viewBox="0 0 17 18"
-                              fill="none"
-                            >
-                              <path
-                                fill-rule="evenodd"
-                                clip-rule="evenodd"
-                                d="M12.5264 12.1723H4.46103C4.11296 12.1723 3.83046 11.8898 3.83046 11.5417C3.83046 11.1937 4.11296 10.9112 4.46103 10.9112H12.5264C12.8744 10.9112 13.1569 11.1937 13.1569 11.5417C13.1569 11.8898 12.8744 12.1723 12.5264 12.1723ZM15.4715 5.25963C14.5492 4.26586 13.373 4.2894 12.3364 4.3079C11.6865 4.31967 11.0719 4.33228 10.633 4.08174C10.0907 3.77318 9.90322 3.42343 9.68546 3.01735C9.44501 2.56838 9.17261 2.05973 8.4319 1.65953C7.06484 0.923034 5.45984 0.779266 3.3815 1.20805C1.32755 1.62842 0 3.44865 0 5.84479V10.9448C0 17.0587 3.52359 17.5321 8.5 17.5321C13.3158 17.5321 17 17.047 17 10.9221C17 9.42136 17 6.90918 15.4715 5.25963Z"
-                                fill="url(#paint0_linear_2840_43)"
-                              />
-                              <defs>
-                                <linearGradient
-                                  id="paint0_linear_2840_43"
-                                  x1="17"
-                                  y1="17.5321"
-                                  x2="0.44177"
-                                  y2="0.537826"
-                                  gradientUnits="userSpaceOnUse"
-                                >
-                                  <stop stop-color="#CD3EFF" />
-                                  <stop offset="1" stop-color="#FFB2E0" />
-                                </linearGradient>
-                              </defs>
-                            </svg>
-                          </div>
-                          <p className="collect_text mt-[2px]">Collections</p>
-                          <p className="collect_text_sec mt-[2px]">
-                            {video?.related[0]?.type === "top_post" &&
-                              "Top 20 Movies"}
-                          </p>
-                        </div>
-                        <div className="">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="22"
-                            viewBox="0 0 16 22"
-                            fill="none"
-                            className="mt-[10px]"
-                          >
-                            <g filter="url(#filter0_d_2840_37)">
-                              <path
-                                d="M5.27271 13L10.7273 7L5.27271 1"
-                                stroke="white"
-                                stroke-opacity="0.7"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                shape-rendering="crispEdges"
-                              />
-                            </g>
-                            <defs>
-                              <filter
-                                id="filter0_d_2840_37"
-                                x="0.272705"
-                                y="0"
-                                width="15.4546"
-                                height="22"
-                                filterUnits="userSpaceOnUse"
-                                color-interpolation-filters="sRGB"
-                              >
-                                <feFlood
-                                  flood-opacity="0"
-                                  result="BackgroundImageFix"
-                                />
-                                <feColorMatrix
-                                  in="SourceAlpha"
-                                  type="matrix"
-                                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-                                  result="hardAlpha"
-                                />
-                                <feOffset dy="4" />
-                                <feGaussianBlur stdDeviation="2" />
-                                <feComposite in2="hardAlpha" operator="out" />
-                                <feColorMatrix
-                                  type="matrix"
-                                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"
-                                />
-                                <feBlend
-                                  mode="normal"
-                                  in2="BackgroundImageFix"
-                                  result="effect1_dropShadow_2840_37"
-                                />
-                                <feBlend
-                                  mode="normal"
-                                  in="SourceGraphic"
-                                  in2="effect1_dropShadow_2840_37"
-                                  result="shape"
-                                />
-                              </filter>
-                            </defs>
-                          </svg>
-                        </div>
-                      </button>
-                    )} */
-}

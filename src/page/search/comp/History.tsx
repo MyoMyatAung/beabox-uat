@@ -52,8 +52,9 @@ const History: React.FC<HistoryProps> = ({}) => {
         </span>
       </div>
       <div className=" flex gap-[8px] py-[20px] flex-wrap">
-        {historys?.map((hs: any) => (
+        {historys?.map((hs: any, index: any) => (
           <button
+            key={index}
             onClick={() => handleSearch(hs)}
             className="history_box p-[12px] text-white font-[400]"
           >
