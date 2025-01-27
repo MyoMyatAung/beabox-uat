@@ -187,40 +187,13 @@ const Player = ({
   const hlsRef = useRef<Hls | null>(null); // HLS instance for `src`
   const { mute } = useSelector((state: any) => state.muteSlice);
 
-  const clickHandlerRef = useRef({
-    timestamp: 0,
-    timeoutId: null as NodeJS.Timeout | null,
-  });
-
-  const handleSingleClick = () => {
-    artPlayerInstanceRef.current?.toggle(); // Play or pause
-  };
-
-  const handleClick = () => {
-    const now = Date.now();
-    const { timestamp, timeoutId } = clickHandlerRef.current;
-
-    if (now - timestamp <= 500) {
-      // Double-click detected
-      clearTimeout(timeoutId as NodeJS.Timeout); // Cancel the single-click action
-      clickHandlerRef.current.timeoutId = null;
-      handleLike(); // Call the double-click function
-    } else {
-      // Start single-click timer
-      clickHandlerRef.current.timestamp = now;
-      clickHandlerRef.current.timeoutId = setTimeout(() => {
-        handleSingleClick(); // Call single-click action after 1 second
-      }, 700); // Wait for 1 second to execute single-click
-    }
-  };
-
   // Initialize Artplayer for the current video
   const initializeArtplayer = () => {
     if (!playerContainerRef.current || artPlayerInstanceRef.current) return;
 
     Artplayer.DBCLICK_FULLSCREEN = false;
     Artplayer.MOBILE_DBCLICK_PLAY = false;
-    Artplayer.MOBILE_CLICK_PLAY = false;
+    Artplayer.MOBILE_CLICK_PLAY = true;
 
     artPlayerInstanceRef.current = new Artplayer({
       // autoOrientation: true,
@@ -258,9 +231,43 @@ const Player = ({
         loading: `<img width="100" height="100" src=${vod_loader}>`,
         state: `<img width="50" height="50" src=${indicator}>`,
       },
+      layers: [
+        {
+          html: '<div class="click-layer"></div>',
+          style: {
+            position: "absolute",
+            top: "0",
+            left: "0",
+            width: "100%",
+            height: "100%",
+            zIndex: "10",
+            background: "transparent",
+          },
+          mounted: (element) => {
+            let lastClick = 0;
+            let singleClickTimeout: NodeJS.Timeout | null = null;
+
+            // Add event listener to handle both single and double clicks
+            element.addEventListener("click", () => {
+              const now = Date.now();
+              if (now - lastClick <= 300) {
+                // Double-click detected
+                if (singleClickTimeout) clearTimeout(singleClickTimeout); // Cancel single-click action
+                handleLike(); // Call the double-click function
+              } else {
+                // Single-click: set a timeout to execute play/pause
+                singleClickTimeout = setTimeout(() => {
+                  artPlayerInstanceRef.current?.toggle(); // Play or pause on single click
+                }, 300); // Wait for 300ms to ensure it's not a double-click
+              }
+              lastClick = now; // Update last click timestamp
+            });
+          },
+        },
+      ],
     });
 
-    artPlayerInstanceRef?.current?.on("click", handleClick);
+    // artPlayerInstanceRef?.current?.on("click", handleClick);
 
     // artPlayerInstanceRef.current.on("dblclick", handleLike);
 

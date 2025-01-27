@@ -15,6 +15,7 @@ import FeedFooter from "@/page/home/components/FeedFooter";
 import { setCurrentTab } from "@/page/home/services/homeSlice";
 import HeartCount from "@/page/home/components/Heart";
 import VideoContainer from "@/page/home/components/VideoContainer";
+import Ads from "@/page/home/components/Ads";
 
 interface VodDetailsProps {
   // setshow: (value: boolean) => void;
@@ -192,82 +193,21 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
             setCountdown={setCountdown}
           />
 
-          {/* <Player
-            src={files.files[0].resourceURL}
-            thumbnail={
-              files?.preview_image ||
-              "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg"
-            }
-            mute={mute}
-            setWidth={setWidth}
-            setHeight={setHeight}
-          />
-          <VideoSidebar
-            post={files}
-            likes={files?.like_count}
-            is_liked={files?.is_liked}
-            messages={files?.comment_count}
-            post_id={files?.post_id}
-            setCountNumber={setCountNumber}
-            setCountdown={setCountdown}
-            countNumber={countNumber}
-            countdown={countdown}
-            config={config?.data}
-            image={files?.preview_image}
-            setMute={setMute}
-            mute={mute}
-            setHearts={setHearts}
-          /> */}
+          {files?.type !== "ads" && (
+            <FeedFooter
+              tags={files?.tag}
+              title={files?.title}
+              username={files?.user?.name}
+              city={files?.city}
+            />
+          )}
 
-          <FeedFooter
-            tags={files?.tag}
-            title={files?.title}
-            username={files?.user?.name}
-            city={files?.city}
-          />
+          {files?.type === "ads" && <Ads ads={files?.ads_info} />}
+
           {hearts.map((id: any) => (
             <HeartCount id={id} key={id} remove={removeHeart} />
           ))}
-          {/* {width > height && (
-            <>
-              <button
-                onClick={() => handleFullscreen(files)}
-                className={`absolute 
-                                left-[37%] top-[70%] bottom-0 right-0 w-[100px] bg-[#101010]
-                            h-[35px] rounded-md flex justify-center items-center z-[99] text-center  text-white `}
-              >
-                <div className=" flex items-center p-1 gap-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="14"
-                    height="13"
-                    viewBox="0 0 14 13"
-                    fill="none"
-                  >
-                    <path
-                      d="M11.9279 4.03607L10.664 2.68779C10.6123 2.63272 10.5969 2.55002 10.6249 2.47798C10.6528 2.40611 10.7186 2.35917 10.7916 2.35917L11.3304 2.35917C11.2894 1.07625 10.8481 0.573193 10.8434 0.568154L10.8434 0.567974C10.7879 0.507124 10.7764 0.414495 10.815 0.340101C10.8537 0.265707 10.9335 0.227068 11.0113 0.245124C11.0284 0.249096 12.6563 0.655005 12.7714 2.35915L13.3195 2.35915C13.3925 2.35915 13.4583 2.4061 13.4863 2.47796C13.5142 2.55001 13.4988 2.63271 13.4471 2.68778L12.1832 4.03606C12.1493 4.07217 12.1035 4.09257 12.0556 4.09257C12.0077 4.09257 11.9618 4.07218 11.9279 4.03607Z"
-                      fill="white"
-                    />
-                    <rect
-                      x="0.9"
-                      y="0.640723"
-                      width="7.38519"
-                      height="11.7185"
-                      rx="1.6"
-                      stroke="white"
-                      stroke-width="0.8"
-                    />
-                    <path
-                      d="M9.16667 6.01855L11.5 6.01855C12.6046 6.01855 13.5 6.91399 13.5 8.01855L13.5 10.2778C13.5 11.3824 12.6046 12.2778 11.5 12.2778L9.16667 12.2778"
-                      stroke="white"
-                      stroke-width="0.8"
-                    />
-                  </svg>
-                  <span>全屏</span>
-                </div>
-              </button>
-            </>
-          )} */}
+
           <div className="absolute top-3 left-0 z-50 flex gap-2 items-center w-full">
             <button onClick={handleBack} className="p-3">
               <svg

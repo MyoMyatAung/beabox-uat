@@ -13,6 +13,7 @@ import HeartCount from "./Heart";
 import VideoContainer from "./VideoContainer";
 import { setVideos } from "../services/videosSlice";
 import { showToast } from "../services/errorSlice";
+import Ads from "./Ads";
 
 const VideoFeed = ({
   videos,
@@ -187,36 +188,16 @@ const VideoFeed = ({
               setHearts={setHearts}
               setCountdown={setCountdown}
             />
-            {/* <SearchPlayer
-              src={video.files[0].resourceURL}
-              thumbnail={
-                video?.preview_image ||
-                "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg"
-              }
-              setWidth={setWidth}
-              setHeight={setHeight}
-            />
-            <VideoSidebar
-              likes={video?.like_count}
-              is_liked={video?.is_liked}
-              messages={video?.comment_count}
-              post_id={video?.post_id}
-              setCountNumber={setCountNumber}
-              setCountdown={setCountdown}
-              countNumber={countNumber}
-              countdown={countdown}
-              config={config?.data}
-              image={video?.preview_image}
-              post={video}
-              setHearts={setHearts}
-            /> */}
+            {video?.type !== "ads" && (
+              <FeedFooter
+                tags={video?.tag}
+                title={video?.title}
+                username={video?.user?.name}
+                city={video?.city}
+              />
+            )}
 
-            <FeedFooter
-              tags={video?.tag}
-              title={video?.title}
-              username={video?.user?.name}
-              city={video?.city}
-            />
+            {video?.type === "ads" && <Ads ads={video?.ads_info} />}
             <div className="absolute top-3 left-0 z-50 flex gap-2 items-center w-full">
               <button className="p-3" onClick={() => setShowVideoFeed(false)}>
                 <svg
