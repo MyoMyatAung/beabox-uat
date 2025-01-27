@@ -105,7 +105,7 @@ const VideoContainer = ({
                     video.post_id === post_id
                       ? {
                           ...video,
-                          is_liked: true,
+                          is_liked: false,
                           like_count: +video?.like_count - 1,
                         }
                       : video
@@ -154,7 +154,7 @@ const VideoContainer = ({
                 video.post_id === post_id
                   ? {
                       ...video,
-                      is_liked: true,
+                      is_liked: false,
                       like_count: +video?.like_count - 1,
                     }
                   : video
