@@ -231,9 +231,45 @@ const Player = ({
         loading: `<img width="100" height="100" src=${vod_loader}>`,
         state: `<img width="50" height="50" src=${indicator}>`,
       },
+      layers: [
+        {
+          html: '<div class="click-layer"></div>',
+          style: {
+            position: "absolute",
+            top: "0",
+            left: "0",
+            width: "100%",
+            height: "100%",
+            zIndex: "10",
+            background: "transparent",
+          },
+          mounted: (element) => {
+            let lastClick = 0;
+            let singleClickTimeout: NodeJS.Timeout | null = null;
+
+            // Add event listener to handle both single and double clicks
+            element.addEventListener("click", () => {
+              const now = Date.now();
+              if (now - lastClick <= 300) {
+                // Double-click detected
+                if (singleClickTimeout) clearTimeout(singleClickTimeout); // Cancel single-click action
+                handleLike(); // Call the double-click function
+              } else {
+                // Single-click: set a timeout to execute play/pause
+                singleClickTimeout = setTimeout(() => {
+                  artPlayerInstanceRef.current?.toggle(); // Play or pause on single click
+                }, 300); // Wait for 300ms to ensure it's not a double-click
+              }
+              lastClick = now; // Update last click timestamp
+            });
+          },
+        },
+      ],
     });
 
-    artPlayerInstanceRef.current.on("dblclick", handleLike);
+    // artPlayerInstanceRef?.current?.on("click", handleClick);
+
+    // artPlayerInstanceRef.current.on("dblclick", handleLike);
 
     // artPlayerInstanceRef.current.on("ready", () => {
     //   artPlayerInstanceRef?.current?.play();

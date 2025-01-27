@@ -1,9 +1,91 @@
+import SmallLoader from "@/components/shared/small-loader";
+import SubmitButton from "@/components/shared/submit-button";
+import { paths } from "@/routes/paths";
+import {
+  useCheckAnswerMutation,
+  useCheckSAnswerMutation,
+  useGetMyProfileQuery,
+} from "@/store/api/profileApi";
+import { setForgotToken, setSAnswer } from "@/store/slices/persistSlice";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
+import { FaAngleLeft } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 const CheckAnswer = () => {
+  const [showAns, setShowAns] = useState(true);
+  const [error, setError] = useState("");
+  const securityQues = useSelector((state: any) => state.persist.securityQues);
+  const [ans, setAns] = useState("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [checkSAnswer, { isLoading }] = useCheckSAnswerMutation();
+  const onSubmitHandler = async (e: any) => {
+    e.preventDefault();
+    const { data } = await checkSAnswer({
+      answer: ans,
+    });
+    if (!data?.status) setError("出了点问题");
+    if (data?.status) {
+      navigate(paths.manage);
+      dispatch(setSAnswer(ans));
+    }
+    // dispatch(setForgotToken(data?.data?.token));
+    // navigate(paths.reset_password);
+  };
   return (
-    <div>
-      
-    </div>
-  )
-}
+    <div className="w-full h-screen px-5 flex flex-col items-center bg-[#16131C]">
+      <div className="flex justify-between items-center py-5 w-full">
+        <Link to={paths.settings}>
+          <FaAngleLeft size={18} />
+        </Link>
+        <p className="text-[16px]">安全问题</p>
+        <div></div>
+      </div>
 
-export default CheckAnswer
+      <div className="w-full">
+        <p className="text-[18px] my-5">
+          {securityQues?.ques?.security_question}
+        </p>
+        <form onSubmit={onSubmitHandler} className="w-full">
+          <div className="relative w-full">
+            <label htmlFor="" className="text-[#888] text-[14px]">
+              回答
+            </label>
+            <input
+              onChange={(e) => setAns(e.target.value)}
+              type={showAns ? "text" : "password"}
+              className="block w-full py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none mt-2"
+              placeholder="请输入您的答案"
+            />
+            <button
+              className=" absolute right-0 bottom-2"
+              onClick={(e) => {
+                e.preventDefault();
+                setShowAns(!showAns);
+              }}
+            >
+              {showAns ? (
+                <Eye className="w-[18px]" />
+              ) : (
+                <EyeOff className="w-[18px]" />
+              )}
+            </button>
+            <div className="w-full h-[1px] bg-[#FFFFFF0A]"></div>
+          </div>
+          <h1 className="mt-4 text-red-500 text-sm">{error}</h1>
+
+          <>
+            <SubmitButton
+              text={isLoading ? <SmallLoader /> : "继续"}
+              isLoading={isLoading}
+              condition={ans.length > 1}
+            />
+          </>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default CheckAnswer;

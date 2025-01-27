@@ -10,24 +10,24 @@ export const profileApi = createApi({
     prepareHeaders: (headers, { getState }) => {
       const state = getState() as any;
       const accessToken = state.persist?.user?.token;
-      headers.set("encrypt", "true");
+      // headers.set("encrypt", "true");
       headers.set("Accept-Language", "cn");
       if (accessToken) {
         headers.set("Authorization", `Bearer ${accessToken}`);
       }
       return headers;
     },
-    responseHandler: async (response) => {
-      const encryptedData = await response.json(); // Get the encrypted response as a string
+    // responseHandler: async (response) => {
+    //   const encryptedData = await response.json();
 
-      try {
-        const decryptedData = decryptWithAes(encryptedData?.data); // Decrypt the response data
-        return JSON.parse(decryptedData); // Parse the decrypted data into JSON format
-      } catch (err) {
-        console.error("Error decrypting response:", err);
-        throw new Error("Failed to decrypt response.");
-      }
-    },
+    //   try {
+    //     const decryptedData = decryptWithAes(encryptedData?.data);
+    //     return JSON.parse(decryptedData);
+    //   } catch (err) {
+    //     console.error("Error decrypting response:", err);
+    //     throw new Error("Failed to decrypt response.");
+    //   }
+    // },
   }),
   endpoints: (builder) => ({
     getMyProfile: builder.query<any, string>({
@@ -246,12 +246,22 @@ export const profileApi = createApi({
         },
       }),
     }),
+
     checkAnswer: builder.mutation<any, any>({
       query: ({ token, answer }) => ({
         url: `/check-security-answer`,
         method: "Post",
         body: {
           token,
+          answer,
+        },
+      }),
+    }),
+    checkSAnswer: builder.mutation<any, any>({
+      query: ({ answer }) => ({
+        url: `/profile/check-security-answer`,
+        method: "Post",
+        body: {
           answer,
         },
       }),
@@ -309,6 +319,7 @@ export const profileApi = createApi({
 });
 
 export const {
+  useCheckSAnswerMutation,
   useGetConfigQuery,
   useChangeShareRegionMutation,
   useChangeHideBioMutation,

@@ -32,6 +32,7 @@ export const paths = {
   user_profile: "/user/:id",
   forgot_password: "/forgot-password",
   check_answer: "/check-answer",
+  check_answer2: "/manage/check-answer",
   reset_password: "/reset-password",
   add_bio: "/add-bio",
   getUserProfileId: (id: any) => `/user/${id}`,

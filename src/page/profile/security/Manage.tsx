@@ -26,7 +26,8 @@ const Manage = () => {
     useStoreSecurityQuesMutation();
   const [removeSecurityQuestion, { isLoading: isLoading2 }] =
     useRemoveSecurityQuestionMutation();
-  const [ans, setAns] = useState(data?.data?.security_question?.answer || "");
+  const sanswer = useSelector((state: any) => state.persist.sanswer);
+  const [ans, setAns] = useState(sanswer || "");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const registerUser = useSelector((state: any) => state.persist.registerUser);
@@ -62,7 +63,7 @@ const Manage = () => {
   return (
     <div className="w-full h-screen px-5 flex flex-col items-center bg-[#16131C]">
       <div className="flex justify-between items-center py-5 w-full">
-        <Link to={paths.settings}>
+        <Link to={paths.check_answer2}>
           <FaAngleLeft size={18} />
         </Link>
         <p className="text-[16px]">管理安全</p>
@@ -107,7 +108,7 @@ const Manage = () => {
                 回答
               </label>
               <input
-                defaultValue={data?.data?.security_question?.answer}
+                defaultValue={sanswer}
                 onChange={(e) => setAns(e.target.value)}
                 type={showAns ? "text" : "password"}
                 className="block w-full py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none mt-2"

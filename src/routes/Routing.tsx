@@ -33,6 +33,9 @@ const OTP = lazy(() => import("../page/auth/OTP"));
 const UploadComponent = lazy(() => import("../page/upload/Upload"));
 const UploadProcess = lazy(() => import("../page/upload/UploadProcess"));
 const Question = lazy(() => import("../page/profile/security/Question"));
+const CheckAnswer = lazy(
+  () => import("../components/profile/auth/check-answer")
+);
 const Answer = lazy(() => import("../page/profile/security/Answer"));
 const Manage = lazy(() => import("../page/profile/security/Manage"));
 const AddBio = lazy(() => import("../components/profile/add-bio"));
@@ -115,6 +118,14 @@ const Routing = () => {
       element: (
         <Suspense fallback={<Loader />}>
           <Question />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.check_answer2,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <CheckAnswer />
         </Suspense>
       ),
     },

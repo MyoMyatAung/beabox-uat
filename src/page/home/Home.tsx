@@ -23,6 +23,7 @@ import { setVideos } from "./services/videosSlice";
 import { setPage } from "./services/pageSlice";
 import HeartCount from "./components/Heart";
 import VideoContainer from "./components/VideoContainer";
+import Ads from "./components/Ads";
 
 const Home = () => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
@@ -397,6 +398,8 @@ const Home = () => {
     }
   };
 
+  console.log(videos);
+
   return (
     <div className="flex justify-center items-center">
       <div className="max-w-[1024px] home-main w-full">
@@ -462,35 +465,20 @@ const Home = () => {
                             width={width}
                             height={height}
                           />
-                          {/* <Player
-                            src={video.files[0].resourceURL}
-                            thumbnail={
-                              video?.preview_image ||
-                              "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg"
-                            }
-                            setWidth={setWidth}
-                            setHeight={setHeight}
-                          /> */}
-                          {/* <VideoSidebar
-                            likes={video?.like_count}
-                            is_liked={video?.is_liked}
-                            messages={video?.comment_count}
-                            post_id={video?.post_id}
-                            setCountNumber={setCountNumber}
-                            setCountdown={setCountdown}
-                            countNumber={countNumber}
-                            countdown={countdown}
-                            config={config?.data}
-                            image={video?.preview_image}
-                            post={video}
-                            setHearts={setHearts}
-                          /> */}
-                          <VideoFooter
-                            tags={video?.tag}
-                            title={video?.title}
-                            username={video?.user?.name}
-                            city={video?.city}
-                          />
+
+                          {video?.type !== "ads" && (
+                            <VideoFooter
+                              tags={video?.tag}
+                              title={video?.title}
+                              username={video?.user?.name}
+                              city={video?.city}
+                            />
+                          )}
+
+                          {video?.type === "ads" && (
+                            <Ads ads={video?.ads_info} />
+                          )}
+
                           {hearts.map((id: any) => (
                             <HeartCount id={id} key={id} remove={removeHeart} />
                           ))}
@@ -601,12 +589,18 @@ const Home = () => {
                             height={height}
                           />
 
-                          <VideoFooter
-                            tags={video?.tag}
-                            title={video?.title}
-                            username={video?.user?.name}
-                            city={video?.city}
-                          />
+                          {video?.type !== "ads" && (
+                            <VideoFooter
+                              tags={video?.tag}
+                              title={video?.title}
+                              username={video?.user?.name}
+                              city={video?.city}
+                            />
+                          )}
+
+                          {video?.type === "ads" && (
+                            <Ads ads={video?.ads_info} />
+                          )}
 
                           {hearts.map((id: any) => (
                             <HeartCount id={id} key={id} remove={removeHeart} />

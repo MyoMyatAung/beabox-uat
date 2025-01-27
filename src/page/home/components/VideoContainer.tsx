@@ -324,7 +324,7 @@ const VideoContainer = ({
         post={video}
         setHearts={setHearts}
       />
-      {width > height && (
+      {video?.type !== "ads" && width > height && (
         <>
           <button
             onClick={() => handleFullscreen(video)}

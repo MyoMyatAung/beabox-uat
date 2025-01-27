@@ -82,7 +82,7 @@ const Login = () => {
 
   useEffect(() => {
     setShow验证码(false);
-    setError(lerror?.data?.message);
+    if (lerror) setError(lerror?.data?.message);
   }, [lerror]);
 
   return (
@@ -93,7 +93,7 @@ const Login = () => {
           <button onClick={handleBack}>
             <ChevronLeft />
           </button>
-          <p className="text-[16px]">Login</p>
+          <p className="text-[16px]">登录</p>
           <div></div>
         </div>
         <Form {...form}>
@@ -157,6 +157,7 @@ const Login = () => {
                           className=" absolute right-0 bottom-2"
                           onClick={(e) => {
                             e.stopPropagation();
+                            e.preventDefault();
                             setShowPassword(!showPassword);
                           }}
                         >
@@ -207,57 +208,56 @@ const Login = () => {
               </Link>
             </div>
             <Dialog open={show验证码} onOpenChange={setShow验证码}>
-              {!captchaLoading ? (
-                <DialogContent className="bg-[#16131C] border-0 shadow-lg rounded-lg max-w-[320px]">
-                  <DialogHeader>
-                    <DialogTitle className="text-white text-[16px]">
-                      验证码
-                    </DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-6 w-full">
-                    <div className="flex justify-center items-center gap-1 h-[36px]">
-                      <input
-                        value={captcha}
-                        onChange={(e) => setCaptcha(e.target.value)}
-                        placeholder="Type Captcha"
-                        className="bg-[#2D2738] w-[70%] px-[10px] h-full outline-none"
-                      />
+              <DialogContent className="bg-[#16131C] border-0 shadow-lg rounded-lg max-w-[320px]">
+                <DialogHeader>
+                  <DialogTitle className="text-white text-[16px]">
+                    验证码
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-6 w-full">
+                  <div className="flex justify-center items-center gap-1 h-[36px]">
+                    <input
+                      value={captcha}
+                      onChange={(e) => setCaptcha(e.target.value)}
+                      placeholder="Type Captcha"
+                      className="bg-[#2D2738] w-[70%] px-[10px] h-full outline-none"
+                    />
 
-                      <img
-                        src={data?.data?.img}
-                        className="w-[30%]  h-full  object-center outline-none border-gray-400"
-                        alt=""
-                      />
-                    </div>
-                    <div
-                      onClick={async (e) => {
-                        e.stopPropagation();
-                        await getCaptcha("");
-                        console.log("get new");
-                      }}
-                      className="flex items-center gap-2"
-                    >
-                      <RotateCcw size={14} />
-                      <p className="text-[12px] text-[#bbb]">刷新</p>
-                    </div>
-                    <Button
-                      onClick={handleVerify}
-                      disabled={isLoading ? true : false || !captcha?.length}
-                      type="submit"
-                      className="w-full gradient-bg hover:gradient-bg text-white rounded-lg"
-                    >
-                      {/* {registerLoading ? "loading..." : "Verify"} */}
-                      {isLoading ? (
-                        <img src={loader} alt="" className="w-12" />
-                      ) : (
-                        "Verify"
-                      )}
-                    </Button>
+                    <img
+                      src={data?.data?.img}
+                      className="w-[30%]  h-full  object-center outline-none border-gray-400"
+                      alt=""
+                    />
                   </div>
-                </DialogContent>
-              ) : (
-                <></>
-              )}
+                  <div
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      await getCaptcha("");
+                      console.log("get new");
+                    }}
+                    className="flex items-center gap-2"
+                  >
+                    <RotateCcw
+                      size={14}
+                      className={`${captchaLoading ? "animate-spin" : ""}`}
+                    />
+                    <p className="text-[12px] text-[#bbb]">刷新</p>
+                  </div>
+                  <Button
+                    onClick={handleVerify}
+                    disabled={isLoading ? true : false || !captcha?.length}
+                    type="submit"
+                    className="w-full gradient-bg hover:gradient-bg text-white rounded-lg"
+                  >
+                    {/* {registerLoading ? "loading..." : "Verify"} */}
+                    {isLoading ? (
+                      <img src={loader} alt="" className="w-12" />
+                    ) : (
+                      "Verify"
+                    )}
+                  </Button>
+                </div>
+              </DialogContent>
             </Dialog>
             <div className="w-full flex flex-col items-center">
               <p className="text-[14px] text-[#494848] text-center mb-5">
