@@ -215,7 +215,7 @@ const Profile = () => {
                 </p>
                 {data?.data?.share_region == "on" && region ? (
                   <div className="z-[1200] flex">
-                    <div className="z-[1200] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 pt-1 rounded-full justify-center shrink-0">
+                    <div className="z-[1200] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
                       {!region?.city?.length && !region?.province?.length ? (
                         <span>Unknown</span>
                       ) : (
@@ -228,7 +228,7 @@ const Profile = () => {
                   </div>
                 ) : (
                   <div className="z-[1200] flex">
-                    <div className="z-[1200] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 pt-1 rounded-full justify-center shrink-0">
+                    <div className="z-[1200] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
                       <span>Unknown</span>
                     </div>
                   </div>

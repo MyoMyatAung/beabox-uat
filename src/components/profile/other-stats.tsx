@@ -14,7 +14,7 @@ const OtherStats = ({ followers, following, nickname, likecount }: any) => {
     //   open={isDrawerOpen}
     //   onOpenChange={() => dispatch(setIsDrawerOpen(true))}
     // >
-      <div className="flex justify-between w-full max-w-xs my-4 items-center mx-auto">
+      <div className="flex z-[1200] justify-between w-full max-w-xs my-4 items-center mx-auto">
         <div className="text-center">
           {/* <DrawerTrigger
             asChild

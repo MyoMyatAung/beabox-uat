@@ -82,8 +82,9 @@ const RegisterForm = ({ setIsOpen }: any) => {
   };
 
   useEffect(() => {
-    setError(rerror?.data?.message);
-    console.log(rerror?.data?.message);
+    // const error = rerror?.errors?.map((item) => item);
+    console.log(rerror);
+    setError(rerror?.data?.errors[0]);
   }, [rerror]);
   return (
     <div className="px-5">
