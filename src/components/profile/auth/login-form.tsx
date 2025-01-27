@@ -224,7 +224,7 @@ const LoginForm = ({ setIsOpen }: any) => {
                     <input
                       value={captcha}
                       onChange={(e) => setCaptcha(e.target.value)}
-                      placeholder="Type Captcha"
+                      placeholder="输入验证码"
                       className="bg-[#524D5C] w-[70%] px-[10px] h-full outline-none"
                     />
 
