@@ -81,6 +81,7 @@ const Login = () => {
   };
 
   useEffect(() => {
+    setShow验证码(false);
     setError(lerror?.data?.message);
   }, [lerror]);
 
@@ -259,7 +260,9 @@ const Login = () => {
               )}
             </Dialog>
             <div className="w-full flex flex-col items-center">
-              <p className="text-[14px] text-[#494848] text-center mb-5">或者</p>
+              <p className="text-[14px] text-[#494848] text-center mb-5">
+                或者
+              </p>
               <Link to={paths.regiter}>
                 <Button
                   className="w-[320px] bg-transparent"

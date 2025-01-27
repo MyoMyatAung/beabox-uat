@@ -1,6 +1,8 @@
 import { paths } from "@/routes/paths";
 import { FaAngleLeft } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
+import System from "@/assets/profile/system1.png";
+import Balance from "@/assets/profile/balance1.png";
 
 const NotiDetail = () => {
   const state = useLocation();
@@ -20,7 +22,7 @@ const NotiDetail = () => {
           <div className="flex items-center gap-3">
             <img
               className="w-10 h-10"
-              src={state.state.data.metadata.image}
+              src={state.state.data.type === "system" ? System : Balance}
               alt=""
             />
 

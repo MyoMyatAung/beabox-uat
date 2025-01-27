@@ -25,7 +25,7 @@ const FollowStatusBtn = ({ userData, id, refetch, userLoading }: any) => {
         userData?.data?.is_following
           ? "bg-[#FFFFFF0F] hover:bg-[#FFFFFF0F]"
           : "gradient-bg hover:gradient-bg"
-      } rounded-[12px]`}
+      } rounded-[12px] z-[1200]`}
     >
       {isLoading ? (
         <img src={loader} alt="" className="w-12" />

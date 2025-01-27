@@ -81,6 +81,7 @@ const LoginForm = ({ setIsOpen }: any) => {
 
   useEffect(() => {
     setError(lerror?.data?.message);
+    setShow验证码(false);
   }, [lerror]);
 
   console.log(lerror, "lerrror");

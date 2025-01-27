@@ -80,7 +80,7 @@ const Settings = ({
   }, []);
 
   return (
-    <div className="w-full h-screen px-5 flex flex-col items-center justify-between bg-[#16131C]">
+    <div className="w-full h-screen px-5 flex flex-col items-center relative bg-[#16131C]">
       <div className="top flex flex-col gap-5 w-full">
         <div className="flex justify-between items-center py-5">
           <Link to={paths.profile}>
@@ -156,7 +156,7 @@ const Settings = ({
           </p>
         </div>
       </div>
-      <div className="w-full">
+      <div className="w-full fixed bottom-0 px-5">
         {user?.token ? (
           <div className="bot w-full py-5">
             <Button
