@@ -173,6 +173,7 @@ const VideoFeed = ({
             data-post-id={video.post_id} // Add post ID to the container
           >
             <VideoContainer
+              container={videoContainerRef.current}
               width={width}
               height={height}
               status={false}
