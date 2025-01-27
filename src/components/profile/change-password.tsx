@@ -4,7 +4,7 @@ import {
   DrawerClose,
   DrawerContent,
   DrawerTrigger,
-} from "@/components/ui/drawer";
+} from "@/components/shared/drawer";
 import { Button } from "../ui/button";
 import { useRef, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
@@ -42,9 +42,9 @@ const ChangePassword = () => {
       </div>
       <DrawerContent className="border-0">
         {isLoading ? <Loader /> : <></>}
-        <div className="w-full c-height px-5 bg-[#16131C]">
+        <div className="w-full px-5 bg-[#16131C]">
           <div className="flex justify-between items-center py-5">
-            <DrawerClose asChild>
+            <DrawerClose className="z-[1200]">
               <button onClick={() => setIsOpen(false)}>
                 <FaAngleLeft size={18} />
               </button>
