@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "../store";
+import { decryptWithAes } from "@/lib/decrypt";
 
 export const authApi = createApi({
   reducerPath: "authApi",
@@ -7,13 +8,25 @@ export const authApi = createApi({
     baseUrl: import.meta.env.VITE_API_URL,
     // baseUrl: "http://107.148.47.94:8800/api/v1",
     prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).persist?.user?.token;
-      // const rtoken = (getState() as RootState).persist?.registerUser?.token;
-      // Adjust 'auth.token' to match your Redux slice structure
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
+      const state = getState() as any;
+      const accessToken = state.persist?.user?.token;
+      headers.set("encrypt", "true");
+      headers.set("Accept-Language", "cn");
+      if (accessToken) {
+        headers.set("Authorization", `Bearer ${accessToken}`);
       }
       return headers;
+    },
+    responseHandler: async (response) => {
+      const encryptedData = await response.json(); // Get the encrypted response as a string
+
+      try {
+        const decryptedData = decryptWithAes(encryptedData?.data); // Decrypt the response data
+        return JSON.parse(decryptedData); // Parse the decrypted data into JSON format
+      } catch (err) {
+        console.error("Error decrypting response:", err);
+        throw new Error("Failed to decrypt response.");
+      }
     },
   }),
   endpoints: (builder) => ({
