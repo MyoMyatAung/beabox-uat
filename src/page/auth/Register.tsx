@@ -80,7 +80,7 @@ const Register = () => {
     }
   };
   useEffect(() => {
-    setError(rerror?.data?.message);
+    if (rerror?.data) setError(rerror?.data?.message);
     console.log(rerror?.data?.message);
   }, [rerror]);
   return (
@@ -91,7 +91,7 @@ const Register = () => {
           <Link to={paths.login}>
             <ChevronLeft />
           </Link>
-          <p className="text-[16px]">Create Account</p>
+          <p className="text-[16px]">创建账户</p>
           <div></div>
         </div>
         <Form {...form}>
