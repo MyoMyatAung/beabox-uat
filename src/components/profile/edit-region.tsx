@@ -117,7 +117,7 @@ const EditRegion = () => {
                 onClick={() => changeRegionHandler()}
                 className="w-full rounded-lg bg-[#CD3EFF1F] hover:bg-[#CD3EFF1F] text-[#CD3EFF]"
               >
-                {isLoading ? <SmallLoader /> : "节省"}
+                {isLoading ? <SmallLoader /> : "确认"}
                 {/* Save */}
               </Button>
             </div>

@@ -53,7 +53,7 @@ const AddBio = () => {
               value={value}
               onChange={setValueHandler}
               placeholder="请输入您的个性签名"
-              className="min-h-[100px] w-full resize-none  bg-transparent p-3 text-white placeholder:text-gray-400  border-b border-[#888] focus:outline-none focus:ring-0 focus:border-[#888]"
+              className="w-full resize-none  bg-transparent p-3 text-white placeholder:text-gray-400  border-b border-[#888] focus:outline-none focus:ring-0 focus:border-[#888]"
             />
             <span className="absolute bottom-2 right-2 text-sm text-gray-400">
               {value?.length}/{maxLength}
