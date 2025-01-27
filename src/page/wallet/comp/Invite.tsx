@@ -15,32 +15,57 @@ const Invite: React.FC<InviteProps> = ({}) => {
   const [copied, setCopied] = useState<boolean>(false);
   const imageRef = useRef<HTMLDivElement>(null);
 
-  const handleCopyCode = () => {
-    if (ppdaata?.data) {
-      const inviteCode = ppdaata.data.user_code;
-      navigator.clipboard.writeText(inviteCode).then(() => {
-        setCopied(true); // Set copied to true immediately
-        setTimeout(() => {
-          setCopied(false); // Reset copied to false after 2 seconds
-        }, 2000);
+  console.log(data);
+
+  const sendEventToNative = (name: string, text: string) => {
+    if (
+      (window as any).webkit &&
+      (window as any).webkit.messageHandlers &&
+      (window as any).webkit.messageHandlers.jsBridge
+    ) {
+      (window as any).webkit.messageHandlers.jsBridge.postMessage({
+        eventName: name,
+        value: text,
       });
     }
   };
 
-  const handleSaveAsImage = () => {
-    if (imageRef.current) {
-      toPng(imageRef.current, { cacheBust: true })
-        .then((dataUrl) => {
-          const link = document.createElement("a");
-          link.href = dataUrl;
-          link.download = "share-info.png";
-          link.click();
-        })
-        .catch((err) => {
-          console.error("Failed to generate image:", err);
-        });
-    }
+  console.log(data?.data?.share_link);
+
+  const handleCopyCode = () => {
+    sendEventToNative("copyShareUrl", `${ppdaata?.data?.user_code}`);
   };
+
+  // const handleCopyCode = () => {
+  //   if (ppdaata?.data) {
+  //     const inviteCode = ppdaata.data.user_code;
+  //     navigator.clipboard.writeText(inviteCode).then(() => {
+  //       setCopied(true); // Set copied to true immediately
+  //       setTimeout(() => {
+  //         setCopied(false); // Reset copied to false after 2 seconds
+  //       }, 2000);
+  //     });
+  //   }
+  // };
+
+  const handleSaveAsImage = () => {
+    sendEventToNative("saveImage", `${data?.data?.pop_up?.image}`);
+  };
+
+  // const handleSaveAsImage = () => {
+  //   if (imageRef.current) {
+  //     toPng(imageRef.current, { cacheBust: true })
+  //       .then((dataUrl) => {
+  //         const link = document.createElement("a");
+  //         link.href = dataUrl;
+  //         link.download = "share-info.png";
+  //         link.click();
+  //       })
+  //       .catch((err) => {
+  //         console.error("Failed to generate image:", err);
+  //       });
+  //   }
+  // };
 
   return (
     <div className=" flex justify-center items-center">
