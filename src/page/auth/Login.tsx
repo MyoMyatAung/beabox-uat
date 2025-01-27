@@ -82,7 +82,7 @@ const Login = () => {
 
   useEffect(() => {
     setShow验证码(false);
-    setError(lerror?.data?.message);
+    if (lerror?.data) setError(lerror?.data?.message);
   }, [lerror]);
 
   return (
@@ -93,7 +93,7 @@ const Login = () => {
           <button onClick={handleBack}>
             <ChevronLeft />
           </button>
-          <p className="text-[16px]">Login</p>
+          <p className="text-[16px]">登录</p>
           <div></div>
         </div>
         <Form {...form}>

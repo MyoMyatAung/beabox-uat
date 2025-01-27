@@ -18,11 +18,11 @@ export const authApi = createApi({
       return headers;
     },
     responseHandler: async (response) => {
-      const encryptedData = await response.json(); // Get the encrypted response as a string
+      const encryptedData = await response.json(); 
 
       try {
-        const decryptedData = decryptWithAes(encryptedData?.data); // Decrypt the response data
-        return JSON.parse(decryptedData); // Parse the decrypted data into JSON format
+        const decryptedData = decryptWithAes(encryptedData?.data); 
+        return JSON.parse(decryptedData);
       } catch (err) {
         console.error("Error decrypting response:", err);
         throw new Error("Failed to decrypt response.");
