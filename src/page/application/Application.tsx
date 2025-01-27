@@ -130,9 +130,11 @@ const Application: React.FC<any> = () => {
               {applicationData?.application?.length > 0 &&
                 applicationData?.application.map((application: any) => (
                   <>
-                    <h1 className=" text-white text-[14px] font-[500] leading-[20px] pb-[12px] pt-5">
-                      {application.title}
-                    </h1>
+                    {application?.apps?.length > 0 && (
+                      <h1 className=" text-white text-[14px] font-[500] leading-[20px] pb-[12px] pt-5">
+                        {application.title}
+                      </h1>
+                    )}
                     {!isLoading && (
                       <div className=" grid grid-cols-5 gap-[20px]">
                         {application?.apps?.length > 0 &&
