@@ -44,7 +44,7 @@ const ChangePassword = () => {
         {isLoading ? <Loader /> : <></>}
         <div className="w-full c-height px-5 bg-[#16131C]">
           <div className="flex justify-between items-center py-5">
-            <DrawerClose asChild>
+            <DrawerClose className="z-[1200]">
               <button onClick={() => setIsOpen(false)}>
                 <FaAngleLeft size={18} />
               </button>

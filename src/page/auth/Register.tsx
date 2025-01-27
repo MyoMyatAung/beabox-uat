@@ -24,7 +24,7 @@ import {
   useRegisterMutation,
 } from "@/store/api/authApi";
 import { useDispatch } from "react-redux";
-import { setRegisterUser } from "@/store/slices/persistSlice";
+import { setRegisterUser, setUser } from "@/store/slices/persistSlice";
 import Shield from "@/assets/profile/shield.png";
 import Loader from "@/components/shared/loader";
 
@@ -68,9 +68,11 @@ const Register = () => {
     });
     console.log(registerData, "registerData");
     if (registerData?.status) {
-      dispatch(setRegisterUser(registerData?.data));
+      // dispatch(setRegisterUser(registerData?.data));
+      dispatch(setUser(registerData?.data));
       setShow验证码(false);
-      setShowSecurity(true);
+      navigate(paths.profile);
+      // setShowSecurity(true);
     } else {
       setShow验证码(false);
       setShowSecurity(false);
@@ -188,7 +190,10 @@ const Register = () => {
                     ? true
                     : false || !emailOrPhoneValue || !passwordValue
                 }
-                onClick={async () => await getCaptcha("")}
+                onClick={async () => {
+                  await getCaptcha("");
+                  setShow验证码(true);
+                }}
                 className="w-full gradient-bg rounded-lg hover:gradient-bg"
               >
                 {/* {isLoading ? "loading..." : "Continue"} */}
@@ -197,7 +202,7 @@ const Register = () => {
             </div>
             <Dialog open={show验证码} onOpenChange={setShow验证码}>
               {!isLoading ? (
-                <DialogContent className="bg-[#16131C] border-0 shadow-lg rounded-lg max-w-[290px]">
+                <DialogContent className="bg-[#16131C] z-[9999] border-0 shadow-lg rounded-lg max-w-[290px]">
                   <DialogHeader>
                     <DialogTitle className="text-white text-[16px]">
                       验证码
@@ -222,7 +227,7 @@ const Register = () => {
                       onClick={async (e) => {
                         e.stopPropagation();
                         await getCaptcha("");
-                        console.log("get new");
+                        // console.log("get new");
                       }}
                       className="flex items-center gap-2"
                     >

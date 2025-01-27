@@ -56,7 +56,7 @@ const EditUsername = ({
         {isLoading ? <Loader /> : <></>}
         <div className="w-full c-height px-5 bg-[#16131C]">
           <div className="flex justify-between items-center py-5">
-            <DrawerClose>
+            <DrawerClose className="z-[1200]">
               <button>
                 <FaAngleLeft size={18} />
               </button>
