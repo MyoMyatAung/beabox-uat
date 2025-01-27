@@ -25,7 +25,7 @@ import {
   useRegisterMutation,
 } from "@/store/api/authApi";
 import { useDispatch } from "react-redux";
-import { setRegisterUser } from "@/store/slices/persistSlice";
+import { setRegisterUser, setUser } from "@/store/slices/persistSlice";
 import Shield from "@/assets/profile/shield.png";
 import Loader from "@/components/shared/loader";
 import SmallLoader from "@/components/shared/small-loader";
@@ -70,12 +70,14 @@ const RegisterForm = ({ setIsOpen }: any) => {
     });
     console.log(registerData, "registerData");
     if (registerData?.status) {
-      dispatch(setRegisterUser(registerData?.data));
-      setShow验证码(false);
-      dispatch(setAuthToggle(true));
+      dispatch(setUser(registerData?.data));
+      setIsOpen(false);
+      // dispatch(setRegisterUser(registerData?.data));
+      // setShow验证码(false);
+      // dispatch(setAuthToggle(true));
       // setShowSecurity(true);
     } else {
-      setShow验证码(false);
+      // setShow验证码(false);
       // setShowSecurity(false);
       // setError("出了点问题");
     }

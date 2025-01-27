@@ -4,7 +4,7 @@ import {
   DrawerClose,
   DrawerContent,
   DrawerTrigger,
-} from "@/components/shared/drawer";
+} from "@/components/ui/drawer";
 import { Button } from "../ui/button";
 import { useRef, useState } from "react";
 import { useChangeBioMutation } from "@/store/api/profileApi";
@@ -58,7 +58,7 @@ const EditBio = ({ bio, refetchHandler }: any) => {
       </div>
       <DrawerContent className="border-0">
         {isLoading ? <Loader /> : <></>}
-        <div className="w-full px-5 bg-[#16131C]">
+        <div className="w-full px-5 c-height bg-[#16131C]">
           <div className="flex justify-between items-center py-5">
             <DrawerClose className="z-[1200]">
               <button>

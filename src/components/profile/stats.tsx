@@ -5,7 +5,7 @@ import {
   DrawerClose,
   DrawerContent,
   DrawerTrigger,
-} from "@/components/shared/drawer";
+} from "@/components/ui/drawer";
 import { FaAngleLeft } from "react-icons/fa";
 import FollowTabs from "./follow-tabs";
 import { useDispatch, useSelector } from "react-redux";
@@ -97,7 +97,7 @@ const Stats = ({ followers, following, nickname, likeCount }: any) => {
         </div>
       </div>
       <DrawerContent className="z-[1300] border-0">
-        <div className="z-[1200] w-full px-5 bg-[#16131C]">
+        <div className="z-[1200] c-height w-full px-5 bg-[#16131C]">
           <div className="z-[1200] flex justify-between items-center py-5">
             <DrawerClose asChild>
               <button onClick={() => dispatch(setIsDrawerOpen(false))}>
