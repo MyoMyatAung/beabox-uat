@@ -445,7 +445,7 @@ const Home = () => {
                         <div
                           key={index}
                           className="video mt-[20px]"
-                          data-post-id={video.post_id} // Add post ID to the container
+                          data-post-id={video?.post_id} // Add post ID to the container
                         >
                           <VideoContainer
                             container={videoContainerRef.current}

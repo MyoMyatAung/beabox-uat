@@ -196,13 +196,13 @@ const Player = ({
     Artplayer.MOBILE_CLICK_PLAY = true;
 
     artPlayerInstanceRef.current = new Artplayer({
-      autoOrientation: true,
+      // autoOrientation: true,
       container: playerContainerRef.current,
       url: src,
       volume: 0.5,
       muted: mute,
       autoplay: false,
-      fullscreenWeb: true,
+      // fullscreenWeb: true,
       moreVideoAttr: {
         playsInline: true,
         preload: "metadata",

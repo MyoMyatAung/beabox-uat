@@ -1,3 +1,5 @@
+import { decryptWithAes } from "@/lib/decrypt";
+import { convertToSecurePayload, convertToSecureUrl } from "@/lib/encrypt";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const homeApi = createApi({
@@ -7,42 +9,58 @@ export const homeApi = createApi({
     prepareHeaders: (headers, { getState }) => {
       const state = getState() as any;
       const accessToken = state.persist?.user?.token;
+      headers.set("encrypt", "true");
       headers.set("Accept-Language", "cn");
       if (accessToken) {
         headers.set("Authorization", `Bearer ${accessToken}`);
       }
       return headers;
     },
+    responseHandler: async (response) => {
+      const encryptedData = await response.json(); // Get the encrypted response as a string
+
+      try {
+        const decryptedData = decryptWithAes(encryptedData?.data); // Decrypt the response data
+        return JSON.parse(decryptedData); // Parse the decrypted data into JSON format
+      } catch (err) {
+        console.error("Error decrypting response:", err);
+        throw new Error("Failed to decrypt response.");
+      }
+    },
   }),
   endpoints: (builder) => ({
     getPosts: builder.query({
-      query: ({ page }) => `posts/list?pageSize=10&page=${page}`,
+      query: ({ page }) =>
+        convertToSecureUrl(`posts/list?pageSize=10&page=${page}`),
     }),
     getLatestPosts: builder.query({
-      query: ({ page }) => `posts/latest?pageSize=10&page=${page}`,
+      query: ({ page }) =>
+        convertToSecureUrl(`posts/latest?pageSize=10&page=${page}`),
     }),
     getFollowedPosts: builder.query({
-      query: ({ page }) => `posts/following?pageSize=10&page=${page}`,
+      query: ({ page }) =>
+        convertToSecureUrl(`posts/following?pageSize=10&page=${page}`),
     }),
 
     getConfig: builder.query({
-      query: () => `config/data`,
+      query: () => convertToSecureUrl(`config/data`),
     }),
     getExplorePosts: builder.query({
-      query: ({ page }) => `posts/explore?pageSize=10&page=${page}`,
+      query: ({ page }) =>
+        convertToSecureUrl(`posts/explore?pageSize=10&page=${page}`),
     }),
     getFollowPosts: builder.query({
-      query: () => `posts/following`,
+      query: () => convertToSecureUrl(`posts/following`),
     }),
 
     likePost: builder.mutation<void, { post_id: any; count: any }>({
       query: ({ post_id, count }) => ({
         url: `post/like`,
         method: "POST",
-        body: {
+        body: convertToSecurePayload({
           post_id,
           count,
-        },
+        }),
       }),
     }),
 
@@ -50,18 +68,18 @@ export const homeApi = createApi({
       query: ({ post_id }) => ({
         url: `post/unlike`,
         method: "POST",
-        body: {
+        body: convertToSecurePayload({
           post_id,
-        },
+        }),
       }),
     }),
     unInterestPost: builder.mutation<void, { post_id: any }>({
       query: ({ post_id }) => ({
         url: `post/uninterest`,
         method: "POST",
-        body: {
+        body: convertToSecurePayload({
           post_id,
-        },
+        }),
       }),
     }),
 
@@ -69,19 +87,19 @@ export const homeApi = createApi({
       query: ({ follow_user_id, status }) => ({
         url: `follower/change-follow-status`,
         method: "POST",
-        body: {
+        body: convertToSecurePayload({
           follow_user_id,
           status,
-        },
+        }),
       }),
     }),
     commentList: builder.mutation<void, { post_id: any }>({
       query: ({ post_id }) => ({
         url: `comments/list`,
         method: "POST",
-        body: {
+        body: convertToSecurePayload({
           post_id,
-        },
+        }),
       }),
     }),
     postComment: builder.mutation<
@@ -111,7 +129,8 @@ export const homeApi = createApi({
         return {
           url: `post/comment`,
           method: "POST",
-          body, // Pass the body object
+
+          body: convertToSecurePayload(body), // Pass the body object
         };
       },
     }),
@@ -120,11 +139,11 @@ export const homeApi = createApi({
       query: ({ comment_id, last_reply_id }) => ({
         url: `replies/list`,
         method: "POST",
-        body: {
+        body: convertToSecurePayload({
           comment_id,
           last_reply_id,
           limit: 5,
-        },
+        }),
       }),
     }),
     commentReaction: builder.mutation<
@@ -134,18 +153,18 @@ export const homeApi = createApi({
       query: ({ id, is_reply, status }) => ({
         url: `comment/reaction`,
         method: "POST",
-        body: {
+        body: convertToSecurePayload({
           id,
           is_reply,
           status,
-        },
+        }),
       }),
     }),
     top20Posts: builder.query({
-      query: () => `posts/top?pageSize=20&page=1`,
+      query: () => convertToSecureUrl(`posts/top?pageSize=20&page=1`),
     }),
     getReports: builder.query({
-      query: () => `report-content/list`,
+      query: () => convertToSecureUrl(`report-content/list`),
     }),
     storeReport: builder.mutation<
       void,
@@ -154,11 +173,11 @@ export const homeApi = createApi({
       query: ({ model_id, type, report_content }) => ({
         url: `report/store`,
         method: "POST",
-        body: {
+        body: convertToSecurePayload({
           model_id,
           type,
           report_content,
-        },
+        }),
       }),
     }),
   }),
