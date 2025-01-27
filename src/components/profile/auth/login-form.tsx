@@ -80,7 +80,7 @@ const LoginForm = ({ setIsOpen }: any) => {
   };
 
   useEffect(() => {
-    setError(lerror?.data?.message);
+    if(lerror?.data) setError(lerror?.data?.message);
     setShow验证码(false);
   }, [lerror]);
 
