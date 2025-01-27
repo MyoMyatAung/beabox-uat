@@ -187,13 +187,40 @@ const Player = ({
   const hlsRef = useRef<Hls | null>(null); // HLS instance for `src`
   const { mute } = useSelector((state: any) => state.muteSlice);
 
+  const clickHandlerRef = useRef({
+    timestamp: 0,
+    timeoutId: null as NodeJS.Timeout | null,
+  });
+
+  const handleSingleClick = () => {
+    artPlayerInstanceRef.current?.toggle(); // Play or pause
+  };
+
+  const handleClick = () => {
+    const now = Date.now();
+    const { timestamp, timeoutId } = clickHandlerRef.current;
+
+    if (now - timestamp <= 500) {
+      // Double-click detected
+      clearTimeout(timeoutId as NodeJS.Timeout); // Cancel the single-click action
+      clickHandlerRef.current.timeoutId = null;
+      handleLike(); // Call the double-click function
+    } else {
+      // Start single-click timer
+      clickHandlerRef.current.timestamp = now;
+      clickHandlerRef.current.timeoutId = setTimeout(() => {
+        handleSingleClick(); // Call single-click action after 1 second
+      }, 700); // Wait for 1 second to execute single-click
+    }
+  };
+
   // Initialize Artplayer for the current video
   const initializeArtplayer = () => {
     if (!playerContainerRef.current || artPlayerInstanceRef.current) return;
 
     Artplayer.DBCLICK_FULLSCREEN = false;
     Artplayer.MOBILE_DBCLICK_PLAY = false;
-    Artplayer.MOBILE_CLICK_PLAY = true;
+    Artplayer.MOBILE_CLICK_PLAY = false;
 
     artPlayerInstanceRef.current = new Artplayer({
       // autoOrientation: true,
@@ -233,7 +260,9 @@ const Player = ({
       },
     });
 
-    artPlayerInstanceRef.current.on("dblclick", handleLike);
+    artPlayerInstanceRef?.current?.on("click", handleClick);
+
+    // artPlayerInstanceRef.current.on("dblclick", handleLike);
 
     // artPlayerInstanceRef.current.on("ready", () => {
     //   artPlayerInstanceRef?.current?.play();
