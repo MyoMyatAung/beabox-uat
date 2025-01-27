@@ -16,12 +16,16 @@ const initialState: any = {
   forgotToken: null,
   authToggle: true,
   content_visibility: "",
+  sanswer: "",
 };
 
 export const persistSlice = createSlice({
   name: "persist",
   initialState,
   reducers: {
+    setSAnswer: (state, { payload }) => {
+      state.sanswer = payload;
+    },
     setCVisibility: (state, { payload }) => {
       state.content_visibility = payload;
     },
@@ -91,6 +95,7 @@ export const {
   setSecurityQues,
   setRegion,
   setCover,
+  setSAnswer,
 } = persistSlice.actions;
 
 export default persistSlice.reducer;
