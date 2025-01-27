@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { decryptWithAes } from "@/lib/decrypt";
+import { convertToSecureUrl } from "@/lib/encrypt";
 import { RootState } from "@/store/store";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
@@ -13,32 +15,49 @@ export const exploreApi = createApi({
         headers.set("Authorization", `Bearer ${token}`);
       }
       headers.set("Accept-Language", "cn");
+      headers.set("encrypt", "true");
 
       return headers;
     },
+    responseHandler: async (response) => {
+      const encryptedData = await response.json(); // Get the encrypted response as a string
+
+      try {
+        const decryptedData = decryptWithAes(encryptedData?.data); // Decrypt the response data
+        return JSON.parse(decryptedData); // Parse the decrypted data into JSON format
+      } catch (err) {
+        console.error("Error decrypting response:", err);
+        throw new Error("Failed to decrypt response.");
+      }
+    },
   }),
   endpoints: (builder) => ({
-    getExploreHeader: builder.query<any, string>({
-      query: () => ({
-        url: `/explore/header`,
-        method: "GET",
-      }),
+    // getExploreHeader: builder.query<any, string>({
+    //   query: () => ({
+    //     url: `/explore/header`,
+    //     method: "GET",
+    //   }),
+    // }),
+    getExploreHeader: builder.query({
+      query: () => convertToSecureUrl(`explore/header`),
     }),
     getAdsPopUp: builder.query<any, string>({
       query: () => ({
-        url: `/app/ads`,
+        url: convertToSecureUrl(`/app/ads`),
         method: "GET",
       }),
     }),
     getAdsNotice: builder.query<any, string>({
       query: () => ({
-        url: `/notice/list`,
+        url: convertToSecureUrl(`/notice/list`),
         method: "GET",
       }),
     }),
     getExploreTag: builder.query<any, any>({
       query: ({ order, tag, page }) => ({
-        url: `/post/search/tag?tag=${tag}&order=${order}&pageSize=10&page=${page}`,
+        url: convertToSecureUrl(
+          `/post/search/tag?tag=${tag}&order=${order}&pageSize=10&page=${page}`
+        ),
         method: "GET",
       }),
     }),
@@ -48,39 +67,15 @@ export const exploreApi = createApi({
         method: "GET",
       }),
     }),
+    // getExploreList: builder.query<any, any>({
+    //   query: ({ id, page }) => ({
+    //     url: `explore/list?id=${id}&page=${page}`,
+    //     method: "GET",
+    //   }),
+    // }),
     getExploreList: builder.query<any, any>({
-      query: ({ id, page }) => ({
-        url: `explore/list?id=${id}&page=${page}`,
-        method: "GET",
-      }),
-    }),
-    postCommentExp: builder.mutation<
-      void,
-      { post_id: any; content: any; comment_id?: any; reply_id?: any }
-    >({
-      query: ({ post_id, content, comment_id, reply_id }) => {
-        const body: {
-          post_id: any;
-          content: any;
-          comment_id?: any;
-          reply_id?: any;
-        } = {
-          post_id,
-          content,
-        };
-
-        if (comment_id != null) {
-          body.comment_id = comment_id;
-        }
-        if (reply_id != null) {
-          body.reply_id = reply_id;
-        }
-        return {
-          url: `/post/comment`,
-          method: "POST",
-          body,
-        };
-      },
+      query: ({ id, page }) =>
+        convertToSecureUrl(`explore/list?id=${id}&page=${page}`),
     }),
   }),
 });
@@ -90,7 +85,6 @@ export const {
   useGetExploreTagQuery,
   useGetApplicationAdsQuery,
   useGetExploreListQuery,
-  usePostCommentExpMutation,
   useGetAdsPopUpQuery,
   useGetAdsNoticeQuery,
 } = exploreApi;
