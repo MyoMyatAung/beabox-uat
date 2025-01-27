@@ -69,12 +69,12 @@ const More: React.FC<MoreProps> = () => {
       <div className="px-[20px] flex flex-col relative min-h-scree bg-[#16131C]">
         {/* Header */}
         <div className=" fixed w-full bg-transparent bg-[#16131C]">
-          <div className="flex justify-between py-[12px] bg-[#16131C] ">
+          <div className="grid grid-cols-3 justify-between py-[12px] bg-[#16131C] ">
             <ChevronLeft
               onClick={() => navigate("/")}
               className="rec_exp_more_btn px-[2px]"
             />
-            <h1 className="w-2/3 text-white text-[18px] font-[500]">{title}</h1>
+            <h1 className="w-2/3 text-white text-[18px] text-center font-[500]">{title}</h1>
           </div>
 
           {/* Tabs */}
