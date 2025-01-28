@@ -70,14 +70,17 @@ const ShareOverlay: React.FC<any> = ({
       sendEventToNative("saveVideo", post?.files[0].downloadURL);
     } else {
       // For web
-      const link = document.createElement("a");
-      link.target = "_blank";
-      link.href = post?.files[0].downloadURL; // Set the URL of the file
-
-      link.download = "video"; // Set the name of the file to be downloaded
-      document.body.appendChild(link); // Append the link to the document body
-      link.click(); // Programmatically click the link to trigger the download
-      document.body.removeChild(link); // Remove the link after triggering the download
+      const link = document.createElement('a');
+  link.href = post.files[0].downloadURL;
+  link.download = 'video.mp4';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  
+  // Add a delayed redirect in case download didn't trigger
+  setTimeout(() => {
+    window.location.href = post.files[0].downloadURL;
+  }, 1000);
     }
   };
 
