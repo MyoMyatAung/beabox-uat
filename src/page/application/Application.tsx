@@ -8,19 +8,22 @@ import { Autoplay, Pagination } from "swiper/modules";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useGetApplicationAdsQuery } from "@/store/api/explore/exploreApi";
+import { useSelector } from "react-redux";
 
 const Application: React.FC<any> = () => {
   const [ad, setad] = useState([]);
-  const [applicationData, setApplicationData] = useState<any>(null);
-  const { data, isLoading } = useGetApplicationAdsQuery("");
-
+  // const [applicationData, setApplicationData] = useState<any>(null);
+  // const { data, isLoading } = useGetApplicationAdsQuery("");
+  const { applicationData } = useSelector((state: any) => state.explore);
+  const [isLoading, setisLoad] = useState(false);
+  // console.log(applicationData);
   useEffect(() => {
-    if (data?.data) {
-      const cur = data?.data?.carousel;
-      setApplicationData(data?.data);
-      setad(cur);
+    if (applicationData) {
+      // const cur = data?.data?.carousel;
+      // setApplicationData(data?.data);
+      setad(applicationData?.carousel);
     }
-  }, [data, ad]);
+  }, [applicationData, ad]);
 
   return (
     <SkeletonTheme

@@ -5,6 +5,7 @@ const initialState: any = {
   title: "",
   more_tab: "",
   exp_header: "",
+  applicationData: null,
 };
 
 export const exploreSlice = createSlice({
@@ -23,10 +24,18 @@ export const exploreSlice = createSlice({
     setExpHeader: (state, { payload }) => {
       state.exp_header = payload;
     },
+    setApplicationData: (state, { payload }) => {
+      state.applicationData = payload;
+    },
   },
 });
 
-export const { setDetails, setTitle, setMoreTab, setExpHeader } =
-  exploreSlice.actions;
+export const {
+  setDetails,
+  setTitle,
+  setMoreTab,
+  setExpHeader,
+  setApplicationData,
+} = exploreSlice.actions;
 
 export default exploreSlice.reducer;
