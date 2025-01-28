@@ -316,7 +316,7 @@ const VideoContainer = ({
   return (
     <>
       <Player
-        rotate={rotateVideoId === video?.post_id}
+        // rotate={rotateVideoId === video?.post_id}
         src={video.files[0].resourceURL}
         thumbnail={
           video?.preview_image ||

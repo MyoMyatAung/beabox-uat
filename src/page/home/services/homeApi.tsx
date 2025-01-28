@@ -234,9 +234,9 @@ export const homeApi = createApi({
     getPosts: builder.query({
       query: ({ page }) => `posts/list?pageSize=10&page=${page}`,
     }),
-    getLatestPosts: builder.query({
-      query: ({ page }) => `posts/latest?pageSize=10&page=${page}`,
-    }),
+    // getLatestPosts: builder.query({
+    //   query: ({ page }) => `posts/latest?pageSize=10&page=${page}`,
+    // }),
     getFollowedPosts: builder.query({
       query: ({ page }) => `posts/following?pageSize=10&page=${page}`,
     }),
@@ -383,7 +383,7 @@ export const homeApi = createApi({
 
 export const {
   useFollowStatusMutation,
-  useGetLatestPostsQuery,
+  // useGetLatestPostsQuery,
   useGetFollowedPostsQuery,
   useTop20PostsQuery,
   useCommentReactionMutation,

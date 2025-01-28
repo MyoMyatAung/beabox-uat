@@ -84,7 +84,6 @@ const ShareOverlay: React.FC<any> = ({
       document.body.appendChild(link); // Append link to the body
       link.click(); // Trigger download
       document.body.removeChild(link); // Remove link after download
-      console.log("QR Code downloaded!");
     } else {
       console.error("QR code canvas not found.");
     }
@@ -117,11 +116,6 @@ const ShareOverlay: React.FC<any> = ({
     sendEventToNative("copyShareUrl", shareUrl);
   };
 
-  // const handleUnlike = () => {
-  //   dispatch(setUnLike(post_id));
-  //   console.log(post_id);
-  // };
-
   const handleReport = () => {
     if (user?.token) {
       navigate(`/reports/post/${post?.post_id}`);
@@ -134,7 +128,7 @@ const ShareOverlay: React.FC<any> = ({
     if (user?.token) {
       try {
         const response = await unInterestPost({ post_id: post?.post_id }); // Pass the accumulated count to the API
-        console.log(currentActivePost);
+
         if (status) {
           const updatedVideos = {
             ...videos, // Spread the existing videos state

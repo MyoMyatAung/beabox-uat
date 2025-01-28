@@ -2,7 +2,6 @@ import { useEffect, memo, useRef, useState } from "react";
 import {
   useGetConfigQuery,
   useGetFollowedPostsQuery,
-  useGetLatestPostsQuery,
   useGetPostsQuery,
 } from "./services/homeApi";
 import Player from "./components/Player";
@@ -69,18 +68,6 @@ const Home = () => {
   );
 
   const {
-    data: latestData,
-    isFetching: isLatestFetching,
-    refetch: latestRefetch,
-    isError: latestError,
-  } = useGetLatestPostsQuery(
-    {
-      page,
-    },
-    { skip: currentTab !== 1 }
-  );
-
-  const {
     data: forYouData,
     isFetching: isForYouFetching,
     refetch: forYouRefetch,
@@ -94,45 +81,11 @@ const Home = () => {
 
   const isLoading =
     (currentTab === 0 && isFollowFetching) ||
-    (currentTab === 1 && isLatestFetching) ||
     (currentTab === 2 && isForYouFetching);
 
-  const isError = latestError || ForyouError || followError;
-
-  // useEffect(() => {
-  //   // Populate videos based on the current tab and fetched data
-  //   const currentData =
-  //     currentTab === 0
-  //       ? followData
-  //       : currentTab === 1
-  //       ? latestData
-  //       : forYouData;
-
-  //   console.log("win");
-
-  //   if (currentData?.data) {
-  //     // Filter out posts with duplicate `post_id`
-  //     const filteredData = currentData.data.filter(
-  //       (newPost: any) =>
-  //         !videos.some((video: any) => video.post_id === newPost.post_id)
-  //     );
-
-  //     if (filteredData.length > 0) {
-  //       if (page === 1) {
-  //         console.log("ha1");
-  //         dispatch(setVideos(filteredData)); // Set the filtered videos if page is 1
-  //       } else {
-  //         console.log("ha2");
-  //         dispatch(setVideos([...videos, ...filteredData])); // Append filtered videos otherwise
-  //       }
-  //     } else {
-  //       console.log("No new videos to add");
-  //     }
-  //   }
-  // }, [followData, forYouData, latestData, currentTab, videos]);
+  const isError = ForyouError || followError;
 
   useEffect(() => {
-    console.log("winnnn");
     // Determine which data corresponds to the current tab
     const currentData =
       currentTab === 0 ? followData : currentTab === 2 ? forYouData : null; // Add other tabs if necessary
@@ -169,37 +122,10 @@ const Home = () => {
           );
         }
       } else {
-        console.log("No new videos to add");
+        // console.log("No new videos to add");
       }
     }
   }, [followData, forYouData, currentTab, page]);
-
-  // useEffect(() => {
-  //   // Populate videos based on the current tab and fetched data
-  //   const currentData =
-  //     currentTab === 0
-  //       ? followData
-  //       : currentTab === 1
-  //       ? latestData
-  //       : forYouData;
-
-  //   console.log("win");
-
-  //   if (currentData?.data) {
-  //     if (page === 1) {
-  //       console.log("ha1");
-  //       dispatch(setVideos(currentData.data));
-
-  //       // setVideos(currentData.data);
-  //     } else {
-  //       console.log("ha2");
-  //       dispatch(setVideos([...videos, ...currentData.data]));
-
-  //       // dispatch(setVideos((prev: any) => [...prev, ...currentData.data]));
-  //       //setVideos((prev: any) => [...prev, ...currentData.data]);
-  //     }
-  //   }
-  // }, [followData, forYouData, latestData, currentTab]);
 
   // Scroll to the first current post when the component is mounted
   useEffect(() => {
@@ -284,23 +210,6 @@ const Home = () => {
     };
   }, [videos[currentTab === 2 ? "foryou" : "follow"], refresh]);
 
-  // const currentPadding = useMemo(() => {
-  //   console.log(currentActivePost);
-  //   const currentVideo = videos.find(
-  //     (video) => video.post_id == currentActivePost
-  //   );
-  //   console.log(currentVideo);
-  //   return currentVideo?.related?.length > 0 ? "pb-[90px]" : "pb-[43px]";
-  // }, [videos, currentActivePost]);
-
-  // const handleRelated = (related: any) => {
-  //   if (related[0]?.type === "top_post") {
-  //     console.log("aa");
-  //     setTopMovies(true);
-  //   }
-  //   console.log(related);
-  // };
-
   if (topmovies) {
     return <Top20Movies setTopMovies={setTopMovies} />;
   }
@@ -354,8 +263,15 @@ const Home = () => {
   const handleTabClick = (tab: number) => {
     dispatch(setPage(1));
     dispatch(setCurrentActivePost(null));
+    dispatch(
+      setVideos({
+        follow: [],
+        foryou: [],
+      })
+    );
     if (currentTab !== tab) {
       dispatch(setCurrentTab(tab));
+
       // setCurrentTab(tab); // Update the current tab
 
       // dispatch(setVideos([]));
@@ -397,8 +313,6 @@ const Home = () => {
       followRefetch();
     }
   };
-
-  console.log(videos);
 
   return (
     <div className="flex justify-center items-center">
@@ -487,7 +401,6 @@ const Home = () => {
                     </div>
 
                     {(!followData?.data?.length ||
-                      !latestData?.data?.length ||
                       !forYouData?.data?.length) && (
                       <p style={{ textAlign: "center" }}>
                         {/* <b>You have seen all videos</b> */}
@@ -610,7 +523,6 @@ const Home = () => {
                     </div>
 
                     {(!followData?.data?.length ||
-                      !latestData?.data?.length ||
                       !forYouData?.data?.length) && (
                       <p style={{ textAlign: "center" }}>
                         {/* <b>You have seen all videos</b> */}
