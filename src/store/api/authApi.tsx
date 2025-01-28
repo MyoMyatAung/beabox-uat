@@ -10,24 +10,24 @@ export const authApi = createApi({
     prepareHeaders: (headers, { getState }) => {
       const state = getState() as any;
       const accessToken = state.persist?.user?.token;
-      // headers.set("encrypt", "true");
+      headers.set("encrypt", "true");
       headers.set("Accept-Language", "cn");
       if (accessToken) {
         headers.set("Authorization", `Bearer ${accessToken}`);
       }
       return headers;
     },
-    // responseHandler: async (response) => {
-    //   const encryptedData = await response.json(); 
+    responseHandler: async (response) => {
+      const encryptedData = await response.json(); 
 
-    //   try {
-    //     const decryptedData = decryptWithAes(encryptedData?.data); 
-    //     return JSON.parse(decryptedData);
-    //   } catch (err) {
-    //     console.error("Error decrypting response:", err);
-    //     throw new Error("Failed to decrypt response.");
-    //   }
-    // },
+      try {
+        const decryptedData = decryptWithAes(encryptedData?.data); 
+        return JSON.parse(decryptedData);
+      } catch (err) {
+        console.error("Error decrypting response:", err);
+        throw new Error("Failed to decrypt response.");
+      }
+    },
   }),
   endpoints: (builder) => ({
     getCaptcha: builder.mutation<any, string>({
