@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import { setApplicationData } from "@/store/slices/exploreSlice";
 
 const RootLayout = ({ children }: any) => {
-  const [showAd, setShowAd] = useState(false);
+  const [showAd, setShowAd] = useState(true);
   const dispatch = useDispatch();
   useEffect(() => {
     const hasSeenAdPopUp = sessionStorage.getItem("hasSeenAdPopUp");
