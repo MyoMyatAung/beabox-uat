@@ -83,7 +83,7 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
           {list?.map((ll: any, index) => (
             <div key={index} className="flex flex-col items-center">
               {/* header */}
-              <div className=" flex w-full justify-between items-center">
+              <div className=" flex w-full justify-between items-center px-1">
                 <h1 className=" text-white text-[14px] font-[500] leading-[20px]">
                   {ll.title}
                 </h1>
@@ -99,7 +99,7 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
               <div className=" py-[12px] grid grid-cols-2 justify-cente w-full items-cente  gap-[18px]">
                 <>
                   {ll.posts.map((card: any) => (
-                    <div key={card.post_id} className="w-[175px pb-[12px]">
+                    <div key={card.post_id} className="max-w-[175px] pb-[12px]">
                       <div
                         onClick={() => showDetailsVod(card)}
                         className=" relative  chinese_photo"
@@ -109,8 +109,8 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
                           src={card.preview_image}
                           alt=""
                         />
-                        <div className=" absolute left-0 mx-auto right-0 bottom-0 flex justify-around items-center w-full bg-blac">
-                          <div className=" flex w-full justify-between px-2">
+                        <div className=" absolute left-0 mx-auto right-0 bottom-0 flex justify-around items-center w-full max-w-[175px] bg-blac">
+                          <div className=" flex w-full  justify-between px-2">
                             <span className=" text-white text-[11px]  left-">
                               {card?.view_count} 次观看
                             </span>
