@@ -267,10 +267,37 @@ const Results: React.FC<ResultsProps> = ({}) => {
                           </div>
                           <div className="flex justify-between items-center">
                             <div className="flex gap-1 items-center">
-                              <Avatar className="w-[20px] h-[20px] border-2 border-white ">
-                                <AvatarImage src="https://i.pinimg.com/236x/64/bf/60/64bf60f08e226ae662e83a459a28a9bf.jpg" />
-                                <AvatarFallback>SM</AvatarFallback>
-                              </Avatar>
+                              {video?.user?.avatar ? (
+                                <Avatar className="w-[20.25px] h-[20.25px] border-2 border-white ">
+                                  <AvatarImage src={video?.user?.avatar} />
+                                  <AvatarFallback>SM</AvatarFallback>
+                                </Avatar>
+                              ) : (
+                                <Avatar className="w-[20.25px] p-3 bg-[#3a374d] flex justify-center items-center h-[20.25px] ">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="21"
+                                    height="30"
+                                    viewBox="0 0 21 30"
+                                    fill="none"
+                                  >
+                                    <path
+                                      fill-rule="evenodd"
+                                      clip-rule="evenodd"
+                                      d="M10.3206 17.5712C4.82551 17.5712 0.00585938 20.804 0.00585938 24.4875C0.00585938 29.2271 7.77035 29.2271 10.3206 29.2271C12.8709 29.2271 20.634 29.2271 20.634 24.4566C20.634 20.7885 15.8143 17.5712 10.3206 17.5712Z"
+                                      fill="white"
+                                    />
+                                    <path
+                                      fill-rule="evenodd"
+                                      clip-rule="evenodd"
+                                      d="M10.2666 14.4974H10.3102C14.0948 14.4974 17.1731 11.4191 17.1731 7.63443C17.1731 3.85117 14.0948 0.772888 10.3102 0.772888C6.52559 0.772888 3.4473 3.85117 3.4473 7.63162C3.43467 11.4036 6.49188 14.4834 10.2666 14.4974Z"
+                                      fill="white"
+                                    />
+                                  </svg>
+                                  {/* <AvatarFallback>SM</AvatarFallback> */}
+                                </Avatar>
+                              )}
+
                               <div className="mt-1 text-[14px] font-cnFont text-left text-[#bfbfbf] mb-1">
                                 {video?.user?.name}
                               </div>
@@ -379,10 +406,37 @@ const Results: React.FC<ResultsProps> = ({}) => {
                           </div>
                           <div className="flex justify-between items-center">
                             <div className="flex gap-1 items-center">
-                              <Avatar className="w-[20px] h-[20px] border-2 border-white ">
-                                <AvatarImage src="https://i.pinimg.com/236x/64/bf/60/64bf60f08e226ae662e83a459a28a9bf.jpg" />
-                                <AvatarFallback>SM</AvatarFallback>
-                              </Avatar>
+                              {video?.user?.avatar ? (
+                                <Avatar className="w-[20.25px] h-[20.25px] border-2 border-white ">
+                                  <AvatarImage src={video?.user?.avatar} />
+                                  <AvatarFallback>SM</AvatarFallback>
+                                </Avatar>
+                              ) : (
+                                <Avatar className="w-[20.25px] p-3 bg-[#3a374d] flex justify-center items-center h-[20.25px] ">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="21"
+                                    height="30"
+                                    viewBox="0 0 21 30"
+                                    fill="none"
+                                  >
+                                    <path
+                                      fill-rule="evenodd"
+                                      clip-rule="evenodd"
+                                      d="M10.3206 17.5712C4.82551 17.5712 0.00585938 20.804 0.00585938 24.4875C0.00585938 29.2271 7.77035 29.2271 10.3206 29.2271C12.8709 29.2271 20.634 29.2271 20.634 24.4566C20.634 20.7885 15.8143 17.5712 10.3206 17.5712Z"
+                                      fill="white"
+                                    />
+                                    <path
+                                      fill-rule="evenodd"
+                                      clip-rule="evenodd"
+                                      d="M10.2666 14.4974H10.3102C14.0948 14.4974 17.1731 11.4191 17.1731 7.63443C17.1731 3.85117 14.0948 0.772888 10.3102 0.772888C6.52559 0.772888 3.4473 3.85117 3.4473 7.63162C3.43467 11.4036 6.49188 14.4834 10.2666 14.4974Z"
+                                      fill="white"
+                                    />
+                                  </svg>
+                                  {/* <AvatarFallback>SM</AvatarFallback> */}
+                                </Avatar>
+                              )}
+
                               <div className="mt-1 text-[14px] text-left text-[#bfbfbf] mb-1">
                                 {video?.user?.name}
                               </div>

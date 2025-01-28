@@ -61,7 +61,7 @@ const ShareOverlay: React.FC<any> = ({
     // For web
     const link = document.createElement("a");
     link.target = "_blank";
-    link.href = post.files[0].downloadURL; // Set the URL of the file
+    link.href = post?.files[0].downloadURL; // Set the URL of the file
 
     link.download = "video"; // Set the name of the file to be downloaded
     document.body.appendChild(link); // Append the link to the document body

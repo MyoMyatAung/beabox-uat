@@ -34,10 +34,14 @@ const Explore = () => {
       setTabs(tt);
       // console.log(tt)
       if (tabs.length > 0) {
-        dispatch(setExpHeader(tt[0]));
+        if (tt) {
+          dispatch(setExpHeader(tt[0]));
+        }
       }
       if (!exp_header) {
-        dispatch(setExpHeader(tt[0]));
+        if (tt) {
+          dispatch(setExpHeader(tt[0]));
+        }
       }
       // setDyId([...ii, dyId]);
     }
