@@ -96,14 +96,14 @@ const Home = () => {
         currentTab === 0 ? "follow" : currentTab === 2 ? "foryou" : "";
 
       // Filter out posts with duplicate `post_id`
-      const filteredData = currentData.data.filter(
+      const filteredData = currentData?.data?.filter(
         (newPost: any) =>
           !videos[videoKey]?.some(
-            (video: any) => video.post_id === newPost.post_id
+            (video: any) => video?.post_id === newPost?.post_id
           )
       );
 
-      if (filteredData.length > 0) {
+      if (filteredData?.length > 0) {
         if (page === 1) {
           // Replace videos for the current tab
           dispatch(
