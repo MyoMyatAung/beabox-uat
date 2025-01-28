@@ -2,9 +2,13 @@
 import { BottomNav } from "@/components/shared/bottom-nav";
 import PopUp from "./PopUp";
 import { useEffect, useState } from "react";
+import { useGetApplicationAdsQuery } from "@/store/api/explore/exploreApi";
+import { useDispatch } from "react-redux";
+import { setApplicationData } from "@/store/slices/exploreSlice";
 
 const RootLayout = ({ children }: any) => {
   const [showAd, setShowAd] = useState(false);
+  const dispatch = useDispatch();
   useEffect(() => {
     const hasSeenAdPopUp = sessionStorage.getItem("hasSeenAdPopUp");
     if (!hasSeenAdPopUp) {
@@ -12,7 +16,18 @@ const RootLayout = ({ children }: any) => {
       sessionStorage.setItem("hasSeenAdPopUp", "true");
     }
   }, []);
-  
+
+  const { data, isLoading } = useGetApplicationAdsQuery("");
+
+  useEffect(() => {
+    if (data?.data) {
+      const cur = data?.data?.carousel;
+      dispatch(setApplicationData(data?.data));
+      // setApplicationData(data?.data);
+      // setad(cur);
+    }
+  }, [data,dispatch]);
+
   return (
     <div className="h-screen">
       {children}
