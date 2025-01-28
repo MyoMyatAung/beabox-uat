@@ -56,19 +56,19 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
 
   useEffect(() => {
     const container = videoContainerRef.current;
-    if (container && files.post_id) {
+    if (container && files?.post_id) {
       const activeElement = container.querySelector(
-        `[data-post-id="${files.post_id}"]`
+        `[data-post-id="${files?.post_id}"]`
       );
       if (activeElement) {
         activeElement.scrollIntoView({ block: "center" });
       }
     }
-  }, [files.post_id]);
+  }, [files?.post_id]);
 
   useEffect(() => {
     const container = videoContainerRef.current;
-    if (!container || files.files[0].length === 0) return;
+    if (!container || files?.files[0].length === 0) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -93,7 +93,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
     return () => {
       observer.disconnect();
     };
-  }, [files.files[0]]);
+  }, [files?.files[0]]);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -256,7 +256,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
               </div>
               <input
                 className="feed-input w-full pl-[45px] py-[8px]"
-                placeholder={files.tag[0]}
+                placeholder={files?.tag[0]}
                 onClick={handleSearch}
               />
             </div>

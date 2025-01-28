@@ -172,17 +172,16 @@ import { useSelector } from "react-redux";
 const Player = ({
   src,
   thumbnail,
+
   setWidth,
   setHeight,
   handleLike,
-  rotate,
 }: {
   src: string;
   thumbnail: string;
   setWidth: (width: number) => void;
   setHeight: (height: number) => void;
   handleLike: () => void;
-  rotate: any;
 }) => {
   const playerContainerRef = useRef<HTMLDivElement | null>(null);
   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
@@ -209,7 +208,7 @@ const Player = ({
         playsInline: true,
         preload: "metadata",
       },
-      flip: true,
+      // flip: true,
       aspectRatio: true,
       fullscreen: false,
       theme: "#d53ff0",
@@ -366,18 +365,13 @@ const Player = ({
       artPlayerInstanceRef.current.muted = mute;
     }
   }, [mute]);
-  useEffect(() => {
-    if (artPlayerInstanceRef.current) {
-      artPlayerInstanceRef.current.fullscreenWeb = rotate;
-    }
-  }, [rotate]); // This effect runs whenever `mute` changes
+  // useEffect(() => {
+  //   if (artPlayerInstanceRef.current) {
+  //     artPlayerInstanceRef.current.fullscreenWeb = rotate;
+  //   }
+  // }, [rotate]); // This effect runs whenever `mute` changes
 
-  return (
-    <div
-      ref={playerContainerRef}
-      className={`video_player w-full ${rotate ? "fullscreen_rotate" : ""}`}
-    />
-  );
+  return <div ref={playerContainerRef} className={`video_player w-full `} />;
 };
 
 export default Player;

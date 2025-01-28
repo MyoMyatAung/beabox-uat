@@ -151,8 +151,6 @@ const VideoFeed = ({
   //   }
   // };
 
-  // console.log(config?.data);
-
   // const handleFullscreen = (video: any) => {
   //   sendEventToNative("beabox_fullscreen", {
   //     post_id: video?.post_id,
@@ -173,6 +171,53 @@ const VideoFeed = ({
   return (
     <div className="app bg-black">
       <div ref={videoContainerRef} className={`app__videos`}>
+        <div className="fixed top-3 left-0  flex gap-2 items-center w-full z-[9999]">
+          <button className="p-3" onClick={() => setShowVideoFeed(false)}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="10"
+              height="14"
+              viewBox="0 0 10 14"
+              fill="none"
+            >
+              <path
+                d="M8.95748 0.326623C8.85923 0.243209 8.74251 0.17703 8.61401 0.131875C8.48551 0.0867197 8.34775 0.0634766 8.20863 0.0634766C8.06951 0.0634766 7.93175 0.0867197 7.80325 0.131875C7.67475 0.17703 7.55803 0.243209 7.45978 0.326623L0.428239 6.28126C0.349798 6.34756 0.287565 6.4263 0.245104 6.51298C0.202642 6.59967 0.180786 6.69259 0.180786 6.78644C0.180786 6.88029 0.202642 6.97321 0.245104 7.0599C0.287565 7.14658 0.349798 7.22533 0.428239 7.29162L7.45978 13.2463C7.8744 13.5974 8.54286 13.5974 8.95748 13.2463C9.37209 12.8951 9.37209 12.3291 8.95748 11.9779L2.83132 6.78286L8.96594 1.58777C9.37209 1.24382 9.37209 0.670574 8.95748 0.326623Z"
+                fill="white"
+              />
+            </svg>
+          </button>
+          <div className="relative flex-1 mr-5">
+            <div className="absolute top-2 left-3">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="22"
+                height="22"
+                viewBox="0 0 22 22"
+                fill="none"
+              >
+                <path
+                  d="M18.6369 13.2917C18.8889 12.5015 19.0249 11.6596 19.0249 10.7859C19.0249 6.23534 15.3359 2.54639 10.7854 2.54639C6.23486 2.54639 2.5459 6.23534 2.5459 10.7859C2.5459 15.3364 6.23486 19.0254 10.7854 19.0254C12.9514 19.0254 14.9222 18.1896 16.3929 16.8229"
+                  stroke="white"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M16.5166 16.9448L19.7469 20.1668"
+                  stroke="white"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+            <input
+              className="feed-input w-full pl-[45px] py-[8px]"
+              placeholder={query}
+              onClick={handleSearch}
+            />
+          </div>
+        </div>
         {videos.map((video: any, index: any) => (
           <div
             key={index}
@@ -204,53 +249,6 @@ const VideoFeed = ({
             )}
 
             {video?.type === "ads" && <Ads ads={video?.ads_info} />}
-            <div className="absolute top-3 left-0 z-50 flex gap-2 items-center w-full">
-              <button className="p-3" onClick={() => setShowVideoFeed(false)}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="10"
-                  height="14"
-                  viewBox="0 0 10 14"
-                  fill="none"
-                >
-                  <path
-                    d="M8.95748 0.326623C8.85923 0.243209 8.74251 0.17703 8.61401 0.131875C8.48551 0.0867197 8.34775 0.0634766 8.20863 0.0634766C8.06951 0.0634766 7.93175 0.0867197 7.80325 0.131875C7.67475 0.17703 7.55803 0.243209 7.45978 0.326623L0.428239 6.28126C0.349798 6.34756 0.287565 6.4263 0.245104 6.51298C0.202642 6.59967 0.180786 6.69259 0.180786 6.78644C0.180786 6.88029 0.202642 6.97321 0.245104 7.0599C0.287565 7.14658 0.349798 7.22533 0.428239 7.29162L7.45978 13.2463C7.8744 13.5974 8.54286 13.5974 8.95748 13.2463C9.37209 12.8951 9.37209 12.3291 8.95748 11.9779L2.83132 6.78286L8.96594 1.58777C9.37209 1.24382 9.37209 0.670574 8.95748 0.326623Z"
-                    fill="white"
-                  />
-                </svg>
-              </button>
-              <div className="relative flex-1 mr-5">
-                <div className="absolute top-2 left-3">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="22"
-                    height="22"
-                    viewBox="0 0 22 22"
-                    fill="none"
-                  >
-                    <path
-                      d="M18.6369 13.2917C18.8889 12.5015 19.0249 11.6596 19.0249 10.7859C19.0249 6.23534 15.3359 2.54639 10.7854 2.54639C6.23486 2.54639 2.5459 6.23534 2.5459 10.7859C2.5459 15.3364 6.23486 19.0254 10.7854 19.0254C12.9514 19.0254 14.9222 18.1896 16.3929 16.8229"
-                      stroke="white"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                    <path
-                      d="M16.5166 16.9448L19.7469 20.1668"
-                      stroke="white"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </div>
-                <input
-                  className="feed-input w-full pl-[45px] py-[8px]"
-                  placeholder={query}
-                  onClick={handleSearch}
-                />
-              </div>
-            </div>
 
             {hearts.map((id: any) => (
               <HeartCount id={id} key={id} remove={removeHeart} />
