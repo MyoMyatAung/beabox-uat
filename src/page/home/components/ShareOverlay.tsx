@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { showToast } from "../services/errorSlice";
 import { setVideos } from "../services/videosSlice";
 import { setCurrentActivePost } from "../services/activeSlice";
+import LoginDrawer from "@/components/profile/auth/login-drawer";
 
 const ShareOverlay: React.FC<any> = ({
   alertVisible,
@@ -27,6 +28,7 @@ const ShareOverlay: React.FC<any> = ({
   const currentTab = useSelector((state: any) => state.home.currentTab);
   const { videos } = useSelector((state: any) => state.videoSlice);
   const { currentActivePost } = useSelector((state: any) => state.activeslice);
+  const [isOpen, setIsOpen] = useState(false);
 
   // const dispatch = useDispatch();
   const handleClose = () => {
@@ -124,7 +126,7 @@ const ShareOverlay: React.FC<any> = ({
     if (user?.token) {
       navigate(`/reports/post/${post?.post_id}`);
     } else {
-      navigate("/login");
+      setIsOpen(true);
     }
   };
 
@@ -159,9 +161,13 @@ const ShareOverlay: React.FC<any> = ({
         );
       }
     } else {
-      navigate("/login");
+      setIsOpen(true);
     }
   };
+
+  if (isOpen) {
+    return <LoginDrawer isOpen={isOpen} setIsOpen={setIsOpen} />;
+  }
 
   return ReactDOM.createPortal(
     <div className="fixed inset-0 z-[999999] flex justify-center items-end">

@@ -175,12 +175,14 @@ const Player = ({
   setWidth,
   setHeight,
   handleLike,
+  rotate,
 }: {
   src: string;
   thumbnail: string;
   setWidth: (width: number) => void;
   setHeight: (height: number) => void;
   handleLike: () => void;
+  rotate: any;
 }) => {
   const playerContainerRef = useRef<HTMLDivElement | null>(null);
   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
@@ -196,13 +198,13 @@ const Player = ({
     Artplayer.MOBILE_CLICK_PLAY = true;
 
     artPlayerInstanceRef.current = new Artplayer({
-      // autoOrientation: true,
+      autoOrientation: true,
       container: playerContainerRef.current,
       url: src,
       volume: 0.5,
       muted: mute,
       autoplay: false,
-      // fullscreenWeb: true,
+      fullscreenWeb: true,
       moreVideoAttr: {
         playsInline: true,
         preload: "metadata",
@@ -364,8 +366,18 @@ const Player = ({
       artPlayerInstanceRef.current.muted = mute;
     }
   }, [mute]);
+  useEffect(() => {
+    if (artPlayerInstanceRef.current) {
+      artPlayerInstanceRef.current.fullscreenWeb = rotate;
+    }
+  }, [rotate]); // This effect runs whenever `mute` changes
 
-  return <div ref={playerContainerRef} className="video_player w-full" />;
+  return (
+    <div
+      ref={playerContainerRef}
+      className={`video_player w-full ${rotate ? "fullscreen_rotate" : ""}`}
+    />
+  );
 };
 
 export default Player;

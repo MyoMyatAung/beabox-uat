@@ -10,6 +10,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { showToast } from "../services/errorSlice";
+import LoginDrawer from "@/components/profile/auth/login-drawer";
 
 interface CommentOverlayProps {
   setCommentCount: any;
@@ -48,6 +49,7 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
   const user = useSelector((state: any) => state.persist.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
   const handleReplyClick = (
     commentId: number,
     replyId: number | null = null
@@ -81,7 +83,7 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
         console.error("Failed to post reply:", error);
       }
     } else {
-      navigate("/login");
+      setIsOpen(true);
     }
   };
 
@@ -143,7 +145,7 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
     if (user?.token) {
       navigate(`/reports/comment/${id}`);
     } else {
-      navigate("/login");
+      setIsOpen(true);
     }
   };
   const toggleRepliesVisibility = (commentId: number) => {
@@ -180,7 +182,7 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
         console.error("Failed to post reply:", error);
       }
     } else {
-      navigate("/login");
+      setIsOpen(true);
     }
   };
   const handleLoadMore = async (comment_id: number, last_reply_id: number) => {
@@ -541,6 +543,10 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
   };
 
   if (!commentsVisible && !isClosing) return null;
+
+  if (isOpen) {
+    return <LoginDrawer isOpen={isOpen} setIsOpen={setIsOpen} />;
+  }
 
   return ReactDOM.createPortal(
     <div className="fixed inset-0 z-[999999] flex justify-center items-end">

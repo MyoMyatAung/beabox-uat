@@ -13,6 +13,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { setVideos } from "../services/videosSlice";
 import { setMute } from "../services/muteSlice";
 
+import { setAuthToggle } from "@/store/slices/profileSlice";
+import LoginDrawer from "@/components/profile/auth/login-drawer";
+
 function VideoSidebar({
   messages,
   setCommentCount,
@@ -70,6 +73,7 @@ function VideoSidebar({
   const [follow, setFollow] = useState(post?.is_followed);
   const dispatch = useDispatch();
   const { videos } = useSelector((state: any) => state.videoSlice);
+  const [isOpen, setIsOpen] = useState(false);
 
   const location = useLocation();
   const isHome = location.pathname === "/";
@@ -102,79 +106,6 @@ function VideoSidebar({
       console.error("Error refetching comment list:", error);
     }
   };
-
-  // const handleLike = (() => {
-  //   console.log("seewin");
-  //   const likeTimeout = useRef<NodeJS.Timeout | null>(null); // Track the debounce timeout
-  //   const [pendingLike, setPendingLike] = useState(false); // Flag to indicate pending like action
-  //   const [nextId, setNextId] = useState(0); // Generate unique IDs for hearts
-
-  //   const handleLikeClick = () => {
-  //     if (user?.token) {
-  //       // if (pendingLike) return; // Prevent further actions if a like is already pending
-  //       const newId = nextId;
-  //       setNextId((prev: any) => prev + 1); // Increment the next ID
-  //       setHearts((prev: any) => [...prev, newId]); // Add the new heart
-
-  //       setCountdown(3); // Reset countdown
-
-  //       setIsLiked(true);
-  //       // setPendingLikes((prev) => prev + 1);
-  //       setCountNumber((prev: any) => prev + 1);
-
-  //       // // Show the heart animation
-
-  //       // Clear any existing debounce timer
-  //       if (likeTimeout.current) {
-  //         clearTimeout(likeTimeout.current);
-  //       }
-
-  //       // Set up a new debounce timer
-  //       likeTimeout.current = setTimeout(async () => {
-  //         if (!pendingLike) {
-  //           try {
-  //             await likePost({ post_id, count: 1 }); // Pass the accumulated count to the API
-  //             setLikeCount((prev: any) => +prev + 1);
-  //             dispatch(
-  //               setVideos({
-  //                 ...videos,
-  //                 [currentTab === 2 ? "foryou" : "follow"]: videos[
-  //                   currentTab === 2 ? "foryou" : "follow"
-  //                 ]?.map((video: any) =>
-  //                   video.post_id === post_id
-  //                     ? {
-  //                         ...video,
-  //                         is_liked: true,
-  //                         like_count: 1,
-  //                       }
-  //                     : video
-  //                 ),
-  //               })
-  //             );
-  //             setCountNumber(0); // Reset pending likes after a successful API call
-  //           } catch (error) {
-  //             console.error("Error liking the post:", error);
-  //           } finally {
-  //             setPendingLike(true); // Reset pending flag
-  //           }
-  //         }
-  //       }, 1000); // Call API 1 second after the last click
-  //     } else {
-  //       navigate("/login");
-  //     }
-  //   };
-
-  //   useEffect(() => {
-  //     // Cleanup on component unmount
-  //     return () => {
-  //       if (likeTimeout.current) {
-  //         clearTimeout(likeTimeout.current);
-  //       }
-  //     };
-  //   }, []);
-
-  //   return handleLikeClick;
-  // })();
 
   const handleShareClick = () => {
     setAlertVisible(true);
@@ -259,13 +190,17 @@ function VideoSidebar({
         console.log(error);
       }
     } else {
-      navigate("/login");
+      setIsOpen(true);
     }
   };
 
   const handleVoice = () => {
     dispatch(setMute(!mute));
   };
+
+  if (isOpen) {
+    return <LoginDrawer isOpen={isOpen} setIsOpen={setIsOpen} />;
+  }
 
   const handleProfile = (id: any) => {
     navigate(`/user/${id}`);

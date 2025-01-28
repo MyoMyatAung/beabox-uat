@@ -18,6 +18,10 @@
 .art-controls {
   display: none !important;
 }
+
+.fullscreen_rotate .art-controls {
+  display: flex !important;
+}
 .art-notice {
   display: none !important;
 }

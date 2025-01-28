@@ -14,6 +14,7 @@ import VideoContainer from "./VideoContainer";
 import { setVideos } from "../services/videosSlice";
 import { showToast } from "../services/errorSlice";
 import Ads from "./Ads";
+import LoginDrawer from "@/components/profile/auth/login-drawer";
 
 const VideoFeed = ({
   videos,
@@ -43,6 +44,7 @@ const VideoFeed = ({
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
   const dispatch = useDispatch();
+  const [isOpen, setIsOpen] = useState(false);
 
   const removeHeart = (id: number) => {
     setHearts((prev) => prev.filter((heartId) => heartId !== id)); // Remove the heart by ID
@@ -128,7 +130,7 @@ const VideoFeed = ({
         console.error("Failed to post reply:", error);
       }
     } else {
-      navigate("/login");
+      setIsOpen(true);
     }
   };
 
@@ -163,6 +165,10 @@ const VideoFeed = ({
   //     is_like: video?.is_liked,
   //   });
   // };
+
+  if (isOpen) {
+    return <LoginDrawer isOpen={isOpen} setIsOpen={setIsOpen} />;
+  }
 
   return (
     <div className="app bg-black">
