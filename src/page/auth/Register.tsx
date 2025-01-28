@@ -176,7 +176,7 @@ const Register = () => {
             <div className="text-sm text-red-500">{error}</div>
             <input
               type="text"
-              placeholder="Enter Promotion Code (Optional)"
+              placeholder="用户名输入邀请码（可选）"
               value={code}
               onChange={(e) => setCode(e.target.value)}
               className="bg-[#1F1C25] border-0 rounded-lg text-white placeholder:text-gray-600 px-4 py-4 text-center placeholder:text-center w-full outline-none"
