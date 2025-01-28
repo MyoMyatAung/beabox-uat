@@ -44,6 +44,14 @@ const ShareOverlay: React.FC<any> = ({
   const shareUrl = config?.share_link;
   const appDownloadLink = config?.app_download_link;
 
+  const isIOSApp = () => {
+    return (
+      (window as any).webkit &&
+      (window as any).webkit.messageHandlers &&
+      (window as any).webkit.messageHandlers.jsBridge
+    );
+  };
+
   const sendEventToNative = (name: string, text: string) => {
     if (
       (window as any).webkit &&
@@ -58,62 +66,72 @@ const ShareOverlay: React.FC<any> = ({
   };
 
   const onDownload = () => {
-    // For web
-    const link = document.createElement("a");
-    link.target = "_blank";
-    link.href = post?.files[0].downloadURL; // Set the URL of the file
+    if (isIOSApp()) {
+      sendEventToNative("saveVideo", post?.files[0].downloadURL);
+    } else {
+      // For web
+      const link = document.createElement("a");
+      link.target = "_blank";
+      link.href = post?.files[0].downloadURL; // Set the URL of the file
 
-    link.download = "video"; // Set the name of the file to be downloaded
-    document.body.appendChild(link); // Append the link to the document body
-    link.click(); // Programmatically click the link to trigger the download
-    document.body.removeChild(link); // Remove the link after triggering the download
-    sendEventToNative("saveVideo", post?.files[0].downloadURL);
+      link.download = "video"; // Set the name of the file to be downloaded
+      document.body.appendChild(link); // Append the link to the document body
+      link.click(); // Programmatically click the link to trigger the download
+      document.body.removeChild(link); // Remove the link after triggering the download
+    }
   };
 
   const handleShare = () => {
-    const qrCanvas = document.querySelector("canvas"); // Select the canvas element
-
-    if (qrCanvas) {
-      const imageType = "image/png"; // Change to "image/jpeg" for JPG
-      const imageUrl = qrCanvas.toDataURL(imageType); // Convert canvas to data URL
-
-      // Create a temporary link to trigger the download
-      const link = document.createElement("a");
-      link.href = imageUrl;
-      link.download = "QRCode.png"; // Set file name and extension
-      document.body.appendChild(link); // Append link to the body
-      link.click(); // Trigger download
-      document.body.removeChild(link); // Remove link after download
+    if (isIOSApp()) {
+      sendEventToNative("saveImage", shareUrl);
     } else {
-      console.error("QR code canvas not found.");
-    }
+      const qrCanvas = document.querySelector("canvas"); // Select the canvas element
 
-    sendEventToNative("saveImage", shareUrl);
+      if (qrCanvas) {
+        const imageType = "image/png"; // Change to "image/jpeg" for JPG
+        const imageUrl = qrCanvas.toDataURL(imageType); // Convert canvas to data URL
+
+        // Create a temporary link to trigger the download
+        const link = document.createElement("a");
+        link.href = imageUrl;
+        link.download = "QRCode.png"; // Set file name and extension
+        document.body.appendChild(link); // Append link to the body
+        link.click(); // Trigger download
+        document.body.removeChild(link); // Remove link after download
+      } else {
+        console.error("QR code canvas not found.");
+      }
+    }
   };
 
   const handleAppCopy = () => {
-    navigator.clipboard.writeText(appDownloadLink).then(() => {
-      dispatch(
-        showToast({
-          message: "复制成功",
-          type: "success",
-        })
-      );
-    });
-
-    sendEventToNative("copyAppdownloadUrl", appDownloadLink);
+    if (isIOSApp()) {
+      sendEventToNative("copyAppdownloadUrl", appDownloadLink);
+    } else {
+      navigator.clipboard.writeText(appDownloadLink).then(() => {
+        dispatch(
+          showToast({
+            message: "复制成功",
+            type: "success",
+          })
+        );
+      });
+    }
   };
 
   const handleLinkCopy = () => {
-    navigator.clipboard.writeText(shareUrl).then(() => {
-      dispatch(
-        showToast({
-          message: "复制成功",
-          type: "success",
-        })
-      );
-    });
-    sendEventToNative("copyShareUrl", shareUrl);
+    if (isIOSApp()) {
+      sendEventToNative("copyShareUrl", shareUrl);
+    } else {
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        dispatch(
+          showToast({
+            message: "复制成功",
+            type: "success",
+          })
+        );
+      });
+    }
   };
 
   const handleReport = () => {
