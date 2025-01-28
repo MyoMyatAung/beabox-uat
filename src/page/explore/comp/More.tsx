@@ -25,12 +25,14 @@ const More: React.FC<MoreProps> = () => {
   const [list, setList] = useState<any[]>([]);
   const [filter, setFilter] = useState<any[]>([]);
   const { data, isLoading, isFetching, refetch } = useGetExploreTagQuery({
-    order: more_tab || "latest",
+    order: more_tab || "created_at",
     tag: title ? title : "Latest Drama",
     page: page,
   });
   // console.log(data);
   // console.log(isFetching);
+
+  console.log(more_tab,filter)
 
   useEffect(() => {
     // dispatch(setMoreTab("Popular")); // Set default tab if needed
@@ -42,7 +44,7 @@ const More: React.FC<MoreProps> = () => {
       }
     }
     // refetch();
-  }, [data]); // Depend on more_tab
+  }, [data,filter]); 
 
   const popularItems = Array.from({ length: 10 }, (_, i) => ({
     title: `My Boss (2021) - ${i + 1}`,
