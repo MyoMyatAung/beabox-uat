@@ -8,11 +8,19 @@
   scroll-snap-type: y mandatory; /* Snap vertically */
   scroll-snap-align: start;
   scroll-snap-stop: always;
-  touch-action: pan-y; /* Disable horizontal dragging */
+  touch-action: pan-y !important; /* Disable horizontal dragging */
+}
+
+.art-video-player {
+  touch-action: pan-y !important; /* Disable horizontal dragging */
 }
 
 .art-controls {
   display: none !important;
+}
+
+.fullscreen_rotate .art-controls {
+  display: flex !important;
 }
 .art-notice {
   display: none !important;

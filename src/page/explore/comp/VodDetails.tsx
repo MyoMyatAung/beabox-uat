@@ -16,6 +16,7 @@ import { setCurrentTab } from "@/page/home/services/homeSlice";
 import HeartCount from "@/page/home/components/Heart";
 import VideoContainer from "@/page/home/components/VideoContainer";
 import Ads from "@/page/home/components/Ads";
+import LoginDrawer from "@/components/profile/auth/login-drawer";
 
 interface VodDetailsProps {
   // setshow: (value: boolean) => void;
@@ -47,6 +48,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
   const [hearts, setHearts] = useState<number[]>([]); // Manage heart IDs
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
 
   const removeHeart = (id: number) => {
     setHearts((prev) => prev.filter((heartId) => heartId !== id)); // Remove the heart by ID
@@ -120,9 +122,13 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
         console.error("Failed to post reply:", error);
       }
     } else {
-      navigate("/login");
+      setIsOpen(true);
     }
   };
+
+  if (isOpen) {
+    return <LoginDrawer isOpen={isOpen} setIsOpen={setIsOpen} />;
+  }
 
   const handleBack = () => {
     // setCurrentTab(1);

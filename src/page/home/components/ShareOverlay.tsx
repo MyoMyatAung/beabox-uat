@@ -5,12 +5,13 @@ import {
   useGetConfigQuery,
   useUnInterestPostMutation,
 } from "../services/homeApi";
-import { QRCodeSVG } from "qrcode.react";
+import { QRCodeCanvas } from "qrcode.react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { showToast } from "../services/errorSlice";
 import { setVideos } from "../services/videosSlice";
 import { setCurrentActivePost } from "../services/activeSlice";
+import LoginDrawer from "@/components/profile/auth/login-drawer";
 
 const ShareOverlay: React.FC<any> = ({
   alertVisible,
@@ -27,6 +28,7 @@ const ShareOverlay: React.FC<any> = ({
   const currentTab = useSelector((state: any) => state.home.currentTab);
   const { videos } = useSelector((state: any) => state.videoSlice);
   const { currentActivePost } = useSelector((state: any) => state.activeslice);
+  const [isOpen, setIsOpen] = useState(false);
 
   // const dispatch = useDispatch();
   const handleClose = () => {
@@ -56,19 +58,62 @@ const ShareOverlay: React.FC<any> = ({
   };
 
   const onDownload = () => {
-    console.log("download");
+    // For web
+    const link = document.createElement("a");
+    link.target = "_blank";
+    link.href = post.files[0].downloadURL; // Set the URL of the file
+
+    link.download = "video"; // Set the name of the file to be downloaded
+    document.body.appendChild(link); // Append the link to the document body
+    link.click(); // Programmatically click the link to trigger the download
+    document.body.removeChild(link); // Remove the link after triggering the download
     sendEventToNative("saveVideo", post?.files[0].downloadURL);
   };
 
   const handleShare = () => {
+    const qrCanvas = document.querySelector("canvas"); // Select the canvas element
+
+    if (qrCanvas) {
+      const imageType = "image/png"; // Change to "image/jpeg" for JPG
+      const imageUrl = qrCanvas.toDataURL(imageType); // Convert canvas to data URL
+
+      // Create a temporary link to trigger the download
+      const link = document.createElement("a");
+      link.href = imageUrl;
+      link.download = "QRCode.png"; // Set file name and extension
+      document.body.appendChild(link); // Append link to the body
+      link.click(); // Trigger download
+      document.body.removeChild(link); // Remove link after download
+      console.log("QR Code downloaded!");
+    } else {
+      console.error("QR code canvas not found.");
+    }
+
     sendEventToNative("saveImage", shareUrl);
   };
 
   const handleAppCopy = () => {
+    navigator.clipboard.writeText(appDownloadLink).then(() => {
+      dispatch(
+        showToast({
+          message: "复制成功",
+          type: "success",
+        })
+      );
+    });
+
     sendEventToNative("copyAppdownloadUrl", appDownloadLink);
   };
 
   const handleLinkCopy = () => {
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      dispatch(
+        showToast({
+          message: "复制成功",
+          type: "success",
+        })
+      );
+    });
     sendEventToNative("copyShareUrl", shareUrl);
   };
 
@@ -81,7 +126,7 @@ const ShareOverlay: React.FC<any> = ({
     if (user?.token) {
       navigate(`/reports/post/${post?.post_id}`);
     } else {
-      navigate("/login");
+      setIsOpen(true);
     }
   };
 
@@ -116,9 +161,13 @@ const ShareOverlay: React.FC<any> = ({
         );
       }
     } else {
-      navigate("/login");
+      setIsOpen(true);
     }
   };
+
+  if (isOpen) {
+    return <LoginDrawer isOpen={isOpen} setIsOpen={setIsOpen} />;
+  }
 
   return ReactDOM.createPortal(
     <div className="fixed inset-0 z-[999999] flex justify-center items-end">
@@ -269,7 +318,11 @@ const ShareOverlay: React.FC<any> = ({
             </div>
             <div className="flex mb-4 justify-center items-center my-10 p-0">
               <div className="text-right bg-white p-3 rounded-xl">
-                <QRCodeSVG value={shareUrl} size={100} />
+                <QRCodeCanvas
+                  value={shareUrl}
+                  size={100}
+                  className="qr_download"
+                />
                 {/* <img src={qr} alt="" width={150} height={150} /> */}
               </div>
               {/* <div>

@@ -8,6 +8,7 @@ import {
 } from "../services/homeApi";
 import { setVideos } from "../services/videosSlice";
 import { useNavigate } from "react-router-dom";
+import LoginDrawer from "@/components/profile/auth/login-drawer";
 
 const VideoContainer = ({
   video,
@@ -48,8 +49,10 @@ const VideoContainer = ({
   const dispatch = useDispatch();
   const currentTab = useSelector((state: any) => state.home.currentTab);
   const { videos } = useSelector((state: any) => state.videoSlice);
-  const navigate = useNavigate();
+
   const post_id = video?.post_id;
+  const [rotateVideoId, setRotateVideoId] = useState<string | null>(null); // For controlling fullscreen per video
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleLike = (() => {
     const likeTimeout = useRef<NodeJS.Timeout | null>(null); // Track the debounce timeout
@@ -119,7 +122,7 @@ const VideoContainer = ({
           }
         }, 1000); // Call API 1 second after the last click
       } else {
-        navigate("/login");
+        setIsOpen(true);
       }
     };
 
@@ -202,7 +205,7 @@ const VideoContainer = ({
           }
         }, 1000); // Call API 1 second after the last click
       } else {
-        navigate("/login");
+        setIsOpen(true);
       }
     };
 
@@ -279,6 +282,21 @@ const VideoContainer = ({
   };
 
   const handleFullscreen = (video: any) => {
+    // if (rotateVideoId === video?.post_id) {
+    //   // If the clicked video is already in fullscreen, exit fullscreen
+    //   setRotateVideoId(null);
+    //   if (container) {
+    //     const activeElement = container.querySelector(
+    //       `[data-post-id="${video?.post_id}"]`
+    //     );
+    //     if (activeElement) {
+    //       activeElement.scrollIntoView({ block: "center" });
+    //     }
+    //   }
+    // } else {
+    //   // Otherwise, set the clicked video to fullscreen
+    //   setRotateVideoId(video?.post_id);
+    // }
     sendEventToNative("beabox_fullscreen", {
       post_id: video?.post_id,
       like_api_url: `${import.meta.env.VITE_API_URL}/post/like`,
@@ -290,9 +308,15 @@ const VideoContainer = ({
       is_like: isLiked,
     });
   };
+
+  if (isOpen) {
+    return <LoginDrawer isOpen={isOpen} setIsOpen={setIsOpen} />;
+  }
+
   return (
     <>
       <Player
+        rotate={rotateVideoId === video?.post_id}
         src={video.files[0].resourceURL}
         thumbnail={
           video?.preview_image ||
@@ -328,9 +352,11 @@ const VideoContainer = ({
         <>
           <button
             onClick={() => handleFullscreen(video)}
-            className={`absolute 
-                                left-[37%] top-[70%] bottom-0 right-0 w-[100px] bg-[#101010]
-                            h-[35px] rounded-md flex justify-center items-center z-[99] text-center  text-white `}
+            className={`absolute ${
+              rotateVideoId === video.post_id
+                ? " top-[10px] right-[10px] w-[40px] bg-transparent"
+                : "left-[37%] top-[70%] bottom-0 right-0 w-[120px] bg-[#101010]"
+            }   h-[35px] rounded-md flex justify-center items-center z-[99] text-center  text-white `}
           >
             <div className=" flex items-center p-1 gap-2">
               <svg
