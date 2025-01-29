@@ -6,7 +6,7 @@ import Loader from "../../page/home/vod_loader.gif";
 const VideoGrid = ({ isUpload, data, hasMore, fetchMoreData }: any) => {
   // console.log(data);
   return (
-    <div className="py-4 pb-28 absolute">
+    <div className="py-4 pb-28 absolute overflow-y-auto h-[500px] no-scrollbar">
       <div className="grid grid-cols-3 gap-2">
         {isUpload ? <Upload /> : <></>}
         {data && (

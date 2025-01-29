@@ -30,7 +30,7 @@ const Stats = ({ followers, following, nickname, likeCount }: any) => {
     // open={isDrawerOpen}
     // onOpenChange={() => dispatch(setIsDrawerOpen(true))}
     >
-      <div className="z-[1200] flex justify-between w-full max-w-xs my-4 items-center mx-auto">
+      <div className="z-[1200] px-5 flex justify-between w-full max-w-xs my-4 items-center mx-auto">
         <div className="z-[1200] text-center">
           {user?.token ? (
             <DrawerTrigger
