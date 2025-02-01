@@ -26,17 +26,17 @@ const EditGender = () => {
 
   return (
     <Drawer>
-      <div className="text-[14px] flex items-center justify-between">
-        <h1>性别</h1>
-        <DrawerTrigger asChild>
+      <DrawerTrigger asChild>
+        <div className="text-[14px] flex items-center justify-between">
+          <h1>性别</h1>
           <p className="flex items-center gap-1 text-[#888]">
             {(gender === "Other" && "不方便透露") ||
               (gender == "Male" && "男性") ||
               (gender == "Female" && "女性")}{" "}
             <FaAngleRight />
           </p>
-        </DrawerTrigger>
-      </div>
+        </div>
+      </DrawerTrigger>
       <DrawerContent className="border-0 bg-[#121012]">
         {/* {isLoading ? <Loader /> : <></>} */}
         <div className="w-full px-5 py-7">

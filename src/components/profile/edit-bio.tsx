@@ -47,15 +47,15 @@ const EditBio = ({ bio, refetchHandler }: any) => {
   };
   return (
     <Drawer open={isOpen} onOpenChange={handleOpenChange}>
-      <div className="text-[14px] flex items-center justify-between">
-        <h1>个性签名</h1>
-        <DrawerTrigger asChild>
+      <DrawerTrigger asChild>
+        <div className="text-[14px] flex items-center justify-between">
+          <h1>个性签名</h1>
           <p className="flex items-start gap-1 text-[#888]">
             <span className="max-w-[200px] ml-auto">{bio ? bio : ""}</span>
             <FaAngleRight className="mt-1" />
           </p>
-        </DrawerTrigger>
-      </div>
+        </div>
+      </DrawerTrigger>
       <DrawerContent className="border-0">
         {isLoading ? <Loader /> : <></>}
         <div className="w-full px-5 c-height bg-[#16131C]">

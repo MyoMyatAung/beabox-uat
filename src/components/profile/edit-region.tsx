@@ -75,9 +75,9 @@ const EditRegion = () => {
 
   return (
     <Drawer onOpenChange={() => setIsOpen(true)}>
-      <div className="text-[14px] flex items-center justify-between">
-        <h1>地区</h1>
-        <DrawerTrigger asChild>
+      <DrawerTrigger asChild>
+        <div className="text-[14px] flex items-center justify-between">
+          <h1>地区</h1>
           <p
             onClick={() => setIsOpen(true)}
             className="flex items-center gap-1 text-[#888]"
@@ -87,8 +87,8 @@ const EditRegion = () => {
               : ""}
             <FaAngleRight />
           </p>
-        </DrawerTrigger>
-      </div>
+        </div>
+      </DrawerTrigger>
       <DrawerContent className="border-0 bg-[#121012]">
         {isLoading ? <Loader /> : <></>}
         <div className="w-full px-5 py-7">
