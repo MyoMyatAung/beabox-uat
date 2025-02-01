@@ -44,14 +44,14 @@ const EditNickName = ({
 
   return (
     <Drawer open={isOpen} onOpenChange={handleOpenChange}>
-      <div className="text-[14px] flex items-center justify-between">
-        <h1>昵称</h1>
-        <DrawerTrigger>
+      <DrawerTrigger>
+        <div className="text-[14px] flex items-center justify-between">
+          <h1>昵称</h1>
           <p className="flex items-center gap-1 text-[#888]">
             {nickname} <FaAngleRight />
           </p>
-        </DrawerTrigger>
-      </div>
+        </div>
+      </DrawerTrigger>
       <DrawerContent className="border-0">
         {isLoading ? <Loader /> : <></>}
         <div className="w-full c-height px-5 bg-[#16131C]">

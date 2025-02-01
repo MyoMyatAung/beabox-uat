@@ -121,18 +121,18 @@ const Settings = ({
               visibilityLoading={cvLoading}
             />
             <div className="border-b border-white/10"></div>
-            <div className="flex justify-between items-center">
+            <Link
+              to={paths.privacy_settings}
+              className="flex justify-between items-center"
+            >
               <p className="flex items-center gap-1 text-[14px]">
                 {/* Privacy Settings */}
                 隐私设置
               </p>
-              <Link
-                to={paths.privacy_settings}
-                className="flex items-center gap-1 text-[14px]"
-              >
+              <div className="flex items-center gap-1 text-[14px]">
                 <ChevronRight size={15} className="text-[#777777]" />
-              </Link>
-            </div>
+              </div>
+            </Link>
           </>
         ) : (
           <></>
