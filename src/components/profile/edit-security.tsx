@@ -16,7 +16,13 @@ const EditSecurity = () => {
   }, []);
   // console.log(data, securityQues, "sq");
   return (
-    <div>
+    <div
+      onClick={() =>
+        !securityQues?.ans && !securityQues?.ques
+          ? navigate(paths.security_questions)
+          : navigate(paths.check_answer2)
+      }
+    >
       <div
         className={`text-[14px] flex items-start justify-between ${
           !securityQues?.ans &&
@@ -51,11 +57,6 @@ const EditSecurity = () => {
               ? "text-[#C23033]"
               : "text-[#888]"
           }  ml-auto`}
-          onClick={() =>
-            !securityQues?.ans && !securityQues?.ques
-              ? navigate(paths.security_questions)
-              : navigate(paths.check_answer2)
-          }
         >
           {!securityQues?.ans && !securityQues?.ques ? "立即设置" : "管理"}{" "}
           <FaAngleRight />
