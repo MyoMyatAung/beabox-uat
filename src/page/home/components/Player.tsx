@@ -240,7 +240,7 @@ const Player = ({
             top: "0",
             left: "0",
             width: "90%",
-            height: "100%",
+            height: "85%",
             zIndex: "10",
             background: "transparent",
           },
