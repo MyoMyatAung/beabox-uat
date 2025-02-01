@@ -37,8 +37,8 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
       setWaterFall((prev) => [...prev, ...data.data]);
 
       const loadedItems =
-        data.pagination.current_page * data.pagination.per_page;
-      setHasMore(loadedItems < data.pagination.total);
+        data?.pagination?.current_page * data?.pagination?.per_page;
+      setHasMore(loadedItems < data?.pagination?.total);
     } else {
       setHasMore(false);
     }
