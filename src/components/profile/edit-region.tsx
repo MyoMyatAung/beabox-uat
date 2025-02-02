@@ -22,24 +22,34 @@ const EditRegion = () => {
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState<any>(false);
   const region = useSelector((state: any) => state.persist.region);
-  const [selectedRegion, setSelectedRegion] = useState<any>(region);
-  //   const [changeGender] = useChangeGenderMutation();
+  const [selectedRegion, setSelectedRegion] = useState<any>(null);
+
+  const [selectedCity, setSelectedCity] = useState(region?.city);
   const [changeRegion, { isLoading }] = useChangeRegionMutation();
   const selectedRegionRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
 
+  const selectedCityRef = useRef<HTMLDivElement>(null);
+
   const changeRegionHandler = async () => {
-    const { data } = await changeRegion(selectedRegion);
+    const { data } = await changeRegion({
+      city: selectedCity,
+      province: selectedRegion?.provinceName,
+    });
     if (data?.status) {
       closeRef.current?.click();
-      dispatch(setRegion(selectedRegion));
+      dispatch(
+        setRegion({
+          city: selectedCity,
+          provinceName: selectedRegion?.provinceName,
+        })
+      );
     }
     setIsOpen(false);
   };
 
   useEffect(() => {
     if (isOpen == true) {
-      setSelectedRegion(region);
       setTimeout(() => {
         if (selectedRegionRef.current) {
           selectedRegionRef.current.scrollIntoView({
@@ -49,30 +59,76 @@ const EditRegion = () => {
         }
       }, 0);
     }
-  }, [isOpen, region]);
+  }, [isOpen, selectedRegion, region]);
+
+  useEffect(() => {
+    if (region) {
+      const selected = data?.data?.filter(
+        (item: any) => item?.provinceName == region?.provinceName
+      );
+      if (selected) setSelectedRegion(selected[0]);
+    } else {
+      setSelectedRegion(data?.data[0]);
+    }
+    // console.log(selected, "selected");
+  }, [data]);
 
   return (
     <Drawer onOpenChange={() => setIsOpen(true)}>
-      <div className="text-[14px] flex items-center justify-between">
-        <h1>地区</h1>
-        <DrawerTrigger asChild>
+      <DrawerTrigger asChild>
+        <div className="text-[14px] flex items-center justify-between">
+          <h1>地区</h1>
           <p
             onClick={() => setIsOpen(true)}
             className="flex items-center gap-1 text-[#888]"
           >
-            {region?.province?.length && region.city?.length
-              ? `${region?.province}, ${region?.city}`
+            {region?.provinceName?.length && region.city?.length
+              ? `${region?.provinceName}, ${region?.city}`
               : ""}
             <FaAngleRight />
           </p>
-        </DrawerTrigger>
-      </div>
+        </div>
+      </DrawerTrigger>
       <DrawerContent className="border-0 bg-[#121012]">
         {isLoading ? <Loader /> : <></>}
         <div className="w-full px-5 py-7">
           <div className="flex flex-col items-center gap-5">
-            <div className="h-[180px] overflow-scroll no-scrollbar w-full space-y-5">
-              {data?.data?.map((region: any) => (
+            <div className="h-[180px] flex w-full gap-3">
+              <div className="left  h-full flex-1 overflow-y-auto no-scrollbar space-y-5 flex flex-col items-center">
+                {data?.data?.map((sregion: any) => (
+                  <p
+                    ref={
+                      sregion?.provinceName == selectedRegion?.provinceName
+                        ? selectedRegionRef
+                        : null
+                    }
+                    className={`${
+                      sregion?.provinceName == selectedRegion?.provinceName
+                        ? "text-[#fff] text-[20px]"
+                        : "text-[#888888] text-[16px]"
+                    }`}
+                    onClick={() => setSelectedRegion(sregion)}
+                  >
+                    {sregion?.provinceName}
+                  </p>
+                ))}
+              </div>
+              <div className="right h-full flex-1 overflow-y-auto no-scrollbar space-y-5 flex flex-col items-center">
+                {selectedRegion?.cities?.map((item: any) => (
+                  <p
+                    // ref={selectedCity == item?.name ? selectedRegionRef : null}
+                    className={`${
+                      selectedCity == item?.name
+                        ? "text-[#fff] text-[20px]"
+                        : "text-[#888888] text-[16px]"
+                    }`}
+                    onClick={() => setSelectedCity(item?.name)}
+                  >
+                    {item?.name}
+                  </p>
+                ))}
+              </div>
+              {/* {data?.data?.map((region: any) => (
                 <React.Fragment key={region?.provinceName}>
                   <div
                     ref={
@@ -99,7 +155,7 @@ const EditRegion = () => {
                   </div>
                   <div className="w-full h-[1px] bg-[#FFFFFF0A]"></div>
                 </React.Fragment>
-              ))}
+              ))} */}
             </div>
             <div className="flex gap-5 w-full">
               {/* <DrawerClose asChild> */}

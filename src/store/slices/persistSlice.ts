@@ -51,6 +51,7 @@ export const persistSlice = createSlice({
       state.gender = "Other";
       state.cover = null;
       state.visibility = "";
+      state.region = null;
     },
     setProfileData: (state, { payload }) => {
       state.profileData = payload;

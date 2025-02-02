@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import loader from "../vod_loader.gif";
@@ -19,19 +19,27 @@ interface CommentOverlayProps {
   post_id: any;
   isLoading: boolean;
   setComments: any;
+  page: any;
+  comment_count: any;
+  setPage: any;
   closeCommentList: () => void;
   refetchComments: () => void; // Function to refresh the comment list
+  getComments: any;
 }
 
 const CommentOverlay: React.FC<CommentOverlayProps> = ({
   setCommentCount,
   commentsVisible,
   comments,
+  comment_count,
   post_id,
   isLoading,
   closeCommentList,
   refetchComments,
   setComments,
+  page,
+  setPage,
+  getComments,
 }) => {
   const [activeReply, setActiveReply] = useState<{
     commentId: number | null;
@@ -47,8 +55,13 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
   const [commentReaction] = useCommentReactionMutation();
   const [isClosing, setIsClosing] = useState(false); // Tracks whether the portal is closing
   const user = useSelector((state: any) => state.persist.user);
+  const observer = useRef<IntersectionObserver | null>(null);
+
+  const lastCommentRef = useRef<HTMLDivElement | null>(null);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [hasMore, setHasMore] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const handleReplyClick = (
     commentId: number,
@@ -164,7 +177,10 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
           content: content,
         }).unwrap();
         setContent("");
-        refetchComments();
+
+        setComments((prev: any) => [...prev, response?.data?.data]);
+
+        // refetchComments();
         //  setCommentCount((prev: any) => +prev + 1);
         dispatch(
           showToast({
@@ -216,12 +232,13 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
     }
   };
 
-  const renderComment = (comment: any) => {
+  const renderComment = (comment: any, index: any) => {
     const areRepliesVisible = repliesVisible[comment.comment_id] || false;
 
     return (
       <div
         key={comment.comment_id}
+        ref={index === comments.length - 1 ? lastCommentRef : null}
         className="flex flex-col p-4 rounded-lg shadow-md"
       >
         {/* Comment Content */}
@@ -535,12 +552,79 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
   };
 
   const handleClose = () => {
+    setPage(1);
+    setHasMore(true);
     setIsClosing(true); // Trigger the closing animation
     setTimeout(() => {
       setIsClosing(false); // Reset the state
       closeCommentList(); // Actually close the portal
     }, 100); // Match the duration of the closing animation
   };
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await getComments({ post_id, page });
+        if (response && response.data) {
+          setComments((prev: any) => [...prev, ...response?.data?.data]);
+          const loadedItems =
+            response?.data?.pagination?.current_page *
+            response?.data?.pagination?.per_page;
+          setHasMore(loadedItems < response?.data?.pagination?.total);
+          // setComments(response && ((response as any).data.data as any[]));
+        } else {
+          setHasMore(false);
+        }
+      } catch (error) {
+        console.error("Error fetching comment list:", error);
+      }
+    };
+
+    if (page !== 1 && hasMore) {
+      fetchComments();
+    }
+  }, [page]);
+
+  const fetchMoreData = () => {
+    if (hasMore) {
+      setPage((prevPage: number) => prevPage + 1);
+    }
+  };
+
+  useEffect(() => {
+    if (!lastCommentRef.current || !hasMore) return;
+
+    observer.current = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          fetchMoreData();
+        }
+      },
+      { root: null, rootMargin: "100px", threshold: 0.1 }
+    );
+
+    if (lastCommentRef.current) {
+      observer.current.observe(lastCommentRef.current);
+    }
+
+    return () => {
+      if (observer.current) {
+        observer.current.disconnect();
+      }
+    };
+  }, [comments]);
+
+  // useEffect(() => {
+  //   if (data?.data) {
+  //     setComments((prev: any) => [...prev, ...data.data]);
+
+  // const loadedItems =
+  //   data.pagination.current_page * data.pagination.per_page;
+  // setHasMore(loadedItems < data.pagination.total);
+  //   } else {
+  //     setHasMore(false);
+  //   }
+  // }, [data]);
 
   if (!commentsVisible && !isClosing) return null;
 
@@ -562,7 +646,7 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
       >
         <div>
           <div className="text-white text-center font-cnFont pt-[14px]">
-            <span className="mr-1"> {comments?.length}</span>条评论
+            <span className="mr-1"> {comment_count}</span>条评论
           </div>
           <button
             className="absolute top-4 right-4 text-gray-700 text-2xl"
@@ -613,7 +697,14 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
               </div>
             </div>
           ) : (
-            comments.map((comment) => renderComment(comment))
+            <>
+              {comments.map((comment, index) => renderComment(comment, index))}
+              {hasMore && (
+                <div className="flex justify-center py-0">
+                  <img src={loader} className="w-[50px] h-[50px]" />
+                </div>
+              )}
+            </>
           )}
         </div>
         <div className="absolute bottom-0 add_comment w-full  py-3 ">

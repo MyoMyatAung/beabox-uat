@@ -32,14 +32,14 @@ const ChangePassword = () => {
   };
   return (
     <Drawer>
-      <div className="text-[14px] flex items-center justify-between">
-        <h1>更改密码</h1>
-        <DrawerTrigger asChild>
+      <DrawerTrigger asChild>
+        <div className="text-[14px] flex items-center justify-between">
+          <h1>更改密码</h1>
           <p className="flex items-center gap-1 text-[#888]">
             <FaAngleRight />
           </p>
-        </DrawerTrigger>
-      </div>
+        </div>
+      </DrawerTrigger>
       <DrawerContent className="border-0">
         {isLoading ? <Loader /> : <></>}
         <div className="w-full c-height px-5 bg-[#16131C]">

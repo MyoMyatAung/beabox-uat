@@ -73,6 +73,8 @@ function VideoSidebar({
   const [follow, setFollow] = useState(post?.is_followed);
   const dispatch = useDispatch();
   const { videos } = useSelector((state: any) => state.videoSlice);
+  const [page, setPage] = useState(1);
+
   const [isOpen, setIsOpen] = useState(false);
 
   const location = useLocation();
@@ -83,7 +85,7 @@ function VideoSidebar({
     setCommentsVisible(true);
     setIsLoading(true);
     try {
-      const response = await getComments({ post_id });
+      const response = await getComments({ post_id, page });
       if (response && response.data) {
         setComments(response && ((response as any).data.data as any[]));
       }
@@ -98,7 +100,7 @@ function VideoSidebar({
     setCommentsVisible(true);
     setIsLoading(false);
     try {
-      const response = await getComments({ post_id });
+      const response = await getComments({ post_id, page });
       if (response && response.data) {
         setComments((response as any).data.data);
       }
@@ -454,6 +456,10 @@ function VideoSidebar({
         isLoading={isLoading}
         refetchComments={refetchComments}
         setComments={setComments}
+        page={page}
+        setPage={setPage}
+        getComments={getComments}
+        comment_count={post?.comment_count}
       />
     </div>
   );

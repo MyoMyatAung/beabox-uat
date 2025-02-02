@@ -94,9 +94,9 @@ export const homeApi = createApi({
         }),
       }),
     }),
-    commentList: builder.mutation<void, { post_id: any }>({
-      query: ({ post_id }) => ({
-        url: `comments/list`,
+    commentList: builder.mutation<void, { post_id: any; page: any }>({
+      query: ({ post_id, page }) => ({
+        url: `comments/list?page=${page}`,
         method: "POST",
         body: convertToSecurePayload({
           post_id,
