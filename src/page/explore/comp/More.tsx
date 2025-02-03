@@ -32,7 +32,7 @@ const More: React.FC<MoreProps> = () => {
   // console.log(data);
   // console.log(isFetching);
 
-  console.log(more_tab,filter)
+  // console.log(more_tab,filter)
 
   useEffect(() => {
     // dispatch(setMoreTab("Popular")); // Set default tab if needed

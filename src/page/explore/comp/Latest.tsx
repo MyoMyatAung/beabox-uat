@@ -36,14 +36,14 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
     if (data?.data) {
       setWaterFall((prev) => [...prev, ...data.data]);
 
-      const loadedItems =
-        data?.pagination?.current_page * data?.pagination?.per_page;
-      setHasMore(loadedItems < data?.pagination?.total);
-    } else {
-      setHasMore(false);
+    //   const loadedItems =
+    //     data?.pagination?.current_page * data?.pagination?.per_page;
+    //   setHasMore(loadedItems < data?.pagination?.total);
+    // } else {
+    //   setHasMore(false);
     }
   }, [data]);
-  // console.log(data)
+  console.log(data?.data)
 
   const formatNumber = (num: number) => {
     if (num >= 1000) {
@@ -75,7 +75,8 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
       ) : (
         <div className=" flex w-full justify-center">
           <div
-            className="columns-2 gap-1 relative "
+            // className="columns-2 gap-1 relative "
+            className=" grid grid-cols-2 relative gap-1"
             ref={contentRef}
             style={{
               columnGap: "20px",
