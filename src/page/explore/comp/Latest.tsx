@@ -36,14 +36,14 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
     if (data?.data) {
       setWaterFall((prev) => [...prev, ...data.data]);
 
-    //   const loadedItems =
-    //     data?.pagination?.current_page * data?.pagination?.per_page;
-    //   setHasMore(loadedItems < data?.pagination?.total);
-    // } else {
-    //   setHasMore(false);
+      const loadedItems =
+        data?.pagination?.current_page * data?.pagination?.per_page;
+      setHasMore(loadedItems < data?.pagination?.total);
+    } else {
+      setHasMore(false);
     }
   }, [data]);
-  console.log(data?.data)
+  // console.log(data?.data)
 
   const formatNumber = (num: number) => {
     if (num >= 1000) {
