@@ -23,6 +23,7 @@ import { setPage } from "./services/pageSlice";
 import HeartCount from "./components/Heart";
 import VideoContainer from "./components/VideoContainer";
 import Ads from "./components/Ads";
+import { setBottomLoader } from "./services/loaderSlice";
 
 const Home = () => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
@@ -181,30 +182,110 @@ const Home = () => {
     }
   }, [currentActivePost]);
 
+  // // Pagination observer for loading more videos
+  // useEffect(() => {
+  //   const container = videoContainerRef.current;
+  //   if (!container) return;
+
+  //   // Function to check if all videos are loaded
+  //   const areAllVideosLoaded = () => {
+  //     const videoElements = container.querySelectorAll("video");
+  //     return Array.from(videoElements).every((video) => video.readyState >= 1); // readyState 3 means data is loaded enough to play
+  //   };
+
+  //   const observer = new IntersectionObserver(
+  //     (entries) => {
+  //       entries.forEach((entry) => {
+  //         if (entry.isIntersecting) {
+  //           console.log("winnnn");
+  //           if (areAllVideosLoaded()) {
+  //             console.log("alll videos");
+  //             // If all videos are loaded, dispatch to load more
+  //             dispatch(setPage(page + 1));
+  //             setBottomLoading(false);
+  //           } else {
+  //             console.log("load");
+  //             // Show loading indication
+  //             setBottomLoading(true); // You can trigger a refresh state or show loading spinner
+  //           }
+  //         }
+  //       });
+  //     },
+  //     { rootMargin: "100px", threshold: 0.5 }
+  //   );
+
+  //   if (areAllVideosLoaded()) {
+  //     console.log("obser");
+  //     const lastVideoElement =
+  //       container.children[container.children.length - 1];
+  //     if (lastVideoElement) {
+  //       observer.observe(lastVideoElement);
+  //     }
+  //   }
+
+  // if (videos[currentTab === 2 ? "foryou" : "follow"].length > 1) {
+  //   const secondLastVideo = container.children[container.children.length - 1];
+
+  // }
+
+  //   return () => {
+  //     observer.disconnect();
+  //   };
+  // }, [videos[currentTab === 2 ? "foryou" : "follow"], refresh]);
+
   // Pagination observer for loading more videos
   useEffect(() => {
     const container = videoContainerRef.current;
     if (!container) return;
 
+    const areAllVideosLoaded = () => {
+      const videoElements = container?.querySelectorAll("video");
+      return Array.from(videoElements).every((video) => video.readyState >= 3); // readyState 3 means data is loaded enough to play
+    };
+
+    // Wait for all videos to be loaded before triggering pagination
+    const waitForVideosToLoad = () => {
+      return new Promise((resolve) => {
+        const interval = setInterval(() => {
+          if (areAllVideosLoaded()) {
+            clearInterval(interval);
+            resolve(true);
+          }
+        }, 500); // Check every 500ms if the videos are loaded
+      });
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            // dispatch(setPage((prevPage: any) => prevPage + 1));
+            dispatch(setBottomLoader(true));
+            // If videos are not fully loaded, show loading spinner
 
-            dispatch(setPage(page + 1));
-            // setPage((prevPage) => prevPage + 1);
+            // Wait for videos to be ready, then trigger pagination
+            waitForVideosToLoad().then(() => {
+              if (areAllVideosLoaded()) {
+                dispatch(setPage(page + 1)); // Load more videos
+                dispatch(setBottomLoader(false));
+              } else {
+                dispatch(setBottomLoader(true));
+              }
+            });
           }
         });
       },
-      { rootMargin: "100px", threshold: 0.5 }
+      {
+        rootMargin: "100px", // Trigger the observer when 100px from the bottom
+        threshold: 0.5, // 50% visibility of the last video
+      }
     );
 
+    // Observe the last video element
     if (videos[currentTab === 2 ? "foryou" : "follow"].length > 1) {
-      const secondLastVideo = container.children[container.children.length - 3];
-      if (secondLastVideo) observer.observe(secondLastVideo);
+      const secondLastVideo = container.children[container.children.length - 1];
+      observer.observe(secondLastVideo);
     }
-
+    // Cleanup observer on component unmount or when dependencies change
     return () => {
       observer.disconnect();
     };
