@@ -208,3 +208,92 @@ input:checked + .slider:before {
   border: 8px solid rgba(255, 255, 255, 0.12);
   /* background: url(<path-to-image>) lightgray 50% / cover no-repeat; */
 }
+/* 
+@keyframes loading-border {
+  from {
+    left: 0%;
+    width: 0;
+    z-index: 100;
+  }
+  to {
+    left: 0;
+    width: 100%;
+  }
+}
+
+.loading-border {
+  position: relative;
+  border-top: 2px solid transparent;
+}
+
+.loading-border:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, #ff4d4d, #ff9800, #ff4d4d);
+  animation: loading-border 1.5s linear infinite;
+} */
+
+/* Define the loading animation where the left and right borders meet at the center */
+/* Define the loading animation where the left and right borders meet at the center and reverse */
+/* Define the loading animation where the left and right borders meet at the center and reverse */
+@keyframes loading-border {
+  0% {
+    width: 0%; /* Start with no width */
+    left: 0; /* Starting from the left */
+  }
+
+  50% {
+    width: 50%; /* Both sides expanding to the center */
+    left: 50%; /* Move the start point to the center */
+  }
+
+  100% {
+    width: 0%; /* Both sides collapse back to zero */
+    left: 0; /* Move back to the left */
+  }
+}
+/* Define the loading animation for the border */
+.loading-border {
+  position: relative;
+  border-top: 2px solid transparent; /* Default transparent border */
+}
+
+.loading-border:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    #cf6bf1,
+    #bf00ff,
+    #cf6bf1
+  ); /* TikTok-like red-orange gradient */
+  animation: loading-border 1.5s ease-in-out infinite; /* Smooth easing in and out */
+}
+
+/* Define the loading animation for the border */
+.loading-border {
+  position: relative;
+  border-top: 2px solid transparent; /* Default transparent border */
+}
+
+.loading-border:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    #cf6bf1,
+    #bf00ff,
+    #cf6bf1
+  ); /* TikTok-like red-orange gradient */
+  animation: loading-border 1.5s ease-in-out infinite; /* Smooth easing in and out */
+}

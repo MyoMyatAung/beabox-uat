@@ -9,6 +9,7 @@ import ProfileSVG from "@/assets/icons/Profile.svg";
 import Profile1SVG from "@/assets/icons/Profile1.svg";
 import Explore1SVG from "@/assets/icons/Explore1.svg";
 import App1SVG from "@/assets/icons/App1.svg";
+import { useSelector } from "react-redux";
 
 const navItems = [
   { name: "首页", selectedIcon: Home1SVG, icon: HomeSVG, href: "/" },
@@ -35,8 +36,15 @@ const navItems = [
 
 export function BottomNav() {
   const { pathname } = useLocation();
+  const { bottomLoader } = useSelector((state: any) => state.loaderSlice);
+
   return (
-    <nav className="h-[76px] flex items-center justify-around p-4 bg-[#191721] backdrop-blur-sm border-t border-white/10">
+    <nav
+      className={`h-[76px] flex items-center justify-around p-4 bg-[#191721] backdrop-blur-sm border-t border-white/10  ${
+        bottomLoader && "loading-border"
+      }`}
+    >
+      {" "}
       {navItems.map((item) => (
         <Link
           key={item.name}
