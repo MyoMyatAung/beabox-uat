@@ -264,7 +264,7 @@ const Profile = () => {
         </div>
         <div className="sticky top-[100px] z-[1200]">
           <div className="z-[1200] relative px-5">
-            <VideoTabs login={user?.token} />
+            <VideoTabs showHeader={showHeader} login={user?.token} />
           </div>
         </div>
       </div>
