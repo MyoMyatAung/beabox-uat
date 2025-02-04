@@ -41,7 +41,7 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
     }
   }, [data, notice]);
   // console.log(NotList)
-  console.log(data?.data)
+  // console.log(data?.data)
 
   const handleStartClose = () => {
     setShowStart(false);
