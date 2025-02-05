@@ -21,7 +21,7 @@ interface ResultsProps {}
 
 const Results: React.FC<ResultsProps> = ({}) => {
   const [tabs, setTabs] = useState([]);
-  const [activeTab, setActiveTab] = useState("综合");
+  const [activeTab, setActiveTab] = useState("");
   const { data: TabsData } = useGetTabListQuery("");
   const [searchParams] = useSearchParams();
   const initialQuery = searchParams.get("query") || "";
@@ -59,6 +59,8 @@ const Results: React.FC<ResultsProps> = ({}) => {
     });
   }, [activeTab, currentPage]);
 
+  console.log(data);
+
   useEffect(() => {
     if (data?.data) {
       setMovies((prevMovies) =>
@@ -70,6 +72,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
   useEffect(() => {
     if (TabsData?.data) {
       setTabs(TabsData.data);
+      setActiveTab(TabsData?.data[0]);
     }
   }, [TabsData]);
 
