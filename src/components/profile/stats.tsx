@@ -15,7 +15,7 @@ import {
 } from "@/store/slices/profileSlice";
 import withFollowData from "@/hocs/withFollowData";
 import { useGetMyOwnProfileQuery } from "@/store/api/profileApi";
-const Stats = ({ followers, following, nickname, likeCount }: any) => {
+const Stats = ({ nickname }: any) => {
   const isDrawerOpen = useSelector((state: any) => state.profile.isDrawerOpen);
   const user = useSelector((state: any) => state.persist.user);
   // console.log(user);
