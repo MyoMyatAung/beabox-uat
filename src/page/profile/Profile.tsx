@@ -58,7 +58,7 @@ const Profile = () => {
       ([entry]) => {
         // When the header is not intersecting (i.e., it's sticky at the top),
         // we set showHeader to true
-        setShowHeader(!entry.isIntersecting);
+        // setShowHeader(!entry.isIntersecting);
       },
       {
         // This rootMargin ensures the callback triggers right as the element
@@ -245,7 +245,7 @@ const Profile = () => {
         </div>
         <div
           ref={headerRef}
-          className="w-full sticky top-0 z-[1500] py-1 h-[1px]"
+          className="w-full top-0 z-[1500] py-1 h-[1px]"
         ></div>
         <div className="px-5">
           {user?.token ? (
@@ -262,7 +262,7 @@ const Profile = () => {
             <></>
           )}
         </div>
-        <div className="sticky top-[100px] z-[1200]">
+        <div className="top-[100px] z-[1200]">
           <div className="z-[1200] relative px-5">
             <VideoTabs showHeader={showHeader} login={user?.token} />
           </div>
