@@ -239,14 +239,14 @@ const Profile = () => {
             name={data?.data?.nickname}
           />
         )}
-        <div
-          ref={headerRef}
-          className="w-full sticky top-0 z-[1500] py-1 h-[1px]"
-        ></div>
 
         <div className={`px-5 ${showHeader ? "opacity-0" : "opacity-1"}`}>
           <Stats />
         </div>
+        <div
+          ref={headerRef}
+          className="w-full sticky top-0 z-[1500] py-1 h-[1px]"
+        ></div>
         <div className="px-5">
           {user?.token ? (
             <Link to={paths.profileDetail}>
