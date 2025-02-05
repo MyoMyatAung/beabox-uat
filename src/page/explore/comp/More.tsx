@@ -32,7 +32,7 @@ const More: React.FC<MoreProps> = () => {
   // console.log(data);
   // console.log(isFetching);
 
-  console.log(more_tab,filter)
+  // console.log(more_tab,filter)
 
   useEffect(() => {
     // dispatch(setMoreTab("Popular")); // Set default tab if needed
@@ -66,6 +66,7 @@ const More: React.FC<MoreProps> = () => {
   };
 
   // console.log(more_tab);
+  // console.log(filter)
   return (
     <>
       <div className="px-[20px] flex flex-col relative min-h-scree bg-[#16131C]">
@@ -97,7 +98,7 @@ const More: React.FC<MoreProps> = () => {
 
         {/* List */}
         <div className="py-[20px] flex flex-col gap-[20px] w-full mt-[80px]">
-          {isLoading && isFetching ? (
+          {isLoading || isFetching ? (
             <div className=" flex justify-center w-screen py-[200px]">
               <div className="">
                 <img
@@ -109,7 +110,7 @@ const More: React.FC<MoreProps> = () => {
             </div>
           ) : (
             <>
-              {(more_tab === "Popular" ? list : list).map(
+              {(more_tab === filter[0]?.key ? list : list).map(
                 (item: any, index) => (
                   <div
                     onClick={() => showDetailsVod(item)}

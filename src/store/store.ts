@@ -20,6 +20,7 @@ import activeSlice from "@/page/home/services/activeSlice";
 import videoSlice from "@/page/home/services/videosSlice";
 import pageSlice from "@/page/home/services/pageSlice";
 import muteSlice from "@/page/home/services/muteSlice";
+import loaderSlice from "@/page/home/services/loaderSlice";
 
 const persistConfig = {
   key: "root",
@@ -42,6 +43,7 @@ const rootReducer = combineReducers({
   videoSlice: videoSlice,
   pageSlice: pageSlice,
   muteSlice: muteSlice,
+  loaderSlice: loaderSlice,
   [profileApi.reducerPath]: profileApi.reducer,
   [authApi.reducerPath]: authApi.reducer,
   [walletApi.reducerPath]: walletApi.reducer,

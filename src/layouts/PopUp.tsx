@@ -50,7 +50,8 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
 
   const handleAppClose = () => {
     setShowAppContent(false);
-    setShowNotice(true);
+    // setShowNotice(true);
+    setShowAd(false);
   };
 
   const handleNoticeClose = () => {

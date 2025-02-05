@@ -6,6 +6,7 @@ import PopApp from "./comp/PopApp";
 import Recommand from "./comp/Recommand";
 import Latest from "./comp/Latest";
 import { Swiper } from "swiper/react";
+import '../home/home.css'
 import "swiper/css";
 import { SwiperSlide } from "swiper/react";
 import { useGetExploreHeaderQuery } from "@/store/api/explore/exploreApi";
@@ -69,7 +70,7 @@ const Explore = () => {
     <>
       {/* {show && <VodDetails  />} */}
 
-      <div className="flex bg-[#16131C] justify-center items-center min-h-screen w-screen overflow-clip">
+      <div className="flex max-w-[1024px] home-main w-full bg-[#16131C] justify-center items-center min-h-screen overflow-clip">
         <div className="explore_sec w-screen xl:w-[800px] flex flex-col justify-center items-cente px-[10px] pb-[100px] mt-14">
           <Banner />
           <PopApp />
@@ -91,8 +92,8 @@ const Explore = () => {
                 centeredSlides={true}
                 // loop={true}
               >
-                {data?.data?.tabs?.map((gg: any) => (
-                  <SwiperSlide>
+                {data?.data?.tabs?.map((gg: any, index: any) => (
+                  <SwiperSlide key={index}>
                     {exp_header === gg.name && (
                       <div className=" min-h-screen text-white">
                         {gg.type === "topic" ? (

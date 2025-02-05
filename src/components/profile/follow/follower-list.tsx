@@ -1,11 +1,15 @@
 import { useSelector } from "react-redux";
 import FollowCard from "../follow-card";
-import { useGetFollowerListQuery } from "@/store/api/profileApi";
+import {
+  useGetFollowerListQuery,
+  useGetMyProfileQuery,
+} from "@/store/api/profileApi";
 import { Users, UsersRound } from "lucide-react";
 import Loader from "../../../page/home/vod_loader.gif";
 
 const FollowerList = ({ searchTerm }: any) => {
   const user_code = useSelector((state: any) => state.persist?.user?.id);
+  const { data: udata } = useGetMyProfileQuery("");
 
   const { data, isLoading, isFetching } = useGetFollowerListQuery({
     user_id: user_code,

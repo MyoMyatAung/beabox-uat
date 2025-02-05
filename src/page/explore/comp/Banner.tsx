@@ -93,3 +93,87 @@ const Banner: React.FC = () => {
 };
 
 export default Banner;
+
+// import React, { useEffect, useState } from "react";
+// import "swiper/css";
+// import "swiper/css/autoplay"; // Import Swiper autoplay styles
+// import { Swiper, SwiperSlide } from "swiper/react";
+// import { Autoplay } from "swiper/modules"; // Import Swiper's autoplay module
+// import { useGetExploreHeaderQuery } from "@/store/api/explore/exploreApi";
+
+// const Banner: React.FC = () => {
+//   const [ad, setAd] = useState([]);
+//   const { data, isLoading } = useGetExploreHeaderQuery("");
+//   const [selectedIndex, setSelectedIndex] = useState(0);
+
+//   const handleOnChange = (swiper: any) => {
+//     setSelectedIndex(swiper.realIndex);
+//   };
+
+//   useEffect(() => {
+//     if (data?.data) {
+//       const cur = data?.data?.ads?.carousel;
+//       setAd(cur || []);
+//     }
+//   }, [data]);
+
+//   const loopCondition = selectedIndex === ad.length;
+//   console.log(" this is mf", selectedIndex, loopCondition);
+
+//   return (
+//     <div className="py-[20px] relative">
+//       {isLoading ? (
+//         <div className="w-full h-[194px] bg-white/20 rounded-md animate-pulse"></div>
+//       ) : (
+//         ad.length > 0 && (
+//           <Swiper
+//             className=""
+//             slidesPerView={1.5}
+//             spaceBetween={"0px"}
+//             centeredSlides={true}
+//             loop={loopCondition}
+//             autoplay={{ delay: 3000, disableOnInteraction: false }}
+//             modules={[Autoplay]}
+//             onSlideChange={handleOnChange}
+//           >
+//             {ad.map((cc: any, index: number) => (
+//               <SwiperSlide className=" w-full" key={index}>
+//                 <a
+//                   href={cc.url}
+//                   target="_blank"
+//                   className={`flex justify-center w-full items-center px-[8px] flex-col relative transition-all duration-300 ${
+//                     selectedIndex === index
+//                       ? "scale-110" // Active slide is bigger
+//                       : "scale-75 opacity-70" // Non-active slides are smaller and faded
+//                   }`}
+//                 >
+//                   <img
+//                     className="rounded-md object-cover w-[332px] h-[162px] transition-all duration-300"
+//                     src={cc.image}
+//                     alt={`Slide ${index + 1}`}
+//                   />
+//                 </a>
+//               </SwiperSlide>
+//             ))}
+//           </Swiper>
+//         )
+//       )}
+//       {/* Custom Dots */}
+//       <ul className="flex justify-center items-center gap-[10px] w-full  mt-2 absolute bottom-0 left-0">
+//         {ad.map((_, dotIndex) => (
+//           <li
+//             key={dotIndex}
+//             className={`w-[6px] h-[6px] rounded-full ${
+//               selectedIndex === dotIndex ? "bg-white" : "bg-[#888]"
+//             }`}
+//             onClick={() => handleOnChange(dotIndex)}
+//             role="button"
+//             tabIndex={0}
+//           ></li>
+//         ))}
+//       </ul>
+//     </div>
+//   );
+// };
+
+// export default Banner;

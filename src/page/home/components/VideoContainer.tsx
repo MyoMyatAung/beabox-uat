@@ -24,6 +24,7 @@ const VideoContainer = ({
   width,
   height,
   container,
+  index,
 }: {
   video: any;
   setWidth: any;
@@ -38,6 +39,7 @@ const VideoContainer = ({
   width: any;
   height: any;
   container: any;
+  index: any;
 }) => {
   const [likeCount, setLikeCount] = useState(video?.like_count);
   const [isLiked, setIsLiked] = useState(video?.is_liked);
