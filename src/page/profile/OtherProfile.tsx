@@ -19,7 +19,7 @@ const OtherProfile = () => {
     isLoading: userLoading,
     refetch,
   } = useGetUserProfileQuery(id || "");
-  // console.log(userData, "userData");
+  console.log(userData, "userData");
   if (userLoading) return <Loader />;
   return (
     <>
@@ -41,7 +41,10 @@ const OtherProfile = () => {
             <div></div>
           </div>
           <div className="w-full flex items-center gap-3 py-5">
-            <ProfileAvatar progressData={userData?.data?.level_progress} />
+            <ProfileAvatar
+              photo={userData?.data?.profile_photo}
+              progressData={userData?.data?.level_progress}
+            />
             <div className="z-[1200] flex-1 flex flex-col gap-0.5">
               <p className="z-[1200] text-[18px] flex items-center gap-1">
                 {userData?.data?.nickname}
