@@ -49,6 +49,8 @@ const Results: React.FC<ResultsProps> = ({}) => {
     }
   };
 
+  console.log("a", TabsData);
+
   // console.log(activeTab);
 
   useEffect(() => {

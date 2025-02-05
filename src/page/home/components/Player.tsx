@@ -144,6 +144,47 @@ const Player = ({
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
+            console.log(artPlayerInstanceRef?.current);
+            // // Handle ready and play events for dimension updates
+            // (artPlayerInstanceRef.current as any)?.on("ready", () => {
+            //   setWidth(
+            //     (artPlayerInstanceRef.current as Artplayer)?.video
+            //       ?.videoWidth || 0
+            //   );
+            //   setHeight(
+            //     (artPlayerInstanceRef.current as Artplayer)?.video
+            //       ?.videoHeight || 0
+            //   );
+            // });
+
+            // (artPlayerInstanceRef.current as any)?.on("play", () => {
+            //   setWidth(
+            //     (artPlayerInstanceRef.current as Artplayer)?.video?.videoWidth
+            //   );
+            //   setHeight(
+            //     (artPlayerInstanceRef.current as Artplayer)?.video?.videoHeight
+            //   );
+            // });
+            // (artPlayerInstanceRef.current as any)?.play();
+          } else {
+            if (artPlayerInstanceRef.current) {
+              artPlayerInstanceRef.current.video.src = "";
+              artPlayerInstanceRef.current.destroy();
+              artPlayerInstanceRef.current = null;
+              //(artPlayerInstanceRef.current as any)?.pause();
+            }
+          }
+        });
+      },
+      {
+        rootMargin: "0px", // Trigger exactly at the edge of the viewport
+        threshold: 0.01, // Trigger when 50% of the element is visible
+      }
+    );
+    const autoplayObserver1 = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
             // Handle ready and play events for dimension updates
             (artPlayerInstanceRef.current as any)?.on("ready", () => {
               setWidth(
@@ -166,12 +207,17 @@ const Player = ({
             });
             (artPlayerInstanceRef.current as any)?.play();
           } else {
-            (artPlayerInstanceRef.current as any)?.pause();
+            if (artPlayerInstanceRef.current) {
+              // artPlayerInstanceRef.current.video.src = "";
+              // artPlayerInstanceRef.current.destroy();
+              // artPlayerInstanceRef.current = null;
+              (artPlayerInstanceRef.current as any)?.pause();
+            }
           }
         });
       },
       {
-        rootMargin: "200px 0px", // Trigger exactly at the edge of the viewport
+        rootMargin: "200px", // Trigger exactly at the edge of the viewport
         threshold: 0.5, // Trigger when 50% of the element is visible
       }
     );
@@ -179,10 +225,12 @@ const Player = ({
     // Observe the player container for both initialization and autoplay
     initObserver.observe(container);
     autoplayObserver.observe(container);
+    autoplayObserver1.observe(container);
 
     return () => {
       initObserver.disconnect();
       autoplayObserver.disconnect();
+      autoplayObserver1.disconnect();
 
       if (artPlayerInstanceRef.current) {
         artPlayerInstanceRef.current.destroy();
