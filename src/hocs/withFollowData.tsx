@@ -26,27 +26,27 @@ const withFollowData = (WrapperCompo: any) => {
       (state: any) => state.profile.isDrawerOpen
     );
 
-    const {
-      data: followers,
-      isLoading: followersLoading,
-      refetch: followerRefetch,
-    } = useGetFollowerListQuery(user_code);
-    const {
-      data: following,
-      isLoading: followingLoading,
-      refetch: followingRefetch,
-    } = useGetFollowingListQuery(user_id);
-    useEffect(() => {
-      followerRefetch();
-      followingRefetch();
-    }, [isDrawerOpen]);
+    // const {
+    //   data: followers,
+    //   isLoading: followersLoading,
+    //   refetch: followerRefetch,
+    // } = useGetFollowerListQuery(user_code);
+    // const {
+    //   data: following,
+    //   isLoading: followingLoading,
+    //   refetch: followingRefetch,
+    // } = useGetFollowingListQuery(user_id);
+    // useEffect(() => {
+    //   followerRefetch();
+    //   followingRefetch();
+    // }, [isDrawerOpen]);
     return (
       <WrapperCompo
         {...props}
-        followers={followers?.data}
-        following={following?.data}
-        followersLoading={followersLoading}
-        followingLoading={followingLoading}
+        // followers={followers?.data}
+        // following={following?.data}
+        // followersLoading={followersLoading}
+        // followingLoading={followingLoading}
         nickname={nickname}
       />
     );
