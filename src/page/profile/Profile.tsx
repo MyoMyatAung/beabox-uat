@@ -195,8 +195,8 @@ const Profile = () => {
                           <span>未知</span>
                         ) : (
                           <>
-                            <span>{region?.city}</span>:
-                            <span>{region?.province}</span>
+                            <span>{region?.provinceName}</span>:
+                            <span>{region?.city}</span>
                           </>
                         )}
                       </div>
