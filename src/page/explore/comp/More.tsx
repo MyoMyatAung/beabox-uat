@@ -25,27 +25,31 @@ const More: React.FC<MoreProps> = () => {
   const location = useLocation();
   const [list, setList] = useState<any[]>([]);
   const [filter, setFilter] = useState<any[]>([]);
-  const { data, isLoading, isFetching, refetch } = useGetExploreTagQuery({
+  const { data, isLoading, isFetching } = useGetExploreTagQuery({
     order: more_tab || "created_at",
     tag: title ? title : "Latest Drama",
     page: page,
   });
-  // console.log(data);
-  // console.log(isFetching);
-
-  // console.log(more_tab,filter)
 
   useEffect(() => {
     // dispatch(setMoreTab("Popular")); // Set default tab if needed
     if (data?.data) {
       setFilter(data?.data.filter);
       setList((prev) => [...prev, ...data.data.list]);
+
+      const loadedItems =
+        data?.pagination?.current_page * data?.pagination?.per_page;
+      setHasMore(loadedItems < data?.pagination?.total);
+      console.log(loadedItems);
       if (!more_tab) {
         dispatch(setMoreTab(filter[0]?.key));
       }
+    } else {
+      setHasMore(false);
     }
-    // refetch();
   }, [data, filter]);
+
+  console.log(data);
 
   const popularItems = Array.from({ length: 10 }, (_, i) => ({
     title: `My Boss (2021) - ${i + 1}`,
@@ -101,12 +105,12 @@ const More: React.FC<MoreProps> = () => {
 
         {/* List */}
         <div className="py-[20px] flex flex-col gap-[20px] w-full mt-[80px]">
-          {isLoading || isFetching ? (
+          {isLoading && isFetching ? (
             <div className=" flex justify-center w-screen py-[200px]">
               <div className="">
                 <img
                   src={Loader}
-                  className="w-[100px] h-[100px]"
+                  className="w-[70px] h-[70px]"
                   alt="Loading"
                 />
               </div>
