@@ -82,7 +82,7 @@ const Profile = () => {
             : defaultCover
         }
         alt=""
-        className={`absolute top-0 left-0 w-full h-[23vh] object-cover object-center`}
+        className={`fixed top-0 left-0 w-full h-[23vh] object-cover object-center`}
       />
       {isCopied ? (
         <div className="w-full absolute top-[80vh] flex justify-center">
