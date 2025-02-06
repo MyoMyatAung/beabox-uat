@@ -1,7 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetUserProfileQuery } from "@/store/api/profileApi";
 import { ChevronLeft } from "lucide-react";
-import { BsPatchCheckFill } from "react-icons/bs";
 import ProfileAvatar from "@/components/profile/profile-avatar";
 import Loader from "@/components/shared/loader";
 import OtherStats from "@/components/profile/other-stats";
@@ -19,7 +18,7 @@ const OtherProfile = () => {
     isLoading: userLoading,
     refetch,
   } = useGetUserProfileQuery(id || "");
-  console.log(userData, "userData");
+  console.log(userData?.data, "userData");
   if (userLoading) return <Loader />;
   return (
     <>
@@ -31,10 +30,10 @@ const OtherProfile = () => {
             : defaultCover
         }
         alt=""
-        className="absolute top-0 left-0 w-full h-[23vh] object-cover object-center"
+        className="fixed top-0 left-0 w-full h-[23vh] object-cover object-center"
       />
-      <div className="px-5 max-h-screen no-scrollbar">
-        <div className="w-full flex flex-col items-center gap-3">
+      <div className={`z-[1200] max-h-screen hide-sb profile-bg `}>
+        <div className="w-full px-5 flex flex-col items-center gap-3">
           <div className="z-[1200] w-full flex gap-3 my-5 justify-between items-center">
             <ChevronLeft onClick={() => navigate(-1)} />
             <p className="text-[16px] mr-5">{userData?.data?.nickname}</p>
@@ -69,27 +68,32 @@ const OtherProfile = () => {
                   </div>
                 </div>
               ) : (
-                <></>
+                <div className="z-[1200] flex">
+                  <div className="z-[1200] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
+                    <span>未知</span>
+                  </div>
+                </div>
               )}
             </div>
           </div>
         </div>
-        <h1 className="text-[12px] text-[#888] mb-5 italic">
-          {userData?.data?.bio ? userData?.data?.bio : ""}
+        <h1 className="text-[12px] text-[#888] mb-5 italic px-5 z-[1200] relative">
+          {userData?.data?.bio && userData?.data?.hide_bio == "off"
+            ? userData?.data?.bio
+            : ""}
         </h1>
-        <OtherStats
-          follower={userData?.data?.followers_count}
-          following={userData?.data?.following_count}
-          likecount={userData?.data?.likes_sum_count}
-        />
-
-        <FollowStatusBtn
-          userData={userData}
-          id={id}
-          refetch={refetch}
-          userLoading={userLoading}
-        />
-        <div className="z-[1200] relative">
+        <div className="z-[1200] relative px-5">
+          <OtherStats
+            followers={userData?.data?.followers_count}
+            following={userData?.data?.following_count}
+            likecount={userData?.data?.likes_sum_count}
+          />
+          <FollowStatusBtn
+            userData={userData}
+            id={id}
+            refetch={refetch}
+            userLoading={userLoading}
+          />
           <VideoTab2 id={id} />
         </div>
       </div>

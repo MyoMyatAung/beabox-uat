@@ -68,6 +68,8 @@ const Profile = () => {
     refetch();
   }, [user, data]);
 
+  console.log(data);
+
   if (isLoading) return <Loader />;
 
   return (
