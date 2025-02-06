@@ -4,11 +4,11 @@ import { setPanding } from "../store/slices/ModelSlice";
 
 import ad1 from "../assets/explore/spl.png";
 import { useGetAdsPopUpQuery } from "@/store/api/explore/exploreApi";
-
+import '../page/search/search.css'
 
 const Landing: React.FC = () => {
   const dispatch = useDispatch();
-    const [cc, setCc] = useState<any>();
+  const [cc, setCc] = useState<any>();
   const [skip, setSkip] = useState(3);
   const [images, setImages] = useState<any>();
   const { data, isLoading } = useGetAdsPopUpQuery("");
@@ -18,11 +18,11 @@ const Landing: React.FC = () => {
   useEffect(() => {
     if (data?.data) {
       const cur = data?.data.splash_screen;
-      if(cur) {
-        setCc(cur)
+      if (cur) {
+        setCc(cur);
         // setImage(cur[0]?.data?.image)
         setImages(cur);
-      } 
+      }
       const timer = setTimeout(() => {
         dispatch(setPanding(false));
         // sendMessageToNative();
@@ -30,8 +30,7 @@ const Landing: React.FC = () => {
 
       return () => clearTimeout(timer);
     }
-
-  }, [data,images]);
+  }, [data, images]);
 
   useEffect(() => {
     if (imgLoad) {
@@ -48,10 +47,14 @@ const Landing: React.FC = () => {
     }
   }, [skip, imgLoad]);
 
+  console.log(imgLoad);
 
   return (
     <>
       <a target="_blink" href={images?.jump_url}>
+        {!imgLoad && (
+          <div className="absolute inset-0 bg-search-img animate-pulse"></div>
+        )}
         <img
           className="h-screen w-screen object-cover"
           onLoad={() => setImgLoad(true)}

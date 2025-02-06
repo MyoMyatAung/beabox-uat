@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "../store";
 import { decryptWithAes } from "@/lib/decrypt";
+import { convertToSecurePayload, convertToSecureUrl } from "@/lib/encrypt";
 
 export const authApi = createApi({
   reducerPath: "authApi",
@@ -31,20 +32,20 @@ export const authApi = createApi({
   }),
   endpoints: (builder) => ({
     getCaptcha: builder.mutation<any, string>({
-      query: (arg: any) => `/captcha`,
+      query: (arg: any) => convertToSecureUrl(`/captcha`),
     }),
     register: builder.mutation<any, string>({
       query: ({ username, password, captcha, captcha_key }: any) => ({
         url: "/register",
         method: "POST",
-        body: { username, password, captcha, captcha_key },
+        body: convertToSecurePayload({ username, password, captcha, captcha_key }),
       }),
     }),
     login: builder.mutation<any, string>({
       query: ({ username, password, captcha, captcha_key }: any) => ({
         url: "/login",
         method: "POST",
-        body: { username, password, captcha, captcha_key },
+        body: convertToSecurePayload({ username, password, captcha, captcha_key }),
       }),
     }),
     storeSecurityQues: builder.mutation<any, string>({
@@ -55,7 +56,7 @@ export const authApi = createApi({
           "Content-Type": "application/json",
           Authorization: `Bearer ${rtoken}`,
         },
-        body: { security_question, answer },
+        body: convertToSecurePayload({ security_question, answer }),
       }),
     }),
   }),
