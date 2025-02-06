@@ -83,7 +83,7 @@ const Ads = ({ ads }: { ads: any }) => {
           target="_blank"
           href={ads?.jump_url}
         >
-          <span>{ads?.profile_text}</span>
+          <span>了解更多</span>
           {mute ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"

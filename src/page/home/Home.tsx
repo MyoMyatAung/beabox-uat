@@ -446,6 +446,7 @@ const Home = () => {
                           data-post-id={video?.post_id} // Add post ID to the container
                         >
                           <VideoContainer
+                            index={index}
                             container={videoContainerRef.current}
                             status={true}
                             countNumber={countNumber}
@@ -568,6 +569,7 @@ const Home = () => {
                           data-post-id={video.post_id} // Add post ID to the container
                         >
                           <VideoContainer
+                            index={index}
                             container={videoContainerRef.current}
                             status={true}
                             countNumber={countNumber}

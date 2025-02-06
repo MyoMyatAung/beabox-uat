@@ -15,7 +15,7 @@ import {
 } from "@/store/slices/profileSlice";
 import withFollowData from "@/hocs/withFollowData";
 import { useGetMyOwnProfileQuery } from "@/store/api/profileApi";
-const Stats = ({ followers, following, nickname, likeCount }: any) => {
+const Stats = ({ nickname }: any) => {
   const isDrawerOpen = useSelector((state: any) => state.profile.isDrawerOpen);
   const user = useSelector((state: any) => state.persist.user);
   // console.log(user);
@@ -30,7 +30,7 @@ const Stats = ({ followers, following, nickname, likeCount }: any) => {
     // open={isDrawerOpen}
     // onOpenChange={() => dispatch(setIsDrawerOpen(true))}
     >
-      <div className="z-[1200] flex justify-between w-full max-w-xs my-4 items-center mx-auto">
+      <div className="z-[1200] px-5 flex justify-between w-full max-w-xs my-4 items-center mx-auto">
         <div className="z-[1200] text-center">
           {user?.token ? (
             <DrawerTrigger

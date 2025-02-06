@@ -11,7 +11,7 @@ import {
 import { useEffect, useState } from "react";
 import Loader from "../../page/home/vod_loader.gif";
 
-const VideoTabs = ({ login }: any) => {
+const VideoTabs = ({ login, showHeader }: any) => {
   const user = useSelector((state: any) => state.persist.user);
   const [page, setPage] = useState(1);
   const [Hispage, setHisPage] = useState(1);
@@ -95,6 +95,7 @@ const VideoTabs = ({ login }: any) => {
             ) : (
               <div className="w-full relative z-[1200]">
                 <VideoGrid
+                  showHeader={showHeader}
                   hasMore={hasMore}
                   fetchMoreData={fetchMoreData}
                   data={waterfall}
@@ -111,6 +112,7 @@ const VideoTabs = ({ login }: any) => {
             ) : (
               <div className="w-full relative  z-[1200]">
                 <VideoGrid
+                  showHeader={showHeader}
                   hasMore={hasMore}
                   fetchMoreData={fetchMoreData}
                   data={HistoryList}

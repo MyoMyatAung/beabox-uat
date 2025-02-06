@@ -3,11 +3,21 @@ import Upload from "./upload";
 import VideoCard from "./video-card";
 import Loader from "../../page/home/vod_loader.gif";
 
-const VideoGrid = ({ isUpload, data, hasMore, fetchMoreData }: any) => {
+const VideoGrid = ({
+  isUpload,
+  data,
+  hasMore,
+  fetchMoreData,
+  showHeader,
+}: any) => {
   // console.log(data);
   return (
-    <div className="py-4 pb-28 absolute">
-      <div className="grid grid-cols-3 gap-2">
+    <div
+      className={`py-4 pb-28 absolute ${
+        showHeader ? "h-screen overflow-auto no-scrollbar" : ""
+      } `}
+    >
+      <div className="grid grid-cols-3 gap-2 pb-32">
         {isUpload ? <Upload /> : <></>}
         {data && (
           <>
