@@ -93,7 +93,7 @@ const Explore = () => {
                 // loop={true}
               >
                 {data?.data?.tabs?.map((gg: any, index: any) => (
-                  <SwiperSlide key={index}>
+                  <SwiperSlide className=" w-full" key={index}>
                     {exp_header === gg.name && (
                       <div className=" min-h-screen text-white">
                         {gg.type === "topic" ? (
