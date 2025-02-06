@@ -11,6 +11,7 @@ import { Person } from "@/assets/profile";
 import { useDispatch } from "react-redux";
 import { setDetails, setTitle } from "@/store/slices/exploreSlice";
 import { paths } from "@/routes/paths";
+import ImageWithPlaceholder from "@/page/search/comp/imgPlaceholder";
 
 interface RecommandProps {
   title: string;
@@ -104,8 +105,15 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
                         onClick={() => showDetailsVod(card)}
                         className=" relative  chinese_photo"
                       >
-                        <img
+                        <ImageWithPlaceholder
+                          src={card?.preview_image}
+                          alt={card.title || "Video"}
+                          width={"100%"}
+                          height={"100%"}
                           className=" w-[175px] h-[100px] rounded-[8px] object-cover"
+                        />
+                        <img
+                          className=" w-[175px] hidden h-[100px] rounded-[8px] object-cover"
                           src={card.preview_image}
                           alt=""
                         />

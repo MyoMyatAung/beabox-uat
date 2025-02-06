@@ -10,6 +10,7 @@ import { setDetails, setMoreTab } from "@/store/slices/exploreSlice";
 import VodDetails from "./VodDetails";
 import { paths } from "@/routes/paths";
 import InfiniteScroll from "react-infinite-scroll-component";
+import ImageWithPlaceholder from "@/page/search/comp/imgPlaceholder";
 
 interface MoreProps {}
 
@@ -44,7 +45,7 @@ const More: React.FC<MoreProps> = () => {
       }
     }
     // refetch();
-  }, [data,filter]); 
+  }, [data, filter]);
 
   const popularItems = Array.from({ length: 10 }, (_, i) => ({
     title: `My Boss (2021) - ${i + 1}`,
@@ -71,13 +72,15 @@ const More: React.FC<MoreProps> = () => {
     <>
       <div className="px-[20px] flex flex-col relative min-h-scree bg-[#16131C]">
         {/* Header */}
-        <div className=" fixed w-full bg-transparent bg-[#16131C]">
+        <div className=" fixed z-[99] w-full bg-transparent bg-[#16131C]">
           <div className="grid grid-cols-3 justify-between py-[12px] bg-[#16131C] ">
             <ChevronLeft
               onClick={() => navigate("/")}
               className="rec_exp_more_btn px-[2px]"
             />
-            <h1 className="w-2/3 text-white text-[18px] text-center font-[500]">{title}</h1>
+            <h1 className="w-2/3 text-white text-[18px] text-center font-[500]">
+              {title}
+            </h1>
           </div>
 
           {/* Tabs */}
@@ -117,8 +120,15 @@ const More: React.FC<MoreProps> = () => {
                     key={index}
                     className="flex w-full justify-center items-center gap-[16px]"
                   >
+                    <ImageWithPlaceholder
+                      src={item.preview_image}
+                      alt={item.title || "Video"}
+                      width={"100%"}
+                      height={"100%"}
+                      className=" w-[175px] h-[100px] rounded-[8px] object-cover"
+                    />
                     <img
-                      className="w-[107px] h-[69px] rounded-[8px] object-cover object-center"
+                      className="w-[107px] h-[69px] rounded-[8px] object-cover object-center hidden"
                       src={item.preview_image}
                       alt="More"
                     />
