@@ -11,6 +11,7 @@ import { Person } from "@/assets/profile";
 import { useDispatch } from "react-redux";
 import { setDetails, setTitle } from "@/store/slices/exploreSlice";
 import { paths } from "@/routes/paths";
+import ImageWithPlaceholder from "@/page/search/comp/imgPlaceholder";
 
 interface RecommandProps {
   title: string;
@@ -66,24 +67,24 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
 
   // console.log(list);
   return (
-    <div className=" pb-[20px] px-[10px] pt-[10px] ">
+    <div className=" pb-[20px] pt-[10px] px-[10px]">
       {isLoading ? (
-        <div className="grid grid-cols-2 gap-10">
-          <div className="w-[175px] rounded-[8px] h-[140px] bg-white/20"></div>
-          <div className="w-[175px] rounded-[8px] h-[140px] bg-white/20"></div>
-          <div className="w-[175px] rounded-[8px] h-[140px] bg-white/20"></div>
-          <div className="w-[175px] rounded-[8px] h-[140px] bg-white/20"></div>
-          <div className="w-[175px] rounded-[8px] h-[140px] bg-white/20"></div>
-          <div className="w-[175px] rounded-[8px] h-[140px] bg-white/20"></div>
-          <div className="w-[175px] rounded-[8px] h-[140px] bg-white/20"></div>
-          <div className="w-[175px] rounded-[8px] h-[140px] bg-white/20"></div>
+        <div className="grid w-full grid-cols-2 gap-[18px]">
+          <div className="w-[175px w-full rounded-[8px] h-[140px] bg-white/20"></div>
+          <div className="w-[175px w-full rounded-[8px] h-[140px] bg-white/20"></div>
+          <div className="w-[175px w-full rounded-[8px] h-[140px] bg-white/20"></div>
+          <div className="w-[175px w-full rounded-[8px] h-[140px] bg-white/20"></div>
+          <div className="w-[175px w-full rounded-[8px] h-[140px] bg-white/20"></div>
+          <div className="w-[175px w-full rounded-[8px] h-[140px] bg-white/20"></div>
+          <div className="w-[175px w-full rounded-[8px] h-[140px] bg-white/20"></div>
+          <div className="w-[175px w-full rounded-[8px] h-[140px] bg-white/20"></div>
         </div>
       ) : (
         <>
           {list?.map((ll: any, index) => (
-            <div key={index} className="flex flex-col items-center">
+            <div key={index} className="flex flex-col w-full items-center">
               {/* header */}
-              <div className=" flex w-full justify-between items-center px-1">
+              <div className=" flex w-full justify-between items-center px-[10p]">
                 <h1 className=" text-white text-[14px] font-[500] leading-[20px]">
                   {ll.title}
                 </h1>
@@ -96,16 +97,23 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
                 </div>
               </div>{" "}
               {/* content */}
-              <div className=" py-[12px] grid grid-cols-2 justify-cente w-full items-cente  gap-[18px]">
+              <div className=" py-[12px] w-full grid grid-cols-2 justify-center items-center  gap-[18px]">
                 <>
                   {ll.posts.map((card: any) => (
-                    <div key={card.post_id} className="max-w-[175px] pb-[12px]">
+                    <div key={card.post_id} className="max-w-full pb-[12px]">
                       <div
                         onClick={() => showDetailsVod(card)}
                         className=" relative  chinese_photo"
                       >
+                        <ImageWithPlaceholder
+                          src={card?.preview_image}
+                          alt={card.title || "Video"}
+                          width={"100%"}
+                          height={"100%"}
+                          className=" w-[175px w-full h-[100px] rounded-[8px] object-cover"
+                        />
                         <img
-                          className=" w-[175px] h-[100px] rounded-[8px] object-cover"
+                          className=" w-[175px] hidden h-[100px] rounded-[8px] object-cover"
                           src={card.preview_image}
                           alt=""
                         />

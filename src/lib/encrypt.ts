@@ -27,21 +27,65 @@ function encryptDataWithChunks(data: string): string {
     const jsEncrypt = new JSEncrypt();
     jsEncrypt.setPublicKey(import.meta.env.VITE_PUBLIC_KEY_STRING);
 
-    // Split data into chunks to fit RSA key size limitations (2048-bit RSA key -> max chunk size ~245 bytes)
-    const chunks = splitIntoChunks(data, 245);
-    const encryptedChunks = chunks.map((chunk) => {
-      const encrypted = jsEncrypt.encrypt(chunk);
-      if (!encrypted) throw new Error("RSA encryption failed for chunk.");
-      return encrypted;
+    // Convert string to UTF-8 bytes
+    const encoder = new TextEncoder();
+    const binaryData = encoder.encode(data);
+
+    // Split into 245-byte chunks
+    const chunks = splitIntoByteChunks(binaryData, 245);
+    
+    // Encrypt each chunk and collect binary results
+    const encryptedChunks = chunks.map(chunk => {
+      // Convert bytes to Latin-1 string for proper byte preservation
+      const chunkString = new TextDecoder('latin1').decode(chunk);
+      const encrypted = jsEncrypt.encrypt(chunkString);
+      if (!encrypted) throw new Error("RSA encryption failed for chunk");
+      return base64ToBytes(encrypted);
     });
 
-    // Concatenate encrypted chunks and perform URL-safe Base64 encoding
-    const concatenated = encryptedChunks.join("");
-    return urlSafeBase64Encode(concatenated);
+    // Concatenate all encrypted bytes
+    const concatenated = concatenateUint8Arrays(encryptedChunks);
+    
+    // Convert to URL-safe Base64
+    return bytesToUrlSafeBase64(concatenated);
   } catch (err) {
     console.error("Chunked Encryption failed:", err);
     throw new Error(`Encryption failed: ${err}`);
   }
+}
+
+// Helper functions
+function splitIntoByteChunks(data: Uint8Array, chunkSize: number): Uint8Array[] {
+  const chunks = [];
+  for (let i = 0; i < data.length; i += chunkSize) {
+    chunks.push(data.slice(i, i + chunkSize));
+  }
+  return chunks;
+}
+
+function base64ToBytes(base64: string): Uint8Array {
+  const raw = atob(base64);
+  const bytes = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; i++) {
+    bytes[i] = raw.charCodeAt(i);
+  }
+  return bytes;
+}
+
+function concatenateUint8Arrays(arrays: Uint8Array[]): Uint8Array {
+  const totalLength = arrays.reduce((acc, arr) => acc + arr.length, 0);
+  const result = new Uint8Array(totalLength);
+  let offset = 0;
+  for (const arr of arrays) {
+    result.set(arr, offset);
+    offset += arr.length;
+  }
+  return result;
+}
+
+function bytesToUrlSafeBase64(bytes: Uint8Array): string {
+  const base64 = btoa(String.fromCharCode(...bytes));
+  return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
 /**
@@ -50,13 +94,6 @@ function encryptDataWithChunks(data: string): string {
  * @param {number} chunkSize - Maximum size of each chunk.
  * @returns {string[]} Array of chunks.
  */
-function splitIntoChunks(data: string, chunkSize: number): string[] {
-  const chunks = [];
-  for (let i = 0; i < data.length; i += chunkSize) {
-    chunks.push(data.slice(i, i + chunkSize));
-  }
-  return chunks;
-}
 
 /**
  * Generates an HMAC signature for the given data using the shared key.
@@ -78,9 +115,6 @@ function generateSignature(data: string): string {
  * @param {string} data - The binary data to encode.
  * @returns {string} URL-safe Base64 encoded string.
  */
-function urlSafeBase64Encode(data: string): string {
-  return data.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-}
 
 export function convertToSecurePayload(formData: any): any {
   //   const publicKey = process.env.REACT_APP_PUBLIC_KEY;
