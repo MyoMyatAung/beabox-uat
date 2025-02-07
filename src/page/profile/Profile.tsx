@@ -87,7 +87,7 @@ const Profile = () => {
         className={`fixed top-0 left-0 w-full h-[23vh] object-cover object-center`}
       />
       {isCopied ? (
-        <div className="w-full absolute top-[80vh] flex justify-center">
+        <div className="w-full z-[1300] absolute top-[80vh] flex justify-center">
           <p className="text-[14px] bg-[#FFFFFF14] px-2 py-1 rounded-lg w-[83px] text-center">
             已复制 ID
           </p>
@@ -243,11 +243,13 @@ const Profile = () => {
         </div>
 
         <div ref={headerRef} className="sticky z-[1300] top-0 w-full"></div>
-        {showHeader && (
+        {showHeader ? (
           <ScrollHeader
             photo={data?.data?.profile_photo}
             name={data?.data?.nickname}
           />
+        ) : (
+          <></>
         )}
 
         <div className={`sticky top-[100px] z-[1200]`}>

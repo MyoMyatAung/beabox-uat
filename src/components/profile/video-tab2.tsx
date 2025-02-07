@@ -4,10 +4,29 @@ import VideoGrid from "./video-grid";
 import { FaHeart } from "react-icons/fa";
 import { useGetLikedPostQuery } from "@/store/api/profileApi";
 import Loader from "../../page/home/vod_loader.gif";
+import { useEffect, useState } from "react";
 
-const VideoTab2 = ({ id }: any) => {
-  const { data, isLoading } = useGetLikedPostQuery(id);
+const VideoTab2 = ({ id, visibility, showHeader }: any) => {
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [waterfall, setWaterFall] = useState<any[]>([]);
+  const { data, isLoading } = useGetLikedPostQuery({ user_id: id, page });
 
+  useEffect(() => {
+    if (data?.data) {
+      setWaterFall((prev) => [...prev, ...data.data]);
+
+      const loadedItems =
+        data.pagination.current_page * data.pagination.per_page;
+      setHasMore(loadedItems < data.pagination.total);
+    } else {
+      setHasMore(false);
+    }
+  }, [data]);
+
+  const fetchMoreData = () => {
+    setPage((prevPage) => prevPage + 1);
+  };
   console.log(data);
 
   return (
@@ -32,14 +51,18 @@ const VideoTab2 = ({ id }: any) => {
         ) : (
           <></>
         )}
-        {!data?.data?.length ? (
+        {data?.data?.length > 0 && visibility == "public" ? (
+          <div className="w-full relative  z-[1200]">
+            <VideoGrid
+              showHeader={showHeader}
+              data={waterfall}
+              fetchMoreData={fetchMoreData}
+            />
+          </div>
+        ) : (
           <div className="flex flex-col justify-center items-center w-full mt-[150px]">
             <NoVideo />
             <p className="text-[12px] text-[#888]">这里空空如也～</p>
-          </div>
-        ) : (
-          <div className="w-full relative  z-[1200]">
-            <VideoGrid data={data?.data} />
           </div>
         )}
       </TabsContent>
