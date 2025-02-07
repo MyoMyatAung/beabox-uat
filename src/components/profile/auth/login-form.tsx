@@ -57,7 +57,14 @@ const LoginForm = ({ setIsOpen }: any) => {
     // Add 验证码 logic here
     e.stopPropagation();
     const { emailOrPhone, password } = form.getValues();
-    console.log(emailOrPhone, password);
+
+    console.log("data", {
+      username: emailOrPhone,
+      password,
+      captcha,
+      captcha_key: data?.data?.captcha_key,
+    });
+
     const { data: loginData } = await login({
       username: emailOrPhone,
       password,
@@ -84,7 +91,6 @@ const LoginForm = ({ setIsOpen }: any) => {
     setShow验证码(false);
   }, [lerror]);
 
-  console.log(lerror, "lerrror");
   return (
     <div className="px-5">
       <div className="flex justify-between items-center">
