@@ -115,9 +115,6 @@ function generateSignature(data: string): string {
  * @param {string} data - The binary data to encode.
  * @returns {string} URL-safe Base64 encoded string.
  */
-function urlSafeBase64Encode(data: string): string {
-  return data.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-}
 
 export function convertToSecurePayload(formData: any): any {
   //   const publicKey = process.env.REACT_APP_PUBLIC_KEY;
