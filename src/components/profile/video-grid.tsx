@@ -13,8 +13,8 @@ const VideoGrid = ({
   // console.log(data);
   return (
     <div
-      className={`py-4 pb-28 absolute ${
-        showHeader ? "h-screen overflow-auto no-scrollbar" : ""
+      className={`py-4 w-full pb-28 absolute ${
+        showHeader ? "h-screen no-scrollbar overflow-x-hidden" : ""
       } `}
     >
       <div className="grid grid-cols-3 gap-2 pb-32">
