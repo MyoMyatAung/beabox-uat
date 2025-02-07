@@ -19,7 +19,7 @@ const FollowerList = ({ searchTerm }: any) => {
   // console.log(data?.data, "follower list");
 
   return (
-    <div className="flex flex-col gap-4 w-full no-scrollbar h-screen pb-20">
+    <div className="flex flex-col gap-4 w-full no-scrollbar h-screen pb-5">
       {isLoading || isFetching ? (
         <div className=" flex justify-center w-full py-[200px]">
           <div className="">

@@ -5,7 +5,10 @@ import center from "@/assets/profile/center3.png";
 import VideoTabs from "@/components/profile/video-tabs";
 import { Link } from "react-router-dom";
 import { paths } from "@/routes/paths";
-import { useGetMyProfileQuery } from "@/store/api/profileApi";
+import {
+  useGetMyOwnProfileQuery,
+  useGetMyProfileQuery,
+} from "@/store/api/profileApi";
 import { useSelector } from "react-redux";
 import { PenIcon as UserPen, Bell, X, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,7 +25,7 @@ import ScrollHeader from "@/components/profile/scroll-header";
 const Profile = () => {
   const headerRef = useRef<any>(null);
   const [showHeader, setShowHeader] = useState(false);
-  const { data, isLoading, refetch } = useGetMyProfileQuery("");
+  const { data, isLoading, refetch } = useGetMyOwnProfileQuery("");
   const [show, setShow] = useState(false);
   const user = useSelector((state: any) => state?.persist?.user);
   const gender = useSelector((state: any) => state?.persist?.gender);
@@ -223,7 +226,12 @@ const Profile = () => {
           </div>
         </div>
         <div className={`px-5 ${showHeader ? "opacity-0" : "opacity-1"} `}>
-          <Stats />
+          <Stats
+            followers={data?.data?.followers_count}
+            followings={data?.data?.following_count}
+            likes={data?.data?.likes_sum_count}
+            nickname={data?.data?.nickname}
+          />
         </div>
 
         <div className="px-5">
