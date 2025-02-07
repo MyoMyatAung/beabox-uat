@@ -5,6 +5,7 @@ import { FaHeart } from "react-icons/fa";
 import { useGetLikedPostQuery } from "@/store/api/profileApi";
 import Loader from "../../page/home/vod_loader.gif";
 import { useEffect, useState } from "react";
+import { BsPersonLock } from "react-icons/bs";
 
 const VideoTab2 = ({ id, visibility, showHeader }: any) => {
   const [page, setPage] = useState(1);
@@ -59,10 +60,15 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
               fetchMoreData={fetchMoreData}
             />
           </div>
-        ) : (
+        ) : visibility == "public" ? (
           <div className="flex flex-col justify-center items-center w-full mt-[150px]">
             <NoVideo />
             <p className="text-[12px] text-[#888]">这里空空如也～</p>
+          </div>
+        ) : (
+          <div className="flex gap-2 flex-col justify-center items-center w-full mt-[150px]">
+            <BsPersonLock size={32} />
+            <p className="text-[12px] text-[#888]">私密账号</p>
           </div>
         )}
       </TabsContent>
