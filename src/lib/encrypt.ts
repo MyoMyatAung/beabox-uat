@@ -94,13 +94,6 @@ function bytesToUrlSafeBase64(bytes: Uint8Array): string {
  * @param {number} chunkSize - Maximum size of each chunk.
  * @returns {string[]} Array of chunks.
  */
-function splitIntoChunks(data: string, chunkSize: number): string[] {
-  const chunks = [];
-  for (let i = 0; i < data.length; i += chunkSize) {
-    chunks.push(data.slice(i, i + chunkSize));
-  }
-  return chunks;
-}
 
 /**
  * Generates an HMAC signature for the given data using the shared key.
