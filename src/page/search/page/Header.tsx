@@ -26,15 +26,15 @@ const Header: React.FC<HeaderProps> = ({
         >
           <span
             className={`${
-              activeTab === tt ? " text-white" : " text-white/60"
+              activeTab?.name === tt?.name ? " text-white" : " text-white/60"
             } text-[16px] font-[500]`}
           >
-            {tt}
+            {tt?.name}
           </span>
 
           <span
             className={`h-[4px] w-[24px] bg-white ${
-              activeTab !== tt ? " opacity-0" : "opacity-100"
+              activeTab?.name !== tt?.name ? " opacity-0" : "opacity-100"
             }`}
           ></span>
         </div>
