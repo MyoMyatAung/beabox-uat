@@ -21,12 +21,18 @@ interface ResultsProps {}
 
 const Results: React.FC<ResultsProps> = ({}) => {
   const [tabs, setTabs] = useState([]);
-  const [activeTab, setActiveTab] = useState("");
-  const { data: TabsData } = useGetTabListQuery("");
+  interface Tab {
+    key: string;
+    // Add other properties if needed
+  }
+
+  const [activeTab, setActiveTab] = useState<Tab | null>(null);
+  // const { data: TabsData } = useGetTabListQuery("");
   const [searchParams] = useSearchParams();
   const initialQuery = searchParams.get("query") || "";
   const [query, setQuery] = useState(initialQuery);
   const dispatch = useDispatch();
+  const [loadingTabs, setLoadingTabs] = useState(true); // Track tab loading state
   const [currentPage, setCurrentPage] = useState(1);
   const [movies, setMovies] = useState<any[]>([]);
   const navigate = useNavigate();
@@ -43,40 +49,52 @@ const Results: React.FC<ResultsProps> = ({}) => {
       dispatch(setHistoryData({ data: query.trim() }));
       postSearch({
         search: query,
-        tab: activeTab,
+        tab: activeTab?.key,
         page: currentPage,
       });
     }
   };
 
-  console.log("a", TabsData);
-
-  // console.log(activeTab);
-
   useEffect(() => {
     postSearch({
       search: query,
-      tab: activeTab,
+      tab: "",
       page: currentPage,
+    }).then((response) => {
+      if (response?.data?.data?.orders) {
+        setTabs(response.data.data.orders); // Store tabs separately
+        setActiveTab(response.data.data.orders[0]); // Set first tab active
+      }
+      setLoadingTabs(false); // Tabs have loaded
     });
-  }, [activeTab, currentPage]);
-
-  console.log(data);
+  }, []);
 
   useEffect(() => {
-    if (data?.data) {
+    if (!loadingTabs && activeTab) {
+      postSearch({
+        search: query,
+        tab: activeTab?.key,
+        page: currentPage,
+      });
+    }
+  }, [activeTab, currentPage, loadingTabs]);
+
+  useEffect(() => {
+    if (data?.data?.list && !loadingTabs) {
       setMovies((prevMovies) =>
-        currentPage === 1 ? data.data : [...prevMovies, ...data.data]
+        currentPage === 1
+          ? data.data?.list
+          : [...prevMovies, ...data.data?.list]
       );
     }
   }, [data]);
 
-  useEffect(() => {
-    if (TabsData?.data) {
-      setTabs(TabsData.data);
-      setActiveTab(TabsData?.data[0]);
-    }
-  }, [TabsData]);
+  // useEffect(() => {
+  //   if (data?.data) {
+  //     setTabs(data?.data?.orders);
+  //     setActiveTab(data?.data?.orders[0]);
+  //   }
+  // }, [data]);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -88,7 +106,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
     }
   };
 
-  const noData = !data || data?.data?.length === 0;
+  const noData = !data || data?.data?.list.length === 0;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -527,7 +545,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
                 />
               </div>
             )}
-            {data?.data?.length === 0 &&
+            {data?.data?.list.length === 0 &&
               (currentPage === 1 ? (
                 <div className={`flex justify-center items-center py-[200px]`}>
                   <div className="flex flex-col items-center">

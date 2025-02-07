@@ -53,7 +53,7 @@ const Landing: React.FC = () => {
     <>
       <a target="_blink" href={images?.jump_url}>
         {!imgLoad && (
-          <div className="absolute inset-0 bg-search-img animate-pulse"></div>
+          <div className="absolute inset-0 bg-search-img"></div>
         )}
         <img
           className="h-screen w-screen object-cover"

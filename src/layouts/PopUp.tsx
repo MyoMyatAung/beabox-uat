@@ -13,6 +13,7 @@ interface PopUpProps {
 }
 
 const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
+  const [multiStart, setMultiStart] = useState([]);
   const [ad, setAd] = useState([]);
   const [start, setStart] = useState<any>();
   const [showStart, setShowStart] = useState(true);
@@ -22,6 +23,7 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
 
   const { data, isLoading } = useGetAdsPopUpQuery("");
   const { data: notice, isLoading: noticeLoading } = useGetAdsNoticeQuery("");
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -35,13 +37,13 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
     if (data?.data?.popup_application) {
       setAd(data.data.popup_application.apps);
       setStart(data?.data.app_start_popup);
+      setMultiStart(data?.data?.index_popup);
     }
     if (notice?.data) {
       setNotList(notice?.data);
     }
   }, [data, notice]);
-  // console.log(NotList)
-  // console.log(data?.data)
+  console.log(multiStart);
 
   const handleStartClose = () => {
     setShowStart(false);
@@ -59,6 +61,17 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
     setShowAd(false);
   };
 
+  const handleClose = () => {
+    if (currentIndex < multiStart.length - 1) {
+      setCurrentIndex((prevIndex) => prevIndex + 1);
+    } else {
+      handleStartClose();
+    }
+  };
+
+  const currentImage: any = multiStart[currentIndex];
+  console.log(currentImage);
+
   return (
     <div className="h-screen bg-black/80 w-screen flex flex-col gap-[20px] justify-center items-center fixed top-0 z-[9999]">
       {/* Start Image */}
@@ -66,15 +79,15 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
         <div className=" w-[268px] h-[397px] bg-white/20 animate-pulse"></div>
       ) : (
         <>
-          {showStart && start && (
+          {showStart && currentImage && (
             <div className="w-[330px] flex flex-col gap-0 justify-center items-center">
               <a
                 className="flex justify-center items-center index_start_popup_img"
                 target="_blank"
-                href={start.jump_url}
+                href={currentImage.jump_url}
               >
                 <ImageWithPlaceholder
-                  src={start.image}
+                  src={currentImage?.image}
                   alt="start"
                   width="100%"
                   height="100%"
@@ -82,7 +95,7 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
                 />
               </a>
               <div
-                onClick={handleStartClose}
+                onClick={handleClose}
                 className="initial_popup_ad_box_close p-[9px] mt-4"
               >
                 <svg

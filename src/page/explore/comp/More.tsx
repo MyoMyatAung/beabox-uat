@@ -25,27 +25,34 @@ const More: React.FC<MoreProps> = () => {
   const location = useLocation();
   const [list, setList] = useState<any[]>([]);
   const [filter, setFilter] = useState<any[]>([]);
+  const [customLoad, setCustomLoad] = useState(false);
   const { data, isLoading, isFetching, refetch } = useGetExploreTagQuery({
-    order: more_tab || "created_at",
+    order: more_tab ? more_tab : "created_at",
     tag: title ? title : "Latest Drama",
     page: page,
   });
-  // console.log(data);
-  // console.log(isFetching);
-
-  // console.log(more_tab,filter)
 
   useEffect(() => {
-    // dispatch(setMoreTab("Popular")); // Set default tab if needed
     if (data?.data) {
       setFilter(data?.data.filter);
-      setList((prev) => [...prev, ...data.data.list]);
+      setList((prev) => {
+        const newList = [...prev, ...data.data.list];
+        return newList.filter(
+          (item, index, self) =>
+            index === self.findIndex((t) => t.post_id === item.post_id) // Assuming `id` is unique
+        );
+      });
+      const loadedItems =
+        data?.pagination?.current_page * data?.pagination?.per_page;
+      setHasMore(loadedItems < data?.pagination?.total);
+      console.log(loadedItems);
       if (!more_tab) {
         dispatch(setMoreTab(filter[0]?.key));
       }
+    } else {
+      setHasMore(false);
     }
-    // refetch();
-  }, [data, filter]);
+  }, [data]);
 
   const popularItems = Array.from({ length: 10 }, (_, i) => ({
     title: `My Boss (2021) - ${i + 1}`,
@@ -66,8 +73,20 @@ const More: React.FC<MoreProps> = () => {
     navigate(paths.vod_details);
   };
 
-  // console.log(more_tab);
-  // console.log(filter)
+  const handleTabChange = (ff: any) => {
+    setCustomLoad(true);
+    dispatch(setMoreTab(ff.key));
+    if (isFetching || isLoading) {
+      return;
+    } else {
+      setTimeout(() => {
+        setCustomLoad(false);
+      }, 1000);
+    }
+  };
+
+  // console.log(data?.data);
+
   return (
     <>
       <div className="px-[20px] flex flex-col relative min-h-scree bg-[#16131C]">
@@ -89,9 +108,11 @@ const More: React.FC<MoreProps> = () => {
               <button
                 key={index}
                 className={`text-white text-[14px] font-[400] leading-[16px] px-[16px] py-[8px] ${
-                  ff.active ? "more_tabs_buttons_active" : "more_tabs_buttons"
+                  more_tab === ff.key || ff.active
+                    ? "more_tabs_buttons_active"
+                    : "more_tabs_buttons"
                 }`}
-                onClick={() => dispatch(setMoreTab(ff.key))} // Update more_tab
+                onClick={() => handleTabChange(ff)} // Update more_tab
               >
                 {ff.title}
               </button>
@@ -101,53 +122,47 @@ const More: React.FC<MoreProps> = () => {
 
         {/* List */}
         <div className="py-[20px] flex flex-col gap-[20px] w-full mt-[80px]">
-          {isLoading || isFetching ? (
+          {isLoading || customLoad ? (
             <div className=" flex justify-center w-screen py-[200px]">
               <div className="">
-                <img
-                  src={Loader}
-                  className="w-[100px] h-[100px]"
-                  alt="Loading"
-                />
+                <img src={Loader} className="w-[70px] h-[70px]" alt="Loading" />
               </div>
             </div>
           ) : (
             <>
-              {(more_tab === filter[0]?.key ? list : list).map(
-                (item: any, index) => (
-                  <div
-                    onClick={() => showDetailsVod(item)}
-                    key={index}
-                    className="flex w-full justify-center items-center gap-[16px]"
-                  >
-                    <ImageWithPlaceholder
-                      src={item.preview_image}
-                      alt={item.title || "Video"}
-                      width={"100%"}
-                      height={"100%"}
-                      className=" w-[175px] h-[100px] rounded-[8px] object-cover"
-                    />
-                    <img
-                      className="w-[107px] h-[69px] rounded-[8px] object-cover object-center hidden"
-                      src={item.preview_image}
-                      alt="More"
-                    />
-                    <div className="w-2/3 flex flex-col h-[70px] justify-between">
-                      <span className="text-white text-[14px] font-[400]">
-                        {item.title.length > 20
-                          ? `${item.title.slice(0, 30)}...`
-                          : item.title}{" "}
+              {list?.map((item: any, index) => (
+                <div
+                  onClick={() => showDetailsVod(item)}
+                  key={index}
+                  className="flex w-full justify-center items-center gap-[16px]"
+                >
+                  <ImageWithPlaceholder
+                    src={item.preview_image}
+                    alt={item.title || "Video"}
+                    width={"100%"}
+                    height={"100%"}
+                    className=" w-[175px] h-[100px] rounded-[8px] object-cover"
+                  />
+                  <img
+                    className="w-[107px] h-[69px] rounded-[8px] object-cover object-center hidden"
+                    src={item.preview_image}
+                    alt="More"
+                  />
+                  <div className="w-2/3 flex flex-col h-[70px] justify-between">
+                    <span className="text-white text-[14px] font-[400]">
+                      {item.title.length > 20
+                        ? `${item.title.slice(0, 30)}...`
+                        : item.title}{" "}
+                    </span>
+                    <div className="flex justify-between text-[#AAA] text-[12px] font-[400] leading-[15px]">
+                      <span>
+                        {item.view_count ? item.view_count : "11"} 次观看
                       </span>
-                      <div className="flex justify-between text-[#AAA] text-[12px] font-[400] leading-[15px]">
-                        <span>
-                          {item.view_count ? item.view_count : "11"} 次观看
-                        </span>
-                        <span>{item.like_count} 人喜欢</span>
-                      </div>
+                      <span>{item.like_count} 人喜欢</span>
                     </div>
                   </div>
-                )
-              )}
+                </div>
+              ))}
               <InfiniteScroll
                 className="py-[20px]"
                 dataLength={list.length}

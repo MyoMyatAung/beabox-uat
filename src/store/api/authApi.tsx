@@ -19,10 +19,11 @@ export const authApi = createApi({
       return headers;
     },
     responseHandler: async (response) => {
-      const encryptedData = await response.json(); 
+      const encryptedData = await response.json();
+      console.log(encryptedData);
 
       try {
-        const decryptedData = decryptWithAes(encryptedData?.data); 
+        const decryptedData = decryptWithAes(encryptedData?.data);
         return JSON.parse(decryptedData);
       } catch (err) {
         console.error("Error decrypting response:", err);
@@ -38,14 +39,24 @@ export const authApi = createApi({
       query: ({ username, password, captcha, captcha_key }: any) => ({
         url: "/register",
         method: "POST",
-        body: convertToSecurePayload({ username, password, captcha, captcha_key }),
+        body: convertToSecurePayload({
+          username,
+          password,
+          captcha,
+          captcha_key,
+        }),
       }),
     }),
     login: builder.mutation<any, string>({
       query: ({ username, password, captcha, captcha_key }: any) => ({
         url: "/login",
         method: "POST",
-        body: convertToSecurePayload({ username, password, captcha, captcha_key }),
+        body: convertToSecurePayload({
+          username,
+          password,
+          captcha,
+          captcha_key,
+        }),
       }),
     }),
     storeSecurityQues: builder.mutation<any, string>({
