@@ -31,6 +31,7 @@ const Login = () => {
   const [login, { isLoading, error: lerror }] = useLoginMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const authErr = localStorage.getItem("auth-error") || "";
 
   const [getCaptcha, { data, isLoading: captchaLoading }] =
     useGetCaptchaMutation();
@@ -69,10 +70,11 @@ const Login = () => {
     if (loginData?.status) {
       dispatch(setUser(loginData?.data));
       setShow验证码(false);
+      dispatch(setIsDrawerOpen(false));
       navigate(paths.profile);
     } else {
+      if (authErr) setError(authErr);
       setShow验证码(false);
-      setError("出了点问题");
     }
   };
 
@@ -80,10 +82,11 @@ const Login = () => {
     navigate(-1);
   };
 
-  useEffect(() => {
-    setShow验证码(false);
-    if (lerror) setError(lerror?.data?.message);
-  }, [lerror]);
+  // useEffect(() => {
+  //   const authErr = localStorage.getItem("auth-error") || "";
+  //   console.log(authErr, "authErr");
+  //   if (lerror) setError(authErr);
+  // }, [lerror]);
 
   return (
     <>
@@ -203,9 +206,14 @@ const Login = () => {
                 {/* {isLoading ? "loading..." : "Login"} */}
                 {captchaLoading ? <SmallLoader /> : "登录"}
               </Button>
-              <Link to={paths.forgot_password}>
-                <p className="text-center text-[14px] mt-5">忘记密码？</p>
-              </Link>
+              <div className="flex justify-center">
+                <Link
+                  to={paths.forgot_password}
+                  className="text-center text-[14px] mt-5"
+                >
+                  忘记密码？
+                </Link>
+              </div>
             </div>
             <Dialog open={show验证码} onOpenChange={setShow验证码}>
               <DialogContent className="bg-[#16131C] border-0 shadow-lg rounded-lg max-w-[320px]">

@@ -20,7 +20,7 @@ const withFollowData = (WrapperCompo: any) => {
     // const user_code = data?.data?.user_code;
     // const user_id = data?.data?.id;
 
-    console.log(user_id, user_code);
+    // console.log(user_id, user_code);
     const nickname = useSelector((state: any) => state.persist.user?.nickname);
     const isDrawerOpen = useSelector(
       (state: any) => state.profile.isDrawerOpen

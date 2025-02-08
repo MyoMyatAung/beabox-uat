@@ -3,15 +3,15 @@ import { useDispatch } from "react-redux";
 import { setPanding } from "../store/slices/ModelSlice";
 
 import ad1 from "../assets/explore/spl.png";
-import { useGetAdsPopUpQuery } from "@/store/api/explore/exploreApi";
 import '../page/search/search.css'
+import { useGetAdsPopUpQuery } from "@/utils/helperService";
 
 const Landing: React.FC = () => {
   const dispatch = useDispatch();
   const [cc, setCc] = useState<any>();
   const [skip, setSkip] = useState(3);
   const [images, setImages] = useState<any>();
-  const { data, isLoading } = useGetAdsPopUpQuery("");
+  const { data, isLoading } = useGetAdsPopUpQuery();
   // console.log(data)
   const [imgLoad, setImgLoad] = useState(false);
 
