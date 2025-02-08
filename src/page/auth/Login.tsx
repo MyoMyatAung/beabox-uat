@@ -70,6 +70,7 @@ const Login = () => {
     if (loginData?.status) {
       dispatch(setUser(loginData?.data));
       setShow验证码(false);
+      dispatch(setIsDrawerOpen(false));
       navigate(paths.profile);
     } else {
       if (authErr) setError(authErr);
