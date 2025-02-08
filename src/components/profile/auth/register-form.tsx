@@ -1,4 +1,9 @@
-import { setAuthToggle, setIsDrawerOpen } from "@/store/slices/profileSlice";
+import {
+  setAlertText,
+  setAuthToggle,
+  setIsDrawerOpen,
+  setShowAlert,
+} from "@/store/slices/profileSlice";
 import { paths } from "@/routes/paths";
 import { ChevronLeft, Eye, EyeOff, RotateCcw, X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -74,6 +79,8 @@ const RegisterForm = ({ setIsOpen }: any) => {
     if (registerData?.status) {
       dispatch(setUser(registerData?.data));
       dispatch(setIsDrawerOpen(false));
+      dispatch(setShowAlert(true));
+      dispatch(setAlertText(registerData?.message));
       setIsOpen(false);
       dispatch(setIsDrawerOpen(false));
       // dispatch(setRegisterUser(registerData?.data));

@@ -68,14 +68,13 @@ const Profile = () => {
         console.error("Failed to copy text: ", err);
       });
   };
+  
   useEffect(() => {
     if (user) refetch();
   }, []);
   useEffect(() => {
     if (user) refetch();
   }, [user, data]);
-
-  console.log(data);
 
   if (isLoading) return <Loader />;
 
