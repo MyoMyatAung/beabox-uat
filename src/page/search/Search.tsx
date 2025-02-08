@@ -32,6 +32,10 @@ const Search: React.FC<SearchProps> = ({}) => {
     }
   };
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // Fetch autocomplete suggestions when the query changes
   useEffect(() => {
     if (query.trim()) {
@@ -85,7 +89,7 @@ const Search: React.FC<SearchProps> = ({}) => {
       {/* header */}
       <form
         onSubmit={handleSubmit}
-        className=" pb-[32px] pt-[20px] flex justify-between items-center gap-[10px]"
+        className=" pb-[20px] pt-[20px] flex justify-between items-center gap-[10px]"
       >
         <img
           onClick={() => navigate("/")}

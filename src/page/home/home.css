@@ -52,8 +52,8 @@
 }
 
 .art-bottom {
-  padding-left: 0px !important;
-  padding-right: 0px !important;
+  /* padding-left: 0px !important;
+  padding-right: 0px !important; */
   padding-bottom: 5px !important;
   background-image: none !important;
   opacity: 1 !important;
@@ -747,3 +747,43 @@ html {
   font-weight: 400;
   line-height: normal;
 }
+.custom-progress-container {
+  position: absolute;
+  bottom: 10px;
+  width: 90%;
+  left: 5%;
+  height: 8px;
+  z-index: 15;
+}
+
+.custom-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.3);
+  position: relative;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.custom-progress-fill {
+  height: 100%;
+  background: #ff3b30;
+  width: 0;
+  transition: width 0.1s linear;
+  border-radius: 3px;
+}
+
+.custom-progress-thumb {
+  width: 12px;
+  height: 12px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: -3px;
+  transform: translateX(-50%);
+  cursor: pointer;
+}
+
+/* .art-progress {
+  display: none !important;
+} */
