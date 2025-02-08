@@ -40,6 +40,7 @@ const Register = () => {
     useRegisterMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const authErr = localStorage.getItem("auth-error") || "";
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -74,9 +75,8 @@ const Register = () => {
       navigate(paths.profile);
       // setShowSecurity(true);
     } else {
+      if (authErr) setError(authErr); // setError("出了点问题");
       setShow验证码(false);
-      setShowSecurity(false);
-      setError("出了点问题");
     }
   };
   useEffect(() => {

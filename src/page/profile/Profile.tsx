@@ -9,8 +9,8 @@ import {
   useGetMyOwnProfileQuery,
   useGetMyProfileQuery,
 } from "@/store/api/profileApi";
-import { useSelector } from "react-redux";
-import { PenIcon as UserPen, Bell, X, Copy } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { PenIcon as UserPen, Bell, X, Copy, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SettingBtn from "@/components/profile/setting-btn";
 import ProfileAvatar from "@/components/profile/profile-avatar";
@@ -22,6 +22,7 @@ import FemaleSVG from "@/assets/profile/female";
 import EditCover from "@/components/profile/edit-cover";
 import AuthDrawer from "@/components/profile/auth/auth-drawer";
 import ScrollHeader from "@/components/profile/scroll-header";
+import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 const Profile = () => {
   const headerRef = useRef<any>(null);
   const [showHeader, setShowHeader] = useState(false);
@@ -33,6 +34,7 @@ const Profile = () => {
   const gender = useSelector((state: any) => state?.persist?.gender);
   const region = useSelector((state: any) => state?.persist?.region);
   const [isCopied, setIsCopied] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -167,7 +169,14 @@ const Profile = () => {
               />
             )}
             {!user?.token ? (
-              <AuthDrawer />
+              // <AuthDrawer />
+              <div
+                onClick={() => dispatch(setIsDrawerOpen(true))}
+                className="z-[1200] flex items-center gap-2 flex-1"
+              >
+                <span className="z-[1200] text-[18px] ">点击登陆</span>
+                <ChevronRight size={18} />
+              </div>
             ) : (
               <div className="z-[1200] flex-1 flex flex-col gap-0.5">
                 <p className="z-[1200] text-[18px] flex items-center gap-1">
