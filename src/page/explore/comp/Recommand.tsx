@@ -73,7 +73,7 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
     if (width > height) {
       return 240; // Landscape
     }
-    return 200; 
+    return 200;
   };
 
   const formatNumber = (num: number) => {
@@ -118,7 +118,7 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
                   {ll.posts.map((card: any) => (
                     <div
                       key={card.post_id}
-                      className="max-w-full pb-[12px chinese_photo h-[312px]"
+                      className="max-w-full pb-[12px chinese_photo h-[315px]"
                     >
                       <div
                         onClick={() => showDetailsVod(card)}
@@ -147,9 +147,9 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
                           </div>
                         </div>
                       </div>
-                      <h1 className="text-white text-[12px] font-[500] leading-[18px] p-[6px]">
-                        {card.title.length > 20
-                          ? `${card.title.slice(0, 20)}...`
+                      <h1 className="text-white w-full text-[12px] font-[400] px-[6px] pt-[6px leading-[20px] break-words">
+                        {card.title.length > 50
+                          ? `${card.title.slice(0, 50)}...`
                           : card.title}
                       </h1>
                       <div className=" flex w-full p-[6px] justify-between">

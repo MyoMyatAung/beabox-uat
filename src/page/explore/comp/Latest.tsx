@@ -71,6 +71,7 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
     dispatch(setDetails(file));
     navigate("/vod_details");
   };
+  // console.log(waterfall);
   return (
     <>
       {isLoading ? (
@@ -92,7 +93,7 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
               {waterfall?.map((card: any, index: number) => (
                 <div
                   key={index}
-                  className="chinese_photo h-[312px] max-w-full shadow-lg mb-4 relative"
+                  className="chinese_photo h-[315px] max-w-full shadow-lg relative"
                 >
                   <div
                     className=" relative flex justify-center items-center bg-[#010101] rounded-t-[4px] overflow-hidden  h-[240px]"
@@ -110,11 +111,11 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
                     />
                   </div>
 
-                  <div className="text-white text-[12px] font-[400] p-[6px] leading-[20px]">
-                    {card.title.length > 30
-                      ? `${card.title.slice(0, 30)}...`
+                  <h1 className="text-white w-full text-[12px] font-[400] px-[6px] pt-[6px leading-[20px] break-words">
+                    {card.title.length > 50
+                      ? `${card.title.slice(0, 50)}...`
                       : card.title}
-                  </div>
+                  </h1>
                   <div className="  w-full px-[6px] text-white text-[14px] font-[400] leading-[30px] flex justify-between items-center ">
                     <div className=" flex justify-center items-center gap-[4px]">
                       {card.user?.avatar ? (
