@@ -23,7 +23,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { setAuthToggle } from "@/store/slices/profileSlice";
+import { setAuthToggle, setIsDrawerOpen } from "@/store/slices/profileSlice";
 import SmallLoader from "@/components/shared/small-loader";
 const LoginForm = ({ setIsOpen }: any) => {
   const [name, setName] = useState("");
@@ -32,6 +32,8 @@ const LoginForm = ({ setIsOpen }: any) => {
   const [login, { isLoading, error: lerror }] = useLoginMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const authErr = localStorage.getItem("auth-error") || "";
+
 
   const [getCaptcha, { data, isLoading: captchaLoading }] =
     useGetCaptchaMutation();
@@ -79,7 +81,9 @@ const LoginForm = ({ setIsOpen }: any) => {
       // navigate(paths.profile);
       setIsOpen(false);
     } else {
-      // setShow验证码(false);
+      if (authErr) setError(authErr);
+      setShow验证码(false);
+
       // setError("出了点问题");
     }
     // if (lerror) {
@@ -87,12 +91,15 @@ const LoginForm = ({ setIsOpen }: any) => {
     // }
   };
 
-  useEffect(() => {
-    const authErr = localStorage.getItem("auth-error") || "";
-    console.log(authErr, "authErr")
-    if (lerror) setError(authErr);
-    // setShow验证码(false);
-  }, [lerror]);
+  // const authErr = localStorage.getItem("auth-error") || "";
+  // useEffect(() => {
+  //   if (authErr) setError(authErr);
+  //   setShow验证码(false);
+  // }, [authErr]);
+
+  // useEffect(() => {
+  //   localStorage.removeItem("auth-error");
+  // }, []);
 
   return (
     <div className="px-5">
@@ -103,7 +110,7 @@ const LoginForm = ({ setIsOpen }: any) => {
           {/* Login */}
         </p>
         <div
-          onClick={() => setIsOpen(false)}
+          onClick={() => dispatch(setIsDrawerOpen(false))}
           className="bg-[#FFFFFF0A] p-2 rounded-full"
         >
           <X size={18} />

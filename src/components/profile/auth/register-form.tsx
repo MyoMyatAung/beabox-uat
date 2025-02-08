@@ -1,4 +1,4 @@
-import { setAuthToggle } from "@/store/slices/profileSlice";
+import { setAuthToggle, setIsDrawerOpen } from "@/store/slices/profileSlice";
 import { paths } from "@/routes/paths";
 import { ChevronLeft, Eye, EyeOff, RotateCcw, X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -42,6 +42,7 @@ const RegisterForm = ({ setIsOpen }: any) => {
     useRegisterMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const authErr = localStorage.getItem("auth-error") || "";
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -78,18 +79,18 @@ const RegisterForm = ({ setIsOpen }: any) => {
       // dispatch(setAuthToggle(true));
       // setShowSecurity(true);
     } else {
-      // setShow验证码(false);
       // setShowSecurity(false);
-      // setError("出了点问题");
+      if (authErr) setError(authErr); // setError("出了点问题");
+      setShow验证码(false);
     }
   };
 
-  useEffect(() => {
-    const authErr = localStorage.getItem("auth-error") || "";
-    console.log(authErr, "authErr");
-    if (rerror) setError(authErr);
-    // setShow验证码(false);
-  }, [rerror]);
+  // useEffect(() => {
+  //   const authErr = localStorage.getItem("auth-error") || "";
+  //   console.log(authErr, "authErr");
+  //   if (rerror) setError(authErr);
+  //   // setShow验证码(false);
+  // }, [rerror]);
 
   console.log(rerror);
   return (
@@ -102,7 +103,8 @@ const RegisterForm = ({ setIsOpen }: any) => {
         </p>
         <div
           onClick={() => {
-            setIsOpen(false);
+            // setIsOpen(false);
+            dispatch(setIsDrawerOpen(false));
             dispatch(setAuthToggle(true));
           }}
           className="bg-[#FFFFFF0A] p-2 rounded-full"

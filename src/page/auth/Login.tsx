@@ -31,6 +31,7 @@ const Login = () => {
   const [login, { isLoading, error: lerror }] = useLoginMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const authErr = localStorage.getItem("auth-error") || "";
 
   const [getCaptcha, { data, isLoading: captchaLoading }] =
     useGetCaptchaMutation();
@@ -71,8 +72,8 @@ const Login = () => {
       setShow验证码(false);
       navigate(paths.profile);
     } else {
+      if (authErr) setError(authErr);
       setShow验证码(false);
-      setError("出了点问题");
     }
   };
 
@@ -80,11 +81,11 @@ const Login = () => {
     navigate(-1);
   };
 
-  useEffect(() => {
-    const authErr = localStorage.getItem("auth-error") || "";
-    console.log(authErr, "authErr");
-    if (lerror) setError(authErr);
-  }, [lerror]);
+  // useEffect(() => {
+  //   const authErr = localStorage.getItem("auth-error") || "";
+  //   console.log(authErr, "authErr");
+  //   if (lerror) setError(authErr);
+  // }, [lerror]);
 
   return (
     <>
