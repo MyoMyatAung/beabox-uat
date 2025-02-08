@@ -180,9 +180,9 @@ const More: React.FC<MoreProps> = () => {
                   </div>
                 }
                 endMessage={
-                  <div className="flex bg-whit pt-20 justify-center items-center  w-screen">
+                  <div className="flex bg-whit pt-20 justify-center items-center">
                     <p className="py-10" style={{ textAlign: "center" }}>
-                      {/* <b>No more yet!</b> */}
+                      <b>No video yet!</b>
                     </p>
                   </div>
                 }

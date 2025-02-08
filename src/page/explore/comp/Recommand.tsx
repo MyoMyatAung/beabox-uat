@@ -73,7 +73,7 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
     if (width > height) {
       return 240; // Landscape
     }
-    return 200; // Default case for square images
+    return 200; 
   };
 
   const formatNumber = (num: number) => {
@@ -100,7 +100,7 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
           {list?.map((ll: any, index) => (
             <div key={index} className="flex flex-col w-full items-center">
               {/* header */}
-              <div className=" flex w-full justify-between items-center px-[10p]">
+              <div className=" flex w-full justify-between items-center py-[12px] px-[10p]">
                 <h1 className=" text-white text-[14px] font-[500] leading-[20px]">
                   {ll.title}
                 </h1>
