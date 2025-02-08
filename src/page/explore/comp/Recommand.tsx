@@ -11,7 +11,8 @@ import { Person } from "@/assets/profile";
 import { useDispatch } from "react-redux";
 import { setDetails, setTitle } from "@/store/slices/exploreSlice";
 import { paths } from "@/routes/paths";
-import ImageWithPlaceholder from "@/page/search/comp/imgPlaceholder";
+import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder";
+import { FaHeart } from "react-icons/fa";
 
 interface RecommandProps {
   title: string;
@@ -65,26 +66,41 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
     }
   }
 
+  const calculateHeight = (width: number, height: number) => {
+    if (width < height) {
+      return 112; // Portrait
+    }
+    if (width > height) {
+      return 240; // Landscape
+    }
+    return 200;
+  };
+
+  const formatNumber = (num: number) => {
+    if (num >= 1000) {
+      return `${(num / 1000).toFixed(1).replace(/\.0$/, "")}k`;
+    }
+    return num;
+  };
+
   // console.log(list);
   return (
     <div className=" pb-[20px] pt-[10px] px-[10px]">
       {isLoading ? (
-        <div className="grid w-full grid-cols-2 gap-[18px]">
-          <div className="w-[175px w-full rounded-[8px] h-[140px] bg-white/20"></div>
-          <div className="w-[175px w-full rounded-[8px] h-[140px] bg-white/20"></div>
-          <div className="w-[175px w-full rounded-[8px] h-[140px] bg-white/20"></div>
-          <div className="w-[175px w-full rounded-[8px] h-[140px] bg-white/20"></div>
-          <div className="w-[175px w-full rounded-[8px] h-[140px] bg-white/20"></div>
-          <div className="w-[175px w-full rounded-[8px] h-[140px] bg-white/20"></div>
-          <div className="w-[175px w-full rounded-[8px] h-[140px] bg-white/20"></div>
-          <div className="w-[175px w-full rounded-[8px] h-[140px] bg-white/20"></div>
+        <div className="flex w-full justify-center">
+          <div className=" grid grid-cols-2 gap-[20px]">
+            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[312px]"></div>
+            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[312px]"></div>
+            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[312px]"></div>
+            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[312px]"></div>
+          </div>
         </div>
       ) : (
         <>
           {list?.map((ll: any, index) => (
             <div key={index} className="flex flex-col w-full items-center">
               {/* header */}
-              <div className=" flex w-full justify-between items-center px-[10p]">
+              <div className=" flex w-full justify-between items-center py-[12px] px-[10p]">
                 <h1 className=" text-white text-[14px] font-[500] leading-[20px]">
                   {ll.title}
                 </h1>
@@ -100,24 +116,27 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
               <div className=" py-[12px] w-full grid grid-cols-2 justify-center items-center  gap-[18px]">
                 <>
                   {ll.posts.map((card: any) => (
-                    <div key={card.post_id} className="max-w-full pb-[12px]">
+                    <div
+                      key={card.post_id}
+                      className="max-w-full pb-[12px chinese_photo h-[315px]"
+                    >
                       <div
                         onClick={() => showDetailsVod(card)}
-                        className=" relative  chinese_photo"
+                        className=" relative flex justify-center items-center bg-[#010101] rounded-t-[4px] overflow-hidden  h-[240px]"
                       >
                         <ImageWithPlaceholder
                           src={card?.preview_image}
                           alt={card.title || "Video"}
                           width={"100%"}
-                          height={"100%"}
-                          className=" w-[175px w-full h-[100px] rounded-[8px] object-cover"
+                          // height={240}
+                          height={calculateHeight(
+                            card?.files[0]?.width,
+                            card?.files[0]?.height
+                          )}
+                          className=" object-cover h-full w-full rounded-none"
                         />
-                        <img
-                          className=" w-[175px] hidden h-[100px] rounded-[8px] object-cover"
-                          src={card.preview_image}
-                          alt=""
-                        />
-                        <div className=" absolute left-0 mx-auto right-0 bottom-0 flex justify-around items-center w-full max-w-[175px] bg-blac">
+
+                        <div className=" absolute hidden left-0 mx-auto right-0 bottom-0 fle justify-around items-center w-full max-w-[175px] bg-blac">
                           <div className=" flex w-full  justify-between px-2">
                             <span className=" text-white text-[11px]  left-">
                               {card?.view_count} 次观看
@@ -128,26 +147,36 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
                           </div>
                         </div>
                       </div>
-                      <h1 className="text-white text-[14px] font-[500] leading-[20px] py-[4px]">
-                        {card.title.length > 10
-                          ? `${card.title.slice(0, 10)}...`
+                      <h1 className="text-white w-full text-[12px] font-[400] px-[6px] pt-[6px leading-[20px] break-words">
+                        {card.title.length > 50
+                          ? `${card.title.slice(0, 50)}...`
                           : card.title}
                       </h1>
-                      <div className=" flex justify-cente py-[4px] items-center gap-[8px]">
-                        {card.user.avatar ? (
-                          <img
-                            className=" w-[26px] h-[26px] rounded-full"
-                            src={card.user.avatar}
-                            alt=""
-                          />
-                        ) : (
-                          <div className="w-[15px] h-[15px] rounded-full bg-[#FFFFFF12] flex justify-center items-center">
-                            <Person />
-                          </div>
-                        )}
-                        <h1 className=" text-white text-[12px] font-[400] leading-[20px]">
-                          {card.user.name}
-                        </h1>
+                      <div className=" flex w-full p-[6px] justify-between">
+                        <div className=" flex justify-cente  items-center gap-[8px]">
+                          {card.user.avatar ? (
+                            <img
+                              onError={() => console.log("gg")}
+                              className=" w-[26px] h-[26px] rounded-full"
+                              src={card.user.avatar}
+                              alt=""
+                            />
+                          ) : (
+                            <div className="w-[15px] h-[15px] rounded-full bg-[#FFFFFF12] flex justify-center items-center">
+                              <Person />
+                            </div>
+                          )}
+                          <h1 className=" text-white text-[12px] font-[400] leading-[20px]">
+                            {card.user.name}
+                            {/* {card?.files[0]?.width} & {card?.files[0]?.height} {} */}
+                          </h1>
+                        </div>
+                        <div className=" flex justify-center items-center gap-[4px]">
+                          <FaHeart />
+                          <h1 className=" text-white text-[12px] font-[400] leading-[20px]">
+                            {formatNumber(card?.like_count)}
+                          </h1>
+                        </div>
                       </div>
                     </div>
                   ))}

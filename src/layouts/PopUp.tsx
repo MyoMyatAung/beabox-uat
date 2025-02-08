@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import header from "../assets/explore/Header.png";
 import {
   useGetAdsNoticeQuery,
-  useGetAdsPopUpQuery,
 } from "@/store/api/explore/exploreApi";
 import "../page/explore/explore.css";
 import ImageWithPlaceholder from "@/page/search/comp/imgPlaceholder";
 import Notice from "./Notice";
+import { useGetAdsPopUpQuery } from "@/utils/helperService";
 
 interface PopUpProps {
   setShowAd: any;
@@ -21,7 +21,7 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
   const [showNotice, setShowNotice] = useState(false);
   const [NotList, setNotList] = useState<any>();
 
-  const { data, isLoading } = useGetAdsPopUpQuery("");
+  const { data, isLoading } = useGetAdsPopUpQuery();
   const { data: notice, isLoading: noticeLoading } = useGetAdsNoticeQuery("");
   const [currentIndex, setCurrentIndex] = useState(0);
 

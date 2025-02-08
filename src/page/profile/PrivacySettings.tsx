@@ -21,8 +21,8 @@ const PrivacySettings = () => {
           <div></div>
         </div>
         <div className="space-y-6">
-          <PrivateProfile />
-          <div className="border-b border-white/10"></div>
+          {/* <PrivateProfile />
+          <div className="border-b border-white/10"></div> */}
 
           <DisableFollow />
           <div className="border-b border-white/10"></div>

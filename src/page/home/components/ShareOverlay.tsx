@@ -129,7 +129,7 @@ const ShareOverlay: React.FC<any> = ({
 
   const handleLinkCopy = () => {
     if (isIOSApp()) {
-      sendEventToNative("copyShareUrl", shareUrl);
+      sendEventToNative("copyAppdownloadUrl", shareUrl);
     } else {
       navigator.clipboard.writeText(shareUrl).then(() => {
         dispatch(

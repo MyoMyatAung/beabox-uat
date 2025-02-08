@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setDetails } from "@/store/slices/exploreSlice";
 import { replace, useNavigate, useSearchParams } from "react-router-dom";
 import { paths } from "@/routes/paths";
-import ImageWithPlaceholder from "@/page/search/comp/imgPlaceholder";
+import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder";
 
 interface LatestPorp {
   list_id: string;
@@ -56,11 +56,22 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
     setPage((prevPage) => prevPage + 1);
   };
 
+  const calculateHeight = (width: number, height: number) => {
+    if (width < height) {
+      return 112; // Portrait
+    }
+    if (width > height) {
+      return 240; // Landscape
+    }
+    return 200;
+  };
+
   const showDetailsVod = (file: any) => {
     scrollPositionRef.current = contentRef.current?.scrollTop || 0;
     dispatch(setDetails(file));
     navigate("/vod_details");
   };
+  // console.log(waterfall);
   return (
     <>
       {isLoading ? (
@@ -75,53 +86,37 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
       ) : (
         <div className=" flex w-full justify-center">
           <div
-            // className="columns-2 gap-1 relative "
-            className=" grid grid-cols-2 relative gap-1"
+            className=" grid grid-cols-2 relative gap-[18px] px-2"
             ref={contentRef}
-            style={{
-              columnGap: "20px",
-            }}
           >
             <>
               {waterfall?.map((card: any, index: number) => (
                 <div
                   key={index}
-                  className="rounded-lg shadow-lg h-fit mb-4 w-[172px] relative"
-                  style={{ breakInside: "avoid" }}
+                  className="chinese_photo h-[315px] max-w-full shadow-lg relative"
                 >
                   <div
+                    className=" relative flex justify-center items-center bg-[#010101] rounded-t-[4px] overflow-hidden  h-[240px]"
                     onClick={() => showDetailsVod(card)}
-                    style={{
-                      height: index % 2 === 0 ? "216px" : "272px",
-                    }}
-                    className=""
                   >
                     <ImageWithPlaceholder
                       src={card?.preview_image}
                       alt={card.title || "Video"}
                       width={"100%"}
-                      height={"100%"}
-                      className={` w-full ${
-                        index % 2 === 0 ? "h-[216px]" : "h-[272px]"
-                      }  object-cover`}
-                      // style={{ minHeight: "240px", maxHeight: "340px" }}
+                      height={calculateHeight(
+                        card?.files[0]?.width,
+                        card?.files[0]?.height
+                      )}
+                      className=" object-cover h-full w-full rounded-none"
                     />
                   </div>
-                  <img
-                    onClick={() => showDetailsVod(card)}
-                    className="w-full object-cover hidden rounded-[6px] bg-white/20"
-                    src={card.preview_image}
-                    alt=""
-                    style={{
-                      height: index % 2 === 0 ? "216px" : "272px",
-                    }}
-                  />
-                  <div className="text-white text-[12px] font-[400] leading-[20px]">
+
+                  <h1 className="text-white w-full text-[12px] font-[400] px-[6px] pt-[6px leading-[20px] break-words">
                     {card.title.length > 50
                       ? `${card.title.slice(0, 50)}...`
                       : card.title}
-                  </div>
-                  <div className=" z-[999] pt-[6px]  w-full bottom-[30px] text-white text-[14px] font-[400] leading-[30px] flex justify-between items-center ">
+                  </h1>
+                  <div className="  w-full px-[6px] text-white text-[14px] font-[400] leading-[30px] flex justify-between items-center ">
                     <div className=" flex justify-center items-center gap-[4px]">
                       {card.user?.avatar ? (
                         <img
