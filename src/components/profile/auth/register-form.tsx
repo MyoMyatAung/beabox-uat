@@ -73,7 +73,9 @@ const RegisterForm = ({ setIsOpen }: any) => {
     // console.log(registerData, "registerData");
     if (registerData?.status) {
       dispatch(setUser(registerData?.data));
+      dispatch(setIsDrawerOpen(false));
       setIsOpen(false);
+      dispatch(setIsDrawerOpen(false));
       // dispatch(setRegisterUser(registerData?.data));
       setShow验证码(false);
       // dispatch(setAuthToggle(true));

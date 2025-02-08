@@ -134,12 +134,13 @@ export const authApi = createApi({
       query: ({ username, password, captcha, captcha_key }: any) => ({
         url: "/login",
         method: "POST",
-        body: convertToSecurePayload({
-          username,
-          password,
-          captcha,
-          captcha_key,
-        }),
+        // body: convertToSecurePayload({
+        //   username,
+        //   password,
+        //   captcha,
+        //   captcha_key,
+        // }),
+        body: { username, password, captcha, captcha_key },
       }),
     }),
     storeSecurityQues: builder.mutation<any, string>({
