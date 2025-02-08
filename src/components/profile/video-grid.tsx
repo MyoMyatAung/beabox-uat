@@ -17,7 +17,7 @@ const VideoGrid = ({
         showHeader ? "h-screen no-scrollbar overflow-x-hidden" : ""
       } `}
     >
-      <div className="grid grid-cols-3 gap-2 pb-32">
+      <div className="grid grid-cols-3 gap-2">
         {isUpload ? <Upload /> : <></>}
         {data && (
           <>

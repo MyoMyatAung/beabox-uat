@@ -154,7 +154,7 @@ const OtherProfile = () => {
           />
         </div>
         <div ref={headerRef} className="sticky z-[1300] top-0 w-full"></div>
-        {showHeader ? (
+        {false ? (
           <OscrollHeader
             photo={userData?.data?.profile_photo}
             name={userData?.data?.nickname}
@@ -163,15 +163,15 @@ const OtherProfile = () => {
         ) : (
           <></>
         )}
-        <div className={`sticky top-[100px] z-[1200]`}>
+        {/* <div className={`sticky top-[100px] z-[1200]`}> */}
           <div className="z-[1200] relative px-5">
             <VideoTab2
               id={id}
-              showHeader={showHeader}
+              showHeader={false}
               visibility={userData?.data?.content_visibility}
             />
           </div>
-        </div>
+        {/* </div> */}
       </div>
     </>
   );

@@ -25,9 +25,11 @@ import ScrollHeader from "@/components/profile/scroll-header";
 const Profile = () => {
   const headerRef = useRef<any>(null);
   const [showHeader, setShowHeader] = useState(false);
-  const { data, isLoading, refetch } = useGetMyOwnProfileQuery("");
+  const user = useSelector((state: any) => state?.persist?.user) || "";
+  const { data, isLoading, refetch } = useGetMyOwnProfileQuery("", {
+    skip: !user,
+  });
   const [show, setShow] = useState(false);
-  const user = useSelector((state: any) => state?.persist?.user);
   const gender = useSelector((state: any) => state?.persist?.gender);
   const region = useSelector((state: any) => state?.persist?.region);
   const [isCopied, setIsCopied] = useState(false);
@@ -65,10 +67,10 @@ const Profile = () => {
       });
   };
   useEffect(() => {
-    refetch();
+    if (user) refetch();
   }, []);
   useEffect(() => {
-    refetch();
+    if (user) refetch();
   }, [user, data]);
 
   console.log(data);
@@ -225,7 +227,7 @@ const Profile = () => {
             )}
           </div>
         </div>
-        <div className={`px-5 ${showHeader ? "opacity-0" : "opacity-1"} `}>
+        <div className={`px-5 ${false ? "opacity-0" : "opacity-1"} `}>
           <Stats
             followers={data?.data?.followers_count}
             followings={data?.data?.following_count}
@@ -239,7 +241,7 @@ const Profile = () => {
             <Link to={paths.profileDetail}>
               <Button
                 className={`${
-                  showHeader ? "opacity-0" : "opacity-1"
+                  false ? "opacity-0" : "opacity-1"
                 } z-[1200] w-full bg-[#FFFFFF0F] hover:bg-[#FFFFFF0F] relative rounded-[12px]`}
               >
                 <UserPen /> 编辑资料
@@ -251,7 +253,7 @@ const Profile = () => {
         </div>
 
         <div ref={headerRef} className="sticky z-[1300] top-0 w-full"></div>
-        {showHeader ? (
+        {false ? (
           <ScrollHeader
             photo={data?.data?.profile_photo}
             name={data?.data?.nickname}
@@ -260,11 +262,11 @@ const Profile = () => {
           <></>
         )}
 
-        <div className={`sticky top-[100px] z-[1200]`}>
-          <div className="z-[1200] relative px-5">
-            <VideoTabs showHeader={showHeader} login={user?.token} />
-          </div>
+        {/* <div className={`sticky top-[100px] z-[1200]`}> */}
+        <div className="z-[1200] relative px-5">
+          <VideoTabs showHeader={false} login={user?.token} />
         </div>
+        {/* </div> */}
       </div>
     </>
   );

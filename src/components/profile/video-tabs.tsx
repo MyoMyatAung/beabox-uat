@@ -19,9 +19,12 @@ const VideoTabs = ({ login, showHeader }: any) => {
   const [waterfall, setWaterFall] = useState<any[]>([]);
   const [HistoryList, setHistoryList] = useState<any[]>([]);
   const { data, isLoading } = useGetLikedPostQuery({ user_id: user?.id, page });
-  const { data: history, isLoading: historyLoading } = useGetWatchHistoryQuery({
-    page: Hispage,
-  });
+  const { data: history, isLoading: historyLoading } = useGetWatchHistoryQuery(
+    {
+      page: Hispage,
+    },
+    { skip: !user }
+  );
   // console.log(HistoryList);
 
   useEffect(() => {
