@@ -84,9 +84,9 @@ const May: React.FC<MayProps> = ({}) => {
           >
             {index < 2 ? (
               <>
-                <div className="font-bold flex items-center gap-2 pr-[100px]">
+                <div className="font-bold flex truncate items-center gap-2 pr-[100px]">
                   <div className="w-[4px] h-[4px] rounded-full bg-[#EAACFF] flex-shrink-0"></div>
-                  <div className="truncate ml-2 max-w-[calc(100%-40px)]">
+                  <div className=" ml-2 max-w-[calc(100%-40px)]">
                     {val?.title}
                   </div>
                 </div>
