@@ -7,9 +7,12 @@ import { setPanding } from "./store/slices/ModelSlice";
 import ErrorToast from "./page/home/services/ErrorToast";
 
 import { Toaster } from "./components/ui/toaster";
+import { useGetApplicationAdsQuery } from "./store/api/explore/exploreApi";
 
 const App = () => {
   const { panding } = useSelector((state: any) => state.model);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { data } = useGetApplicationAdsQuery("");
 
   const dispatch = useDispatch();
 
