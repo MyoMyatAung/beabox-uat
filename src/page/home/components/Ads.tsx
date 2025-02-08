@@ -1,9 +1,7 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
 
 const Ads = ({ ads }: { ads: any }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { mute } = useSelector((state: any) => state.muteSlice);
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
@@ -77,131 +75,67 @@ const Ads = ({ ads }: { ads: any }) => {
         </div>
         <div className="spon px-3 py-2 mb-3 inline-block">立即预约</div>
         <a
-          className={`${
-            mute ? "ads-btn1" : "ads-btn"
-          } w-[75%] flex items-center justify-center py-2`}
+          className={`ads-btn w-[75%] flex items-center justify-center py-2`}
           target="_blank"
           href={ads?.jump_url}
         >
           <span>了解更多</span>
-          {mute ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="15"
-              height="19"
-              viewBox="0 0 15 19"
-              fill="none"
-              className="mt-3"
-            >
-              <g filter="url(#filter0_d_4978_17127)">
-                <path
-                  d="M5.68164 1.5L9.318 5.5L5.68164 1.5ZM9.318 5.5L5.68164 9.5L9.318 5.5Z"
-                  fill="#555555"
+          <svg
+            className="mt-3"
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="19"
+            viewBox="0 0 14 19"
+            fill="none"
+          >
+            <g filter="url(#filter0_d_4978_17314)">
+              <path
+                d="M5.18164 1.5L8.818 5.5L5.18164 9.5"
+                stroke="white"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                shape-rendering="crispEdges"
+              />
+            </g>
+            <defs>
+              <filter
+                id="filter0_d_4978_17314"
+                x="0.431641"
+                y="0.75"
+                width="13.1367"
+                height="17.5"
+                filterUnits="userSpaceOnUse"
+                color-interpolation-filters="sRGB"
+              >
+                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feColorMatrix
+                  in="SourceAlpha"
+                  type="matrix"
+                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                  result="hardAlpha"
                 />
-                <path
-                  d="M5.68164 1.5L9.318 5.5L5.68164 9.5"
-                  stroke="#444444"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                <feOffset dy="4" />
+                <feGaussianBlur stdDeviation="2" />
+                <feComposite in2="hardAlpha" operator="out" />
+                <feColorMatrix
+                  type="matrix"
+                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"
                 />
-              </g>
-              <defs>
-                <filter
-                  id="filter0_d_4978_17127"
-                  x="0.931641"
-                  y="0.75"
-                  width="13.1367"
-                  height="17.5"
-                  filterUnits="userSpaceOnUse"
-                  color-interpolation-filters="sRGB"
-                >
-                  <feFlood flood-opacity="0" result="BackgroundImageFix" />
-                  <feColorMatrix
-                    in="SourceAlpha"
-                    type="matrix"
-                    values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-                    result="hardAlpha"
-                  />
-                  <feOffset dy="4" />
-                  <feGaussianBlur stdDeviation="2" />
-                  <feComposite in2="hardAlpha" operator="out" />
-                  <feColorMatrix
-                    type="matrix"
-                    values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"
-                  />
-                  <feBlend
-                    mode="normal"
-                    in2="BackgroundImageFix"
-                    result="effect1_dropShadow_4978_17127"
-                  />
-                  <feBlend
-                    mode="normal"
-                    in="SourceGraphic"
-                    in2="effect1_dropShadow_4978_17127"
-                    result="shape"
-                  />
-                </filter>
-              </defs>
-            </svg>
-          ) : (
-            <svg
-              className="mt-3"
-              xmlns="http://www.w3.org/2000/svg"
-              width="14"
-              height="19"
-              viewBox="0 0 14 19"
-              fill="none"
-            >
-              <g filter="url(#filter0_d_4978_17314)">
-                <path
-                  d="M5.18164 1.5L8.818 5.5L5.18164 9.5"
-                  stroke="white"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  shape-rendering="crispEdges"
+                <feBlend
+                  mode="normal"
+                  in2="BackgroundImageFix"
+                  result="effect1_dropShadow_4978_17314"
                 />
-              </g>
-              <defs>
-                <filter
-                  id="filter0_d_4978_17314"
-                  x="0.431641"
-                  y="0.75"
-                  width="13.1367"
-                  height="17.5"
-                  filterUnits="userSpaceOnUse"
-                  color-interpolation-filters="sRGB"
-                >
-                  <feFlood flood-opacity="0" result="BackgroundImageFix" />
-                  <feColorMatrix
-                    in="SourceAlpha"
-                    type="matrix"
-                    values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-                    result="hardAlpha"
-                  />
-                  <feOffset dy="4" />
-                  <feGaussianBlur stdDeviation="2" />
-                  <feComposite in2="hardAlpha" operator="out" />
-                  <feColorMatrix
-                    type="matrix"
-                    values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"
-                  />
-                  <feBlend
-                    mode="normal"
-                    in2="BackgroundImageFix"
-                    result="effect1_dropShadow_4978_17314"
-                  />
-                  <feBlend
-                    mode="normal"
-                    in="SourceGraphic"
-                    in2="effect1_dropShadow_4978_17314"
-                    result="shape"
-                  />
-                </filter>
-              </defs>
-            </svg>
-          )}
+                <feBlend
+                  mode="normal"
+                  in="SourceGraphic"
+                  in2="effect1_dropShadow_4978_17314"
+                  result="shape"
+                />
+              </filter>
+            </defs>
+          </svg>
         </a>
       </div>
     </div>

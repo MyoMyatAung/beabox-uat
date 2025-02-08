@@ -69,18 +69,23 @@ const ShareOverlay: React.FC<any> = ({
     if (isIOSApp()) {
       sendEventToNative("saveVideo", post?.files[0].downloadURL);
     } else {
+      dispatch(
+        showToast({
+          message: "无法保存视频",
+          type: "success",
+        })
+      );
       // For web
-      const link = document.createElement('a');
-  link.href = post.files[0].downloadURL;
-  link.download = 'video.mp4';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  
-  // Add a delayed redirect in case download didn't trigger
-  setTimeout(() => {
-    window.location.href = post.files[0].downloadURL;
-  }, 1000);
+      //     const link = document.createElement('a');
+      // link.href = post.files[0].downloadURL;
+      // link.download = 'video.mp4';
+      // document.body.appendChild(link);
+      // link.click();
+      // document.body.removeChild(link);
+      // // Add a delayed redirect in case download didn't trigger
+      // setTimeout(() => {
+      //   window.location.href = post.files[0].downloadURL;
+      // }, 1000);
     }
   };
 

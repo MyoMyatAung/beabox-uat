@@ -14,8 +14,17 @@
 }
 
 .history_box {
+  color: var(--Neutral_6, #fff);
+
+  font-family: "Helvetica Neue";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 120%; /* 16.8px */
+  letter-spacing: -0.28px;
+
   border-radius: 100px;
-  background: rgba(58, 58, 58, 0.2);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .dot {
@@ -81,4 +90,28 @@
 
 .bg-search-img {
   background: linear-gradient(151deg, #1d1a22 8.06%, #221d2b 95.37%);
+}
+
+.may_text {
+  color: rgba(255, 255, 255, 0.6);
+  font-family: "Source Han Sans CN";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.bg-first-two {
+  color: #eaacff;
+  font-family: "Source Han Sans CN";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  border-radius: 4px;
+  background: linear-gradient(
+    93deg,
+    rgba(206, 74, 251, 0.12) 1.58%,
+    rgba(206, 74, 251, 0.04) 20.59%
+  );
 }

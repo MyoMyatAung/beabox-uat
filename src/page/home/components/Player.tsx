@@ -8,7 +8,6 @@ import { useSelector } from "react-redux";
 const Player = ({
   src,
   thumbnail,
-
   setWidth,
   setHeight,
   handleLike,
@@ -44,6 +43,7 @@ const Player = ({
         playsInline: true,
         preload: "metadata",
       },
+
       // flip: true,
       aspectRatio: true,
       fullscreen: false,
@@ -144,7 +144,6 @@ const Player = ({
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            console.log(artPlayerInstanceRef?.current);
             // // Handle ready and play events for dimension updates
             // (artPlayerInstanceRef.current as any)?.on("ready", () => {
             //   setWidth(
@@ -156,7 +155,6 @@ const Player = ({
             //       ?.videoHeight || 0
             //   );
             // });
-
             // (artPlayerInstanceRef.current as any)?.on("play", () => {
             //   setWidth(
             //     (artPlayerInstanceRef.current as Artplayer)?.video?.videoWidth
@@ -282,11 +280,13 @@ export default Player;
 // }) => {
 //   const playerContainerRef = useRef<HTMLDivElement | null>(null);
 //   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
-//   const hlsRef = useRef<Hls | null>(null);
+//   const hlsRef = useRef<Hls | null>(null); // HLS instance for `src`
 //   const { mute } = useSelector((state: any) => state.muteSlice);
 
+//   // Custom progress state
+//   const [progress, setProgress] = useState(0);
 //   const [isDragging, setIsDragging] = useState(false);
-//   const [dragPosition, setDragPosition] = useState(0);
+//   const lastSeekTimeRef = useRef(0);
 
 //   // Initialize Artplayer for the current video
 //   const initializeArtplayer = () => {
@@ -333,6 +333,184 @@ export default Player;
 //       },
 //       layers: [
 //         {
+//           html: `
+//             <div class="custom-progress-container">
+//               <div class="custom-progress-bar">
+//                 <div class="custom-progress-fill"></div>
+//                 <div class="custom-progress-thumb"></div>
+//               </div>
+//             </div>
+//           `,
+//           style: {
+//             position: "absolute",
+//             bottom: "10px",
+//             left: "5%",
+//             width: "90%",
+//             height: "10px",
+//             zIndex: "15",
+//           },
+//           mounted: (element) => {
+//             const progressBar = element.querySelector(".custom-progress-bar");
+//             const progressFill = element.querySelector(".custom-progress-fill");
+//             const progressThumb = element.querySelector(
+//               ".custom-progress-thumb"
+//             );
+
+//             if (!progressBar || !progressFill || !progressThumb) {
+//               console.error("❌ Custom progress bar elements not found");
+//               return;
+//             }
+
+//             // **Update progress bar while video is playing**
+//             artPlayerInstanceRef.current.on("video:timeupdate", () => {
+//               if (!isDragging) {
+//                 const currentTime =
+//                   artPlayerInstanceRef.current?.currentTime || 0;
+//                 const duration = artPlayerInstanceRef.current?.duration || 1;
+//                 const newProgress = (currentTime / duration) * 100;
+//                 setProgress(newProgress);
+//                 progressFill.style.width = `${newProgress}%`;
+//                 progressThumb.style.left = `${newProgress}%`;
+//               }
+//             });
+
+//             // **Handle click on progress bar**
+//             progressBar.addEventListener("click", (e) => {
+//               if (!artPlayerInstanceRef.current) return;
+//               const rect = progressBar.getBoundingClientRect();
+//               const percentage = (e.clientX - rect.left) / rect.width;
+//               const newTime =
+//                 percentage * artPlayerInstanceRef.current.duration;
+
+//               artPlayerInstanceRef.current.currentTime = newTime;
+//               setProgress(percentage * 100);
+//               progressFill.style.width = `${percentage * 100}%`;
+//               progressThumb.style.left = `${percentage * 100}%`;
+//             });
+
+//             // **Handle drag start**
+//             progressThumb.addEventListener("mousedown", (e) => {
+//               setIsDragging(true);
+//               e.preventDefault(); // Prevents unwanted text selection
+//               document.addEventListener("mousemove", handleDragging);
+//               document.addEventListener("mouseup", handleDragEnd);
+//             });
+
+//             // **Handle dragging**
+//             const handleDragging = (e) => {
+//               if (!artPlayerInstanceRef.current) return;
+//               const rect = progressBar.getBoundingClientRect();
+//               let percentage = (e.clientX - rect.left) / rect.width;
+
+//               if (percentage < 0) percentage = 0;
+//               if (percentage > 1) percentage = 1;
+
+//               lastSeekTimeRef.current =
+//                 percentage * artPlayerInstanceRef.current.duration;
+
+//               progressFill.style.width = `${percentage * 100}%`;
+//               progressThumb.style.left = `${percentage * 100}%`;
+//             };
+
+//             // **Handle drag end (seek video)**
+//             const handleDragEnd = () => {
+//               setIsDragging(false);
+//               document.removeEventListener("mousemove", handleDragging);
+//               document.removeEventListener("mouseup", handleDragEnd);
+
+//               if (artPlayerInstanceRef.current) {
+//                 artPlayerInstanceRef.current.currentTime =
+//                   lastSeekTimeRef.current;
+//               }
+//             };
+//           },
+
+//           // mounted: (element) => {
+//           //   const progressBar = element.querySelector(".custom-progress-bar");
+//           //   const progressFill = element.querySelector(".custom-progress-fill");
+//           //   const progressThumb = element.querySelector(
+//           //     ".custom-progress-thumb"
+//           //   );
+
+//           //   if (!progressBar || !progressFill || !progressThumb) {
+//           //     console.error("❌ Custom progress bar elements not found");
+//           //     return;
+//           //   }
+
+//           //   // **Sync progress bar with video playback**
+//           //   artPlayerInstanceRef.current?.on("video:timeupdate", () => {
+//           //     if (!isDragging) {
+//           //       const currentTime =
+//           //         artPlayerInstanceRef.current?.currentTime || 0;
+//           //       const duration = artPlayerInstanceRef.current?.duration || 1;
+//           //       const newProgress = (currentTime / duration) * 100;
+//           //       setProgress(newProgress);
+//           //       (progressFill as HTMLElement).style.width = `${newProgress}%`;
+//           //       (progressThumb as HTMLElement).style.left = `${newProgress}%`;
+//           //     }
+//           //   });
+
+//           //   // **Handle click on progress bar**
+//           //   progressBar.addEventListener("click", (e) => {
+//           //     if (!artPlayerInstanceRef.current) return;
+//           //     const rect = progressBar.getBoundingClientRect();
+//           //     const percentage =
+//           //       ((e as MouseEvent).clientX - rect.left) / rect.width;
+//           //     const newTime =
+//           //       percentage * artPlayerInstanceRef.current.duration;
+
+//           //     artPlayerInstanceRef.current.currentTime = newTime;
+//           //     setProgress(percentage * 100);
+//           //     (progressFill as HTMLElement).style.width = `${
+//           //       percentage * 100
+//           //     }%`;
+//           //     (progressThumb as HTMLElement).style.left = `${
+//           //       percentage * 100
+//           //     }%`;
+//           //   });
+
+//           //   // **Handle drag start**
+//           //   progressThumb.addEventListener("mousedown", (e) => {
+//           //     setIsDragging(true);
+//           //     e.preventDefault(); // Prevents unwanted text selection
+//           //     document.addEventListener("mousemove", handleDragging);
+//           //     document.addEventListener("mouseup", handleDragEnd);
+//           //   });
+
+//           //   // **Handle dragging**
+//           //   const handleDragging = (e: any) => {
+//           //     if (!artPlayerInstanceRef.current) return;
+//           //     const rect = progressBar.getBoundingClientRect();
+//           //     let percentage = (e.clientX - rect.left) / rect.width;
+
+//           //     if (percentage < 0) percentage = 0;
+//           //     if (percentage > 1) percentage = 1;
+
+//           //     lastSeekTimeRef.current =
+//           //       percentage * artPlayerInstanceRef.current.duration;
+
+//           //     (progressFill as HTMLElement).style.width = `${
+//           //       percentage * 100
+//           //     }%`;
+//           //     (progressThumb as HTMLElement).style.left = `${
+//           //       percentage * 100
+//           //     }%`;
+//           //   };
+
+//           //   // **Handle drag end (seek video)**
+//           //   const handleDragEnd = () => {
+//           //     setIsDragging(false);
+//           //     document.removeEventListener("mousemove", handleDragging);
+//           //     document.removeEventListener("mouseup", handleDragEnd);
+
+//           //     if (artPlayerInstanceRef.current) {
+//           //       artPlayerInstanceRef.current.currentTime =
+//           //         lastSeekTimeRef.current;
+//           //     }
+//           //   };
+//           // },
+//         },
+//         {
 //           html: '<div class="click-layer"></div>',
 //           style: {
 //             position: "absolute",
@@ -364,47 +542,6 @@ export default Player;
 //             });
 //           },
 //         },
-//         {
-//           html: '<div class="drag-progress-layer"></div>',
-//           style: {
-//             position: "absolute",
-//             bottom: "0",
-//             left: "0",
-//             width: "100%",
-//             height: "100%",
-//             background: "transparent",
-//             zIndex: "100",
-//           },
-//           mounted: (element) => {
-//             let startX = 0;
-//             let videoElement = artPlayerInstanceRef.current?.video;
-//             element.addEventListener("mousedown", (e) => {
-//               console.log("d");
-//               startX = e.clientX;
-//               setIsDragging(true);
-//               element.style.cursor = "pointer"; // Change cursor during drag
-//             });
-
-//             document.addEventListener("mousemove", (e) => {
-//               console.log("m");
-//               if (isDragging && videoElement) {
-//                 const dragDistance = e.clientX - startX;
-//                 const videoWidth = element.offsetWidth;
-//                 const progress = Math.min(
-//                   Math.max(dragDistance / videoWidth, 0),
-//                   1
-//                 );
-//                 setDragPosition(progress);
-//                 videoElement.currentTime = videoElement.duration * progress;
-//               }
-//             });
-
-//             document.addEventListener("mouseup", () => {
-//               setIsDragging(false);
-//               element.style.cursor = "default"; // Reset cursor
-//             });
-//           },
-//         },
 //       ],
 //     });
 
@@ -415,36 +552,103 @@ export default Player;
 
 //   useEffect(() => {
 //     const container = playerContainerRef.current;
+
 //     if (!container) return;
 
+//     // Observer for initializing the player
 //     const initObserver = new IntersectionObserver(
 //       (entries) => {
 //         entries.forEach((entry) => {
 //           if (entry.isIntersecting && !artPlayerInstanceRef.current) {
-//             initializeArtplayer();
+//             initializeArtplayer(); // Initialize Artplayer for the current video
 //           }
 //         });
 //       },
 //       {
-//         rootMargin: "0px",
-//         threshold: 0.01,
+//         rootMargin: "0px", // Start initializing slightly before entering viewport
+//         threshold: 0.01, // Trigger when at least 1% of the element is visible
 //       }
 //     );
 
+//     // Observer for autoplay functionality
+//     const autoplayObserver = new IntersectionObserver(
+//       (entries) => {
+//         entries.forEach((entry) => {
+//           if (entry.isIntersecting) {
+//             console.log(artPlayerInstanceRef?.current);
+//           } else {
+//             if (artPlayerInstanceRef.current) {
+//               artPlayerInstanceRef.current.video.src = "";
+//               artPlayerInstanceRef.current.destroy();
+//               artPlayerInstanceRef.current = null;
+//             }
+//           }
+//         });
+//       },
+//       {
+//         rootMargin: "0px", // Trigger exactly at the edge of the viewport
+//         threshold: 0.01, // Trigger when 50% of the element is visible
+//       }
+//     );
+//     const autoplayObserver1 = new IntersectionObserver(
+//       (entries) => {
+//         entries.forEach((entry) => {
+//           if (entry.isIntersecting) {
+//             // Handle ready and play events for dimension updates
+//             (artPlayerInstanceRef.current as any)?.on("ready", () => {
+//               setWidth(
+//                 (artPlayerInstanceRef.current as Artplayer)?.video
+//                   ?.videoWidth || 0
+//               );
+//               setHeight(
+//                 (artPlayerInstanceRef.current as Artplayer)?.video
+//                   ?.videoHeight || 0
+//               );
+//             });
+
+//             (artPlayerInstanceRef.current as any)?.on("play", () => {
+//               setWidth(
+//                 (artPlayerInstanceRef.current as Artplayer)?.video?.videoWidth
+//               );
+//               setHeight(
+//                 (artPlayerInstanceRef.current as Artplayer)?.video?.videoHeight
+//               );
+//             });
+//             (artPlayerInstanceRef.current as any)?.play();
+//           } else {
+//             if (artPlayerInstanceRef.current) {
+//               (artPlayerInstanceRef.current as any)?.pause();
+//             }
+//           }
+//         });
+//       },
+//       {
+//         rootMargin: "200px", // Trigger exactly at the edge of the viewport
+//         threshold: 0.5, // Trigger when 50% of the element is visible
+//       }
+//     );
+
+//     // Observe the player container for both initialization and autoplay
 //     initObserver.observe(container);
+//     autoplayObserver.observe(container);
+//     autoplayObserver1.observe(container);
 
 //     return () => {
 //       initObserver.disconnect();
+//       autoplayObserver.disconnect();
+//       autoplayObserver1.disconnect();
+
 //       if (artPlayerInstanceRef.current) {
 //         artPlayerInstanceRef.current.destroy();
 //         artPlayerInstanceRef.current = null;
 //       }
+
 //       if (hlsRef.current) {
 //         hlsRef.current.destroy();
 //         hlsRef.current = null;
 //       }
 //     };
-//   }, [src]);
+//   }, [src]); // Re-run when `src` changes
 
 //   useEffect(() => {
 //     if (artPlayerInstanceRef.current) {
@@ -452,18 +656,7 @@ export default Player;
 //     }
 //   }, [mute]);
 
-//   return (
-//     <div ref={playerContainerRef} className={`video_player w-full`}>
-//       <div
-//         className="progress-bar"
-//         style={{
-//           width: `${dragPosition * 100}%`,
-//           background: "rgba(255, 255, 255, 0.8)",
-//           height: "3px",
-//         }}
-//       />
-//     </div>
-//   );
+//   return <div ref={playerContainerRef} className={`video_player w-full `} />;
 // };
 
 // export default Player;
