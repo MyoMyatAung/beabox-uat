@@ -72,6 +72,7 @@ const Register = () => {
       // dispatch(setRegisterUser(registerData?.data));
       dispatch(setUser(registerData?.data));
       setShow验证码(false);
+      dispatch(setIsDrawerOpen(false));
       navigate(paths.profile);
       // setShowSecurity(true);
     } else {

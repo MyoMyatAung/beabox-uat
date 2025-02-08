@@ -59,31 +59,23 @@ const LoginForm = ({ setIsOpen }: any) => {
     e.stopPropagation();
     e.preventDefault();
     const { emailOrPhone, password } = form.getValues();
-
-    console.log("data", {
-      username: emailOrPhone,
-      password,
-      captcha,
-      captcha_key: data?.data?.captcha_key,
-    });
-
+    console.log(emailOrPhone, password);
     const { data: loginData } = await login({
       username: emailOrPhone,
       password,
       captcha,
       captcha_key: data?.data?.captcha_key,
     });
-    // console.log(loginData, "loginData");
+
     if (loginData?.status) {
       dispatch(setUser(loginData?.data));
-      // setShow验证码(false);
+      dispatch(setIsDrawerOpen(false));
+      setShow验证码(false);
       // navigate(paths.profile);
       setIsOpen(false);
     } else {
       if (authErr) setError(authErr);
       setShow验证码(false);
-
-      // setError("出了点问题");
     }
     // if (lerror) {
     //   setError(lerror?.data?.message);
@@ -99,6 +91,8 @@ const LoginForm = ({ setIsOpen }: any) => {
   // useEffect(() => {
   //   localStorage.removeItem("auth-error");
   // }, []);
+
+  useEffect(() => {}, []);
 
   return (
     <div className="px-5">
