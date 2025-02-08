@@ -61,6 +61,7 @@ const RegisterForm = ({ setIsOpen }: any) => {
   const handleVerify = async (e: any) => {
     // Add 验证码 logic here
     e.stopPropagation();
+    e.preventDefault();
     const { emailOrPhone, password } = form.getValues();
     const { data: registerData } = await register({
       username: emailOrPhone,
@@ -84,10 +85,10 @@ const RegisterForm = ({ setIsOpen }: any) => {
   };
 
   useEffect(() => {
-    // const error = rerror?.errors?.map((item) => item);
-    // console.log(rerror);
-    if (rerror) setError(rerror?.data?.message);
-    setShow验证码(false);
+    const authErr = localStorage.getItem("auth-error") || "";
+    console.log(authErr, "authErr");
+    if (rerror) setError(authErr);
+    // setShow验证码(false);
   }, [rerror]);
 
   console.log(rerror);
