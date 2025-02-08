@@ -10,6 +10,8 @@ import { setDetails } from "@/store/slices/exploreSlice";
 import { replace, useNavigate, useSearchParams } from "react-router-dom";
 import { paths } from "@/routes/paths";
 import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder";
+import personE from '../../../assets/explore/personE.svg'
+
 
 interface LatestPorp {
   list_id: string;
@@ -122,6 +124,8 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
                         <img
                           className=" w-[26px] h-[26px] rounded-full"
                           src={card.user.avatar}
+                          onError={(e) => (e.currentTarget.src = personE)}
+
                           alt=""
                         />
                       ) : (

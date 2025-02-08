@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import uiLeft from "../../../assets/explore/uiLeftt.svg";
 import "../explore.css";
 import { useNavigate } from "react-router-dom";
+import personE from '../../../assets/explore/personE.svg'
 import {
   useGetExploreListQuery,
   useGetExploreTagQuery,
@@ -23,6 +24,7 @@ interface RecommandProps {
 const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
   const dispatch = useDispatch();
   const [list, setList] = useState([]);
+  const [imgError, setImgError] = useState(false);
   const { data, isLoading, refetch } = useGetExploreListQuery({
     id: list_id,
   });
@@ -156,9 +158,10 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
                         <div className=" flex justify-cente  items-center gap-[8px]">
                           {card.user.avatar ? (
                             <img
-                              onError={() => console.log("gg")}
-                              className=" w-[26px] h-[26px] rounded-full"
+                              // onError={() => console.log("gg")}
+                              className=" w-[20px] h-[20px] rounded-full"
                               src={card.user.avatar}
+                              onError={(e) => (e.currentTarget.src = personE)}
                               alt=""
                             />
                           ) : (
