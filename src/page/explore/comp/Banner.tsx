@@ -60,7 +60,7 @@ const Banner: React.FC = () => {
                     height={"100%"}
                   /> */}
                   <img
-                    className={`rounded-md hidden transition-all duration-300  ${
+                    className={`rounded-[12px] hidden transition-all duration-300  ${
                       selectedIndex === index
                         ? "w-[332px] h-[162px]" // Active slide size
                         : "w-[290px] h-[148px]" // Non-active slide size
@@ -72,7 +72,7 @@ const Banner: React.FC = () => {
               ))}
             </Carousel>
             {/* Custom Dots */}
-            <ul className="flex justify-center items-center gap-[10px] w-full  mt-2 absolute bottom-0 left-0">
+            <ul className="flex justify-center items-center gap-[4px] w-full  mt-2 absolute bottom-0 left-0">
               {ad.map((_, dotIndex) => (
                 <li
                   key={dotIndex}

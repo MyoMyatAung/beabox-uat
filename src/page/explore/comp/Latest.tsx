@@ -77,10 +77,10 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
       {isLoading ? (
         <div className="flex w-full justify-center">
           <div className=" grid grid-cols-2 gap-[20px]">
-            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[216px]"></div>
-            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[216px]"></div>
-            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[216px]"></div>
-            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[216px]"></div>
+            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[315px]"></div>
+            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[315px]"></div>
+            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[315px]"></div>
+            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[315px]"></div>
           </div>
         </div>
       ) : (
@@ -93,7 +93,7 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
               {waterfall?.map((card: any, index: number) => (
                 <div
                   key={index}
-                  className="chinese_photo h-[315px] max-w-full shadow-lg relative"
+                  className="chinese_photo h-[320px] max-w-full shadow-lg relative"
                 >
                   <div
                     className=" relative flex justify-center items-center bg-[#010101] rounded-t-[4px] overflow-hidden  h-[240px]"

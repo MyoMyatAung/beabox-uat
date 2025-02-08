@@ -35,13 +35,13 @@ const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
           {hd?.map((tab: any, index) => (
             <div
               key={index}
-              className="flex flex-col justify-center items-center py-[10px] gap-[3px]"
+              className="flex flex-col justify-center items-center py-[10px] gap-[3px] pr-[16px]"
             >
               <h1
-                className={`cursor-pointer transition duration-300 ${
+                className={`cursor-pointer transition duration-300 text-[16px] ${
                   exp_header !== tab.name
-                    ? "text-white/60 font-[500] text-[15px] leading-[20px]"
-                    : "text-[16px] font-[700] leading-[20px] text-white"
+                    ? "text-white/60 font-[500] leading-[20px]"
+                    : " font-[700] leading-[20px] text-white"
                 }`}
                 // onClick={() => setActiveTab(tab?.title)}
                 onClick={() => dispatch(setExpHeader(tab?.name))}
@@ -51,7 +51,7 @@ const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
               <span
                 className={`${
                   exp_header !== tab.name ? "opacity-0" : "opacity-100"
-                } w-[24px] h-[4px] bg-white rounded-full`}
+                } w-[24px] h-[4px] bg-[#CD3EFF] rounded-full`}
               ></span>
             </div>
           ))}

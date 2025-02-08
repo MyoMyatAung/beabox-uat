@@ -53,7 +53,7 @@ const Poppizza: React.FC<PoppizzaProps> = ({}) => {
             loading="lazy"
           />
         )}
-        <p className="text-[12px] font-[500] text-[#888]">
+        <p className="text-[10px] font-[500] text-[#888]">
           {item?.title || ""}
         </p>
       </Link>

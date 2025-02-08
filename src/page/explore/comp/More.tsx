@@ -86,8 +86,8 @@ const More: React.FC<MoreProps> = () => {
     }
   };
 
-  // console.log(data?.data);
-  console.log(list);
+  console.log(data?.data);
+  // console.log(list);
 
   return (
     <>

@@ -85,7 +85,7 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
 
   // console.log(list);
   return (
-    <div className=" pb-[20px] pt-[10px] px-[10px]">
+    <div className=" pb-[20px] px-[10px]">
       {isLoading ? (
         <div className="flex w-full justify-center">
           <div className=" grid grid-cols-2 gap-[20px]">
@@ -118,7 +118,7 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
                   {ll.posts.map((card: any) => (
                     <div
                       key={card.post_id}
-                      className="max-w-full pb-[12px chinese_photo h-[315px]"
+                      className="max-w-full pb-[12px chinese_photo h-[320px]"
                     >
                       <div
                         onClick={() => showDetailsVod(card)}
@@ -147,7 +147,7 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
                           </div>
                         </div>
                       </div>
-                      <h1 className="text-white w-full text-[12px] font-[400] px-[6px] pt-[6px leading-[20px] break-words">
+                      <h1 className="text-white w-full text-[12px] font-[400] px-[6px] pt-[6px] leading-[20px] break-words">
                         {card.title.length > 50
                           ? `${card.title.slice(0, 50)}...`
                           : card.title}
