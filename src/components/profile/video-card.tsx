@@ -26,10 +26,7 @@ const VideoCard = ({ videoData }: any) => {
       {/* remove if not work ;( */}
       <div className=" h-[300px]">
         <ImageWithPlaceholder
-          // src={videoData?.preview_image}
-          src={
-            "https://i.pinimg.com/736x/e2/82/ec/e282ecb8f710296976eda512e9a19022.jpg"
-          }
+          src={videoData?.preview_image}
           alt={videoData.title || "Video"}
           width={""}
           height={""}
