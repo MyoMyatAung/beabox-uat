@@ -34,7 +34,6 @@ const LoginForm = ({ setIsOpen }: any) => {
   const dispatch = useDispatch();
   const authErr = localStorage.getItem("auth-error") || "";
 
-
   const [getCaptcha, { data, isLoading: captchaLoading }] =
     useGetCaptchaMutation();
   const [show验证码, setShow验证码] = useState(false);
@@ -223,9 +222,14 @@ const LoginForm = ({ setIsOpen }: any) => {
               {captchaLoading ? <SmallLoader /> : "登录"}
               {/* 登录 */}
             </Button>
-            <Link to={paths.forgot_password}>
-              <p className="text-center text-[14px] mt-5">忘记密码？</p>
-            </Link>
+            <div className="flex justify-center">
+              <Link
+                to={paths.forgot_password}
+                className="text-center text-[14px] mt-5"
+              >
+                忘记密码？
+              </Link>
+            </div>
           </div>
           <Dialog open={show验证码} onOpenChange={setShow验证码}>
             <DialogContent className="bg-[#393641] z-[3000] border-0 shadow-lg rounded-lg max-w-[300px]">
