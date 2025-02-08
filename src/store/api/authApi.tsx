@@ -122,36 +122,24 @@ export const authApi = createApi({
       query: ({ username, password, captcha, captcha_key }: any) => ({
         url: "/register",
         method: "POST",
-        // body: convertToSecurePayload({
-        //   username,
-        //   password,
-        //   captcha,
-        //   captcha_key,
-        // }),
-        body: {
+        body: convertToSecurePayload({
           username,
           password,
           captcha,
           captcha_key,
-        },
+        }),
       }),
     }),
     login: builder.mutation<any, string>({
       query: ({ username, password, captcha, captcha_key }: any) => ({
         url: "/login",
         method: "POST",
-        // body: convertToSecurePayload({
-        //   username,
-        //   password,
-        //   captcha,
-        //   captcha_key,
-        // }),
-        body: {
+        body: convertToSecurePayload({
           username,
           password,
           captcha,
           captcha_key,
-        },
+        }),
       }),
     }),
     storeSecurityQues: builder.mutation<any, string>({
@@ -162,8 +150,7 @@ export const authApi = createApi({
           "Content-Type": "application/json",
           Authorization: `Bearer ${rtoken}`,
         },
-        // body: convertToSecurePayload({ security_question, answer }),
-        body: { security_question, answer },
+        body: convertToSecurePayload({ security_question, answer }),
       }),
     }),
   }),
