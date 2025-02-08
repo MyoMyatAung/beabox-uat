@@ -80,8 +80,9 @@ const Register = () => {
     }
   };
   useEffect(() => {
-    if (rerror) setError(rerror?.data?.message);
-    setShow验证码(false);
+    const authErr = localStorage.getItem("auth-error") || "";
+    console.log(authErr, "authErr");
+    if (rerror) setError(authErr);
   }, [rerror]);
   return (
     <>

@@ -56,6 +56,7 @@ const LoginForm = ({ setIsOpen }: any) => {
   const handleVerify = async (e: any) => {
     // Add 验证码 logic here
     e.stopPropagation();
+    e.preventDefault();
     const { emailOrPhone, password } = form.getValues();
 
     console.log("data", {
@@ -87,8 +88,10 @@ const LoginForm = ({ setIsOpen }: any) => {
   };
 
   useEffect(() => {
-    if (lerror) setError(lerror?.data?.message);
-    setShow验证码(false);
+    const authErr = localStorage.getItem("auth-error") || "";
+    console.log(authErr, "authErr")
+    if (lerror) setError(authErr);
+    // setShow验证码(false);
   }, [lerror]);
 
   return (

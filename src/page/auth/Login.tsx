@@ -81,8 +81,9 @@ const Login = () => {
   };
 
   useEffect(() => {
-    setShow验证码(false);
-    if (lerror) setError(lerror?.data?.message);
+    const authErr = localStorage.getItem("auth-error") || "";
+    console.log(authErr, "authErr");
+    if (lerror) setError(authErr);
   }, [lerror]);
 
   return (
