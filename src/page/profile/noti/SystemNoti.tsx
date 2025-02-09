@@ -1,5 +1,5 @@
 import { paths } from "@/routes/paths";
-import { FaAngleLeft } from "react-icons/fa";
+import backButton from "../../assets/backButton.svg";
 import { Link } from "react-router-dom";
 import Card from "@/components/profile/noti/card";
 const SystemNoti = () => {
@@ -8,7 +8,8 @@ const SystemNoti = () => {
       <div className="w-full">
         <div className="flex justify-between items-center py-5 sticky top-0 bg-black z-50">
           <Link to={paths.noti}>
-            <FaAngleLeft size={22} />
+            {/* <FaAngleLeft size={22} /> */}
+            <img src={backButton} alt="" />
           </Link>
           <p className="text-[16px]">System Notification</p>
           <div></div>

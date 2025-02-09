@@ -18,7 +18,8 @@ import VideoContainer from "@/page/home/components/VideoContainer";
 import Ads from "@/page/home/components/Ads";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
 import sc from "../../../assets/explore/sc.svg";
-import { FaAngleLeft } from "react-icons/fa";
+// import { FaAngleLeft } from "react-icons/fa";
+import backButton from "../../../assets/backButton.svg";
 
 interface VodDetailsProps {
   // setshow: (value: boolean) => void;
@@ -230,7 +231,8 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
                   fill="white"
                 />
               </svg> */}
-              <FaAngleLeft size={22} />
+              {/* <FaAngleLeft size={22} /> */}
+              <img src={backButton} alt="" />
             </button>
             <div className="relative flex-1 mr-5">
               <div className="absolute top-2 left-3">

@@ -3,7 +3,7 @@ import HideBio from "@/components/profile/hide-bio";
 import PrivateProfile from "@/components/profile/private-profile";
 import ShareRegion from "@/components/profile/share-region";
 import { paths } from "@/routes/paths";
-import { FaAngleLeft } from "react-icons/fa";
+import backButton from "../../assets/backButton.svg";
 import { Link } from "react-router-dom";
 
 const PrivacySettings = () => {
@@ -12,7 +12,8 @@ const PrivacySettings = () => {
       <div className="w-full">
         <div className="flex justify-between items-center py-5">
           <Link to={paths.settings}>
-            <FaAngleLeft size={22} />
+            {/* <FaAngleLeft size={22} /> */}
+            <img src={backButton} alt="" />
           </Link>
           <p className="text-[16px]">
             {/* Privacy Settings */}
