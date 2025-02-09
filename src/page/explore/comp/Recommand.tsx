@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import uiLeft from "../../../assets/explore/uiLeftt.svg";
 import "../explore.css";
 import { useNavigate } from "react-router-dom";
-import personE from '../../../assets/explore/personE.svg'
+import personE from "../../../assets/explore/personE.svg";
 import {
   useGetExploreListQuery,
   useGetExploreTagQuery,
@@ -89,12 +89,15 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
   return (
     <div className=" pb-[20px] px-[10px]">
       {isLoading ? (
-        <div className="flex w-full justify-center">
-          <div className=" grid grid-cols-2 gap-[20px]">
-            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[312px]"></div>
-            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[312px]"></div>
-            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[312px]"></div>
-            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[312px]"></div>
+        <div className=" flex flex-col w-full">
+          <div className="py-[12px]">
+            <div className=" w-full h-[20px] rounded-lg shadow-lg bg-white/20 animate-pulse mb-4"></div>
+          </div>
+          <div className=" w-full grid grid-cols-2 justify-center items-center  gap-[12px]">
+            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 max-w-full h-[312px]"></div>
+            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 max-w-full h-[312px]"></div>
+            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 max-w-full h-[312px]"></div>
+            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 max-w-full h-[312px]"></div>
           </div>
         </div>
       ) : (
@@ -115,7 +118,7 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
                 </div>
               </div>{" "}
               {/* content */}
-              <div className=" py-[12px] w-full grid grid-cols-2 justify-center items-center  gap-[18px]">
+              <div className=" py-[12px] w-full grid grid-cols-2 justify-center items-center  gap-[10px]">
                 <>
                   {ll.posts.map((card: any) => (
                     <div

@@ -50,6 +50,13 @@ const Explore = () => {
   // console.log(exp_header)
 
   useEffect(() => {
+    window.scrollTo(0,0)
+    // window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [exp_header]);  
+
+  
+
+  useEffect(() => {
     if (swiperRef.current) {
       const index = tabs?.indexOf(exp_header);
       if (index >= 0) {

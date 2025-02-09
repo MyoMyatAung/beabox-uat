@@ -10,8 +10,7 @@ import { setDetails } from "@/store/slices/exploreSlice";
 import { replace, useNavigate, useSearchParams } from "react-router-dom";
 import { paths } from "@/routes/paths";
 import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder";
-import personE from '../../../assets/explore/personE.svg'
-
+import personE from "../../../assets/explore/personE.svg";
 
 interface LatestPorp {
   list_id: string;
@@ -77,18 +76,16 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
   return (
     <>
       {isLoading ? (
-        <div className="flex w-full justify-center">
-          <div className=" grid grid-cols-2 gap-[20px]">
-            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[315px]"></div>
-            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[315px]"></div>
-            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[315px]"></div>
-            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[315px]"></div>
-          </div>
+        <div className=" w-full grid grid-cols-2 justify-center items-center  gap-[12px]">
+          <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 max-w-full h-[312px]"></div>
+          <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 max-w-full h-[312px]"></div>
+          <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 max-w-full h-[312px]"></div>
+          <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 max-w-full h-[312px]"></div>
         </div>
       ) : (
         <div className=" flex w-full justify-center">
           <div
-            className=" grid grid-cols-2 relative gap-[18px] px-2"
+            className=" grid grid-cols-2 relative gap-[10px] px-2"
             ref={contentRef}
           >
             <>
@@ -125,7 +122,6 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
                           className=" w-[26px] h-[26px] rounded-full"
                           src={card.user.avatar}
                           onError={(e) => (e.currentTarget.src = personE)}
-
                           alt=""
                         />
                       ) : (

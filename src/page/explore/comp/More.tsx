@@ -48,12 +48,13 @@ const More: React.FC<MoreProps> = () => {
       setHasMore(loadedItems < data?.pagination?.total);
       console.log(loadedItems);
       if (!more_tab) {
+        console.log('gg')
         dispatch(setMoreTab(filter[0]?.key));
       }
     } else {
       setHasMore(false);
     }
-  }, [data]);
+  }, [data,dispatch,filter]);
 
   const popularItems = Array.from({ length: 10 }, (_, i) => ({
     title: `My Boss (2021) - ${i + 1}`,
@@ -75,19 +76,19 @@ const More: React.FC<MoreProps> = () => {
   };
 
   const handleTabChange = (ff: any) => {
-    setCustomLoad(true);
+    // setCustomLoad(true);
     dispatch(setMoreTab(ff.key));
-    if (isFetching || isLoading) {
-      return;
-    } else {
-      setTimeout(() => {
-        setCustomLoad(false);
-      }, 1000);
-    }
+    // if (isFetching || isLoading) {
+    //   return;
+    // } else {
+    //   setTimeout(() => {
+    //     setCustomLoad(false);
+    //   }, 1000);
+    // }
   };
 
   console.log(data?.data);
-  // console.log(list);
+  console.log(more_tab);
 
   return (
     <>
@@ -110,7 +111,7 @@ const More: React.FC<MoreProps> = () => {
               <button
                 key={index}
                 className={`text-white text-[14px] font-[400] leading-[16px] px-[16px] py-[8px] ${
-                  more_tab === ff.key || ff.active
+                  more_tab === ff.key
                     ? "more_tabs_buttons_active"
                     : "more_tabs_buttons"
                 }`}
