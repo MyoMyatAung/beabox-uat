@@ -792,7 +792,7 @@ html {
   color: #fff;
   font-variant-numeric: lining-nums proportional-nums;
   font-feature-settings: "dlig" on;
-  font-family: Inter;
+  /* font-family: Inter; */
   font-size: 20px;
   font-style: normal;
   font-weight: 700;
@@ -800,7 +800,7 @@ html {
   letter-spacing: 0.24px;
   position: absolute;
   bottom: 50px;
-  right: 23%;
+  right: 22%;
   display: flex;
   justify-content: center;
   color: white;
