@@ -35,7 +35,7 @@ const Question = () => {
     <div className="w-full h-screen px-5 flex flex-col items-center bg-[#16131C]">
       <div className="flex justify-between items-center py-5 w-full">
         <Link to={paths.forgot_password}>
-          <FaAngleLeft size={18} />
+          <FaAngleLeft size={22} />
         </Link>
         <p className="text-[16px]">安全问题</p>
         <div></div>

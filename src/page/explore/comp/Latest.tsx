@@ -10,6 +10,8 @@ import { setDetails } from "@/store/slices/exploreSlice";
 import { replace, useNavigate, useSearchParams } from "react-router-dom";
 import { paths } from "@/routes/paths";
 import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder";
+import personE from '../../../assets/explore/personE.svg'
+
 
 interface LatestPorp {
   list_id: string;
@@ -77,10 +79,10 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
       {isLoading ? (
         <div className="flex w-full justify-center">
           <div className=" grid grid-cols-2 gap-[20px]">
-            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[216px]"></div>
-            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[216px]"></div>
-            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[216px]"></div>
-            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[216px]"></div>
+            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[315px]"></div>
+            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[315px]"></div>
+            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[315px]"></div>
+            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 w-[172px] h-[315px]"></div>
           </div>
         </div>
       ) : (
@@ -93,7 +95,7 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
               {waterfall?.map((card: any, index: number) => (
                 <div
                   key={index}
-                  className="chinese_photo h-[315px] max-w-full shadow-lg relative"
+                  className="chinese_photo h-[320px] max-w-full shadow-lg relative"
                 >
                   <div
                     className=" relative flex justify-center items-center bg-[#010101] rounded-t-[4px] overflow-hidden  h-[240px]"
@@ -111,7 +113,7 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
                     />
                   </div>
 
-                  <h1 className="text-white w-full text-[12px] font-[400] px-[6px] pt-[6px leading-[20px] break-words">
+                  <h1 className="text-white w-full text-[12px] font-[400] px-[6px] pt-[6px] leading-[20px] break-words">
                     {card.title.length > 50
                       ? `${card.title.slice(0, 50)}...`
                       : card.title}
@@ -122,6 +124,8 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
                         <img
                           className=" w-[26px] h-[26px] rounded-full"
                           src={card.user.avatar}
+                          onError={(e) => (e.currentTarget.src = personE)}
+
                           alt=""
                         />
                       ) : (

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import uiLeft from "../../../assets/explore/uiLeftt.svg";
 import "../explore.css";
 import { useNavigate } from "react-router-dom";
+import personE from '../../../assets/explore/personE.svg'
 import {
   useGetExploreListQuery,
   useGetExploreTagQuery,
@@ -23,6 +24,7 @@ interface RecommandProps {
 const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
   const dispatch = useDispatch();
   const [list, setList] = useState([]);
+  const [imgError, setImgError] = useState(false);
   const { data, isLoading, refetch } = useGetExploreListQuery({
     id: list_id,
   });
@@ -85,7 +87,7 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
 
   // console.log(list);
   return (
-    <div className=" pb-[20px] pt-[10px] px-[10px]">
+    <div className=" pb-[20px] px-[10px]">
       {isLoading ? (
         <div className="flex w-full justify-center">
           <div className=" grid grid-cols-2 gap-[20px]">
@@ -118,7 +120,7 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
                   {ll.posts.map((card: any) => (
                     <div
                       key={card.post_id}
-                      className="max-w-full pb-[12px chinese_photo h-[315px]"
+                      className="max-w-full pb-[12px chinese_photo h-[320px]"
                     >
                       <div
                         onClick={() => showDetailsVod(card)}
@@ -147,7 +149,7 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
                           </div>
                         </div>
                       </div>
-                      <h1 className="text-white w-full text-[12px] font-[400] px-[6px] pt-[6px leading-[20px] break-words">
+                      <h1 className="text-white w-full text-[12px] font-[400] px-[6px] pt-[6px] leading-[20px] break-words">
                         {card.title.length > 50
                           ? `${card.title.slice(0, 50)}...`
                           : card.title}
@@ -156,9 +158,10 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
                         <div className=" flex justify-cente  items-center gap-[8px]">
                           {card.user.avatar ? (
                             <img
-                              onError={() => console.log("gg")}
-                              className=" w-[26px] h-[26px] rounded-full"
+                              // onError={() => console.log("gg")}
+                              className=" w-[20px] h-[20px] rounded-full"
                               src={card.user.avatar}
+                              onError={(e) => (e.currentTarget.src = personE)}
                               alt=""
                             />
                           ) : (

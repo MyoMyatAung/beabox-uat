@@ -84,7 +84,7 @@ const Settings = ({
       <div className="top flex flex-col gap-5 w-full">
         <div className="flex justify-between items-center py-5">
           <Link to={paths.profile}>
-            <FaAngleLeft size={18} />
+            <FaAngleLeft size={22} />
           </Link>
           <p className="text-[16px]">
             {/* {user?.token ? "Setting & Privacy" : "Setting"} */}

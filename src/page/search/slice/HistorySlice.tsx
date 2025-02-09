@@ -23,7 +23,8 @@ export const HistorySlice = createSlice({
       }
     },
     clearData: (state, action) => {
-      state.data = [];
+      const { data } = action.payload;
+      state.data = state.data.filter((item) => item !== data);
     },
   },
 });
