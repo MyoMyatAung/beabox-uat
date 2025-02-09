@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Artplayer from "artplayer";
 import Hls from "hls.js";
 import indicator from "../indicator.svg";
@@ -22,6 +22,8 @@ const Player = ({
   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
   const hlsRef = useRef<Hls | null>(null); // HLS instance for `src`
   const { mute } = useSelector((state: any) => state.muteSlice);
+  const [isPaused, setIsPaused] = useState(false);
+  const playIconRef = useRef<HTMLDivElement | null>(null); // Reference to the play icon
 
   // Initialize Artplayer for the current video
   const initializeArtplayer = () => {
@@ -66,9 +68,30 @@ const Player = ({
       },
       icons: {
         loading: `<img width="100" height="100" src=${vod_loader}>`,
-        state: `<img width="50" height="50" src=${indicator}>`,
+        state: "",
       },
       layers: [
+        {
+          html: `<div class="custom-play-icon">
+                    <img src="${indicator}" width="50" height="50" alt="Play">
+                 </div>`,
+          style: {
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: "999999",
+            display: "none", // Initially hidden
+          },
+          mounted: (element) => {
+            playIconRef.current = element; // Store reference to custom play button
+
+            // Click the play button to resume video
+            playIconRef?.current?.addEventListener("click", () => {
+              artPlayerInstanceRef.current?.play();
+            });
+          },
+        },
         {
           html: '<div class="click-layer"></div>',
           style: {
@@ -102,6 +125,17 @@ const Player = ({
           },
         },
       ],
+    });
+
+    artPlayerInstanceRef.current.on("pause", () => {
+      setIsPaused(true);
+      if (playIconRef.current) playIconRef.current.style.display = "block";
+    });
+
+    // **Hide Play Icon When Video is Playing**
+    artPlayerInstanceRef.current.on("play", () => {
+      setIsPaused(false);
+      if (playIconRef.current) playIconRef.current.style.display = "none";
     });
 
     // artPlayerInstanceRef?.current?.on("click", handleClick);

@@ -2,6 +2,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import Upload from "./upload";
 import VideoCard from "./video-card";
 import Loader from "../../page/home/vod_loader.gif";
+import ScrollHeader from "./scroll-header";
 
 const VideoGrid = ({
   isUpload,
@@ -17,7 +18,9 @@ const VideoGrid = ({
         showHeader ? "h-screen no-scrollbar overflow-x-hidden" : ""
       } `}
     >
-      <div className="grid grid-cols-3 gap-2">
+      <div
+        className={`grid grid-cols-3 gap-2 ${showHeader ? "mb-32" : "mb-0"}`}
+      >
         {isUpload ? <Upload /> : <></>}
         {data && (
           <>
