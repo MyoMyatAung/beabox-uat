@@ -135,17 +135,18 @@ const Settings = ({
                 <ChevronRight size={15} className="text-[#777777]" />
               </div>
             </Link>
-            <div className="flex justify-between items-center">
-              <p className="flex items-center gap-1 text-[14px]">当前版本</p>
-              <p className="flex items-center gap-1 text-[14px]">
-                V {data?.data[0]?.version_number}{" "}
-                <ChevronRight size={15} className="text-[#777777]" />
-              </p>
-            </div>
           </>
         ) : (
           <></>
         )}
+
+        <div className="flex justify-between items-center">
+          <p className="flex items-center gap-1 text-[14px]">当前版本</p>
+          <p className="flex items-center gap-1 text-[14px]">
+            V {data?.data[0]?.version_number}{" "}
+            <ChevronRight size={15} className="text-[#777777]" />
+          </p>
+        </div>
 
         <div className="border-b border-white/10 my-2"></div>
 

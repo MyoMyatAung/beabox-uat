@@ -65,14 +65,12 @@ const LoginForm = ({ setIsOpen }: any) => {
     e.stopPropagation();
     e.preventDefault();
     const { emailOrPhone, password } = form.getValues();
-    console.log(emailOrPhone, password);
     const { data: loginData } = await login({
       username: emailOrPhone,
       password,
       captcha,
       captcha_key: data?.data?.captcha_key,
     });
-    console.log(loginData, "logindata");
     if (loginData?.status) {
       dispatch(setUser(loginData?.data));
       dispatch(setIsDrawerOpen(false));
@@ -82,7 +80,8 @@ const LoginForm = ({ setIsOpen }: any) => {
       setIsOpen(false);
     } else {
       if (authErr) setError(authErr);
-      setShow验证码(false);
+      await getCaptcha("");
+      // setShow验证码(false);
     }
   };
 
