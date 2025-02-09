@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import uiLeft from "../../../assets/explore/uiLeftt.svg";
+import { CiHeart } from "react-icons/ci";
 import "../explore.css";
 import { useNavigate } from "react-router-dom";
 import personE from "../../../assets/explore/personE.svg";
@@ -158,7 +159,7 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
                           : card.title}
                       </h1>
                       <div className=" flex w-full p-[6px] justify-between">
-                        <div className=" flex justify-cente  items-center gap-[8px]">
+                        <div className=" flex justify-cente  items-center gap-[4px]">
                           {card.user.avatar ? (
                             <img
                               // onError={() => console.log("gg")}
@@ -168,18 +169,33 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
                               alt=""
                             />
                           ) : (
-                            <div className="w-[15px] h-[15px] rounded-full bg-[#FFFFFF12] flex justify-center items-center">
-                              <Person />
-                            </div>
+                            <img
+                              src={personE}
+                              className=" w-[20px] h-[20px] rounded-full"
+                              alt=""
+                            />
                           )}
-                          <h1 className=" text-white text-[12px] font-[400] leading-[20px]">
+                          <h1 className=" text-[#888] text-[12px] font-[400] leading-[20px]">
                             {card.user.name}
                             {/* {card?.files[0]?.width} & {card?.files[0]?.height} {} */}
                           </h1>
                         </div>
                         <div className=" flex justify-center items-center gap-[4px]">
-                          <FaHeart />
-                          <h1 className=" text-white text-[12px] font-[400] leading-[20px]">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="13"
+                            height="12"
+                            viewBox="0 0 13 12"
+                            fill="none"
+                          >
+                            <path
+                              d="M8.56675 1.13281C7.53401 1.13281 6.6298 1.57692 6.06616 2.32759C5.50253 1.57692 4.59832 1.13281 3.56557 1.13281C2.74349 1.13374 1.95535 1.46072 1.37405 2.04202C0.792751 2.62332 0.46577 3.41146 0.464844 4.23354C0.464844 7.73437 5.65557 10.568 5.87662 10.6851C5.93488 10.7164 6.00001 10.7328 6.06616 10.7328C6.13232 10.7328 6.19745 10.7164 6.25571 10.6851C6.47676 10.568 11.6675 7.73437 11.6675 4.23354C11.6666 3.41146 11.3396 2.62332 10.7583 2.04202C10.177 1.46072 9.38883 1.13374 8.56675 1.13281Z"
+                              stroke="#BBBBBB"
+                              stroke-width="0.8"
+                            />
+                          </svg>
+                          {/* <FaHeart /> */}
+                          <h1 className=" text-[#888] text-[12px] font-[400] leading-[20px]">
                             {formatNumber(card?.like_count)}
                           </h1>
                         </div>
