@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { NoVideo } from "@/assets/profile";
+import { NoVideo, PersonLock } from "@/assets/profile";
 import VideoGrid from "./video-grid";
 import { FaHeart } from "react-icons/fa";
 import { useGetLikedPostQuery } from "@/store/api/profileApi";
@@ -67,7 +67,7 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
           </div>
         ) : (
           <div className="flex gap-2 flex-col justify-center items-center w-full mt-[150px]">
-            <BsPersonLock size={32} />
+            <PersonLock />
             <p className="text-[12px] text-[#888]">私密账号</p>
           </div>
         )}
