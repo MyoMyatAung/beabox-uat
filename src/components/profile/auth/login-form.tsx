@@ -23,8 +23,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { setAuthToggle, setIsDrawerOpen } from "@/store/slices/profileSlice";
+import {
+  setAlertText,
+  setAuthToggle,
+  setIsDrawerOpen,
+  setShowAlert,
+} from "@/store/slices/profileSlice";
 import SmallLoader from "@/components/shared/small-loader";
+import AlertToast from "@/components/shared/alert-toast";
 const LoginForm = ({ setIsOpen }: any) => {
   const [name, setName] = useState("");
   const [pass, setPass] = useState("");
@@ -66,36 +72,23 @@ const LoginForm = ({ setIsOpen }: any) => {
       captcha,
       captcha_key: data?.data?.captcha_key,
     });
-
+    console.log(loginData, "logindata");
     if (loginData?.status) {
       dispatch(setUser(loginData?.data));
       dispatch(setIsDrawerOpen(false));
+      dispatch(setShowAlert(true));
+      dispatch(setAlertText(loginData?.message));
       setShow验证码(false);
-      // navigate(paths.profile);
       setIsOpen(false);
     } else {
       if (authErr) setError(authErr);
       setShow验证码(false);
     }
-    // if (lerror) {
-    //   setError(lerror?.data?.message);
-    // }
   };
-
-  // const authErr = localStorage.getItem("auth-error") || "";
-  // useEffect(() => {
-  //   if (authErr) setError(authErr);
-  //   setShow验证码(false);
-  // }, [authErr]);
-
-  // useEffect(() => {
-  //   localStorage.removeItem("auth-error");
-  // }, []);
-
-  useEffect(() => {}, []);
 
   return (
     <div className="px-5">
+      {/* <AlertToast /> */}
       <div className="flex justify-between items-center">
         <div className="px-3"></div>
         <p className="text-[18px]">

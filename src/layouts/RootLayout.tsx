@@ -8,6 +8,7 @@ import { setApplicationData } from "@/store/slices/exploreSlice";
 import RegisterForm from "@/components/profile/auth/register-form";
 import LoginForm from "@/components/profile/auth/login-form";
 import AuthDrawer from "@/components/profile/auth/auth-drawer";
+import AlertToast from "@/components/shared/alert-toast";
 
 const RootLayout = ({ children }: any) => {
   const [showAd, setShowAd] = useState(false);
@@ -39,6 +40,7 @@ const RootLayout = ({ children }: any) => {
       {/* <RightSideActions /> */}
       {showAd && <PopUp setShowAd={setShowAd} />}
       {isOpen ? <AuthDrawer /> : <></>}
+      <AlertToast />
       <div className="fixed bottom-0 left-0 w-full z-[1300]">
         <BottomNav />
       </div>
