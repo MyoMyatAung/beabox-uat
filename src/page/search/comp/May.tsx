@@ -76,7 +76,7 @@ const May: React.FC<MayProps> = ({}) => {
           <button
             key={index}
             onClick={() => handleSearch(val?.title)}
-            className={`p-[12px]  font-[400] flex gap-[8px] items-center rounded-lg ${
+            className={`px-[12px] py-[8px]  font-[400] flex gap-[8px] items-center rounded-lg ${
               index < 2
                 ? "bg-first-two text-[16px] font-bold flex relative  items-center justify-between"
                 : ""
@@ -85,7 +85,7 @@ const May: React.FC<MayProps> = ({}) => {
             {index < 2 ? (
               <>
                 <div className="font-bold flex truncate items-center gap-2">
-                  <div className="w-[4px] h-[4px] rounded-full bg-[#EAACFF] flex-shrink-0"></div>
+                  <div className="w-[6px] h-[6px] rounded-full bg-[#EAACFF] flex-shrink-0"></div>
                   <div className=" ml-2 max-w-[calc(100%-40px)] truncate">
                     {val?.title}
                   </div>

@@ -16,6 +16,7 @@ import VideoFeed from "@/page/home/components/VideoFeed";
 import empty from "../../home/empty.png";
 import ImageWithPlaceholder from "../comp/imgPlaceholder";
 import he from "he";
+import { FaAngleLeft } from "react-icons/fa";
 
 interface ResultsProps {}
 
@@ -193,12 +194,14 @@ const Results: React.FC<ResultsProps> = ({}) => {
           onSubmit={handleSubmit}
           className="px-[16px] pb-[20px] pt-[20px] flex justify-between items-center gap-[10px]"
         >
-          <img
+          {/* <img
             onClick={() => navigate("/search_overlay")}
             className=" pt-[6px]"
             src={back}
             alt=""
-          />
+          /> */}
+          <FaAngleLeft size={22} onClick={() => navigate("/search_overlay")}/>
+          
           <div className=" w-full px-[10px] py-[8px] search_input flex gap-[12px]">
             <img src={sc} alt="" />
             <input
@@ -550,13 +553,13 @@ const Results: React.FC<ResultsProps> = ({}) => {
                 <div className={`flex justify-center items-center py-[200px]`}>
                   <div className="flex flex-col items-center">
                     <img src={empty} className="w-[80px]" alt="" />
-                    <h1 className="text-center">搜索结果为空</h1>
+                    <h1 className="text-center text-white/60">搜索结果为空</h1>
                   </div>
                 </div>
               ) : (
                 <div className={`flex justify-center items-center py-[20px]`}>
                   <div>
-                    <h1 className="">搜索结果为空</h1>
+                    <h1 className="text-white/60">搜索结果为空</h1>
                   </div>
                 </div>
               ))}

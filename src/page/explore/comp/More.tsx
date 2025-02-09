@@ -128,7 +128,7 @@ const More: React.FC<MoreProps> = () => {
             <div className={`flex justify-center items-center py-[200px]`}>
               <div className="flex flex-col items-center">
                 <img src={empty} className="w-[80px]" alt="" />
-                <h1 className="text-center">搜索结果为空</h1>
+                <h1 className="text-center text-white/60">搜索结果为空</h1>
               </div>
             </div>
           </div>
