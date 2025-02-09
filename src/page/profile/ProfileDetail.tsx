@@ -15,6 +15,7 @@ import EditNickName from "@/components/profile/edit-nickname";
 import EditRegion from "@/components/profile/edit-region";
 import ImageUpload from "@/components/profile/image-upload";
 import TranLoader from "@/components/shared/tran-loader";
+import backButton from "../../assets/backButton.svg";
 
 const ProfileDetail = () => {
   const user = useSelector((state: any) => state.persist.user);
@@ -47,7 +48,8 @@ const ProfileDetail = () => {
       <div className="w-full h-screen px-5 bg-[#16131C]">
         <div className="flex justify-between items-center py-5">
           <Link to={paths.profile}>
-            <FaAngleLeft size={22} />
+            {/* <FaAngleLeft size={22} /> */}
+            <img src={backButton} alt="" />
           </Link>
           <p className="text-[16px] mr-5">资料</p>
           <div></div>

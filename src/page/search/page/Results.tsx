@@ -16,7 +16,8 @@ import VideoFeed from "@/page/home/components/VideoFeed";
 import empty from "../../home/empty.png";
 import ImageWithPlaceholder from "../comp/imgPlaceholder";
 import he from "he";
-import { FaAngleLeft } from "react-icons/fa";
+// import { FaAngleLeft } from "react-icons/fa";
+import backButton from "../../../assets/backButton.svg";
 
 interface ResultsProps {}
 
@@ -194,13 +195,13 @@ const Results: React.FC<ResultsProps> = ({}) => {
           onSubmit={handleSubmit}
           className="px-[16px] pb-[20px] pt-[20px] flex justify-between items-center gap-[10px]"
         >
-          {/* <img
+          <img
             onClick={() => navigate("/search_overlay")}
-            className=" pt-[6px]"
-            src={back}
+            // className=" pt-[6px]"
+            src={backButton}
             alt=""
-          /> */}
-          <FaAngleLeft size={22} onClick={() => navigate("/search_overlay")}/>
+          />
+          {/* <FaAngleLeft size={22} onClick={() => navigate("/search_overlay")}/> */}
           
           <div className=" w-full px-[10px] py-[8px] search_input flex gap-[12px]">
             <img src={sc} alt="" />

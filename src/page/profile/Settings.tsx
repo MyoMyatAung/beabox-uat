@@ -1,5 +1,5 @@
 import { paths } from "@/routes/paths";
-import { FaAngleLeft } from "react-icons/fa";
+// import { FaAngleLeft } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import EditSecurity from "@/components/profile/edit-security";
 import PrivateProfile from "@/components/profile/private-profile";
 import ContentVisibility from "@/components/profile/content-visibility";
 import { useEffect, useState } from "react";
+import backButton from "../../assets/backButton.svg";
 
 const Settings = ({
   liked_video_visibility,
@@ -84,7 +85,8 @@ const Settings = ({
       <div className="top flex flex-col gap-5 w-full">
         <div className="flex justify-between items-center py-5">
           <Link to={paths.profile}>
-            <FaAngleLeft size={22} />
+            {/* <FaAngleLeft size={22} /> */}
+            <img src={backButton} alt="" />
           </Link>
           <p className="text-[16px]">
             {/* {user?.token ? "Setting & Privacy" : "Setting"} */}
