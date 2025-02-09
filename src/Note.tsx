@@ -79,7 +79,7 @@ const Profile = () => {
   if (isLoading) return <Loader />;
 
   return (
-    <div className="h-[calc(100vh-76px)]">
+    <div className="h-[calc(100vh-76px)] overflow-hidden overflow-y-scroll hide-sb">
       <div className="gradient-overlay"></div>
       <img
         src={

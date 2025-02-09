@@ -49,16 +49,8 @@ const VideoTabs = ({ login, showHeader, headerRef }: any) => {
     setPage((prevPage) => prevPage + 1);
   };
   return (
-    <Tabs defaultValue="liked" className="my-5">
-      <div ref={headerRef} className="sticky z-[1300] top-0 w-full"></div>
-
+    <Tabs defaultValue="liked" className="py-5 sticky top-[80px]">
       <TabsList className="grid w-full grid-cols-3 bg-transparent">
-        {/* <TabsTrigger
-          className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2"
-          value="videos"
-        >
-          <Play /> <span>Your Videos</span>
-        </TabsTrigger> */}
         <TabsTrigger
           className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2"
           value="liked"
@@ -76,16 +68,6 @@ const VideoTabs = ({ login, showHeader, headerRef }: any) => {
           </span>
         </TabsTrigger>
       </TabsList>
-      {/* <TabsContent value="videos">
-        {login ? (
-          <VideoGrid isUpload={true} />
-        ) : (
-          <div className="flex flex-col justify-center items-center w-full mt-[150px]">
-            <NoVideo />
-            <p className="text-[12px] text-[#888]"> 这里空空如也～</p>
-          </div>
-        )}
-      </TabsContent> */}
       {isLoading || historyLoading ? (
         <div className=" flex justify-center w-full py-[200px]">
           <div className="">
