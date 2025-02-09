@@ -11,7 +11,7 @@ import {
 import { useEffect, useState } from "react";
 import Loader from "../../page/home/vod_loader.gif";
 
-const VideoTabs = ({ login, showHeader }: any) => {
+const VideoTabs = ({ login, showHeader, headerRef }: any) => {
   const user = useSelector((state: any) => state.persist.user);
   const [page, setPage] = useState(1);
   const [Hispage, setHisPage] = useState(1);
@@ -50,6 +50,8 @@ const VideoTabs = ({ login, showHeader }: any) => {
   };
   return (
     <Tabs defaultValue="liked" className="my-5">
+      <div ref={headerRef} className="sticky z-[1300] top-0 w-full"></div>
+
       <TabsList className="grid w-full grid-cols-3 bg-transparent">
         {/* <TabsTrigger
           className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2"

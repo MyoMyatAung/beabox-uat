@@ -68,7 +68,7 @@ const Profile = () => {
         console.error("Failed to copy text: ", err);
       });
   };
-  
+
   useEffect(() => {
     if (user) refetch();
   }, []);
@@ -260,8 +260,8 @@ const Profile = () => {
           )}
         </div>
 
-        <div ref={headerRef} className="sticky z-[1300] top-0 w-full"></div>
-        {false ? (
+        {/* <div ref={headerRef} className="sticky z-[1300] top-0 w-full"></div> */}
+        {showHeader ? (
           <ScrollHeader
             photo={data?.data?.profile_photo}
             name={data?.data?.nickname}
@@ -270,11 +270,25 @@ const Profile = () => {
           <></>
         )}
 
-        {/* <div className={`sticky top-[100px] z-[1200]`}> */}
-        <div className="z-[1200] relative px-5">
-          <VideoTabs showHeader={false} login={user?.token} />
-        </div>
-        {/* </div> */}
+        {showHeader ? (
+          <div className={`sticky top-[80px] z-[1200]`}>
+            <div className="z-[1200] relative px-5">
+              <VideoTabs
+                headerRef={headerRef}
+                showHeader={showHeader}
+                login={user?.token}
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="z-[1200] relative px-5">
+            <VideoTabs
+              headerRef={headerRef}
+              showHeader={false}
+              login={user?.token}
+            />
+          </div>
+        )}
       </div>
     </>
   );
