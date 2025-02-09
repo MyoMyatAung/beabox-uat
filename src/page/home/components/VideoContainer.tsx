@@ -24,7 +24,7 @@ const VideoContainer = ({
   width,
   height,
   container,
-
+  hideBar,
   sethideBar,
 }: {
   video: any;
@@ -40,7 +40,7 @@ const VideoContainer = ({
   width: any;
   height: any;
   container: any;
-
+  hideBar: any;
   sethideBar: any;
 }) => {
   const [likeCount, setLikeCount] = useState(video?.like_count);
@@ -331,28 +331,31 @@ const VideoContainer = ({
         sethideBar={sethideBar}
         setHeight={setHeight}
       />
-      <VideoSidebar
-        status={status}
-        unLike={unLike}
-        handleLike={handleLike}
-        setLikeCount={setLikeCount}
-        likeCount={likeCount}
-        isLiked={isLiked}
-        setIsLiked={setIsLiked}
-        // likes={video?.like_count}
-        // is_liked={video?.is_liked}
-        setCommentCount={setcommentCount}
-        messages={commentCount}
-        post_id={video?.post_id}
-        setCountNumber={setCountNumber}
-        setCountdown={setCountdown}
-        countNumber={countNumber}
-        countdown={countdown}
-        config={config?.data}
-        image={video?.preview_image}
-        post={video}
-        setHearts={setHearts}
-      />
+      {!hideBar && (
+        <VideoSidebar
+          status={status}
+          unLike={unLike}
+          handleLike={handleLike}
+          setLikeCount={setLikeCount}
+          likeCount={likeCount}
+          isLiked={isLiked}
+          setIsLiked={setIsLiked}
+          // likes={video?.like_count}
+          // is_liked={video?.is_liked}
+          setCommentCount={setcommentCount}
+          messages={commentCount}
+          post_id={video?.post_id}
+          setCountNumber={setCountNumber}
+          setCountdown={setCountdown}
+          countNumber={countNumber}
+          countdown={countdown}
+          config={config?.data}
+          image={video?.preview_image}
+          post={video}
+          setHearts={setHearts}
+        />
+      )}
+
       {video?.type !== "ads" && width > height && (
         <>
           <button

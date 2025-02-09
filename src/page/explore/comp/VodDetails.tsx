@@ -199,6 +199,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
             setHearts={setHearts}
             setCountdown={setCountdown}
             sethideBar={sethideBar}
+            hideBar={hideBar}
           />
 
           {!hideBar && files?.type !== "ads" && (

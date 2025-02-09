@@ -359,8 +359,8 @@ const Player = ({
           style: {
             position: "absolute",
             bottom: "0px",
-            left: "3%",
-            width: "94%",
+            left: "5%",
+            width: "90%",
             height: "25px",
             zIndex: "9999",
           },

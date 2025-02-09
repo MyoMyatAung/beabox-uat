@@ -836,7 +836,8 @@ html {
   cursor: pointer;
 }
 
-.custom-progress-bar::-webkit-slider-thumb {
+/* .custom-progress-bar::-webkit-slider-thumb {
+  padding: 15px;
   -webkit-appearance: none !important;
   appearance: none !important;
 
@@ -846,6 +847,20 @@ html {
   border-radius: var(--thumb-radius, 50%);
   background: #cd3eff !important;
   cursor: pointer;
+} */
+
+.custom-progress-bar::-webkit-slider-thumb {
+  -webkit-appearance: none !important;
+  appearance: none !important;
+
+  width: var(--thumb-width, 12px); /* Visual size of the thumb */
+  height: var(--thumb-height, 12px); /* Visual size of the thumb */
+
+  border-radius: var(--thumb-radius, 50%);
+  background: #cd3eff !important;
+  cursor: pointer;
+
+  position: relative;
 }
 
 .art-progress {

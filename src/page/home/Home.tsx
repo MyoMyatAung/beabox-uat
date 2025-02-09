@@ -409,6 +409,7 @@ const Home = () => {
                             width={width}
                             height={height}
                             sethideBar={sethideBar}
+                            hideBar={hideBar}
                           />
 
                           {!hideBar && video?.type !== "ads" && (
@@ -532,6 +533,7 @@ const Home = () => {
                             width={width}
                             height={height}
                             sethideBar={sethideBar}
+                            hideBar={hideBar}
                           />
 
                           {!hideBar && video?.type !== "ads" && (

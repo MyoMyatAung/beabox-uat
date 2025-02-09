@@ -240,6 +240,7 @@ const VideoFeed = ({
               setHearts={setHearts}
               setCountdown={setCountdown}
               sethideBar={sethideBar}
+              hideBar={hideBar}
             />
             {!hideBar && video?.type !== "ads" && (
               <FeedFooter
