@@ -32,6 +32,7 @@ const Home = () => {
   const { currentActivePost } = useSelector((state: any) => state.activeslice);
   const { videos } = useSelector((state: any) => state.videoSlice);
   const { page } = useSelector((state: any) => state.pageSlice);
+  const [hideBar, sethideBar] = useState(false);
 
   //const [currentActivePost, setCurrentActivePost] = useState<any>(null); // Active post ID
 
@@ -394,7 +395,6 @@ const Home = () => {
                           data-post-id={video?.post_id} // Add post ID to the container
                         >
                           <VideoContainer
-                            index={index}
                             container={videoContainerRef.current}
                             status={true}
                             countNumber={countNumber}
@@ -408,9 +408,10 @@ const Home = () => {
                             setCountdown={setCountdown}
                             width={width}
                             height={height}
+                            sethideBar={sethideBar}
                           />
 
-                          {video?.type !== "ads" && (
+                          {!hideBar && video?.type !== "ads" && (
                             <VideoFooter
                               tags={video?.tag}
                               title={video?.title}
@@ -517,7 +518,6 @@ const Home = () => {
                           data-post-id={video.post_id} // Add post ID to the container
                         >
                           <VideoContainer
-                            index={index}
                             container={videoContainerRef.current}
                             status={true}
                             countNumber={countNumber}
@@ -531,9 +531,10 @@ const Home = () => {
                             setCountdown={setCountdown}
                             width={width}
                             height={height}
+                            sethideBar={sethideBar}
                           />
 
-                          {video?.type !== "ads" && (
+                          {!hideBar && video?.type !== "ads" && (
                             <VideoFooter
                               tags={video?.tag}
                               title={video?.title}

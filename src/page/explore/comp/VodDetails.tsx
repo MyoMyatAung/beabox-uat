@@ -49,6 +49,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
+  const [hideBar, sethideBar] = useState(false);
 
   const removeHeart = (id: number) => {
     setHearts((prev) => prev.filter((heartId) => heartId !== id)); // Remove the heart by ID
@@ -197,9 +198,10 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
             setHeight={setHeight}
             setHearts={setHearts}
             setCountdown={setCountdown}
+            sethideBar={sethideBar}
           />
 
-          {files?.type !== "ads" && (
+          {!hideBar && files?.type !== "ads" && (
             <FeedFooter
               tags={files?.tag}
               title={files?.title}

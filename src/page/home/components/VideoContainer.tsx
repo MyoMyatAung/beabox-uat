@@ -24,7 +24,8 @@ const VideoContainer = ({
   width,
   height,
   container,
-  index,
+
+  sethideBar,
 }: {
   video: any;
   setWidth: any;
@@ -39,7 +40,8 @@ const VideoContainer = ({
   width: any;
   height: any;
   container: any;
-  index: any;
+
+  sethideBar: any;
 }) => {
   const [likeCount, setLikeCount] = useState(video?.like_count);
   const [isLiked, setIsLiked] = useState(video?.is_liked);
@@ -326,6 +328,7 @@ const VideoContainer = ({
         }
         handleLike={handleLike}
         setWidth={setWidth}
+        sethideBar={sethideBar}
         setHeight={setHeight}
       />
       <VideoSidebar

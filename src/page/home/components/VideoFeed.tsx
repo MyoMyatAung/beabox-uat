@@ -45,6 +45,7 @@ const VideoFeed = ({
   const [height, setHeight] = useState(0);
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
+  const [hideBar, sethideBar] = useState(false);
 
   const removeHeart = (id: number) => {
     setHearts((prev) => prev.filter((heartId) => heartId !== id)); // Remove the heart by ID
@@ -238,8 +239,9 @@ const VideoFeed = ({
               setHeight={setHeight}
               setHearts={setHearts}
               setCountdown={setCountdown}
+              sethideBar={sethideBar}
             />
-            {video?.type !== "ads" && (
+            {!hideBar && video?.type !== "ads" && (
               <FeedFooter
                 tags={video?.tag}
                 title={video?.title}
