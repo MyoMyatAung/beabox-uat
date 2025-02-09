@@ -58,7 +58,7 @@ const EditNickName = ({
           <div className="flex justify-between items-center py-5">
             <DrawerClose className="z-[1200]">
               <button>
-                <FaAngleLeft size={18} />
+                <FaAngleLeft size={22} />
               </button>
             </DrawerClose>
             <p className="text-[16px]">昵称</p>

@@ -46,7 +46,7 @@ const ChangePassword = () => {
           <div className="flex justify-between items-center py-5">
             <DrawerClose className="z-[1200]">
               <button onClick={() => setIsOpen(false)}>
-                <FaAngleLeft size={18} />
+                <FaAngleLeft size={22} />
               </button>
             </DrawerClose>
             <p className="text-[16px]">更改密码</p>

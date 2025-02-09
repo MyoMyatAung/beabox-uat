@@ -35,7 +35,7 @@ const May: React.FC<MayProps> = ({}) => {
     <div>
       {/* header */}
       <div className=" flex justify-between items-center">
-        <h1 className=" text-white text-[14px] font-[700] leading-[16px]">
+        <h1 className=" text-white text-[17px] font-[700] leading-[16px]">
           猜你喜欢
         </h1>
         <span
@@ -84,14 +84,14 @@ const May: React.FC<MayProps> = ({}) => {
           >
             {index < 2 ? (
               <>
-                <div className="font-bold flex truncate items-center gap-2 pr-[100px]">
+                <div className="font-bold flex truncate items-center gap-2">
                   <div className="w-[4px] h-[4px] rounded-full bg-[#EAACFF] flex-shrink-0"></div>
-                  <div className=" ml-2 max-w-[calc(100%-40px)]">
+                  <div className=" ml-2 max-w-[calc(100%-40px)] truncate">
                     {val?.title}
                   </div>
+                  <span className="text-xl">🔥</span>
                 </div>
 
-                <span className="text-xl absolute right-[10px] ">🔥</span>
               </>
             ) : (
               <>

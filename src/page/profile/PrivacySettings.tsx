@@ -12,7 +12,7 @@ const PrivacySettings = () => {
       <div className="w-full">
         <div className="flex justify-between items-center py-5">
           <Link to={paths.settings}>
-            <FaAngleLeft size={18} />
+            <FaAngleLeft size={22} />
           </Link>
           <p className="text-[16px]">
             {/* Privacy Settings */}

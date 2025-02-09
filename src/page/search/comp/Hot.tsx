@@ -21,10 +21,10 @@ const Hot: React.FC<HotProps> = ({}) => {
     }
   };
   return (
-    <div className="mt-[30px]">
+    <div className="mt-[15px]">
       {/* header */}
       <div className=" flex justify-between items-center">
-        <h1 className=" text-white text-[14px] font-[700] leading-[16px]">
+        <h1 className=" text-white text-[17px] font-[700] leading-[16px]">
           热门搜索
         </h1>
       </div>
