@@ -94,7 +94,7 @@ const OtherProfile = () => {
             <SettingBtn2 id={id} />
           </div>
         </div>
-        <div className="w-full flex items-center gap-3 py-5">
+        <div className="w-full flex items-center gap-3 pb-5">
           <ProfileAvatar
             progress={userData?.data?.level_progress}
             levelImage={userData?.data?.level}
