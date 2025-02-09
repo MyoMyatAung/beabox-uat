@@ -30,6 +30,7 @@ const Profile = () => {
   const { data, isLoading, refetch } = useGetMyOwnProfileQuery("", {
     skip: !user,
   });
+  console.log(data, "data");
   const [show, setShow] = useState(false);
   const gender = useSelector((state: any) => state?.persist?.gender);
   const region = useSelector((state: any) => state?.persist?.region);
@@ -43,52 +44,51 @@ const Profile = () => {
         setDecryptedCover(defaultCover);
         return;
       }
-  
+
       try {
         const coverUrl = data.data.cover_photo;
-        
-        if (!coverUrl.endsWith('.txt')) {
+
+        if (!coverUrl.endsWith(".txt")) {
           setDecryptedCover(coverUrl);
           return;
         }
-  
+
         // Fetch encrypted image data
         const response = await fetch(coverUrl);
         const encryptedData = await response.arrayBuffer();
-        
+
         // XOR decryption with key 0x12
         const decryptedData = new Uint8Array(encryptedData);
         const key = 0x12;
         const maxSize = Math.min(4096, decryptedData.length);
-        
+
         for (let i = 0; i < maxSize; i++) {
           decryptedData[i] ^= key;
         }
-  
+
         // Determine MIME type from decrypted data (simple detection)
-        let mimeType = 'image/jpeg'; // default
+        let mimeType = "image/jpeg"; // default
         if (decryptedData[0] === 0x89 && decryptedData[1] === 0x50) {
-          mimeType = 'image/png';
+          mimeType = "image/png";
         } else if (decryptedData[0] === 0x47 && decryptedData[1] === 0x49) {
-          mimeType = 'image/gif';
+          mimeType = "image/gif";
         }
-  
+
         // Create blob URL
         const blob = new Blob([decryptedData], { type: mimeType });
         const blobUrl = URL.createObjectURL(blob);
         setDecryptedCover(blobUrl);
-  
       } catch (error) {
-        console.error('Error loading cover photo:', error);
+        console.error("Error loading cover photo:", error);
         setDecryptedCover(defaultCover);
       }
     };
-  
+
     loadAndDecryptImage();
-  
+
     // Cleanup function to revoke blob URL
     return () => {
-      if (decryptedCover.startsWith('blob:')) {
+      if (decryptedCover.startsWith("blob:")) {
         URL.revokeObjectURL(decryptedCover);
       }
     };

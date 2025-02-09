@@ -1,6 +1,6 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useGetUserProfileQuery } from "@/store/api/profileApi";
-import { ChevronLeft, Copy } from "lucide-react";
+import { ChevronLeft, Copy, Flag, Search } from "lucide-react";
 import ProfileAvatar from "@/components/profile/profile-avatar";
 import Loader from "@/components/shared/loader";
 import OtherStats from "@/components/profile/other-stats";
@@ -13,9 +13,13 @@ import { useEffect, useRef, useState } from "react";
 import ScrollHeader from "@/components/profile/scroll-header";
 import OscrollHeader from "@/components/profile/oscroll-header";
 import SettingBtn2 from "@/components/profile/setting-btn2";
+import { useSelector } from "react-redux";
+import share from "@/assets/profile/share.svg";
 
 const OtherProfile = () => {
   const { id } = useParams();
+  const user = useSelector((state: any) => state?.persist?.user) || "";
+
   const [isCopied, setIsCopied] = useState(false);
   const headerRef = useRef<any>(null);
   const [showHeader, setShowHeader] = useState(false);
@@ -26,7 +30,7 @@ const OtherProfile = () => {
     refetch,
   } = useGetUserProfileQuery(id || "");
   console.log(userData?.data, "userData");
-  const handleCopy = (text: any) => {
+   const handleCopy = (text: any) => {
     navigator?.clipboard
       .writeText(text)
       .then(() => {
@@ -58,6 +62,7 @@ const OtherProfile = () => {
       window.removeEventListener("scroll", handleScroll); // Clean up on unmount
     };
   }, []);
+
   if (userLoading) return <Loader />;
   return (
     <div className="h-screen flex flex-col">
@@ -91,7 +96,21 @@ const OtherProfile = () => {
           <div className="z-[1200] relative px-5 w-full flex gap-3 my-5 justify-between items-center">
             <ChevronLeft onClick={() => navigate(-1)} />
             <div className="flex gap-3 z-[1500] items-center">
-              <SettingBtn2 id={id} />
+              {/* <div className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full">
+                <Search size={18} />
+              </div> */}
+              <div
+                onClick={() => handleCopy("Copied Link")}
+                className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full"
+              >
+                <img src={share} alt="" />
+              </div>
+              <Link
+                to={`/reports/profile/${id}`}
+                className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full"
+              >
+                <Flag size={18} />
+              </Link>
             </div>
           </div>
           <div className="w-full flex items-center gap-3 pb-5 px-5">
@@ -156,14 +175,18 @@ const OtherProfile = () => {
                 id={userData?.data?.id}
               />
             </div>
-            <div className={`${showHeader ? "opacity-0" : "opacity-1"}`}>
-              <FollowStatusBtn
-                userData={userData}
-                id={id}
-                refetch={refetch}
-                userLoading={userLoading}
-              />
-            </div>
+            {user?.id == id ? (
+              <></>
+            ) : (
+              <div className={`${showHeader ? "opacity-0" : "opacity-1"}`}>
+                <FollowStatusBtn
+                  userData={userData}
+                  id={id}
+                  refetch={refetch}
+                  userLoading={userLoading}
+                />
+              </div>
+            )}
           </div>
         </div>
         <div ref={headerRef} className="sticky z-[1500] top-0 py-3">
