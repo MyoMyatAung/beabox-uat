@@ -11,7 +11,8 @@ import { setSecurityQues } from "@/store/slices/persistSlice";
 import { RootState } from "@reduxjs/toolkit/query";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import { FaAngleLeft } from "react-icons/fa";
+// import { FaAngleLeft } from "react-icons/fa";
+import backButton from "../../../assets/backButton.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -64,7 +65,8 @@ const Manage = () => {
     <div className="w-full h-screen px-5 flex flex-col items-center bg-[#16131C]">
       <div className="flex justify-between items-center py-5 w-full">
         <Link to={paths.check_answer2}>
-          <FaAngleLeft size={18} />
+          {/* <FaAngleLeft size={22} /> */}
+          <img src={backButton} alt="" />
         </Link>
         <p className="text-[16px]">管理安全</p>
         <div></div>

@@ -35,7 +35,7 @@ const May: React.FC<MayProps> = ({}) => {
     <div>
       {/* header */}
       <div className=" flex justify-between items-center">
-        <h1 className=" text-white text-[14px] font-[700] leading-[16px]">
+        <h1 className=" text-white text-[17px] font-[700] leading-[16px]">
           猜你喜欢
         </h1>
         <span
@@ -76,7 +76,7 @@ const May: React.FC<MayProps> = ({}) => {
           <button
             key={index}
             onClick={() => handleSearch(val?.title)}
-            className={`p-[12px]  font-[400] flex gap-[8px] items-center rounded-lg ${
+            className={`px-[12px] py-[4px]  font-[400] flex gap-[8px] items-center rounded-lg ${
               index < 2
                 ? "bg-first-two text-[16px] font-bold flex relative  items-center justify-between"
                 : ""
@@ -84,14 +84,14 @@ const May: React.FC<MayProps> = ({}) => {
           >
             {index < 2 ? (
               <>
-                <div className="font-bold flex truncate items-center gap-2 pr-[100px]">
-                  <div className="w-[4px] h-[4px] rounded-full bg-[#EAACFF] flex-shrink-0"></div>
-                  <div className=" ml-2 max-w-[calc(100%-40px)]">
+                <div className="font-bold flex truncate items-center gap-2">
+                  <div className="w-[5px] h-[5px] rounded-full bg-[#EAACFF] flex-shrink-0"></div>
+                  <div className=" max-w-[calc(100%-40px)] truncate">
                     {val?.title}
                   </div>
+                  <span className="text-xl">🔥</span>
                 </div>
 
-                <span className="text-xl absolute right-[10px] ">🔥</span>
               </>
             ) : (
               <>

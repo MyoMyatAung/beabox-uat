@@ -83,7 +83,7 @@ const Stats = ({ followers, followings, likes, nickname }: any) => {
             <div className="z-[1200] sticky -top-1 bg-[#16131C] w-full flex justify-between items-center h-[50px]">
               <DrawerClose asChild>
                 <button onClick={() => dispatch(setIsDrawerOpen(false))}>
-                  <FaAngleLeft size={18} />
+                  <FaAngleLeft size={22} />
                 </button>
               </DrawerClose>
               <p className="z-[1200] text-[16px]">{nickname}</p>

@@ -25,6 +25,64 @@ const OtherProfile = () => {
     isLoading: userLoading,
     refetch,
   } = useGetUserProfileQuery(id || "");
+  const [decryptedCover, setDecryptedCover] = useState(defaultCover);
+
+useEffect(() => {
+  const loadAndDecryptImage = async () => {
+    if (!user?.token || !data?.data?.cover_photo) {
+      setDecryptedCover(defaultCover);
+      return;
+    }
+
+    try {
+      const coverUrl = data.data.cover_photo;
+      
+      if (!coverUrl.endsWith('.txt')) {
+        setDecryptedCover(coverUrl);
+        return;
+      }
+
+      // Fetch encrypted image data
+      const response = await fetch(coverUrl);
+      const encryptedData = await response.arrayBuffer();
+      
+      // XOR decryption with key 0x12
+      const decryptedData = new Uint8Array(encryptedData);
+      const key = 0x12;
+      const maxSize = Math.min(4096, decryptedData.length);
+      
+      for (let i = 0; i < maxSize; i++) {
+        decryptedData[i] ^= key;
+      }
+
+      // Determine MIME type from decrypted data (simple detection)
+      let mimeType = 'image/jpeg'; // default
+      if (decryptedData[0] === 0x89 && decryptedData[1] === 0x50) {
+        mimeType = 'image/png';
+      } else if (decryptedData[0] === 0x47 && decryptedData[1] === 0x49) {
+        mimeType = 'image/gif';
+      }
+
+      // Create blob URL
+      const blob = new Blob([decryptedData], { type: mimeType });
+      const blobUrl = URL.createObjectURL(blob);
+      setDecryptedCover(blobUrl);
+
+    } catch (error) {
+      console.error('Error loading cover photo:', error);
+      setDecryptedCover(defaultCover);
+    }
+  };
+
+  loadAndDecryptImage();
+
+  // Cleanup function to revoke blob URL
+  return () => {
+    if (decryptedCover.startsWith('blob:')) {
+      URL.revokeObjectURL(decryptedCover);
+    }
+  };
+}, [userData?.data?.cover_photo, userData?.token]);
   console.log(userData?.data, "userData");
   const handleCopy = (text: any) => {
     navigator?.clipboard
@@ -63,11 +121,7 @@ const OtherProfile = () => {
     <div className="h-[calc(100vh-76px)] overflow-hidden overflow-y-scroll hide-sb">
       <div className="gradient-overlay"></div>
       <img
-        src={
-          userData?.data?.cover_photo
-            ? userData?.data?.cover_photo
-            : defaultCover
-        }
+        src={decryptedCover}
         alt=""
         className="fixed top-0 left-0 w-full h-[23vh] object-cover object-center"
       />

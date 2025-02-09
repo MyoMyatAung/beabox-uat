@@ -33,7 +33,7 @@ const EditReferral = ({ referral_code }: any) => {
         <div className="w-full h-screen px-5">
           <div className="flex justify-between items-center py-5">
             <button onClick={() => setIsOpen(false)}>
-              <FaAngleLeft size={18} />
+              <FaAngleLeft size={22} />
             </button>
             <p className="text-[16px]">Referral Code</p>
             <div></div>
