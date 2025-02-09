@@ -1,6 +1,6 @@
 import { paths } from "@/routes/paths";
 // import { FaAngleLeft } from "react-icons/fa";
-import backButton from "../../assets/backButton.svg";
+import backButton from "../../../assets/backButton.svg";
 import { Link, useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
 import { useState } from "react";

@@ -1,5 +1,5 @@
 import { paths } from "@/routes/paths";
-import backButton from "../../assets/backButton.svg";
+import backButton from "../../../assets/backButton.svg";
 import { Link, useLocation } from "react-router-dom";
 import System from "@/assets/profile/system1.png";
 import Balance from "@/assets/profile/balance1.png";

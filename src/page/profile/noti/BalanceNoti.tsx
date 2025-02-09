@@ -1,6 +1,6 @@
 import { paths } from "@/routes/paths";
 // import { FaAngleLeft } from "react-icons/fa";
-import backButton from "../../assets/backButton.svg";
+import backButton from "../../../assets/backButton.svg";
 import { Link } from "react-router-dom";
 import Card from "@/components/profile/noti/card";
 const BalanceNoti = () => {

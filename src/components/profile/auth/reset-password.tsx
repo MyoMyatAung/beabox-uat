@@ -5,7 +5,7 @@ import { useSetPasswordMutation } from "@/store/api/profileApi";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 // import { FaAngleLeft } from "react-icons/fa";
-import backButton from "../../assets/backButton.svg";
+import backButton from "../../../assets/backButton.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 const ResetPassword = () => {

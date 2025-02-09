@@ -1,5 +1,5 @@
 import { paths } from "@/routes/paths";
-import backButton from "../../assets/backButton.svg";
+import backButton from "../../../assets/backButton.svg";
 import { Link } from "react-router-dom";
 import Card from "@/components/profile/noti/card";
 const SystemNoti = () => {
