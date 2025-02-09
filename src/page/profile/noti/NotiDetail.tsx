@@ -12,7 +12,7 @@ const NotiDetail = () => {
       <div className="w-full">
         <div className="flex justify-between items-center py-5 sticky top-0 bg-[#16131C] z-50">
           <Link to={paths.noti}>
-            <FaAngleLeft size={18} />
+            <FaAngleLeft size={22} />
           </Link>
           <p className="text-[16px]">Details</p>
           <div></div>

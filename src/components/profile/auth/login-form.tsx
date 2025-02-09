@@ -23,8 +23,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { setAuthToggle } from "@/store/slices/profileSlice";
+import {
+  setAlertText,
+  setAuthToggle,
+  setIsDrawerOpen,
+  setShowAlert,
+} from "@/store/slices/profileSlice";
 import SmallLoader from "@/components/shared/small-loader";
+import AlertToast from "@/components/shared/alert-toast";
 const LoginForm = ({ setIsOpen }: any) => {
   const [name, setName] = useState("");
   const [pass, setPass] = useState("");
@@ -32,6 +38,7 @@ const LoginForm = ({ setIsOpen }: any) => {
   const [login, { isLoading, error: lerror }] = useLoginMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const authErr = localStorage.getItem("auth-error") || "";
 
   const [getCaptcha, { data, isLoading: captchaLoading }] =
     useGetCaptchaMutation();
@@ -56,43 +63,32 @@ const LoginForm = ({ setIsOpen }: any) => {
   const handleVerify = async (e: any) => {
     // Add 验证码 logic here
     e.stopPropagation();
+    e.preventDefault();
     const { emailOrPhone, password } = form.getValues();
-
-    console.log("data", {
-      username: emailOrPhone,
-      password,
-      captcha,
-      captcha_key: data?.data?.captcha_key,
-    });
-
+    console.log(emailOrPhone, password);
     const { data: loginData } = await login({
       username: emailOrPhone,
       password,
       captcha,
       captcha_key: data?.data?.captcha_key,
     });
-    // console.log(loginData, "loginData");
+    console.log(loginData, "logindata");
     if (loginData?.status) {
       dispatch(setUser(loginData?.data));
-      // setShow验证码(false);
-      // navigate(paths.profile);
+      dispatch(setIsDrawerOpen(false));
+      dispatch(setShowAlert(true));
+      dispatch(setAlertText(loginData?.message));
+      setShow验证码(false);
       setIsOpen(false);
     } else {
-      // setShow验证码(false);
-      // setError("出了点问题");
+      if (authErr) setError(authErr);
+      setShow验证码(false);
     }
-    // if (lerror) {
-    //   setError(lerror?.data?.message);
-    // }
   };
-
-  useEffect(() => {
-    if (lerror) setError(lerror?.data?.message);
-    setShow验证码(false);
-  }, [lerror]);
 
   return (
     <div className="px-5">
+      {/* <AlertToast /> */}
       <div className="flex justify-between items-center">
         <div className="px-3"></div>
         <p className="text-[18px]">
@@ -100,7 +96,7 @@ const LoginForm = ({ setIsOpen }: any) => {
           {/* Login */}
         </p>
         <div
-          onClick={() => setIsOpen(false)}
+          onClick={() => dispatch(setIsDrawerOpen(false))}
           className="bg-[#FFFFFF0A] p-2 rounded-full"
         >
           <X size={18} />
@@ -213,9 +209,14 @@ const LoginForm = ({ setIsOpen }: any) => {
               {captchaLoading ? <SmallLoader /> : "登录"}
               {/* 登录 */}
             </Button>
-            <Link to={paths.forgot_password}>
-              <p className="text-center text-[14px] mt-5">忘记密码？</p>
-            </Link>
+            <div className="flex justify-center">
+              <Link
+                to={paths.forgot_password}
+                className="text-center text-[14px] mt-5"
+              >
+                忘记密码？
+              </Link>
+            </div>
           </div>
           <Dialog open={show验证码} onOpenChange={setShow验证码}>
             <DialogContent className="bg-[#393641] z-[3000] border-0 shadow-lg rounded-lg max-w-[300px]">

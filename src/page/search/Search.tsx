@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 import { setHistoryData } from "./slice/HistorySlice";
 import { useLazyGetSuggestionsQuery } from "@/store/api/search/searchApi";
 import he from "he";
+import { FaAngleLeft } from "react-icons/fa";
 
 interface SearchProps {}
 
@@ -31,6 +32,10 @@ const Search: React.FC<SearchProps> = ({}) => {
       navigate(`/search?query=${encodeURIComponent(query.trim())}`);
     }
   };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   // Fetch autocomplete suggestions when the query changes
   useEffect(() => {
@@ -85,14 +90,15 @@ const Search: React.FC<SearchProps> = ({}) => {
       {/* header */}
       <form
         onSubmit={handleSubmit}
-        className=" pb-[32px] pt-[20px] flex justify-between items-center gap-[10px]"
+        className=" pb-[20px] pt-[20px] flex justify-between items-center gap-[10px]"
       >
-        <img
+        {/* <img
           onClick={() => navigate("/")}
           className=" pt-[6px]"
           src={back}
           alt=""
-        />
+        /> */}
+        <FaAngleLeft size={22} onClick={() => navigate("/")}/>
         <div
           //   onSubmit={handleSubmit}
           className=" w-full px-[10px] py-[8px] search_input flex gap-[12px]"

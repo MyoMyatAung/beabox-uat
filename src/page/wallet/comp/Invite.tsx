@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Header from "../Header";
 import qr from "../../../assets/wallet/qr.svg";
 import "../wallet.css";
@@ -18,9 +18,15 @@ const Invite: React.FC<InviteProps> = ({}) => {
   const [copied, setCopied] = useState<boolean>(false);
   const imageRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
+  const [shareUrl, setShareUrl] = useState('');
+  const [appDownloadLink, setAppDownloadLink] = useState('');
   
-    const shareUrl = data?.share_link;
-    const appDownloadLink = data?.app_download_link;
+  useEffect(()=>{
+    if(data) {
+      setShareUrl(data?.data?.share_link);
+      setAppDownloadLink(data?.data?.app_download_link);
+    }
+  }, [data]);
   
     const isIOSApp = () => {
       return (
@@ -82,7 +88,9 @@ const Invite: React.FC<InviteProps> = ({}) => {
     };
   
     const handleLinkCopy = () => {
+      console.log('Event:copyShareUrl', shareUrl);
       if (isIOSApp()) {
+        console.log('Event:copyShareUrl')
         sendEventToNative("copyShareUrl", shareUrl);
       } else {
         navigator.clipboard.writeText(shareUrl).then(() => {

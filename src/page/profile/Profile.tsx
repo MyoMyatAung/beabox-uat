@@ -9,8 +9,8 @@ import {
   useGetMyOwnProfileQuery,
   useGetMyProfileQuery,
 } from "@/store/api/profileApi";
-import { useSelector } from "react-redux";
-import { PenIcon as UserPen, Bell, X, Copy } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { PenIcon as UserPen, Bell, X, Copy, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SettingBtn from "@/components/profile/setting-btn";
 import ProfileAvatar from "@/components/profile/profile-avatar";
@@ -22,15 +22,77 @@ import FemaleSVG from "@/assets/profile/female";
 import EditCover from "@/components/profile/edit-cover";
 import AuthDrawer from "@/components/profile/auth/auth-drawer";
 import ScrollHeader from "@/components/profile/scroll-header";
+import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 const Profile = () => {
   const headerRef = useRef<any>(null);
   const [showHeader, setShowHeader] = useState(false);
-  const { data, isLoading, refetch } = useGetMyOwnProfileQuery("");
+  const user = useSelector((state: any) => state?.persist?.user) || "";
+  const { data, isLoading, refetch } = useGetMyOwnProfileQuery("", {
+    skip: !user,
+  });
   const [show, setShow] = useState(false);
-  const user = useSelector((state: any) => state?.persist?.user);
   const gender = useSelector((state: any) => state?.persist?.gender);
   const region = useSelector((state: any) => state?.persist?.region);
   const [isCopied, setIsCopied] = useState(false);
+  const dispatch = useDispatch();
+  const [decryptedCover, setDecryptedCover] = useState(defaultCover);
+
+  useEffect(() => {
+    const loadAndDecryptImage = async () => {
+      if (!user?.token || !data?.data?.cover_photo) {
+        setDecryptedCover(defaultCover);
+        return;
+      }
+  
+      try {
+        const coverUrl = data.data.cover_photo;
+        
+        if (!coverUrl.endsWith('.txt')) {
+          setDecryptedCover(coverUrl);
+          return;
+        }
+  
+        // Fetch encrypted image data
+        const response = await fetch(coverUrl);
+        const encryptedData = await response.arrayBuffer();
+        
+        // XOR decryption with key 0x12
+        const decryptedData = new Uint8Array(encryptedData);
+        const key = 0x12;
+        const maxSize = Math.min(4096, decryptedData.length);
+        
+        for (let i = 0; i < maxSize; i++) {
+          decryptedData[i] ^= key;
+        }
+  
+        // Determine MIME type from decrypted data (simple detection)
+        let mimeType = 'image/jpeg'; // default
+        if (decryptedData[0] === 0x89 && decryptedData[1] === 0x50) {
+          mimeType = 'image/png';
+        } else if (decryptedData[0] === 0x47 && decryptedData[1] === 0x49) {
+          mimeType = 'image/gif';
+        }
+  
+        // Create blob URL
+        const blob = new Blob([decryptedData], { type: mimeType });
+        const blobUrl = URL.createObjectURL(blob);
+        setDecryptedCover(blobUrl);
+  
+      } catch (error) {
+        console.error('Error loading cover photo:', error);
+        setDecryptedCover(defaultCover);
+      }
+    };
+  
+    loadAndDecryptImage();
+  
+    // Cleanup function to revoke blob URL
+    return () => {
+      if (decryptedCover.startsWith('blob:')) {
+        URL.revokeObjectURL(decryptedCover);
+      }
+    };
+  }, [data?.data?.cover_photo, user?.token]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -64,28 +126,21 @@ const Profile = () => {
         console.error("Failed to copy text: ", err);
       });
   };
+
   useEffect(() => {
-    refetch();
+    if (user) refetch();
   }, []);
   useEffect(() => {
-    refetch();
+    if (user) refetch();
   }, [user, data]);
-
-  console.log(data);
 
   if (isLoading) return <Loader />;
 
   return (
-    <>
+    <div className="h-[calc(100vh-76px)] overflow-hidden overflow-y-scroll hide-sb">
       <div className="gradient-overlay"></div>
       <img
-        src={
-          user?.token
-            ? data?.data?.cover_photo
-              ? data?.data?.cover_photo
-              : defaultCover
-            : defaultCover
-        }
+        src={decryptedCover}
         alt=""
         className={`fixed top-0 left-0 w-full h-[23vh] object-cover object-center`}
       />
@@ -98,7 +153,7 @@ const Profile = () => {
       ) : (
         ""
       )}
-      <div className={`z-[1200] max-h-screen hide-sb profile-bg `}>
+      <div className={`z-[1200]`}>
         {show ? (
           <div className="absolute top-0 z-[1500] left-0 w-full h-full mx-auto flex flex-col justify-center items-center bg-black/80">
             <div className="z-[1200] px-10">
@@ -165,7 +220,14 @@ const Profile = () => {
               />
             )}
             {!user?.token ? (
-              <AuthDrawer />
+              // <AuthDrawer />
+              <div
+                onClick={() => dispatch(setIsDrawerOpen(true))}
+                className="z-[1200] flex items-center gap-2 flex-1"
+              >
+                <span className="z-[1200] text-[18px] ">点击登陆</span>
+                <ChevronRight size={18} />
+              </div>
             ) : (
               <div className="z-[1200] flex-1 flex flex-col gap-0.5">
                 <p className="z-[1200] text-[18px] flex items-center gap-1">
@@ -225,7 +287,7 @@ const Profile = () => {
             )}
           </div>
         </div>
-        <div className={`px-5 ${showHeader ? "opacity-0" : "opacity-1"} `}>
+        <div className={`px-5 ${false ? "opacity-0" : "opacity-1"} `}>
           <Stats
             followers={data?.data?.followers_count}
             followings={data?.data?.following_count}
@@ -239,7 +301,7 @@ const Profile = () => {
             <Link to={paths.profileDetail}>
               <Button
                 className={`${
-                  showHeader ? "opacity-0" : "opacity-1"
+                  false ? "opacity-0" : "opacity-1"
                 } z-[1200] w-full bg-[#FFFFFF0F] hover:bg-[#FFFFFF0F] relative rounded-[12px]`}
               >
                 <UserPen /> 编辑资料
@@ -250,8 +312,8 @@ const Profile = () => {
           )}
         </div>
 
-        <div ref={headerRef} className="sticky z-[1300] top-0 w-full"></div>
-        {showHeader ? (
+        {/* <div ref={headerRef} className="sticky z-[1300] top-0 w-full"></div> */}
+        {false ? (
           <ScrollHeader
             photo={data?.data?.profile_photo}
             name={data?.data?.nickname}
@@ -260,13 +322,27 @@ const Profile = () => {
           <></>
         )}
 
-        <div className={`sticky top-[100px] z-[1200]`}>
-          <div className="z-[1200] relative px-5">
-            <VideoTabs showHeader={showHeader} login={user?.token} />
+        {false ? (
+          <div className={`sticky top-[80px] z-[1200]`}>
+            <div className="z-[1200] relative px-5">
+              <VideoTabs
+                headerRef={headerRef}
+                showHeader={showHeader}
+                login={user?.token}
+              />
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="z-[1200] relative px-5">
+            <VideoTabs
+              headerRef={headerRef}
+              showHeader={false}
+              login={user?.token}
+            />
+          </div>
+        )}
       </div>
-    </>
+    </div>
   );
 };
 

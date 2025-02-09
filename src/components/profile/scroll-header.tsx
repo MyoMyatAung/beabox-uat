@@ -6,7 +6,7 @@ import SettingBtn from "./setting-btn";
 const ScrollHeader = ({ photo, name, setShow }: any) => {
   return (
     <>
-      <div className="z-[1500] sticky top-0 px-5 flex justify-between items-center w-full py-5">
+      <div className="z-[1500] fixed h-[80px] top-0 px-5 flex justify-between items-center w-full py-5">
         <div className="flex items-center gap-3">
           <img
             className="w-[58px] z-[1500] h-[58px] rounded-full object-cover object-center"

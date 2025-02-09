@@ -11,6 +11,7 @@ import VodDetails from "./VodDetails";
 import { paths } from "@/routes/paths";
 import InfiniteScroll from "react-infinite-scroll-component";
 import ImageWithPlaceholder from "@/page/search/comp/imgPlaceholder";
+import empty from "../../../page/home/empty.png";
 
 interface MoreProps {}
 
@@ -85,7 +86,8 @@ const More: React.FC<MoreProps> = () => {
     }
   };
 
-  // console.log(data?.data);
+  console.log(data?.data);
+  // console.log(list);
 
   return (
     <>
@@ -121,77 +123,92 @@ const More: React.FC<MoreProps> = () => {
         </div>
 
         {/* List */}
-        <div className="py-[20px] flex flex-col gap-[20px] w-full mt-[80px]">
-          {isLoading || customLoad ? (
-            <div className=" flex justify-center w-screen py-[200px]">
-              <div className="">
-                <img src={Loader} className="w-[70px] h-[70px]" alt="Loading" />
+        {list?.length === 0 ? (
+          <div className=" mt-[80px]">
+            <div className={`flex justify-center items-center py-[200px]`}>
+              <div className="flex flex-col items-center">
+                <img src={empty} className="w-[80px]" alt="" />
+                <h1 className="text-center text-white/60">搜索结果为空</h1>
               </div>
             </div>
-          ) : (
-            <>
-              {list?.map((item: any, index) => (
-                <div
-                  onClick={() => showDetailsVod(item)}
-                  key={index}
-                  className="flex w-full justify-center items-center gap-[16px]"
-                >
-                  <ImageWithPlaceholder
-                    src={item.preview_image}
-                    alt={item.title || "Video"}
-                    width={"100%"}
-                    height={"100%"}
-                    className=" w-[175px] h-[100px] rounded-[8px] object-cover"
-                  />
+          </div>
+        ) : (
+          <div className="py-[20px] flex flex-col gap-[20px] w-full mt-[80px]">
+            {isLoading || customLoad ? (
+              <div className=" flex justify-center w-screen py-[200px]">
+                <div className="">
                   <img
-                    className="w-[107px] h-[69px] rounded-[8px] object-cover object-center hidden"
-                    src={item.preview_image}
-                    alt="More"
+                    src={Loader}
+                    className="w-[70px] h-[70px]"
+                    alt="Loading"
                   />
-                  <div className="w-2/3 flex flex-col h-[70px] justify-between">
-                    <span className="text-white text-[14px] font-[400]">
-                      {item.title.length > 20
-                        ? `${item.title.slice(0, 30)}...`
-                        : item.title}{" "}
-                    </span>
-                    <div className="flex justify-between text-[#AAA] text-[12px] font-[400] leading-[15px]">
-                      <span>
-                        {item.view_count ? item.view_count : "11"} 次观看
-                      </span>
-                      <span>{item.like_count} 人喜欢</span>
-                    </div>
-                  </div>
                 </div>
-              ))}
-              <InfiniteScroll
-                className="py-[20px]"
-                dataLength={list.length}
-                next={fetchMoreData}
-                hasMore={hasMore}
-                loader={
-                  <div className=" flex justify-center py-[10px]">
-                    <div className="">
-                      <img
-                        src={Loader}
-                        className="w-[70px] h-[70px]"
-                        alt="Loading"
-                      />
+              </div>
+            ) : (
+              <>
+                {list?.map((item: any, index) => (
+                  <div
+                    onClick={() => showDetailsVod(item)}
+                    key={index}
+                    className="flex w-full justify-center items-center gap-[16px]"
+                  >
+                    <ImageWithPlaceholder
+                      src={item.preview_image}
+                      alt={item.title || "Video"}
+                      width={"100%"}
+                      height={"100%"}
+                      className=" w-[175px] h-[100px] rounded-[8px] object-cover"
+                    />
+                    <img
+                      className="w-[107px] h-[69px] rounded-[8px] object-cover object-center hidden"
+                      src={item.preview_image}
+                      alt="More"
+                    />
+                    <div className="w-2/3 flex flex-col h-[70px] justify-between">
+                      <span className="text-white text-[14px] font-[400]">
+                        {item.title.length > 20
+                          ? `${item.title.slice(0, 30)}...`
+                          : item.title}{" "}
+                      </span>
+                      <div className="flex justify-between text-[#AAA] text-[12px] font-[400] leading-[15px]">
+                        <span>
+                          {item.view_count ? item.view_count : "11"} 次观看
+                        </span>
+                        <span>{item.like_count} 人喜欢</span>
+                      </div>
                     </div>
                   </div>
-                }
-                endMessage={
-                  <div className="flex bg-whit pt-20 justify-center items-center  w-screen">
-                    <p className="py-10" style={{ textAlign: "center" }}>
-                      {/* <b>No more yet!</b> */}
-                    </p>
-                  </div>
-                }
-              >
-                <></>
-              </InfiniteScroll>
-            </>
-          )}
-        </div>
+                ))}
+                <InfiniteScroll
+                  className="py-[20px]"
+                  dataLength={list.length}
+                  next={fetchMoreData}
+                  hasMore={hasMore}
+                  loader={
+                    <div className=" flex justify-center py-[10px]">
+                      <div className="">
+                        <img
+                          src={Loader}
+                          className="w-[70px] h-[70px]"
+                          alt="Loading"
+                        />
+                      </div>
+                    </div>
+                  }
+                  endMessage={
+                    <div className="flex hidden bg-whit pt-20 justify-center items-center">
+                      <p className="py-10" style={{ textAlign: "center" }}>
+                        <b>No video yet!</b>
+                      </p>
+                    </div>
+                  }
+                >
+                  <></>
+                </InfiniteScroll>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </>
   );
