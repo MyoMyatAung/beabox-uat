@@ -14,9 +14,7 @@ const VideoGrid = ({
   // console.log(data);
   return (
     <div className={`py-4 w-full absolute ${""} `}>
-      <div
-        className={`grid grid-cols-3 gap-2 ${showHeader ? "mb-32" : "mb-0"}`}
-      >
+      <div className={`grid grid-cols-3 gap-2 ${showHeader ? "mb-0" : "mb-0"}`}>
         {isUpload ? <Upload /> : <></>}
         {data && (
           <>

@@ -101,7 +101,7 @@ const ScrollHeader = ({ photo, name, setShow, login, dphoto }: any) => {
             </TabsTrigger>
           </TabsList>
         </div>
-        <div className="relative  pt-[150px] px-5">
+        <div className="relative  px-5">
           {isLoading || historyLoading ? (
             <div className=" flex justify-center w-full py-[200px]">
               <div className="">

@@ -16,6 +16,14 @@
   font-style: normal;
 }
 
+body {
+  scrollbar-width: none !important;
+}
+
+body::-webkit-scrollbar {
+  display: none !important; /* For Chrome, Safari, and Edge */
+}
+
 @layer base {
   :root {
     --background: 0 0% 0%;

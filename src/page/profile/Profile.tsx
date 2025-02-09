@@ -138,7 +138,7 @@ const Profile = () => {
   // if (isLoading) return <Loader />;
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className={`h-screen flex flex-col`}>
       <div className="">
         {showHeader ? (
           <></>
@@ -161,7 +161,7 @@ const Profile = () => {
         ) : (
           ""
         )}
-        <div className="z-[1200]">
+        <div className="z-[1200] hide-sb">
           {show ? (
             <div className="absolute top-0 z-[1500] left-0 w-full h-full mx-auto flex flex-col justify-center items-center bg-black/80">
               <div className="z-[1200] px-10">

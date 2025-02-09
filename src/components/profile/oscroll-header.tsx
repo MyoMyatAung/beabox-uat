@@ -70,7 +70,7 @@ const OscrollHeader = ({ photo, name, id, visibility, dphoto }: any) => {
             </TabsTrigger>
           </TabsList>
         </div>
-        <div className="relative pt-[50px] px-5">
+        <div className="relative px-5">
           <TabsContent value="liked">
             {isLoading ? (
               <div className=" flex justify-center w-full py-[200px]">
