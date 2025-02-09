@@ -144,10 +144,10 @@ const Banner: React.FC = () => {
                   className={`flex justify-center w-full items-center px-[8px] flex-col relative transition-all duration-300 `}
                 >
                   <img
-                    className={`rounded-[20px] object-cover w-[332px] h-[162px] transition-all duration-300 ${
+                    className={` object-cover w-[332px] h-[162px] transition-all duration-300 ${
                       selectedIndex === index
-                        ? "scale-[1.3]" // Active slide is bigger
-                        : "scale-75 opacity-70" // Non-active slides are smaller and faded
+                        ? "scale-[1.3] rounded-[32px]" 
+                        : "scale-75 opacity-70" 
                     }`}
                     src={cc.image}
                     alt={`Slide ${index + 1}`}
