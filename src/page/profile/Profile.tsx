@@ -100,7 +100,7 @@ const Profile = () => {
         const rect = headerRef.current.getBoundingClientRect();
         // console.log(rect);
 
-        if (rect.top <= 0) {
+        if (rect.top <= 100) {
           setShowHeader(true);
         } else {
           setShowHeader(false);
