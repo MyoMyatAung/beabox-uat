@@ -77,7 +77,7 @@ const Stats = ({ followers, followings, likes, nickname }: any) => {
           <div className="z-[1200] text-gray-400 text-[14px]">点赞</div>
         </div>
       </div>
-      <DrawerContent className="z-[1300] border-0">
+      <DrawerContent className="z-[1900] border-0">
         <div className="c-height z-[1200] overflow-y-scroll hide-sb overflow-x-hidden bg-[#16131C]">
           <div className="px-5">
             <div className="z-[1200] sticky -top-1 bg-[#16131C] w-full flex justify-between items-center h-[50px]">
