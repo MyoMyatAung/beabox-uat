@@ -79,9 +79,9 @@ const Settings = ({
       setDevice("other");
     }
   }, []);
-
+  // bg-[#16131C]
   return (
-    <div className="w-full h-screen px-5 flex flex-col items-center relative bg-[#16131C]">
+    <div className="w-full h-screen no-scrollbar px-5 flex flex-col items-center relative bg-[#16131C]">
       <div className="top flex flex-col gap-5 w-full">
         <div className="flex justify-between items-center py-5">
           <Link to={paths.profile}>
@@ -102,7 +102,9 @@ const Settings = ({
             <div className="flex flex-col gap-4">
               <h1 className="text-[12px] text-[#888]">账户安全</h1>
               <ChangePassword />
-              <EditSecurity />
+              <div className="mt-5">
+                <EditSecurity />
+              </div>
             </div>
           </>
         ) : (
@@ -111,7 +113,7 @@ const Settings = ({
 
         {user?.token ? (
           <>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 mt-5">
               <h1 className="text-[12px] text-[#888]">
                 {/* Account Privacy */}
                 账号隐私设置
@@ -122,10 +124,10 @@ const Settings = ({
               changeVisibilityHandler={changeCVisHandler}
               visibilityLoading={cvLoading}
             />
-            <div className="border-b border-white/10"></div>
+            <div className="border-b border-white/10 my-2"></div>
             <Link
               to={paths.privacy_settings}
-              className="flex justify-between items-center"
+              className="flex justify-between items-center mb-5"
             >
               <p className="flex items-center gap-1 text-[14px]">
                 {/* Privacy Settings */}
@@ -140,23 +142,23 @@ const Settings = ({
           <></>
         )}
 
-        <div className="border-b border-white/10"></div>
-
         <div className="flex justify-between items-center">
           <p className="flex items-center gap-1 text-[14px]">当前版本</p>
           <p className="flex items-center gap-1 text-[14px]">
-            V 1.0.0.2{" "}
+            V 1.0.0.3{" "}
             <ChevronRight size={15} className="text-[#777777]" />
           </p>
         </div>
-        {/* <div className="border-b border-white/10"></div>
+
+        <div className="border-b border-white/10 my-2"></div>
+
         <div className="flex justify-between items-center">
           <p className="flex items-center gap-1 text-[14px]">清除缓存</p>
           <p className="flex items-center gap-1 text-[14px]">
             {Math.round(cacheSize)} MB{" "}
             <ChevronRight size={15} className="text-[#777777]" />
           </p>
-        </div> */}
+        </div>
       </div>
       <div className="w-full fixed bottom-0 px-5">
         {user?.token ? (

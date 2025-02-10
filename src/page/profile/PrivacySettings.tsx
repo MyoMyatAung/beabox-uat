@@ -25,8 +25,8 @@ const PrivacySettings = () => {
           {/* <PrivateProfile />
           <div className="border-b border-white/10"></div> */}
 
-          <DisableFollow />
-          <div className="border-b border-white/10"></div>
+          {/* <DisableFollow />
+          <div className="border-b border-white/10"></div> */}
 
           <HideBio />
           <div className="border-b border-white/10"></div>

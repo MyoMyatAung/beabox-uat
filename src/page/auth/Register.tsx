@@ -67,7 +67,7 @@ const Register = () => {
       captcha,
       captcha_key: data?.data?.captcha_key,
     });
-    console.log(registerData, "registerData");
+    // console.log(registerData, "registerData");
     if (registerData?.status) {
       // dispatch(setRegisterUser(registerData?.data));
       dispatch(setUser(registerData?.data));
@@ -77,7 +77,8 @@ const Register = () => {
       // setShowSecurity(true);
     } else {
       if (authErr) setError(authErr); // setError("出了点问题");
-      setShow验证码(false);
+      // setShow验证码(false);
+      await getCaptcha("");
     }
   };
   useEffect(() => {

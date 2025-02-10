@@ -109,8 +109,8 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
                       className=" object-cover h-full w-full rounded-none"
                     />
                   </div>
-
-                  <h1 className="text-white w-full text-[12px] font-[400] px-[6px] pt-[6px] leading-[20px] break-words">
+                  <h1 className="search_text font-cnFont line-clamp-2 text-left text-[12px] font-[400] px-[6px] pt-[6px]">
+                  {/* <h1 className="search_text font-cnFont px-[6px] line-clamp-2 text-left"> */}
                     {card.title.length > 50
                       ? `${card.title.slice(0, 50)}...`
                       : card.title}

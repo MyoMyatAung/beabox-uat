@@ -90,7 +90,8 @@ const RegisterForm = ({ setIsOpen }: any) => {
     } else {
       // setShowSecurity(false);
       if (authErr) setError(authErr); // setError("出了点问题");
-      setShow验证码(false);
+      // setShow验证码(false);
+      await getCaptcha("");
     }
   };
 

@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { NoVideo } from "@/assets/profile";
+import { NoVideo, PersonLock } from "@/assets/profile";
 import VideoGrid from "./video-grid";
 import { FaHeart } from "react-icons/fa";
 import { useGetLikedPostQuery } from "@/store/api/profileApi";
@@ -32,9 +32,9 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
 
   return (
     <Tabs defaultValue="liked" className="my-5">
-      <TabsList className="grid w-full grid-cols-3 bg-transparent">
+      <TabsList className="grid w-full grid-cols-3 z-[1600] bg-transparent sticky top-[100px]">
         <TabsTrigger
-          className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2"
+          className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2 "
           value="liked"
         >
           <span className="flex items-center gap-1">
@@ -43,37 +43,89 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
         </TabsTrigger>
       </TabsList>
       <TabsContent value="liked">
-        {isLoading ? (
-          <div className=" flex justify-center w-full py-[200px]">
-            <div className="">
-              <img src={Loader} className="w-[70px] h-[70px]" alt="Loading" />
+        <div className="py-5">
+          {isLoading ? (
+            <div className=" flex justify-center w-full py-[200px]">
+              <div className="">
+                <img src={Loader} className="w-[70px] h-[70px]" alt="Loading" />
+              </div>
             </div>
-          </div>
-        ) : (
-          <></>
-        )}
-        {data?.data?.length > 0 && visibility == "public" ? (
-          <div className="w-full relative  z-[1200]">
-            <VideoGrid
-              showHeader={showHeader}
-              data={waterfall}
-              fetchMoreData={fetchMoreData}
-            />
-          </div>
-        ) : visibility == "public" ? (
-          <div className="flex flex-col justify-center items-center w-full mt-[150px]">
-            <NoVideo />
-            <p className="text-[12px] text-[#888]">这里空空如也～</p>
-          </div>
-        ) : (
-          <div className="flex gap-2 flex-col justify-center items-center w-full mt-[150px]">
-            <BsPersonLock size={32} />
-            <p className="text-[12px] text-[#888]">私密账号</p>
-          </div>
-        )}
+          ) : (
+            <></>
+          )}
+          {data?.data?.length > 0 && visibility == "public" ? (
+            <div>
+              <VideoGrid
+                showHeader={showHeader}
+                data={waterfall}
+                fetchMoreData={fetchMoreData}
+              />
+              <div className="py-[38px]"></div>
+            </div>
+          ) : visibility == "public" ? (
+            <div className="flex flex-col justify-center items-center w-full mt-[150px]">
+              <NoVideo />
+              <p className="text-[12px] text-[#888]">这里空空如也～</p>
+            </div>
+          ) : (
+            <div className="flex gap-2 flex-col justify-center items-center w-full mt-[150px]">
+              <PersonLock />
+              <p className="text-[12px] text-[#888]">私密账号</p>
+            </div>
+          )}
+        </div>
       </TabsContent>
     </Tabs>
   );
 };
 
 export default VideoTab2;
+
+const test = () => {
+  return (
+    <>
+      <Tabs defaultValue="liked" className="my-5">
+        <TabsList className="grid w-full grid-cols-3 bg-transparent">
+          <TabsTrigger
+            className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2"
+            value="liked"
+          >
+            <span className="flex items-center gap-1">
+              <FaHeart /> 已点赞视频
+            </span>
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="liked">
+          {isLoading ? (
+            <div className=" flex justify-center w-full py-[200px]">
+              <div className="">
+                <img src={Loader} className="w-[70px] h-[70px]" alt="Loading" />
+              </div>
+            </div>
+          ) : (
+            <></>
+          )}
+          {data?.data?.length > 0 && visibility == "public" ? (
+            <div className="w-full relative  z-[1200]">
+              <VideoGrid
+                showHeader={showHeader}
+                data={waterfall}
+                fetchMoreData={fetchMoreData}
+              />
+            </div>
+          ) : visibility == "public" ? (
+            <div className="flex flex-col justify-center items-center w-full mt-[150px]">
+              <NoVideo />
+              <p className="text-[12px] text-[#888]">这里空空如也～</p>
+            </div>
+          ) : (
+            <div className="flex gap-2 flex-col justify-center items-center w-full mt-[150px]">
+              <PersonLock />
+              <p className="text-[12px] text-[#888]">私密账号</p>
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
+    </>
+  );
+};

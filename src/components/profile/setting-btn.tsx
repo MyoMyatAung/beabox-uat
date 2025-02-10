@@ -40,16 +40,16 @@ const SettingBtn = ({ setShow }: any) => {
     },
   ];
   const data2 = [
-    // {
-    //   title: "Balance",
-    //   icon: <Wallet size={14} />,
-    //   link: user?.token ? paths.login : paths.wallet,
-    // },
     {
       title: "创作者中心",
-      icon: <UserPen size={14} />,
-      link: paths.settings,
+      icon: <img src={UserStar} className="w-3.5" />,
+      // link: paths.settings,
     },
+    // {
+    //   title: "创作者中心",
+    //   icon: <UserPen size={14} />,
+    //   link: paths.settings,
+    // },
     {
       title: "设置和隐私",
       icon: <Settings size={14} />,
@@ -63,7 +63,7 @@ const SettingBtn = ({ setShow }: any) => {
           <Menu />
         </button>
       </DrawerTrigger>
-      <DrawerContent className="border-0 bg-[#121012] z-[1500]">
+      <DrawerContent className="border-0 bg-[#121012] z-[1600]">
         <div className="w-full px-5 py-7">
           <div className="space-y-3">
             {(user?.token ? data : data2)?.map(

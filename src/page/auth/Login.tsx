@@ -74,7 +74,8 @@ const Login = () => {
       navigate(paths.profile);
     } else {
       if (authErr) setError(authErr);
-      setShow验证码(false);
+      // setShow验证码(false);
+      await getCaptcha("");
     }
   };
 

@@ -41,7 +41,7 @@ const RootLayout = ({ children }: any) => {
       {showAd && <PopUp setShowAd={setShowAd} />}
       {isOpen ? <AuthDrawer /> : <></>}
       <AlertToast />
-      <div className="fixed bottom-0 left-0 w-full z-[1300]">
+      <div className="fixed bottom-0 left-0 w-full z-[1600]">
         <BottomNav />
       </div>
     </div>
