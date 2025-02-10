@@ -70,7 +70,7 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
   }
 
   const calculateHeight = (width: number, height: number) => {
-    console.log(width,height)
+    // console.log(width,height)
     if (width > height) {
       return 112; // Portrait
     }
