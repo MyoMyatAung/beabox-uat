@@ -158,7 +158,7 @@ const More: React.FC<MoreProps> = () => {
             </div>
           </div>
         )}
-        <div className="py-[20px] flex flex-col gap-[20px] w-full mt-[80px]">
+        <div className="py-[20px] flex flex-col gap-[20px] w-full mt-[60px]">
           {isLoading || customLoad ? (
             <div className=" flex justify-center w-screen py-[200px]">
               <div className="">
