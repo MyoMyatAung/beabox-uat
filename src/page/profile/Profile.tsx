@@ -221,7 +221,7 @@ const Profile = () => {
             photo={data?.data?.profile_photo}
             name={data?.data?.nickname}
             login={user?.token}
-            dphoto={data?.data?.cover_photo}
+            dphoto={decryptedCover}
           />
         </div>
         {/* {showHeader ? (
