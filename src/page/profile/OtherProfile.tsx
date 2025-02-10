@@ -103,7 +103,20 @@ const OtherProfile = () => {
         ""
       )}
       <div className="flex-1">
-        {showHeader ? (
+        <div
+          className={`px-5 fixed ${
+            showHeader ? "opacity-1" : "opacity-0"
+          } top-0 w-full z-[1600] py-5`}
+        >
+          <OscrollHeader
+            photo={userData?.data?.profile_photo}
+            name={userData?.data?.nickname}
+            visibility={userData?.data?.content_visibility}
+            id={id}
+            dphoto={userData?.data?.cover_photo}
+          />
+        </div>
+        {/* {showHeader ? (
           <div className="px-5 fixed top-0 w-full z-[1600] py-5">
             <OscrollHeader
               photo={userData?.data?.profile_photo}
@@ -115,7 +128,7 @@ const OtherProfile = () => {
           </div>
         ) : (
           <></>
-        )}
+        )} */}
         <div className="z-[1200] relative px-5 w-full flex gap-3 my-5 justify-between items-center">
           <ChevronLeft onClick={() => navigate(-1)} />
           <div className="flex gap-3 z-[1500] items-center">

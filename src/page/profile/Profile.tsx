@@ -174,7 +174,19 @@ const Profile = () => {
         ""
       )}
       <div className="flex-1">
-        {showHeader ? (
+        <div
+          className={`px-5 ${
+            showHeader ? "opacity-1" : "opacity-0"
+          } fixed top-0 w-full z-[1600] py-5`}
+        >
+          <ScrollHeader
+            photo={data?.data?.profile_photo}
+            name={data?.data?.nickname}
+            login={user?.token}
+            dphoto={data?.data?.cover_photo}
+          />
+        </div>
+        {/* {showHeader ? (
           <div className="px-5 fixed top-0 w-full z-[1600] py-5">
             <ScrollHeader
               photo={data?.data?.profile_photo}
@@ -185,7 +197,7 @@ const Profile = () => {
           </div>
         ) : (
           <></>
-        )}
+        )} */}
         <div className="z-[1200] flex my-5 justify-between items-center px-5">
           {user?.token ? <EditCover /> : <div></div>}
           <div className="z-[1200] flex gap-3 items-center">
