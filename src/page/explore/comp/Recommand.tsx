@@ -157,7 +157,8 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
                           </div>
                         </div>
                       </div>
-                      <h1 className="text-white w-full text-[12px] font-[400] px-[6px] pt-[6px] leading-[20px] break-words">
+                      {/* <h1 className="text-white w-full text-[12px] font-[400] px-[6px] pt-[6px] leading-[20px] break-words"> */}
+                      <h1 className="search_text font-cnFont line-clamp-2 text-left text-[12px] font-[400] px-[6px] pt-[6px]">
                         {card.title.length > 50
                           ? `${card.title.slice(0, 50)}...`
                           : card.title}
