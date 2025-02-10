@@ -92,7 +92,7 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
               {waterfall?.map((card: any, index: number) => (
                 <div
                   key={index}
-                  className="chinese_photo h-[320px] max-w-full shadow-lg relative pt-[20px]"
+                  className="chinese_photo h-[320px] max-w-full relative pt-[20px]"
                 >
                   <div
                     className=" relative flex justify-center items-center bg-[#010101] rounded-t-[4px] overflow-hidden  h-[240px]"
