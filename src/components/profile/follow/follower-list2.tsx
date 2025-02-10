@@ -8,8 +8,6 @@ import { Users, UsersRound } from "lucide-react";
 import Loader from "../../../page/home/vod_loader.gif";
 
 const FollowerList2 = ({ searchTerm, id, closeTab }: any) => {
-  //   const user_code = useSelector((state: any) => state.persist?.user?.id);
-
   const { data, isLoading, isFetching } = useGetFollowerListQuery({
     user_id: id,
     search: searchTerm,

@@ -3,10 +3,12 @@ import { AvatarImage, Avatar } from "../ui/avatar";
 import { Link } from "react-router-dom";
 import { paths } from "@/routes/paths";
 import FollowBtn from "./follow-btn";
+import { useSelector } from "react-redux";
 
 const FollowCard = ({ data }: { data: any }) => {
-  const [changeFollowStatus, { data: statusData, isLoading }] =
-    useChangeFollowStatusMutation();
+  const myId = useSelector((state: any) => state?.persist?.user?.id);
+
+  const [changeFollowStatus] = useChangeFollowStatusMutation();
   const changeFollowStatusHandler = async () => {
     try {
       await changeFollowStatus({
@@ -33,7 +35,11 @@ const FollowCard = ({ data }: { data: any }) => {
           <h1 className="text-[#888]">ID : {data?.user_code}</h1>
         </div>
       </Link>
-      <FollowBtn id={data?.id} followBack={data?.follows_back} />
+      {data?.id == myId ? (
+        <div></div>
+      ) : (
+        <FollowBtn id={data?.id} followBack={data?.follows_back} />
+      )}
       {/* <Button
         onClick={() => changeFollowStatusHandler(data?.user_code)}
         className={`${
