@@ -48,12 +48,9 @@ const SettingBtn2 = ({ id }: any) => {
           <EllipsisVertical />
         </button>
       </DrawerTrigger>
-      <DrawerContent className="border-0 bg-[#121012] z-[1500]">
+      <DrawerContent className="border-0 bg-[#121012] z-[1800]">
         <div className="w-full px-5 py-7">
-          <div className="space-x-3">
-            {/* <div className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full">
-              <Search size={18} />
-            </div> */}
+          <div className="space-x-3 flex">
             <div
               onClick={() => handleCopy("Copied Link")}
               className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full"

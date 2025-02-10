@@ -30,7 +30,7 @@ const OtherProfile = () => {
     refetch,
   } = useGetUserProfileQuery(id || "");
   console.log(userData?.data, "userData");
-   const handleCopy = (text: any) => {
+  const handleCopy = (text: any) => {
     navigator?.clipboard
       .writeText(text)
       .then(() => {
@@ -65,135 +65,46 @@ const OtherProfile = () => {
 
   if (userLoading) return <Loader />;
   return (
-    <div className="h-screen flex flex-col">
-      <div className="">
-        {showHeader ? (
-          <></>
-        ) : (
-          <>
-            <div className="gradient-overlay"></div>
-            <img
-              src={
-                userData?.data?.cover_photo
-                  ? userData?.data?.cover_photo
-                  : defaultCover
-              }
-              alt=""
-              className="fixed top-0 left-0 w-full h-[23vh] object-cover object-center"
-            />
-          </>
-        )}
-        {isCopied ? (
-          <div className="w-full z-[1300] absolute top-[80vh] flex justify-center">
-            <p className="text-[14px] bg-[#FFFFFF14] px-2 py-1 rounded-lg w-[83px] text-center">
-              已复制 ID
-            </p>
-          </div>
-        ) : (
-          ""
-        )}
-        <div className="z-[1200]">
-          <div className="z-[1200] relative px-5 w-full flex gap-3 my-5 justify-between items-center">
-            <ChevronLeft onClick={() => navigate(-1)} />
-            <div className="flex gap-3 z-[1500] items-center">
-              {/* <div className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full">
-                <Search size={18} />
-              </div> */}
-              <div
-                onClick={() => handleCopy("Copied Link")}
-                className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full"
-              >
-                <img src={share} alt="" />
-              </div>
-              <Link
-                to={`/reports/profile/${id}`}
-                className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full"
-              >
-                <Flag size={18} />
-              </Link>
-            </div>
-          </div>
-          <div className="w-full flex items-center gap-3 pb-5 px-5">
-            <ProfileAvatar
-              progress={userData?.data?.level_progress}
-              levelImage={userData?.data?.level}
-              photo={userData?.data?.profile_photo}
-            />
-            {/* <ProfileAvatar
-              photo={userData?.data?.profile_photo}
-              progressData={userData?.data?.level_progress}
-            /> */}
-            <div className="z-[1200] flex-1 flex flex-col gap-0.5">
-              <p className="z-[1200] text-[18px] flex items-center gap-1">
-                {userData?.data?.nickname}
-                <span>
-                  {userData?.data?.gender == "Male" ? <MaleSVG /> : <></>}
-                </span>
-                <span>
-                  {userData?.data?.gender == "Feale" ? <FemaleSVG /> : <></>}
-                </span>
-                {/* <span>
-                <BsPatchCheckFill className="z-[1200] text-[#888]" />
-              </span>{" "} */}
-              </p>
-              <p className="z-[1200] text-[14px] text-[#BBBBBB] flex items-center gap-2">
-                B号 : {userData?.data?.user_code}{" "}
-                <Copy
-                  onClick={() => handleCopy(userData?.data?.user_code)}
-                  size={14}
-                />
-              </p>
-              {userData?.data?.city &&
-              userData?.data?.province &&
-              userData?.data?.share_region == "on" ? (
-                <div className="z-[1200] flex">
-                  <div className="z-[1200] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 pt-1 rounded-full justify-center shrink-0">
-                    <span>{userData?.data?.province}</span>:
-                    <span>{userData?.data?.city}</span>
-                  </div>
-                </div>
-              ) : (
-                <div className="z-[1200] flex">
-                  <div className="z-[1200] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
-                    <span>未知</span>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-          <h1 className="text-[12px] text-[#888] mb-5 italic px-5 z-[1200] relative">
-            {userData?.data?.bio && userData?.data?.hide_bio == "off"
-              ? userData?.data?.bio
-              : ""}
-          </h1>
-          <div className="z-[1200] relative px-5">
-            <div className={`${showHeader ? "opacity-0" : "opacity-1"}`}>
-              <OtherStats
-                followers={userData?.data?.followers_count}
-                followings={userData?.data?.following_count}
-                likes={userData?.data?.likes_sum_count}
-                id={userData?.data?.id}
-              />
-            </div>
-            {user?.id == id ? (
-              <></>
-            ) : (
-              <div className={`${showHeader ? "opacity-0" : "opacity-1"}`}>
-                <FollowStatusBtn
-                  userData={userData}
-                  id={id}
-                  refetch={refetch}
-                  userLoading={userLoading}
-                />
-              </div>
-            )}
-          </div>
+    <div className="h-screen flex flex-col hide-sb">
+      {showHeader ? (
+        <>
+          <div className="gradient-overlay2"></div>
+          <img
+            src={
+              userData?.data?.cover_photo
+                ? userData?.data?.cover_photo
+                : defaultCover
+            }
+            alt=""
+            className={`fixed top-0 z-[1500] left-0 w-full h-[155px] object-cover object-center`}
+          />
+        </>
+      ) : (
+        <>
+          <div className="gradient-overlay"></div>
+          <img
+            src={
+              userData?.data?.cover_photo
+                ? userData?.data?.cover_photo
+                : defaultCover
+            }
+            alt=""
+            className="fixed top-0 left-0 w-full h-[23vh] object-cover object-center"
+          />
+        </>
+      )}
+      {isCopied ? (
+        <div className="w-full z-[1300] absolute top-[80vh] flex justify-center">
+          <p className="text-[14px] bg-[#FFFFFF14] px-2 py-1 rounded-lg w-[83px] text-center">
+            已复制 ID
+          </p>
         </div>
-        <div ref={headerRef} className="sticky z-[1500] top-0 py-3">
-          {/* {showHeader && "HEY"} */}
-        </div>
+      ) : (
+        ""
+      )}
+      <div className="flex-1">
         {showHeader ? (
-          <>
+          <div className="px-5 fixed top-0 w-full z-[1600] py-5">
             <OscrollHeader
               photo={userData?.data?.profile_photo}
               name={userData?.data?.nickname}
@@ -201,21 +112,114 @@ const OtherProfile = () => {
               id={id}
               dphoto={userData?.data?.cover_photo}
             />
-          </>
+          </div>
         ) : (
           <></>
         )}
-        <div className={`${showHeader ? "hidden" : "block"}`}>
-          <div className="z-[1200] relative px-5">
-            <VideoTab2
-              id={id}
-              showHeader={false}
-              visibility={userData?.data?.content_visibility}
-            />
+        <div className="z-[1200] relative px-5 w-full flex gap-3 my-5 justify-between items-center">
+          <ChevronLeft onClick={() => navigate(-1)} />
+          <div className="flex gap-3 z-[1500] items-center">
+            {/* <div className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full">
+                <Search size={18} />
+              </div> */}
+            <div
+              onClick={() => handleCopy("Copied Link")}
+              className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full"
+            >
+              <img src={share} alt="" />
+            </div>
+            <Link
+              to={`/reports/profile/${id}`}
+              className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full"
+            >
+              <Flag size={18} />
+            </Link>
           </div>
         </div>
+        <div className="w-full flex items-center gap-3 pb-5 px-5">
+          <ProfileAvatar
+            progress={userData?.data?.level_progress}
+            levelImage={userData?.data?.level}
+            photo={userData?.data?.profile_photo}
+          />
+          <div className="z-[1200] flex-1 flex flex-col gap-0.5">
+            <p className="z-[1200] text-[18px] flex items-center gap-1">
+              {userData?.data?.nickname}
+              <span>
+                {userData?.data?.gender == "Male" ? <MaleSVG /> : <></>}
+              </span>
+              <span>
+                {userData?.data?.gender == "Feale" ? <FemaleSVG /> : <></>}
+              </span>
+              {/* <span>
+                <BsPatchCheckFill className="z-[1200] text-[#888]" />
+              </span>{" "} */}
+            </p>
+            <p className="z-[1200] text-[14px] text-[#BBBBBB] flex items-center gap-2">
+              B号 : {userData?.data?.user_code}{" "}
+              <Copy
+                onClick={() => handleCopy(userData?.data?.user_code)}
+                size={14}
+              />
+            </p>
+            {userData?.data?.city &&
+            userData?.data?.province &&
+            userData?.data?.share_region == "on" ? (
+              <div className="z-[1200] flex">
+                <div className="z-[1200] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 pt-1 rounded-full justify-center shrink-0">
+                  <span>{userData?.data?.province}</span>:
+                  <span>{userData?.data?.city}</span>
+                </div>
+              </div>
+            ) : (
+              <div className="z-[1200] flex">
+                <div className="z-[1200] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
+                  <span>未知</span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        <h1 className="text-[12px] text-[#888] mb-5 italic px-5 z-[1200] relative">
+          {userData?.data?.bio && userData?.data?.hide_bio == "off"
+            ? userData?.data?.bio
+            : ""}
+        </h1>
+        <div className={`${showHeader ? "opacity-0" : "opacity-1"}`}>
+          <OtherStats
+            followers={userData?.data?.followers_count}
+            followings={userData?.data?.following_count}
+            likes={userData?.data?.likes_sum_count}
+            id={userData?.data?.id}
+          />
+        </div>
+        {user?.id == id ? (
+          <></>
+        ) : (
+          <div
+            className={`px-5 z-[1200] relative ${
+              showHeader ? "opacity-0" : "opacity-1"
+            }`}
+          >
+            <FollowStatusBtn
+              userData={userData}
+              id={id}
+              refetch={refetch}
+              userLoading={userLoading}
+            />
+          </div>
+        )}
+        <div ref={headerRef} className="sticky z-[1500] top-0">
+          {/* {showHeader ? "Show" : "Hide"} */}
+        </div>
+        <div className="px-5">
+          <VideoTab2
+            id={id}
+            showHeader={false}
+            visibility={userData?.data?.content_visibility}
+          />
+        </div>
       </div>
-      <div className="py-[38px] w-full"></div>
     </div>
   );
 };

@@ -11,7 +11,7 @@ import {
   useGetLikedPostQuery,
   useGetWatchHistoryQuery,
 } from "@/store/api/profileApi";
-import { NoVideo } from "@/assets/profile";
+import { NoVideo, Person } from "@/assets/profile";
 import VideoGrid from "./video-grid";
 import defaultCover from "@/assets/cover.jpg";
 import Loader from "@/page/home/vod_loader.gif";
@@ -54,101 +54,31 @@ const ScrollHeader = ({ photo, name, setShow, login, dphoto }: any) => {
     setPage((prevPage) => prevPage + 1);
   };
   return (
-    <div className="h-screen">
-      <div className="gradient-overlay2"></div>
-      <img
-        src={user?.token ? (dphoto ? dphoto : defaultCover) : defaultCover}
-        alt=""
-        className={`fixed top-0 z-[1000] left-0 w-full h-[155px] object-cover object-center`}
-      />
-      <Tabs defaultValue="liked">
-        <div className="z-[1500] fixed top-0 px-5  w-full pt-5 pb-10">
-          <div className="flex justify-between items-center w-full">
-            <div className="flex items-center gap-3">
-              <img
-                className="w-[58px] z-[1500] h-[58px] rounded-full object-cover object-center"
-                src={photo}
-                alt=""
-              />
-              <p className="z-[1500]">{name}</p>
-            </div>
-            <div className="flex gap-3 z-[1500] items-center">
-              <Link
-                to={paths.noti}
-                className="z-[1500] bg-[#FFFFFF12] w-10 h-10 rounded-full flex items-center justify-center"
-              >
-                <Bell />
-              </Link>
-              <SettingBtn setShow={setShow} />
-            </div>
+    <div className="flex justify-between items-center w-full z-[1800] relative">
+      <div className="flex items-center gap-3">
+        {photo ? (
+          <img
+            className="w-[58px] z-[1500] h-[58px] rounded-full object-cover object-center"
+            src={photo}
+            alt=""
+          />
+        ) : (
+          <div className="w-[58px] h-[58px] rounded-full bg-[#FFFFFF12] flex justify-center items-center p-2">
+            <Person />
           </div>
-          <TabsList className="grid w-full grid-cols-3 bg-transparent py-5">
-            <TabsTrigger
-              className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2"
-              value="liked"
-            >
-              <span className="flex items-center gap-1">
-                <FaHeart /> 已点赞视频
-              </span>
-            </TabsTrigger>
-            <TabsTrigger
-              className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2"
-              value="history"
-            >
-              <span className="flex items-center gap-1">
-                <MdWatchLater /> 观看历史
-              </span>
-            </TabsTrigger>
-          </TabsList>
-        </div>
-        <div className="relative  px-5">
-          {isLoading || historyLoading ? (
-            <div className=" flex justify-center w-full py-[200px]">
-              <div className="">
-                <img src={Loader} className="w-[70px] h-[70px]" alt="Loading" />
-              </div>
-            </div>
-          ) : (
-            <>
-              <TabsContent value="liked">
-                {!login || data?.data?.length <= 0 ? (
-                  <div className="flex flex-col justify-center items-center w-full mt-[150px]">
-                    <NoVideo />
-                    <p className="text-[12px] text-[#888]">这里空空如也～</p>
-                  </div>
-                ) : (
-                  <div className="w-full relative">
-                    <VideoGrid
-                      showHeader={false}
-                      hasMore={hasMore}
-                      fetchMoreData={fetchMoreData}
-                      data={waterfall}
-                    />
-                  </div>
-                )}
-              </TabsContent>
-              <TabsContent value="history">
-                {!login || history?.data?.length <= 0 ? (
-                  <div className="flex flex-col justify-center items-center w-full mt-[150px]">
-                    <NoVideo />
-                    <p className="text-[12px] text-[#888]">这里空空如也～</p>
-                  </div>
-                ) : (
-                  <div className="w-full relative  z-[1200]">
-                    <VideoGrid
-                      showHeader={false}
-                      hasMore={hasMore}
-                      fetchMoreData={fetchMoreData}
-                      data={HistoryList}
-                    />
-                  </div>
-                )}
-              </TabsContent>
-            </>
-          )}
-        </div>
-        <div className="py-[38px] w-full"></div>
-      </Tabs>
+        )}
+
+        {/* <p className="z-[1500]">{name}</p> */}
+      </div>
+      <div className="flex gap-3 z-[1500] items-center">
+        <Link
+          to={paths.noti}
+          className="z-[1200] bg-[#FFFFFF12] w-10 h-10 rounded-full flex items-center justify-center"
+        >
+          <Bell />
+        </Link>
+        <SettingBtn />
+      </div>
     </div>
   );
 };

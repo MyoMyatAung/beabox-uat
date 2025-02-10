@@ -225,7 +225,7 @@ input:checked + .slider:before {
     rgb(21, 19, 28)
   );
   pointer-events: none;
-  z-index: 1300;
+  z-index: 1600;
 }
 
 .c-height {
