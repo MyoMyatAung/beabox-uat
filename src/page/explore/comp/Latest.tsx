@@ -85,14 +85,14 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
       ) : (
         <div className=" flex w-full justify-center">
           <div
-            className=" grid grid-cols-2 relative gap-[10px] px-2"
+            className=" grid grid-cols-2 relative gap-[6px] px-2"
             ref={contentRef}
           >
             <>
               {waterfall?.map((card: any, index: number) => (
                 <div
                   key={index}
-                  className="chinese_photo h-[320px] max-w-full shadow-lg relative"
+                  className="chinese_photo h-[320px] max-w-full shadow-lg relative pt-[20px]"
                 >
                   <div
                     className=" relative flex justify-center items-center bg-[#010101] rounded-t-[4px] overflow-hidden  h-[240px]"
