@@ -1,5 +1,6 @@
 import { paths } from "@/routes/paths";
-import { FaAngleLeft } from "react-icons/fa";
+// import { FaAngleLeft } from "react-icons/fa";
+import backButton from "../../../assets/backButton.svg";
 import { Link } from "react-router-dom";
 import SystemNotiLink from "@/components/profile/noti/system-noti-link";
 import BalanceNotiLink from "@/components/profile/noti/balance-noti-link";
@@ -20,7 +21,8 @@ const Noti = () => {
       <div className="w-full">
         <div className="flex justify-between items-center py-5 sticky top-0 bg-[#16131C00] z-50">
           <Link to={paths.profile}>
-            <FaAngleLeft size={22} />
+            {/* <FaAngleLeft size={22} /> */}
+            <img src={backButton} alt="" />
           </Link>
           <p className="text-[16px]">通知</p>
           <div></div>
