@@ -115,3 +115,8 @@
     rgba(206, 74, 251, 0.04) 20.59%
   );
 }
+
+.chinese_photo1 {
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.12);
+}
