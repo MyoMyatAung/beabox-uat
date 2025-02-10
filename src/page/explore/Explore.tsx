@@ -50,7 +50,7 @@ const Explore = () => {
   // console.log(exp_header)
 
   useEffect(() => {
-    window.scrollTo(0,0)
+    window.scrollTo(0,500)
     // window.scrollTo({ top: 0, behavior: "smooth" });
   }, [exp_header]);  
 

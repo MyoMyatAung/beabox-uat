@@ -129,7 +129,7 @@ const Banner: React.FC = () => {
           <Swiper
             className=""
             slidesPerView={1.5}
-            // spaceBetween={"10px"}
+            spaceBetween={30}
             centeredSlides={true}
             loop={true}
             autoplay={{ delay: 3000, disableOnInteraction: false }}
@@ -137,21 +137,23 @@ const Banner: React.FC = () => {
             onSlideChange={handleOnChange}
           >
             {ad.map((cc: any, index: number) => (
-              <SwiperSlide className=" w-full" key={index}>
+              <SwiperSlide className=" w-full rounded-[12px]" key={index}>
                 <a
                   href={cc.url}
                   target="_blank"
-                  className={`flex justify-center w-full items-center px-[8px] flex-col relative transition-all duration-300 `}
+                  className={`flex rounded-[12px] justify-center w-full items-center px-[8px] flex-col relative transition-all duration-300 `}
                 >
-                  <img
-                    className={` object-cover w-[332px] h-[162px] transition-all duration-300 ${
-                      selectedIndex === index
-                        ? "scale-[1.3] rounded-[32px]" 
-                        : "scale-75 opacity-70" 
-                    }`}
-                    src={cc.image}
-                    alt={`Slide ${index + 1}`}
-                  />
+                  <div className=" w-[332px] h-[162px] px-2 overflow-hidden rounded-[12px]">
+                    <img
+                      className={` object-cover  w-[332px] h-[162px] transition-all duration-300 ${
+                        selectedIndex === index
+                          ? "scale-[1.3]"
+                          : "scale-75 opacity-70 rounded-[12px]"
+                      }`}
+                      src={cc.image}
+                      alt={`Slide ${index + 1}`}
+                    />
+                  </div>
                 </a>
               </SwiperSlide>
             ))}
