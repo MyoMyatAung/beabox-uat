@@ -68,7 +68,7 @@ const ScrollHeader = ({ photo, name, setShow, login, dphoto }: any) => {
           </div>
         )}
 
-        {/* <p className="z-[1500]">{name}</p> */}
+        <p className="z-[1500]">{name}</p>
       </div>
       <div className="flex gap-3 z-[1500] items-center">
         <Link

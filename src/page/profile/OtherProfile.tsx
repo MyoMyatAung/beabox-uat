@@ -48,7 +48,7 @@ const OtherProfile = () => {
         const rect = headerRef.current.getBoundingClientRect();
         // console.log(rect);
 
-        if (rect.top < 100) {
+        if (rect.top <= 100) {
           setShowHeader(true);
         } else {
           setShowHeader(false);
@@ -129,7 +129,7 @@ const OtherProfile = () => {
         ) : (
           <></>
         )} */}
-        <div className="z-[1200] relative px-5 w-full flex gap-3 my-5 justify-between items-center">
+        <div className="z-[1900] relative px-5 w-full flex gap-3 my-5 justify-between items-center">
           <ChevronLeft onClick={() => navigate(-1)} />
           <div className="flex gap-3 z-[1500] items-center">
             {/* <div className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full">
