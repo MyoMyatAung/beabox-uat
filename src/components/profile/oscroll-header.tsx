@@ -41,12 +41,12 @@ const OscrollHeader = ({ photo, name, id, visibility, dphoto }: any) => {
       <div className="flex items-center gap-3">
         {photo ? (
           <img
-            className="w-[58px] z-[1500] h-[58px] rounded-full object-cover object-center"
+            className="w-[48px] z-[1500] h-[48px] rounded-full object-cover object-center"
             src={photo}
             alt=""
           />
         ) : (
-          <div className="w-[58px] h-[58px] rounded-full bg-[#FFFFFF12] flex justify-center items-center p-2">
+          <div className="w-[48px] h-[48px] rounded-full bg-[#FFFFFF12] flex justify-center items-center p-2">
             <Person />
           </div>
         )}

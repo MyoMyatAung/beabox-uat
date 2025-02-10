@@ -37,6 +37,7 @@ const Profile = () => {
   const [isCopied, setIsCopied] = useState(false);
   const dispatch = useDispatch();
   const [decryptedCover, setDecryptedCover] = useState(defaultCover);
+  const [decryptedPhoto, setDecryptedPhoto] = useState("");
 
   useEffect(() => {
     const loadAndDecryptImage = async () => {
@@ -93,6 +94,63 @@ const Profile = () => {
       }
     };
   }, [data?.data?.cover_photo, user?.token]);
+
+
+  useEffect(() => {
+    const loadAndDecryptImage = async () => {
+      if (!user?.token || !data?.data?.profile_photo) {
+        setDecryptedPhoto("");
+        return;
+      }
+
+      try {
+        const coverUrl = data?.data?.profile_photo;
+
+        if (!coverUrl.endsWith(".txt")) {
+          setDecryptedPhoto(coverUrl);
+          return;
+        }
+
+        // Fetch encrypted image data
+        const response = await fetch(coverUrl);
+        const encryptedData = await response.arrayBuffer();
+
+        // XOR decryption with key 0x12
+        const decryptedData = new Uint8Array(encryptedData);
+        const key = 0x12;
+        const maxSize = Math.min(4096, decryptedData.length);
+
+        for (let i = 0; i < maxSize; i++) {
+          decryptedData[i] ^= key;
+        }
+
+        // Determine MIME type from decrypted data (simple detection)
+        let mimeType = "image/jpeg"; // default
+        if (decryptedData[0] === 0x89 && decryptedData[1] === 0x50) {
+          mimeType = "image/png";
+        } else if (decryptedData[0] === 0x47 && decryptedData[1] === 0x49) {
+          mimeType = "image/gif";
+        }
+
+        // Create blob URL
+        const blob = new Blob([decryptedData], { type: mimeType });
+        const blobUrl = URL.createObjectURL(blob);
+        setDecryptedPhoto(blobUrl);
+      } catch (error) {
+        console.error("Error loading cover photo:", error);
+        setDecryptedPhoto("");
+      }
+    };
+
+    loadAndDecryptImage();
+
+    // Cleanup function to revoke blob URL
+    return () => {
+      if (decryptedCover.startsWith("blob:")) {
+        URL.revokeObjectURL(decryptedCover);
+      }
+    };
+  }, [data?.data?.profile_photo, user?.token]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -157,7 +215,7 @@ const Profile = () => {
         <>
           <div className="gradient-overlay"></div>
           <img
-            src={decryptedCover}
+            src={decryptedCover ? decryptedCover : defaultCover}
             alt=""
             className={`fixed top-0 left-0 w-full h-[23vh] object-cover object-center`}
           />
@@ -218,10 +276,10 @@ const Profile = () => {
           } fixed top-0 w-full z-[1600] py-5`}
         >
           <ScrollHeader
-            photo={data?.data?.profile_photo}
+            photo={decryptedPhoto}
             name={data?.data?.nickname}
             login={user?.token}
-            dphoto={decryptedCover}
+            dphoto={data?.data?.cover_photo}
           />
         </div>
         {/* {showHeader ? (
@@ -252,7 +310,7 @@ const Profile = () => {
           <ProfileAvatar
             progress={data?.data?.level_progress}
             levelImage={data?.data?.level}
-            photo={data?.data?.profile_photo}
+            photo={decryptedPhoto}
           />
           {!user?.token ? (
             // <AuthDrawer />

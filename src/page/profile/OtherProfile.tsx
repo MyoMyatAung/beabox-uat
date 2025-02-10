@@ -29,7 +29,121 @@ const OtherProfile = () => {
     isLoading: userLoading,
     refetch,
   } = useGetUserProfileQuery(id || "");
-  console.log(userData?.data, "userData");
+  const [decryptedCover, setDecryptedCover] = useState(defaultCover);
+  const [decryptedPhoto, setDecryptedPhoto] = useState("");
+
+  useEffect(() => {
+    const loadAndDecryptImage = async () => {
+      if (!userData?.data?.cover_photo) {
+        setDecryptedCover(defaultCover);
+        return;
+      }
+
+      try {
+        const coverUrl = userData.data.cover_photo;
+
+        if (!coverUrl.endsWith(".txt")) {
+          setDecryptedCover(coverUrl);
+          return;
+        }
+
+        // Fetch encrypted image data
+        const response = await fetch(coverUrl);
+        const encryptedData = await response.arrayBuffer();
+
+        // XOR decryption with key 0x12
+        const decryptedData = new Uint8Array(encryptedData);
+        const key = 0x12;
+        const maxSize = Math.min(4096, decryptedData.length);
+
+        for (let i = 0; i < maxSize; i++) {
+          decryptedData[i] ^= key;
+        }
+
+        // Determine MIME type from decrypted data (simple detection)
+        let mimeType = "image/jpeg"; // default
+        if (decryptedData[0] === 0x89 && decryptedData[1] === 0x50) {
+          mimeType = "image/png";
+        } else if (decryptedData[0] === 0x47 && decryptedData[1] === 0x49) {
+          mimeType = "image/gif";
+        }
+
+        // Create blob URL
+        const blob = new Blob([decryptedData], { type: mimeType });
+        const blobUrl = URL.createObjectURL(blob);
+        setDecryptedCover(blobUrl);
+      } catch (error) {
+        console.error("Error loading cover photo:", error);
+        setDecryptedCover(defaultCover);
+      }
+    };
+
+    loadAndDecryptImage();
+
+    // Cleanup function to revoke blob URL
+    return () => {
+      if (decryptedCover.startsWith("blob:")) {
+        URL.revokeObjectURL(decryptedCover);
+      }
+    };
+  }, [userData?.data?.cover_photo]);
+
+  useEffect(() => {
+    const loadAndDecryptImage = async () => {
+      if (!userData?.data?.profile_photo) {
+        setDecryptedPhoto("");
+        return;
+      }
+
+      try {
+        const coverUrl = userData?.data?.profile_photo;
+
+        if (!coverUrl.endsWith(".txt")) {
+          setDecryptedPhoto(coverUrl);
+          return;
+        }
+
+        // Fetch encrypted image data
+        const response = await fetch(coverUrl);
+        const encryptedData = await response.arrayBuffer();
+
+        // XOR decryption with key 0x12
+        const decryptedData = new Uint8Array(encryptedData);
+        const key = 0x12;
+        const maxSize = Math.min(4096, decryptedData.length);
+
+        for (let i = 0; i < maxSize; i++) {
+          decryptedData[i] ^= key;
+        }
+
+        // Determine MIME type from decrypted data (simple detection)
+        let mimeType = "image/jpeg"; // default
+        if (decryptedData[0] === 0x89 && decryptedData[1] === 0x50) {
+          mimeType = "image/png";
+        } else if (decryptedData[0] === 0x47 && decryptedData[1] === 0x49) {
+          mimeType = "image/gif";
+        }
+
+        // Create blob URL
+        const blob = new Blob([decryptedData], { type: mimeType });
+        const blobUrl = URL.createObjectURL(blob);
+        setDecryptedPhoto(blobUrl);
+      } catch (error) {
+        console.error("Error loading cover photo:", error);
+        setDecryptedPhoto("");
+      }
+    };
+
+    loadAndDecryptImage();
+
+    // Cleanup function to revoke blob URL
+    return () => {
+      if (decryptedCover.startsWith("blob:")) {
+        URL.revokeObjectURL(decryptedCover);
+      }
+    };
+  }, [user?.data?.profile_photo]);
+
   const handleCopy = (text: any) => {
     navigator?.clipboard
       .writeText(text)
@@ -70,11 +184,7 @@ const OtherProfile = () => {
         <>
           <div className="gradient-overlay2"></div>
           <img
-            src={
-              userData?.data?.cover_photo
-                ? userData?.data?.cover_photo
-                : defaultCover
-            }
+            src={decryptedCover ? decryptedCover : defaultCover}
             alt=""
             className={`fixed top-0 z-[1500] left-0 w-full h-[155px] object-cover object-center`}
           />
@@ -83,11 +193,7 @@ const OtherProfile = () => {
         <>
           <div className="gradient-overlay"></div>
           <img
-            src={
-              userData?.data?.cover_photo
-                ? userData?.data?.cover_photo
-                : defaultCover
-            }
+            src={decryptedCover ? decryptedCover : defaultCover}
             alt=""
             className="fixed top-0 left-0 w-full h-[23vh] object-cover object-center"
           />
@@ -109,7 +215,7 @@ const OtherProfile = () => {
           } top-0 w-full z-[1600] py-5`}
         >
           <OscrollHeader
-            photo={userData?.data?.profile_photo}
+            photo={decryptedPhoto}
             name={userData?.data?.nickname}
             visibility={userData?.data?.content_visibility}
             id={id}
@@ -153,7 +259,7 @@ const OtherProfile = () => {
           <ProfileAvatar
             progress={userData?.data?.level_progress}
             levelImage={userData?.data?.level}
-            photo={userData?.data?.profile_photo}
+            photo={decryptedPhoto}
           />
           <div className="z-[1900] flex-1 flex flex-col gap-0.5">
             <p className="z-[1900] text-[18px] flex items-center gap-1">
