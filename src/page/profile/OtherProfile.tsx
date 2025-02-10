@@ -155,8 +155,8 @@ const OtherProfile = () => {
             levelImage={userData?.data?.level}
             photo={userData?.data?.profile_photo}
           />
-          <div className="z-[1200] flex-1 flex flex-col gap-0.5">
-            <p className="z-[1200] text-[18px] flex items-center gap-1">
+          <div className="z-[1900] flex-1 flex flex-col gap-0.5">
+            <p className="z-[1900] text-[18px] flex items-center gap-1">
               {userData?.data?.nickname}
               <span>
                 {userData?.data?.gender == "Male" ? <MaleSVG /> : <></>}
@@ -168,7 +168,7 @@ const OtherProfile = () => {
                 <BsPatchCheckFill className="z-[1200] text-[#888]" />
               </span>{" "} */}
             </p>
-            <p className="z-[1200] text-[14px] text-[#BBBBBB] flex items-center gap-2">
+            <p className="z-[1900] text-[14px] text-[#BBBBBB] flex items-center gap-2">
               B号 : {userData?.data?.user_code}{" "}
               <Copy
                 onClick={() => handleCopy(userData?.data?.user_code)}
@@ -178,22 +178,22 @@ const OtherProfile = () => {
             {userData?.data?.city &&
             userData?.data?.province &&
             userData?.data?.share_region == "on" ? (
-              <div className="z-[1200] flex">
-                <div className="z-[1200] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 pt-1 rounded-full justify-center shrink-0">
+              <div className="z-[1900] flex">
+                <div className="z-[1900] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 pt-1 rounded-full justify-center shrink-0">
                   <span>{userData?.data?.province}</span>:
                   <span>{userData?.data?.city}</span>
                 </div>
               </div>
             ) : (
-              <div className="z-[1200] flex">
-                <div className="z-[1200] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
+              <div className="z-[1900] flex">
+                <div className="z-[1900] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
                   <span>未知</span>
                 </div>
               </div>
             )}
           </div>
         </div>
-        <h1 className="text-[12px] text-[#888] mb-5 italic px-5 z-[1200] relative">
+        <h1 className="text-[12px] text-[#888] mb-5 italic px-5 z-[1900] relative">
           {userData?.data?.bio && userData?.data?.hide_bio == "off"
             ? userData?.data?.bio
             : ""}
@@ -210,7 +210,7 @@ const OtherProfile = () => {
           <></>
         ) : (
           <div
-            className={`px-5 z-[1200] relative ${
+            className={`px-5 z-[1900] relative ${
               showHeader ? "opacity-0" : "opacity-1"
             }`}
           >

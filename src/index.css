@@ -210,7 +210,7 @@ input:checked + .slider:before {
     rgb(21, 19, 28)
   );
   pointer-events: none;
-  z-index: 99;
+  z-index: 1600;
 }
 .gradient-overlay2 {
   position: fixed;

@@ -172,6 +172,45 @@ const Profile = () => {
       ) : (
         ""
       )}
+      {show ? (
+        <div className="absolute top-0 z-[2300] left-0 w-full h-full mx-auto flex flex-col justify-center items-center bg-black/80">
+          <div className="z-[1200] px-10">
+            <div className="z-[1200] h-[250px] gradient-b  rounded-lg relative">
+              <img
+                src={center || "/placeholder.svg"}
+                className=" absolute h-[250px h-full w-full "
+                alt=""
+              />
+              <div className="z-[1200] w-full absolute -top-20 flex justify-center items-center">
+                <img
+                  src={phoneImg || "/placeholder.svg"}
+                  className={`w-[180px] z-[1200] `}
+                  alt=""
+                />
+              </div>
+            </div>
+            <div className="z-[1200] flex flex-col justify-center items-center gap-4 bg-[#161619] p-5 rounded-bl-lg rounded-br-lg">
+              <h1 className="z-[1200] text-[18px] font-semibold text-white">
+                创作者中心
+              </h1>
+              <p className="z-[1200] text-[14px] text-center text-[#FFFFFFCC]">
+                查看创作者排名，洞察顶尖创作者的风采，观看最受欢迎视频，掌握流行趋势，发现精彩瞬间，探索全新内容。
+              </p>
+              <Button className="z-[1200] mt-2 mb-4 rounded-[16px] px-[26px] py-[12px] bg-[#FFFFFF14] hover:bg-[#FFFFFF14]">
+                即将上线，敬请期待！
+              </Button>
+            </div>
+          </div>
+          <div
+            onClick={() => setShow(false)}
+            className="z-[1200] bg-[#FFFFFF29] p-2 rounded-full mt-5"
+          >
+            <X />
+          </div>
+        </div>
+      ) : (
+        ""
+      )}
       <div className="flex-1">
         <div
           className={`px-5 ${
@@ -197,12 +236,12 @@ const Profile = () => {
         ) : (
           <></>
         )} */}
-        <div className="z-[1200] flex my-5 justify-between items-center px-5">
+        <div className="z-[1900] flex my-5 justify-between items-center px-5">
           {user?.token ? <EditCover /> : <div></div>}
-          <div className="z-[1200] flex gap-3 items-center">
+          <div className="z-[1900] flex gap-3 items-center">
             <Link
               to={paths.noti}
-              className="z-[1200] bg-[#FFFFFF12] w-10 h-10 rounded-full flex items-center justify-center"
+              className="z-[1900] bg-[#FFFFFF12] w-10 h-10 rounded-full flex items-center justify-center"
             >
               <Bell />
             </Link>
@@ -219,19 +258,19 @@ const Profile = () => {
             // <AuthDrawer />
             <div
               onClick={() => dispatch(setIsDrawerOpen(true))}
-              className="z-[1200] flex items-center gap-2 flex-1"
+              className="z-[1900] flex items-center gap-2 flex-1"
             >
               <span className="z-[1200] text-[18px] ">点击登陆</span>
               <ChevronRight size={18} />
             </div>
           ) : (
-            <div className="z-[1200] flex-1 flex flex-col gap-0.5">
-              <p className="z-[1200] text-[18px] flex items-center gap-1">
+            <div className="z-[1900] flex-1 flex flex-col gap-0.5">
+              <p className="z-[1900] text-[18px] flex items-center gap-1">
                 {data?.data?.nickname}
                 <span>{gender == "Male" ? <MaleSVG /> : <></>}</span>
                 <span>{gender == "Feale" ? <FemaleSVG /> : <></>}</span>
               </p>
-              <p className="z-[1200] text-[14px] text-[#BBBBBB] flex gap-1 items-center">
+              <p className="z-[1900] text-[14px] text-[#BBBBBB] flex gap-1 items-center">
                 B号 : {data?.data?.user_code}
                 <Copy
                   onClick={() => handleCopy(data?.data?.user_code)}
@@ -239,8 +278,8 @@ const Profile = () => {
                 />
               </p>
               {data?.data?.share_region == "on" && region ? (
-                <div className="z-[1200] flex">
-                  <div className="z-[1200] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
+                <div className="z-[1900] flex">
+                  <div className="z-[1900] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
                     {!region?.city?.length && !region?.province?.length ? (
                       <span>未知</span>
                     ) : (
@@ -252,7 +291,7 @@ const Profile = () => {
                   </div>
                 </div>
               ) : (
-                <div className="z-[1200] flex">
+                <div className="z-[1900] flex">
                   <div className="z-[1200] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
                     <span>未知</span>
                   </div>
@@ -290,14 +329,14 @@ const Profile = () => {
           />
         </div>
         <div
-          className={`px-5 z-[1200] relative ${
+          className={`px-5 z-[1900] relative ${
             showHeader ? "opacity-0" : "opacity-1"
           }`}
         >
           {user?.token ? (
             <Link to={paths.profileDetail}>
               <Button
-                className={`z-[1200] w-full bg-[#FFFFFF0F] hover:bg-[#FFFFFF0F] relative rounded-[12px]`}
+                className={`z-[1900] w-full bg-[#FFFFFF0F] hover:bg-[#FFFFFF0F] relative rounded-[12px]`}
               >
                 <UserPen /> 编辑资料
               </Button>

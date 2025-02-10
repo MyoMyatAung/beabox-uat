@@ -48,21 +48,27 @@ const SettingBtn2 = ({ id }: any) => {
           <EllipsisVertical />
         </button>
       </DrawerTrigger>
-      <DrawerContent className="border-0 bg-[#121012] z-[1800]">
+      <DrawerContent className="border-0 bg-[#2D2C30] z-[1800]">
         <div className="w-full px-5 py-7">
-          <div className="space-x-3 flex">
-            <div
-              onClick={() => handleCopy("Copied Link")}
-              className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full"
-            >
-              <img src={share} alt="" />
+          <div className="space-x-10 flex">
+            <div className="flex flex-col gap-3 items-center">
+              <Link
+                to={`/reports/profile/${id}`}
+                className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full"
+              >
+                <Flag size={18} />
+              </Link>
+              <span className="text-[14px]">举报</span>
             </div>
-            <Link
-              to={`/reports/profile/${id}`}
-              className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full"
-            >
-              <Flag size={18} />
-            </Link>
+            <div className="flex flex-col items-center gap-3">
+              <div
+                onClick={() => handleCopy("Copied Link")}
+                className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full"
+              >
+                <img src={share} alt="" />
+              </div>
+              <span className="text-[14px]">分享</span>
+            </div>
           </div>
         </div>
       </DrawerContent>
