@@ -9,12 +9,14 @@ import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useGetApplicationAdsQuery } from "@/store/api/explore/exploreApi";
 import { useSelector } from "react-redux";
+import { Carousel } from "react-responsive-carousel";
 
 const Application: React.FC<any> = () => {
   const [ad, setad] = useState([]);
   // const [applicationData, setApplicationData] = useState<any>(null);
   // const { data, isLoading } = useGetApplicationAdsQuery("");
   const { applicationData } = useSelector((state: any) => state.explore);
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [isLoading, setisLoad] = useState(false);
   // console.log(applicationData);
   useEffect(() => {
@@ -24,6 +26,10 @@ const Application: React.FC<any> = () => {
       setad(applicationData?.carousel);
     }
   }, [applicationData, ad]);
+
+  const handleOnChange = (index: number) => {
+    setSelectedIndex(index);
+  };
 
   return (
     <SkeletonTheme
@@ -81,33 +87,52 @@ const Application: React.FC<any> = () => {
 
         {!isLoading && applicationData && (
           <>
-            <Swiper
-              modules={[Autoplay, Pagination]}
-              pagination={{
-                el: ".custom-pagination",
-                clickable: true,
-              }}
-              autoplay={{
-                delay: 3000,
-                disableOnInteraction: false,
-              }}
-              spaceBetween={50}
-              slidesPerView={1}
+            <Carousel
+              showThumbs={false}
+              showArrows={false}
+              showStatus={false}
+              showIndicators={false}
+              autoPlay={true}
+              infiniteLoop={true}
+              centerMode
+              centerSlidePercentage={87}
+              selectedItem={selectedIndex}
+              onChange={handleOnChange}
+              interval={3000} // Set autoplay interval
             >
-              {applicationData?.carousel?.length > 0 &&
-                applicationData?.carousel.map((cc: any) => (
-                  <SwiperSlide key={cc.id}>
-                    <a href={cc.url} target="_blank" key={cc.id}>
-                      <img
-                        className="w-screen rounded-md h-[174px] xl:w-[600px]"
-                        src={cc.image}
-                        alt="Slide 1"
-                      />
-                    </a>
-                  </SwiperSlide>
-                ))}
-              <div className="custom-pagination mt-4 flex justify-center"></div>
-            </Swiper>
+              {ad.map((cc: any, index: number) => (
+                <a
+                  href={cc.url}
+                  target="_blink"
+                  key={index}
+                  className={`justify-center h-[172px] items-center px-[8px] flex flex-col relative bg-[#16131C]`}
+                >
+                  <img
+                    className={`rounded-[12px] hidden transition-all duration-300  ${
+                      selectedIndex === index
+                        ? "w-[332px] h-[162px]" // Active slide size
+                        : "w-[290px] h-[148px]" // Non-active slide size
+                    }`}
+                    src={cc.image}
+                    alt={`Slide ${index + 1}`}
+                  />
+                </a>
+              ))}
+            </Carousel>
+            {/* Custom Dots */}
+            <ul className="flex justify-center items-center gap-[4px] w-full  mt-2  bottom-0 left-0">
+              {ad.map((_, dotIndex) => (
+                <li
+                  key={dotIndex}
+                  className={`w-[6px] h-[6px] rounded-full ${
+                    selectedIndex === dotIndex ? "bg-white" : "bg-[#888]"
+                  }`}
+                  onClick={() => handleOnChange(dotIndex)}
+                  role="button"
+                  tabIndex={0}
+                ></li>
+              ))}
+            </ul>
 
             <div className="mt-[20px]">
               {

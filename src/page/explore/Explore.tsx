@@ -27,7 +27,7 @@ const Explore = () => {
   const [show, setshow] = useState<boolean>(false);
   const dispatch = useDispatch();
   const scroll = window.scrollY;
-  console.log(scroll);
+  // console.log(scroll);
 
   useEffect(() => {
     if (data?.data?.tabs) {
