@@ -1,4 +1,7 @@
-import { useChangeFollowStatusMutation } from "@/store/api/profileApi";
+import {
+  useChangeFollowStatusMutation,
+  useGetMyOwnProfileQuery,
+} from "@/store/api/profileApi";
 import { AvatarImage, Avatar } from "../ui/avatar";
 import { Link } from "react-router-dom";
 import { paths } from "@/routes/paths";
@@ -6,8 +9,14 @@ import FollowBtn from "./follow-btn";
 import { useSelector } from "react-redux";
 
 const FollowCard = ({ data }: { data: any }) => {
-  const myId = useSelector((state: any) => state?.persist?.user?.id);
-
+  const user = useSelector((state: any) => state?.persist?.user) || "";
+  const {
+    data: userData,
+    isLoading,
+    refetch,
+  } = useGetMyOwnProfileQuery("", {
+    skip: !user,
+  });
   const [changeFollowStatus] = useChangeFollowStatusMutation();
   const changeFollowStatusHandler = async () => {
     try {
@@ -35,11 +44,8 @@ const FollowCard = ({ data }: { data: any }) => {
           <h1 className="text-[#888]">ID : {data?.user_code}</h1>
         </div>
       </Link>
-      {data?.id == myId ? (
-        <div></div>
-      ) : (
-        <FollowBtn id={data?.id} followBack={data?.follows_back} />
-      )}
+
+      <FollowBtn id={data?.id} followBack={data?.follows_back} />
       {/* <Button
         onClick={() => changeFollowStatusHandler(data?.user_code)}
         className={`${
