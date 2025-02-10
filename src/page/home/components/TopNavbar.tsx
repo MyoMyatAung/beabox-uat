@@ -16,7 +16,7 @@ const TopNavbar = ({
   return (
     <div className="absolute top-5 left-0 px-5 right-0 flex justify-between items-center z-[9999]">
       <div></div>
-      <div className="flex gap-2 items-center text-white">
+      <div className="flex gap-2 ml-[24px] items-center text-white">
         {TABS.map((tab, index) => (
           <button
             key={index}
@@ -38,7 +38,7 @@ const TopNavbar = ({
       </div>
 
       {/* <div className="px-3 pb-1"> */}
-      <Link to={"/search_overlay"} className="px-3 pb-1">
+      <Link to={"/search_overlay"} className="pb-1">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
