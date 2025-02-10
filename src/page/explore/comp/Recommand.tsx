@@ -70,6 +70,7 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
   }
 
   const calculateHeight = (width: number, height: number) => {
+    console.log(width,height)
     if (width > height) {
       return 112; // Portrait
     }
@@ -135,10 +136,13 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
                           alt={card.title || "Video"}
                           width={"100%"}
                           // height={240}
-                          height={calculateHeight(
-                            card?.files[0]?.width,
-                            card?.files[0]?.height
-                          )}
+                          height={
+                            card?.files[0]?.height &&
+                            calculateHeight(
+                              card?.files[0]?.width,
+                              card?.files[0]?.height
+                            )
+                          }
                           className=" object-cover h-full w-full rounded-none"
                         />
 
