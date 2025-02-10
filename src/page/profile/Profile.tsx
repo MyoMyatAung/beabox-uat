@@ -134,8 +134,7 @@ const Profile = () => {
     if (user) refetch();
   }, [user, data]);
 
-  console.log(showHeader);
-  // if (isLoading) return <Loader />;
+  if (isLoading) return <Loader />;
 
   return (
     <div className="h-screen flex flex-col hide-sb">
