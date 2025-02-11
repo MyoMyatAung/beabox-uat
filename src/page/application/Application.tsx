@@ -12,13 +12,17 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { useSelector } from "react-redux";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
+import ImageWithPlaceholder from "../search/comp/imgPlaceholder";
 
 const Application: React.FC<any> = () => {
   const [ad, setad] = useState([]);
   // const [applicationData, setApplicationData] = useState<any>(null);
   // const { data, isLoading } = useGetApplicationAdsQuery("");
-  const { applicationData } = useSelector((state: any) => state.explore);
-  const [isLoading, setisLoad] = useState(false);
+  const { applicationData, isLoading } = useSelector(
+    (state: any) => state.explore
+  );
+  // console.log(isLoading)
+  // const [isLoading, setisLoad] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [autoPlay, setAutoPlay] = useState(false);
 
@@ -36,7 +40,7 @@ const Application: React.FC<any> = () => {
       // setApplicationData(data?.data);
       setad(applicationData?.carousel);
     }
-  }, [applicationData, ad]);
+  }, [applicationData,ad]);
 
   return (
     <SkeletonTheme
@@ -102,7 +106,7 @@ const Application: React.FC<any> = () => {
                 showIndicators={false}
                 autoPlay={autoPlay}
                 infiniteLoop={true}
-                centerMode
+                centerMode={true}
                 centerSlidePercentage={87}
                 selectedItem={selectedIndex}
                 onChange={handleOnChange}
@@ -179,11 +183,18 @@ const Application: React.FC<any> = () => {
                       .reverse()
                       .map((header: any) => (
                         <a href={header.url} target="_blank" key={header.id}>
-                          <img
+                          <ImageWithPlaceholder
+                            className=""
+                            alt="gg"
+                            width={"100%"}
+                            height={"100%"}
+                            src={header.image}
+                          />
+                          {/* <img
                             className=" w-full h-auto rounded-[6px] border-[#222]"
                             src={header.image}
                             alt=""
-                          />
+                          /> */}
                         </a>
                       ))}
                 </div>
@@ -229,10 +240,17 @@ const Application: React.FC<any> = () => {
               {applicationData?.footer?.length > 0 &&
                 applicationData?.footer.map((footer: any) => (
                   <a href={footer.url} target="_blank" key={footer.id}>
-                    <img
+                    {/* <img
                       className="w-full h-auto rounded-[6px] border-[#222]"
                       src={footer.image}
                       alt=""
+                    /> */}
+                    <ImageWithPlaceholder
+                      className=""
+                      alt="gg"
+                      width={"100%"}
+                      height={"100%"}
+                      src={footer.image}
                     />
                   </a>
                 ))}

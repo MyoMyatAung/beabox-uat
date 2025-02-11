@@ -32,18 +32,19 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
       document.body.style.overflow = "visible";
     };
   }, []);
+  // console.log(data?.data)
 
   useEffect(() => {
     if (data?.data?.popup_application) {
       setAd(data.data.popup_application.apps);
-      setStart(data?.data.app_start_popup);
+      // setStart(data?.data.app_start_popup);
       setMultiStart(data?.data?.index_popup);
     }
     if (notice?.data) {
       setNotList(notice?.data);
     }
   }, [data, notice]);
-  console.log(multiStart);
+  // console.log(multiStart);
 
   const handleStartClose = () => {
     setShowStart(false);
@@ -70,7 +71,7 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
   };
 
   const currentImage: any = multiStart[currentIndex];
-  console.log(currentImage);
+  // console.log(currentImage);
 
   return (
     <div className="h-screen bg-transparent w-screen flex flex-col gap-[20px] justify-center items-center fixed top-0 z-[9999]">
