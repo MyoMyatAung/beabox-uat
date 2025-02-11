@@ -106,7 +106,7 @@ const ChangePassword = () => {
             <SubmitButton
               isLoading={isLoading}
               condition={
-                current_password.length > 1 && new_password?.length > 1
+                current_password.length >= 8 && new_password?.length >= 8
               }
               text="设置新密码"
             />
