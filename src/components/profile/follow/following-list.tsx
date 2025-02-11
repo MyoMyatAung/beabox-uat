@@ -9,7 +9,6 @@ import InfiniteScroll from "react-infinite-scroll-component";
 const FollowingList = ({ searchTerm }: any) => {
   const user_code = useSelector((state: any) => state.persist?.user?.id);
   const [waterfall, setWaterFall] = useState<any[]>([]);
-  // console.log(user_code)
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
@@ -57,7 +56,7 @@ const FollowingList = ({ searchTerm }: any) => {
                 next={fetchMoreData}
                 hasMore={hasMore}
                 loader={
-                  <div className=" flex justify-center w-screen h-[300px]">
+                  <div className=" flex justify-center w-screen h-[100px]">
                     <div className="">
                       <img
                         src={Loader}

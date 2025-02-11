@@ -28,6 +28,7 @@ const OtherProfile = () => {
     data: userData,
     isLoading: userLoading,
     refetch,
+    isFetching,
   } = useGetUserProfileQuery(id || "");
   const [decryptedCover, setDecryptedCover] = useState(defaultCover);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
@@ -142,7 +143,7 @@ const OtherProfile = () => {
         URL.revokeObjectURL(decryptedCover);
       }
     };
-  }, [user?.data?.profile_photo]);
+  }, [userData?.data?.profile_photo]);
 
   const handleCopy = (text: any) => {
     navigator?.clipboard
@@ -177,7 +178,11 @@ const OtherProfile = () => {
     };
   }, []);
 
-  if (userLoading) return <Loader />;
+  useEffect(() => {
+    refetch();
+  }, [id]);
+
+  if (userLoading || isFetching) return <Loader />;
   return (
     <div className="h-screen flex flex-col hide-sb">
       {showHeader ? (

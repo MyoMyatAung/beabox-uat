@@ -6,8 +6,15 @@ import { act, useState } from "react";
 import { Input } from "@/components/ui/input";
 import FollowerList2 from "./follower-list2";
 import FollowingList2 from "./following-list2";
+import { useGetMyOwnProfileQuery } from "@/store/api/profileApi";
 
 const FollowTabs2 = ({ id, defaultFollowTab, closeTab }: any) => {
+  const user = useSelector((state: any) => state?.persist?.user) || "";
+  const { data: userData } = useGetMyOwnProfileQuery("", {
+    skip: !user,
+  });
+  const me = userData?.data;
+  console.log(userData, "me");
 
   const [active, setActive] = useState(defaultFollowTab);
   const [searchTerm, setSearchTerm] = useState<any>("");
@@ -60,10 +67,20 @@ const FollowTabs2 = ({ id, defaultFollowTab, closeTab }: any) => {
       </div>
       <div className="py-3 px-2 flex-1">
         <TabsContent value="follower">
-          <FollowerList2 searchTerm={searchTerm} id={id} closeTab={closeTab} />
+          <FollowerList2
+            searchTerm={searchTerm}
+            id={id}
+            closeTab={closeTab}
+            me={me}
+          />
         </TabsContent>
         <TabsContent value="following">
-          <FollowingList2 searchTerm={searchTerm} id={id} closeTab={closeTab} />
+          <FollowingList2
+            searchTerm={searchTerm}
+            id={id}
+            closeTab={closeTab}
+            me={me}
+          />
         </TabsContent>
       </div>
     </Tabs>
