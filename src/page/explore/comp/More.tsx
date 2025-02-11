@@ -90,15 +90,15 @@ const More: React.FC<MoreProps> = () => {
   };
 
   const handleTabChange = (ff: any) => {
-    // setCustomLoad(true);
+    setCustomLoad(true);
     dispatch(setMoreTab(ff.key));
-    // if (isFetching || isLoading) {
-    //   return;
-    // } else {
-    //   setTimeout(() => {
-    //     setCustomLoad(false);
-    //   }, 1000);
-    // }
+    if (isFetching || isLoading) {
+      return;
+    } else {
+      setTimeout(() => {
+        setCustomLoad(false);
+      }, 500);
+    }
   };
 
   const calculateHeight = (width: number, height: number) => {
@@ -116,7 +116,7 @@ const More: React.FC<MoreProps> = () => {
 
   return (
     <>
-      <div className="px-[20px] flex flex-col relative min-h-scree bg-[#16131C]">
+      <div className="px-[10px] flex flex-col relative min-h-scree bg-[#16131C]">
         {/* Header */}
         <div className=" fixed z-[99] w-full bg-transparent bg-[#16131C]">
           <div className="grid grid-cols-3 justify-between py-[12px] bg-[#16131C] ">
@@ -158,6 +158,13 @@ const More: React.FC<MoreProps> = () => {
             </div>
           </div>
         )}
+        {/* {isFetching && (
+          <div className=" flex h-screen items-center justify-center w-screen py-[200px]">
+            <div className="">
+              <img src={Loader} className="w-[70px] h-[70px]" alt="Loading" />
+            </div>
+          </div>
+        )} */}
         <div className="py-[20px] flex flex-col gap-[20px] w-full mt-[80px]">
           {isLoading || customLoad ? (
             <div className=" flex justify-center w-screen py-[200px]">
