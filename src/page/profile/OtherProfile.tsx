@@ -16,6 +16,16 @@ import SettingBtn2 from "@/components/profile/setting-btn2";
 import { useSelector } from "react-redux";
 import share from "@/assets/profile/share.svg";
 
+const decryptImage = (arrayBuffer, key = 0x12, decryptSize = 4096) => {
+  const data = new Uint8Array(arrayBuffer);
+  const maxSize = Math.min(decryptSize, data.length);
+  for (let i = 0; i < maxSize; i++) {
+    data[i] ^= key;
+  }
+  // Decode the entire data as text.
+  return new TextDecoder().decode(data);
+};
+
 const OtherProfile = () => {
   const { id } = useParams();
   const user = useSelector((state: any) => state?.persist?.user) || "";
@@ -32,9 +42,9 @@ const OtherProfile = () => {
   const [decryptedCover, setDecryptedCover] = useState(defaultCover);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
 
-  useEffect(() => {
-    const loadAndDecryptImage = async () => {
-      if (!userData?.data?.cover_photo) {
+    useEffect(() => {
+    const loadAndDecryptCover = async () => {
+      if (!user?.token || !userData?.data?.cover_photo) {
         setDecryptedCover(defaultCover);
         return;
       }
@@ -42,107 +52,64 @@ const OtherProfile = () => {
       try {
         const coverUrl = userData.data.cover_photo;
 
+        // If it's not a .txt file, assume it's already a valid URL
         if (!coverUrl.endsWith(".txt")) {
           setDecryptedCover(coverUrl);
           return;
         }
 
-        // Fetch encrypted image data
+        // Fetch the encrypted image data
         const response = await fetch(coverUrl);
-        const encryptedData = await response.arrayBuffer();
+        const arrayBuffer = await response.arrayBuffer();
 
-        // XOR decryption with key 0x12
-        const decryptedData = new Uint8Array(encryptedData);
-        const key = 0x12;
-        const maxSize = Math.min(4096, decryptedData.length);
+        // Decrypt the first 4096 bytes and decode the entire file as text.
+        const decryptedStr = decryptImage(arrayBuffer);
 
-        for (let i = 0; i < maxSize; i++) {
-          decryptedData[i] ^= key;
-        }
-
-        // Determine MIME type from decrypted data (simple detection)
-        let mimeType = "image/jpeg"; // default
-        if (decryptedData[0] === 0x89 && decryptedData[1] === 0x50) {
-          mimeType = "image/png";
-        } else if (decryptedData[0] === 0x47 && decryptedData[1] === 0x49) {
-          mimeType = "image/gif";
-        }
-
-        // Create blob URL
-        const blob = new Blob([decryptedData], { type: mimeType });
-        const blobUrl = URL.createObjectURL(blob);
-        setDecryptedCover(blobUrl);
+        // Set the decrypted cover image source
+        setDecryptedCover(decryptedStr);
       } catch (error) {
         console.error("Error loading cover photo:", error);
         setDecryptedCover(defaultCover);
       }
     };
 
-    loadAndDecryptImage();
-
-    // Cleanup function to revoke blob URL
-    return () => {
-      if (decryptedCover.startsWith("blob:")) {
-        URL.revokeObjectURL(decryptedCover);
-      }
-    };
+    loadAndDecryptCover();
   }, [userData?.data?.cover_photo]);
 
-  useEffect(() => {
-    const loadAndDecryptImage = async () => {
-      if (!userData?.data?.profile_photo) {
-        setDecryptedPhoto("");
-        return;
-      }
-
-      try {
-        const coverUrl = userData?.data?.profile_photo;
-
-        if (!coverUrl.endsWith(".txt")) {
-          setDecryptedPhoto(coverUrl);
+    useEffect(() => {
+      const loadAndDecryptPhoto = async () => {
+        if (!user?.token || !data?.data?.profile_photo) {
+          setDecryptedPhoto("");
           return;
         }
-
-        // Fetch encrypted image data
-        const response = await fetch(coverUrl);
-        const encryptedData = await response.arrayBuffer();
-
-        // XOR decryption with key 0x12
-        const decryptedData = new Uint8Array(encryptedData);
-        const key = 0x12;
-        const maxSize = Math.min(4096, decryptedData.length);
-
-        for (let i = 0; i < maxSize; i++) {
-          decryptedData[i] ^= key;
+  
+        try {
+          const photoUrl = data.data.profile_photo;
+  
+          // If it's not a .txt file, assume it's already a valid URL
+          if (!photoUrl.endsWith(".txt")) {
+            setDecryptedPhoto(photoUrl);
+            return;
+          }
+  
+          // Fetch encrypted image data
+          const response = await fetch(photoUrl);
+          const arrayBuffer = await response.arrayBuffer();
+  
+          // Decrypt the first 4096 bytes and decode as text.
+          const decryptedStr = decryptImage(arrayBuffer);
+          console.log("Decrypted profile photo string is =>", decryptedStr);
+  
+          // Set the decrypted profile photo source
+          setDecryptedPhoto(decryptedStr);
+        } catch (error) {
+          console.error("Error loading profile photo:", error);
+          setDecryptedPhoto("");
         }
-
-        // Determine MIME type from decrypted data (simple detection)
-        let mimeType = "image/jpeg"; // default
-        if (decryptedData[0] === 0x89 && decryptedData[1] === 0x50) {
-          mimeType = "image/png";
-        } else if (decryptedData[0] === 0x47 && decryptedData[1] === 0x49) {
-          mimeType = "image/gif";
-        }
-
-        // Create blob URL
-        const blob = new Blob([decryptedData], { type: mimeType });
-        const blobUrl = URL.createObjectURL(blob);
-        setDecryptedPhoto(blobUrl);
-      } catch (error) {
-        console.error("Error loading cover photo:", error);
-        setDecryptedPhoto("");
-      }
-    };
-
-    loadAndDecryptImage();
-
-    // Cleanup function to revoke blob URL
-    return () => {
-      if (decryptedCover.startsWith("blob:")) {
-        URL.revokeObjectURL(decryptedCover);
-      }
-    };
-  }, [user?.data?.profile_photo]);
+      };
+  
+      loadAndDecryptPhoto();
+    }, [userData?.data?.profile_photo]);
 
   const handleCopy = (text: any) => {
     navigator?.clipboard

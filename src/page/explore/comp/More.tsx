@@ -158,7 +158,7 @@ const More: React.FC<MoreProps> = () => {
             </div>
           </div>
         )}
-        <div className="py-[20px] flex flex-col gap-[20px] w-full mt-[60px]">
+        <div className="py-[20px] flex flex-col gap-[20px] w-full mt-[80px]">
           {isLoading || customLoad ? (
             <div className=" flex justify-center w-screen py-[200px]">
               <div className="">
@@ -172,7 +172,7 @@ const More: React.FC<MoreProps> = () => {
                   <div
                     onClick={() => showDetailsVod(item)}
                     key={index}
-                    className="chinese_photo h-[320px] max-w-full shadow-lg relative pt-[20px]"
+                    className="chinese_photo h-[320px] max-w-full relative pt-[20px]"
                   >
                     <div
                       className=" relative flex justify-center items-center bg-[#010101] rounded-t-[4px] overflow-hidden  h-[240px]"

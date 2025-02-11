@@ -73,9 +73,23 @@ function concatenateUint8Arrays(arrays: Uint8Array[]): Uint8Array {
   return result;
 }
 
+// function bytesToUrlSafeBase64(bytes: Uint8Array): string {
+//   const base64 = btoa(String.fromCharCode(...bytes));
+//   return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+// }
+
 function bytesToUrlSafeBase64(bytes: Uint8Array): string {
-  const base64 = btoa(String.fromCharCode(...bytes));
-  return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  let binary = '';
+  const chunkSize = 0x8000; // 32768 bytes per chunk
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    // Process each chunk separately
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+  }
+  // Convert to base64 and make it URL-safe
+  return btoa(binary)
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
 }
 
 // Helper functions

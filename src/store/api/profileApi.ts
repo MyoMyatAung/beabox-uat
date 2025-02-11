@@ -57,7 +57,7 @@ export const profileApi = createApi({
     }),
     changeUsername: builder.mutation({
       query: ({ username }) => ({
-        url: convertToSecureUrl(`/profile/change-username`),
+        url: `/profile/change-username`,
         method: "POST",
         body: convertToSecurePayload({
           username,
@@ -66,7 +66,7 @@ export const profileApi = createApi({
     }),
     changeNickname: builder.mutation({
       query: ({ nickname }) => ({
-        url: convertToSecureUrl(`/profile/change-nickname`),
+        url: `/profile/change-nickname`,
         method: "POST",
         body: convertToSecurePayload({
           nickname,
@@ -75,7 +75,7 @@ export const profileApi = createApi({
     }),
     changeGender: builder.mutation({
       query: ({ gender }) => ({
-        url: convertToSecureUrl(`/profile/change-gender`),
+        url: `/profile/change-gender`,
         method: "POST",
         body: convertToSecurePayload({
           gender,
@@ -84,7 +84,7 @@ export const profileApi = createApi({
     }),
     changeBio: builder.mutation({
       query: ({ bio }) => ({
-        url: convertToSecureUrl(`/profile/save-bio`),
+        url: `/profile/save-bio`,
         method: "POST",
         body: convertToSecurePayload({
           bio,
@@ -93,7 +93,7 @@ export const profileApi = createApi({
     }),
     changeReferralCode: builder.mutation({
       query: ({ referral_code }) => ({
-        url: convertToSecureUrl(`/profile/save-referral-code`),
+        url: `/profile/save-referral-code`,
         method: "POST",
         body: convertToSecurePayload({
           referral_code,
@@ -102,7 +102,7 @@ export const profileApi = createApi({
     }),
     uploadProfilePic: builder.mutation({
       query: ({ file_url }) => ({
-        url: convertToSecureUrl(`/profile/upload`),
+        url: `/profile/upload`,
         method: "POST",
         body: convertToSecurePayload({
           file_url,
@@ -117,7 +117,7 @@ export const profileApi = createApi({
     }),
     changePassword: builder.mutation({
       query: ({ current_password, new_password }) => ({
-        url: convertToSecureUrl(`/profile/change-password`),
+        url: `/profile/change-password`,
         method: "POST",
         body: convertToSecurePayload({
           current_password,
@@ -127,7 +127,7 @@ export const profileApi = createApi({
     }),
     changePrivateProfileStats: builder.mutation({
       query: ({ status }) => ({
-        url: convertToSecureUrl(`/profile/private-profile-status`),
+        url: `/profile/private-profile-status`,
         method: "POST",
         body: convertToSecurePayload({
           status,
@@ -136,7 +136,7 @@ export const profileApi = createApi({
     }),
     changeVisibility: builder.mutation({
       query: ({ status }) => ({
-        url: convertToSecureUrl(`/profile/liked-video-visibility`),
+        url: `/profile/liked-video-visibility`,
         method: "POST",
         body: convertToSecurePayload({
           status,
@@ -145,7 +145,7 @@ export const profileApi = createApi({
     }),
     changeCVis: builder.mutation({
       query: ({ status }) => ({
-        url: convertToSecureUrl(`/profile/content-visibility`),
+        url: `/profile/content-visibility`,
         method: "POST",
         body: convertToSecurePayload({
           status,
@@ -154,7 +154,7 @@ export const profileApi = createApi({
     }),
     changeRegion: builder.mutation({
       query: (region) => ({
-        url: convertToSecureUrl(`/profile/change-region`),
+        url: `/profile/change-region`,
         method: "POST",
         body: region,
       }),
@@ -218,9 +218,9 @@ export const profileApi = createApi({
     }),
     settingUpload: builder.mutation<any, any>({
       query: ({ filedata, filePath }: any) => ({
-        url: convertToSecureUrl(`/storage/upload`),
+        url: `/storage/upload`,
         method: "Post",
-        body: convertToSecurePayload({ filePath, file: filedata }),
+        body: { filePath, file: filedata },
       }),
     }),
     profileUpload: builder.mutation<any, any>({
@@ -232,7 +232,7 @@ export const profileApi = createApi({
     }),
     changeCover: builder.mutation<any, any>({
       query: ({ file_url }: any) => ({
-        url: convertToSecureUrl(`/profile/change-cover-photo`),
+        url: `/profile/change-cover-photo`,
         method: "Post",
         body: convertToSecurePayload({ file_url }),
       }),
@@ -251,7 +251,7 @@ export const profileApi = createApi({
     }),
     checkUsername: builder.mutation<any, any>({
       query: ({ username, captcha, captcha_key }) => ({
-        url: convertToSecureUrl(`/check-username`),
+        url: `/check-username`,
         method: "Post",
         body: convertToSecurePayload({
           username,
@@ -263,7 +263,7 @@ export const profileApi = createApi({
 
     checkAnswer: builder.mutation<any, any>({
       query: ({ token, answer }) => ({
-        url: convertToSecureUrl(`/check-security-answer`),
+        url: `/check-security-answer`,
         method: "Post",
         body: convertToSecurePayload({
           token,
@@ -273,7 +273,7 @@ export const profileApi = createApi({
     }),
     checkSAnswer: builder.mutation<any, any>({
       query: ({ answer }) => ({
-        url: convertToSecureUrl(`/profile/check-security-answer`),
+        url: `/profile/check-security-answer`,
         method: "Post",
         body: convertToSecurePayload({
           answer,
@@ -282,7 +282,7 @@ export const profileApi = createApi({
     }),
     setPassword: builder.mutation<any, any>({
       query: ({ token, password }) => ({
-        url: convertToSecureUrl(`/set-password`),
+        url: `/set-password`,
         method: "Post",
         body: convertToSecurePayload({
           token,
@@ -292,7 +292,7 @@ export const profileApi = createApi({
     }),
     changeFollowReq: builder.mutation<any, any>({
       query: (status) => ({
-        url: convertToSecureUrl(`/profile/disallow-follow-request`),
+        url: `/profile/disallow-follow-request`,
         method: "Post",
         body: convertToSecurePayload({
           status,
@@ -301,7 +301,7 @@ export const profileApi = createApi({
     }),
     changeHideBio: builder.mutation<any, any>({
       query: (status) => ({
-        url: convertToSecureUrl(`/profile/hide-bio`),
+        url: `/profile/hide-bio`,
         method: "Post",
         body: convertToSecurePayload({
           status,
@@ -310,7 +310,7 @@ export const profileApi = createApi({
     }),
     changeShareRegion: builder.mutation<any, any>({
       query: (status) => ({
-        url: convertToSecureUrl(`/profile/share-region`),
+        url: `/profile/share-region`,
         method: "Post",
         body: convertToSecurePayload({
           status,
