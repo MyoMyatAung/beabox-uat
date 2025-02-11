@@ -10,15 +10,16 @@ import { setDetails, setMoreTab } from "@/store/slices/exploreSlice";
 import VodDetails from "./VodDetails";
 import { paths } from "@/routes/paths";
 import InfiniteScroll from "react-infinite-scroll-component";
-import ImageWithPlaceholder from "@/page/search/comp/imgPlaceholder";
+import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder";
 import empty from "../../../page/home/empty.png";
+import personE from "../../../assets/explore/personE.svg";
 
 interface MoreProps {}
 
 const More: React.FC<MoreProps> = () => {
   const [show, setshow] = useState<boolean>(false);
   const { title, more_tab } = useSelector((state: any) => state.explore);
-  console.log(more_tab);
+  // console.log(more_tab);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const dispatch = useDispatch();
@@ -34,6 +35,12 @@ const More: React.FC<MoreProps> = () => {
   });
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+
+    // window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [more_tab]);
+
+  useEffect(() => {
     if (data?.data) {
       setFilter(data?.data.filter);
       setList((prev) => {
@@ -46,21 +53,28 @@ const More: React.FC<MoreProps> = () => {
       const loadedItems =
         data?.pagination?.current_page * data?.pagination?.per_page;
       setHasMore(loadedItems < data?.pagination?.total);
-      console.log(loadedItems);
+      // console.log(loadedItems);
       if (!more_tab) {
-        console.log('gg')
+        // console.log("gg");
         dispatch(setMoreTab(filter[0]?.key));
       }
     } else {
       setHasMore(false);
     }
-  }, [data,dispatch,filter]);
+  }, [data, dispatch, filter]);
 
   const popularItems = Array.from({ length: 10 }, (_, i) => ({
     title: `My Boss (2021) - ${i + 1}`,
     views: 3685 + i * 10,
     likes: 1245 + i * 5,
   }));
+
+  const formatNumber = (num: number) => {
+    if (num >= 1000) {
+      return `${(num / 1000).toFixed(1).replace(/\.0$/, "")}k`;
+    }
+    return num;
+  };
 
   const latestItems: any[] = []; // Empty for "Latest"
 
@@ -87,8 +101,18 @@ const More: React.FC<MoreProps> = () => {
     // }
   };
 
-  console.log(data?.data);
-  console.log(more_tab);
+  const calculateHeight = (width: number, height: number) => {
+    if (width > height) {
+      return 112; // Portrait
+    }
+    if (width < height) {
+      return 240; // Landscape
+    }
+    return 200;
+  };
+
+  // console.log(data?.data);
+  // console.log(more_tab);
 
   return (
     <>
@@ -124,7 +148,7 @@ const More: React.FC<MoreProps> = () => {
         </div>
 
         {/* List */}
-        {list?.length === 0 ? (
+        {data?.data?.list?.length === 0 && (
           <div className=" mt-[80px]">
             <div className={`flex justify-center items-center py-[200px]`}>
               <div className="flex flex-col items-center">
@@ -133,50 +157,83 @@ const More: React.FC<MoreProps> = () => {
               </div>
             </div>
           </div>
-        ) : (
-          <div className="py-[20px] flex flex-col gap-[20px] w-full mt-[80px]">
-            {isLoading || customLoad ? (
-              <div className=" flex justify-center w-screen py-[200px]">
-                <div className="">
-                  <img
-                    src={Loader}
-                    className="w-[70px] h-[70px]"
-                    alt="Loading"
-                  />
-                </div>
+        )}
+        <div className="py-[20px] flex flex-col gap-[20px] w-full mt-[80px]">
+          {isLoading || customLoad ? (
+            <div className=" flex justify-center w-screen py-[200px]">
+              <div className="">
+                <img src={Loader} className="w-[70px] h-[70px]" alt="Loading" />
               </div>
-            ) : (
-              <>
+            </div>
+          ) : (
+            <>
+              <div className=" grid grid-cols-2 relative gap-[6px]">
                 {list?.map((item: any, index) => (
                   <div
                     onClick={() => showDetailsVod(item)}
                     key={index}
-                    className="flex w-full justify-center items-center gap-[16px]"
+                    className="chinese_photo h-[320px] max-w-full relative pt-[20px]"
                   >
-                    <ImageWithPlaceholder
-                      src={item.preview_image}
-                      alt={item.title || "Video"}
-                      width={"100%"}
-                      height={"100%"}
-                      className=" w-[175px] h-[100px] rounded-[8px] object-cover"
-                    />
-                    <img
-                      className="w-[107px] h-[69px] rounded-[8px] object-cover object-center hidden"
-                      src={item.preview_image}
-                      alt="More"
-                    />
-                    <div className="w-2/3 flex flex-col h-[70px] justify-between">
-                      <span className="text-white text-[14px] font-[400]">
-                        {item.title.length > 20
-                          ? `${item.title.slice(0, 30)}...`
-                          : item.title}{" "}
-                      </span>
-                      <div className="flex justify-between text-[#AAA] text-[12px] font-[400] leading-[15px]">
-                        <span>
-                          {item.view_count ? item.view_count : "11"} 次观看
-                        </span>
-                        <span>{item.like_count} 人喜欢</span>
+                    <div
+                      className=" relative flex justify-center items-center bg-[#010101] rounded-t-[4px] overflow-hidden  h-[240px]"
+                      onClick={() => showDetailsVod(item)}
+                    >
+                      <ImageWithPlaceholder
+                        src={item?.preview_image}
+                        alt={item.title || "Video"}
+                        width={"100%"}
+                        height={calculateHeight(
+                          item?.files[0]?.width,
+                          item?.files[0]?.height
+                        )}
+                        className=" object-cover h-full w-full rounded-none"
+                      />
+                    </div>
+                    <h1 className="search_text font-cnFont line-clamp-2 text-left text-[12px] font-[400] px-[6px] pt-[6px]">
+                      {/* <h1 className="search_text font-cnFont px-[6px] line-clamp-2 text-left"> */}
+                      {item.title.length > 50
+                        ? `${item.title.slice(0, 50)}...`
+                        : item.title}
+                    </h1>
+                    <div className="  w-full px-[6px] text-white text-[14px] font-[400] leading-[30px] flex justify-between items-center ">
+                      <div className=" flex justify-center items-center gap-[4px]">
+                        {item.user?.avatar ? (
+                          <img
+                            className=" w-[20px] h-[20px] rounded-full"
+                            src={item.user.avatar}
+                            onError={(e) => (e.currentTarget.src = personE)}
+                            alt=""
+                          />
+                        ) : (
+                          <img
+                            src={personE}
+                            className="w-[20px] h-[20px] rounded-full"
+                            alt=""
+                          />
+                        )}
+                        <h1 className=" text-[#888] text-[12px] font-[500]">
+                          {item.user.name}
+                        </h1>
                       </div>
+                      <span className="flex gap-[5px] items-center">
+                        {/* <FaHeart /> */}
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="13"
+                          height="12"
+                          viewBox="0 0 13 12"
+                          fill="none"
+                        >
+                          <path
+                            d="M8.56675 1.13281C7.53401 1.13281 6.6298 1.57692 6.06616 2.32759C5.50253 1.57692 4.59832 1.13281 3.56557 1.13281C2.74349 1.13374 1.95535 1.46072 1.37405 2.04202C0.792751 2.62332 0.46577 3.41146 0.464844 4.23354C0.464844 7.73437 5.65557 10.568 5.87662 10.6851C5.93488 10.7164 6.00001 10.7328 6.06616 10.7328C6.13232 10.7328 6.19745 10.7164 6.25571 10.6851C6.47676 10.568 11.6675 7.73437 11.6675 4.23354C11.6666 3.41146 11.3396 2.62332 10.7583 2.04202C10.177 1.46072 9.38883 1.13374 8.56675 1.13281Z"
+                            stroke="#BBBBBB"
+                            stroke-width="0.8"
+                          />
+                        </svg>
+                        <h1 className=" text-[#888] text-[12px] font-[400] leading-[20px]">
+                          {formatNumber(item?.like_count)}
+                        </h1>
+                      </span>
                     </div>
                   </div>
                 ))}
@@ -186,7 +243,7 @@ const More: React.FC<MoreProps> = () => {
                   next={fetchMoreData}
                   hasMore={hasMore}
                   loader={
-                    <div className=" flex justify-center py-[10px]">
+                    <div className=" flex justify-center w-screen absolute bottom-[-30px] left-[-20px]">
                       <div className="">
                         <img
                           src={Loader}
@@ -206,10 +263,10 @@ const More: React.FC<MoreProps> = () => {
                 >
                   <></>
                 </InfiniteScroll>
-              </>
-            )}
-          </div>
-        )}
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </>
   );

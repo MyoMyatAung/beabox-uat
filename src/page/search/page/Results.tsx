@@ -307,7 +307,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
                         setShowVideoFeed(true);
                       }}
                       key={card.post_id}
-                      className="max-w-full pb-[12px] chinese_photo1 h-[325px]"
+                      className="max-w-full pb-[12px] chinese_photo h-[325px]"
                     >
                       <div
                         // onClick={() => showDetailsVod(card)}

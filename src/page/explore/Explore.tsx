@@ -27,7 +27,7 @@ const Explore = () => {
   const [show, setshow] = useState<boolean>(false);
   const dispatch = useDispatch();
   const scroll = window.scrollY;
-  console.log(scroll);
+  // console.log(scroll);
 
   useEffect(() => {
     if (data?.data?.tabs) {
@@ -81,7 +81,7 @@ const Explore = () => {
       {/* {show && <VodDetails  />} */}
 
       <div className="flex max-w-[1024px] home-main w-full bg-[#16131C] justify-center items-center min-h-screen overflow-clip">
-        <div className="explore_sec w-screen xl:w-[800px] flex flex-col justify-center items-cente px-[10px] pb-[100px] mt-14">
+        <div className="explore_sec w-screen xl:w-[800px] flex flex-col justify-center items-cente px-[10px pb-[100px] mt-14">
           <Banner />
           <PopApp />
           <div className="mt-[20px] relative">

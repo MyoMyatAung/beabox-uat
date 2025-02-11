@@ -85,14 +85,14 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
       ) : (
         <div className=" flex w-full justify-center">
           <div
-            className=" grid grid-cols-2 relative gap-[10px] px-2"
+            className=" grid grid-cols-2 relative gap-[6px] px-2"
             ref={contentRef}
           >
             <>
               {waterfall?.map((card: any, index: number) => (
                 <div
                   key={index}
-                  className="chinese_photo h-[320px] max-w-full shadow-lg relative"
+                  className="chinese_photo h-[320px] max-w-full relative pt-[20px]"
                 >
                   <div
                     className=" relative flex justify-center items-center bg-[#010101] rounded-t-[4px] overflow-hidden  h-[240px]"
@@ -109,8 +109,8 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
                       className=" object-cover h-full w-full rounded-none"
                     />
                   </div>
-
-                  <h1 className="text-white w-full text-[12px] font-[400] px-[6px] pt-[6px] leading-[20px] break-words">
+                  <h1 className="search_text font-cnFont line-clamp-2 text-left text-[12px] font-[400] px-[6px] pt-[6px]">
+                  {/* <h1 className="search_text font-cnFont px-[6px] line-clamp-2 text-left"> */}
                     {card.title.length > 50
                       ? `${card.title.slice(0, 50)}...`
                       : card.title}

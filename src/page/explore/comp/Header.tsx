@@ -26,7 +26,7 @@ const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
   // console.log(hd);
 
   return (
-    <div className="bg-[#16131C] z-[99] py-[5px] sticky top-0 w-screen overscroll-auto">
+    <div className="bg-[#16131C] z-[99] py-[5px] sticky top-0 w-screen px-[10px] overscroll-auto">
 
       {isLoading ? (
         <div className=" w-2/3 px-2 bg-white/20 rounded-md h-[50px] animate-pulse"></div>
@@ -51,7 +51,7 @@ const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
               <span
                 className={`${
                   exp_header !== tab.name ? "opacity-0" : "opacity-100"
-                } w-[24px] h-[4px] bg-[#CD3EFF] rounded-full`}
+                } w-[52px] absolute bottom-0 h-[4px] bg-[#CD3EFF] rounded-full`}
               ></span>
             </div>
           ))}

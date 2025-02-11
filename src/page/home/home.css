@@ -787,6 +787,54 @@ html {
   transform: translateX(-50%);
   cursor: pointer;
 } */
+.custom-progress-container {
+  position: relative;
+  height: 4px;
+  width: 100%;
+  cursor: pointer;
+}
+
+.custom-progress-background {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+}
+
+.custom-progress-main {
+  position: absolute;
+  height: 100%;
+  background: #d53ff0;
+  border-radius: 2px;
+  transition: width 0.1s linear;
+}
+
+.custom-progress-buffer {
+  position: absolute;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 2px;
+  transition: width 0.3s linear;
+}
+
+.custom-progress-thumb {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  background: #d53ff0;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.custom-progress-container:hover .custom-progress-thumb,
+.custom-progress-container.dragging .custom-progress-thumb {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.2);
+}
 
 .custom-time-display {
   color: #fff;
@@ -809,6 +857,13 @@ html {
   pointer-events: none;
 }
 
+.art-progress {
+  display: none !important;
+}
+
+/* .art-hide-cursor * {
+  cursor: pointer !important;
+} */
 .custom-progress-container {
   position: relative;
   width: 100%;
@@ -835,38 +890,3 @@ html {
   /* transition: opacity 0.2s; */
   cursor: pointer;
 }
-
-/* .custom-progress-bar::-webkit-slider-thumb {
-  padding: 15px;
-  -webkit-appearance: none !important;
-  appearance: none !important;
-
-  width: var(--thumb-width, 12px);
-  height: var(--thumb-height, 12px);
-
-  border-radius: var(--thumb-radius, 50%);
-  background: #cd3eff !important;
-  cursor: pointer;
-} */
-
-.custom-progress-bar::-webkit-slider-thumb {
-  -webkit-appearance: none !important;
-  appearance: none !important;
-
-  width: var(--thumb-width, 12px); /* Visual size of the thumb */
-  height: var(--thumb-height, 12px); /* Visual size of the thumb */
-
-  border-radius: var(--thumb-radius, 50%);
-  background: #cd3eff !important;
-  cursor: pointer;
-
-  position: relative;
-}
-
-.art-progress {
-  display: none !important;
-}
-
-/* .art-hide-cursor * {
-  cursor: pointer !important;
-} */
