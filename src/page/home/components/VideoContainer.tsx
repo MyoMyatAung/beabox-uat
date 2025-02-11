@@ -286,21 +286,21 @@ const VideoContainer = ({
   };
 
   const handleFullscreen = (video: any) => {
-    // if (rotateVideoId === video?.post_id) {
-    //   // If the clicked video is already in fullscreen, exit fullscreen
-    //   setRotateVideoId(null);
-    //   if (container) {
-    //     const activeElement = container.querySelector(
-    //       `[data-post-id="${video?.post_id}"]`
-    //     );
-    //     if (activeElement) {
-    //       activeElement.scrollIntoView({ block: "center" });
-    //     }
-    //   }
-    // } else {
-    //   // Otherwise, set the clicked video to fullscreen
-    //   setRotateVideoId(video?.post_id);
-    // }
+    if (rotateVideoId === video?.post_id) {
+      // If the clicked video is already in fullscreen, exit fullscreen
+      setRotateVideoId(null);
+      if (container) {
+        const activeElement = container.querySelector(
+          `[data-post-id="${video?.post_id}"]`
+        );
+        if (activeElement) {
+          activeElement.scrollIntoView({ block: "center" });
+        }
+      }
+    } else {
+      // Otherwise, set the clicked video to fullscreen
+      setRotateVideoId(video?.post_id);
+    }
     sendEventToNative("beabox_fullscreen", {
       post_id: video?.post_id,
       like_api_url: `${import.meta.env.VITE_API_URL}/post/like`,
@@ -320,7 +320,7 @@ const VideoContainer = ({
   return (
     <>
       <Player
-        // rotate={rotateVideoId === video?.post_id}
+        rotate={rotateVideoId === video?.post_id}
         src={video?.files[0].resourceURL}
         thumbnail={
           video?.preview_image ||
@@ -361,11 +361,8 @@ const VideoContainer = ({
         <>
           <button
             onClick={() => handleFullscreen(video)}
-            className={`absolute ${
-              rotateVideoId === video.post_id
-                ? " top-[10px] right-[10px] w-[40px] bg-transparent"
-                : "left-[37%] top-[70%] bottom-0 right-0 w-[120px] bg-[#101010]"
-            }   h-[35px] rounded-md flex justify-center items-center z-[99] text-center  text-white `}
+            className={`absolute 
+            left-[37%] top-[70%] bottom-0 right-0 w-[120px] bg-[#101010] h-[35px] rounded-md flex justify-center items-center z-[99] text-center  text-white `}
           >
             <div className=" flex items-center p-1 gap-2">
               <svg
