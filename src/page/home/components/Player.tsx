@@ -268,6 +268,7 @@ import Hls from "hls.js";
 import indicator from "../indicator.svg";
 import vod_loader from "../vod_loader.gif";
 import { useSelector } from "react-redux";
+import { useWatchtPostMutation } from "../services/homeApi";
 
 const Player = ({
   src,
@@ -276,6 +277,7 @@ const Player = ({
   setHeight,
   handleLike,
   sethideBar,
+  post_id,
 }: {
   src: string;
   thumbnail: string;
@@ -283,11 +285,13 @@ const Player = ({
   setHeight: (height: number) => void;
   handleLike: () => void;
   sethideBar: any;
+  post_id: any;
 }) => {
   const playerContainerRef = useRef<HTMLDivElement | null>(null);
   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
   const hlsRef = useRef<Hls | null>(null);
   const { mute } = useSelector((state: any) => state.muteSlice);
+  const user = useSelector((state: any) => state.persist.user);
   const [isPaused, setIsPaused] = useState(false);
   const playIconRef = useRef<HTMLDivElement | null>(null);
   const progressBarRef = useRef<HTMLInputElement | null>(null); // Reference to the range input
@@ -295,6 +299,9 @@ const Player = ({
   const seekTimeRef = useRef(0); // Store the seek time while dragging
   const timeDisplayRef = useRef<HTMLDivElement | null>(null); // Reference to the time display
   const muteRef = useRef(mute); // Store latest mute state
+  const watchedTimeRef = useRef(0); // Track total watched time
+  const apiCalledRef = useRef(false); // Ensure API is called only once
+  const [watchtPost] = useWatchtPostMutation(); // Hook for watch history API
 
   useEffect(() => {
     muteRef.current = mute; // Update muteRef when mute state changes
@@ -308,6 +315,18 @@ const Player = ({
     return `${hours.toString().padStart(2, "0")}:${minutes
       .toString()
       .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  };
+
+  const handleWatchHistory = () => {
+    if (!apiCalledRef.current && user?.token) {
+      apiCalledRef.current = true; // Mark API as called
+      watchtPost({ post_id: post_id }) // Replace with actual post ID
+        .unwrap()
+        .then(() => console.log("Watch history updated"))
+        .catch((error) =>
+          console.error("Failed to update watch history", error)
+        );
+    }
   };
 
   // Initialize Artplayer for the current video
@@ -529,6 +548,11 @@ const Player = ({
           "--progress",
           `${newProgress}%`
         );
+        // Track watched time
+        watchedTimeRef.current = currentTime;
+        if (watchedTimeRef.current >= 60 && !apiCalledRef.current) {
+          handleWatchHistory(); // Call API after 1 minute
+        }
       }
     });
 

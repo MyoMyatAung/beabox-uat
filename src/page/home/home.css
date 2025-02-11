@@ -890,3 +890,14 @@ html {
   /* transition: opacity 0.2s; */
   cursor: pointer;
 }
+
+.custom-progress-bar::-webkit-slider-thumb {
+  padding: 8px;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  width: var(--thumb-width, 12px);
+  height: var(--thumb-height, 12px);
+  border-radius: var(--thumb-radius, 50%);
+  background: #cd3eff !important;
+  cursor: pointer;
+}
