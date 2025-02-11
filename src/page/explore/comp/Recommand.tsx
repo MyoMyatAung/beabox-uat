@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 
 import uiLeft from "../../../assets/explore/uiLeftt.svg";
+import { CiHeart } from "react-icons/ci";
 import "../explore.css";
 import { useNavigate } from "react-router-dom";
+import personE from "../../../assets/explore/personE.svg";
 import {
   useGetExploreListQuery,
   useGetExploreTagQuery,
@@ -11,7 +13,8 @@ import { Person } from "@/assets/profile";
 import { useDispatch } from "react-redux";
 import { setDetails, setTitle } from "@/store/slices/exploreSlice";
 import { paths } from "@/routes/paths";
-import ImageWithPlaceholder from "@/page/search/comp/imgPlaceholder";
+import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder";
+import { FaHeart } from "react-icons/fa";
 
 interface RecommandProps {
   title: string;
@@ -22,6 +25,7 @@ interface RecommandProps {
 const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
   const dispatch = useDispatch();
   const [list, setList] = useState([]);
+  const [imgError, setImgError] = useState(false);
   const { data, isLoading, refetch } = useGetExploreListQuery({
     id: list_id,
   });
@@ -65,26 +69,45 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
     }
   }
 
+  const calculateHeight = (width: number, height: number) => {
+    // console.log(width,height)
+    if (width > height) {
+      return 112; // Portrait
+    }
+    if (width < height) {
+      return 240; // Landscape
+    }
+    return 200;
+  };
+
+  const formatNumber = (num: number) => {
+    if (num >= 1000) {
+      return `${(num / 1000).toFixed(1).replace(/\.0$/, "")}k`;
+    }
+    return num;
+  };
+
   // console.log(list);
   return (
-    <div className=" pb-[20px] pt-[10px] px-[10px]">
+    <div className=" pb-[20px] px-[10px]">
       {isLoading ? (
-        <div className="grid w-full grid-cols-2 gap-[18px]">
-          <div className="w-[175px w-full rounded-[8px] h-[140px] bg-white/20"></div>
-          <div className="w-[175px w-full rounded-[8px] h-[140px] bg-white/20"></div>
-          <div className="w-[175px w-full rounded-[8px] h-[140px] bg-white/20"></div>
-          <div className="w-[175px w-full rounded-[8px] h-[140px] bg-white/20"></div>
-          <div className="w-[175px w-full rounded-[8px] h-[140px] bg-white/20"></div>
-          <div className="w-[175px w-full rounded-[8px] h-[140px] bg-white/20"></div>
-          <div className="w-[175px w-full rounded-[8px] h-[140px] bg-white/20"></div>
-          <div className="w-[175px w-full rounded-[8px] h-[140px] bg-white/20"></div>
+        <div className=" flex flex-col w-full">
+          <div className="py-[12px]">
+            <div className=" w-full h-[20px] rounded-lg shadow-lg bg-white/20 animate-pulse mb-4"></div>
+          </div>
+          <div className=" w-full grid grid-cols-2 justify-center items-center  gap-[12px]">
+            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 max-w-full h-[312px]"></div>
+            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 max-w-full h-[312px]"></div>
+            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 max-w-full h-[312px]"></div>
+            <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 max-w-full h-[312px]"></div>
+          </div>
         </div>
       ) : (
         <>
           {list?.map((ll: any, index) => (
             <div key={index} className="flex flex-col w-full items-center">
               {/* header */}
-              <div className=" flex w-full justify-between items-center px-[10p]">
+              <div className=" flex w-full justify-between items-center py-[12px] px-[10p]">
                 <h1 className=" text-white text-[14px] font-[500] leading-[20px]">
                   {ll.title}
                 </h1>
@@ -97,27 +120,33 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
                 </div>
               </div>{" "}
               {/* content */}
-              <div className=" py-[12px] w-full grid grid-cols-2 justify-center items-center  gap-[18px]">
+              <div className=" py-[12px] w-full grid grid-cols-2 justify-center items-center  gap-[10px]">
                 <>
                   {ll.posts.map((card: any) => (
-                    <div key={card.post_id} className="max-w-full pb-[12px]">
+                    <div
+                      key={card.post_id}
+                      className="max-w-full pb-[12px chinese_photo h-[320px]"
+                    >
                       <div
                         onClick={() => showDetailsVod(card)}
-                        className=" relative  chinese_photo"
+                        className=" relative flex justify-center items-center bg-[#010101] rounded-t-[4px] overflow-hidden  h-[240px]"
                       >
                         <ImageWithPlaceholder
                           src={card?.preview_image}
                           alt={card.title || "Video"}
                           width={"100%"}
-                          height={"100%"}
-                          className=" w-[175px w-full h-[100px] rounded-[8px] object-cover"
+                          // height={240}
+                          height={
+                            card?.files[0]?.height &&
+                            calculateHeight(
+                              card?.files[0]?.width,
+                              card?.files[0]?.height
+                            )
+                          }
+                          className=" object-cover h-full w-full rounded-none"
                         />
-                        <img
-                          className=" w-[175px] hidden h-[100px] rounded-[8px] object-cover"
-                          src={card.preview_image}
-                          alt=""
-                        />
-                        <div className=" absolute left-0 mx-auto right-0 bottom-0 flex justify-around items-center w-full max-w-[175px] bg-blac">
+
+                        <div className=" absolute hidden left-0 mx-auto right-0 bottom-0 fle justify-around items-center w-full max-w-[175px] bg-blac">
                           <div className=" flex w-full  justify-between px-2">
                             <span className=" text-white text-[11px]  left-">
                               {card?.view_count} 次观看
@@ -128,26 +157,53 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
                           </div>
                         </div>
                       </div>
-                      <h1 className="text-white text-[14px] font-[500] leading-[20px] py-[4px]">
-                        {card.title.length > 10
-                          ? `${card.title.slice(0, 10)}...`
+                      {/* <h1 className="text-white w-full text-[12px] font-[400] px-[6px] pt-[6px] leading-[20px] break-words"> */}
+                      <h1 className="search_text font-cnFont line-clamp-2 text-left text-[12px] font-[400] px-[6px] pt-[6px]">
+                        {card.title.length > 50
+                          ? `${card.title.slice(0, 50)}...`
                           : card.title}
                       </h1>
-                      <div className=" flex justify-cente py-[4px] items-center gap-[8px]">
-                        {card.user.avatar ? (
-                          <img
-                            className=" w-[26px] h-[26px] rounded-full"
-                            src={card.user.avatar}
-                            alt=""
-                          />
-                        ) : (
-                          <div className="w-[15px] h-[15px] rounded-full bg-[#FFFFFF12] flex justify-center items-center">
-                            <Person />
-                          </div>
-                        )}
-                        <h1 className=" text-white text-[12px] font-[400] leading-[20px]">
-                          {card.user.name}
-                        </h1>
+                      <div className=" flex w-full p-[6px] justify-between">
+                        <div className=" flex justify-cente  items-center gap-[4px]">
+                          {card.user.avatar ? (
+                            <img
+                              // onError={() => console.log("gg")}
+                              className=" w-[20px] h-[20px] rounded-full"
+                              src={card.user.avatar}
+                              onError={(e) => (e.currentTarget.src = personE)}
+                              alt=""
+                            />
+                          ) : (
+                            <img
+                              src={personE}
+                              className=" w-[20px] h-[20px] rounded-full"
+                              alt=""
+                            />
+                          )}
+                          <h1 className=" text-[#888] text-[12px] font-[400] leading-[20px]">
+                            {card.user.name}
+                            {/* {card?.files[0]?.width} & {card?.files[0]?.height} {} */}
+                          </h1>
+                        </div>
+                        <div className=" flex justify-center items-center gap-[4px]">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="13"
+                            height="12"
+                            viewBox="0 0 13 12"
+                            fill="none"
+                          >
+                            <path
+                              d="M8.56675 1.13281C7.53401 1.13281 6.6298 1.57692 6.06616 2.32759C5.50253 1.57692 4.59832 1.13281 3.56557 1.13281C2.74349 1.13374 1.95535 1.46072 1.37405 2.04202C0.792751 2.62332 0.46577 3.41146 0.464844 4.23354C0.464844 7.73437 5.65557 10.568 5.87662 10.6851C5.93488 10.7164 6.00001 10.7328 6.06616 10.7328C6.13232 10.7328 6.19745 10.7164 6.25571 10.6851C6.47676 10.568 11.6675 7.73437 11.6675 4.23354C11.6666 3.41146 11.3396 2.62332 10.7583 2.04202C10.177 1.46072 9.38883 1.13374 8.56675 1.13281Z"
+                              stroke="#BBBBBB"
+                              stroke-width="0.8"
+                            />
+                          </svg>
+                          {/* <FaHeart /> */}
+                          <h1 className=" text-[#888] text-[12px] font-[400] leading-[20px]">
+                            {formatNumber(card?.like_count)}
+                          </h1>
+                        </div>
                       </div>
                     </div>
                   ))}

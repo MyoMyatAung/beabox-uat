@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import header from "../assets/explore/Header.png";
 import {
   useGetAdsNoticeQuery,
-  useGetAdsPopUpQuery,
 } from "@/store/api/explore/exploreApi";
 import "../page/explore/explore.css";
 import ImageWithPlaceholder from "@/page/search/comp/imgPlaceholder";
 import Notice from "./Notice";
+import { useGetAdsPopUpQuery } from "@/utils/helperService";
 
 interface PopUpProps {
   setShowAd: any;
@@ -21,7 +21,7 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
   const [showNotice, setShowNotice] = useState(false);
   const [NotList, setNotList] = useState<any>();
 
-  const { data, isLoading } = useGetAdsPopUpQuery("");
+  const { data, isLoading } = useGetAdsPopUpQuery();
   const { data: notice, isLoading: noticeLoading } = useGetAdsNoticeQuery("");
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -73,7 +73,7 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
   console.log(currentImage);
 
   return (
-    <div className="h-screen bg-black/80 w-screen flex flex-col gap-[20px] justify-center items-center fixed top-0 z-[9999]">
+    <div className="h-screen bg-transparent w-screen flex flex-col gap-[20px] justify-center items-center fixed top-0 z-[9999]">
       {/* Start Image */}
       {isLoading ? (
         <div className=" w-[268px] h-[397px] bg-white/20 animate-pulse"></div>

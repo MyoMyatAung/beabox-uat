@@ -6,7 +6,7 @@ import PopApp from "./comp/PopApp";
 import Recommand from "./comp/Recommand";
 import Latest from "./comp/Latest";
 import { Swiper } from "swiper/react";
-import '../home/home.css'
+import "../home/home.css";
 import "swiper/css";
 import { SwiperSlide } from "swiper/react";
 import { useGetExploreHeaderQuery } from "@/store/api/explore/exploreApi";
@@ -26,6 +26,8 @@ const Explore = () => {
   const swiperRef = useRef<any>(null);
   const [show, setshow] = useState<boolean>(false);
   const dispatch = useDispatch();
+  const scroll = window.scrollY;
+  // console.log(scroll);
 
   useEffect(() => {
     if (data?.data?.tabs) {
@@ -50,6 +52,14 @@ const Explore = () => {
   // console.log(exp_header)
 
   useEffect(() => {
+    if (scroll >= 500) {
+      window.scrollTo(0, 500);
+    }
+
+    // window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [exp_header]);
+
+  useEffect(() => {
     if (swiperRef.current) {
       const index = tabs?.indexOf(exp_header);
       if (index >= 0) {
@@ -71,14 +81,22 @@ const Explore = () => {
       {/* {show && <VodDetails  />} */}
 
       <div className="flex max-w-[1024px] home-main w-full bg-[#16131C] justify-center items-center min-h-screen overflow-clip">
-        <div className="explore_sec w-screen xl:w-[800px] flex flex-col justify-center items-cente px-[10px] pb-[100px] mt-14">
+        <div className="explore_sec w-screen xl:w-[800px] flex flex-col justify-center items-cente px-[10px pb-[100px] mt-14">
           <Banner />
           <PopApp />
           <div className="mt-[20px] relative">
             <Header activeTab={activeTab} setActiveTab={setActiveTab} />
             {isLoading ? (
-              <div className=" min-h-screen bg-white/20 rounded-md animate-pulse p-2">
-                {" "}
+              <div className=" flex flex-col w-full">
+                <div className="py-[12px]">
+                  <div className=" w-full h-[20px] rounded-lg shadow-lg bg-white/20 animate-pulse mb-4"></div>
+                </div>
+                <div className=" w-full grid grid-cols-2 justify-center items-center  gap-[12px]">
+                  <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 max-w-full h-[312px]"></div>
+                  <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 max-w-full h-[312px]"></div>
+                  <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 max-w-full h-[312px]"></div>
+                  <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 max-w-full h-[312px]"></div>
+                </div>
               </div>
             ) : (
               <Swiper

@@ -1,20 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import { useGetConfigQuery, usePostCommentMutation } from "../services/homeApi";
-import Player from "./Player";
-
-import VideoSidebar from "./VideoSidebar";
-
+// import Player from "./Player";
+// import VideoSidebar from "./VideoSidebar";
 import Top20Movies from "./Top20Movies";
 import { useDispatch, useSelector } from "react-redux";
 import FeedFooter from "./FeedFooter";
 import { useNavigate } from "react-router-dom";
-import SearchPlayer from "./SearchPlayer";
+// import SearchPlayer from "./SearchPlayer";
 import HeartCount from "./Heart";
 import VideoContainer from "./VideoContainer";
-import { setVideos } from "../services/videosSlice";
+// import { setVideos } from "../services/videosSlice";
 import { showToast } from "../services/errorSlice";
 import Ads from "./Ads";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
+import sc from "../../../assets/explore/sc.svg";
 
 const VideoFeed = ({
   videos,
@@ -45,6 +44,7 @@ const VideoFeed = ({
   const [height, setHeight] = useState(0);
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
+  const [hideBar, sethideBar] = useState(false);
 
   const removeHeart = (id: number) => {
     setHearts((prev) => prev.filter((heartId) => heartId !== id)); // Remove the heart by ID
@@ -188,7 +188,7 @@ const VideoFeed = ({
           </button>
           <div className="relative flex-1 mr-5">
             <div className="absolute top-2 left-3">
-              <svg
+              {/* <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="22"
                 height="22"
@@ -209,10 +209,11 @@ const VideoFeed = ({
                   stroke-linecap="round"
                   stroke-linejoin="round"
                 />
-              </svg>
+              </svg> */}
+              <img src={sc} alt="" />
             </div>
             <input
-              className="feed-input w-full pl-[45px] py-[8px]"
+              className="feed-input w-full pl-[45px] py-[8px]" 
               placeholder={query}
               onClick={handleSearch}
             />
@@ -238,8 +239,10 @@ const VideoFeed = ({
               setHeight={setHeight}
               setHearts={setHearts}
               setCountdown={setCountdown}
+              sethideBar={sethideBar}
+              hideBar={hideBar}
             />
-            {video?.type !== "ads" && (
+            {!hideBar && video?.type !== "ads" && (
               <FeedFooter
                 tags={video?.tag}
                 title={video?.title}

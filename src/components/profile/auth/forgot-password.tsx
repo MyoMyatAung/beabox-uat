@@ -1,5 +1,6 @@
 import { paths } from "@/routes/paths";
-import { FaAngleLeft } from "react-icons/fa";
+// import { FaAngleLeft } from "react-icons/fa";
+import backButton from "../../../assets/backButton.svg";
 import { Link, useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
 import { useState } from "react";
@@ -51,7 +52,8 @@ const ForgotPassword = () => {
       <div className="w-full">
         <div className="flex justify-between items-center py-5">
           <Link to={paths.profile}>
-            <FaAngleLeft size={18} />
+            {/* <FaAngleLeft size={22} /> */}
+            <img src={backButton} alt=""/>
           </Link>
           <p className="text-[16px]">
             {/* {user?.token ? "Setting & Privacy" : "Setting"} */}

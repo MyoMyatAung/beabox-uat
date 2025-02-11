@@ -32,6 +32,7 @@ const Home = () => {
   const { currentActivePost } = useSelector((state: any) => state.activeslice);
   const { videos } = useSelector((state: any) => state.videoSlice);
   const { page } = useSelector((state: any) => state.pageSlice);
+  const [hideBar, sethideBar] = useState(false);
 
   //const [currentActivePost, setCurrentActivePost] = useState<any>(null); // Active post ID
 
@@ -182,95 +183,43 @@ const Home = () => {
     }
   }, [currentActivePost]);
 
-  // // Pagination observer for loading more videos
-  // useEffect(() => {
-  //   const container = videoContainerRef.current;
-  //   if (!container) return;
-
-  //   // Function to check if all videos are loaded
-  //   const areAllVideosLoaded = () => {
-  //     const videoElements = container.querySelectorAll("video");
-  //     return Array.from(videoElements).every((video) => video.readyState >= 1); // readyState 3 means data is loaded enough to play
-  //   };
-
-  //   const observer = new IntersectionObserver(
-  //     (entries) => {
-  //       entries.forEach((entry) => {
-  //         if (entry.isIntersecting) {
-  //           console.log("winnnn");
-  //           if (areAllVideosLoaded()) {
-  //             console.log("alll videos");
-  //             // If all videos are loaded, dispatch to load more
-  //             dispatch(setPage(page + 1));
-  //             setBottomLoading(false);
-  //           } else {
-  //             console.log("load");
-  //             // Show loading indication
-  //             setBottomLoading(true); // You can trigger a refresh state or show loading spinner
-  //           }
-  //         }
-  //       });
-  //     },
-  //     { rootMargin: "100px", threshold: 0.5 }
-  //   );
-
-  //   if (areAllVideosLoaded()) {
-  //     console.log("obser");
-  //     const lastVideoElement =
-  //       container.children[container.children.length - 1];
-  //     if (lastVideoElement) {
-  //       observer.observe(lastVideoElement);
-  //     }
-  //   }
-
-  // if (videos[currentTab === 2 ? "foryou" : "follow"].length > 1) {
-  //   const secondLastVideo = container.children[container.children.length - 1];
-
-  // }
-
-  //   return () => {
-  //     observer.disconnect();
-  //   };
-  // }, [videos[currentTab === 2 ? "foryou" : "follow"], refresh]);
-
-  // Pagination observer for loading more videos
   useEffect(() => {
     const container = videoContainerRef.current;
     if (!container) return;
 
-    const areAllVideosLoaded = () => {
-      const videoElements = container?.querySelectorAll("video");
-      return Array.from(videoElements).every((video) => video.readyState >= 3); // readyState 3 means data is loaded enough to play
-    };
+    // const areAllVideosLoaded = () => {
+    //   const videoElements = container?.querySelectorAll("video");
+    //   return Array.from(videoElements).every((video) => video.readyState >= 3); // readyState 3 means data is loaded enough to play
+    // };
 
     // Wait for all videos to be loaded before triggering pagination
-    const waitForVideosToLoad = () => {
-      return new Promise((resolve) => {
-        const interval = setInterval(() => {
-          if (areAllVideosLoaded()) {
-            clearInterval(interval);
-            resolve(true);
-          }
-        }, 500); // Check every 500ms if the videos are loaded
-      });
-    };
+    // const waitForVideosToLoad = () => {
+    //   return new Promise((resolve) => {
+    //     const interval = setInterval(() => {
+    //       if (areAllVideosLoaded()) {
+    //         clearInterval(interval);
+    //         resolve(true);
+    //       }
+    //     }, 500); // Check every 500ms if the videos are loaded
+    //   });
+    // };
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            dispatch(setBottomLoader(true));
+            dispatch(setPage(page + 1)); // Load more videos
+            // dispatch(setBottomLoader(true));
             // If videos are not fully loaded, show loading spinner
-
-            // Wait for videos to be ready, then trigger pagination
-            waitForVideosToLoad().then(() => {
-              if (areAllVideosLoaded()) {
-                dispatch(setPage(page + 1)); // Load more videos
-                dispatch(setBottomLoader(false));
-              } else {
-                dispatch(setBottomLoader(true));
-              }
-            });
+            // // Wait for videos to be ready, then trigger pagination
+            // waitForVideosToLoad().then(() => {
+            //   if (areAllVideosLoaded()) {
+            // dispatch(setPage(page + 1)); // Load more videos
+            //     dispatch(setBottomLoader(false));
+            //   } else {
+            //     dispatch(setBottomLoader(true));
+            //   }
+            // });
           }
         });
       },
@@ -282,7 +231,7 @@ const Home = () => {
 
     // Observe the last video element
     if (videos[currentTab === 2 ? "foryou" : "follow"].length > 1) {
-      const secondLastVideo = container.children[container.children.length - 1];
+      const secondLastVideo = container.children[container.children.length - 5];
       observer.observe(secondLastVideo);
     }
     // Cleanup observer on component unmount or when dependencies change
@@ -446,7 +395,6 @@ const Home = () => {
                           data-post-id={video?.post_id} // Add post ID to the container
                         >
                           <VideoContainer
-                            index={index}
                             container={videoContainerRef.current}
                             status={true}
                             countNumber={countNumber}
@@ -460,9 +408,11 @@ const Home = () => {
                             setCountdown={setCountdown}
                             width={width}
                             height={height}
+                            sethideBar={sethideBar}
+                            hideBar={hideBar}
                           />
 
-                          {video?.type !== "ads" && (
+                          {!hideBar && video?.type !== "ads" && (
                             <VideoFooter
                               tags={video?.tag}
                               title={video?.title}
@@ -569,7 +519,6 @@ const Home = () => {
                           data-post-id={video.post_id} // Add post ID to the container
                         >
                           <VideoContainer
-                            index={index}
                             container={videoContainerRef.current}
                             status={true}
                             countNumber={countNumber}
@@ -583,9 +532,11 @@ const Home = () => {
                             setCountdown={setCountdown}
                             width={width}
                             height={height}
+                            sethideBar={sethideBar}
+                            hideBar={hideBar}
                           />
 
-                          {video?.type !== "ads" && (
+                          {!hideBar && video?.type !== "ads" && (
                             <VideoFooter
                               tags={video?.tag}
                               title={video?.title}

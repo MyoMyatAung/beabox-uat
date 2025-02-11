@@ -5,9 +5,12 @@ import center from "@/assets/profile/center3.png";
 import VideoTabs from "@/components/profile/video-tabs";
 import { Link } from "react-router-dom";
 import { paths } from "@/routes/paths";
-import { useGetMyProfileQuery } from "@/store/api/profileApi";
-import { useSelector } from "react-redux";
-import { PenIcon as UserPen, Bell, X, Copy } from "lucide-react";
+import {
+  useGetMyOwnProfileQuery,
+  useGetMyProfileQuery,
+} from "@/store/api/profileApi";
+import { useDispatch, useSelector } from "react-redux";
+import { PenIcon as UserPen, Bell, X, Copy, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SettingBtn from "@/components/profile/setting-btn";
 import ProfileAvatar from "@/components/profile/profile-avatar";
@@ -19,256 +22,336 @@ import FemaleSVG from "@/assets/profile/female";
 import EditCover from "@/components/profile/edit-cover";
 import AuthDrawer from "@/components/profile/auth/auth-drawer";
 import ScrollHeader from "@/components/profile/scroll-header";
+import { setIsDrawerOpen } from "@/store/slices/profileSlice";
+
+// A helper function that mimics your Kotlin logic.
+// It XORs only the first 4096 bytes (or the data size if smaller) and decodes the result as text.
+const decryptImage = (arrayBuffer, key = 0x12, decryptSize = 4096) => {
+  const data = new Uint8Array(arrayBuffer);
+  const maxSize = Math.min(decryptSize, data.length);
+  for (let i = 0; i < maxSize; i++) {
+    data[i] ^= key;
+  }
+  // Decode the entire data as text.
+  return new TextDecoder().decode(data);
+};
 
 const Profile = () => {
-  const headerRef = useRef<any>(null);
-
+  const headerRef = useRef(null);
   const [showHeader, setShowHeader] = useState(false);
-  const { data, isLoading, refetch } = useGetMyProfileQuery("");
+  const user = useSelector((state) => state?.persist?.user) || "";
+  const { data, isLoading, refetch } = useGetMyOwnProfileQuery("", {
+    skip: !user,
+  });
+  console.log(data, "data");
   const [show, setShow] = useState(false);
-  const user = useSelector((state: any) => state?.persist?.user);
-  const gender = useSelector((state: any) => state?.persist?.gender);
-  const region = useSelector((state: any) => state?.persist?.region);
-  const [isCopied, setIsCopied] = useState(false); // State for feedback
+  const gender = useSelector((state) => state?.persist?.gender);
+  const region = useSelector((state) => state?.persist?.region);
+  const [isCopied, setIsCopied] = useState(false);
+  const dispatch = useDispatch();
+  // decryptedCover and decryptedPhoto will now hold a string (for example, a data URL)
+  const [decryptedCover, setDecryptedCover] = useState(defaultCover);
+  const [decryptedPhoto, setDecryptedPhoto] = useState("");
 
-  const handleCopy = (text: any) => {
+  // Effect to load and decrypt cover photo
+  useEffect(() => {
+    const loadAndDecryptCover = async () => {
+      if (!user?.token || !data?.data?.cover_photo) {
+        setDecryptedCover(defaultCover);
+        return;
+      }
+
+      try {
+        const coverUrl = data.data.cover_photo;
+
+        // If it's not a .txt file, assume it's already a valid URL
+        if (!coverUrl.endsWith(".txt")) {
+          setDecryptedCover(coverUrl);
+          return;
+        }
+        console.log("coverUrl is =>", coverUrl);
+
+        // Fetch the encrypted image data
+        const response = await fetch(coverUrl);
+        const arrayBuffer = await response.arrayBuffer();
+
+        // Decrypt the first 4096 bytes and decode the entire file as text.
+        const decryptedStr = decryptImage(arrayBuffer);
+        console.log("Decrypted cover string is =>", decryptedStr);
+
+        // Set the decrypted cover image source
+        setDecryptedCover(decryptedStr);
+      } catch (error) {
+        console.error("Error loading cover photo:", error);
+        setDecryptedCover(defaultCover);
+      }
+    };
+
+    loadAndDecryptCover();
+  }, [data?.data?.cover_photo, user?.token]);
+
+  // Effect to load and decrypt profile photo
+  useEffect(() => {
+    const loadAndDecryptPhoto = async () => {
+      if (!user?.token || !data?.data?.profile_photo) {
+        setDecryptedPhoto("");
+        return;
+      }
+
+      try {
+        const photoUrl = data.data.profile_photo;
+
+        // If it's not a .txt file, assume it's already a valid URL
+        if (!photoUrl.endsWith(".txt")) {
+          setDecryptedPhoto(photoUrl);
+          return;
+        }
+
+        // Fetch encrypted image data
+        const response = await fetch(photoUrl);
+        const arrayBuffer = await response.arrayBuffer();
+
+        // Decrypt the first 4096 bytes and decode as text.
+        const decryptedStr = decryptImage(arrayBuffer);
+        console.log("Decrypted profile photo string is =>", decryptedStr);
+
+        // Set the decrypted profile photo source
+        setDecryptedPhoto(decryptedStr);
+      } catch (error) {
+        console.error("Error loading profile photo:", error);
+        setDecryptedPhoto("");
+      }
+    };
+
+    loadAndDecryptPhoto();
+  }, [data?.data?.profile_photo, user?.token]);
+
+  // Scroll handler for header appearance
+  useEffect(() => {
+    const handleScroll = () => {
+      if (headerRef.current) {
+        const rect = headerRef.current.getBoundingClientRect();
+        if (rect.top <= 100) {
+          setShowHeader(true);
+        } else {
+          setShowHeader(false);
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleCopy = (text) => {
     navigator?.clipboard
       .writeText(text)
       .then(() => {
-        setIsCopied(true); // Show feedback
-        setTimeout(() => setIsCopied(false), 2000); // Hide feedback after 2 seconds
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 2000);
       })
       .catch((err) => {
         console.error("Failed to copy text: ", err);
       });
   };
-  // console.log(data);
+
   useEffect(() => {
-    refetch();
+    if (user) refetch();
   }, []);
   useEffect(() => {
-    refetch();
-  }, [data]);
-  useEffect(() => {
-    refetch();
-  }, [user]);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        // When the header is not intersecting (i.e., it's sticky at the top),
-        // we set showHeader to true
-        // setShowHeader(!entry.isIntersecting);
-      },
-      {
-        // This rootMargin ensures the callback triggers right as the element
-        // reaches the top of the viewport
-        rootMargin: "-1px 0px 0px 0px",
-        threshold: [1],
-      }
-    );
-
-    if (headerRef.current) {
-      observer.observe(headerRef.current);
-    }
-
-    return () => {
-      if (headerRef.current) {
-        observer.unobserve(headerRef.current);
-      }
-    };
-  }, []);
-
-  console.log(showHeader);
+    if (user) refetch();
+  }, [user, data]);
 
   if (isLoading) return <Loader />;
 
   return (
-    <>
-      <div className="gradient-overlay"></div>
-      <img
-        src={
-          user?.token
-            ? data?.data?.cover_photo
-              ? data?.data?.cover_photo
-              : defaultCover
-            : defaultCover
-        }
-        alt=""
-        className={`absolute top-0 left-0 w-full h-[23vh] object-cover object-center`}
-      />
-      {isCopied ? (
-        <div className="w-full absolute top-[80vh] flex justify-center">
+    <div className="h-screen flex flex-col hide-sb">
+      {showHeader ? (
+        <>
+          <div className="gradient-overlay2"></div>
+          <img
+            src={
+              user?.token
+                ? decryptedCover || defaultCover
+                : defaultCover
+            }
+            alt=""
+            className="fixed top-0 z-[1000] left-0 w-full h-[155px] object-cover object-center"
+          />
+        </>
+      ) : (
+        <>
+          <div className="gradient-overlay"></div>
+          <img
+            src={decryptedCover || defaultCover}
+            alt=""
+            className="fixed top-0 left-0 w-full h-[23vh] object-cover object-center"
+          />
+        </>
+      )}
+      {isCopied && (
+        <div className="w-full z-[1300] absolute top-[80vh] flex justify-center">
           <p className="text-[14px] bg-[#FFFFFF14] px-2 py-1 rounded-lg w-[83px] text-center">
             已复制 ID
           </p>
         </div>
-      ) : (
-        ""
       )}
-      <div className={`z-[1200] max-h-screen no-scrollbar profile-bg `}>
-        {show ? (
-          <div className="absolute top-0 z-[1500] left-0 w-full h-full mx-auto flex flex-col justify-center items-center bg-black/80">
-            <div className="z-[1200] px-10">
-              <div className="z-[1200] h-[250px] gradient-b  rounded-lg relative">
+      {show && (
+        <div className="absolute top-0 z-[2300] left-0 w-full h-full mx-auto flex flex-col justify-center items-center bg-black/80">
+          <div className="z-[1200] px-10">
+            <div className="z-[1200] h-[250px] gradient-b rounded-lg relative">
+              <img
+                src={center || "/placeholder.svg"}
+                className="absolute h-[250px] w-full"
+                alt=""
+              />
+              <div className="z-[1200] w-full absolute -top-20 flex justify-center items-center">
                 <img
-                  src={center || "/placeholder.svg"}
-                  className=" absolute h-[250px h-full w-full "
+                  src={phoneImg || "/placeholder.svg"}
+                  className="w-[180px] z-[1200]"
                   alt=""
                 />
-                <div className="z-[1200] w-full absolute -top-20 flex justify-center items-center">
-                  <img
-                    src={phoneImg || "/placeholder.svg"}
-                    className={`w-[180px] z-[1200] `}
-                    alt=""
-                  />
-                </div>
-              </div>
-              <div className="z-[1200] flex flex-col justify-center items-center gap-4 bg-[#161619] p-5 rounded-bl-lg rounded-br-lg">
-                <h1 className="z-[1200] text-[18px] font-semibold text-white">
-                  创作者中心
-                </h1>
-                <p className="z-[1200] text-[14px] text-center text-[#FFFFFFCC]">
-                  查看创作者排名，洞察顶尖创作者的风采，观看最受欢迎视频，掌握流行趋势，发现精彩瞬间，探索全新内容。
-                </p>
-                <Button className="z-[1200] mt-2 mb-4 rounded-[16px] px-[26px] py-[12px] bg-[#FFFFFF14] hover:bg-[#FFFFFF14]">
-                  即将上线，敬请期待！
-                </Button>
               </div>
             </div>
-            <div
-              onClick={() => setShow(false)}
-              className="z-[1200] bg-[#FFFFFF29] p-2 rounded-full mt-5"
-            >
-              <X />
+            <div className="z-[1200] flex flex-col justify-center items-center gap-4 bg-[#161619] p-5 rounded-bl-lg rounded-br-lg">
+              <h1 className="z-[1200] text-[18px] font-semibold text-white">
+                创作者中心
+              </h1>
+              <p className="z-[1200] text-[14px] text-center text-[#FFFFFFCC]">
+                查看创作者排名，洞察顶尖创作者的风采，观看最受欢迎视频，
+                掌握流行趋势，发现精彩瞬间，探索全新内容。
+              </p>
+              <Button className="z-[1200] mt-2 mb-4 rounded-[16px] px-[26px] py-[12px] bg-[#FFFFFF14] hover:bg-[#FFFFFF14]">
+                即将上线，敬请期待！
+              </Button>
             </div>
           </div>
-        ) : (
-          ""
-        )}
-        <div className="z-[1200] flex my-5 justify-between items-center px-5">
+          <div
+            onClick={() => setShow(false)}
+            className="z-[1200] bg-[#FFFFFF29] p-2 rounded-full mt-5"
+          >
+            <X />
+          </div>
+        </div>
+      )}
+      <div className="flex-1">
+        <div
+          className={`px-5 ${
+            showHeader ? "opacity-1" : "opacity-0"
+          } fixed top-0 w-full z-[1600] py-5`}
+        >
+          <ScrollHeader
+            photo={decryptedPhoto}
+            name={data?.data?.nickname}
+            login={user?.token}
+            dphoto={data?.data?.cover_photo}
+          />
+        </div>
+        <div className="z-[1900] flex my-5 justify-between items-center px-5">
           {user?.token ? <EditCover /> : <div></div>}
-          <div className="z-[1200] flex gap-3 items-center">
+          <div className="z-[1900] flex gap-3 items-center">
             <Link
               to={paths.noti}
-              className="z-[1200] bg-[#FFFFFF12] w-10 h-10 rounded-full flex items-center justify-center"
+              className="z-[1900] bg-[#FFFFFF12] w-10 h-10 rounded-full flex items-center justify-center"
             >
               <Bell />
             </Link>
             <SettingBtn setShow={setShow} />
           </div>
         </div>
-        {!showHeader ? (
-          <div className="w-full flex flex-col px-5">
-            <div className="z-[1200] w-full flex items-center gap-3 py-5">
-              {!user?.token ? (
-                <div className="z-[1200] w-[58px] h-[58px] rounded-full bg-[#FFFFFF12] flex justify-center items-center p-2">
-                  <Person />
-                </div>
-              ) : (
-                <ProfileAvatar
-                  progress={data?.data?.level_progress}
-                  levelImage={data?.data?.level}
-                  photo={data?.data?.profile_photo}
-                />
-              )}
-              {!user?.token ? (
-                <AuthDrawer />
-              ) : (
-                <div className="z-[1200] flex-1 flex flex-col gap-0.5">
-                  <p className="z-[1200] text-[18px] flex items-center gap-1">
-                    {data?.data?.nickname}
-                    <span>{gender == "Male" ? <MaleSVG /> : <></>}</span>
-                    <span>{gender == "Feale" ? <FemaleSVG /> : <></>}</span>
-                  </p>
-                  <p className="z-[1200] text-[14px] text-[#BBBBBB] flex gap-1 items-center">
-                    B号 : {data?.data?.user_code}
-                    <Copy
-                      onClick={() => handleCopy(data?.data?.user_code)}
-                      size={14}
-                    />
-                  </p>
-                  {data?.data?.share_region == "on" && region ? (
-                    <div className="z-[1200] flex">
-                      <div className="z-[1200] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
-                        {!region?.city?.length && !region?.province?.length ? (
-                          <span>未知</span>
-                        ) : (
-                          <>
-                            <span>{region?.provinceName}</span>:
-                            <span>{region?.city}</span>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="z-[1200] flex">
-                      <div className="z-[1200] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
-                        <span>未知</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-
-            <div className="z-[1200]">
-              {data?.data?.hide_bio == "on" ? (
-                <></>
-              ) : user?.token ? (
-                data?.data?.bio ? (
-                  <div className="text-[12px] text-[#888] mb-5 italic">
-                    {data?.data?.bio ? data?.data?.bio : ""}
-                  </div>
-                ) : (
-                  <Link
-                    to={paths.add_bio}
-                    className="text-[12px] text-[#FFFFFFCC] bg-[#FFFFFF14] px-2 py-1 w-[91px] text-center rounded-full"
-                  >
-                    + 个人简介
-                  </Link>
-                )
-              ) : (
-                <></>
-              )}
-            </div>
-          </div>
-        ) : (
-          <ScrollHeader
-            photo={data?.data?.profile_photo}
-            name={data?.data?.nickname}
+        <div className="w-full flex items-center gap-3 pb-5 px-5">
+          <ProfileAvatar
+            progress={data?.data?.level_progress}
+            levelImage={data?.data?.level}
+            photo={decryptedPhoto}
           />
-        )}
-
-        <div className={`px-5 ${showHeader ? "opacity-0" : "opacity-1"}`}>
-          <Stats />
+          {!user?.token ? (
+            <div
+              onClick={() => dispatch(setIsDrawerOpen(true))}
+              className="z-[1900] flex items-center gap-2 flex-1"
+            >
+              <span className="z-[1200] text-[18px]">点击登陆</span>
+              <ChevronRight size={18} />
+            </div>
+          ) : (
+            <div className="z-[1900] flex-1 flex flex-col gap-0.5">
+              <p className="z-[1900] text-[18px] flex items-center gap-1">
+                {data?.data?.nickname}
+                <span>{gender === "Male" ? <MaleSVG /> : null}</span>
+                <span>{gender === "Feale" ? <FemaleSVG /> : null}</span>
+              </p>
+              <p className="z-[1900] text-[14px] text-[#BBBBBB] flex gap-1 items-center">
+                B号 : {data?.data?.user_code}
+                <Copy
+                  onClick={() => handleCopy(data?.data?.user_code)}
+                  size={14}
+                />
+              </p>
+              {data?.data?.share_region === "on" && region ? (
+                <div className="z-[1900] flex">
+                  <div className="z-[1900] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
+                    {(!region?.city?.length && !region?.province?.length) ? (
+                      <span>未知</span>
+                    ) : (
+                      <>
+                        <span>{region?.provinceName}</span>:<span>{region?.city}</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="z-[1900] flex">
+                  <div className="z-[1200] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
+                    <span>未知</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+        <h1 className="text-[12px] text-[#888] mb-5 italic px-5 z-[1900] relative">
+          {data?.data?.hide_bio === "on" ? null : user?.token ? (
+            data?.data?.bio ? (
+              <div className="text-[12px] text-[#888] mb-5 italic">
+                {data?.data?.bio}
+              </div>
+            ) : (
+              <Link
+                to={paths.add_bio}
+                className="text-[12px] text-[#FFFFFFCC] bg-[#FFFFFF14] px-2 py-1 w-[91px] text-center rounded-full"
+              >
+                + 个人简介
+              </Link>
+            )
+          ) : null}
+        </h1>
+        <div className={`${showHeader ? "opacity-0" : "opacity-1"}`}>
+          <Stats
+            followers={data?.data?.followers_count}
+            followings={data?.data?.following_count}
+            likes={data?.data?.likes_sum_count}
+            nickname={data?.data?.nickname}
+          />
         </div>
         <div
-          ref={headerRef}
-          className="w-full top-0 z-[1500] py-1 h-[1px]"
-        ></div>
-        <div className="px-5">
+          className={`px-5 z-[1900] relative ${
+            showHeader ? "opacity-0" : "opacity-1"
+          }`}
+        >
           {user?.token ? (
             <Link to={paths.profileDetail}>
-              <Button
-                className={`${
-                  showHeader ? "opacity-0" : "opacity-1"
-                } z-[1200] w-full bg-[#FFFFFF0F] hover:bg-[#FFFFFF0F] relative rounded-[12px]`}
-              >
+              <Button className="z-[1900] w-full bg-[#FFFFFF0F] hover:bg-[#FFFFFF0F] relative rounded-[12px]">
                 <UserPen /> 编辑资料
               </Button>
             </Link>
-          ) : (
-            <></>
-          )}
+          ) : null}
         </div>
-        <div className="top-[100px] z-[1200]">
-          <div className="z-[1200] relative px-5">
-            <VideoTabs showHeader={showHeader} login={user?.token} />
-          </div>
+        <div ref={headerRef} className="sticky z-[1500] top-0"></div>
+        <div className="px-5">
+          <VideoTabs headerRef={headerRef} showHeader={showHeader} login={user?.token} />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

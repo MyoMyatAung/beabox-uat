@@ -58,12 +58,12 @@ const EditCover = () => {
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>
-        <div className="flex gap-2 z-[1200] bg-[#FFFFFF14] px-4 justify-center py-1 rounded-lg items-center">
+        <div className="flex gap-2 z-[1900] bg-[#FFFFFF14] px-4 justify-center py-1 rounded-lg items-center">
           <PencilLine size={14} />
           <p className="text-[12px]">设置封面</p>
         </div>
       </DrawerTrigger>
-      <DrawerContent className="border-0 bg-[#121012] z-[1500]">
+      <DrawerContent className="border-0 bg-[#121012] z-[1800]">
         <div className="w-full px-5 py-7">
           <div className="space-y-6">
             <div>

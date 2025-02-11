@@ -17,6 +17,9 @@ import HeartCount from "@/page/home/components/Heart";
 import VideoContainer from "@/page/home/components/VideoContainer";
 import Ads from "@/page/home/components/Ads";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
+import sc from "../../../assets/explore/sc.svg";
+// import { FaAngleLeft } from "react-icons/fa";
+import backButton from "../../../assets/backButton.svg";
 
 interface VodDetailsProps {
   // setshow: (value: boolean) => void;
@@ -49,6 +52,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
+  const [hideBar, sethideBar] = useState(false);
 
   const removeHeart = (id: number) => {
     setHearts((prev) => prev.filter((heartId) => heartId !== id)); // Remove the heart by ID
@@ -197,9 +201,11 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
             setHeight={setHeight}
             setHearts={setHearts}
             setCountdown={setCountdown}
+            sethideBar={sethideBar}
+            hideBar={hideBar}
           />
 
-          {files?.type !== "ads" && (
+          {!hideBar && files?.type !== "ads" && (
             <FeedFooter
               tags={files?.tag}
               title={files?.title}
@@ -216,7 +222,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
 
           <div className="absolute top-3 left-0 z-50 flex gap-2 items-center w-full">
             <button onClick={handleBack} className="p-3">
-              <svg
+              {/* <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="10"
                 height="14"
@@ -227,11 +233,13 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
                   d="M8.95748 0.326623C8.85923 0.243209 8.74251 0.17703 8.61401 0.131875C8.48551 0.0867197 8.34775 0.0634766 8.20863 0.0634766C8.06951 0.0634766 7.93175 0.0867197 7.80325 0.131875C7.67475 0.17703 7.55803 0.243209 7.45978 0.326623L0.428239 6.28126C0.349798 6.34756 0.287565 6.4263 0.245104 6.51298C0.202642 6.59967 0.180786 6.69259 0.180786 6.78644C0.180786 6.88029 0.202642 6.97321 0.245104 7.0599C0.287565 7.14658 0.349798 7.22533 0.428239 7.29162L7.45978 13.2463C7.8744 13.5974 8.54286 13.5974 8.95748 13.2463C9.37209 12.8951 9.37209 12.3291 8.95748 11.9779L2.83132 6.78286L8.96594 1.58777C9.37209 1.24382 9.37209 0.670574 8.95748 0.326623Z"
                   fill="white"
                 />
-              </svg>
+              </svg> */}
+              {/* <FaAngleLeft size={22} /> */}
+              <img src={backButton} alt="" />
             </button>
             <div className="relative flex-1 mr-5">
               <div className="absolute top-2 left-3">
-                <svg
+                {/* <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="22"
                   height="22"
@@ -252,7 +260,8 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
                     stroke-linecap="round"
                     stroke-linejoin="round"
                   />
-                </svg>
+                </svg> */}
+                <img src={sc} alt="" />
               </div>
               <input
                 className="feed-input w-full pl-[45px] py-[8px]"

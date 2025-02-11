@@ -338,7 +338,7 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
           className="reply_btn"
           onClick={() => handleReplyClick(comment.comment_id)}
         >
-          Reply
+          回复
         </button>
 
         {/* Show/Hide Replies */}
@@ -350,8 +350,8 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
               onClick={() => toggleRepliesVisibility(comment.comment_id)}
             >
               {areRepliesVisible
-                ? "Hide Replies"
-                : `View ${comment.replies.list.length} Replies`}
+                ? "收起 条回复"
+                : `展开 ${comment.replies.list.length} 条回复`}
             </button>
           </div>
         )}
@@ -365,7 +365,7 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
                 value={replyContent}
                 onChange={(e) => setReplyContent(e.target.value)}
                 className="w-full p-2 bg-transparent border outline-none text-[14px] border-gray-600 rounded-md text-white"
-                placeholder="Write a reply..."
+                placeholder={`回复 ${comment?.user?.name}`}
               />
               <button
                 className="p-3 comment_arrow text-white"
@@ -526,7 +526,7 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
                 value={replyContent}
                 onChange={(e) => setReplyContent(e.target.value)}
                 className="w-full p-2 bg-transparent border border-gray-600 outline-none rounded-md text-white"
-                placeholder="Write a reply..."
+                placeholder={`回复 ${reply?.user?.name}`}
               />
               <button
                 className="p-3 comment_arrow text-white  rounded-md"

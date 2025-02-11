@@ -16,6 +16,14 @@
   font-style: normal;
 }
 
+body {
+  scrollbar-width: none !important;
+}
+
+body::-webkit-scrollbar {
+  display: none !important; /* For Chrome, Safari, and Edge */
+}
+
 @layer base {
   :root {
     --background: 0 0% 0%;
@@ -86,6 +94,12 @@
   @apply bg-gradient-to-r to-[#CD3EFF] from-[#FFB2E0];
 }
 
+.hide-sb {
+  scrollbar-width: none; /* For Firefox */
+}
+.hide-sb::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Edge */
+}
 /* For modern browsers */
 .no-scrollbar {
   overflow-y: scroll; /* Allows scrolling */
@@ -184,7 +198,7 @@ input:checked + .slider:before {
 }
 
 .gradient-overlay {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -196,7 +210,22 @@ input:checked + .slider:before {
     rgb(21, 19, 28)
   );
   pointer-events: none;
-  z-index: 99;
+  z-index: 1600;
+}
+.gradient-overlay2 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 155px;
+  background: linear-gradient(
+    to bottom,
+    rgba(40, 40, 40, 0.5),
+    rgba(30, 30, 35, 0.8),
+    rgb(21, 19, 28)
+  );
+  pointer-events: none;
+  z-index: 1600;
 }
 
 .c-height {
@@ -296,4 +325,13 @@ input:checked + .slider:before {
     #cf6bf1
   ); /* TikTok-like red-orange gradient */
   animation: loading-border 1.5s ease-in-out infinite; /* Smooth easing in and out */
+}
+
+.hide-x {
+  overflow-x: hidden;
+  scrollbar-width: none; /* For Firefox */
+}
+
+.hide-x::-webkit-scrollbar {
+  width: 0; /* For Webkit browsers (Chrome, Safari) */
 }

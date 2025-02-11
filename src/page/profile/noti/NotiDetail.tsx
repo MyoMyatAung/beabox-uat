@@ -1,5 +1,5 @@
 import { paths } from "@/routes/paths";
-import { FaAngleLeft } from "react-icons/fa";
+import backButton from "../../../assets/backButton.svg";
 import { Link, useLocation } from "react-router-dom";
 import System from "@/assets/profile/system1.png";
 import Balance from "@/assets/profile/balance1.png";
@@ -12,7 +12,8 @@ const NotiDetail = () => {
       <div className="w-full">
         <div className="flex justify-between items-center py-5 sticky top-0 bg-[#16131C] z-50">
           <Link to={paths.noti}>
-            <FaAngleLeft size={18} />
+            {/* <FaAngleLeft size={22} /> */}
+            <img src={backButton} alt="" />
           </Link>
           <p className="text-[16px]">Details</p>
           <div></div>

@@ -1,5 +1,5 @@
 import { paths } from "@/routes/paths";
-import { FaAngleLeft } from "react-icons/fa";
+// import { FaAngleLeft } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,8 @@ import EditSecurity from "@/components/profile/edit-security";
 import PrivateProfile from "@/components/profile/private-profile";
 import ContentVisibility from "@/components/profile/content-visibility";
 import { useEffect, useState } from "react";
+import backButton from "../../assets/backButton.svg";
+import Loader from "@/components/shared/loader";
 
 const Settings = ({
   liked_video_visibility,
@@ -24,7 +26,7 @@ const Settings = ({
 }: any) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [logout, { data: lgdata }] = useLogoutMutation();
+  const [logout, { data: lgdata, isLoading }] = useLogoutMutation();
   const user = useSelector((state: any) => state.persist.user);
   const [device, setDevice] = useState("android");
   const [cacheSize, setCacheSize] = useState(null);
@@ -65,7 +67,6 @@ const Settings = ({
   }, []);
 
   const { data } = useGetConfigQuery(device);
-  // console.log(cacheSize);
 
   useEffect(() => {
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
@@ -78,13 +79,14 @@ const Settings = ({
       setDevice("other");
     }
   }, []);
-
+  if (isLoading) return <Loader />;
   return (
-    <div className="w-full h-screen px-5 flex flex-col items-center relative bg-[#16131C]">
+    <div className="w-full h-screen no-scrollbar px-5 flex flex-col items-center relative bg-[#16131C]">
       <div className="top flex flex-col gap-5 w-full">
         <div className="flex justify-between items-center py-5">
           <Link to={paths.profile}>
-            <FaAngleLeft size={18} />
+            {/* <FaAngleLeft size={22} /> */}
+            <img src={backButton} alt="" />
           </Link>
           <p className="text-[16px]">
             {/* {user?.token ? "Setting & Privacy" : "Setting"} */}
@@ -100,7 +102,9 @@ const Settings = ({
             <div className="flex flex-col gap-4">
               <h1 className="text-[12px] text-[#888]">账户安全</h1>
               <ChangePassword />
-              <EditSecurity />
+              <div className="mt-5">
+                <EditSecurity />
+              </div>
             </div>
           </>
         ) : (
@@ -109,7 +113,7 @@ const Settings = ({
 
         {user?.token ? (
           <>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 mt-5">
               <h1 className="text-[12px] text-[#888]">
                 {/* Account Privacy */}
                 账号隐私设置
@@ -120,10 +124,10 @@ const Settings = ({
               changeVisibilityHandler={changeCVisHandler}
               visibilityLoading={cvLoading}
             />
-            <div className="border-b border-white/10"></div>
+            <div className="border-b border-white/10 my-2"></div>
             <Link
               to={paths.privacy_settings}
-              className="flex justify-between items-center"
+              className="flex justify-between items-center mb-5"
             >
               <p className="flex items-center gap-1 text-[14px]">
                 {/* Privacy Settings */}
@@ -138,23 +142,23 @@ const Settings = ({
           <></>
         )}
 
-        <div className="border-b border-white/10"></div>
-
         <div className="flex justify-between items-center">
           <p className="flex items-center gap-1 text-[14px]">当前版本</p>
           <p className="flex items-center gap-1 text-[14px]">
-            V {data?.data[0]?.version_number}{" "}
+            V 1.0.0.6{" "}
             <ChevronRight size={15} className="text-[#777777]" />
           </p>
         </div>
-        {/* <div className="border-b border-white/10"></div>
+
+        <div className="border-b border-white/10 my-2"></div>
+
         <div className="flex justify-between items-center">
           <p className="flex items-center gap-1 text-[14px]">清除缓存</p>
           <p className="flex items-center gap-1 text-[14px]">
             {Math.round(cacheSize)} MB{" "}
             <ChevronRight size={15} className="text-[#777777]" />
           </p>
-        </div> */}
+        </div>
       </div>
       <div className="w-full fixed bottom-0 px-5">
         {user?.token ? (
@@ -163,8 +167,7 @@ const Settings = ({
               onClick={async () => {
                 dispatch(logOutUser());
                 await logout("");
-                console.log(lgdata);
-                // navigate(paths.profile);
+                navigate(paths.profile);
               }}
               className="w-full rounded-xl bg-[#1C1A22] hover:bg-[#1C1A22]"
             >

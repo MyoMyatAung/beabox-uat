@@ -1,4 +1,4 @@
-import { FaAngleLeft } from "react-icons/fa";
+// import { FaAngleLeft } from "react-icons/fa";
 import { useRef, useState } from "react";
 import { useChangeBioMutation } from "@/store/api/profileApi";
 import { useDispatch } from "react-redux";

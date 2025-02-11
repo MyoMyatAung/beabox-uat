@@ -60,7 +60,7 @@ const Banner: React.FC = () => {
                     height={"100%"}
                   /> */}
                   <img
-                    className={`rounded-md hidden transition-all duration-300  ${
+                    className={`rounded-[12px] hidden transition-all duration-300  ${
                       selectedIndex === index
                         ? "w-[332px] h-[162px]" // Active slide size
                         : "w-[290px] h-[148px]" // Non-active slide size
@@ -72,7 +72,7 @@ const Banner: React.FC = () => {
               ))}
             </Carousel>
             {/* Custom Dots */}
-            <ul className="flex justify-center items-center gap-[10px] w-full  mt-2 absolute bottom-0 left-0">
+            <ul className="flex justify-center items-center gap-[4px] w-full  mt-2 absolute bottom-0 left-0">
               {ad.map((_, dotIndex) => (
                 <li
                   key={dotIndex}
@@ -118,7 +118,7 @@ export default Banner;
 //   }, [data]);
 
 //   const loopCondition = selectedIndex === ad.length;
-//   console.log(" this is mf", selectedIndex, loopCondition);
+//   // console.log(" this is mf", selectedIndex, loopCondition);
 
 //   return (
 //     <div className="py-[20px] relative">
@@ -129,29 +129,31 @@ export default Banner;
 //           <Swiper
 //             className=""
 //             slidesPerView={1.5}
-//             spaceBetween={"0px"}
+//             spaceBetween={30}
 //             centeredSlides={true}
-//             loop={loopCondition}
+//             loop={true}
 //             autoplay={{ delay: 3000, disableOnInteraction: false }}
 //             modules={[Autoplay]}
 //             onSlideChange={handleOnChange}
 //           >
 //             {ad.map((cc: any, index: number) => (
-//               <SwiperSlide className=" w-full" key={index}>
+//               <SwiperSlide className=" w-full rounded-[12px]" key={index}>
 //                 <a
 //                   href={cc.url}
 //                   target="_blank"
-//                   className={`flex justify-center w-full items-center px-[8px] flex-col relative transition-all duration-300 ${
-//                     selectedIndex === index
-//                       ? "scale-110" // Active slide is bigger
-//                       : "scale-75 opacity-70" // Non-active slides are smaller and faded
-//                   }`}
+//                   className={`flex rounded-[12px] justify-center w-full items-center px-[8px] flex-col relative transition-all duration-300 `}
 //                 >
-//                   <img
-//                     className="rounded-md object-cover w-[332px] h-[162px] transition-all duration-300"
-//                     src={cc.image}
-//                     alt={`Slide ${index + 1}`}
-//                   />
+//                   <div className=" w-[332px] h-[162px] px-2 overflow-hidden rounded-[12px]">
+//                     <img
+//                       className={` object-cover  w-[332px] h-[162px] transition-all duration-300 ${
+//                         selectedIndex === index
+//                           ? "scale-[1.3]"
+//                           : "scale-75 opacity-70 rounded-[12px]"
+//                       }`}
+//                       src={cc.image}
+//                       alt={`Slide ${index + 1}`}
+//                     />
+//                   </div>
 //                 </a>
 //               </SwiperSlide>
 //             ))}

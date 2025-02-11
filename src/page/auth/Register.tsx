@@ -40,6 +40,7 @@ const Register = () => {
     useRegisterMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const authErr = localStorage.getItem("auth-error") || "";
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -66,22 +67,24 @@ const Register = () => {
       captcha,
       captcha_key: data?.data?.captcha_key,
     });
-    console.log(registerData, "registerData");
+    // console.log(registerData, "registerData");
     if (registerData?.status) {
       // dispatch(setRegisterUser(registerData?.data));
       dispatch(setUser(registerData?.data));
       setShow验证码(false);
+      dispatch(setIsDrawerOpen(false));
       navigate(paths.profile);
       // setShowSecurity(true);
     } else {
-      setShow验证码(false);
-      setShowSecurity(false);
-      setError("出了点问题");
+      if (authErr) setError(authErr); // setError("出了点问题");
+      // setShow验证码(false);
+      await getCaptcha("");
     }
   };
   useEffect(() => {
-    if (rerror) setError(rerror?.data?.message);
-    setShow验证码(false);
+    const authErr = localStorage.getItem("auth-error") || "";
+    console.log(authErr, "authErr");
+    if (rerror) setError(authErr);
   }, [rerror]);
   return (
     <>
