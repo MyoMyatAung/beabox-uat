@@ -292,31 +292,38 @@ const VideoContainer = ({
   };
 
   const handleFullscreen = (video: any) => {
-    if (rotateVideoId === video?.post_id) {
-      // If the clicked video is already in fullscreen, exit fullscreen
-      setRotateVideoId(null);
-      if (container) {
-        const activeElement = container.querySelector(
-          `[data-post-id="${video?.post_id}"]`
-        );
-        if (activeElement) {
-          activeElement.scrollIntoView({ block: "center" });
-        }
-      }
+    if (
+      (window as any).webkit &&
+      (window as any).webkit.messageHandlers &&
+      (window as any).webkit.messageHandlers.jsBridge
+    ) {
+      sendEventToNative("beabox_fullscreen", {
+        post_id: video?.post_id,
+        like_api_url: `${import.meta.env.VITE_API_URL}/post/like`,
+        token: `Bearer ${user?.token}`,
+        video_url: video?.files[0].resourceURL,
+        share_link: config?.data?.share_link,
+        title: video.title,
+        like_count: +likeCount,
+        is_like: isLiked,
+      });
     } else {
-      // Otherwise, set the clicked video to fullscreen
-      setRotateVideoId(video?.post_id);
+      if (rotateVideoId === video?.post_id) {
+        // If the clicked video is already in fullscreen, exit fullscreen
+        setRotateVideoId(null);
+        if (container) {
+          const activeElement = container.querySelector(
+            `[data-post-id="${video?.post_id}"]`
+          );
+          if (activeElement) {
+            activeElement.scrollIntoView({ block: "center" });
+          }
+        }
+      } else {
+        // Otherwise, set the clicked video to fullscreen
+        setRotateVideoId(video?.post_id);
+      }
     }
-    sendEventToNative("beabox_fullscreen", {
-      post_id: video?.post_id,
-      like_api_url: `${import.meta.env.VITE_API_URL}/post/like`,
-      token: `Bearer ${user?.token}`,
-      video_url: video?.files[0].resourceURL,
-      share_link: config?.data?.share_link,
-      title: video.title,
-      like_count: +likeCount,
-      is_like: isLiked,
-    });
   };
 
   if (isOpen) {
