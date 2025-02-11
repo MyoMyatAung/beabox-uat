@@ -9,6 +9,7 @@ import {
 import { setVideos } from "../services/videosSlice";
 import { useNavigate } from "react-router-dom";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
+import { showToast } from "../services/errorSlice";
 
 const VideoContainer = ({
   video,
@@ -126,7 +127,12 @@ const VideoContainer = ({
           }
         }, 1000); // Call API 1 second after the last click
       } else {
-        setIsOpen(true);
+        dispatch(
+          showToast({
+            message: "登陆后可点赞",
+            type: "success",
+          })
+        );
       }
     };
 
