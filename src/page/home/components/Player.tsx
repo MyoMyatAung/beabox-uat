@@ -293,6 +293,7 @@ const Player = ({
   const { mute } = useSelector((state: any) => state.muteSlice);
   const user = useSelector((state: any) => state.persist.user);
   const [isPaused, setIsPaused] = useState(false);
+  const [isPlay, setIsplay] = useState(false);
   const playIconRef = useRef<HTMLDivElement | null>(null);
   const progressBarRef = useRef<HTMLInputElement | null>(null); // Reference to the range input
   const isDraggingRef = useRef(false); // Track if the user is dragging the progress bar
@@ -643,6 +644,8 @@ const Player = ({
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
+            setIsplay(true);
+
             // Handle ready and play events for dimension updates
             (artPlayerInstanceRef.current as any)?.on("ready", () => {
               setWidth(
@@ -653,6 +656,7 @@ const Player = ({
                 (artPlayerInstanceRef.current as Artplayer)?.video
                   ?.videoHeight || 0
               );
+              (artPlayerInstanceRef.current as any)?.play();
             });
 
             (artPlayerInstanceRef.current as any)?.on("play", () => {
@@ -669,6 +673,7 @@ const Player = ({
             }
           } else {
             if (artPlayerInstanceRef.current) {
+              setIsplay(false);
               // artPlayerInstanceRef.current.video.src = "";
               // artPlayerInstanceRef.current.destroy();
               // artPlayerInstanceRef.current = null;
@@ -708,6 +713,11 @@ const Player = ({
       }
     };
   }, [src]); // Re-run when `src` changes
+  useEffect(() => {
+    if (isPlay) {
+      artPlayerInstanceRef?.current?.play();
+    }
+  }, [isPlay]);
 
   useEffect(() => {
     if (artPlayerInstanceRef.current) {
