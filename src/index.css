@@ -326,3 +326,12 @@ input:checked + .slider:before {
   ); /* TikTok-like red-orange gradient */
   animation: loading-border 1.5s ease-in-out infinite; /* Smooth easing in and out */
 }
+
+.hide-x {
+  overflow-x: hidden;
+  scrollbar-width: none; /* For Firefox */
+}
+
+.hide-x::-webkit-scrollbar {
+  width: 0; /* For Webkit browsers (Chrome, Safari) */
+}

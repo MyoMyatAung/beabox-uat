@@ -29,7 +29,7 @@ const AuthDrawer = () => {
     }
   };
   return (
-    <div className="z-[1800] fixed bottom-0 left-0 w-full">
+    <div className="z-[1900] fixed bottom-0 left-0 w-full">
       <AnimatePresence>
         <div
           className="bg-transparent min-h-[30vh]"

@@ -1,9 +1,8 @@
-import { AvatarImage, Avatar } from "../ui/avatar";
+import { AvatarImage, Avatar } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
 import { paths } from "@/routes/paths";
-import FollowBtn from "./follow-btn";
 
-const FollowCard = ({ data }: { data: any }) => {
+const MyFollowCard = ({ data }: { data: any }) => {
   return (
     <div className="w-full flex justify-between items-center py-1">
       <Link
@@ -19,18 +18,9 @@ const FollowCard = ({ data }: { data: any }) => {
         </div>
       </Link>
 
-      <FollowBtn id={data?.id} followBack={data?.follows_back} />
-      {/* <Button
-        onClick={() => changeFollowStatusHandler(data?.user_code)}
-        className={`${
-          data?.follows_back ? "bg-[#FFFFFF17]" : "gradient-bg"
-        } w-[88px]`}
-        size={"sm"}
-      >
-        {data?.follows_back ? "Following" : "Follow"}
-      </Button> */}
+      <div className=""></div>
     </div>
   );
 };
 
-export default FollowCard;
+export default MyFollowCard;

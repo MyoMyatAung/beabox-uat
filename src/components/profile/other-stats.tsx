@@ -5,12 +5,9 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { FaAngleLeft } from "react-icons/fa";
-import { useDispatch } from "react-redux";
-import FollowTabs from "./follow-tabs";
 import FollowTabs2 from "./follow/follow-tab2";
 import { useEffect, useState } from "react";
 const OtherStats = ({ followers, followings, likes, nickname, id }: any) => {
-  const dispatch = useDispatch();
   const [defaultFollowTab, setDefaultFollowTab] = useState("follower");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 

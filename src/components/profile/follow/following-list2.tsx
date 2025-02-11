@@ -5,10 +5,10 @@ import { useGetFollowingListQuery } from "@/store/api/profileApi";
 import { UsersRound } from "lucide-react";
 import Loader from "../../../page/home/vod_loader.gif";
 import InfiniteScroll from "react-infinite-scroll-component";
+import MyFollowCard from "./my-follow-card";
 
-const FollowingList2 = ({ searchTerm, id }: any) => {
+const FollowingList2 = ({ searchTerm, id, closeTab, me }: any) => {
   const [waterfall, setWaterFall] = useState<any[]>([]);
-  // console.log(user_code)
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
@@ -17,6 +17,8 @@ const FollowingList2 = ({ searchTerm, id }: any) => {
     search: searchTerm,
     page: page,
   });
+
+  const myId = useSelector((state: any) => state?.persist?.user?.id);
 
   useEffect(() => {
     if (data?.data) {
@@ -27,14 +29,11 @@ const FollowingList2 = ({ searchTerm, id }: any) => {
     } else {
       setHasMore(false);
     }
-    // console.log(data.pagination?.total);
   }, [data]);
-  // console.log(" this is mf", waterfall);
   const fetchMoreData = () => {
     console.log(page);
     setPage((prevPage) => prevPage + 1);
   };
-  // console.log(data?.data, "following");
   return (
     <div className="flex flex-col gap-4 w-full no-scrollbar h-screen pb-5">
       {isLoading || isFetching ? (
@@ -47,16 +46,24 @@ const FollowingList2 = ({ searchTerm, id }: any) => {
         <>
           {data?.data?.length ? (
             <>
-              {waterfall.map((follower: any) => (
-                <FollowCard key={follower.user_code} data={follower} />
-              ))}
+              {waterfall?.map((follower: any) =>
+                follower?.id !== me?.id ? (
+                  <div key={follower.user_code} onClick={() => closeTab(false)}>
+                    <FollowCard data={follower} />
+                  </div>
+                ) : (
+                  <div key={follower.user_code} onClick={() => closeTab(false)}>
+                    <MyFollowCard data={follower} />
+                  </div>
+                )
+              )}
               <InfiniteScroll
                 className=""
                 dataLength={data?.data?.length}
                 next={fetchMoreData}
                 hasMore={hasMore}
                 loader={
-                  <div className=" flex justify-center w-screen h-[300px]">
+                  <div className=" flex justify-center w-screen h-[100px]">
                     <div className="">
                       <img
                         src={Loader}

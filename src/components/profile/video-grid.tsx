@@ -4,14 +4,7 @@ import VideoCard from "./video-card";
 import Loader from "../../page/home/vod_loader.gif";
 import ScrollHeader from "./scroll-header";
 
-const VideoGrid = ({
-  isUpload,
-  data,
-  hasMore,
-  fetchMoreData,
-  showHeader,
-}: any) => {
-  // console.log(data);
+const VideoGrid = ({ data, hasMore, fetchMoreData }: any) => {
   return (
     <div className={`grid grid-cols-3 gap-2`}>
       {data && (
