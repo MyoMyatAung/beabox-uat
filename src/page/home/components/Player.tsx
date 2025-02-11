@@ -742,25 +742,9 @@ const Player = ({
   }, [mute]);
 
   useEffect(() => {
-    if (artPlayerInstanceRef.current?.video) {
-      const videoElement = artPlayerInstanceRef.current.video;
-
-      if (videoElement.requestFullscreen) {
-        videoElement.requestFullscreen();
-      } else if (videoElement.mozRequestFullScreen) {
-        // Firefox
-        videoElement.mozRequestFullScreen();
-      } else if (videoElement.webkitRequestFullscreen) {
-        // Chrome, Safari, and Opera
-        videoElement.webkitRequestFullscreen();
-      } else if (videoElement.msRequestFullscreen) {
-        // IE/Edge
-        videoElement.msRequestFullscreen();
-      }
+    if (artPlayerInstanceRef.current) {
+      artPlayerInstanceRef.current.fullscreen = rotate;
     }
-    // if (artPlayerInstanceRef.current) {
-    //   artPlayerInstanceRef.current.fullscreenWeb = rotate;
-    // }
   }, [rotate]); // This effect runs whenever `mute` changes
 
   return <div ref={playerContainerRef} className={`video_player w-full`} />;
