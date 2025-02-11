@@ -83,6 +83,15 @@ export const homeApi = createApi({
         }),
       }),
     }),
+    watchtPost: builder.mutation<void, { post_id: any }>({
+      query: ({ post_id }) => ({
+        url: `watch-history/store`,
+        method: "POST",
+        body: convertToSecurePayload({
+          post_id,
+        }),
+      }),
+    }),
 
     followStatus: builder.mutation<void, { follow_user_id: any; status: any }>({
       query: ({ follow_user_id, status }) => ({
@@ -201,6 +210,7 @@ export const {
   useStoreReportMutation,
   useUnlikePostMutation,
   useUnInterestPostMutation,
+  useWatchtPostMutation,
 } = homeApi;
 
 // import { decryptWithAes } from "@/lib/decrypt";

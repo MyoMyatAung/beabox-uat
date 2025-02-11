@@ -330,6 +330,7 @@ const VideoContainer = ({
         setWidth={setWidth}
         sethideBar={sethideBar}
         setHeight={setHeight}
+        post_id={post_id}
       />
       {!hideBar && (
         <VideoSidebar
