@@ -14,6 +14,7 @@ import PrivateProfile from "@/components/profile/private-profile";
 import ContentVisibility from "@/components/profile/content-visibility";
 import { useEffect, useState } from "react";
 import backButton from "../../assets/backButton.svg";
+import Loader from "@/components/shared/loader";
 
 const Settings = ({
   liked_video_visibility,
@@ -25,7 +26,7 @@ const Settings = ({
 }: any) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [logout, { data: lgdata }] = useLogoutMutation();
+  const [logout, { data: lgdata, isLoading }] = useLogoutMutation();
   const user = useSelector((state: any) => state.persist.user);
   const [device, setDevice] = useState("android");
   const [cacheSize, setCacheSize] = useState(null);
@@ -66,7 +67,6 @@ const Settings = ({
   }, []);
 
   const { data } = useGetConfigQuery(device);
-  // console.log(cacheSize);
 
   useEffect(() => {
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
@@ -79,7 +79,7 @@ const Settings = ({
       setDevice("other");
     }
   }, []);
-  // bg-[#16131C]
+  if (isLoading) return <Loader />;
   return (
     <div className="w-full h-screen no-scrollbar px-5 flex flex-col items-center relative bg-[#16131C]">
       <div className="top flex flex-col gap-5 w-full">
