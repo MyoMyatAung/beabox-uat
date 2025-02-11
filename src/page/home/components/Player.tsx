@@ -491,6 +491,19 @@ const Player = ({
           mounted: (element) => {
             playIconRef.current = element; // Store reference to custom play button
 
+            // Handle play/pause events
+            artPlayerInstanceRef.current?.on("pause", () => {
+              setIsPaused(true);
+
+              if (element) element.style.display = "block";
+            });
+
+            artPlayerInstanceRef.current?.on("play", () => {
+              // progressBarRef?.current?.classList.remove("hidden");
+              setIsPaused(false);
+              if (element) elementstyle.display = "none";
+            });
+
             // Click the play button to resume video
             playIconRef?.current?.addEventListener("click", () => {
               artPlayerInstanceRef.current?.play();
@@ -557,6 +570,11 @@ const Player = ({
     });
 
     artPlayerInstanceRef.current.on("ready", () => {
+      if (!artPlayerInstanceRef.current?.playing) {
+        if (playIconRef.current) playIconRef.current.style.display = "block";
+      } else {
+        if (playIconRef.current) playIconRef.current.style.display = "none";
+      }
       if (progressBarRef?.current) {
         if (progressBarRef.current) {
           progressBarRef.current.style.opacity = "1";
@@ -567,11 +585,11 @@ const Player = ({
     // Handle play/pause events
     artPlayerInstanceRef.current.on("pause", () => {
       setIsPaused(true);
+
       if (playIconRef.current) playIconRef.current.style.display = "block";
     });
 
     artPlayerInstanceRef.current.on("play", () => {
-      // progressBarRef?.current?.classList.remove("hidden");
       setIsPaused(false);
       if (playIconRef.current) playIconRef.current.style.display = "none";
     });
@@ -655,6 +673,7 @@ const Player = ({
               // artPlayerInstanceRef.current.destroy();
               // artPlayerInstanceRef.current = null;
               (artPlayerInstanceRef.current as any)?.pause();
+
               if (artPlayerInstanceRef.current) {
                 (artPlayerInstanceRef.current as any).muted = muteRef.current;
               }
