@@ -73,7 +73,7 @@ const Ads = ({ ads }: { ads: any }) => {
             </button>
           )}
         </div>
-        <div className="spon px-3 py-2 mb-3 inline-block">立即预约</div>
+        <div className="spon px-3 py-2 mb-3 inline-block">赞助商</div>
         <a
           className={`ads-btn w-[75%] flex items-center justify-center py-2`}
           target="_blank"
