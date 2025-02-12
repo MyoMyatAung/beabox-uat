@@ -181,17 +181,18 @@ const Application: React.FC<any> = () => {
             {/* Footer Section */}
             <div className="mt-[20px] mb-[80px]">
               {applicationData?.footer?.length > 0 &&
-                applicationData?.footer.map((footer: any) => (
-                  <a href={footer.url} target="_blank" key={footer.id}>
+                // applicationData?.footer.map((footer: any) => (
+                  <a href={applicationData?.footer[0].url} target="_blank" key={applicationData?.footer[0].id}>
                     <ImageWithPlaceholder
                       className="mt-[5px] rounded-md"
                       alt="Footer Image"
                       width={"100%"}
                       height={"100%"}
-                      src={footer.image}
+                      src={applicationData?.footer[0].image}
                     />
                   </a>
-                ))}
+                // ))
+                }
             </div>
           </>
         )}
