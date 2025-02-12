@@ -73,13 +73,13 @@ const Ads = ({ ads }: { ads: any }) => {
             </button>
           )}
         </div>
-        <div className="spon px-3 py-2 mb-3 inline-block">赞助商</div>
+        <div className="spon px-3 py-2 mb-3 inline-block">{ads?.profile_text}赞助商</div>
         <a
           className={`ads-btn w-[75%] flex items-center justify-center py-2`}
           target="_blank"
           href={ads?.jump_url}
         >
-          <span>了解更多</span>
+          <span>{ads?.btn_text}</span>
           <svg
             className="mt-3"
             xmlns="http://www.w3.org/2000/svg"
