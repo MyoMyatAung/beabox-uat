@@ -9,7 +9,7 @@ import ChangePassword from "@/components/profile/change-password";
 import EditBio from "@/components/profile/edit-bio";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetMyProfileQuery } from "@/store/api/profileApi";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { setProfileData } from "@/store/slices/persistSlice";
 import EditNickName from "@/components/profile/edit-nickname";
 import EditRegion from "@/components/profile/edit-region";
@@ -20,6 +20,16 @@ import backButton from "../../assets/backButton.svg";
 const ProfileDetail = () => {
   const user = useSelector((state: any) => state.persist.user);
   const profileData = useSelector((state: any) => state.persist.profileData);
+  const [decryptedPhoto, setDecryptedPhoto] = useState("");
+  const decryptImage = (arrayBuffer, key = 0x12, decryptSize = 4096) => {
+    const data = new Uint8Array(arrayBuffer);
+    const maxSize = Math.min(decryptSize, data.length);
+    for (let i = 0; i < maxSize; i++) {
+      data[i] ^= key;
+    }
+    // Decode the entire data as text.
+    return new TextDecoder().decode(data);
+  };
   const private_profile = useSelector(
     (state: any) => state.persist.private_profile
   );
@@ -33,15 +43,44 @@ const ProfileDetail = () => {
   }, []);
 
   useEffect(() => {
+    const loadAndDecryptPhoto = async () => {
+      if (!user?.token || !data?.data?.profile_photo) {
+        setDecryptedPhoto("");
+        return;
+      }
+
+      try {
+        const photoUrl = data.data.profile_photo;
+
+        // If it's not a .txt file, assume it's already a valid URL
+        if (!photoUrl.endsWith(".txt")) {
+          setDecryptedPhoto(photoUrl);
+          return;
+        }
+
+        // Fetch encrypted image data
+        const response = await fetch(photoUrl);
+        const arrayBuffer = await response.arrayBuffer();
+
+        // Decrypt the first 4096 bytes and decode as text.
+        const decryptedStr = decryptImage(arrayBuffer);
+        console.log("Decrypted profile photo string is =>", decryptedStr);
+
+        // Set the decrypted profile photo source
+        setDecryptedPhoto(decryptedStr);
+      } catch (error) {
+        console.error("Error loading profile photo:", error);
+        setDecryptedPhoto("");
+      }
+    };
+
+    loadAndDecryptPhoto();
+  }, [data?.data?.profile_photo, user?.token]);
+
+  useEffect(() => {
     refetch();
   }, [private_profile]);
 
-  // console.log(profileData)
-  // console.log(data?.data?.profile_photo);
-
-  // useEffect(() => {
-  //   refetch();
-  // }, [bio, refetch, gender]);
   return (
     <>
       {/* <TranLoader /> */}
@@ -54,7 +93,7 @@ const ProfileDetail = () => {
           <p className="text-[16px] mr-5">资料</p>
           <div></div>
         </div>
-        <ImageUpload imgurl={data?.data?.profile_photo} />
+        <ImageUpload imgurl={decryptedPhoto} />
         <div className="flex flex-col gap-7 my-7">
           <h1 className="text-[12px] text-[#888]">关于你</h1>
           <EditUsername
@@ -75,7 +114,9 @@ const ProfileDetail = () => {
         </div> */}
           <div className="text-[14px] flex items-center justify-between">
             <h1>用户身份</h1>
-            <p className="flex items-center gap-1 text-[#888]">{profileData?.user_code}</p>
+            <p className="flex items-center gap-1 text-[#888]">
+              {profileData?.user_code}
+            </p>
           </div>
           <EditBio bio={data?.data?.bio} refetchHandler={refetchHandler} />
         </div>

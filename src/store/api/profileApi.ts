@@ -181,11 +181,12 @@ export const profileApi = createApi({
     }),
     getFollowerList: builder.query<any, any>({
       query: ({ user_id, search }) => ({
-        url: search?.length
-          ? convertToSecureUrl(
-              `/follower/follower-list?user_id=${user_id}&search=${search}`
-            )
-          : convertToSecureUrl(`/follower/follower-list?user_id=${user_id}`),
+        url:
+          search?.length > 0 
+            ? convertToSecureUrl(
+                `/follower/follower-list?user_id=${user_id}&search=${search}`
+              )
+            : convertToSecureUrl(`/follower/follower-list?user_id=${user_id}`),
         method: "GET",
       }),
     }),
