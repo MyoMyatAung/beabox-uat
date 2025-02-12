@@ -79,7 +79,7 @@ const Ads = ({ ads }: { ads: any }) => {
           target="_blank"
           href={ads?.jump_url}
         >
-          <span>了解更多</span>
+          <span>点击领取</span>
           <svg
             className="mt-3"
             xmlns="http://www.w3.org/2000/svg"
