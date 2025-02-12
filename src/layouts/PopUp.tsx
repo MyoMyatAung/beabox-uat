@@ -4,7 +4,7 @@ import {
   useGetAdsNoticeQuery,
 } from "@/store/api/explore/exploreApi";
 import "../page/explore/explore.css";
-import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceholder";
+import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder.tsx";
 import Notice from "./Notice";
 import { useGetAdsPopUpQuery } from "@/utils/helperService";
 
