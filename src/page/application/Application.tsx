@@ -230,7 +230,7 @@ const Application: React.FC<any> = () => {
                 applicationData?.footer.map((footer: any) => (
                   <a href={footer.url} target="_blank" key={footer.id}>
                     <img
-                      className="w-full h-auto rounded-[6px] border-[#222]"
+                      className="w-full h-auto rounded-[6px] mt-[5px] border-[#222]"
                       src={footer.image}
                       alt=""
                     />
