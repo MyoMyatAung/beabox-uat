@@ -216,7 +216,12 @@ const RegisterForm = ({ setIsOpen }: any) => {
           <div className="">
             <Button
               // type="submit"
-              disabled={isLoading || !emailOrPhoneValue || !passwordValue}
+              disabled={
+                isLoading ||
+                !emailOrPhoneValue ||
+                !passwordValue ||
+                passwordValue?.length < 8
+              }
               onClick={async () => {
                 await getCaptcha("");
                 setShow验证码(true);

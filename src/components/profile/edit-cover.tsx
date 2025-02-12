@@ -9,7 +9,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { setCover } from "@/store/slices/persistSlice";
 
-const EditCover = () => {
+const EditCover = ({ decryptedCover }: any) => {
   const dispatch = useDispatch();
   const cover = useSelector((state: any) => state.persist.cover);
   const [isOpen, setIsOpen] = useState(false);
@@ -36,7 +36,10 @@ const EditCover = () => {
       if (e.target && typeof e.target.result === "string") {
         setImage(e.target.result);
         console.log("1");
-        await settingUpload({ filedata: e.target.result, filePath: "cover_photo" });
+        await settingUpload({
+          filedata: e.target.result,
+          filePath: "cover_photo",
+        });
         // if (settingUploadData?.status)
         // await profileUpload({ file_url: settingUploadData?.data?.url });
       }
@@ -82,12 +85,16 @@ const EditCover = () => {
               </label>
             </div>
             <div className="w-full h-[1px] bg-[#FFFFFF0A]"></div>
-            <div className="flex items-center gap-3" onClick={removeHandler}>
-              <div className="bg-[#FFFFFF1F] p-2 rounded-full">
-                <X size={16} />
+            {decryptedCover ? (
+              <div className="flex items-center gap-3" onClick={removeHandler}>
+                <div className="bg-[#FFFFFF1F] p-2 rounded-full">
+                  <X size={16} />
+                </div>
+                <p className="text-[14px]">移除封面</p>
               </div>
-              <p className="text-[14px]">移除封面</p>
-            </div>
+            ) : (
+              <></>
+            )}
           </div>
         </div>
       </DrawerContent>

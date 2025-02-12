@@ -240,7 +240,7 @@ const OtherProfile = () => {
                 {userData?.data?.gender == "Male" ? <MaleSVG /> : <></>}
               </span>
               <span>
-                {userData?.data?.gender == "Feale" ? <FemaleSVG /> : <></>}
+                {userData?.data?.gender == "Female" ? <FemaleSVG /> : <></>}
               </span>
               {/* <span>
                 <BsPatchCheckFill className="z-[1200] text-[#888]" />

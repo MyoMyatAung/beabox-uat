@@ -195,7 +195,8 @@ const Login = () => {
                   isLoading ||
                   captchaLoading ||
                   !emailOrPhoneValue ||
-                  !passwordValue
+                  !passwordValue ||
+                  passwordValue?.length < 8
                 }
                 // type="submit"
                 onClick={async () => {

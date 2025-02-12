@@ -189,9 +189,10 @@ const Register = () => {
               <Button
                 // type="submit"
                 disabled={
-                  isLoading
-                    ? true
-                    : false || !emailOrPhoneValue || !passwordValue
+                  isLoading ||
+                  !emailOrPhoneValue ||
+                  !passwordValue ||
+                  passwordValue?.length < 8
                 }
                 onClick={async () => {
                   await getCaptcha("");
