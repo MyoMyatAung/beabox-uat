@@ -24,7 +24,7 @@ import AuthDrawer from "@/components/profile/auth/auth-drawer";
 import ScrollHeader from "@/components/profile/scroll-header";
 import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 
-// A helper function that mimics your Kotlin logic.
+// A helper function that mimdata?.data?.profile_photoics your Kotlin logic.
 // It XORs only the first 4096 bytes (or the data size if smaller) and decodes the result as text.
 const decryptImage = (arrayBuffer, key = 0x12, decryptSize = 4096) => {
   const data = new Uint8Array(arrayBuffer);
@@ -248,7 +248,7 @@ const Profile = () => {
           />
         </div>
         <div className="z-[1900] flex my-5 justify-between items-center px-5">
-          {user?.token ? <EditCover /> : <div></div>}
+          {user?.token ? <EditCover decryptedCover={decryptedCover} /> : <div></div>}
           <div className="z-[1900] flex gap-3 items-center">
             <Link
               to={paths.noti}
@@ -278,7 +278,7 @@ const Profile = () => {
               <p className="z-[1900] text-[18px] flex items-center gap-1">
                 {data?.data?.nickname}
                 <span>{gender === "Male" ? <MaleSVG /> : null}</span>
-                <span>{gender === "Feale" ? <FemaleSVG /> : null}</span>
+                <span>{gender === "Female" ? <FemaleSVG /> : null}</span>
               </p>
               <p className="z-[1900] text-[14px] text-[#BBBBBB] flex gap-1 items-center">
                 B号 : {data?.data?.user_code}

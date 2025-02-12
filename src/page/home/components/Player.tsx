@@ -251,11 +251,11 @@
 //       artPlayerInstanceRef.current.muted = mute;
 //     }
 //   }, [mute]);
-//   // useEffect(() => {
-//   //   if (artPlayerInstanceRef.current) {
-//   //     artPlayerInstanceRef.current.fullscreenWeb = rotate;
-//   //   }
-//   // }, [rotate]); // This effect runs whenever `mute` changes
+// useEffect(() => {
+//   if (artPlayerInstanceRef.current) {
+//     artPlayerInstanceRef.current.fullscreenWeb = rotate;
+//   }
+// }, [rotate]); // This effect runs whenever `mute` changes
 
 //   return <div ref={playerContainerRef} className={`video_player w-full `} />;
 // };
@@ -267,8 +267,9 @@ import Artplayer from "artplayer";
 import Hls from "hls.js";
 import indicator from "../indicator.svg";
 import vod_loader from "../vod_loader.gif";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useWatchtPostMutation } from "../services/homeApi";
+import { showToast } from "../services/errorSlice";
 
 const Player = ({
   src,
@@ -277,6 +278,7 @@ const Player = ({
   setHeight,
   handleLike,
   sethideBar,
+  rotate,
   post_id,
 }: {
   src: string;
@@ -286,6 +288,7 @@ const Player = ({
   handleLike: () => void;
   sethideBar: any;
   post_id: any;
+  rotate: any;
 }) => {
   const playerContainerRef = useRef<HTMLDivElement | null>(null);
   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
@@ -303,6 +306,8 @@ const Player = ({
   const watchedTimeRef = useRef(0); // Track total watched time
   const apiCalledRef = useRef(false); // Ensure API is called only once
   const [watchtPost] = useWatchtPostMutation(); // Hook for watch history API
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     muteRef.current = mute; // Update muteRef when mute state changes
@@ -343,6 +348,7 @@ const Player = ({
       container: playerContainerRef.current,
       url: src,
       volume: 0.5,
+      loop: true,
       muted: mute,
       autoplay: false,
       fullscreenWeb: true,
@@ -678,7 +684,17 @@ const Player = ({
               const now = Date.now();
               if (now - lastClick <= 300) {
                 if (singleClickTimeout) clearTimeout(singleClickTimeout);
-                handleLike();
+                if (user?.token) {
+                  handleLike();
+                } else {
+                  //  setCommentCount((prev: any) => +prev + 1);
+                  dispatch(
+                    showToast({
+                      message: "登陆后可点赞",
+                      type: "success",
+                    })
+                  );
+                }
               } else {
                 singleClickTimeout = setTimeout(() => {
                   artPlayerInstanceRef.current?.toggle();
@@ -868,6 +884,12 @@ const Player = ({
       artPlayerInstanceRef.current.muted = mute;
     }
   }, [mute]);
+
+  useEffect(() => {
+    if (artPlayerInstanceRef.current) {
+      artPlayerInstanceRef.current.fullscreen = rotate;
+    }
+  }, [rotate]); // This effect runs whenever `mute` changes
 
   return <div ref={playerContainerRef} className={`video_player w-full`} />;
 };

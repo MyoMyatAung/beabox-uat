@@ -24,7 +24,7 @@ const VideoCard = ({ videoData }: any) => {
         className="h-full rounded w-full object-cover object-center"
       /> */}
       {/* remove if not work ;( */}
-      <div className=" h-[300px]">
+      <div className="">
         <ImageWithPlaceholder
           src={videoData?.preview_image}
           alt={videoData.title || "Video"}

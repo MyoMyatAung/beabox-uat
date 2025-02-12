@@ -62,6 +62,7 @@ const More: React.FC<MoreProps> = () => {
       setHasMore(false);
     }
   }, [data, dispatch, filter]);
+  // console.log(list)
 
   const popularItems = Array.from({ length: 10 }, (_, i) => ({
     title: `My Boss (2021) - ${i + 1}`,
@@ -92,14 +93,17 @@ const More: React.FC<MoreProps> = () => {
   const handleTabChange = (ff: any) => {
     setCustomLoad(true);
     dispatch(setMoreTab(ff.key));
-    if (isFetching || isLoading) {
-      return;
-    } else {
-      setTimeout(() => {
-        setCustomLoad(false);
-      }, 500);
-    }
+    
+    if (isFetching || isLoading) return;
+    
+    setList([]); // Reset list when switching tabs
+    setPage(1); // Reset page number
+  
+    setTimeout(() => {
+      setCustomLoad(false);
+    }, 500);
   };
+  
 
   const calculateHeight = (width: number, height: number) => {
     if (width > height) {
