@@ -5,7 +5,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { useSelector } from "react-redux";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
-import ImageWithPlaceholder from "../search/comp/imgPlaceholder";
+import ImageWithPlaceholder from "../explore/comp/imgPlaceHolder.tsx";
 
 const Application: React.FC<any> = () => {
   const [ad, setAd] = useState([]);
@@ -134,6 +134,7 @@ const Application: React.FC<any> = () => {
                     .reverse()
                     .map((header: any) => (
                       <a href={header.url} target="_blank" key={header.id}>
+
                         <ImageWithPlaceholder
                           alt="Header Image"
                           width="100%"
@@ -185,8 +186,8 @@ const Application: React.FC<any> = () => {
                   <a href={footer.url} target="_blank" key={footer.id}>
                     <ImageWithPlaceholder
                       alt="Footer Image"
-                      width="100%"
-                      height="100%"
+                      width={"100%"}
+                      height={"100%"}
                       src={footer.image}
                     />
                   </a>
