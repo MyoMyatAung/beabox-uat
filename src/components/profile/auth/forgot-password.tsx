@@ -2,7 +2,7 @@ import { paths } from "@/routes/paths";
 // import { FaAngleLeft } from "react-icons/fa";
 import backButton from "../../../assets/backButton.svg";
 import { Link, useNavigate } from "react-router-dom";
-import { X } from "lucide-react";
+import { RotateCcw, X } from "lucide-react";
 import { useState } from "react";
 import SubmitButton from "@/components/shared/submit-button";
 import {
@@ -41,19 +41,20 @@ const ForgotPassword = () => {
     });
     if (!data?.status) {
       setError("出了点问题");
-      setShow验证码(false);
+      // setShow验证码(false);
+    } else {
+      dispatch(setForgotData(data?.data));
+      navigate(paths.check_answer);
     }
-    dispatch(setForgotData(data?.data));
-    navigate(paths.check_answer);
   };
-
+  console.log(data, "cun");
   return (
     <div className="w-full h-screen px-5 flex flex-col items-center justify-between bg-[#16131C]">
       <div className="w-full">
         <div className="flex justify-between items-center py-5">
           <Link to={paths.profile}>
             {/* <FaAngleLeft size={22} /> */}
-            <img src={backButton} alt=""/>
+            <img src={backButton} alt="" />
           </Link>
           <p className="text-[16px]">
             {/* {user?.token ? "Setting & Privacy" : "Setting"} */}
@@ -63,7 +64,7 @@ const ForgotPassword = () => {
         </div>
         <div>
           <label htmlFor="" className="text-[14px] text-[#888888] my-3">
-          用户名
+            用户名
           </label>
           <div className="relative">
             <input
@@ -102,7 +103,7 @@ const ForgotPassword = () => {
       </div>
       <Dialog open={show验证码} onOpenChange={setShow验证码}>
         {show验证码 ? (
-          <DialogContent className="bg-[#16131C] border-0 shadow-lg rounded-lg max-w-[290px]">
+          <DialogContent className="bg-[#393641] border-0 shadow-lg rounded-lg max-w-[290px]">
             <DialogHeader>
               <DialogTitle className="text-white text-[16px]">
                 验证码
@@ -123,9 +124,24 @@ const ForgotPassword = () => {
                   alt=""
                 />
               </div>
+              <div
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  await getCaptcha("");
+                  setShow验证码(true);
+                  console.log("get new");
+                }}
+                className={`flex items-center gap-2`}
+              >
+                <RotateCcw
+                  className={`${captchaLoading ? "animate-spin" : ""}`}
+                  size={14}
+                />
+                <p className="text-[12px] text-[#bbb]">刷新</p>
+              </div>
               <Button
                 onClick={handleVerify}
-                disabled={isLoading}
+                disabled={isLoading || captchaLoading}
                 type="submit"
                 className="w-full gradient-bg hover:gradient-bg text-white rounded-lg"
               >

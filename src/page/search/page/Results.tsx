@@ -22,6 +22,7 @@ import personE from "../../../assets/explore/personE.svg";
 
 // import { FaAngleLeft } from "react-icons/fa";
 import backButton from "../../../assets/backButton.svg";
+import { useGetConfigQuery } from "@/page/home/services/homeApi";
 
 interface ResultsProps {}
 
@@ -40,6 +41,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
   const dispatch = useDispatch();
   const [loadingTabs, setLoadingTabs] = useState(true); // Track tab loading state
   const [currentPage, setCurrentPage] = useState(1);
+  // const { data: filter } = useGetConfigQuery({});
   const [movies, setMovies] = useState<any[]>([]);
   const navigate = useNavigate();
   const [postSearch, { data, isLoading }] = usePostSearchMutation();
@@ -49,6 +51,9 @@ const Results: React.FC<ResultsProps> = ({}) => {
   const [isFocused, setIsFocused] = useState(false); // Manage input focus
   const [triggerAutocomplete, { data: autocompleteData }] =
     useLazyGetSuggestionsQuery(); // Lazy query for autocomplete
+
+  // const res = filter?.data?.post_filter;
+  // const firstKey = res ? Object.keys(res)[0] : null;
 
   const handleSearch = () => {
     if (query.trim()) {
@@ -69,6 +74,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
     }).then((response) => {
       if (response?.data?.data?.orders) {
         setTabs(response.data.data.orders); // Store tabs separately
+
         setActiveTab(response.data.data.orders[0]); // Set first tab active
       }
       setLoadingTabs(false); // Tabs have loaded
