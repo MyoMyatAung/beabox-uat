@@ -19,7 +19,7 @@ export const profileApi = createApi({
     },
     responseHandler: async (response) => {
       const encryptedData = await response.json();
-
+      console.log(encryptedData, "ecdata");
       try {
         const decryptedData = decryptWithAes(encryptedData?.data);
         return JSON.parse(decryptedData);
@@ -182,7 +182,7 @@ export const profileApi = createApi({
     getFollowerList: builder.query<any, any>({
       query: ({ user_id, search }) => ({
         url:
-          search?.length > 0 
+          search?.length > 0
             ? convertToSecureUrl(
                 `/follower/follower-list?user_id=${user_id}&search=${search}`
               )

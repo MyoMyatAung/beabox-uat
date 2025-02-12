@@ -170,11 +170,7 @@ const Profile = () => {
         <>
           <div className="gradient-overlay2"></div>
           <img
-            src={
-              user?.token
-                ? decryptedCover || defaultCover
-                : defaultCover
-            }
+            src={user?.token ? decryptedCover || defaultCover : defaultCover}
             alt=""
             className="fixed top-0 z-[1000] left-0 w-full h-[155px] object-cover object-center"
           />
@@ -248,7 +244,11 @@ const Profile = () => {
           />
         </div>
         <div className="z-[1900] flex my-5 justify-between items-center px-5">
-          {user?.token ? <EditCover decryptedCover={decryptedCover} /> : <div></div>}
+          {user?.token ? (
+            <EditCover decryptedCover={decryptedCover} />
+          ) : (
+            <div></div>
+          )}
           <div className="z-[1900] flex gap-3 items-center">
             <Link
               to={paths.noti}
@@ -287,14 +287,16 @@ const Profile = () => {
                   size={14}
                 />
               </p>
-              {data?.data?.share_region === "on" && region ? (
+              {data?.data?.share_region === "on" ? (
                 <div className="z-[1900] flex">
                   <div className="z-[1900] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
-                    {(!region?.city?.length && !region?.province?.length) ? (
+                    {!data?.data?.city?.length &&
+                    !data?.data?.province?.length ? (
                       <span>未知</span>
                     ) : (
                       <>
-                        <span>{region?.provinceName}</span>:<span>{region?.city}</span>
+                        <span>{data?.data?.province}</span>:
+                        <span>{data?.data?.city}</span>
                       </>
                     )}
                   </div>
@@ -310,7 +312,31 @@ const Profile = () => {
           )}
         </div>
         <h1 className="text-[12px] text-[#888] mb-5 italic px-5 z-[1900] relative">
-          {data?.data?.hide_bio === "on" ? null : user?.token ? (
+          {user?.token ? (
+            <>
+              {data?.data?.hide_bio === "on" ? (
+                <div className="text-[12px] text-[#888] mb-5 italic">
+                  {data?.data?.bio}
+                </div>
+              ) : (
+                <>
+                  {data?.data?.hide_bio?.length ? (
+                    <></>
+                  ) : (
+                    <Link
+                      to={paths.add_bio}
+                      className="text-[12px] text-[#FFFFFFCC] bg-[#FFFFFF14] px-2 py-1 w-[91px] text-center rounded-full"
+                    >
+                      + 个人简介
+                    </Link>
+                  )}
+                </>
+              )}
+            </>
+          ) : (
+            <></>
+          )}
+          {/* {data?.data?.hide_bio === "on" ? null : user?.token ? (
             data?.data?.bio ? (
               <div className="text-[12px] text-[#888] mb-5 italic">
                 {data?.data?.bio}
@@ -323,7 +349,7 @@ const Profile = () => {
                 + 个人简介
               </Link>
             )
-          ) : null}
+          ) : null} */}
         </h1>
         <div className={`${showHeader ? "opacity-0" : "opacity-1"}`}>
           <Stats
@@ -348,7 +374,11 @@ const Profile = () => {
         </div>
         <div ref={headerRef} className="sticky z-[1500] top-0"></div>
         <div className="px-5">
-          <VideoTabs headerRef={headerRef} showHeader={showHeader} login={user?.token} />
+          <VideoTabs
+            headerRef={headerRef}
+            showHeader={showHeader}
+            login={user?.token}
+          />
         </div>
       </div>
     </div>

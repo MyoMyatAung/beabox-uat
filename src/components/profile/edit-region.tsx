@@ -25,7 +25,8 @@ const EditRegion = () => {
   const [selectedRegion, setSelectedRegion] = useState<any>(null);
 
   const [selectedCity, setSelectedCity] = useState(region?.city);
-  const [changeRegion, { isLoading }] = useChangeRegionMutation();
+  const [changeRegion, { data: cdata, error: cerror, isLoading }] =
+    useChangeRegionMutation();
   const selectedRegionRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
 
@@ -47,6 +48,8 @@ const EditRegion = () => {
     }
     setIsOpen(false);
   };
+
+  console.log(cdata, cerror);
 
   useEffect(() => {
     if (isOpen == true) {
