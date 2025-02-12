@@ -130,12 +130,11 @@ const Application: React.FC<any> = () => {
               <div className="grid grid-rows-4 gap-[5px]">
                 {applicationData?.header?.length > 0 &&
                   applicationData?.header
-                    .slice()
-                    .reverse()
                     .map((header: any) => (
                       <a href={header.url} target="_blank" key={header.id}>
 
                         <ImageWithPlaceholder
+                        className="rounded-md"
                           alt="Header Image"
                           width="100%"
                           height={44}
@@ -185,6 +184,7 @@ const Application: React.FC<any> = () => {
                 applicationData?.footer.map((footer: any) => (
                   <a href={footer.url} target="_blank" key={footer.id}>
                     <ImageWithPlaceholder
+                      className="mt-[5px] rounded-md"
                       alt="Footer Image"
                       width={"100%"}
                       height={"100%"}

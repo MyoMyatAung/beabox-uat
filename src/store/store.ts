@@ -25,7 +25,7 @@ import loaderSlice from "@/page/home/services/loaderSlice";
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["persist", "history", "explore", "home", "unlike"], // Reducers you want to persist
+  whitelist: ["persist", "history", "explore", "unlike"], // Reducers you want to persist
 };
 
 const rootReducer = combineReducers({
