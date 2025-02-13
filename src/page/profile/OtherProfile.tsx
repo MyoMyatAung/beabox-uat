@@ -1,6 +1,6 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useGetUserProfileQuery } from "@/store/api/profileApi";
-import { ChevronLeft, Copy, Flag, Search } from "lucide-react";
+import { ChevronLeft, Copy, Flag } from "lucide-react";
 import ProfileAvatar from "@/components/profile/profile-avatar";
 import Loader from "@/components/shared/loader";
 import OtherStats from "@/components/profile/other-stats";
@@ -10,13 +10,11 @@ import MaleSVG from "@/assets/profile/male";
 import FemaleSVG from "@/assets/profile/female";
 import defaultCover from "@/assets/cover.jpg";
 import { useEffect, useRef, useState } from "react";
-import ScrollHeader from "@/components/profile/scroll-header";
 import OscrollHeader from "@/components/profile/oscroll-header";
-import SettingBtn2 from "@/components/profile/setting-btn2";
 import { useSelector } from "react-redux";
 import share from "@/assets/profile/share.svg";
 
-const decryptImage = (arrayBuffer, key = 0x12, decryptSize = 4096) => {
+const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
   const data = new Uint8Array(arrayBuffer);
   const maxSize = Math.min(decryptSize, data.length);
   for (let i = 0; i < maxSize; i++) {
@@ -42,8 +40,8 @@ const OtherProfile = () => {
   } = useGetUserProfileQuery(id || "");
   const [decryptedCover, setDecryptedCover] = useState(defaultCover);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
-
-    useEffect(() => {
+  console.log(userData, "user data");
+  useEffect(() => {
     const loadAndDecryptCover = async () => {
       if (!user?.token || !userData?.data?.cover_photo) {
         setDecryptedCover(defaultCover);
@@ -77,40 +75,40 @@ const OtherProfile = () => {
     loadAndDecryptCover();
   }, [userData?.data?.cover_photo]);
 
-    useEffect(() => {
-      const loadAndDecryptPhoto = async () => {
-        if (!user?.token || !data?.data?.profile_photo) {
-          setDecryptedPhoto("");
+  useEffect(() => {
+    const loadAndDecryptPhoto = async () => {
+      if (!user?.token || !userData?.data?.profile_photo) {
+        setDecryptedPhoto("");
+        return;
+      }
+
+      try {
+        const photoUrl = userData.data.profile_photo;
+
+        // If it's not a .txt file, assume it's already a valid URL
+        if (!photoUrl.endsWith(".txt")) {
+          setDecryptedPhoto(photoUrl);
           return;
         }
-  
-        try {
-          const photoUrl = data.data.profile_photo;
-  
-          // If it's not a .txt file, assume it's already a valid URL
-          if (!photoUrl.endsWith(".txt")) {
-            setDecryptedPhoto(photoUrl);
-            return;
-          }
-  
-          // Fetch encrypted image data
-          const response = await fetch(photoUrl);
-          const arrayBuffer = await response.arrayBuffer();
-  
-          // Decrypt the first 4096 bytes and decode as text.
-          const decryptedStr = decryptImage(arrayBuffer);
-          console.log("Decrypted profile photo string is =>", decryptedStr);
-  
-          // Set the decrypted profile photo source
-          setDecryptedPhoto(decryptedStr);
-        } catch (error) {
-          console.error("Error loading profile photo:", error);
-          setDecryptedPhoto("");
-        }
-      };
-  
-      loadAndDecryptPhoto();
-    }, [userData?.data?.profile_photo]);
+
+        // Fetch encrypted image data
+        const response = await fetch(photoUrl);
+        const arrayBuffer = await response.arrayBuffer();
+
+        // Decrypt the first 4096 bytes and decode as text.
+        const decryptedStr = decryptImage(arrayBuffer);
+        console.log("Decrypted profile photo string is =>", decryptedStr);
+
+        // Set the decrypted profile photo source
+        setDecryptedPhoto(decryptedStr);
+      } catch (error) {
+        console.error("Error loading profile photo:", error);
+        setDecryptedPhoto("");
+      }
+    };
+
+    loadAndDecryptPhoto();
+  }, [userData?.data?.profile_photo]);
 
   const handleCopy = (text: any) => {
     navigator?.clipboard
