@@ -54,6 +54,7 @@ const VideoContainer = ({
   const dispatch = useDispatch();
   const currentTab = useSelector((state: any) => state.home.currentTab);
   const { videos } = useSelector((state: any) => state.videoSlice);
+  console.log(video);
 
   const post_id = video?.post_id;
   const [rotateVideoId, setRotateVideoId] = useState<string | null>(null); // For controlling fullscreen per video
@@ -325,6 +326,9 @@ const VideoContainer = ({
       }
     }
   };
+
+  console.log("w", video?.files[0]?.width);
+  console.log("h", video?.files[0]?.height);
 
   if (isOpen) {
     return <LoginDrawer isOpen={isOpen} setIsOpen={setIsOpen} />;

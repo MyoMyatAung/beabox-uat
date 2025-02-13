@@ -489,143 +489,213 @@ const Player = ({
             timeDisplayRef.current = element.querySelector(
               ".custom-time-display"
             ) as HTMLDivElement;
-          
+
             if (!progressBarRef.current) {
               console.error("Custom progress bar or tooltip element not found");
               return;
             }
-          
+
             // Initial setup for the progress bar
             progressBarRef.current.value = "0";
             progressBarRef.current.style.opacity = "0";
-          
+
             // Desktop events (existing)
             progressBarRef.current.addEventListener("input", (e) => {
               if (!artPlayerInstanceRef.current) return;
               if (!isDraggingRef.current) {
                 sethideBar(true);
-                if(progressBarRef?.current?.style) {
+                if (progressBarRef?.current?.style) {
                   progressBarRef.current.style.height = "10px";
-                  progressBarRef.current.style.setProperty("--thumb-width", "16px");
-                  progressBarRef.current.style.setProperty("--thumb-height", "20px");
-                  progressBarRef.current.style.setProperty("--thumb-radius", "5px");
+                  progressBarRef.current.style.setProperty(
+                    "--thumb-width",
+                    "16px"
+                  );
+                  progressBarRef.current.style.setProperty(
+                    "--thumb-height",
+                    "20px"
+                  );
+                  progressBarRef.current.style.setProperty(
+                    "--thumb-radius",
+                    "5px"
+                  );
                 }
                 isDraggingRef.current = true;
                 timeDisplayRef.current!.style.display = "block";
               }
-          
+
               const value = parseFloat((e.target as HTMLInputElement).value);
-              seekTimeRef.current = (value / 100) * artPlayerInstanceRef.current.duration;
-              progressBarRef.current?.style.setProperty("--progress", `${value}%`);
-          
+              seekTimeRef.current =
+                (value / 100) * artPlayerInstanceRef.current.duration;
+              progressBarRef.current?.style.setProperty(
+                "--progress",
+                `${value}%`
+              );
+
               if (timeDisplayRef.current) {
                 const currentTime = formatTime(seekTimeRef.current);
-                const duration = formatTime(artPlayerInstanceRef.current.duration);
+                const duration = formatTime(
+                  artPlayerInstanceRef.current.duration
+                );
                 timeDisplayRef.current.textContent = `${currentTime} / ${duration}`;
               }
             });
-          
+
             progressBarRef.current.addEventListener("change", () => {
-              if (!artPlayerInstanceRef.current || !isDraggingRef.current) return;
+              if (!artPlayerInstanceRef.current || !isDraggingRef.current)
+                return;
               isDraggingRef.current = false;
               sethideBar(false);
-              if(progressBarRef.current) {
+              if (progressBarRef.current) {
                 progressBarRef.current.style.height = "4px";
-                progressBarRef.current.style.setProperty("--thumb-width", "12px");
-                progressBarRef.current.style.setProperty("--thumb-height", "12px");
-                progressBarRef.current.style.setProperty("--thumb-radius", "50%");
+                progressBarRef.current.style.setProperty(
+                  "--thumb-width",
+                  "12px"
+                );
+                progressBarRef.current.style.setProperty(
+                  "--thumb-height",
+                  "12px"
+                );
+                progressBarRef.current.style.setProperty(
+                  "--thumb-radius",
+                  "50%"
+                );
               }
               timeDisplayRef.current!.style.display = "none";
               artPlayerInstanceRef.current.currentTime = seekTimeRef.current;
             });
-          
+
             // Allow clicking anywhere in the container (for desktop)
             element.addEventListener("click", (e) => {
-              if (!artPlayerInstanceRef.current || !progressBarRef.current) return;
-          
+              if (!artPlayerInstanceRef.current || !progressBarRef.current)
+                return;
+
               // If the click is directly on the thumb, let its own events handle it.
-              if ((e.target as HTMLElement).classList.contains("custom-progress-bar")) {
+              if (
+                (e.target as HTMLElement).classList.contains(
+                  "custom-progress-bar"
+                )
+              ) {
                 return;
               }
               const rect = element.getBoundingClientRect();
               const clickX = e.clientX - rect.left;
-              const percent = Math.min(Math.max((clickX / rect.width) * 100, 0), 100);
-          
+              const percent = Math.min(
+                Math.max((clickX / rect.width) * 100, 0),
+                100
+              );
+
               progressBarRef.current.value = percent.toString();
-              progressBarRef.current.style.setProperty("--progress", `${percent}%`);
-              const newTime = (percent / 100) * artPlayerInstanceRef.current.duration;
+              progressBarRef.current.style.setProperty(
+                "--progress",
+                `${percent}%`
+              );
+              const newTime =
+                (percent / 100) * artPlayerInstanceRef.current.duration;
               artPlayerInstanceRef.current.currentTime = newTime;
             });
-          
+
             // ==== Mobile Touch Events ====
-          
+
             // Start dragging on touchstart
             element.addEventListener("touchstart", (e) => {
-              if (!artPlayerInstanceRef.current || !progressBarRef.current) return;
+              if (!artPlayerInstanceRef.current || !progressBarRef.current)
+                return;
               // Use the first touch
               const touch = e.touches[0];
               const rect = element.getBoundingClientRect();
               const touchX = touch.clientX - rect.left;
-              const percent = Math.min(Math.max((touchX / rect.width) * 100, 0), 100);
-          
+              const percent = Math.min(
+                Math.max((touchX / rect.width) * 100, 0),
+                100
+              );
+
               // Update progress bar visuals immediately
               progressBarRef.current.value = percent.toString();
-              progressBarRef.current.style.setProperty("--progress", `${percent}%`);
+              progressBarRef.current.style.setProperty(
+                "--progress",
+                `${percent}%`
+              );
               isDraggingRef.current = true;
               sethideBar(true);
               progressBarRef.current.style.height = "10px";
               progressBarRef.current.style.setProperty("--thumb-width", "16px");
-              progressBarRef.current.style.setProperty("--thumb-height", "20px");
+              progressBarRef.current.style.setProperty(
+                "--thumb-height",
+                "20px"
+              );
               progressBarRef.current.style.setProperty("--thumb-radius", "5px");
               timeDisplayRef.current!.style.display = "block";
-          
+
               // Update the time display
-              const newTime = (percent / 100) * artPlayerInstanceRef.current.duration;
+              const newTime =
+                (percent / 100) * artPlayerInstanceRef.current.duration;
               seekTimeRef.current = newTime;
               if (timeDisplayRef.current) {
                 const currentTime = formatTime(newTime);
-                const duration = formatTime(artPlayerInstanceRef.current.duration);
+                const duration = formatTime(
+                  artPlayerInstanceRef.current.duration
+                );
                 timeDisplayRef.current.textContent = `${currentTime} / ${duration}`;
               }
             });
-          
+
             // Update progress on touchmove
             element.addEventListener("touchmove", (e) => {
-              if (!artPlayerInstanceRef.current || !progressBarRef.current || !isDraggingRef.current)
+              if (
+                !artPlayerInstanceRef.current ||
+                !progressBarRef.current ||
+                !isDraggingRef.current
+              )
                 return;
               // Prevent scrolling while dragging the progress bar
               e.preventDefault();
               const touch = e.touches[0];
               const rect = element.getBoundingClientRect();
               const touchX = touch.clientX - rect.left;
-              const percent = Math.min(Math.max((touchX / rect.width) * 100, 0), 100);
-          
+              const percent = Math.min(
+                Math.max((touchX / rect.width) * 100, 0),
+                100
+              );
+
               progressBarRef.current.value = percent.toString();
-              progressBarRef.current.style.setProperty("--progress", `${percent}%`);
-              seekTimeRef.current = (percent / 100) * artPlayerInstanceRef.current.duration;
-          
+              progressBarRef.current.style.setProperty(
+                "--progress",
+                `${percent}%`
+              );
+              seekTimeRef.current =
+                (percent / 100) * artPlayerInstanceRef.current.duration;
+
               if (timeDisplayRef.current) {
                 const currentTime = formatTime(seekTimeRef.current);
-                const duration = formatTime(artPlayerInstanceRef.current.duration);
+                const duration = formatTime(
+                  artPlayerInstanceRef.current.duration
+                );
                 timeDisplayRef.current.textContent = `${currentTime} / ${duration}`;
               }
             });
-          
+
             // End dragging on touchend
             element.addEventListener("touchend", () => {
-              if (!artPlayerInstanceRef.current || !progressBarRef.current || !isDraggingRef.current)
+              if (
+                !artPlayerInstanceRef.current ||
+                !progressBarRef.current ||
+                !isDraggingRef.current
+              )
                 return;
               isDraggingRef.current = false;
               sethideBar(false);
               progressBarRef.current.style.height = "4px";
               progressBarRef.current.style.setProperty("--thumb-width", "12px");
-              progressBarRef.current.style.setProperty("--thumb-height", "12px");
+              progressBarRef.current.style.setProperty(
+                "--thumb-height",
+                "12px"
+              );
               progressBarRef.current.style.setProperty("--thumb-radius", "50%");
               timeDisplayRef.current!.style.display = "none";
               // Set the video time to the position chosen via touch
               artPlayerInstanceRef.current.currentTime = seekTimeRef.current;
             });
-          },          
+          },
         },
         {
           html: `<div class="custom-play-icon">
@@ -729,6 +799,9 @@ const Player = ({
         }
       }
     });
+    artPlayerInstanceRef?.current?.on("loading", () => {
+      if (playIconRef.current) playIconRef.current.style.display = "none";
+    });
 
     artPlayerInstanceRef.current.on("ready", () => {
       if (!artPlayerInstanceRef.current?.playing) {
@@ -746,7 +819,6 @@ const Player = ({
     // Handle play/pause events
     artPlayerInstanceRef.current.on("pause", () => {
       setIsPaused(true);
-
       if (playIconRef.current) playIconRef.current.style.display = "block";
     });
 

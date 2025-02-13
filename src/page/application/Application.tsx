@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
 import ImageWithPlaceholder from "../explore/comp/imgPlaceHolder.tsx";
+import AsyncDecryptedImage from "@/utils/asyncDecryptedImage.tsx";
 
 const Application: React.FC<any> = () => {
   const [ad, setAd] = useState([]);
@@ -98,13 +99,13 @@ const Application: React.FC<any> = () => {
                   key={index}
                   className="justify-center h-[172px] items-center px-[8px] flex flex-col relative bg-[#16131C]"
                 >
-                  <img
+                  <AsyncDecryptedImage
                     className={`rounded-[12px] transition-all duration-300 ${
                       selectedIndex === index
                         ? "w-[332px] h-[162px]" // Active slide size
                         : "w-[290px] h-[148px]" // Non‑active slide size
                     }`}
-                    src={cc.image}
+                    imageUrl={cc.image}
                     alt={`Slide ${index + 1}`}
                   />
                 </a>
@@ -163,9 +164,9 @@ const Application: React.FC<any> = () => {
                           target="_blank"
                           className="flex flex-col justify-center items-center gap-[4px]"
                         >
-                          <img
+                          <AsyncDecryptedImage
                             className="w-[52px] h-[52px] rounded-[6px] border-[#222]"
-                            src={app.image}
+                            imageUrl={app.image}
                             alt={app.title}
                           />
                           <h1 className="text-white text-[10px] font-[400]">
@@ -181,17 +182,18 @@ const Application: React.FC<any> = () => {
             {/* Footer Section */}
             <div className="mt-[20px] mb-[80px]">
               {applicationData?.footer?.length > 0 &&
-                applicationData?.footer.map((footer: any) => (
-                  <a href={footer.url} target="_blank" key={footer.id}>
+                // applicationData?.footer.map((footer: any) => (
+                  <a href={applicationData?.footer[0].url} target="_blank" key={applicationData?.footer[0].id}>
                     <ImageWithPlaceholder
                       className="mt-[5px] rounded-md"
                       alt="Footer Image"
                       width={"100%"}
                       height={"100%"}
-                      src={footer.image}
+                      src={applicationData?.footer[0].image}
                     />
                   </a>
-                ))}
+                // ))
+                }
             </div>
           </>
         )}
