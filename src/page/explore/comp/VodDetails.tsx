@@ -265,7 +265,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
               </div>
               <input
                 className="feed-input w-full pl-[45px] py-[8px]"
-                placeholder={files?.tag[0]}
+                placeholder={"搜索影片"}
                 onClick={handleSearch}
               />
             </div>
