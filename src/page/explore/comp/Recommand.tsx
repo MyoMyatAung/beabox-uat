@@ -108,7 +108,7 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
             <div key={index} className="flex flex-col w-full items-center">
               {/* header */}
               <div className=" flex w-full justify-between items-center py-[12px] px-[10p]">
-                <h1 className=" text-white text-[14px] font-[500] leading-[20px]">
+                <h1 className=" text-white text-[16px] font-[500] leading-[20px]">
                   {ll.title}
                 </h1>
                 <div
