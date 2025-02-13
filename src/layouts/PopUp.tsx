@@ -7,6 +7,7 @@ import "../page/explore/explore.css";
 import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder.tsx";
 import Notice from "./Notice";
 import { useGetAdsPopUpQuery } from "@/utils/helperService";
+import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 
 interface PopUpProps {
   setShowAd: any;
@@ -151,9 +152,9 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
                     target="_blank"
                     className="flex h-[75px] flex-col justify-center items-center gap-[4px]"
                   >
-                    <img
+                    <AsyncDecryptedImage
                       className="w-[56px] h-[53px] rounded-[6px] border-[#222]"
-                      src={app.image}
+                      imageUrl={app.image}
                       alt=""
                     />
                     <h1 className="text-white text-[10px] font-[400]">
