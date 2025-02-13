@@ -3,6 +3,7 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import storage from "redux-persist/lib/storage";
 import counterSlice from "./slices/counterSlice";
 import profileSlice from "./slices/profileSlice";
+import { Storage } from "redux-persist";
 import { profileApi } from "./api/profileApi";
 import { authApi } from "./api/authApi";
 import persistSlice from "./slices/persistSlice";
@@ -22,6 +23,32 @@ import pageSlice from "@/page/home/services/pageSlice";
 import muteSlice from "@/page/home/services/muteSlice";
 import loaderSlice from "@/page/home/services/loaderSlice";
 
+const sessionStorageWrapper: Storage = {
+  getItem: (key: string) => {
+    return new Promise<string | null>((resolve) => {
+      const item = sessionStorage.getItem(key);
+      resolve(item);
+    });
+  },
+  setItem: (key: string, value: string) => {
+    return new Promise<void>((resolve) => {
+      sessionStorage.setItem(key, value);
+      resolve();
+    });
+  },
+  removeItem: (key: string) => {
+    return new Promise<void>((resolve) => {
+      sessionStorage.removeItem(key);
+      resolve();
+    });
+  },
+};
+
+const persistHomeSliceConfig = {
+  key: "home",
+  storage: sessionStorageWrapper, // Use sessionStorage instead of default localStorage
+};
+
 const persistConfig = {
   key: "root",
   storage,
@@ -35,7 +62,7 @@ const rootReducer = combineReducers({
   persist: persistSlice,
   explore: exploreSlice,
   history: HistorySlice,
-  home: homeSlice,
+  home: persistReducer(persistHomeSliceConfig, homeSlice), // Apply sessionStorage for homeSlice
   model: ModelSlice,
   unlike: unlikeSlice,
   errorslice: errorSlice,
