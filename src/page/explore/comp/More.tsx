@@ -91,7 +91,10 @@ const More: React.FC<MoreProps> = () => {
   };
 
   const handleTabChange = (ff: any) => {
-    if (ff.key === more_tab) return;
+    if (ff.key === more_tab) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
     setCustomLoad(true);
     dispatch(setMoreTab(ff.key));
 
@@ -129,9 +132,9 @@ const More: React.FC<MoreProps> = () => {
               className="rec_exp_more_btn px-[2px]"
             />
             <h1
-              onClick={() => {
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }}
+              // onClick={() => {
+              //   window.scrollTo({ top: 0, behavior: "smooth" });
+              // }}
               className="w-2/3 text-white text-[18px] text-center font-[500]"
             >
               {title}
