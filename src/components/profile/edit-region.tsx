@@ -16,7 +16,7 @@ import Loader from "../shared/loader";
 import { setRegion } from "@/store/slices/persistSlice";
 import SmallLoader from "../shared/small-loader";
 
-const EditRegion = () => {
+const EditRegion = ({ province, city }: any) => {
   const { data } = useGetRegionQuery("");
 
   const dispatch = useDispatch();
@@ -75,6 +75,15 @@ const EditRegion = () => {
     }
     // console.log(selected, "selected");
   }, [data]);
+
+  useEffect(() => {
+    dispatch(
+      setRegion({
+        city: city,
+        provinceName: province,
+      })
+    );
+  }, [city, province]);
 
   return (
     <Drawer onOpenChange={() => setIsOpen(true)}>

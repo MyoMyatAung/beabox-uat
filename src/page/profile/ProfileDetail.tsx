@@ -8,7 +8,10 @@ import EditReferral from "@/components/profile/edit-referral";
 import ChangePassword from "@/components/profile/change-password";
 import EditBio from "@/components/profile/edit-bio";
 import { useDispatch, useSelector } from "react-redux";
-import { useGetMyProfileQuery } from "@/store/api/profileApi";
+import {
+  useGetMyOwnProfileQuery,
+  useGetMyProfileQuery,
+} from "@/store/api/profileApi";
 import { useEffect, useState } from "react";
 import { setProfileData } from "@/store/slices/persistSlice";
 import EditNickName from "@/components/profile/edit-nickname";
@@ -33,11 +36,13 @@ const ProfileDetail = () => {
   const private_profile = useSelector(
     (state: any) => state.persist.private_profile
   );
-  const { data, refetch } = useGetMyProfileQuery("");
+  const { data, refetch } = useGetMyOwnProfileQuery("");
   const dispatch = useDispatch();
   const refetchHandler = async () => {
     await refetch();
   };
+
+  console.log(data, "pddata");
   useEffect(() => {
     if (data?.status) dispatch(setProfileData(data?.data));
   }, []);
@@ -105,7 +110,7 @@ const ProfileDetail = () => {
             refetchHandler={refetchHandler}
           />
           <EditGender />
-          <EditRegion />
+          <EditRegion province={data?.data?.province} city={data?.data?.city} />
           {/* <div className="text-[14px] flex items-center justify-between">
           <h1>Region</h1>
           <p className="flex items-center gap-1 text-[#888]">
