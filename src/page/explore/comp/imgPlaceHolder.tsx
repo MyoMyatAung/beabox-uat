@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 // import cardSkeleton from "../images/cardSkeleton.png";
 import "../explore.css"
+import AsyncDecryptedImage from "@/utils/asyncDecryptedImage.tsx";
 type ImageWithPlaceholderProps = {
   src: any;
   alt: string;
@@ -60,7 +61,7 @@ const ImageWithPlaceholder = ({
       className="image-container_exp bg-search-img"
         style={{ width: width, height: height }}
     >
-      <img
+      <AsyncDecryptedImage
         ref={imgRef}
         // src={cardSkeleton}
         alt={alt}
