@@ -3,13 +3,14 @@ import { setHistoryData } from "../slice/HistorySlice";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useTop20PostsQuery } from "@/page/home/services/homeApi";
+import loader from "@/page/home/vod_loader.gif";
 
 interface MayProps {}
 
 const May: React.FC<MayProps> = ({}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { data, isLoading, refetch } = useTop20PostsQuery({});
+  const { data, isLoading, isFetching, refetch } = useTop20PostsQuery({});
   const post = data?.data;
 
   // const may = [
@@ -31,6 +32,10 @@ const May: React.FC<MayProps> = ({}) => {
       navigate(`/search?query=${encodeURIComponent(query.trim())}`);
     }
   };
+
+  console.log(isLoading);
+  console.log(isFetching);
+
   return (
     <div>
       {/* header */}
@@ -71,39 +76,44 @@ const May: React.FC<MayProps> = ({}) => {
           </button>
         ))}
       </div> */}
-      <div className="flex flex-col gap-[8px] py-[20px]">
-        {post?.map((val: any, index: number) => (
-          <button
-            key={index}
-            onClick={() => handleSearch(val?.title)}
-            className={`px-[12px] py-[4px]  font-[400] flex gap-[8px] items-center rounded-lg ${
-              index < 2
-                ? "bg-first-two text-[16px] font-bold flex relative  items-center justify-between"
-                : ""
-            }`}
-          >
-            {index < 2 ? (
-              <>
-                <div className="font-bold flex truncate items-center gap-2">
-                  <div className="w-[5px] h-[5px] rounded-full bg-[#EAACFF] flex-shrink-0"></div>
-                  <div className=" max-w-[calc(100%-40px)] truncate">
-                    {val?.title}
+      {isLoading || isFetching ? (
+        <div className="flex justify-center items-center h-[300px]">
+          <img src={loader} alt="" className="w-[70px] h-[70px]" />
+        </div>
+      ) : (
+        <div className="flex flex-col gap-[8px] py-[20px]">
+          {post?.map((val: any, index: number) => (
+            <button
+              key={index}
+              onClick={() => handleSearch(val?.title)}
+              className={`px-[12px] py-[4px]  font-[400] flex gap-[8px] items-center rounded-lg ${
+                index < 2
+                  ? "bg-first-two text-[16px] font-bold flex relative  items-center justify-between"
+                  : ""
+              }`}
+            >
+              {index < 2 ? (
+                <>
+                  <div className="font-bold flex truncate items-center gap-2">
+                    <div className="w-[5px] h-[5px] rounded-full bg-[#EAACFF] flex-shrink-0"></div>
+                    <div className=" max-w-[calc(100%-40px)] truncate">
+                      {val?.title}
+                    </div>
+                    <span className="text-xl">🔥</span>
                   </div>
-                  <span className="text-xl">🔥</span>
-                </div>
-
-              </>
-            ) : (
-              <>
-                <div className="w-[4px] h-[4px] rounded-full bg-[#888] flex-shrink-0"></div>
-                <h1 className="text-start truncate may_text ml-2">
-                  {val?.title}
-                </h1>
-              </>
-            )}
-          </button>
-        ))}
-      </div>
+                </>
+              ) : (
+                <>
+                  <div className="w-[4px] h-[4px] rounded-full bg-[#888] flex-shrink-0"></div>
+                  <h1 className="text-start truncate may_text ml-2">
+                    {val?.title}
+                  </h1>
+                </>
+              )}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
