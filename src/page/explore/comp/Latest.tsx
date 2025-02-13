@@ -77,7 +77,7 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
   return (
     <>
       {isLoading ? (
-        <div className=" w-full grid grid-cols-2 justify-center items-center  gap-[12px]">
+        <div className=" w-full grid grid-cols-2 justify-center items-center  gap-[12px] pt-[20px]">
           <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 max-w-full h-[312px]"></div>
           <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 max-w-full h-[312px]"></div>
           <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 max-w-full h-[312px]"></div>
