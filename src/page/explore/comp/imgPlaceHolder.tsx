@@ -28,9 +28,7 @@ const ImageWithPlaceholder = ({
         for (const entry of entries) {
           if (entry.isIntersecting) {
             try {
-              console.log('src is =>', src);
               const decryptedUrl = await decryptImage(src);
-              console.log('decryptedUrl is=>', decryptedUrl);
               setDecryptedSrc(decryptedUrl);
             } catch (error) {
               console.error("Error decrypting image:", error);
