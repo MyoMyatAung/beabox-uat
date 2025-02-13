@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 // Define the initial state using that type
 const initialState: any = {
-  mute: true,
+  mute: false,
 };
 
 export const muteSlice = createSlice({

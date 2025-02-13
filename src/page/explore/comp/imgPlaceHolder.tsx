@@ -1,8 +1,9 @@
-import { useEffect, useRef } from "react";
-// import cardSkeleton from "../images/cardSkeleton.png";
-import "../explore.css"
+import { useEffect, useRef, useState } from "react";
+import { decryptImage } from "@/utils/imageDecrypt";
+import "../explore.css";
+
 type ImageWithPlaceholderProps = {
-  src: any;
+  src: string;
   alt: string;
   width: string | number;
   height: string | number;
@@ -19,23 +20,22 @@ const ImageWithPlaceholder = ({
 }: ImageWithPlaceholderProps) => {
   const imgRef = useRef<HTMLImageElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const [decryptedSrc, setDecryptedSrc] = useState<string>("");
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
+      async (entries) => {
+        for (const entry of entries) {
           if (entry.isIntersecting) {
-            if (imgRef.current) {
-              imgRef.current.src = src;
-              imgRef.current.onload = () => {
-                if (imgRef.current && imgRef.current !== null) {
-                  imgRef.current.style.opacity = "1";
-                }
-              };
+            try {
+              const decryptedUrl = await decryptImage(src);
+              setDecryptedSrc(decryptedUrl);
+            } catch (error) {
+              console.error("Error decrypting image:", error);
             }
             observer.disconnect();
           }
-        });
+        }
       },
       {
         rootMargin: "100px",
@@ -43,30 +43,26 @@ const ImageWithPlaceholder = ({
       }
     );
 
-    if (imgRef.current) {
-      observer.observe(imgRef.current);
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
     }
 
-    return () => {
-      if (imgRef.current) {
-        observer.unobserve(imgRef.current);
-      }
-    };
+    return () => observer.disconnect();
   }, [src]);
 
   return (
     <div
       ref={containerRef}
       className="image-container_exp bg-search-img"
-        style={{ width: width, height: height }}
+      style={{ width, height }}
     >
       <img
         ref={imgRef}
-        // src={cardSkeleton}
+        src={decryptedSrc || ""}
         alt={alt}
-        // style={{ height: height }}
         className={`${className} image-placeholder`}
         {...props}
+        style={{ opacity: decryptedSrc ? "1" : "0", transition: "opacity 0.3s" }}
       />
     </div>
   );

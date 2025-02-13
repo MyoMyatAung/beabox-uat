@@ -11,6 +11,7 @@ import { replace, useNavigate, useSearchParams } from "react-router-dom";
 import { paths } from "@/routes/paths";
 import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder";
 import personE from "../../../assets/explore/personE.svg";
+import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 
 interface LatestPorp {
   list_id: string;
@@ -76,7 +77,7 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
   return (
     <>
       {isLoading ? (
-        <div className=" w-full grid grid-cols-2 justify-center items-center  gap-[12px]">
+        <div className=" w-full grid grid-cols-2 justify-center items-center  gap-[12px] pt-[20px]">
           <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 max-w-full h-[312px]"></div>
           <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 max-w-full h-[312px]"></div>
           <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 max-w-full h-[312px]"></div>
@@ -118,15 +119,15 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
                   <div className="  w-full px-[6px] text-white text-[14px] font-[400] leading-[30px] flex justify-between items-center ">
                     <div className=" flex justify-center items-center gap-[4px]">
                       {card.user?.avatar ? (
-                        <img
+                        <AsyncDecryptedImage
                           className=" w-[20px] h-[20px] rounded-full"
-                          src={card.user.avatar}
+                          imageUrl={card.user.avatar}
                           onError={(e) => (e.currentTarget.src = personE)}
                           alt=""
                         />
                       ) : (
-                        <img
-                          src={personE}
+                        <AsyncDecryptedImage
+                        imageUrl={personE}
                           className="w-[20px] h-[20px] rounded-full"
                           alt=""
                         />

@@ -71,7 +71,7 @@ function FeedFooter({
             >
               <span className="mr-2">{title}</span>
               {tags?.map((tag: any, index: number) => (
-                <span key={index} className="footer_tag mr-2">
+                <span key={index} className="footer_tag mr-1">
                   #{tag}
                 </span>
               ))}
@@ -82,7 +82,7 @@ function FeedFooter({
             >
               <span className="mr-2">{title}</span>
               {tags?.map((tag: any, index: number) => (
-                <span key={index} className="footer_tag mr-2">
+                <span key={index} className="footer_tag mr-1">
                   #{tag}
                 </span>
               ))}

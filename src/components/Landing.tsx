@@ -5,6 +5,7 @@ import { setPanding } from "../store/slices/ModelSlice";
 import ad1 from "../assets/explore/spl.png";
 import '../page/search/search.css'
 import { useGetAdsPopUpQuery } from "@/utils/helperService";
+import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 
 const Landing: React.FC = () => {
   const dispatch = useDispatch();
@@ -55,10 +56,10 @@ const Landing: React.FC = () => {
         {!imgLoad && (
           <div className="absolute inset-0 bg-search-img"></div>
         )}
-        <img
+        <AsyncDecryptedImage
           className="h-screen w-screen object-cover"
           onLoad={() => setImgLoad(true)}
-          src={images?.image}
+          imageUrl={images?.image}
           alt=""
         />
       </a>

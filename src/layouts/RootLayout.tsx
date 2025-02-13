@@ -4,7 +4,7 @@ import PopUp from "./PopUp";
 import { useEffect, useState } from "react";
 import { useGetApplicationAdsQuery } from "@/store/api/explore/exploreApi";
 import { useDispatch, useSelector } from "react-redux";
-import { setApplicationData } from "@/store/slices/exploreSlice";
+import { setApplicationData, setisLoading } from "@/store/slices/exploreSlice";
 import RegisterForm from "@/components/profile/auth/register-form";
 import LoginForm from "@/components/profile/auth/login-form";
 import AuthDrawer from "@/components/profile/auth/auth-drawer";
@@ -27,6 +27,7 @@ const RootLayout = ({ children }: any) => {
     if (data?.data) {
       const cur = data?.data?.carousel;
       dispatch(setApplicationData(data?.data));
+      dispatch(setisLoading(isLoading));
       // setApplicationData(data?.data);
       // setad(cur);
     }

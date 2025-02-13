@@ -241,7 +241,7 @@ const LoginForm = ({ setIsOpen }: any) => {
                     alt=""
                   />
                 </div>
-                <div
+                {/* <div
                   onClick={async (e) => {
                     e.stopPropagation();
                     await getCaptcha("");
@@ -255,7 +255,7 @@ const LoginForm = ({ setIsOpen }: any) => {
                     size={14}
                   />
                   <p className="text-[12px] text-[#bbb]">刷新</p>
-                </div>
+                </div> */}
                 <Button
                   onClick={handleVerify}
                   disabled={isLoading ? true : false || !captcha?.length}
