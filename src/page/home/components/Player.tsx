@@ -722,7 +722,7 @@ const Player = ({
             artPlayerInstanceRef.current?.on("play", () => {
               // progressBarRef?.current?.classList.remove("hidden");
               setIsPaused(false);
-              if (element) elementstyle.display = "none";
+              if (element) element.style.display = "none";
             });
 
             // Click the play button to resume video
@@ -888,7 +888,6 @@ const Player = ({
                 (artPlayerInstanceRef.current as Artplayer)?.video
                   ?.videoHeight || 0
               );
-              (artPlayerInstanceRef.current as any)?.play();
             });
 
             (artPlayerInstanceRef.current as any)?.on("play", () => {
@@ -900,6 +899,7 @@ const Player = ({
               );
             });
             (artPlayerInstanceRef.current as any)?.play();
+            // (artPlayerInstanceRef.current as any)?.play();
             if (artPlayerInstanceRef.current) {
               (artPlayerInstanceRef.current as any).muted = muteRef.current;
             }
@@ -919,7 +919,7 @@ const Player = ({
         });
       },
       {
-        rootMargin: "200px", // Trigger exactly at the edge of the viewport
+        rootMargin: "200px 0px", // Trigger exactly at the edge of the viewport
         threshold: 0.5, // Trigger when 50% of the element is visible
       }
     );
