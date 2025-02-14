@@ -107,108 +107,112 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
           {list?.map((ll: any, index) => (
             <div key={index} className="flex flex-col w-full items-center">
               {/* header */}
-              <div className=" flex w-full justify-between items-center py-[12px] px-[10p]">
-                <h1 className=" text-white text-[16px] font-[500] leading-[20px]">
-                  {ll.title}
-                </h1>
-                <div
-                  // onClick={() => navigate(paths.recommand_more, { state: { title } })}
-                  onClick={() => showMore(ll.title)}
-                  className="rec_exp_more_btn"
-                >
-                  <img src={uiLeft} alt="" />
+              {ll.posts.length !== 0 && (
+                <div className=" flex w-full justify-between items-center py-[12px] px-[10p]">
+                  <h1 className=" text-white text-[16px] font-[500] leading-[20px]">
+                    {ll.title}
+                  </h1>
+                  <div
+                    // onClick={() => navigate(paths.recommand_more, { state: { title } })}
+                    onClick={() => showMore(ll.title)}
+                    className="rec_exp_more_btn"
+                  >
+                    <img src={uiLeft} alt="" />
+                  </div>
                 </div>
-              </div>{" "}
+              )}
               {/* content */}
-              <div className=" py-[12px] w-full grid grid-cols-2 justify-center items-center  gap-[10px]">
-                <>
-                  {ll.posts.map((card: any) => (
-                    <div
-                      key={card.post_id}
-                      className="max-w-full pb-[12px chinese_photo h-[320px]"
-                    >
+              {ll.posts.length !== 0 && (
+                <div className=" py-[12px] w-full grid grid-cols-2 justify-center items-center  gap-[10px]">
+                  <>
+                    {ll.posts.map((card: any) => (
                       <div
-                        onClick={() => showDetailsVod(card)}
-                        className=" relative flex justify-center items-center bg-[#010101] rounded-t-[4px] overflow-hidden  h-[240px]"
+                        key={card.post_id}
+                        className="max-w-full pb-[12px chinese_photo h-[320px]"
                       >
-                        <ImageWithPlaceholder
-                          src={card?.preview_image}
-                          alt={card.title || "Video"}
-                          width={"100%"}
-                          // height={240}
-                          height={
-                            card?.files[0]?.height &&
-                            calculateHeight(
-                              card?.files[0]?.width,
-                              card?.files[0]?.height
-                            )
-                          }
-                          className=" object-cover h-full w-full rounded-none"
-                        />
+                        <div
+                          onClick={() => showDetailsVod(card)}
+                          className=" relative flex justify-center items-center bg-[#010101] rounded-t-[4px] overflow-hidden  h-[240px]"
+                        >
+                          <ImageWithPlaceholder
+                            src={card?.preview_image}
+                            alt={card.title || "Video"}
+                            width={"100%"}
+                            // height={240}
+                            height={
+                              card?.files[0]?.height &&
+                              calculateHeight(
+                                card?.files[0]?.width,
+                                card?.files[0]?.height
+                              )
+                            }
+                            className=" object-cover h-full w-full rounded-none"
+                          />
 
-                        <div className=" absolute hidden left-0 mx-auto right-0 bottom-0 fle justify-around items-center w-full max-w-[175px] bg-blac">
-                          <div className=" flex w-full  justify-between px-2">
-                            <span className=" text-white text-[11px]  left-">
-                              {card?.view_count} 次观看
-                            </span>
-                            <span className=" text-white text-[11px]  right-0">
-                              {formatDuration(card?.files[0].duration)}
-                            </span>
+                          <div className=" absolute hidden left-0 mx-auto right-0 bottom-0 fle justify-around items-center w-full max-w-[175px] bg-blac">
+                            <div className=" flex w-full  justify-between px-2">
+                              <span className=" text-white text-[11px]  left-">
+                                {card?.view_count} 次观看
+                              </span>
+                              <span className=" text-white text-[11px]  right-0">
+                                {formatDuration(card?.files[0].duration)}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        {/* <h1 className="text-white w-full text-[12px] font-[400] px-[6px] pt-[6px] leading-[20px] break-words"> */}
+                        <h1 className="search_text font-cnFont line-clamp-2 text-left text-[12px] font-[400] px-[6px] pt-[6px]">
+                          {card.title.length > 50
+                            ? `${card.title.slice(0, 50)}...`
+                            : card.title}
+                        </h1>
+                        <div className=" flex w-full p-[6px] justify-between">
+                          <div className=" flex justify-cente  items-center gap-[4px]">
+                            {card.user.avatar ? (
+                              <img
+                                // onError={() => console.log("gg")}
+                                className=" w-[20px] h-[20px] rounded-full"
+                                src={card.user.avatar}
+                                onError={(e) => (e.currentTarget.src = personE)}
+                                alt=""
+                              />
+                            ) : (
+                              <img
+                                src={personE}
+                                className=" w-[20px] h-[20px] rounded-full"
+                                alt=""
+                              />
+                            )}
+                            <h1 className=" text-[#888] text-[12px] font-[400] leading-[20px]">
+                              {card.user.name}
+                              {/* {card?.files[0]?.width} & {card?.files[0]?.height} {} */}
+                            </h1>
+                          </div>
+                          <div className=" flex justify-center items-center gap-[4px]">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="13"
+                              height="12"
+                              viewBox="0 0 13 12"
+                              fill="none"
+                            >
+                              <path
+                                d="M8.56675 1.13281C7.53401 1.13281 6.6298 1.57692 6.06616 2.32759C5.50253 1.57692 4.59832 1.13281 3.56557 1.13281C2.74349 1.13374 1.95535 1.46072 1.37405 2.04202C0.792751 2.62332 0.46577 3.41146 0.464844 4.23354C0.464844 7.73437 5.65557 10.568 5.87662 10.6851C5.93488 10.7164 6.00001 10.7328 6.06616 10.7328C6.13232 10.7328 6.19745 10.7164 6.25571 10.6851C6.47676 10.568 11.6675 7.73437 11.6675 4.23354C11.6666 3.41146 11.3396 2.62332 10.7583 2.04202C10.177 1.46072 9.38883 1.13374 8.56675 1.13281Z"
+                                stroke="#BBBBBB"
+                                stroke-width="0.8"
+                              />
+                            </svg>
+                            {/* <FaHeart /> */}
+                            <h1 className=" text-[#888] text-[12px] font-[400] leading-[20px]">
+                              {formatNumber(card?.like_count)}
+                            </h1>
                           </div>
                         </div>
                       </div>
-                      {/* <h1 className="text-white w-full text-[12px] font-[400] px-[6px] pt-[6px] leading-[20px] break-words"> */}
-                      <h1 className="search_text font-cnFont line-clamp-2 text-left text-[12px] font-[400] px-[6px] pt-[6px]">
-                        {card.title.length > 50
-                          ? `${card.title.slice(0, 50)}...`
-                          : card.title}
-                      </h1>
-                      <div className=" flex w-full p-[6px] justify-between">
-                        <div className=" flex justify-cente  items-center gap-[4px]">
-                          {card.user.avatar ? (
-                            <img
-                              // onError={() => console.log("gg")}
-                              className=" w-[20px] h-[20px] rounded-full"
-                              src={card.user.avatar}
-                              onError={(e) => (e.currentTarget.src = personE)}
-                              alt=""
-                            />
-                          ) : (
-                            <img
-                              src={personE}
-                              className=" w-[20px] h-[20px] rounded-full"
-                              alt=""
-                            />
-                          )}
-                          <h1 className=" text-[#888] text-[12px] font-[400] leading-[20px]">
-                            {card.user.name}
-                            {/* {card?.files[0]?.width} & {card?.files[0]?.height} {} */}
-                          </h1>
-                        </div>
-                        <div className=" flex justify-center items-center gap-[4px]">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="13"
-                            height="12"
-                            viewBox="0 0 13 12"
-                            fill="none"
-                          >
-                            <path
-                              d="M8.56675 1.13281C7.53401 1.13281 6.6298 1.57692 6.06616 2.32759C5.50253 1.57692 4.59832 1.13281 3.56557 1.13281C2.74349 1.13374 1.95535 1.46072 1.37405 2.04202C0.792751 2.62332 0.46577 3.41146 0.464844 4.23354C0.464844 7.73437 5.65557 10.568 5.87662 10.6851C5.93488 10.7164 6.00001 10.7328 6.06616 10.7328C6.13232 10.7328 6.19745 10.7164 6.25571 10.6851C6.47676 10.568 11.6675 7.73437 11.6675 4.23354C11.6666 3.41146 11.3396 2.62332 10.7583 2.04202C10.177 1.46072 9.38883 1.13374 8.56675 1.13281Z"
-                              stroke="#BBBBBB"
-                              stroke-width="0.8"
-                            />
-                          </svg>
-                          {/* <FaHeart /> */}
-                          <h1 className=" text-[#888] text-[12px] font-[400] leading-[20px]">
-                            {formatNumber(card?.like_count)}
-                          </h1>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </>
-              </div>{" "}
+                    ))}
+                  </>
+                </div>
+              )}
             </div>
           ))}
         </>
