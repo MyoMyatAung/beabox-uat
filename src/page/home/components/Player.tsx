@@ -270,6 +270,7 @@ import vod_loader from "../vod_loader.gif";
 import { useDispatch, useSelector } from "react-redux";
 import { useWatchtPostMutation } from "../services/homeApi";
 import { showToast } from "../services/errorSlice";
+import { decryptImage } from "@/utils/imageDecrypt";
 
 const Player = ({
   src,
@@ -306,6 +307,7 @@ const Player = ({
   const watchedTimeRef = useRef(0); // Track total watched time
   const apiCalledRef = useRef(false); // Ensure API is called only once
   const [watchtPost] = useWatchtPostMutation(); // Hook for watch history API
+  const [decryptedPhoto, setDecryptedPhoto] = useState('');
 
   const dispatch = useDispatch();
 
@@ -331,6 +333,32 @@ const Player = ({
     }
   };
 
+  useEffect(() => {
+        const loadAndDecryptPhoto = async () => {
+          if (!thumbnail) {
+            setDecryptedPhoto("");
+            return;
+          }
+    
+          try {
+            const photoUrl = thumbnail;
+    
+            // If it's not a .txt file, assume it's already a valid URL
+            if (!photoUrl.endsWith(".txt")) {
+              setDecryptedPhoto(photoUrl);
+              return;
+            }
+            const decryptedUrl = await decryptImage(photoUrl);
+            setDecryptedPhoto(decryptedUrl);
+          } catch (error) {
+            console.error("Error loading profile photo:", error);
+            setDecryptedPhoto("");
+          }
+        };
+    
+        loadAndDecryptPhoto();
+      }, [thumbnail]);
+
   // Initialize Artplayer for the current video
   const initializeArtplayer = () => {
     if (!playerContainerRef.current || artPlayerInstanceRef.current) return;
@@ -346,11 +374,12 @@ const Player = ({
       volume: 0.5,
       loop: true,
       muted: mute,
-      autoplay: false,
+      // autoplay: false,
       fullscreenWeb: true,
+      poster: decryptedPhoto,
       moreVideoAttr: {
         playsInline: true,
-        preload: "metadata",
+        preload: "auto",
       },
       aspectRatio: true,
       fullscreen: false,
@@ -757,8 +786,8 @@ const Player = ({
         });
       },
       {
-        rootMargin: "0px", // Start initializing slightly before entering viewport
-        threshold: 0.01, // Trigger when at least 1% of the element is visible
+        rootMargin: "1000px", // Start initializing slightly before entering viewport
+        threshold: 0, // Trigger when at least 1% of the element is visible
       }
     );
 
@@ -885,11 +914,13 @@ const Player = ({
       }
     };
   }, [src]); // Re-run when `src` changes
+
   useEffect(() => {
-    if (isPlay) {
-      artPlayerInstanceRef?.current?.play();
+    if (isPlay && artPlayerInstanceRef.current && !artPlayerInstanceRef.current.playing) {
+      artPlayerInstanceRef.current.play();
     }
   }, [isPlay]);
+  
 
   // useEffect(() => {
   //   muteRef.current = mute; // Update muteRef when mute state changes
