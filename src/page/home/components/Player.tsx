@@ -309,10 +309,6 @@ const Player = ({
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    muteRef.current = mute; // Update muteRef when mute state changes
-  }, [mute]);
-
   // Format time (e.g., 65 => "01:05")
   const formatTime = (time: number) => {
     const hours = Math.floor(time / 3600);
@@ -395,93 +391,7 @@ const Player = ({
             height: "25px",
             zIndex: "9999",
           },
-          // mounted: (element) => {
-          //   progressBarRef.current = element.querySelector(
-          //     ".custom-progress-bar"
-          //   ) as HTMLInputElement;
-          //   timeDisplayRef.current = element.querySelector(
-          //     ".custom-time-display"
-          //   ) as HTMLDivElement;
 
-          //   if (!progressBarRef.current) {
-          //     console.error("Custom progress bar or tooltip element not found");
-          //     return;
-          //   }
-
-          //   progressBarRef.current.value = "0"; // Ensure progress starts at 0
-          //   progressBarRef.current.style.opacity = "0"; // Hide thumb initially
-
-          //   // Handle input (while dragging)
-          //   progressBarRef.current.addEventListener("input", (e) => {
-          //     if (!artPlayerInstanceRef.current) return;
-
-          //     // If not already dragging, set the flag to true (start of dragging)
-          //     if (!isDraggingRef.current) {
-          //       sethideBar(true);
-          //       if (progressBarRef.current) {
-          //         progressBarRef.current.style.height = "10px";
-          //         progressBarRef.current.style.setProperty(
-          //           "--thumb-width",
-          //           "16px"
-          //         );
-          //         progressBarRef.current.style.setProperty(
-          //           "--thumb-height",
-          //           "20px"
-          //         );
-          //         progressBarRef.current.style.setProperty(
-          //           "--thumb-radius",
-          //           "5px"
-          //         );
-          //       }
-          //       isDraggingRef.current = true;
-          //       timeDisplayRef.current!.style.display = "block"; // Show time display
-          //     }
-
-          //     const value = parseFloat((e.target as HTMLInputElement).value);
-          //     seekTimeRef.current =
-          //       (value / 100) * artPlayerInstanceRef.current.duration;
-
-          //     progressBarRef.current!.style.setProperty(
-          //       "--progress",
-          //       `${value}%`
-          //     );
-
-          //     // Update time display text
-          //     if (timeDisplayRef.current) {
-          //       const currentTime = formatTime(seekTimeRef.current);
-          //       const duration = formatTime(
-          //         artPlayerInstanceRef.current.duration
-          //       );
-          //       timeDisplayRef.current.textContent = `${currentTime} / ${duration}`;
-          //     }
-          //   });
-
-          //   // Handle change (end dragging)
-          //   progressBarRef.current.addEventListener("change", () => {
-          //     if (!artPlayerInstanceRef.current || !isDraggingRef.current)
-          //       return;
-
-          //     isDraggingRef.current = false; // End of dragging
-          //     sethideBar(false);
-          //     if (progressBarRef.current) {
-          //       progressBarRef.current.style.height = "4px";
-          //       progressBarRef.current.style.setProperty(
-          //         "--thumb-width",
-          //         "12px"
-          //       );
-          //       progressBarRef.current.style.setProperty(
-          //         "--thumb-height",
-          //         "12px"
-          //       );
-          //       progressBarRef.current.style.setProperty(
-          //         "--thumb-radius",
-          //         "50%"
-          //       );
-          //     }
-          //     timeDisplayRef.current!.style.display = "none"; // Hide time display
-          //     artPlayerInstanceRef.current.currentTime = seekTimeRef.current;
-          //   });
-          // },
           mounted: (element) => {
             progressBarRef.current = element.querySelector(
               ".custom-progress-bar"
@@ -878,6 +788,8 @@ const Player = ({
           if (entry.isIntersecting) {
             setIsplay(true);
 
+            (artPlayerInstanceRef.current as any)?.play();
+
             // Handle ready and play events for dimension updates
             (artPlayerInstanceRef.current as any)?.on("ready", () => {
               setWidth(
@@ -898,11 +810,39 @@ const Player = ({
                 (artPlayerInstanceRef.current as Artplayer)?.video?.videoHeight
               );
             });
-            (artPlayerInstanceRef.current as any)?.play();
-            // (artPlayerInstanceRef.current as any)?.play();
+
             if (artPlayerInstanceRef.current) {
               (artPlayerInstanceRef.current as any).muted = muteRef.current;
             }
+
+            // Handle mute/unmute logic
+            // if (artPlayerInstanceRef.current) {
+            //   if (muteRef.current) {
+            //     // If muted, set muted immediately
+            //     artPlayerInstanceRef.current.muted = true;
+            //   } else {
+            //     // Track playback time using the video:timeupdate event
+            //     const handleTimeUpdate = () => {
+            //       const currentTime =
+            //         artPlayerInstanceRef.current?.currentTime || 0;
+            //       if (currentTime >= 10) {
+            //         if (artPlayerInstanceRef.current) {
+            //           console.log("unmount");
+            //           artPlayerInstanceRef.current.muted = false;
+            //         }
+            //         artPlayerInstanceRef.current?.off(
+            //           "video:timeupdate",
+            //           handleTimeUpdate
+            //         ); // Stop tracking after unmuting
+            //       }
+            //     };
+
+            //     artPlayerInstanceRef.current.on(
+            //       "video:timeupdate",
+            //       handleTimeUpdate
+            //     );
+            //   }
+            // }
           } else {
             if (artPlayerInstanceRef.current) {
               setIsplay(false);
@@ -951,7 +891,38 @@ const Player = ({
     }
   }, [isPlay]);
 
+  // useEffect(() => {
+  //   muteRef.current = mute; // Update muteRef when mute state changes
+
+  //   if (artPlayerInstanceRef.current) {
+  //     if (mute) {
+  //       // If muting, set muted immediately
+  //       artPlayerInstanceRef.current.muted = true;
+  //     } else {
+  //       // If unmuting, check if the video has been playing for at least 2 seconds
+  //       const currentTime = artPlayerInstanceRef.current.currentTime || 0;
+
+  //       if (currentTime >= 2) {
+  //         console.log("cc");
+  //         // If the video has been playing for at least 2 seconds, unmute immediately
+  //         artPlayerInstanceRef.current.muted = false;
+  //       } else {
+  //         // If not, wait until the video has played for 2 seconds
+  //         const timeToWait = 2000 - currentTime * 1000; // Calculate remaining time to reach 2 seconds
+  //         if (timeToWait > 0) {
+  //           setTimeout(() => {
+  //             if (artPlayerInstanceRef.current) {
+  //               artPlayerInstanceRef.current.muted = false;
+  //             }
+  //           }, timeToWait);
+  //         }
+  //       }
+  //     }
+  //   }
+  // }, [mute]);
+
   useEffect(() => {
+    muteRef.current = mute; // Update muteRef when mute state changes
     if (artPlayerInstanceRef.current) {
       artPlayerInstanceRef.current.muted = mute;
     }
