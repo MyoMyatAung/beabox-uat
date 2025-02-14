@@ -180,24 +180,32 @@ export const profileApi = createApi({
       }),
     }),
     getFollowerList: builder.query<any, any>({
+      query: ({ user_id }) => ({
+        url: convertToSecureUrl(`/follower/follower-list?user_id=${user_id}`),
+        method: "GET",
+      }),
+    }),
+    filterFollower: builder.query<any, any>({
       query: ({ user_id, search }) => ({
-        url: search?.length
-          ? convertToSecureUrl(
-              `/follower/follower-list?user_id=${user_id}&search=${search}`
-            )
-          : convertToSecureUrl(`/follower/follower-list?user_id=${user_id}`),
+        url: convertToSecureUrl(
+          `/follower/follower-list?user_id=${user_id}&search=${search}`
+        ),
         method: "GET",
       }),
     }),
     getFollowingList: builder.query<any, any>({
-      query: ({ user_id, search, page }) => ({
-        url: search?.length
-          ? convertToSecureUrl(
-              `/follower/following-list?user_id=${user_id}&search=${search}&page=${page}`
-            )
-          : convertToSecureUrl(
-              `/follower/following-list?user_id=${user_id}&page=${page}`
-            ),
+      query: ({ user_id, page }) => ({
+        url: convertToSecureUrl(
+          `/follower/following-list?user_id=${user_id}&page=${page}`
+        ),
+        method: "GET",
+      }),
+    }),
+    filterFollowing: builder.query<any, any>({
+      query: ({ user_id, search }) => ({
+        url: convertToSecureUrl(
+          `/follower/following-list?user_id=${user_id}&search=${search}`
+        ),
         method: "GET",
       }),
     }),
@@ -333,6 +341,8 @@ export const profileApi = createApi({
 });
 
 export const {
+  useFilterFollowingQuery,
+  useFilterFollowerQuery,
   useCheckSAnswerMutation,
   useGetConfigQuery,
   useChangeShareRegionMutation,
