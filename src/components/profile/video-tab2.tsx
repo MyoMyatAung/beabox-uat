@@ -43,7 +43,7 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
           value="video"
         >
           <span className="flex items-center gap-1">
-            <Play /> 我的作品
+            <Play /> 他的作品
           </span>
         </TabsTrigger>
         <TabsTrigger
