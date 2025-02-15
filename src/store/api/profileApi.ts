@@ -167,6 +167,14 @@ export const profileApi = createApi({
         method: "GET",
       }),
     }),
+    getMyPost: builder.query<any, any>({
+      query: ({ status, pageSize }) => ({
+        url: convertToSecureUrl(
+          `/my/post/list?status=${status}&pageSize=${pageSize}`
+        ),
+        method: "GET",
+      }),
+    }),
     getSecurityQuestions: builder.mutation<any, string>({
       query: () => ({
         url: convertToSecureUrl(`/get-security-question`),
@@ -341,6 +349,7 @@ export const profileApi = createApi({
 });
 
 export const {
+  useGetMyPostQuery,
   useFilterFollowingQuery,
   useFilterFollowerQuery,
   useCheckSAnswerMutation,
