@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import FollowCard from "../follow-card";
 import { useSelector } from "react-redux";
-import { useGetFollowingListQuery } from "@/store/api/profileApi";
+import {
+  useFilterFollowingQuery,
+  useGetFollowingListQuery,
+} from "@/store/api/profileApi";
 import { UsersRound } from "lucide-react";
 import Loader from "../../../page/home/vod_loader.gif";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -14,8 +17,13 @@ const FollowingList = ({ searchTerm }: any) => {
 
   const { data, isLoading, isFetching } = useGetFollowingListQuery({
     user_id: user_code,
-    search: searchTerm,
+    // search: searchTerm,
     page: page,
+  });
+
+  const { data: filterdata } = useFilterFollowingQuery({
+    user_id: user_code,
+    search: searchTerm,
   });
 
   useEffect(() => {
@@ -45,7 +53,26 @@ const FollowingList = ({ searchTerm }: any) => {
         </div>
       ) : (
         <>
-          {data?.data?.length ? (
+          {searchTerm?.length ? (
+            <>
+              {filterdata?.data?.length ? (
+                filterdata?.data?.map((follower: any) => (
+                  <FollowCard key={follower.user_code} data={follower} />
+                ))
+              ) : (
+                <div className="h-full flex justify-center mt-[40%]">
+                  <div className="flex flex-col items-center gap-3">
+                    <UsersRound className="text-[#888]" />
+                    <p className="text-[12px] text-[#888] w-[90px] text-center">
+                      快关注你感兴 趣的用户吧！
+                    </p>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+                {data?.data?.length ? (
             <>
               {waterfall.map((follower: any) => (
                 <FollowCard key={follower.user_code} data={follower} />
@@ -68,17 +95,12 @@ const FollowingList = ({ searchTerm }: any) => {
                 }
                 endMessage={
                   <div className="flex bg-whit pt-20 justify-center items-center  w-screen absolute bottom-[-20px] left-[-20px]">
-                    <p className="py-10" style={{ textAlign: "center" }}>
-                      {/* <b>No more yet!</b> */}
-                    </p>
+                    <p className="py-10" style={{ textAlign: "center" }}></p>
                   </div>
                 }
               >
                 <></>
               </InfiniteScroll>
-              {/* data?.data?.map((follower: any) => (
-              <FollowCard key={follower.user_code} data={follower} />
-            )) */}
             </>
           ) : (
             <div className="h-full flex justify-center mt-[40%]">
@@ -89,7 +111,62 @@ const FollowingList = ({ searchTerm }: any) => {
                 </p>
               </div>
             </div>
+          )}  {data?.data?.length ? (
+                data?.data?.map((follower: any) => (
+                  <FollowCard key={follower.user_code} data={follower} />
+                ))
+              ) : (
+                <div className="h-full flex justify-center mt-[40%]">
+                  <div className="flex flex-col items-center gap-3">
+                    <UsersRound className="text-[#888]" />
+                    <p className="text-[12px] text-[#888] w-[90px] text-center">
+                      快关注你感兴 趣的用户吧！
+                    </p>
+                  </div>
+                </div>
+              )}
+            </>
           )}
+          {/* {data?.data?.length ? (
+            <>
+              {waterfall.map((follower: any) => (
+                <FollowCard key={follower.user_code} data={follower} />
+              ))}
+              <InfiniteScroll
+                className=""
+                dataLength={data?.data?.length}
+                next={fetchMoreData}
+                hasMore={hasMore}
+                loader={
+                  <div className=" flex justify-center w-screen h-[300px]">
+                    <div className="">
+                      <img
+                        src={Loader}
+                        className="w-[70px] h-[70px] hidden"
+                        alt="Loading"
+                      />
+                    </div>
+                  </div>
+                }
+                endMessage={
+                  <div className="flex bg-whit pt-20 justify-center items-center  w-screen absolute bottom-[-20px] left-[-20px]">
+                    <p className="py-10" style={{ textAlign: "center" }}></p>
+                  </div>
+                }
+              >
+                <></>
+              </InfiniteScroll>
+            </>
+          ) : (
+            <div className="h-full flex justify-center mt-[40%]">
+              <div className="flex flex-col items-center gap-3">
+                <UsersRound className="text-[#888]" />
+                <p className="text-[12px] text-[#888] w-[90px] text-center">
+                  快关注你感兴 趣的用户吧！
+                </p>
+              </div>
+            </div>
+          )} */}
         </>
       )}
       {/* {data?.data?.map((follower: any) => (
