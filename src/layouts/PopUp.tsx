@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import header from "../assets/explore/Header.png";
-import {
-  useGetAdsNoticeQuery,
-} from "@/store/api/explore/exploreApi";
+import { useGetAdsNoticeQuery } from "@/store/api/explore/exploreApi";
 import "../page/explore/explore.css";
 import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder.tsx";
 import Notice from "./Notice";
@@ -72,7 +70,7 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
   };
 
   const currentImage: any = multiStart[currentIndex];
-  // console.log(currentImage);
+  // console.log(ad);
 
   return (
     <div className="h-screen bg-transparent w-screen flex flex-col gap-[20px] justify-center items-center fixed top-0 z-[9999]">
@@ -152,10 +150,17 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
                     target="_blank"
                     className="flex h-[75px] flex-col justify-center items-center gap-[4px]"
                   >
-                    <AsyncDecryptedImage
+                    {/* <AsyncDecryptedImage
                       className="w-[56px] h-[53px] rounded-[6px] border-[#222]"
                       imageUrl={app.image}
                       alt=""
+                    /> */}
+                    <ImageWithPlaceholder
+                      src={app.image}
+                      width={""}
+                      height={""}
+                      alt="start"
+                      className="w-[56px] h-[53px] rounded-[6px] border-[#222]"
                     />
                     <h1 className="text-white text-[10px] font-[400]">
                       {app.title}

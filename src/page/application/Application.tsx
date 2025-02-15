@@ -10,7 +10,9 @@ import AsyncDecryptedImage from "@/utils/asyncDecryptedImage.tsx";
 
 const Application: React.FC<any> = () => {
   const [ad, setAd] = useState([]);
-  const { applicationData, isLoading } = useSelector((state: any) => state.explore);
+  const { applicationData, isLoading } = useSelector(
+    (state: any) => state.explore
+  );
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [autoPlay, setAutoPlay] = useState(false);
 
@@ -38,7 +40,10 @@ const Application: React.FC<any> = () => {
         {isLoading && (
           <>
             {/* Skeleton for Carousel */}
-            <Skeleton height={174} className="rounded-md w-screen xl:w-[600px]" />
+            <Skeleton
+              height={174}
+              className="rounded-md w-screen xl:w-[600px]"
+            />
 
             {/* Skeleton for Header */}
             <div className="mt-[20px] grid grid-rows-4 gap-[5px]">
@@ -58,7 +63,11 @@ const Application: React.FC<any> = () => {
                         key={appIndex}
                         className="flex flex-col items-center gap-[4px]"
                       >
-                        <Skeleton height={53} width={56} className="rounded-[6px]" />
+                        <Skeleton
+                          height={53}
+                          width={56}
+                          className="rounded-[6px]"
+                        />
                         <Skeleton height={10} width={40} />
                       </div>
                     ))}
@@ -130,19 +139,17 @@ const Application: React.FC<any> = () => {
             <div className="mt-[20px]">
               <div className="grid grid-rows-4 gap-[5px]">
                 {applicationData?.header?.length > 0 &&
-                  applicationData?.header
-                    .map((header: any) => (
-                      <a href={header.url} target="_blank" key={header.id}>
-
-                        <ImageWithPlaceholder
+                  applicationData?.header.map((header: any) => (
+                    <a href={header.url} target="_blank" key={header.id}>
+                      <ImageWithPlaceholder
                         className="rounded-md"
-                          alt="Header Image"
-                          width="100%"
-                          height={44}
-                          src={header.image}
-                        />
-                      </a>
-                    ))}
+                        alt="Header Image"
+                        width="100%"
+                        height={44}
+                        src={header.image}
+                      />
+                    </a>
+                  ))}
               </div>
             </div>
 
@@ -164,9 +171,16 @@ const Application: React.FC<any> = () => {
                           target="_blank"
                           className="flex flex-col justify-center items-center gap-[4px]"
                         >
-                          <AsyncDecryptedImage
+                          {/* <AsyncDecryptedImage
                             className="w-[52px] h-[52px] rounded-[6px] border-[#222]"
                             imageUrl={app.image}
+                            alt={app.title}
+                          /> */}
+                          <ImageWithPlaceholder
+                            className="w-[52px] h-[52px] rounded-[6px] border-[#222]"
+                            src={app.image}
+                            width={""}
+                            height={""}
                             alt={app.title}
                           />
                           <h1 className="text-white text-[10px] font-[400]">
@@ -181,9 +195,14 @@ const Application: React.FC<any> = () => {
 
             {/* Footer Section */}
             <div className="mt-[20px] mb-[80px]">
-              {applicationData?.footer?.length > 0 &&
-                // applicationData?.footer.map((footer: any) => (
-                  <a href={applicationData?.footer[0].url} target="_blank" key={applicationData?.footer[0].id}>
+              {
+                applicationData?.footer?.length > 0 && (
+                  // applicationData?.footer.map((footer: any) => (
+                  <a
+                    href={applicationData?.footer[0].url}
+                    target="_blank"
+                    key={applicationData?.footer[0].id}
+                  >
                     <ImageWithPlaceholder
                       className="mt-[5px] rounded-md"
                       alt="Footer Image"
@@ -192,8 +211,9 @@ const Application: React.FC<any> = () => {
                       src={applicationData?.footer[0].image}
                     />
                   </a>
+                )
                 // ))
-                }
+              }
             </div>
           </>
         )}
