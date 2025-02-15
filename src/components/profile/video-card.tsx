@@ -1,4 +1,4 @@
-import ImageWithPlaceholder from "@/page/search/comp/imgPlaceholder";
+import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder";
 import { paths } from "@/routes/paths";
 import { setDetails } from "@/store/slices/exploreSlice";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
@@ -35,6 +35,7 @@ const VideoCard = ({ videoData }: any) => {
   useEffect(() => {
     loadHandler();
   }, []);
+  console.log(videoData);
 
   useEffect(() => {
     const loadAndDecryptPhoto = async () => {
@@ -86,10 +87,18 @@ const VideoCard = ({ videoData }: any) => {
         {!decryptedPhoto ? (
           <div className="h-[153px] object-cover rounded w-full object-center bg-gray-900"></div>
         ) : (
-          <img
-            src={decryptedPhoto}
-            alt=""
+          // <AsyncDecryptedImage
+          //   className="h-[153px] object-cover rounded w-full object-center"
+          //   // onLoad={() => setImgLoad(true)}
+          //   imageUrl={videoData?.preview_image}
+          //   alt=""
+          // />
+          <ImageWithPlaceholder
             className="h-[153px] object-cover rounded w-full object-center"
+            width={""}
+            height={""}
+            alt="preview"
+            src={videoData?.preview_image}
           />
           // <AsyncDecryptedImage
           //   className="h-[153px] object-cover rounded w-full object-center"
