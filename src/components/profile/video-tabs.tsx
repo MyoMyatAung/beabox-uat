@@ -6,7 +6,7 @@ import { MdWatchLater } from "react-icons/md";
 import { useSelector } from "react-redux";
 import {
   useGetLikedPostQuery,
-  useGetMyPostQuery,
+  useGetPostsQuery,
   useGetWatchHistoryQuery,
 } from "@/store/api/profileApi";
 import { useEffect, useState } from "react";
@@ -25,9 +25,8 @@ const VideoTabs = ({ login, showHeader, headerRef }: any) => {
     { user_id: user?.id, page },
     { skip: !user }
   );
-  const { data: mydata, isLoading: myloading } = useGetMyPostQuery({
-    status,
-    pageSize,
+  const { data: mydata, isLoading: myloading } = useGetPostsQuery({
+    id: user?.id,
   });
   const { data: history, isLoading: historyLoading } = useGetWatchHistoryQuery(
     {
@@ -166,7 +165,7 @@ const VideoTabs = ({ login, showHeader, headerRef }: any) => {
             <div>
               <VideoGrid
                 showHeader={showHeader}
-                data={mydata}
+                data={mydata?.data}
                 fetchMoreData={fetchMoreData}
               />
               <div className="py-[38px]"></div>

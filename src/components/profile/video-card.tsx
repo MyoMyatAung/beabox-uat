@@ -85,7 +85,7 @@ const VideoCard = ({ videoData }: any) => {
       {/* remove if not work ;( */}
       <div className="">
         {!decryptedPhoto ? (
-          <div className="h-[153px] object-cover rounded w-full object-center bg-gray-900"></div>
+          <div className="h-[153px] object-cover rounded w-full object-center bg-[#FFFFFF1F]"></div>
         ) : (
           // <AsyncDecryptedImage
           //   className="h-[153px] object-cover rounded w-full object-center"

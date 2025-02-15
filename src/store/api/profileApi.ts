@@ -167,11 +167,9 @@ export const profileApi = createApi({
         method: "GET",
       }),
     }),
-    getMyPost: builder.query<any, any>({
-      query: ({ status, pageSize }) => ({
-        url: convertToSecureUrl(
-          `/my/post/list?status=${status}&pageSize=${pageSize}`
-        ),
+    getPosts: builder.query<any, any>({
+      query: ({ id }) => ({
+        url: convertToSecureUrl(`/user/post?user_id=${id}&page=1`),
         method: "GET",
       }),
     }),
@@ -349,7 +347,7 @@ export const profileApi = createApi({
 });
 
 export const {
-  useGetMyPostQuery,
+  useGetPostsQuery,
   useFilterFollowingQuery,
   useFilterFollowerQuery,
   useCheckSAnswerMutation,
