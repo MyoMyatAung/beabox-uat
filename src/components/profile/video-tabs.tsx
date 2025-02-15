@@ -28,7 +28,7 @@ const VideoTabs = ({ login, showHeader, headerRef }: any) => {
     },
     { skip: !user }
   );
-  // console.log(HistoryList);
+  console.log(data, "vdata");
 
   useEffect(() => {
     if (data?.data) {
@@ -134,4 +134,3 @@ const VideoTabs = ({ login, showHeader, headerRef }: any) => {
 };
 
 export default VideoTabs;
-

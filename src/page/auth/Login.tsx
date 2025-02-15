@@ -195,7 +195,8 @@ const Login = () => {
                   isLoading ||
                   captchaLoading ||
                   !emailOrPhoneValue ||
-                  !passwordValue
+                  !passwordValue ||
+                  passwordValue?.length < 8
                 }
                 // type="submit"
                 onClick={async () => {
@@ -238,7 +239,7 @@ const Login = () => {
                       alt=""
                     />
                   </div>
-                  <div
+                  {/* <div
                     onClick={async (e) => {
                       e.stopPropagation();
                       await getCaptcha("");
@@ -251,7 +252,7 @@ const Login = () => {
                       className={`${captchaLoading ? "animate-spin" : ""}`}
                     />
                     <p className="text-[12px] text-[#bbb]">刷新</p>
-                  </div>
+                  </div> */}
                   <Button
                     onClick={handleVerify}
                     disabled={isLoading ? true : false || !captcha?.length}

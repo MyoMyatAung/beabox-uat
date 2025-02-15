@@ -7,6 +7,7 @@ import { Camera } from "lucide-react";
 import { useEffect, useState } from "react";
 import Loader from "../shared/loader";
 import TranLoader from "../shared/tran-loader";
+import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 
 const ImageUpload = ({ imgurl }: any) => {
   const [image, setImage] = useState<string | null>(null);
@@ -50,8 +51,8 @@ const ImageUpload = ({ imgurl }: any) => {
           {image && (
             <label htmlFor="image-upload" className="">
               <div className="flex justify-center items-center relative">
-                <img
-                  src={image || "/placeholder.svg"}
+                <AsyncDecryptedImage
+                  imageUrl={image || "/placeholder.svg"}
                   alt="Preview"
                   className="w-[80px] h-[80px] rounded-full bg-[#FFFFFF12] flex justify-center items-center object-cover object-center filter saturate-50 brightness-75"
                 />

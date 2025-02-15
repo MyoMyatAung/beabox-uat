@@ -7,6 +7,7 @@ import {
 } from "@/store/api/explore/exploreApi";
 import { Link } from "react-router-dom";
 import useCachedImage from "@/utils/useCachedImage";
+import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 interface PoppizzaProps {}
 
 const Poppizza: React.FC<PoppizzaProps> = ({}) => {
@@ -46,8 +47,8 @@ const Poppizza: React.FC<PoppizzaProps> = ({}) => {
           </div>
         )}
         {imgSrc && (
-          <img
-            src={imgSrc}
+          <AsyncDecryptedImage
+            imageUrl={imgSrc}
             className="w-[58px] h-[58px] object-cover rounded-[8px] mx-auto"
             alt="ad"
             loading="lazy"
@@ -61,7 +62,7 @@ const Poppizza: React.FC<PoppizzaProps> = ({}) => {
   };
   
   return (
-    <div className=" pt-[20px]">
+    <div className=" pt-[20px] px-[10px]">
       <h1 className=" text-white text-[14px] font-[500] leading-[20px] pb-[12px] px-1">
         {data?.data?.ads?.application.title
           ? data?.data?.ads?.application.title

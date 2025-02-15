@@ -27,7 +27,7 @@ const navItems = [
     href: "/application",
   },
   {
-    name: "我的",
+    name: "个人中心",
     selectedIcon: Profile1SVG,
     icon: ProfileSVG,
     href: "/profile",

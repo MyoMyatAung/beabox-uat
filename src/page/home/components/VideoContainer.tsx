@@ -9,6 +9,7 @@ import {
 import { setVideos } from "../services/videosSlice";
 import { useNavigate } from "react-router-dom";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
+import { showToast } from "../services/errorSlice";
 
 const VideoContainer = ({
   video,
@@ -24,7 +25,8 @@ const VideoContainer = ({
   width,
   height,
   container,
-  index,
+  hideBar,
+  sethideBar,
 }: {
   video: any;
   setWidth: any;
@@ -39,7 +41,8 @@ const VideoContainer = ({
   width: any;
   height: any;
   container: any;
-  index: any;
+  hideBar: any;
+  sethideBar: any;
 }) => {
   const [likeCount, setLikeCount] = useState(video?.like_count);
   const [isLiked, setIsLiked] = useState(video?.is_liked);
@@ -51,6 +54,7 @@ const VideoContainer = ({
   const dispatch = useDispatch();
   const currentTab = useSelector((state: any) => state.home.currentTab);
   const { videos } = useSelector((state: any) => state.videoSlice);
+  console.log(video);
 
   const post_id = video?.post_id;
   const [rotateVideoId, setRotateVideoId] = useState<string | null>(null); // For controlling fullscreen per video
@@ -124,7 +128,12 @@ const VideoContainer = ({
           }
         }, 1000); // Call API 1 second after the last click
       } else {
-        setIsOpen(true);
+        dispatch(
+          showToast({
+            message: "登陆后可点赞",
+            type: "success",
+          })
+        );
       }
     };
 
@@ -284,32 +293,42 @@ const VideoContainer = ({
   };
 
   const handleFullscreen = (video: any) => {
-    // if (rotateVideoId === video?.post_id) {
-    //   // If the clicked video is already in fullscreen, exit fullscreen
-    //   setRotateVideoId(null);
-    //   if (container) {
-    //     const activeElement = container.querySelector(
-    //       `[data-post-id="${video?.post_id}"]`
-    //     );
-    //     if (activeElement) {
-    //       activeElement.scrollIntoView({ block: "center" });
-    //     }
-    //   }
-    // } else {
-    //   // Otherwise, set the clicked video to fullscreen
-    //   setRotateVideoId(video?.post_id);
-    // }
-    sendEventToNative("beabox_fullscreen", {
-      post_id: video?.post_id,
-      like_api_url: `${import.meta.env.VITE_API_URL}/post/like`,
-      token: `Bearer ${user?.token}`,
-      video_url: video?.files[0].resourceURL,
-      share_link: config?.data?.share_link,
-      title: video.title,
-      like_count: +likeCount,
-      is_like: isLiked,
-    });
+    if (
+      (window as any).webkit &&
+      (window as any).webkit.messageHandlers &&
+      (window as any).webkit.messageHandlers.jsBridge
+    ) {
+      sendEventToNative("beabox_fullscreen", {
+        post_id: video?.post_id,
+        like_api_url: `${import.meta.env.VITE_API_URL}/post/like`,
+        token: `Bearer ${user?.token}`,
+        video_url: video?.files[0].resourceURL,
+        share_link: config?.data?.share_link,
+        title: video.title,
+        like_count: +likeCount,
+        is_like: isLiked,
+      });
+    } else {
+      if (rotateVideoId === video?.post_id) {
+        // If the clicked video is already in fullscreen, exit fullscreen
+        setRotateVideoId(null);
+        if (container) {
+          const activeElement = container.querySelector(
+            `[data-post-id="${video?.post_id}"]`
+          );
+          if (activeElement) {
+            activeElement.scrollIntoView({ block: "center" });
+          }
+        }
+      } else {
+        // Otherwise, set the clicked video to fullscreen
+        setRotateVideoId(video?.post_id);
+      }
+    }
   };
+
+  console.log("w", video?.files[0]?.width);
+  console.log("h", video?.files[0]?.height);
 
   if (isOpen) {
     return <LoginDrawer isOpen={isOpen} setIsOpen={setIsOpen} />;
@@ -318,7 +337,7 @@ const VideoContainer = ({
   return (
     <>
       <Player
-        // rotate={rotateVideoId === video?.post_id}
+        rotate={rotateVideoId === video?.post_id}
         src={video?.files[0].resourceURL}
         thumbnail={
           video?.preview_image ||
@@ -326,39 +345,41 @@ const VideoContainer = ({
         }
         handleLike={handleLike}
         setWidth={setWidth}
+        sethideBar={sethideBar}
         setHeight={setHeight}
+        post_id={post_id}
       />
-      <VideoSidebar
-        status={status}
-        unLike={unLike}
-        handleLike={handleLike}
-        setLikeCount={setLikeCount}
-        likeCount={likeCount}
-        isLiked={isLiked}
-        setIsLiked={setIsLiked}
-        // likes={video?.like_count}
-        // is_liked={video?.is_liked}
-        setCommentCount={setcommentCount}
-        messages={commentCount}
-        post_id={video?.post_id}
-        setCountNumber={setCountNumber}
-        setCountdown={setCountdown}
-        countNumber={countNumber}
-        countdown={countdown}
-        config={config?.data}
-        image={video?.preview_image}
-        post={video}
-        setHearts={setHearts}
-      />
+      {!hideBar && (
+        <VideoSidebar
+          status={status}
+          unLike={unLike}
+          handleLike={handleLike}
+          setLikeCount={setLikeCount}
+          likeCount={likeCount}
+          isLiked={isLiked}
+          setIsLiked={setIsLiked}
+          // likes={video?.like_count}
+          // is_liked={video?.is_liked}
+          setCommentCount={setcommentCount}
+          messages={commentCount}
+          post_id={video?.post_id}
+          setCountNumber={setCountNumber}
+          setCountdown={setCountdown}
+          countNumber={countNumber}
+          countdown={countdown}
+          config={config?.data}
+          image={video?.preview_image}
+          post={video}
+          setHearts={setHearts}
+        />
+      )}
+
       {video?.type !== "ads" && width > height && (
         <>
           <button
             onClick={() => handleFullscreen(video)}
-            className={`absolute ${
-              rotateVideoId === video.post_id
-                ? " top-[10px] right-[10px] w-[40px] bg-transparent"
-                : "left-[37%] top-[70%] bottom-0 right-0 w-[120px] bg-[#101010]"
-            }   h-[35px] rounded-md flex justify-center items-center z-[99] text-center  text-white `}
+            className={`absolute 
+            left-[37%] top-[70%] bottom-0 right-0 w-[120px] bg-[#101010] h-[35px] rounded-md flex justify-center items-center z-[99] text-center  text-white `}
           >
             <div className=" flex items-center p-1 gap-2">
               <svg

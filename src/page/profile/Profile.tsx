@@ -23,23 +23,39 @@ import EditCover from "@/components/profile/edit-cover";
 import AuthDrawer from "@/components/profile/auth/auth-drawer";
 import ScrollHeader from "@/components/profile/scroll-header";
 import { setIsDrawerOpen } from "@/store/slices/profileSlice";
+
+// A helper function that mimdata?.data?.profile_photoics your Kotlin logic.
+// It XORs only the first 4096 bytes (or the data size if smaller) and decodes the result as text.
+const decryptImage = (arrayBuffer, key = 0x12, decryptSize = 4096) => {
+  const data = new Uint8Array(arrayBuffer);
+  const maxSize = Math.min(decryptSize, data.length);
+  for (let i = 0; i < maxSize; i++) {
+    data[i] ^= key;
+  }
+  // Decode the entire data as text.
+  return new TextDecoder().decode(data);
+};
+
 const Profile = () => {
-  const headerRef = useRef<any>(null);
+  const headerRef = useRef(null);
   const [showHeader, setShowHeader] = useState(false);
-  const user = useSelector((state: any) => state?.persist?.user) || "";
+  const user = useSelector((state) => state?.persist?.user) || "";
   const { data, isLoading, refetch } = useGetMyOwnProfileQuery("", {
     skip: !user,
   });
   console.log(data, "data");
   const [show, setShow] = useState(false);
-  const gender = useSelector((state: any) => state?.persist?.gender);
-  const region = useSelector((state: any) => state?.persist?.region);
+  const gender = useSelector((state) => state?.persist?.gender);
+  const region = useSelector((state) => state?.persist?.region);
   const [isCopied, setIsCopied] = useState(false);
   const dispatch = useDispatch();
+  // decryptedCover and decryptedPhoto will now hold a string (for example, a data URL)
   const [decryptedCover, setDecryptedCover] = useState(defaultCover);
+  const [decryptedPhoto, setDecryptedPhoto] = useState("");
 
+  // Effect to load and decrypt cover photo
   useEffect(() => {
-    const loadAndDecryptImage = async () => {
+    const loadAndDecryptCover = async () => {
       if (!user?.token || !data?.data?.cover_photo) {
         setDecryptedCover(defaultCover);
         return;
@@ -48,59 +64,74 @@ const Profile = () => {
       try {
         const coverUrl = data.data.cover_photo;
 
+        // If it's not a .txt file, assume it's already a valid URL
         if (!coverUrl.endsWith(".txt")) {
           setDecryptedCover(coverUrl);
           return;
         }
+        console.log("coverUrl is =>", coverUrl);
 
-        // Fetch encrypted image data
+        // Fetch the encrypted image data
         const response = await fetch(coverUrl);
-        const encryptedData = await response.arrayBuffer();
+        const arrayBuffer = await response.arrayBuffer();
 
-        // XOR decryption with key 0x12
-        const decryptedData = new Uint8Array(encryptedData);
-        const key = 0x12;
-        const maxSize = Math.min(4096, decryptedData.length);
+        // Decrypt the first 4096 bytes and decode the entire file as text.
+        const decryptedStr = decryptImage(arrayBuffer);
+        console.log("Decrypted cover string is =>", decryptedStr);
 
-        for (let i = 0; i < maxSize; i++) {
-          decryptedData[i] ^= key;
-        }
-
-        // Determine MIME type from decrypted data (simple detection)
-        let mimeType = "image/jpeg"; // default
-        if (decryptedData[0] === 0x89 && decryptedData[1] === 0x50) {
-          mimeType = "image/png";
-        } else if (decryptedData[0] === 0x47 && decryptedData[1] === 0x49) {
-          mimeType = "image/gif";
-        }
-
-        // Create blob URL
-        const blob = new Blob([decryptedData], { type: mimeType });
-        const blobUrl = URL.createObjectURL(blob);
-        setDecryptedCover(blobUrl);
+        // Set the decrypted cover image source
+        setDecryptedCover(decryptedStr);
       } catch (error) {
         console.error("Error loading cover photo:", error);
         setDecryptedCover(defaultCover);
       }
     };
 
-    loadAndDecryptImage();
-
-    // Cleanup function to revoke blob URL
-    return () => {
-      if (decryptedCover.startsWith("blob:")) {
-        URL.revokeObjectURL(decryptedCover);
-      }
-    };
+    loadAndDecryptCover();
   }, [data?.data?.cover_photo, user?.token]);
 
+  // Effect to load and decrypt profile photo
+  useEffect(() => {
+    const loadAndDecryptPhoto = async () => {
+      if (!user?.token || !data?.data?.profile_photo) {
+        setDecryptedPhoto("");
+        return;
+      }
+
+      try {
+        const photoUrl = data.data.profile_photo;
+
+        // If it's not a .txt file, assume it's already a valid URL
+        if (!photoUrl.endsWith(".txt")) {
+          setDecryptedPhoto(photoUrl);
+          return;
+        }
+
+        // Fetch encrypted image data
+        const response = await fetch(photoUrl);
+        const arrayBuffer = await response.arrayBuffer();
+
+        // Decrypt the first 4096 bytes and decode as text.
+        const decryptedStr = decryptImage(arrayBuffer);
+        console.log("Decrypted profile photo string is =>", decryptedStr);
+
+        // Set the decrypted profile photo source
+        setDecryptedPhoto(decryptedStr);
+      } catch (error) {
+        console.error("Error loading profile photo:", error);
+        setDecryptedPhoto("");
+      }
+    };
+
+    loadAndDecryptPhoto();
+  }, [data?.data?.profile_photo, user?.token]);
+
+  // Scroll handler for header appearance
   useEffect(() => {
     const handleScroll = () => {
       if (headerRef.current) {
         const rect = headerRef.current.getBoundingClientRect();
-        // console.log(rect);
-
-        if (rect.top <= 0) {
+        if (rect.top <= 100) {
           setShowHeader(true);
         } else {
           setShowHeader(false);
@@ -109,13 +140,10 @@ const Profile = () => {
     };
 
     window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll); // Clean up on unmount
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleCopy = (text: any) => {
+  const handleCopy = (text) => {
     navigator?.clipboard
       .writeText(text)
       .then(() => {
@@ -142,35 +170,65 @@ const Profile = () => {
         <>
           <div className="gradient-overlay2"></div>
           <img
-            src={
-              user?.token
-                ? decryptedCover
-                  ? decryptedCover
-                  : defaultCover
-                : defaultCover
-            }
+            src={user?.token ? decryptedCover || defaultCover : defaultCover}
             alt=""
-            className={`fixed top-0 z-[1000] left-0 w-full h-[155px] object-cover object-center`}
+            className="fixed top-0 z-[1000] left-0 w-full h-[155px] object-cover object-center"
           />
         </>
       ) : (
         <>
           <div className="gradient-overlay"></div>
           <img
-            src={decryptedCover}
+            src={decryptedCover || defaultCover}
             alt=""
-            className={`fixed top-0 left-0 w-full h-[23vh] object-cover object-center`}
+            className="fixed top-0 left-0 w-full h-[23vh] object-cover object-center"
           />
         </>
       )}
-      {isCopied ? (
+      {isCopied && (
         <div className="w-full z-[1300] absolute top-[80vh] flex justify-center">
           <p className="text-[14px] bg-[#FFFFFF14] px-2 py-1 rounded-lg w-[83px] text-center">
             已复制 ID
           </p>
         </div>
-      ) : (
-        ""
+      )}
+      {show && (
+        <div className="absolute top-0 z-[2300] left-0 w-full h-full mx-auto flex flex-col justify-center items-center bg-black/80">
+          <div className="z-[1200] px-10">
+            <div className="z-[1200] h-[250px] gradient-b rounded-lg relative">
+              <img
+                src={center || "/placeholder.svg"}
+                className="absolute h-[250px] w-full"
+                alt=""
+              />
+              <div className="z-[1200] w-full absolute -top-20 flex justify-center items-center">
+                <img
+                  src={phoneImg || "/placeholder.svg"}
+                  className="w-[180px] z-[1200]"
+                  alt=""
+                />
+              </div>
+            </div>
+            <div className="z-[1200] flex flex-col justify-center items-center gap-4 bg-[#161619] p-5 rounded-bl-lg rounded-br-lg">
+              <h1 className="z-[1200] text-[18px] font-semibold text-white">
+                创作者中心
+              </h1>
+              <p className="z-[1200] text-[14px] text-center text-[#FFFFFFCC]">
+                查看创作者排名，洞察顶尖创作者的风采，观看最受欢迎视频，
+                掌握流行趋势，发现精彩瞬间，探索全新内容。
+              </p>
+              <Button className="z-[1200] mt-2 mb-4 rounded-[16px] px-[26px] py-[12px] bg-[#FFFFFF14] hover:bg-[#FFFFFF14]">
+                即将上线，敬请期待！
+              </Button>
+            </div>
+          </div>
+          <div
+            onClick={() => setShow(false)}
+            className="z-[1200] bg-[#FFFFFF29] p-2 rounded-full mt-5"
+          >
+            <X />
+          </div>
+        </div>
       )}
       <div className="flex-1">
         <div
@@ -179,30 +237,22 @@ const Profile = () => {
           } fixed top-0 w-full z-[1600] py-5`}
         >
           <ScrollHeader
-            photo={data?.data?.profile_photo}
+            photo={decryptedPhoto}
             name={data?.data?.nickname}
             login={user?.token}
             dphoto={data?.data?.cover_photo}
           />
         </div>
-        {/* {showHeader ? (
-          <div className="px-5 fixed top-0 w-full z-[1600] py-5">
-            <ScrollHeader
-              photo={data?.data?.profile_photo}
-              name={data?.data?.nickname}
-              login={user?.token}
-              dphoto={data?.data?.cover_photo}
-            />
-          </div>
-        ) : (
-          <></>
-        )} */}
-        <div className="z-[1200] flex my-5 justify-between items-center px-5">
-          {user?.token ? <EditCover /> : <div></div>}
-          <div className="z-[1200] flex gap-3 items-center">
+        <div className="z-[1900] flex my-5 justify-between items-center px-5">
+          {user?.token ? (
+            <EditCover decryptedCover={decryptedCover} />
+          ) : (
+            <div></div>
+          )}
+          <div className="z-[1900] flex gap-3 items-center">
             <Link
               to={paths.noti}
-              className="z-[1200] bg-[#FFFFFF12] w-10 h-10 rounded-full flex items-center justify-center"
+              className="z-[1900] bg-[#FFFFFF12] w-10 h-10 rounded-full flex items-center justify-center"
             >
               <Bell />
             </Link>
@@ -213,46 +263,46 @@ const Profile = () => {
           <ProfileAvatar
             progress={data?.data?.level_progress}
             levelImage={data?.data?.level}
-            photo={data?.data?.profile_photo}
+            photo={decryptedPhoto}
           />
           {!user?.token ? (
-            // <AuthDrawer />
             <div
               onClick={() => dispatch(setIsDrawerOpen(true))}
-              className="z-[1200] flex items-center gap-2 flex-1"
+              className="z-[1900] flex items-center gap-2 flex-1"
             >
-              <span className="z-[1200] text-[18px] ">点击登陆</span>
+              <span className="z-[1200] text-[18px]">点击登陆</span>
               <ChevronRight size={18} />
             </div>
           ) : (
-            <div className="z-[1200] flex-1 flex flex-col gap-0.5">
-              <p className="z-[1200] text-[18px] flex items-center gap-1">
+            <div className="z-[1900] flex-1 flex flex-col gap-0.5">
+              <p className="z-[1900] text-[18px] flex items-center gap-1">
                 {data?.data?.nickname}
-                <span>{gender == "Male" ? <MaleSVG /> : <></>}</span>
-                <span>{gender == "Feale" ? <FemaleSVG /> : <></>}</span>
+                <span>{gender === "Male" ? <MaleSVG /> : null}</span>
+                <span>{gender === "Female" ? <FemaleSVG /> : null}</span>
               </p>
-              <p className="z-[1200] text-[14px] text-[#BBBBBB] flex gap-1 items-center">
+              <p className="z-[1900] text-[14px] text-[#BBBBBB] flex gap-1 items-center">
                 B号 : {data?.data?.user_code}
                 <Copy
                   onClick={() => handleCopy(data?.data?.user_code)}
                   size={14}
                 />
               </p>
-              {data?.data?.share_region == "on" && region ? (
-                <div className="z-[1200] flex">
-                  <div className="z-[1200] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
-                    {!region?.city?.length && !region?.province?.length ? (
+              {data?.data?.share_region === "on" ? (
+                <div className="z-[1900] flex">
+                  <div className="z-[1900] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
+                    {!data?.data?.city?.length &&
+                    !data?.data?.province?.length ? (
                       <span>未知</span>
                     ) : (
                       <>
-                        <span>{region?.provinceName}</span>:
-                        <span>{region?.city}</span>
+                        <span>{data?.data?.province}</span>:
+                        <span>{data?.data?.city}</span>
                       </>
                     )}
                   </div>
                 </div>
               ) : (
-                <div className="z-[1200] flex">
+                <div className="z-[1900] flex">
                   <div className="z-[1200] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
                     <span>未知</span>
                   </div>
@@ -261,13 +311,35 @@ const Profile = () => {
             </div>
           )}
         </div>
-        <h1 className="text-[12px] text-[#888] mb-5 italic px-5 z-[1200] relative">
-          {data?.data?.hide_bio == "on" ? (
+        <h1 className="text-[12px] text-[#888] mb-5 italic px-5 z-[1900] relative">
+          {user?.token ? (
+            <>
+              {data?.data?.hide_bio === "on" ? (
+                <div className="text-[12px] text-[#888] mb-5 italic">
+                  {data?.data?.bio}
+                </div>
+              ) : (
+                <>
+                  {data?.data?.hide_bio?.length ? (
+                    <></>
+                  ) : (
+                    <Link
+                      to={paths.add_bio}
+                      className="text-[12px] text-[#FFFFFFCC] bg-[#FFFFFF14] px-2 py-1 w-[91px] text-center rounded-full"
+                    >
+                      + 个人简介
+                    </Link>
+                  )}
+                </>
+              )}
+            </>
+          ) : (
             <></>
-          ) : user?.token ? (
+          )}
+          {/* {data?.data?.hide_bio === "on" ? null : user?.token ? (
             data?.data?.bio ? (
               <div className="text-[12px] text-[#888] mb-5 italic">
-                {data?.data?.bio ? data?.data?.bio : ""}
+                {data?.data?.bio}
               </div>
             ) : (
               <Link
@@ -277,9 +349,7 @@ const Profile = () => {
                 + 个人简介
               </Link>
             )
-          ) : (
-            <></>
-          )}
+          ) : null} */}
         </h1>
         <div className={`${showHeader ? "opacity-0" : "opacity-1"}`}>
           <Stats
@@ -290,25 +360,19 @@ const Profile = () => {
           />
         </div>
         <div
-          className={`px-5 z-[1200] relative ${
+          className={`px-5 z-[1900] relative ${
             showHeader ? "opacity-0" : "opacity-1"
           }`}
         >
           {user?.token ? (
             <Link to={paths.profileDetail}>
-              <Button
-                className={`z-[1200] w-full bg-[#FFFFFF0F] hover:bg-[#FFFFFF0F] relative rounded-[12px]`}
-              >
+              <Button className="z-[1900] w-full bg-[#FFFFFF0F] hover:bg-[#FFFFFF0F] relative rounded-[12px]">
                 <UserPen /> 编辑资料
               </Button>
             </Link>
-          ) : (
-            <></>
-          )}
+          ) : null}
         </div>
-        <div ref={headerRef} className="sticky z-[1500] top-0">
-          {/* {showHeader ? "Show" : "Hide"} */}
-        </div>
+        <div ref={headerRef} className="sticky z-[1500] top-0"></div>
         <div className="px-5">
           <VideoTabs
             headerRef={headerRef}

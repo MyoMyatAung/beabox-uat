@@ -216,7 +216,12 @@ const RegisterForm = ({ setIsOpen }: any) => {
           <div className="">
             <Button
               // type="submit"
-              disabled={isLoading || !emailOrPhoneValue || !passwordValue}
+              disabled={
+                isLoading ||
+                !emailOrPhoneValue ||
+                !passwordValue ||
+                passwordValue?.length < 8
+              }
               onClick={async () => {
                 await getCaptcha("");
                 setShow验证码(true);
@@ -250,7 +255,7 @@ const RegisterForm = ({ setIsOpen }: any) => {
                     alt=""
                   />
                 </div>
-                <div
+                {/* <div
                   onClick={async (e) => {
                     e.stopPropagation();
                     await getCaptcha("");
@@ -263,7 +268,7 @@ const RegisterForm = ({ setIsOpen }: any) => {
                     className={`${isLoading ? "animate-spin" : ""}`}
                   />
                   <p className="text-[12px] text-[#bbb]">刷新</p>
-                </div>
+                </div> */}
                 <Button
                   onClick={handleVerify}
                   disabled={registerLoading ? true : false || !captcha?.length}

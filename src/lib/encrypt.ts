@@ -33,11 +33,11 @@ function encryptDataWithChunks(data: string): string {
 
     // Split into 245-byte chunks
     const chunks = splitIntoByteChunks(binaryData, 245);
-    
+
     // Encrypt each chunk and collect binary results
-    const encryptedChunks = chunks.map(chunk => {
+    const encryptedChunks = chunks.map((chunk) => {
       // Convert bytes to Latin-1 string for proper byte preservation
-      const chunkString = new TextDecoder('latin1').decode(chunk);
+      const chunkString = new TextDecoder("utf-8").decode(chunk);
       const encrypted = jsEncrypt.encrypt(chunkString);
       if (!encrypted) throw new Error("RSA encryption failed for chunk");
       return base64ToBytes(encrypted);
@@ -45,7 +45,7 @@ function encryptDataWithChunks(data: string): string {
 
     // Concatenate all encrypted bytes
     const concatenated = concatenateUint8Arrays(encryptedChunks);
-    
+
     // Convert to URL-safe Base64
     return bytesToUrlSafeBase64(concatenated);
   } catch (err) {
@@ -53,16 +53,6 @@ function encryptDataWithChunks(data: string): string {
     throw new Error(`Encryption failed: ${err}`);
   }
 }
-
-// Helper functions
-function splitIntoByteChunks(data: Uint8Array, chunkSize: number): Uint8Array[] {
-  const chunks = [];
-  for (let i = 0; i < data.length; i += chunkSize) {
-    chunks.push(data.slice(i, i + chunkSize));
-  }
-  return chunks;
-}
-
 function base64ToBytes(base64: string): Uint8Array {
   const raw = atob(base64);
   const bytes = new Uint8Array(raw.length);
@@ -83,10 +73,67 @@ function concatenateUint8Arrays(arrays: Uint8Array[]): Uint8Array {
   return result;
 }
 
+// function bytesToUrlSafeBase64(bytes: Uint8Array): string {
+//   const base64 = btoa(String.fromCharCode(...bytes));
+//   return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+// }
+
 function bytesToUrlSafeBase64(bytes: Uint8Array): string {
-  const base64 = btoa(String.fromCharCode(...bytes));
-  return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  let binary = '';
+  const chunkSize = 0x8000; // 32768 bytes per chunk
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    // Process each chunk separately
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+  }
+  // Convert to base64 and make it URL-safe
+  return btoa(binary)
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
 }
+
+// Helper functions
+
+function splitIntoByteChunks(
+  data: Uint8Array,
+  chunkSize: number
+): Uint8Array[] {
+  const chunks = [];
+  for (let i = 0; i < data.length; i += chunkSize) {
+    chunks.push(data.slice(i, i + chunkSize));
+  }
+  return chunks;
+}
+
+// function encryptDataWithChunks(data: string): string {
+//   try {
+//     const jsEncrypt = new JSEncrypt();
+//     jsEncrypt.setPublicKey(import.meta.env.VITE_PUBLIC_KEY_STRING);
+
+//     // Convert UTF-8 string to Base64 (so it preserves all characters properly)
+//     const base64Data = btoa(unescape(encodeURIComponent(data))); // ✅ Proper encoding
+
+//     // Split into 245-byte chunks (RSA padding limit)
+//     const chunks = splitIntoByteChunks(
+//       new TextEncoder().encode(base64Data),
+//       245
+//     );
+
+//     // Encrypt each chunk
+//     const encryptedChunks = chunks.map((chunk) => {
+//       const chunkString = new TextDecoder().decode(chunk); // ✅ Decode safely
+//       const encrypted = jsEncrypt.encrypt(chunkString);
+//       if (!encrypted) throw new Error("RSA encryption failed for chunk");
+//       return encrypted; // Keep it in base64 form
+//     });
+
+//     // Join all encrypted parts with a separator
+//     return encryptedChunks.join(".");
+//   } catch (err) {
+//     console.error("Chunked Encryption failed:", err);
+//     throw new Error(`Encryption failed: ${err}`);
+//   }
+// }
 
 /**
  * Splits data into chunks of the specified size.

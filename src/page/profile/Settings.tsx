@@ -1,5 +1,5 @@
 import { paths } from "@/routes/paths";
-import { FaAngleLeft } from "react-icons/fa";
+// import { FaAngleLeft } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,8 @@ import EditSecurity from "@/components/profile/edit-security";
 import PrivateProfile from "@/components/profile/private-profile";
 import ContentVisibility from "@/components/profile/content-visibility";
 import { useEffect, useState } from "react";
+import backButton from "../../assets/backButton.svg";
+import Loader from "@/components/shared/loader";
 
 const Settings = ({
   liked_video_visibility,
@@ -24,7 +26,7 @@ const Settings = ({
 }: any) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [logout, { data: lgdata }] = useLogoutMutation();
+  const [logout, { data: lgdata, isLoading }] = useLogoutMutation();
   const user = useSelector((state: any) => state.persist.user);
   const [device, setDevice] = useState("android");
   const [cacheSize, setCacheSize] = useState(null);
@@ -65,7 +67,6 @@ const Settings = ({
   }, []);
 
   const { data } = useGetConfigQuery(device);
-  // console.log(cacheSize);
 
   useEffect(() => {
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
@@ -78,13 +79,14 @@ const Settings = ({
       setDevice("other");
     }
   }, []);
-  // bg-[#16131C]
+  if (isLoading) return <Loader />;
   return (
     <div className="w-full h-screen no-scrollbar px-5 flex flex-col items-center relative bg-[#16131C]">
       <div className="top flex flex-col gap-5 w-full">
         <div className="flex justify-between items-center py-5">
           <Link to={paths.profile}>
-            <FaAngleLeft size={22} />
+            {/* <FaAngleLeft size={22} /> */}
+            <img src={backButton} alt="" />
           </Link>
           <p className="text-[16px]">
             {/* {user?.token ? "Setting & Privacy" : "Setting"} */}
@@ -143,7 +145,7 @@ const Settings = ({
         <div className="flex justify-between items-center">
           <p className="flex items-center gap-1 text-[14px]">当前版本</p>
           <p className="flex items-center gap-1 text-[14px]">
-            V {data?.data[0]?.version_number}{" "}
+            V 1.0.1.4{" "}
             <ChevronRight size={15} className="text-[#777777]" />
           </p>
         </div>
@@ -165,8 +167,7 @@ const Settings = ({
               onClick={async () => {
                 dispatch(logOutUser());
                 await logout("");
-                console.log(lgdata);
-                // navigate(paths.profile);
+                navigate(paths.profile);
               }}
               className="w-full rounded-xl bg-[#1C1A22] hover:bg-[#1C1A22]"
             >

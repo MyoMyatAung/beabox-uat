@@ -1,6 +1,6 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useGetUserProfileQuery } from "@/store/api/profileApi";
-import { ChevronLeft, Copy, Flag, Search } from "lucide-react";
+import { ChevronLeft, Copy, Flag } from "lucide-react";
 import ProfileAvatar from "@/components/profile/profile-avatar";
 import Loader from "@/components/shared/loader";
 import OtherStats from "@/components/profile/other-stats";
@@ -10,11 +10,19 @@ import MaleSVG from "@/assets/profile/male";
 import FemaleSVG from "@/assets/profile/female";
 import defaultCover from "@/assets/cover.jpg";
 import { useEffect, useRef, useState } from "react";
-import ScrollHeader from "@/components/profile/scroll-header";
 import OscrollHeader from "@/components/profile/oscroll-header";
-import SettingBtn2 from "@/components/profile/setting-btn2";
 import { useSelector } from "react-redux";
 import share from "@/assets/profile/share.svg";
+
+const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
+  const data = new Uint8Array(arrayBuffer);
+  const maxSize = Math.min(decryptSize, data.length);
+  for (let i = 0; i < maxSize; i++) {
+    data[i] ^= key;
+  }
+  // Decode the entire data as text.
+  return new TextDecoder().decode(data);
+};
 
 const OtherProfile = () => {
   const { id } = useParams();
@@ -28,8 +36,80 @@ const OtherProfile = () => {
     data: userData,
     isLoading: userLoading,
     refetch,
+    isFetching,
   } = useGetUserProfileQuery(id || "");
-  console.log(userData?.data, "userData");
+  const [decryptedCover, setDecryptedCover] = useState(defaultCover);
+  const [decryptedPhoto, setDecryptedPhoto] = useState("");
+  console.log(userData, "user data");
+  useEffect(() => {
+    const loadAndDecryptCover = async () => {
+      if (!user?.token || !userData?.data?.cover_photo) {
+        setDecryptedCover(defaultCover);
+        return;
+      }
+
+      try {
+        const coverUrl = userData.data.cover_photo;
+
+        // If it's not a .txt file, assume it's already a valid URL
+        if (!coverUrl.endsWith(".txt")) {
+          setDecryptedCover(coverUrl);
+          return;
+        }
+
+        // Fetch the encrypted image data
+        const response = await fetch(coverUrl);
+        const arrayBuffer = await response.arrayBuffer();
+
+        // Decrypt the first 4096 bytes and decode the entire file as text.
+        const decryptedStr = decryptImage(arrayBuffer);
+
+        // Set the decrypted cover image source
+        setDecryptedCover(decryptedStr);
+      } catch (error) {
+        console.error("Error loading cover photo:", error);
+        setDecryptedCover(defaultCover);
+      }
+    };
+
+    loadAndDecryptCover();
+  }, [userData?.data?.cover_photo]);
+
+  useEffect(() => {
+    const loadAndDecryptPhoto = async () => {
+      if (!user?.token || !userData?.data?.profile_photo) {
+        setDecryptedPhoto("");
+        return;
+      }
+
+      try {
+        const photoUrl = userData.data.profile_photo;
+
+        // If it's not a .txt file, assume it's already a valid URL
+        if (!photoUrl.endsWith(".txt")) {
+          setDecryptedPhoto(photoUrl);
+          return;
+        }
+
+        // Fetch encrypted image data
+        const response = await fetch(photoUrl);
+        const arrayBuffer = await response.arrayBuffer();
+
+        // Decrypt the first 4096 bytes and decode as text.
+        const decryptedStr = decryptImage(arrayBuffer);
+        console.log("Decrypted profile photo string is =>", decryptedStr);
+
+        // Set the decrypted profile photo source
+        setDecryptedPhoto(decryptedStr);
+      } catch (error) {
+        console.error("Error loading profile photo:", error);
+        setDecryptedPhoto("");
+      }
+    };
+
+    loadAndDecryptPhoto();
+  }, [userData?.data?.profile_photo]);
+
   const handleCopy = (text: any) => {
     navigator?.clipboard
       .writeText(text)
@@ -48,7 +128,7 @@ const OtherProfile = () => {
         const rect = headerRef.current.getBoundingClientRect();
         // console.log(rect);
 
-        if (rect.top < 100) {
+        if (rect.top <= 100) {
           setShowHeader(true);
         } else {
           setShowHeader(false);
@@ -63,18 +143,18 @@ const OtherProfile = () => {
     };
   }, []);
 
-  if (userLoading) return <Loader />;
+  useEffect(() => {
+    refetch();
+  }, [id]);
+
+  if (userLoading || isFetching) return <Loader />;
   return (
     <div className="h-screen flex flex-col hide-sb">
       {showHeader ? (
         <>
           <div className="gradient-overlay2"></div>
           <img
-            src={
-              userData?.data?.cover_photo
-                ? userData?.data?.cover_photo
-                : defaultCover
-            }
+            src={decryptedCover ? decryptedCover : defaultCover}
             alt=""
             className={`fixed top-0 z-[1500] left-0 w-full h-[155px] object-cover object-center`}
           />
@@ -83,11 +163,7 @@ const OtherProfile = () => {
         <>
           <div className="gradient-overlay"></div>
           <img
-            src={
-              userData?.data?.cover_photo
-                ? userData?.data?.cover_photo
-                : defaultCover
-            }
+            src={decryptedCover ? decryptedCover : defaultCover}
             alt=""
             className="fixed top-0 left-0 w-full h-[23vh] object-cover object-center"
           />
@@ -109,7 +185,7 @@ const OtherProfile = () => {
           } top-0 w-full z-[1600] py-5`}
         >
           <OscrollHeader
-            photo={userData?.data?.profile_photo}
+            photo={decryptedPhoto}
             name={userData?.data?.nickname}
             visibility={userData?.data?.content_visibility}
             id={id}
@@ -129,7 +205,7 @@ const OtherProfile = () => {
         ) : (
           <></>
         )} */}
-        <div className="z-[1200] relative px-5 w-full flex gap-3 my-5 justify-between items-center">
+        <div className="z-[1900] relative px-5 w-full flex gap-3 my-5 justify-between items-center">
           <ChevronLeft onClick={() => navigate(-1)} />
           <div className="flex gap-3 z-[1500] items-center">
             {/* <div className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full">
@@ -153,22 +229,22 @@ const OtherProfile = () => {
           <ProfileAvatar
             progress={userData?.data?.level_progress}
             levelImage={userData?.data?.level}
-            photo={userData?.data?.profile_photo}
+            photo={decryptedPhoto}
           />
-          <div className="z-[1200] flex-1 flex flex-col gap-0.5">
-            <p className="z-[1200] text-[18px] flex items-center gap-1">
+          <div className="z-[1900] flex-1 flex flex-col gap-0.5">
+            <p className="z-[1900] text-[18px] flex items-center gap-1">
               {userData?.data?.nickname}
               <span>
                 {userData?.data?.gender == "Male" ? <MaleSVG /> : <></>}
               </span>
               <span>
-                {userData?.data?.gender == "Feale" ? <FemaleSVG /> : <></>}
+                {userData?.data?.gender == "Female" ? <FemaleSVG /> : <></>}
               </span>
               {/* <span>
                 <BsPatchCheckFill className="z-[1200] text-[#888]" />
               </span>{" "} */}
             </p>
-            <p className="z-[1200] text-[14px] text-[#BBBBBB] flex items-center gap-2">
+            <p className="z-[1900] text-[14px] text-[#BBBBBB] flex items-center gap-2">
               B号 : {userData?.data?.user_code}{" "}
               <Copy
                 onClick={() => handleCopy(userData?.data?.user_code)}
@@ -178,22 +254,22 @@ const OtherProfile = () => {
             {userData?.data?.city &&
             userData?.data?.province &&
             userData?.data?.share_region == "on" ? (
-              <div className="z-[1200] flex">
-                <div className="z-[1200] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 pt-1 rounded-full justify-center shrink-0">
+              <div className="z-[1900] flex">
+                <div className="z-[1900] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 pt-1 rounded-full justify-center shrink-0">
                   <span>{userData?.data?.province}</span>:
                   <span>{userData?.data?.city}</span>
                 </div>
               </div>
             ) : (
-              <div className="z-[1200] flex">
-                <div className="z-[1200] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
+              <div className="z-[1900] flex">
+                <div className="z-[1900] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
                   <span>未知</span>
                 </div>
               </div>
             )}
           </div>
         </div>
-        <h1 className="text-[12px] text-[#888] mb-5 italic px-5 z-[1200] relative">
+        <h1 className="text-[12px] text-[#888] mb-5 italic px-5 z-[1900] relative">
           {userData?.data?.bio && userData?.data?.hide_bio == "off"
             ? userData?.data?.bio
             : ""}
@@ -210,7 +286,7 @@ const OtherProfile = () => {
           <></>
         ) : (
           <div
-            className={`px-5 z-[1200] relative ${
+            className={`px-5 z-[1900] relative ${
               showHeader ? "opacity-0" : "opacity-1"
             }`}
           >
