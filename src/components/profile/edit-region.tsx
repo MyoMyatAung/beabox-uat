@@ -16,7 +16,7 @@ import Loader from "../shared/loader";
 import { setRegion } from "@/store/slices/persistSlice";
 import SmallLoader from "../shared/small-loader";
 
-const EditRegion = () => {
+const EditRegion = ({ province, city }: any) => {
   const { data } = useGetRegionQuery("");
 
   const dispatch = useDispatch();
@@ -25,7 +25,8 @@ const EditRegion = () => {
   const [selectedRegion, setSelectedRegion] = useState<any>(null);
 
   const [selectedCity, setSelectedCity] = useState(region?.city);
-  const [changeRegion, { isLoading }] = useChangeRegionMutation();
+  const [changeRegion, { data: cdata, error: cerror, isLoading }] =
+    useChangeRegionMutation();
   const selectedRegionRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
 
@@ -47,6 +48,8 @@ const EditRegion = () => {
     }
     setIsOpen(false);
   };
+
+  console.log(cdata, cerror);
 
   useEffect(() => {
     if (isOpen == true) {
@@ -72,6 +75,15 @@ const EditRegion = () => {
     }
     // console.log(selected, "selected");
   }, [data]);
+
+  useEffect(() => {
+    dispatch(
+      setRegion({
+        city: city,
+        provinceName: province,
+      })
+    );
+  }, [city, province]);
 
   return (
     <Drawer onOpenChange={() => setIsOpen(true)}>
