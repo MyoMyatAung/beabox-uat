@@ -23,6 +23,9 @@ import EditCover from "@/components/profile/edit-cover";
 import AuthDrawer from "@/components/profile/auth/auth-drawer";
 import ScrollHeader from "@/components/profile/scroll-header";
 import { setIsDrawerOpen } from "@/store/slices/profileSlice";
+import normal from "@/assets/profile/normal.png";
+import gold from "@/assets/profile/gold.png";
+import silver from "@/assets/profile/silver.png";
 
 // A helper function that mimdata?.data?.profile_photoics your Kotlin logic.
 // It XORs only the first 4096 bytes (or the data size if smaller) and decodes the result as text.
@@ -277,8 +280,27 @@ const Profile = () => {
             <div className="z-[1900] flex-1 flex flex-col gap-0.5">
               <p className="z-[1900] text-[18px] flex items-center gap-1">
                 {data?.data?.nickname}
-                <span>{gender === "Male" ? <MaleSVG /> : null}</span>
-                <span>{gender === "Female" ? <FemaleSVG /> : null}</span>
+                {data?.data?.account_type == "normal" ? (
+                  <img className="w-5" src={normal} alt="" />
+                ) : (
+                  <></>
+                )}
+                {data?.data?.account_type == "silver" ? (
+                  <img className="w-5" src={silver} alt="" />
+                ) : (
+                  <></>
+                )}
+                {data?.data?.account_type == "gold" ? (
+                  <img className="w-5" src={gold} alt="" />
+                ) : (
+                  <></>
+                )}
+                <span>
+                  {data?.data?.gender === "Male" ? <MaleSVG /> : null}
+                </span>
+                <span>
+                  {data?.data?.gender === "Female" ? <FemaleSVG /> : null}
+                </span>
               </p>
               <p className="z-[1900] text-[14px] text-[#BBBBBB] flex gap-1 items-center">
                 B号 : {data?.data?.user_code}
