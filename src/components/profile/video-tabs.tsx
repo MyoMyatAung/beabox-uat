@@ -6,6 +6,7 @@ import { MdWatchLater } from "react-icons/md";
 import { useSelector } from "react-redux";
 import {
   useGetLikedPostQuery,
+  useGetMyPostQuery,
   useGetWatchHistoryQuery,
 } from "@/store/api/profileApi";
 import { useEffect, useState } from "react";
@@ -14,6 +15,8 @@ import Loader from "../../page/home/vod_loader.gif";
 const VideoTabs = ({ login, showHeader, headerRef }: any) => {
   const user = useSelector((state: any) => state.persist.user);
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [status, setStatus] = useState("published");
   const [Hispage, setHisPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [waterfall, setWaterFall] = useState<any[]>([]);
@@ -22,13 +25,17 @@ const VideoTabs = ({ login, showHeader, headerRef }: any) => {
     { user_id: user?.id, page },
     { skip: !user }
   );
+  const { data: mydata, isLoading: myloading } = useGetMyPostQuery({
+    status,
+    pageSize,
+  });
   const { data: history, isLoading: historyLoading } = useGetWatchHistoryQuery(
     {
       page: Hispage,
     },
     { skip: !user }
   );
-  // console.log(HistoryList);
+  console.log(data, "vdata");
 
   useEffect(() => {
     if (data?.data) {
@@ -49,8 +56,16 @@ const VideoTabs = ({ login, showHeader, headerRef }: any) => {
     setPage((prevPage) => prevPage + 1);
   };
   return (
-    <Tabs defaultValue="liked" className="py-5">
+    <Tabs defaultValue="upload" className="py-5">
       <TabsList className="grid w-full grid-cols-3 z-[1600] bg-transparent sticky top-[100px]">
+        <TabsTrigger
+          className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2"
+          value="upload"
+        >
+          <span className="flex items-center gap-1">
+            <Play /> 我的作品
+          </span>
+        </TabsTrigger>
         <TabsTrigger
           className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2"
           value="liked"
@@ -129,9 +144,38 @@ const VideoTabs = ({ login, showHeader, headerRef }: any) => {
           )}
         </div>
       </TabsContent>
+      <TabsContent value="upload">
+        <div className="py-5">
+          {myloading ? (
+            <div className=" flex justify-center w-full py-[200px]">
+              <div className="">
+                <img src={Loader} className="w-[70px] h-[70px]" alt="Loading" />
+              </div>
+            </div>
+          ) : (
+            <></>
+          )}
+          {!login || mydata?.data?.length <= 0 ? (
+            <div>
+              <div className="flex flex-col justify-center items-center w-full mt-[150px]">
+                <NoVideo />
+                <p className="text-[12px] text-[#888]">这里空空如也～</p>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <VideoGrid
+                showHeader={showHeader}
+                data={mydata}
+                fetchMoreData={fetchMoreData}
+              />
+              <div className="py-[38px]"></div>
+            </div>
+          )}
+        </div>
+      </TabsContent>
     </Tabs>
   );
 };
 
 export default VideoTabs;
-
