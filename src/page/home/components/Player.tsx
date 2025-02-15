@@ -373,7 +373,7 @@ const Player = ({
       url: src,
       volume: 0.5,
       loop: true,
-      muted: mute,
+      muted: true,
       // autoplay: false,
       fullscreenWeb: true,
       poster: decryptedPhoto,
@@ -815,8 +815,8 @@ const Player = ({
         });
       },
       {
-        rootMargin: "1000px", // Start initializing slightly before entering viewport
-        threshold: 0, // Trigger when at least 1% of the element is visible
+        rootMargin: "0px", // Start initializing slightly before entering viewport
+        threshold: 0.01, // Trigger when at least 1% of the element is visible
       }
     );
 
@@ -869,38 +869,38 @@ const Player = ({
               );
             });
 
-            if (artPlayerInstanceRef.current) {
-              (artPlayerInstanceRef.current as any).muted = muteRef.current;
-            }
-
-            // Handle mute/unmute logic
             // if (artPlayerInstanceRef.current) {
-            //   if (muteRef.current) {
-            //     // If muted, set muted immediately
-            //     artPlayerInstanceRef.current.muted = true;
-            //   } else {
-            //     // Track playback time using the video:timeupdate event
-            //     const handleTimeUpdate = () => {
-            //       const currentTime =
-            //         artPlayerInstanceRef.current?.currentTime || 0;
-            //       if (currentTime >= 10) {
-            //         if (artPlayerInstanceRef.current) {
-            //           console.log("unmount");
-            //           artPlayerInstanceRef.current.muted = false;
-            //         }
-            //         artPlayerInstanceRef.current?.off(
-            //           "video:timeupdate",
-            //           handleTimeUpdate
-            //         ); // Stop tracking after unmuting
-            //       }
-            //     };
-
-            //     artPlayerInstanceRef.current.on(
-            //       "video:timeupdate",
-            //       handleTimeUpdate
-            //     );
-            //   }
+            //   (artPlayerInstanceRef.current as any).muted = muteRef.current;
             // }
+
+            if (artPlayerInstanceRef.current) {
+              if (muteRef.current) {
+                // If muted, set muted immediately
+                artPlayerInstanceRef.current.muted = true;
+              } else {
+                // Track playback time using the video:timeupdate event
+                const handleTimeUpdate = () => {
+                  const currentTime =
+                    artPlayerInstanceRef.current?.currentTime || 0;
+                  if (currentTime >= 5) {
+                    if (artPlayerInstanceRef.current) {
+                      console.log("unmount");
+                      artPlayerInstanceRef.current.muted = false;
+                      artPlayerInstanceRef.current.play();
+                    }
+                    artPlayerInstanceRef.current?.off(
+                      "video:timeupdate",
+                      handleTimeUpdate
+                    ); // Stop tracking after unmuting
+                  }
+                };
+
+                artPlayerInstanceRef.current.on(
+                  "video:timeupdate",
+                  handleTimeUpdate
+                );
+              }
+            }
           } else {
             if (artPlayerInstanceRef.current) {
               setIsplay(false);
@@ -910,7 +910,7 @@ const Player = ({
               (artPlayerInstanceRef.current as any)?.pause();
 
               if (artPlayerInstanceRef.current) {
-                (artPlayerInstanceRef.current as any).muted = muteRef.current;
+                (artPlayerInstanceRef.current as any).muted = true;
               }
             }
           }
@@ -954,42 +954,42 @@ const Player = ({
     }
   }, [isPlay]);
 
-  // useEffect(() => {
-  //   muteRef.current = mute; // Update muteRef when mute state changes
-
-  //   if (artPlayerInstanceRef.current) {
-  //     if (mute) {
-  //       // If muting, set muted immediately
-  //       artPlayerInstanceRef.current.muted = true;
-  //     } else {
-  //       // If unmuting, check if the video has been playing for at least 2 seconds
-  //       const currentTime = artPlayerInstanceRef.current.currentTime || 0;
-
-  //       if (currentTime >= 2) {
-  //         console.log("cc");
-  //         // If the video has been playing for at least 2 seconds, unmute immediately
-  //         artPlayerInstanceRef.current.muted = false;
-  //       } else {
-  //         // If not, wait until the video has played for 2 seconds
-  //         const timeToWait = 2000 - currentTime * 1000; // Calculate remaining time to reach 2 seconds
-  //         if (timeToWait > 0) {
-  //           setTimeout(() => {
-  //             if (artPlayerInstanceRef.current) {
-  //               artPlayerInstanceRef.current.muted = false;
-  //             }
-  //           }, timeToWait);
-  //         }
-  //       }
-  //     }
-  //   }
-  // }, [mute]);
-
   useEffect(() => {
     muteRef.current = mute; // Update muteRef when mute state changes
+
     if (artPlayerInstanceRef.current) {
-      artPlayerInstanceRef.current.muted = mute;
+      if (mute) {
+        // If muting, set muted immediately
+        artPlayerInstanceRef.current.muted = true;
+      } else {
+        // If unmuting, check if the video has been playing for at least 2 seconds
+        const currentTime = artPlayerInstanceRef.current.currentTime || 0;
+
+        if (currentTime >= 10) {
+          console.log("cc");
+          // If the video has been playing for at least 2 seconds, unmute immediately
+          artPlayerInstanceRef.current.muted = false;
+        } else {
+          // If not, wait until the video has played for 2 seconds
+          const timeToWait = 2000 - currentTime * 1000; // Calculate remaining time to reach 2 seconds
+          if (timeToWait > 0) {
+            setTimeout(() => {
+              if (artPlayerInstanceRef.current) {
+                artPlayerInstanceRef.current.muted = false;
+              }
+            }, timeToWait);
+          }
+        }
+      }
     }
   }, [mute]);
+
+  // useEffect(() => {
+  //   muteRef.current = mute; // Update muteRef when mute state changes
+  //   if (artPlayerInstanceRef.current) {
+  //     artPlayerInstanceRef.current.muted = mute;
+  //   }
+  // }, [mute]);
 
   useEffect(() => {
     if (artPlayerInstanceRef.current) {

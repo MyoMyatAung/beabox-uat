@@ -1,8 +1,8 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { NoVideo, PersonLock } from "@/assets/profile";
+import { NoVideo, PersonLock, Play } from "@/assets/profile";
 import VideoGrid from "./video-grid";
 import { FaHeart } from "react-icons/fa";
-import { useGetLikedPostQuery } from "@/store/api/profileApi";
+import { useGetLikedPostQuery, useGetPostsQuery } from "@/store/api/profileApi";
 import Loader from "../../page/home/vod_loader.gif";
 import { useEffect, useState } from "react";
 import { BsPersonLock } from "react-icons/bs";
@@ -12,6 +12,11 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
   const [hasMore, setHasMore] = useState(true);
   const [waterfall, setWaterFall] = useState<any[]>([]);
   const { data, isLoading } = useGetLikedPostQuery({ user_id: id, page });
+  const { data: mydata, isLoading: myloading } = useGetPostsQuery({
+    id,
+  });
+
+  console.log(mydata, "mydata");
 
   useEffect(() => {
     if (data?.data) {
@@ -31,8 +36,16 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
   console.log(data);
 
   return (
-    <Tabs defaultValue="liked" className="my-5">
+    <Tabs defaultValue="video" className="my-5">
       <TabsList className="grid w-full grid-cols-3 z-[1600] bg-transparent sticky top-[100px]">
+        <TabsTrigger
+          className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2 "
+          value="video"
+        >
+          <span className="flex items-center gap-1">
+            <Play /> 他的作品
+          </span>
+        </TabsTrigger>
         <TabsTrigger
           className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2 "
           value="liked"
@@ -42,6 +55,36 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
           </span>
         </TabsTrigger>
       </TabsList>
+      <TabsContent value="video">
+        <div className="py-5">
+          {myloading ? (
+            <div className=" flex justify-center w-full py-[200px]">
+              <div className="">
+                <img src={Loader} className="w-[70px] h-[70px]" alt="Loading" />
+              </div>
+            </div>
+          ) : (
+            <></>
+          )}
+          {!mydata?.data?.length ? (
+            <div>
+              <div className="flex flex-col justify-center items-center w-full mt-[150px]">
+                <NoVideo />
+                <p className="text-[12px] text-[#888]">这里空空如也～</p>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <VideoGrid
+                showHeader={showHeader}
+                data={mydata?.data}
+                fetchMoreData={fetchMoreData}
+              />
+              <div className="py-[38px]"></div>
+            </div>
+          )}
+        </div>
+      </TabsContent>
       <TabsContent value="liked">
         <div className="py-5">
           {isLoading ? (
