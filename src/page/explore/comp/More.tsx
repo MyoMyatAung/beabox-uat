@@ -18,7 +18,7 @@ interface MoreProps {}
 
 const More: React.FC<MoreProps> = () => {
   const [show, setshow] = useState<boolean>(false);
-  const { title, more_tab } = useSelector((state: any) => state.explore);
+  const { title, more_tab , tags } = useSelector((state: any) => state.explore);
   // console.log(more_tab);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -137,7 +137,7 @@ const More: React.FC<MoreProps> = () => {
               // }}
               className="w-2/3 text-white text-[18px] text-center font-[500]"
             >
-              {title}
+              {tags}
             </h1>
           </div>
 
@@ -177,7 +177,7 @@ const More: React.FC<MoreProps> = () => {
             </div>
           </div>
         )} */}
-        <div className="py-[20px] flex flex-col gap-[20px] w-full mt-[80px]">
+        <div className="py-[20px] flex flex-col gap-[20px] w-full mt-[60px]">
           {isLoading || customLoad ? (
             <div className=" flex justify-center w-screen py-[200px]">
               <div className="">

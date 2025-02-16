@@ -11,7 +11,7 @@ import {
 } from "@/store/api/explore/exploreApi";
 import { Person } from "@/assets/profile";
 import { useDispatch } from "react-redux";
-import { setDetails, setTitle } from "@/store/slices/exploreSlice";
+import { setDetails, setTag, setTitle } from "@/store/slices/exploreSlice";
 import { paths } from "@/routes/paths";
 import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder";
 import { FaHeart } from "react-icons/fa";
@@ -48,8 +48,9 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
   };
 
   const showMore = (tt: any) => {
-    const title = tt?.navigation[0].tag
+    const title = tt?.navigation[0].tag;
     dispatch(setTitle(title));
+    dispatch(setTag(tt.title));
     navigate(paths.recommand_more, { state: { tt } });
   };
 
