@@ -80,7 +80,7 @@ const Profile = () => {
 
         // Decrypt the first 4096 bytes and decode the entire file as text.
         const decryptedStr = decryptImage(arrayBuffer);
-        console.log("Decrypted cover string is =>", decryptedStr);
+        // console.log("Decrypted cover string is =>", decryptedStr);
 
         // Set the decrypted cover image source
         setDecryptedCover(decryptedStr);
@@ -116,7 +116,6 @@ const Profile = () => {
 
         // Decrypt the first 4096 bytes and decode as text.
         const decryptedStr = decryptImage(arrayBuffer);
-        console.log("Decrypted profile photo string is =>", decryptedStr);
 
         // Set the decrypted profile photo source
         setDecryptedPhoto(decryptedStr);
@@ -165,6 +164,11 @@ const Profile = () => {
     if (user) refetch();
   }, [user, data]);
 
+  useEffect(()=>{
+    if(data) {
+      console.log('data is=>', data);
+    }
+  },[data]);
   if (isLoading) return <Loader />;
 
   return (

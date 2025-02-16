@@ -270,6 +270,7 @@ import vod_loader from "../vod_loader.gif";
 import { useDispatch, useSelector } from "react-redux";
 import { useWatchtPostMutation } from "../services/homeApi";
 import { showToast } from "../services/errorSlice";
+import { decryptImage } from "@/utils/imageDecrypt";
 
 const Player = ({
   src,
@@ -279,6 +280,7 @@ const Player = ({
   handleLike,
   sethideBar,
   rotate,
+  type,
   post_id,
 }: {
   src: string;
@@ -289,6 +291,7 @@ const Player = ({
   sethideBar: any;
   post_id: any;
   rotate: any;
+  type: any;
 }) => {
   const playerContainerRef = useRef<HTMLDivElement | null>(null);
   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
@@ -306,12 +309,9 @@ const Player = ({
   const watchedTimeRef = useRef(0); // Track total watched time
   const apiCalledRef = useRef(false); // Ensure API is called only once
   const [watchtPost] = useWatchtPostMutation(); // Hook for watch history API
+  const [decryptedPhoto, setDecryptedPhoto] = useState("");
 
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    muteRef.current = mute; // Update muteRef when mute state changes
-  }, [mute]);
 
   // Format time (e.g., 65 => "01:05")
   const formatTime = (time: number) => {
@@ -335,6 +335,32 @@ const Player = ({
     }
   };
 
+  useEffect(() => {
+    const loadAndDecryptPhoto = async () => {
+      if (!thumbnail) {
+        setDecryptedPhoto("");
+        return;
+      }
+
+      try {
+        const photoUrl = thumbnail;
+
+        // If it's not a .txt file, assume it's already a valid URL
+        if (!photoUrl.endsWith(".txt")) {
+          setDecryptedPhoto(photoUrl);
+          return;
+        }
+        const decryptedUrl = await decryptImage(photoUrl);
+        setDecryptedPhoto(decryptedUrl);
+      } catch (error) {
+        console.error("Error loading profile photo:", error);
+        setDecryptedPhoto("");
+      }
+    };
+
+    loadAndDecryptPhoto();
+  }, [thumbnail]);
+
   // Initialize Artplayer for the current video
   const initializeArtplayer = () => {
     if (!playerContainerRef.current || artPlayerInstanceRef.current) return;
@@ -349,12 +375,13 @@ const Player = ({
       url: src,
       volume: 0.5,
       loop: true,
-      muted: mute,
-      autoplay: false,
+      muted: true,
+      // autoplay: false,
       fullscreenWeb: true,
+      poster: decryptedPhoto,
       moreVideoAttr: {
         playsInline: true,
-        preload: "metadata",
+        preload: "auto",
       },
       aspectRatio: true,
       fullscreen: false,
@@ -395,93 +422,7 @@ const Player = ({
             height: "25px",
             zIndex: "9999",
           },
-          // mounted: (element) => {
-          //   progressBarRef.current = element.querySelector(
-          //     ".custom-progress-bar"
-          //   ) as HTMLInputElement;
-          //   timeDisplayRef.current = element.querySelector(
-          //     ".custom-time-display"
-          //   ) as HTMLDivElement;
 
-          //   if (!progressBarRef.current) {
-          //     console.error("Custom progress bar or tooltip element not found");
-          //     return;
-          //   }
-
-          //   progressBarRef.current.value = "0"; // Ensure progress starts at 0
-          //   progressBarRef.current.style.opacity = "0"; // Hide thumb initially
-
-          //   // Handle input (while dragging)
-          //   progressBarRef.current.addEventListener("input", (e) => {
-          //     if (!artPlayerInstanceRef.current) return;
-
-          //     // If not already dragging, set the flag to true (start of dragging)
-          //     if (!isDraggingRef.current) {
-          //       sethideBar(true);
-          //       if (progressBarRef.current) {
-          //         progressBarRef.current.style.height = "10px";
-          //         progressBarRef.current.style.setProperty(
-          //           "--thumb-width",
-          //           "16px"
-          //         );
-          //         progressBarRef.current.style.setProperty(
-          //           "--thumb-height",
-          //           "20px"
-          //         );
-          //         progressBarRef.current.style.setProperty(
-          //           "--thumb-radius",
-          //           "5px"
-          //         );
-          //       }
-          //       isDraggingRef.current = true;
-          //       timeDisplayRef.current!.style.display = "block"; // Show time display
-          //     }
-
-          //     const value = parseFloat((e.target as HTMLInputElement).value);
-          //     seekTimeRef.current =
-          //       (value / 100) * artPlayerInstanceRef.current.duration;
-
-          //     progressBarRef.current!.style.setProperty(
-          //       "--progress",
-          //       `${value}%`
-          //     );
-
-          //     // Update time display text
-          //     if (timeDisplayRef.current) {
-          //       const currentTime = formatTime(seekTimeRef.current);
-          //       const duration = formatTime(
-          //         artPlayerInstanceRef.current.duration
-          //       );
-          //       timeDisplayRef.current.textContent = `${currentTime} / ${duration}`;
-          //     }
-          //   });
-
-          //   // Handle change (end dragging)
-          //   progressBarRef.current.addEventListener("change", () => {
-          //     if (!artPlayerInstanceRef.current || !isDraggingRef.current)
-          //       return;
-
-          //     isDraggingRef.current = false; // End of dragging
-          //     sethideBar(false);
-          //     if (progressBarRef.current) {
-          //       progressBarRef.current.style.height = "4px";
-          //       progressBarRef.current.style.setProperty(
-          //         "--thumb-width",
-          //         "12px"
-          //       );
-          //       progressBarRef.current.style.setProperty(
-          //         "--thumb-height",
-          //         "12px"
-          //       );
-          //       progressBarRef.current.style.setProperty(
-          //         "--thumb-radius",
-          //         "50%"
-          //       );
-          //     }
-          //     timeDisplayRef.current!.style.display = "none"; // Hide time display
-          //     artPlayerInstanceRef.current.currentTime = seekTimeRef.current;
-          //   });
-          // },
           mounted: (element) => {
             progressBarRef.current = element.querySelector(
               ".custom-progress-bar"
@@ -722,7 +663,7 @@ const Player = ({
             artPlayerInstanceRef.current?.on("play", () => {
               // progressBarRef?.current?.classList.remove("hidden");
               setIsPaused(false);
-              if (element) elementstyle.display = "none";
+              if (element) element.style.display = "none";
             });
 
             // Click the play button to resume video
@@ -793,10 +734,6 @@ const Player = ({
           `${newProgress}%`
         );
         // Track watched time
-        watchedTimeRef.current = currentTime;
-        if (watchedTimeRef.current >= 60 && !apiCalledRef.current) {
-          handleWatchHistory(); // Call API after 1 minute
-        }
       }
     });
     artPlayerInstanceRef?.current?.on("loading", () => {
@@ -831,6 +768,35 @@ const Player = ({
       console.error("Error in Artplayer");
     });
   };
+
+  // Track watched time for 5 seconds
+  let watchTimer: NodeJS.Timeout | null = null;
+
+  artPlayerInstanceRef.current?.on("play", () => {
+    watchTimer = setInterval(() => {
+      watchedTimeRef.current += 1; // Increment watched time every second
+
+      // Trigger API call after 5 seconds of playback
+      if (watchedTimeRef.current >= 5 && !apiCalledRef.current && !type) {
+        handleWatchHistory();
+      }
+    }, 1000); // Update every second
+  });
+
+  artPlayerInstanceRef.current?.on("pause", () => {
+    if (watchTimer) {
+      clearInterval(watchTimer);
+      watchTimer = null;
+    }
+  });
+
+  artPlayerInstanceRef.current?.on("video:ended", () => {
+    if (watchTimer) {
+      clearInterval(watchTimer);
+      watchTimer = null;
+    }
+    watchedTimeRef.current = 0; // Reset watched time
+  });
 
   useEffect(() => {
     const container = playerContainerRef.current;
@@ -878,6 +844,8 @@ const Player = ({
           if (entry.isIntersecting) {
             setIsplay(true);
 
+            (artPlayerInstanceRef.current as any)?.play();
+
             // Handle ready and play events for dimension updates
             (artPlayerInstanceRef.current as any)?.on("ready", () => {
               setWidth(
@@ -888,7 +856,6 @@ const Player = ({
                 (artPlayerInstanceRef.current as Artplayer)?.video
                   ?.videoHeight || 0
               );
-              (artPlayerInstanceRef.current as any)?.play();
             });
 
             (artPlayerInstanceRef.current as any)?.on("play", () => {
@@ -899,9 +866,38 @@ const Player = ({
                 (artPlayerInstanceRef.current as Artplayer)?.video?.videoHeight
               );
             });
-            (artPlayerInstanceRef.current as any)?.play();
+
+            // if (artPlayerInstanceRef.current) {
+            //   (artPlayerInstanceRef.current as any).muted = muteRef.current;
+            // }
+
             if (artPlayerInstanceRef.current) {
-              (artPlayerInstanceRef.current as any).muted = muteRef.current;
+              if (muteRef.current) {
+                // If muted, set muted immediately
+                artPlayerInstanceRef.current.muted = true;
+              } else {
+                // Track playback time using the video:timeupdate event
+                const handleTimeUpdate = () => {
+                  const currentTime =
+                    artPlayerInstanceRef.current?.currentTime || 0;
+                  if (currentTime >= 3) {
+                    if (artPlayerInstanceRef.current) {
+                      console.log("unmount");
+                      artPlayerInstanceRef.current.muted = false;
+                      artPlayerInstanceRef.current.play();
+                    }
+                    artPlayerInstanceRef.current?.off(
+                      "video:timeupdate",
+                      handleTimeUpdate
+                    ); // Stop tracking after unmuting
+                  }
+                };
+
+                artPlayerInstanceRef.current.on(
+                  "video:timeupdate",
+                  handleTimeUpdate
+                );
+              }
             }
           } else {
             if (artPlayerInstanceRef.current) {
@@ -912,14 +908,14 @@ const Player = ({
               (artPlayerInstanceRef.current as any)?.pause();
 
               if (artPlayerInstanceRef.current) {
-                (artPlayerInstanceRef.current as any).muted = muteRef.current;
+                (artPlayerInstanceRef.current as any).muted = true;
               }
             }
           }
         });
       },
       {
-        rootMargin: "200px", // Trigger exactly at the edge of the viewport
+        rootMargin: "200px 0px", // Trigger exactly at the edge of the viewport
         threshold: 0.5, // Trigger when 50% of the element is visible
       }
     );
@@ -945,17 +941,52 @@ const Player = ({
       }
     };
   }, [src]); // Re-run when `src` changes
+
   useEffect(() => {
-    if (isPlay) {
-      artPlayerInstanceRef?.current?.play();
+    if (
+      isPlay &&
+      artPlayerInstanceRef.current &&
+      !artPlayerInstanceRef.current.playing
+    ) {
+      artPlayerInstanceRef.current.play();
     }
   }, [isPlay]);
 
   useEffect(() => {
+    muteRef.current = mute; // Update muteRef when mute state changes
+
     if (artPlayerInstanceRef.current) {
-      artPlayerInstanceRef.current.muted = mute;
+      if (mute) {
+        // If muting, set muted immediately
+        artPlayerInstanceRef.current.muted = true;
+      } else {
+        // If unmuting, check if the video has been playing for at least 2 seconds
+        const currentTime = artPlayerInstanceRef.current.currentTime || 0;
+
+        if (currentTime >= 3) {
+          // If the video has been playing for at least 2 seconds, unmute immediately
+          artPlayerInstanceRef.current.muted = false;
+        } else {
+          // If not, wait until the video has played for 2 seconds
+          const timeToWait = 3000 - currentTime * 1000; // Calculate remaining time to reach 2 seconds
+          if (timeToWait > 0) {
+            setTimeout(() => {
+              if (artPlayerInstanceRef.current) {
+                artPlayerInstanceRef.current.muted = false;
+              }
+            }, timeToWait);
+          }
+        }
+      }
     }
   }, [mute]);
+
+  // useEffect(() => {
+  //   muteRef.current = mute; // Update muteRef when mute state changes
+  //   if (artPlayerInstanceRef.current) {
+  //     artPlayerInstanceRef.current.muted = mute;
+  //   }
+  // }, [mute]);
 
   useEffect(() => {
     if (artPlayerInstanceRef.current) {

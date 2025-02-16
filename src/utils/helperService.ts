@@ -23,7 +23,6 @@ export const getAdsData = async () => {
     });
 
     try {
-      console.log('response is=>', response);
       const decryptedData = decryptWithAes(response?.data?.data); // Decrypt the response data
       return JSON.parse(decryptedData); // Parse the decrypted data into JSON format
     } catch (err) {

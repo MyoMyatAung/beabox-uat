@@ -86,7 +86,7 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
       ) : (
         <div className=" flex w-full justify-center">
           <div
-            className=" grid grid-cols-2 relative gap-[6px] px-2"
+            className=" grid grid-cols-2 relative gap-[6px] px-2 w-full"
             ref={contentRef}
           >
             <>

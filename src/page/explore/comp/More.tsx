@@ -91,19 +91,22 @@ const More: React.FC<MoreProps> = () => {
   };
 
   const handleTabChange = (ff: any) => {
+    if (ff.key === more_tab) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
     setCustomLoad(true);
     dispatch(setMoreTab(ff.key));
-    
-    if (isFetching || isLoading) return;
-    
+
+    // if (isFetching || isLoading) return;
+
     setList([]); // Reset list when switching tabs
     setPage(1); // Reset page number
-  
+
     setTimeout(() => {
       setCustomLoad(false);
     }, 500);
   };
-  
 
   const calculateHeight = (width: number, height: number) => {
     if (width > height) {
@@ -128,7 +131,12 @@ const More: React.FC<MoreProps> = () => {
               onClick={() => navigate("/")}
               className="rec_exp_more_btn px-[2px]"
             />
-            <h1 className="w-2/3 text-white text-[18px] text-center font-[500]">
+            <h1
+              // onClick={() => {
+              //   window.scrollTo({ top: 0, behavior: "smooth" });
+              // }}
+              className="w-2/3 text-white text-[18px] text-center font-[500]"
+            >
               {title}
             </h1>
           </div>

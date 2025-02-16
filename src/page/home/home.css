@@ -225,7 +225,7 @@ html {
 .footer_tag {
   border-radius: 16px;
   /* background: rgba(255, 255, 255, 0.08); */
-  display: flex;
+  /* display: flex; */
   padding: 1px 2px;
   align-items: center;
   gap: 0px;

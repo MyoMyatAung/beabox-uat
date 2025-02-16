@@ -122,8 +122,8 @@ function VideoFooter({
   const shouldExpand = titleLength > 40;
 
   return (
-    <div className="videoFooter">
-      <div>
+    <div className="videoFooter w-full">
+      <div className="w-full">
         <div className="flex items-center gap-3 mb-2">
           <div className="flex items-center gap-2">
             <span className="footer_head_text font-cnFont">{username}</span>
@@ -159,7 +159,7 @@ function VideoFooter({
           </div>
         </div>
 
-        <div className="relative flex items-end overflow-hidden">
+        <div className="relative flex items-end overflow-hidden w-full">
           {/* Combined Title and Tags Section */}
           {/* {shouldExpand ? (
             <div
@@ -214,7 +214,7 @@ function VideoFooter({
           )} */}
           {shouldExpand && (
             <button
-              className="more_text font-cnFont inline ml-[-3px] text-primary"
+              className="more_text font-cnFont inline ml-[0px] text-primary"
               onClick={toggleExpand}
             >
               {isExpanded ? "收起" : "更多"}
