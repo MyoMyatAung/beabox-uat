@@ -47,7 +47,7 @@ const RegisterForm = ({ setIsOpen }: any) => {
     useRegisterMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const authErr = localStorage.getItem("auth-error") || "";
+  const authErr = localStorage.getItem("auth-error") || "验证码错误";
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -90,8 +90,8 @@ const RegisterForm = ({ setIsOpen }: any) => {
     } else {
       // setShowSecurity(false);
       if (authErr) setError(authErr); // setError("出了点问题");
-      // setShow验证码(false);
-      await getCaptcha("");
+      setShow验证码(false);
+      // await getCaptcha("");
     }
   };
 
@@ -255,7 +255,7 @@ const RegisterForm = ({ setIsOpen }: any) => {
                     alt=""
                   />
                 </div>
-                {/* <div
+                <div
                   onClick={async (e) => {
                     e.stopPropagation();
                     await getCaptcha("");
@@ -268,7 +268,7 @@ const RegisterForm = ({ setIsOpen }: any) => {
                     className={`${isLoading ? "animate-spin" : ""}`}
                   />
                   <p className="text-[12px] text-[#bbb]">刷新</p>
-                </div> */}
+                </div>
                 <Button
                   onClick={handleVerify}
                   disabled={registerLoading ? true : false || !captcha?.length}

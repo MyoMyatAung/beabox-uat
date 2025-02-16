@@ -31,7 +31,7 @@ const Login = () => {
   const [login, { isLoading, error: lerror }] = useLoginMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const authErr = localStorage.getItem("auth-error") || "";
+  const authErr = localStorage.getItem("auth-error") || "请输入验证码";
 
   const [getCaptcha, { data, isLoading: captchaLoading }] =
     useGetCaptchaMutation();
@@ -74,8 +74,8 @@ const Login = () => {
       navigate(paths.profile);
     } else {
       if (authErr) setError(authErr);
-      // setShow验证码(false);
-      await getCaptcha("");
+      setShow验证码(false);
+      // await getCaptcha("");
     }
   };
 
@@ -239,11 +239,11 @@ const Login = () => {
                       alt=""
                     />
                   </div>
-                  {/* <div
+                  <div
                     onClick={async (e) => {
                       e.stopPropagation();
                       await getCaptcha("");
-                      console.log("get new");
+                      // console.log("get new");
                     }}
                     className="flex items-center gap-2"
                   >
@@ -252,7 +252,7 @@ const Login = () => {
                       className={`${captchaLoading ? "animate-spin" : ""}`}
                     />
                     <p className="text-[12px] text-[#bbb]">刷新</p>
-                  </div> */}
+                  </div>
                   <Button
                     onClick={handleVerify}
                     disabled={isLoading ? true : false || !captcha?.length}

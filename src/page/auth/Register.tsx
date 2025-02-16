@@ -40,7 +40,7 @@ const Register = () => {
     useRegisterMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const authErr = localStorage.getItem("auth-error") || "";
+  const authErr = localStorage.getItem("auth-error") || "验证码错误";
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -77,15 +77,15 @@ const Register = () => {
       // setShowSecurity(true);
     } else {
       if (authErr) setError(authErr); // setError("出了点问题");
-      // setShow验证码(false);
-      await getCaptcha("");
+      setShow验证码(false);
+      // await getCaptcha("");
     }
   };
-  useEffect(() => {
-    const authErr = localStorage.getItem("auth-error") || "";
-    console.log(authErr, "authErr");
-    if (rerror) setError(authErr);
-  }, [rerror]);
+  // useEffect(() => {
+  //   const authErr = localStorage.getItem("auth-error") || "";
+  //   console.log(authErr, "authErr");
+  //   if (rerror) setError(authErr);
+  // }, [rerror]);
   return (
     <>
       {registerLoading || isLoading ? <Loader /> : <></>}
@@ -226,7 +226,7 @@ const Register = () => {
                       alt=""
                     />
                   </div>
-                  {/* <div
+                  <div
                     onClick={async (e) => {
                       e.stopPropagation();
                       await getCaptcha("");
@@ -239,7 +239,7 @@ const Register = () => {
                       size={14}
                     />
                     <p className="text-[12px] text-[#bbb]">刷新</p>
-                  </div> */}
+                  </div>
                   <Button
                     onClick={handleVerify}
                     disabled={

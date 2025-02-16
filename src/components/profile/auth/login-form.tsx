@@ -38,7 +38,7 @@ const LoginForm = ({ setIsOpen }: any) => {
   const [login, { isLoading, error: lerror }] = useLoginMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const authErr = localStorage.getItem("auth-error") || "";
+  const authErr = localStorage.getItem("auth-error") || "请输入验证码";
 
   const [getCaptcha, { data, isLoading: captchaLoading }] =
     useGetCaptchaMutation();
@@ -80,8 +80,8 @@ const LoginForm = ({ setIsOpen }: any) => {
       setIsOpen(false);
     } else {
       if (authErr) setError(authErr);
-      await getCaptcha("");
-      // setShow验证码(false);
+      // await getCaptcha("");
+      setShow验证码(false);
     }
   };
 
@@ -241,12 +241,12 @@ const LoginForm = ({ setIsOpen }: any) => {
                     alt=""
                   />
                 </div>
-                {/* <div
+                <div
                   onClick={async (e) => {
                     e.stopPropagation();
                     await getCaptcha("");
                     setShow验证码(true);
-                    console.log("get new");
+                    // console.log("get new");
                   }}
                   className={`flex items-center gap-2`}
                 >
@@ -255,7 +255,7 @@ const LoginForm = ({ setIsOpen }: any) => {
                     size={14}
                   />
                   <p className="text-[12px] text-[#bbb]">刷新</p>
-                </div> */}
+                </div>
                 <Button
                   onClick={handleVerify}
                   disabled={isLoading ? true : false || !captcha?.length}
