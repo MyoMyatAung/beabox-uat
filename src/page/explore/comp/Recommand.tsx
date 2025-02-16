@@ -48,7 +48,8 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
   };
 
   const showMore = (tt: any) => {
-    dispatch(setTitle(tt));
+    const title = tt?.navigation[0].tag
+    dispatch(setTitle(title));
     navigate(paths.recommand_more, { state: { tt } });
   };
 
@@ -87,7 +88,7 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
     return num;
   };
 
-  console.log(uiLeft);
+  // console.log(list);
   return (
     <div className=" pb-[20px] px-[10px]">
       {isLoading ? (
@@ -114,7 +115,7 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
                   </h1>
                   <div
                     // onClick={() => navigate(paths.recommand_more, { state: { title } })}
-                    onClick={() => showMore(ll.title)}
+                    onClick={() => showMore(ll)}
                     className="rec_exp_more_btn"
                   >
                     <svg
