@@ -113,20 +113,6 @@ const FollowingList2 = ({ searchTerm, id }: any) => {
                     </p>
                   </div>
                 </div>
-              )}{" "}
-              {data?.data?.length ? (
-                data?.data?.map((follower: any) => (
-                  <FollowCard key={follower.user_code} data={follower} />
-                ))
-              ) : (
-                <div className="h-full flex justify-center mt-[40%]">
-                  <div className="flex flex-col items-center gap-3">
-                    <UsersRound className="text-[#888]" />
-                    <p className="text-[12px] text-[#888] w-[90px] text-center">
-                      快关注你感兴 趣的用户吧！
-                    </p>
-                  </div>
-                </div>
               )}
             </>
           )}
