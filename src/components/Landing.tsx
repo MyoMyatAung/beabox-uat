@@ -29,7 +29,7 @@ const Landing: React.FC = () => {
   useEffect(() => {
     const splashTimer = setTimeout(() => {
       setShowSplash(false);
-    }, 3000);
+    }, 7000);
     return () => clearTimeout(splashTimer);
   }, []);
 
