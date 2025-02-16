@@ -5,7 +5,7 @@ import "../wallet.css";
 import { Link } from "lucide-react";
 import { useGetMyProfileQuery } from "@/store/api/profileApi";
 import { toPng } from "html-to-image";
-import shareLogo from "../../../assets/share-logo.svg";
+import shareLogo from "../../../assets/inviteLogo.svg";
 import { useGetConfigQuery } from "@/page/home/services/homeApi";
 import { showToast } from "@/page/home/services/errorSlice";
 import { useDispatch } from "react-redux";

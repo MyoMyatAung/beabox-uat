@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setPanding } from "../store/slices/ModelSlice";
 
-import ad1 from "../assets/explore/spl.png";
+import splashLogo from "../assets/splashLogo.svg";
 import '../page/search/search.css'
 import { useGetAdsPopUpQuery } from "@/utils/helperService";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
@@ -13,7 +13,6 @@ const Landing: React.FC = () => {
   const [skip, setSkip] = useState(3);
   const [images, setImages] = useState<any>();
   const { data, isLoading } = useGetAdsPopUpQuery();
-  // console.log(data)
   const [imgLoad, setImgLoad] = useState(false);
 
   useEffect(() => {
@@ -21,17 +20,15 @@ const Landing: React.FC = () => {
       const cur = data?.data.splash_screen;
       if (cur) {
         setCc(cur);
-        // setImage(cur[0]?.data?.image)
         setImages(cur);
       }
       const timer = setTimeout(() => {
         dispatch(setPanding(false));
-        // sendMessageToNative();
       }, 6000);
 
       return () => clearTimeout(timer);
     }
-  }, [data, images]);
+  }, [data, images, dispatch]);
 
   useEffect(() => {
     if (imgLoad) {
@@ -40,19 +37,17 @@ const Landing: React.FC = () => {
           setSkip((prev) => prev - 1);
         } else {
           dispatch(setPanding(false));
-          //   sendMessageToNative();
         }
       }, 1000);
 
       return () => clearInterval(countdown);
     }
-  }, [skip, imgLoad]);
-
-  console.log(imgLoad);
+  }, [skip, imgLoad, dispatch]);
 
   return (
     <>
-      <a target="_blink" href={images?.jump_url}>
+      <a target="_blank" rel="noopener noreferrer" href={images?.jump_url}>
+        {/* Optional overlay while image is loading */}
         {!imgLoad && (
           <div className="absolute inset-0 bg-search-img"></div>
         )}
@@ -62,6 +57,10 @@ const Landing: React.FC = () => {
           imageUrl={images?.image}
           alt=""
         />
+        {/* Centered splash logo */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <img src={splashLogo} alt="Splash Logo" style={{width: '199px', height: '68px'}} />
+        </div>
       </a>
       {imgLoad && (
         <div
