@@ -87,7 +87,7 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
     return num;
   };
 
-  // console.log(list);
+  console.log(uiLeft);
   return (
     <div className=" pb-[20px] px-[10px]">
       {isLoading ? (
@@ -117,7 +117,32 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
                     onClick={() => showMore(ll.title)}
                     className="rec_exp_more_btn"
                   >
-                    <img src={uiLeft} alt="" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="21\5"
+                      height="25"
+                      viewBox="0 0 21 20"
+                      fill="none"
+                    >
+                      <path
+                        opacity="0.64"
+                        d="M11.9365 10.0001L7.81152 5.87511L8.98986 4.69678L14.2932 10.0001L8.98986 15.3034L7.81152 14.1251L11.9365 10.0001Z"
+                        fill="url(#paint0_linear_3794_4838)"
+                      />
+                      <defs>
+                        <linearGradient
+                          id="paint0_linear_3794_4838"
+                          x1="7.81152"
+                          y1="15.3034"
+                          x2="13.2174"
+                          y2="15.2829"
+                          gradientUnits="userSpaceOnUse"
+                        >
+                          <stop stop-color="#E8B9FF" />
+                          <stop offset="1" stop-color="#FF94B4" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
                   </div>
                 </div>
               )}
