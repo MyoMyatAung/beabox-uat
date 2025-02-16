@@ -15,6 +15,7 @@ import { setMute } from "../services/muteSlice";
 
 import { setAuthToggle } from "@/store/slices/profileSlice";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
+import { decryptImage } from "@/utils/imageDecrypt";
 
 function VideoSidebar({
   messages,
@@ -70,10 +71,11 @@ function VideoSidebar({
   const { mute } = useSelector((state: any) => state.muteSlice);
   const navigate = useNavigate();
   const alertRef = useRef<HTMLDivElement>(null); // Reference to the alert box
-  const [follow, setFollow] = useState(post?.is_followed);
+  // const [follow, setFollow] = useState(post?.is_followed);
   const dispatch = useDispatch();
   const { videos } = useSelector((state: any) => state.videoSlice);
   const [page, setPage] = useState(1);
+  const [decryptedPhoto, setDecryptedPhoto] = useState("");
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -161,6 +163,32 @@ function VideoSidebar({
     };
   }, []);
 
+  useEffect(() => {
+    const loadAndDecryptPhoto = async () => {
+      if (!post?.user?.avatar) {
+        setDecryptedPhoto("");
+        return;
+      }
+
+      try {
+        const photoUrl = post?.user?.avatar;
+
+        // If it's not a .txt file, assume it's already a valid URL
+        if (!photoUrl.endsWith(".txt")) {
+          setDecryptedPhoto(photoUrl);
+          return;
+        }
+        const decryptedUrl = await decryptImage(photoUrl);
+        setDecryptedPhoto(decryptedUrl);
+      } catch (error) {
+        console.error("Error loading profile photo:", error);
+        setDecryptedPhoto("");
+      }
+    };
+
+    loadAndDecryptPhoto();
+  }, [post?.user?.avatar]);
+
   // Close the comment list
 
   const closeCommentList = () => {
@@ -172,9 +200,9 @@ function VideoSidebar({
       try {
         const res = await followStatus({
           follow_user_id: post?.user?.id,
-          status: follow ? "unfollow" : "follow",
+          status: post?.is_followed ? "unfollow" : "follow",
         });
-        setFollow(!follow);
+        // setFollow(!follow);
         // Update the follow status in the videos state
         dispatch(
           setVideos({
@@ -182,8 +210,8 @@ function VideoSidebar({
             [currentTab === 2 ? "foryou" : "follow"]: videos[
               currentTab === 2 ? "foryou" : "follow"
             ]?.map((video: any) =>
-              video.post_id === post_id
-                ? { ...video, is_followed: !follow }
+              video.user.id === post?.user?.id
+                ? { ...video, is_followed: !post?.is_followed }
                 : video
             ),
           })
@@ -252,9 +280,9 @@ function VideoSidebar({
               </>
             ) : (
               <>
-                {post?.user?.avatar ? (
-                  <Avatar className="w-[35.25px] h-[35.25px] border-2 border-white ">
-                    <AvatarImage src={post?.user?.avatar} />
+                {decryptedPhoto ? (
+                  <Avatar className="w-[35.25px] h-[35.25px]">
+                    <AvatarImage src={decryptedPhoto} />
                     <AvatarFallback>SM</AvatarFallback>
                   </Avatar>
                 ) : (
@@ -290,7 +318,7 @@ function VideoSidebar({
             className="flex justify-center items-center absolute -bottom-2"
             onClick={handleFollow}
           >
-            {follow ? (
+            {post?.is_followed ? (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="17"

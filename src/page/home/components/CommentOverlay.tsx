@@ -91,8 +91,15 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
         }).unwrap();
         setActiveReply({ commentId: null, replyId: null });
         setReplyContent("");
-        refetchComments();
+
+        // refetchComments();
       } catch (error) {
+        dispatch(
+          showToast({
+            message: error?.data?.message,
+            type: "error",
+          })
+        );
         console.error("Failed to post reply:", error);
       }
     } else {

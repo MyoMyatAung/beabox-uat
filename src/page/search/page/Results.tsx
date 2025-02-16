@@ -23,6 +23,7 @@ import personE from "../../../assets/explore/personE.svg";
 // import { FaAngleLeft } from "react-icons/fa";
 import backButton from "../../../assets/backButton.svg";
 import { useGetConfigQuery } from "@/page/home/services/homeApi";
+import { decryptImage } from "@/utils/imageDecrypt";
 
 interface ResultsProps {}
 
@@ -51,6 +52,9 @@ const Results: React.FC<ResultsProps> = ({}) => {
   const [isFocused, setIsFocused] = useState(false); // Manage input focus
   const [triggerAutocomplete, { data: autocompleteData }] =
     useLazyGetSuggestionsQuery(); // Lazy query for autocomplete
+  const [decryptedAvatars, setDecryptedAvatars] = useState<{
+    [key: string]: string;
+  }>({});
 
   // const res = filter?.data?.post_filter;
   // const firstKey = res ? Object.keys(res)[0] : null;
@@ -221,6 +225,29 @@ const Results: React.FC<ResultsProps> = ({}) => {
     }
   }
 
+  useEffect(() => {
+    const decryptAvatar = async (avatarUrl: string, userId: string) => {
+      if (!avatarUrl.endsWith(".txt")) {
+        setDecryptedAvatars((prev) => ({ ...prev, [userId]: avatarUrl }));
+        return;
+      }
+
+      try {
+        const decryptedUrl = await decryptImage(avatarUrl);
+        setDecryptedAvatars((prev) => ({ ...prev, [userId]: decryptedUrl }));
+      } catch (error) {
+        console.error("Error decrypting avatar:", error);
+        setDecryptedAvatars((prev) => ({ ...prev, [userId]: "" }));
+      }
+    };
+
+    movies.forEach((movie) => {
+      if (movie.user.avatar) {
+        decryptAvatar(movie.user.avatar, movie.user.id);
+      }
+    });
+  }, [movies]);
+
   if (showVideoFeed && selectedMovieId) {
     return (
       <VideoFeed
@@ -361,7 +388,10 @@ const Results: React.FC<ResultsProps> = ({}) => {
                             <img
                               // onError={() => console.log("gg")}
                               className=" w-[20px] h-[20px] rounded-full"
-                              src={card.user.avatar}
+                              src={
+                                decryptedAvatars[card.user.id] ||
+                                card.user.avatar
+                              }
                               onError={(e) => (e.currentTarget.src = personE)}
                               alt=""
                             />
