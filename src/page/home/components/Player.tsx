@@ -280,6 +280,7 @@ const Player = ({
   handleLike,
   sethideBar,
   rotate,
+  type,
   post_id,
 }: {
   src: string;
@@ -290,6 +291,7 @@ const Player = ({
   sethideBar: any;
   post_id: any;
   rotate: any;
+  type: any;
 }) => {
   const playerContainerRef = useRef<HTMLDivElement | null>(null);
   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
@@ -732,10 +734,6 @@ const Player = ({
           `${newProgress}%`
         );
         // Track watched time
-        watchedTimeRef.current = currentTime;
-        if (watchedTimeRef.current >= 60 && !apiCalledRef.current) {
-          handleWatchHistory(); // Call API after 1 minute
-        }
       }
     });
     artPlayerInstanceRef?.current?.on("loading", () => {
@@ -779,7 +777,7 @@ const Player = ({
       watchedTimeRef.current += 1; // Increment watched time every second
 
       // Trigger API call after 5 seconds of playback
-      if (watchedTimeRef.current >= 5 && !apiCalledRef.current) {
+      if (watchedTimeRef.current >= 5 && !apiCalledRef.current && !type) {
         handleWatchHistory();
       }
     }, 1000); // Update every second
@@ -882,7 +880,7 @@ const Player = ({
                 const handleTimeUpdate = () => {
                   const currentTime =
                     artPlayerInstanceRef.current?.currentTime || 0;
-                  if (currentTime >= 5) {
+                  if (currentTime >= 3) {
                     if (artPlayerInstanceRef.current) {
                       console.log("unmount");
                       artPlayerInstanceRef.current.muted = false;
@@ -965,13 +963,12 @@ const Player = ({
         // If unmuting, check if the video has been playing for at least 2 seconds
         const currentTime = artPlayerInstanceRef.current.currentTime || 0;
 
-        if (currentTime >= 10) {
-          console.log("cc");
+        if (currentTime >= 3) {
           // If the video has been playing for at least 2 seconds, unmute immediately
           artPlayerInstanceRef.current.muted = false;
         } else {
           // If not, wait until the video has played for 2 seconds
-          const timeToWait = 2000 - currentTime * 1000; // Calculate remaining time to reach 2 seconds
+          const timeToWait = 3000 - currentTime * 1000; // Calculate remaining time to reach 2 seconds
           if (timeToWait > 0) {
             setTimeout(() => {
               if (artPlayerInstanceRef.current) {

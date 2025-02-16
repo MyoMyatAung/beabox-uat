@@ -59,7 +59,6 @@ const VideoCard = ({ videoData }: any) => {
 
         // Decrypt the first 4096 bytes and decode as text.
         const decryptedStr = decryptImage(arrayBuffer);
-        console.log("Decrypted profile photo string is =>", decryptedStr);
 
         // Set the decrypted profile photo source
         setDecryptedPhoto(decryptedStr);

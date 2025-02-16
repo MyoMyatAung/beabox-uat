@@ -333,6 +333,7 @@ const VideoContainer = ({
   return (
     <>
       <Player
+        type={video?.type == "ads" ? true : false}
         rotate={rotateVideoId === video?.post_id}
         src={video?.files[0].resourceURL}
         thumbnail={

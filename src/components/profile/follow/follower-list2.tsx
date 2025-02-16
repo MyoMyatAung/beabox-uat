@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import FollowCard from "../follow-card";
 import { useSelector } from "react-redux";
 import {
+  useFilterFollowerQuery,
   useFilterFollowingQuery,
+  useGetFollowerListQuery,
   useGetFollowingListQuery,
 } from "@/store/api/profileApi";
 import { UsersRound } from "lucide-react";
@@ -15,13 +17,13 @@ const FollowingList2 = ({ searchTerm, id }: any) => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
-  const { data, isLoading, isFetching } = useGetFollowingListQuery({
+  const { data, isLoading, isFetching } = useGetFollowerListQuery({
     user_id: id,
     // search: searchTerm,
     page: page,
   });
 
-  const { data: filterdata } = useFilterFollowingQuery({
+  const { data: filterdata } = useFilterFollowerQuery({
     user_id: id,
     search: searchTerm,
   });
@@ -104,20 +106,6 @@ const FollowingList2 = ({ searchTerm, id }: any) => {
                     <></>
                   </InfiniteScroll>
                 </>
-              ) : (
-                <div className="h-full flex justify-center mt-[40%]">
-                  <div className="flex flex-col items-center gap-3">
-                    <UsersRound className="text-[#888]" />
-                    <p className="text-[12px] text-[#888] w-[90px] text-center">
-                      快关注你感兴 趣的用户吧！
-                    </p>
-                  </div>
-                </div>
-              )}{" "}
-              {data?.data?.length ? (
-                data?.data?.map((follower: any) => (
-                  <FollowCard key={follower.user_code} data={follower} />
-                ))
               ) : (
                 <div className="h-full flex justify-center mt-[40%]">
                   <div className="flex flex-col items-center gap-3">
