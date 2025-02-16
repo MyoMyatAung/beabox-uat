@@ -161,9 +161,11 @@ export const profileApi = createApi({
     }),
     getLikedPost: builder.query<any, any>({
       query: ({ user_id, page }) => ({
-        url: convertToSecureUrl(
+        url: 
+        // convertToSecureUrl(
           `/user/liked-post?user_id=${user_id}&page=${page}`
-        ),
+        // ),
+        ,
         method: "GET",
       }),
     }),
@@ -339,7 +341,7 @@ export const profileApi = createApi({
     }),
     getWatchHistory: builder.query<any, any>({
       query: ({ page }) => ({
-        url: convertToSecureUrl(`/watch-history?pageSize=10&page=${page}`),
+        url: convertToSecureUrl(`/watch-history?pageSize=12&page=${page}`),
         method: "GET",
       }),
     }),
