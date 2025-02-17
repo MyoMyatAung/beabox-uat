@@ -14,7 +14,7 @@ const TopNavbar = ({
   ];
 
   return (
-    <div className="absolute top-5 left-0 px-5 right-0 flex justify-between items-center z-[9999]">
+    <div className="absolute top-5 left-0 px-5 right-0 flex justify-between items-center z-[9999] max-w-[480px] mx-auto">
       <div></div>
       <div className="flex gap-2 ml-[24px] items-center text-white">
         {TABS.map((tab, index) => (
