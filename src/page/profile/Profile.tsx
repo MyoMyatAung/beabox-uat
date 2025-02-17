@@ -395,11 +395,7 @@ const Profile = () => {
         </div>
         <div ref={headerRef} className="sticky z-[1500] top-0"></div>
         <div className="px-5">
-          <VideoTabs
-            headerRef={headerRef}
-            showHeader={showHeader}
-            login={user?.token}
-          />
+          <VideoTabs />
         </div>
       </div>
     </div>
