@@ -60,7 +60,7 @@ const Landing: React.FC = () => {
           }
           return prev - 1;
         });
-      }, 1000); 
+      }, 1000);
 
       return () => clearInterval(countdown);
     }
@@ -79,28 +79,30 @@ const Landing: React.FC = () => {
         </div>
       ) : showAd ? (
         // Ad view (only shows after image is fully loaded)
-        <a target="_blank" rel="noopener noreferrer" href={images?.jump_url}>
-          <div className="relative h-screen w-screen">
-            <AsyncDecryptedImage
-              className="h-full w-full object-cover"
-              imageUrl={images?.image}
-              alt="Advertisement"
-            />
-            <div
-              onClick={() => dispatch(setPanding(false))}
-              style={{
-                borderRadius: "52px",
-                background: "rgba(0, 0, 0, 0.98)",
-                backdropFilter: "blur(2px)",
-              }}
-              className="absolute top-[2vh] right-[2vh] cursor-pointer"
-            >
-              <h1 className="text-white text-xs md:text-sm font-[400] py-[4px] px-[12px]">
-                跳过广告 <span>{skip}</span>
-              </h1>
+        <>
+          <a target="_blank" rel="noopener noreferrer" href={images?.jump_url}>
+            <div className="relative h-screen w-screen">
+              <AsyncDecryptedImage
+                className="h-full w-full object-cover"
+                imageUrl={images?.image}
+                alt="Advertisement"
+              />
             </div>
+          </a>
+          <div
+            onClick={() => dispatch(setPanding(false))}
+            style={{
+              borderRadius: "52px",
+              background: "rgba(0, 0, 0, 0.98)",
+              backdropFilter: "blur(2px)",
+            }}
+            className="absolute top-[2vh] right-[2vh] cursor-pointe"
+          >
+            <h1 className="text-white text-xs md:text-sm font-[400] py-[4px] px-[12px]">
+              跳过广告 <span>{skip}</span>
+            </h1>
           </div>
-        </a>
+        </>
       ) : (
         <div className="h-screen w-screen">
           <img
