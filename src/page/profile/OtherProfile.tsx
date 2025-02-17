@@ -1,6 +1,6 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useGetUserProfileQuery } from "@/store/api/profileApi";
-import { ChevronLeft, Copy, Flag } from "lucide-react";
+import { ChevronLeft, Copy, Flag, Search } from "lucide-react";
 import ProfileAvatar from "@/components/profile/profile-avatar";
 import Loader from "@/components/shared/loader";
 import OtherStats from "@/components/profile/other-stats";
@@ -209,8 +209,8 @@ const OtherProfile = () => {
           <ChevronLeft onClick={() => navigate(-1)} />
           <div className="flex gap-3 z-[1500] items-center">
             {/* <div className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full">
-                <Search size={18} />
-              </div> */}
+              <Search size={18} />
+            </div> */}
             <div
               onClick={() => handleCopy("Copied Link")}
               className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full"
@@ -271,8 +271,8 @@ const OtherProfile = () => {
             )}
           </div>
         </div>
-        <h1 className="text-[12px] text-[#888] mb-5 px-5 z-[1900] relative">
-          {userData?.data?.bio && userData?.data?.hide_bio == "off"
+        <h1 className="text-[12px]  text-[#888] mb-5 px-5 z-[1900] relative xs:w-[100px] md:w-[340px] overflow-hidden break-words">
+          {userData?.data?.bio && userData?.data?.hide_bio == "on"
             ? userData?.data?.bio
             : ""}
         </h1>
