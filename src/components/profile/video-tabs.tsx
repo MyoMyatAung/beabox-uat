@@ -7,6 +7,7 @@ import LikedVideos from "./video/liked-videos";
 import HistoryVideos from "./video/history-videos";
 import CreatedVideo from "./video/created-video";
 import { setDefaultTab } from "@/store/slices/persistSlice";
+import CreatedVideo2 from "./video/create-video2";
 
 const VideoTabs = () => {
   const user = useSelector((state: any) => state.persist.user);
@@ -55,7 +56,7 @@ const VideoTabs = () => {
         <HistoryVideos />
       </TabsContent>
       <TabsContent value="upload">
-        <CreatedVideo id={user?.id} />
+        <CreatedVideo2 id={user?.id} />
       </TabsContent>
     </Tabs>
   );
