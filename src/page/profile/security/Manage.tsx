@@ -33,7 +33,6 @@ const Manage = () => {
   const navigate = useNavigate();
   const registerUser = useSelector((state: any) => state.persist.registerUser);
 
-  console.log(data?.data?.security_question?.answer);
 
   const onSubmitHandler = async (e: any) => {
     e.preventDefault();

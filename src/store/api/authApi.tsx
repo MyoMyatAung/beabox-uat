@@ -20,7 +20,6 @@ export const authApi = createApi({
     },
     responseHandler: async (response) => {
       const encryptedData = await response.json();
-      console.log(encryptedData);
       if (encryptedData?.status === false)
         localStorage.setItem("auth-error", encryptedData?.message);
       try {
