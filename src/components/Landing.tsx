@@ -12,48 +12,64 @@ const Landing: React.FC = () => {
   const [skip, setSkip] = useState(3);
   const [images, setImages] = useState<any>(null);
   const [showSplash, setShowSplash] = useState(true);
+  const [adLoaded, setAdLoaded] = useState(false);
+  const [showAd, setShowAd] = useState(false);
 
   const { data } = useGetAdsPopUpQuery();
 
   // Load ad data when available
   useEffect(() => {
-    if (data?.data) {
-      const adData = data.data.splash_screen;
-      if (adData) {
-        setImages(adData);
-      }
+    if (data?.data?.splash_screen) {
+      setImages(data.data.splash_screen);
     }
   }, [data]);
 
-  // Show splash screen for 3 seconds
+  // Show splash screen for exactly 3 seconds
   useEffect(() => {
     const splashTimer = setTimeout(() => {
       setShowSplash(false);
-    }, 7000);
+    }, 3000); // ✅ Splash time fixed to 3 seconds
+
     return () => clearTimeout(splashTimer);
   }, []);
 
-  // Start the skip countdown once splash screen is hidden (ad view)
+  // Wait for ad image to fully load before showing ad
   useEffect(() => {
-    if (!showSplash) {
+    if (!showSplash && images?.image) {
+      const img = new Image();
+      img.src = images.image;
+      img.onload = () => {
+        setAdLoaded(true);
+      };
+    }
+  }, [showSplash, images]);
+
+  // Show the ad for exactly 3 seconds AFTER loading & start countdown
+  useEffect(() => {
+    if (adLoaded) {
+      setShowAd(true);
+      setSkip(3); // ✅ Reset countdown when ad starts
+
       const countdown = setInterval(() => {
         setSkip((prev) => {
           if (prev <= 1) {
             clearInterval(countdown);
             dispatch(setPanding(false));
+            setShowAd(false);
             return 0;
           }
           return prev - 1;
         });
-      }, 1000);
+      }, 1000); 
+
       return () => clearInterval(countdown);
     }
-  }, [showSplash, dispatch]);
+  }, [adLoaded, dispatch]);
 
   return (
     <>
       {showSplash ? (
-        // Splash screen view (no skip button)
+        // Splash screen view (3 seconds, no skip)
         <div className="h-screen w-screen">
           <img
             src={splashScreen}
@@ -61,8 +77,8 @@ const Landing: React.FC = () => {
             alt="Splash Screen"
           />
         </div>
-      ) : (
-        // Ad view with clickable link and skip button with countdown
+      ) : showAd ? (
+        // Ad view (only shows after image is fully loaded)
         <a target="_blank" rel="noopener noreferrer" href={images?.jump_url}>
           <div className="relative h-screen w-screen">
             <AsyncDecryptedImage
@@ -85,6 +101,14 @@ const Landing: React.FC = () => {
             </div>
           </div>
         </a>
+      ) : (
+        <div className="h-screen w-screen">
+          <img
+            src={splashScreen}
+            className="h-full w-full object-cover"
+            alt="Splash Screen"
+          />
+        </div>
       )}
     </>
   );

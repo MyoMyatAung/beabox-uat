@@ -30,7 +30,6 @@ const Profile = () => {
   const { data, isLoading, refetch } = useGetMyOwnProfileQuery("", {
     skip: !user,
   });
-  console.log(data, "data");
   const [show, setShow] = useState(false);
   const gender = useSelector((state: any) => state?.persist?.gender);
   const region = useSelector((state: any) => state?.persist?.region);
@@ -134,7 +133,7 @@ const Profile = () => {
     if (user) refetch();
   }, [user, data]);
 
-  console.log(showHeader);
+  // console.log(showHeader);
   // if (isLoading) return <Loader />;
 
   return (

@@ -119,7 +119,8 @@ function VideoFooter({
 
   // Calculate title length without spaces
   const titleLength = title.replace(/\s/g, "").length;
-  const shouldExpand = titleLength > 40;
+  const shouldExpand =
+    titleLength > 40 || (tags?.length > 5 && titleLength > 10);
 
   return (
     <div className="videoFooter w-full">

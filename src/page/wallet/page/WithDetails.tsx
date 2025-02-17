@@ -39,12 +39,10 @@ const WithDetails: React.FC<WithDetailsProps> = ({ payment }) => {
       // console.log(formData);
       try {
         const { data } = await postWalletWithdrawl({ formData });
-        console.log(data);
         if (!data) {
           throw new Error();
         }
       } catch (error) {
-        console.log(error);
          toast({
             description:
               "nternal server error occurred. Please try again later.",
