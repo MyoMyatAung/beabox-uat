@@ -36,7 +36,7 @@ const Poppizza: React.FC<PoppizzaProps> = ({}) => {
     return (
       <Link
         target="_blank"
-        className="flex flex-col justify-center items-center gap-[4px]"
+        className="flex flex-col w-full justify-center items-center gap-[4px]"
         to={item?.url || "#"}
       >
         {imageLoading && (
