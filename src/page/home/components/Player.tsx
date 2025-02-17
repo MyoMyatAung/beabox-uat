@@ -272,6 +272,7 @@ import { useWatchtPostMutation } from "../services/homeApi";
 import { showToast } from "../services/errorSlice";
 import { decryptImage } from "@/utils/imageDecrypt";
 import { c } from "node_modules/framer-motion/dist/types.d-6pKw1mTI";
+import { setMute } from "../services/muteSlice";
 
 const Player = ({
   src,
@@ -868,45 +869,43 @@ const Player = ({
               );
             });
 
-            // if (artPlayerInstanceRef.current) {
-            //   (artPlayerInstanceRef.current as any).muted = muteRef.current;
+            // if (muteRef.current) {
+            //   if (artPlayerInstanceRef?.current) {
+            //     artPlayerInstanceRef.current.muted = true;
+            //   }
+            //   // If muted, set muted immediately
+            // } else {
+            //   // Track playback time using the video:timeupdate event
+            //   const handleTimeUpdate = () => {
+            //     const currentTime =
+            //       artPlayerInstanceRef.current?.currentTime || 0;
+            //     if (currentTime >= 3) {
+            //       if (artPlayerInstanceRef.current && !muteRef?.current) {
+            //         artPlayerInstanceRef.current.muted = false;
+            //       }
+
+            //       artPlayerInstanceRef.current?.off(
+            //         "video:timeupdate",
+            //         handleTimeUpdate
+            //       ); // Stop tracking after unmuting
+            //     }
+            //   };
+
+            //   if (artPlayerInstanceRef?.current) {
+            //     artPlayerInstanceRef.current.on(
+            //       "video:timeupdate",
+            //       handleTimeUpdate
+            //     );
+            //   }
+            //   // artPlayerInstanceRef.current?.play();
             // }
 
-            // if (artPlayerInstanceRef.current) {
-            //   console.log("cc", muteRef?.current);
-
-            if (muteRef.current) {
-              if (artPlayerInstanceRef?.current) {
-                artPlayerInstanceRef.current.muted = true;
-              }
-              // If muted, set muted immediately
-            } else {
-              // Track playback time using the video:timeupdate event
-              const handleTimeUpdate = () => {
-                const currentTime =
-                  artPlayerInstanceRef.current?.currentTime || 0;
-                if (currentTime >= 3) {
-                  if (artPlayerInstanceRef.current && !muteRef?.current) {
-                    artPlayerInstanceRef.current.muted = false;
-                    artPlayerInstanceRef.current.play();
-                  }
-                  artPlayerInstanceRef.current?.off(
-                    "video:timeupdate",
-                    handleTimeUpdate
-                  ); // Stop tracking after unmuting
-                }
-              };
-
-              if (artPlayerInstanceRef?.current) {
-                artPlayerInstanceRef.current.on(
-                  "video:timeupdate",
-                  handleTimeUpdate
-                );
-              }
+            if (artPlayerInstanceRef.current) {
+              (artPlayerInstanceRef.current as any).muted = true;
             }
-            // }
           } else {
             if (artPlayerInstanceRef.current) {
+              dispatch(setMute(true));
               setIsplay(false);
               // artPlayerInstanceRef.current.video.src = "";
               // artPlayerInstanceRef.current.destroy();
@@ -958,41 +957,42 @@ const Player = ({
     }
   }, [isPlay]);
 
-  useEffect(() => {
-    muteRef.current = mute; // Update muteRef when mute state changes
-
-    if (artPlayerInstanceRef.current) {
-      if (mute) {
-        // If muting, set muted immediately
-        artPlayerInstanceRef.current.muted = true;
-      } else {
-        // If unmuting, check if the video has been playing for at least 2 seconds
-        const currentTime = artPlayerInstanceRef.current.currentTime || 0;
-
-        if (currentTime >= 3) {
-          // If the video has been playing for at least 2 seconds, unmute immediately
-          artPlayerInstanceRef.current.muted = false;
-        } else {
-          // If not, wait until the video has played for 2 seconds
-          const timeToWait = 3000 - currentTime * 1000; // Calculate remaining time to reach 2 seconds
-          if (timeToWait > 0) {
-            setTimeout(() => {
-              if (artPlayerInstanceRef.current) {
-                artPlayerInstanceRef.current.muted = false;
-              }
-            }, timeToWait);
-          }
-        }
-      }
-    }
-  }, [mute]);
-
   // useEffect(() => {
   //   muteRef.current = mute; // Update muteRef when mute state changes
+
   //   if (artPlayerInstanceRef.current) {
-  //     artPlayerInstanceRef.current.muted = mute;
+  //     if (mute) {
+  //       // If muting, set muted immediately
+  //       artPlayerInstanceRef.current.muted = true;
+  //     } else {
+  //       artPlayerInstanceRef.current.muted = false;
+  //       // If unmuting, check if the video has been playing for at least 2 seconds
+  //       // const currentTime = artPlayerInstanceRef.current.currentTime || 0;
+
+  //       // if (currentTime >= 3) {
+  //       //   // If the video has been playing for at least 2 seconds, unmute immediately
+  //       //   artPlayerInstanceRef.current.muted = false;
+  //       // } else {
+  //       //   // If not, wait until the video has played for 2 seconds
+  //       //   const timeToWait = 3000 - currentTime * 1000; // Calculate remaining time to reach 2 seconds
+  //       //   if (timeToWait > 0) {
+  //       //     setTimeout(() => {
+  //       //       if (artPlayerInstanceRef.current) {
+  //       //         artPlayerInstanceRef.current.muted = false;
+  //       //       }
+  //       //     }, timeToWait);
+  //       //   }
+  //       // }
+  //     }
   //   }
   // }, [mute]);
+
+  useEffect(() => {
+    muteRef.current = mute; // Update muteRef when mute state changes
+    if (artPlayerInstanceRef.current) {
+      artPlayerInstanceRef.current.muted = mute;
+    }
+  }, [mute]);
 
   useEffect(() => {
     if (artPlayerInstanceRef.current) {

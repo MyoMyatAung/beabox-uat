@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { paths } from "@/routes/paths";
 import FollowBtn from "./follow-btn";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 const decryptImage = (arrayBuffer, key = 0x12, decryptSize = 4096) => {
   const data = new Uint8Array(arrayBuffer);
@@ -16,9 +17,7 @@ const decryptImage = (arrayBuffer, key = 0x12, decryptSize = 4096) => {
 
 const FollowCard = ({ data }: { data: any }) => {
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
-
-  console.log(data, "follow card");
-
+  const me = useSelector((state: any) => state.persist.user.id);
   useEffect(() => {
     const loadAndDecryptPhoto = async () => {
       if (!data?.photo) {
@@ -68,16 +67,11 @@ const FollowCard = ({ data }: { data: any }) => {
         </div>
       </Link>
 
-      <FollowBtn id={data?.id} followBack={data?.follows_back} />
-      {/* <Button
-        onClick={() => changeFollowStatusHandler(data?.user_code)}
-        className={`${
-          data?.follows_back ? "bg-[#FFFFFF17]" : "gradient-bg"
-        } w-[88px]`}
-        size={"sm"}
-      >
-        {data?.follows_back ? "Following" : "Follow"}
-      </Button> */}
+      {data?.id == me ? (
+        <></>
+      ) : (
+        <FollowBtn id={data?.id} followBack={data?.follows_back} />
+      )}
     </div>
   );
 };

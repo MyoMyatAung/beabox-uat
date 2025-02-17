@@ -19,7 +19,7 @@ const AlertToast = ({ message }: any) => {
     <>
       {show ? (
         <div className="w-full max-h-screen flex justify-center relative bg-transparent z-[3000]">
-          <p className="absolute bottom-32 flex gap-2 text-[14px] bg-[#FFFFFF14] px-4 py-2 rounded-lg text-center justify-center items-center">
+          <p className="absolute bottom-32 flex gap-2 text-[14px] bg-[#191721] px-4 py-2 rounded-lg text-center justify-center items-center">
             <img src={logo} className="w-5" alt="" /> <span>{alertText}</span>
           </p>
         </div>

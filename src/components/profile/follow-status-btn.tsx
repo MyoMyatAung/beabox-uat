@@ -2,8 +2,12 @@ import { Button } from "@/components/ui/button";
 import { useChangeFollowStatusMutation } from "@/store/api/profileApi";
 import loader from "@/page/home/vod_loader.gif";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 
 const FollowStatusBtn = ({ userData, id, refetch, userLoading }: any) => {
+  const token = useSelector((state: any) => state?.persist?.user?.token);
+  const dispatch = useDispatch();
   const [follow, setFollow] = useState(
     userData?.data?.is_following ? true : false
   );
@@ -17,10 +21,15 @@ const FollowStatusBtn = ({ userData, id, refetch, userLoading }: any) => {
     await refetch();
     setFollow(!follow);
   };
+  useEffect(() => {
+    refetch();
+  }, [token]);
   return (
     <Button
       disabled={isLoading || userLoading}
-      onClick={handleChangeFollowStatus}
+      onClick={
+        token ? handleChangeFollowStatus : () => dispatch(setIsDrawerOpen(true))
+      }
       className={`w-full ${
         userData?.data?.is_following
           ? "bg-[#FFFFFF0F] hover:bg-[#FFFFFF0F]"

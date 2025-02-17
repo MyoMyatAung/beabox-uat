@@ -6,7 +6,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Button } from "../ui/button";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useChangeBioMutation } from "@/store/api/profileApi";
 import { useDispatch, useSelector } from "react-redux";
 import { setBio } from "@/store/slices/persistSlice";
@@ -45,6 +45,10 @@ const EditBio = ({ bio, refetchHandler }: any) => {
       setValue(bio);
     }
   };
+
+  useEffect(() => {
+    setValue(bio);
+  }, [isOpen]);
   return (
     <Drawer open={isOpen} onOpenChange={handleOpenChange}>
       <DrawerTrigger asChild>

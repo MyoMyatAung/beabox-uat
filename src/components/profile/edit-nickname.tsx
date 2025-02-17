@@ -6,7 +6,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Button } from "../ui/button";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 import { useSelector } from "react-redux";
 import { useChangeNicknameMutation } from "@/store/api/profileApi";
@@ -23,6 +23,7 @@ const EditNickName = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState(nickname);
+  console.log(value, ":nnv");
   const [changeNickname, { data, isLoading }] = useChangeNicknameMutation();
   const navigate = useNavigate();
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -41,6 +42,10 @@ const EditNickName = ({
       setValue(nickname);
     }
   };
+
+  useEffect(() => {
+    setValue(nickname);
+  }, [isOpen]);
 
   return (
     <Drawer open={isOpen} onOpenChange={handleOpenChange}>
