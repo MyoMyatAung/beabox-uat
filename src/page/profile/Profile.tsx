@@ -26,6 +26,7 @@ import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 import normal from "@/assets/profile/normal.png";
 import gold from "@/assets/profile/gold.png";
 import silver from "@/assets/profile/silver.png";
+import BadgeImg from "@/components/shared/badge-img";
 
 // A helper function that mimdata?.data?.profile_photoics your Kotlin logic.
 // It XORs only the first 4096 bytes (or the data size if smaller) and decodes the result as text.
@@ -164,11 +165,6 @@ const Profile = () => {
     if (user) refetch();
   }, [user, data]);
 
-  useEffect(()=>{
-    if(data) {
-      console.log('data is=>', data);
-    }
-  },[data]);
   if (isLoading) return <Loader />;
 
   return (
@@ -252,7 +248,7 @@ const Profile = () => {
         </div>
         <div className="z-[1900] flex my-5 justify-between items-center px-5">
           {user?.token ? (
-            <EditCover decryptedCover={decryptedCover} />
+            <EditCover decryptedCover={decryptedCover} refetch={refetch} />
           ) : (
             <div></div>
           )}
@@ -284,21 +280,7 @@ const Profile = () => {
             <div className="z-[1900] flex-1 flex flex-col gap-0.5">
               <p className="z-[1900] text-[18px] flex items-center gap-1">
                 {data?.data?.nickname}
-                {data?.data?.account_type == "normal" ? (
-                  <img className="w-5" src={normal} alt="" />
-                ) : (
-                  <></>
-                )}
-                {data?.data?.account_type == "silver" ? (
-                  <img className="w-5" src={silver} alt="" />
-                ) : (
-                  <></>
-                )}
-                {data?.data?.account_type == "gold" ? (
-                  <img className="w-5" src={gold} alt="" />
-                ) : (
-                  <></>
-                )}
+                <BadgeImg photo={data?.data?.badge} />
                 <span>
                   {data?.data?.gender === "Male" ? <MaleSVG /> : null}
                 </span>
@@ -400,11 +382,7 @@ const Profile = () => {
         </div>
         <div ref={headerRef} className="sticky z-[1500] top-0"></div>
         <div className="px-5">
-          <VideoTabs
-            headerRef={headerRef}
-            showHeader={showHeader}
-            login={user?.token}
-          />
+          <VideoTabs />
         </div>
       </div>
     </div>

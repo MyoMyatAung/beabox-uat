@@ -83,7 +83,7 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
     if (user?.token) {
       if (!replyContent.trim()) return;
       try {
-        await postComment({
+        const response = await postComment({
           post_id: post_id,
           content: replyContent,
           comment_id: commentId,
@@ -91,9 +91,22 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
         }).unwrap();
         setActiveReply({ commentId: null, replyId: null });
         setReplyContent("");
-        refetchComments();
+
+        if (response?.data?.data?.status === "success") {
+          refetchComments();
+          // setComments((prev: any) => [...prev, response?.data?.data]);
+        }
+
+        // refetchComments();
       } catch (error) {
-        console.error("Failed to post reply:", error);
+        const errMsg = JSON.parse(error?.data);
+        dispatch(
+          showToast({
+            message: errMsg?.message,
+            type: "error",
+          })
+        );
+        console.error("Failed to post reply:", errMsg);
       }
     } else {
       setIsOpen(true);
@@ -178,10 +191,13 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
         }).unwrap();
         setContent("");
 
-        setComments((prev: any) => [...prev, response?.data?.data]);
+        if (response?.data?.data?.status === "success") {
+          refetchComments();
+          // setComments((prev: any) => [...prev, response?.data?.data]);
+        }
 
-        // refetchComments();
         //  setCommentCount((prev: any) => +prev + 1);
+        console.log(response);
         dispatch(
           showToast({
             message: response?.message,
@@ -189,13 +205,14 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
           })
         );
       } catch (error) {
+        const errMsg = JSON.parse(error?.data);
         dispatch(
           showToast({
-            message: error?.data?.message,
+            message: errMsg?.message,
             type: "error",
           })
         );
-        console.error("Failed to post reply:", error);
+        console.error("Failed to post reply:", errMsg);
       }
     } else {
       setIsOpen(true);

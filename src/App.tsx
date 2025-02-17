@@ -24,6 +24,24 @@ const App = () => {
     }
   }, [dispatch]);
 
+  useEffect(() => {
+    console.log("wionnn");
+    const handleIosEvent = (event: CustomEvent) => {
+      console.log(event);
+    };
+
+    // Listen for the `iosEvent`
+    window.addEventListener("getDeviceInfo", handleIosEvent as EventListener);
+
+    // Cleanup the event listener when the component unmounts
+    return () => {
+      window.removeEventListener(
+        "getDeviceInfo",
+        handleIosEvent as EventListener
+      );
+    };
+  }, []);
+
   const sendNativeEvent = (message: string) => {
     if (
       (window as any).webkit &&
@@ -48,7 +66,6 @@ const App = () => {
         <Landing />
       ) : (
         <>
-          {" "}
           <Routing />
           <Toaster />
           <ErrorToast />

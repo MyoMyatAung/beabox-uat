@@ -13,6 +13,7 @@ import { useEffect, useRef, useState } from "react";
 import OscrollHeader from "@/components/profile/oscroll-header";
 import { useSelector } from "react-redux";
 import share from "@/assets/profile/share.svg";
+import BadgeImg from "@/components/shared/badge-img";
 
 const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
   const data = new Uint8Array(arrayBuffer);
@@ -146,6 +147,8 @@ const OtherProfile = () => {
     refetch();
   }, [id]);
 
+  console.log(userData, "user data ...");
+
   if (userLoading || isFetching) return <Loader />;
   return (
     <div className="h-screen flex flex-col hide-sb">
@@ -233,6 +236,8 @@ const OtherProfile = () => {
           <div className="z-[1900] flex-1 flex flex-col gap-0.5">
             <p className="z-[1900] text-[18px] flex items-center gap-1">
               {userData?.data?.nickname}
+              <BadgeImg photo={userData?.data?.badge} />
+
               <span>
                 {userData?.data?.gender == "Male" ? <MaleSVG /> : <></>}
               </span>

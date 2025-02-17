@@ -17,12 +17,20 @@ const initialState: any = {
   authToggle: true,
   content_visibility: "",
   sanswer: "",
+  defaultTab: "upload",
+  defaultTab2: "video",
 };
 
 export const persistSlice = createSlice({
   name: "persist",
   initialState,
   reducers: {
+    setDefaultTab: (state, { payload }) => {
+      state.defaultTab = payload;
+    },
+    setDefaultTab2: (state, { payload }) => {
+      state.defaultTab2 = payload;
+    },
     setSAnswer: (state, { payload }) => {
       state.sanswer = payload;
     },
@@ -81,6 +89,8 @@ export const persistSlice = createSlice({
 });
 
 export const {
+  setDefaultTab,
+  setDefaultTab2,
   setCVisibility,
   setAuthToggle,
   setForgotToken,

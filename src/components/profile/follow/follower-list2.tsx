@@ -40,7 +40,6 @@ const FollowingList2 = ({ searchTerm, id }: any) => {
   }, [data]);
   // console.log(" this is mf", waterfall);
   const fetchMoreData = () => {
-    console.log(page);
     setPage((prevPage) => prevPage + 1);
   };
   // console.log(data?.data, "following");

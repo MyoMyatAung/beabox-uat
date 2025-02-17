@@ -19,17 +19,26 @@ const ChangePassword = () => {
   const [new_password, setNewPassword] = useState("");
   const [show, setShow] = useState(false);
   const [show2, setShow2] = useState(false);
+  const [error, setError] = useState(false);
   const [changePassword, { data, isLoading }] = useChangePasswordMutation();
   const closeRef = useRef<HTMLButtonElement>(null);
+
+  // const profileErr = localStorage.getItem("profile-error") || "当前密码错误";
 
   const changePassWordHandler = async (e: any) => {
     e.preventDefault();
     if (current_password?.length && new_password?.length) {
-      await changePassword({ current_password, new_password });
+      const { data } = await changePassword({ current_password, new_password });
+      if (data?.status) {
+        setIsOpen(false);
+        setError(false);
+        closeRef.current?.click();
+      } else {
+        setError(true);
+      }
     }
-    setIsOpen(false);
-    closeRef.current?.click();
   };
+
   return (
     <Drawer>
       <DrawerTrigger asChild>
@@ -92,6 +101,9 @@ const ChangePassword = () => {
                 )}
               </div>
             </div>
+            <h1 className="mt-5 text-red-500 text-sm">
+              {error ? "当前密码错误" : ""}
+            </h1>
             {/* <Button
               type="submit"
               disabled={isLoading ? true : false}

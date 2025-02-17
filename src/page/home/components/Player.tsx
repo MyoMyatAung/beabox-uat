@@ -271,6 +271,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useWatchtPostMutation } from "../services/homeApi";
 import { showToast } from "../services/errorSlice";
 import { decryptImage } from "@/utils/imageDecrypt";
+import { c } from "node_modules/framer-motion/dist/types.d-6pKw1mTI";
 
 const Player = ({
   src,
@@ -871,34 +872,39 @@ const Player = ({
             //   (artPlayerInstanceRef.current as any).muted = muteRef.current;
             // }
 
-            if (artPlayerInstanceRef.current) {
-              if (muteRef.current) {
-                // If muted, set muted immediately
-                artPlayerInstanceRef.current.muted = true;
-              } else {
-                // Track playback time using the video:timeupdate event
-                const handleTimeUpdate = () => {
-                  const currentTime =
-                    artPlayerInstanceRef.current?.currentTime || 0;
-                  if (currentTime >= 3) {
-                    if (artPlayerInstanceRef.current) {
-                      console.log("unmount");
-                      artPlayerInstanceRef.current.muted = false;
-                      artPlayerInstanceRef.current.play();
-                    }
-                    artPlayerInstanceRef.current?.off(
-                      "video:timeupdate",
-                      handleTimeUpdate
-                    ); // Stop tracking after unmuting
-                  }
-                };
+            // if (artPlayerInstanceRef.current) {
+            //   console.log("cc", muteRef?.current);
 
+            if (muteRef.current) {
+              if (artPlayerInstanceRef?.current) {
+                artPlayerInstanceRef.current.muted = true;
+              }
+              // If muted, set muted immediately
+            } else {
+              // Track playback time using the video:timeupdate event
+              const handleTimeUpdate = () => {
+                const currentTime =
+                  artPlayerInstanceRef.current?.currentTime || 0;
+                if (currentTime >= 3) {
+                  if (artPlayerInstanceRef.current && !muteRef?.current) {
+                    artPlayerInstanceRef.current.muted = false;
+                    artPlayerInstanceRef.current.play();
+                  }
+                  artPlayerInstanceRef.current?.off(
+                    "video:timeupdate",
+                    handleTimeUpdate
+                  ); // Stop tracking after unmuting
+                }
+              };
+
+              if (artPlayerInstanceRef?.current) {
                 artPlayerInstanceRef.current.on(
                   "video:timeupdate",
                   handleTimeUpdate
                 );
               }
             }
+            // }
           } else {
             if (artPlayerInstanceRef.current) {
               setIsplay(false);

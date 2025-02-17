@@ -35,7 +35,7 @@ const VideoCard = ({ videoData }: any) => {
   useEffect(() => {
     loadHandler();
   }, []);
-  console.log(videoData);
+  // console.log(videoData);
 
   useEffect(() => {
     const loadAndDecryptPhoto = async () => {

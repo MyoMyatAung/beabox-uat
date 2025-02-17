@@ -34,6 +34,7 @@ import { setRegisterUser, setUser } from "@/store/slices/persistSlice";
 import Shield from "@/assets/profile/shield.png";
 import Loader from "@/components/shared/loader";
 import SmallLoader from "@/components/shared/small-loader";
+import AuthError from "@/components/shared/auth-error";
 
 const RegisterForm = ({ setIsOpen }: any) => {
   const [error, setError] = useState("");
@@ -43,11 +44,11 @@ const RegisterForm = ({ setIsOpen }: any) => {
   const [showSecurity, setShowSecurity] = useState(false);
   const [captcha, setCaptcha] = useState("");
   const [getCaptcha, { data, isLoading }] = useGetCaptchaMutation();
-  const [register, { isLoading: registerLoading, error: rerror }] =
+  const [register, { isLoading: registerLoading, data: rdata, isError }] =
     useRegisterMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const authErr = localStorage.getItem("auth-error") || "";
+  const authErr = localStorage.getItem("auth-error") || "验证码错误";
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -83,28 +84,19 @@ const RegisterForm = ({ setIsOpen }: any) => {
       dispatch(setAlertText(registerData?.message));
       setIsOpen(false);
       dispatch(setIsDrawerOpen(false));
-      // dispatch(setRegisterUser(registerData?.data));
       setShow验证码(false);
-      // dispatch(setAuthToggle(true));
-      // setShowSecurity(true);
     } else {
-      // setShowSecurity(false);
-      if (authErr) setError(authErr); // setError("出了点问题");
+      if (authErr) setError(authErr);
       // setShow验证码(false);
+      setCaptcha("");
       await getCaptcha("");
     }
   };
-
-  // useEffect(() => {
-  //   const authErr = localStorage.getItem("auth-error") || "";
-  //   console.log(authErr, "authErr");
-  //   if (rerror) setError(authErr);
-  //   // setShow验证码(false);
-  // }, [rerror]);
-
-  console.log(rerror);
+  console.log(isError, "isError");
   return (
     <div className="px-5">
+      {isError ? <AuthError message={error} /> : <></>}
+
       <div className="flex justify-between items-center">
         <div className="px-3"></div>
         <p className="text-[18px]">
@@ -202,7 +194,7 @@ const RegisterForm = ({ setIsOpen }: any) => {
             )}
           />
 
-          <h1 className="mt-4 text-red-500 text-sm">{error}</h1>
+          {/* <h1 className="mt-4 text-red-500 text-sm">{error}</h1> */}
 
           <input
             type="text"

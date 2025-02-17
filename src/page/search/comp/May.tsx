@@ -33,9 +33,6 @@ const May: React.FC<MayProps> = ({}) => {
     }
   };
 
-  console.log(isLoading);
-  console.log(isFetching);
-
   return (
     <div>
       {/* header */}
