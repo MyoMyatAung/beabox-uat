@@ -54,7 +54,7 @@ const Manage = () => {
 
   const removeHandler = async () => {
     const { data } = await removeSecurityQuestion("");
-    console.log(data);
+    // console.log(data);
     if (data?.status) dispatch(setSecurityQues(null));
 
     navigate(paths.settings);

@@ -41,7 +41,7 @@ const OtherProfile = () => {
   } = useGetUserProfileQuery(id || "");
   const [decryptedCover, setDecryptedCover] = useState(defaultCover);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
-  console.log(userData, "user data");
+  // console.log(userData, "user data");
   useEffect(() => {
     const loadAndDecryptCover = async () => {
       if (!user?.token || !userData?.data?.cover_photo) {
@@ -144,7 +144,9 @@ const OtherProfile = () => {
   }, []);
 
   useEffect(() => {
-    refetch();
+    if (id && refetch) {
+      refetch();
+    }
   }, [id]);
 
   if (userLoading) return <Loader />;

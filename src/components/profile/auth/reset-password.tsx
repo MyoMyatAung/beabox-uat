@@ -18,7 +18,7 @@ const ResetPassword = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [setPassword, { isLoading }] = useSetPasswordMutation();
-  console.log(forgotToken);
+  // console.log(forgotToken);
   const onSubmitHandler = async (e: any) => {
     e.preventDefault();
     const { data } = await setPassword({

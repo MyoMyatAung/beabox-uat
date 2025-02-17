@@ -22,7 +22,7 @@ const EditGender = () => {
 
   const [changeGender, { data, isLoading }] = useChangeGenderMutation();
 
-  console.log(gender);
+  // console.log(gender);
 
   return (
     <Drawer>

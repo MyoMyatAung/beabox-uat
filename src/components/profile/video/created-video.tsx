@@ -12,7 +12,7 @@ const CreatedVideo = ({ id }: any) => {
   const [hasMore, setHasMore] = useState(true);
   const [totalData, setTotalData] = useState<number>(0);
 
-  const { data, isLoading } = useGetPostsQuery({ id, page }, { skip: !user });
+  const { data, isLoading } = useGetPostsQuery({ id, page });
 
   useEffect(() => {
     if (data?.data?.length) {
@@ -47,7 +47,7 @@ const CreatedVideo = ({ id }: any) => {
   }
   return (
     <div className="py-5">
-      {!user?.token || videos.length <= 0 ? (
+      {videos?.length <= 0 ? (
         <div>
           <div className="flex flex-col justify-center items-center w-full mt-[150px]">
             <NoVideo />
@@ -58,7 +58,7 @@ const CreatedVideo = ({ id }: any) => {
         <>
           <div>
             <div className="grid grid-cols-3 gap-2">
-              {videos.map((item: any) => (
+              {videos?.map((item: any) => (
                 <VideoCard key={item.id} videoData={item} />
               ))}
             </div>

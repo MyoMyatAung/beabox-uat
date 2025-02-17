@@ -13,7 +13,7 @@ const VideoTabs = () => {
   const user = useSelector((state: any) => state.persist.user);
   const defaultTab = useSelector((state: any) => state.persist.defaultTab);
   const dispatch = useDispatch();
-  console.log(defaultTab, "defaultab");
+  // console.log(defaultTab, "defaultab");
   return (
     <Tabs defaultValue={user?.token ? defaultTab : "liked"} className="py-5">
       <TabsList className="grid w-full grid-cols-3 z-[1600] bg-transparent sticky top-[100px]">

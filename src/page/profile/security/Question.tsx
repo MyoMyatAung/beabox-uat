@@ -20,7 +20,7 @@ const Question = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [checkAnswer, { isLoading }] = useCheckAnswerMutation();
-  console.log(forgotData);
+  // console.log(forgotData);
   const onSubmitHandler = async (e: any) => {
     e.preventDefault();
     const { data } = await checkAnswer({

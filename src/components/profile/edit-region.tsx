@@ -49,7 +49,7 @@ const EditRegion = ({ province, city }: any) => {
     setIsOpen(false);
   };
 
-  console.log(cdata, cerror);
+  // console.log(cdata, cerror);
 
   useEffect(() => {
     if (isOpen == true) {
