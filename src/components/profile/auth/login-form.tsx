@@ -1,8 +1,8 @@
 import { paths } from "@/routes/paths";
-import { ChevronLeft, Eye, EyeOff, RotateCcw, RotateCw, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Eye, EyeOff, X } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { LoginFormData, loginSchema } from "@/page/auth/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -30,13 +30,11 @@ import {
   setShowAlert,
 } from "@/store/slices/profileSlice";
 import SmallLoader from "@/components/shared/small-loader";
-import AlertToast from "@/components/shared/alert-toast";
+import logo from "@/assets/logo.svg";
+import AuthError from "@/components/shared/auth-error";
 const LoginForm = ({ setIsOpen }: any) => {
-  const [name, setName] = useState("");
-  const [pass, setPass] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [login, { isLoading, error: lerror }] = useLoginMutation();
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const authErr = localStorage.getItem("auth-error") || "请输入验证码";
 
@@ -80,14 +78,15 @@ const LoginForm = ({ setIsOpen }: any) => {
       setIsOpen(false);
     } else {
       if (authErr) setError(authErr);
-      // await getCaptcha("");
-      setShow验证码(false);
+      setCaptcha("");
+      await getCaptcha("");
+      // setShow验证码(false);
     }
   };
 
   return (
     <div className="px-5">
-      {/* <AlertToast /> */}
+      {error ? <AuthError message={error} /> : <></>}
       <div className="flex justify-between items-center">
         <div className="px-3"></div>
         <p className="text-[18px]">
@@ -183,7 +182,7 @@ const LoginForm = ({ setIsOpen }: any) => {
             )}
           />
 
-          <h1 className="mt-4 text-red-500 text-sm">{error}</h1>
+          {/* <h1 className="mt-4 text-red-500 text-sm">{error}</h1> */}
 
           <div className="">
             {/* <SubmitButton
@@ -241,7 +240,7 @@ const LoginForm = ({ setIsOpen }: any) => {
                     alt=""
                   />
                 </div>
-                <div
+                {/* <div
                   onClick={async (e) => {
                     e.stopPropagation();
                     await getCaptcha("");
@@ -255,10 +254,10 @@ const LoginForm = ({ setIsOpen }: any) => {
                     size={14}
                   />
                   <p className="text-[12px] text-[#bbb]">刷新</p>
-                </div>
+                </div> */}
                 <Button
                   onClick={handleVerify}
-                  disabled={isLoading ? true : false || !captcha?.length}
+                  disabled={isLoading || captchaLoading || !captcha?.length}
                   type="submit"
                   className="w-full gradient-bg hover:gradient-bg text-white rounded-lg"
                 >

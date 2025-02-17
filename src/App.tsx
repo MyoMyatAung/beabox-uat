@@ -66,7 +66,6 @@ const App = () => {
         <Landing />
       ) : (
         <>
-          {" "}
           <Routing />
           <Toaster />
           <ErrorToast />
