@@ -232,7 +232,9 @@ const Home = () => {
     // Observe the last video element
     if (videos[currentTab === 2 ? "foryou" : "follow"].length > 1) {
       const secondLastVideo = container.children[container.children.length - 5];
-      observer.observe(secondLastVideo);
+      if (secondLastVideo) {
+        observer.observe(secondLastVideo);
+      }
     }
     // Cleanup observer on component unmount or when dependencies change
     return () => {
@@ -414,6 +416,7 @@ const Home = () => {
 
                           {!hideBar && video?.type !== "ads" && (
                             <VideoFooter
+                              badge={video?.user?.badge}
                               tags={video?.tag}
                               title={video?.title}
                               username={video?.user?.name}
@@ -538,6 +541,7 @@ const Home = () => {
 
                           {!hideBar && video?.type !== "ads" && (
                             <VideoFooter
+                              badge={video?.user?.badge}
                               tags={video?.tag}
                               title={video?.title}
                               username={video?.user?.name}
