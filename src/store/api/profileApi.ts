@@ -163,8 +163,7 @@ export const profileApi = createApi({
     }),
     getLikedPost: builder.query<any, any>({
       query: ({ user_id, page }) => ({
-        url: 
-        convertToSecureUrl(
+        url: convertToSecureUrl(
           `/user/liked-post?user_id=${user_id}&page=${page}`
         ),
         method: "GET",
@@ -237,21 +236,21 @@ export const profileApi = createApi({
       query: ({ filedata, filePath }: any) => ({
         url: convertToSecureUrl(`/storage/upload`),
         method: "Post",
-        body: convertToSecurePayload({ filePath, file: filedata }),
+        body: { filePath, file: filedata },
       }),
     }),
     profileUpload: builder.mutation<any, any>({
       query: ({ file_url }: any) => ({
         url: convertToSecureUrl(`/profile/upload`),
         method: "Post",
-        body: convertToSecurePayload({ file_url }),
+        body: { file_url },
       }),
     }),
     changeCover: builder.mutation<any, any>({
       query: ({ file_url }: any) => ({
         url: convertToSecureUrl(`/profile/change-cover-photo`),
         method: "Post",
-        body: convertToSecurePayload({ file_url }),
+        body: { file_url },
       }),
     }),
     removeCover: builder.mutation<any, any>({

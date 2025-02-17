@@ -164,11 +164,6 @@ const Profile = () => {
     if (user) refetch();
   }, [user, data]);
 
-  useEffect(()=>{
-    if(data) {
-      console.log('data is=>', data);
-    }
-  },[data]);
   if (isLoading) return <Loader />;
 
   return (
@@ -252,7 +247,7 @@ const Profile = () => {
         </div>
         <div className="z-[1900] flex my-5 justify-between items-center px-5">
           {user?.token ? (
-            <EditCover decryptedCover={decryptedCover} />
+            <EditCover decryptedCover={decryptedCover} refetch={refetch} />
           ) : (
             <div></div>
           )}

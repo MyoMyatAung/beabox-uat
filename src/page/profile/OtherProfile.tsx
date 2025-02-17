@@ -146,6 +146,8 @@ const OtherProfile = () => {
     refetch();
   }, [id]);
 
+  console.log(userData, "user data ...");
+
   if (userLoading || isFetching) return <Loader />;
   return (
     <div className="h-screen flex flex-col hide-sb">
