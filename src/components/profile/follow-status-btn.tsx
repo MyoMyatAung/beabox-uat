@@ -22,8 +22,11 @@ const FollowStatusBtn = ({ userData, id, refetch, userLoading }: any) => {
     setFollow(!follow);
   };
   useEffect(() => {
-    refetch();
+    if (token && refetch) {
+      refetch();
+    }
   }, [token]);
+  
   return (
     <Button
       disabled={isLoading || userLoading}

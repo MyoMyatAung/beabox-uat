@@ -36,7 +36,7 @@ const Application: React.FC<any> = () => {
       baseColor="rgba(255, 255, 255, 0.2)"
       highlightColor="rgba(255, 255, 255, 0.2)"
     >
-      <div className="px-[10px] py-[10px]">
+      <div className="px-[10px] py-[10px] max-w-[480px] mx-auto">
         {isLoading && (
           <>
             {/* Skeleton for Carousel */}

@@ -158,7 +158,7 @@ const Profile = () => {
   if (isLoading) return <Loader />;
 
   return (
-    <div className="h-screen flex flex-col hide-sb">
+    <div className="h-screen flex flex-col hide-sb max-w-[480px] mx-auto">
       {showHeader ? (
         <>
           <div className="gradient-overlay2"></div>
