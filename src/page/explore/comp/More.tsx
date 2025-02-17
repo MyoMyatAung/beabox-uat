@@ -4,6 +4,7 @@ import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import more from "../../../assets/explore/more.png";
 import Loader from "../../../page/home/vod_loader.gif";
 import "../explore.css";
+import "../../home/home.css";
 import { useGetExploreTagQuery } from "@/store/api/explore/exploreApi";
 import { useDispatch, useSelector } from "react-redux";
 import { setDetails, setMoreTab } from "@/store/slices/exploreSlice";
@@ -122,10 +123,10 @@ const More: React.FC<MoreProps> = () => {
   // console.log(more_tab);
 
   return (
-    <>
-      <div className="px-[10px] flex flex-col relative min-h-scree bg-[#16131C]">
+    <div className=" flex xl:justify-center items-center">
+      <div className="px-[10px] home-main flex flex-col relative min-h-scree bg-[#16131C]">
         {/* Header */}
-        <div className=" fixed z-[99] w-full bg-transparent bg-[#16131C]">
+        <div className=" fixed z-[99] home-main w-full bg-transparent bg-[#16131C]">
           <div className="grid grid-cols-3 justify-between py-[12px] bg-[#16131C] ">
             <ChevronLeft
               onClick={() => navigate("/")}
@@ -273,7 +274,7 @@ const More: React.FC<MoreProps> = () => {
                     </div>
                   }
                   endMessage={
-                    <div className="flex hidden bg-whit pt-20 justify-center items-center">
+                    <div className=" hidden bg-whit pt-20 justify-center items-center">
                       <p className="py-10" style={{ textAlign: "center" }}>
                         <b>No video yet!</b>
                       </p>
@@ -287,7 +288,7 @@ const More: React.FC<MoreProps> = () => {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
