@@ -1,5 +1,8 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useGetUserProfileQuery } from "@/store/api/profileApi";
+import {
+  useGetUserProfileQuery,
+  useShareInfoMutation,
+} from "@/store/api/profileApi";
 import { ChevronLeft, Copy, Flag, Search } from "lucide-react";
 import ProfileAvatar from "@/components/profile/profile-avatar";
 import Loader from "@/components/shared/loader";
@@ -30,6 +33,7 @@ const OtherProfile = () => {
   const user = useSelector((state: any) => state?.persist?.user) || "";
 
   const [isCopied, setIsCopied] = useState(false);
+  const [isCopied2, setIsCopied2] = useState(false);
   const headerRef = useRef<any>(null);
   const [showHeader, setShowHeader] = useState(false);
   const navigate = useNavigate();
@@ -39,6 +43,8 @@ const OtherProfile = () => {
     refetch,
     isFetching,
   } = useGetUserProfileQuery(id || "");
+  const [shareInfo, { data: shareData, isLoading: shareLoading }] =
+    useShareInfoMutation();
   const [decryptedCover, setDecryptedCover] = useState(defaultCover);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
   // console.log(userData, "user data");
@@ -110,12 +116,26 @@ const OtherProfile = () => {
     loadAndDecryptPhoto();
   }, [userData?.data?.profile_photo]);
 
-  const handleCopy = (text: any) => {
+  const handleCopy = async (text: any) => {
+    // await shareInfo({ id });
     navigator?.clipboard
       .writeText(text)
       .then(() => {
         setIsCopied(true);
         setTimeout(() => setIsCopied(false), 2000);
+      })
+      .catch((err) => {
+        console.error("Failed to copy text: ", err);
+      });
+  };
+  const handleCopy2 = async () => {
+    const { data } = await shareInfo({ id });
+    // console.log(data, "test data");
+    navigator?.clipboard
+      .writeText(data?.data?.link)
+      .then(() => {
+        setIsCopied2(true);
+        setTimeout(() => setIsCopied2(false), 2000);
       })
       .catch((err) => {
         console.error("Failed to copy text: ", err);
@@ -143,11 +163,11 @@ const OtherProfile = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (id && refetch) {
-      refetch();
-    }
-  }, [id]);
+  // useEffect(() => {
+  //   if (id || userData) {
+  //     refetch();
+  //   }
+  // }, [id, userData]);
 
   if (userLoading) return <Loader />;
   return (
@@ -173,8 +193,17 @@ const OtherProfile = () => {
       )}
       {isCopied ? (
         <div className="w-full z-[1300] absolute top-[80vh] flex justify-center">
-          <p className="text-[14px] bg-[#FFFFFF14] px-2 py-1 rounded-lg w-[83px] text-center">
+          <p className="text-[14px] bg-[#191721] px-2 py-1 rounded-lg w-[83px] text-center">
             已复制 ID
+          </p>
+        </div>
+      ) : (
+        ""
+      )}
+      {isCopied2 ? (
+        <div className="w-full z-[1300] absolute top-[80vh] flex justify-center">
+          <p className="text-[14px] bg-[#191721] px-2 py-1 rounded-lg w-[83px] text-center">
+            {shareData?.message}
           </p>
         </div>
       ) : (
@@ -214,7 +243,7 @@ const OtherProfile = () => {
               <Search size={18} />
             </div> */}
             <div
-              onClick={() => handleCopy("Copied Link")}
+              onClick={() => handleCopy2()}
               className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full"
             >
               <img src={share} alt="" />
