@@ -164,6 +164,7 @@ const ShareOverlay: React.FC<any> = ({
           };
           setCurrentActivePost(null);
           dispatch(setVideos(updatedVideos)); // Dispatch the updated videos
+          handleClose();
         }
 
         dispatch(

@@ -882,7 +882,6 @@ const Player = ({
                     artPlayerInstanceRef.current?.currentTime || 0;
                   if (currentTime >= 3) {
                     if (artPlayerInstanceRef.current) {
-                      console.log("unmount");
                       artPlayerInstanceRef.current.muted = false;
                       artPlayerInstanceRef.current.play();
                     }

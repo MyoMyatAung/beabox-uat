@@ -11,7 +11,7 @@ import {
 } from "@/store/api/explore/exploreApi";
 import { Person } from "@/assets/profile";
 import { useDispatch } from "react-redux";
-import { setDetails, setTitle } from "@/store/slices/exploreSlice";
+import { setDetails, setTag, setTitle } from "@/store/slices/exploreSlice";
 import { paths } from "@/routes/paths";
 import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder";
 import { FaHeart } from "react-icons/fa";
@@ -48,7 +48,9 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
   };
 
   const showMore = (tt: any) => {
-    dispatch(setTitle(tt));
+    const title = tt?.navigation[0].tag;
+    dispatch(setTitle(title));
+    dispatch(setTag(tt.title));
     navigate(paths.recommand_more, { state: { tt } });
   };
 
@@ -87,7 +89,7 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
     return num;
   };
 
-  console.log(uiLeft);
+  // console.log(list);
   return (
     <div className=" pb-[20px] px-[10px]">
       {isLoading ? (
@@ -114,7 +116,7 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
                   </h1>
                   <div
                     // onClick={() => navigate(paths.recommand_more, { state: { title } })}
-                    onClick={() => showMore(ll.title)}
+                    onClick={() => showMore(ll)}
                     className="rec_exp_more_btn"
                   >
                     <svg
