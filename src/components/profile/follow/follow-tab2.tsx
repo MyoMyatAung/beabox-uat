@@ -14,11 +14,9 @@ const FollowTabs2 = ({ id, defaultFollowTab, closeTab }: any) => {
     skip: !user,
   });
   const me = userData?.data;
-  console.log(userData, "me");
 
   const [active, setActive] = useState(defaultFollowTab);
   const [searchTerm, setSearchTerm] = useState<any>("");
-  console.log(searchTerm);
   return (
     <Tabs defaultValue={defaultFollowTab} className="flex flex-col">
       <div className="bg-[#16131C] w-full z-[1500] sticky top-[45px]">
