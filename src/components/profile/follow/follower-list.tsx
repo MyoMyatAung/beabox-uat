@@ -1,80 +1,121 @@
-import { useSelector } from "react-redux";
-import FollowCard from "../follow-card";
 import {
   useFilterFollowerQuery,
   useGetFollowerListQuery,
-  useGetMyProfileQuery,
 } from "@/store/api/profileApi";
-import { Users, UsersRound } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import Loader from "../../../page/home/vod_loader.gif";
+import FollowCard from "../follow-card";
+import { UsersRound } from "lucide-react";
+import { FaSearch } from "react-icons/fa";
+import { Input } from "@/components/ui/input";
+import InfinitLoad from "@/components/shared/infinit-load";
 
 const FollowerList = ({ searchTerm }: any) => {
+  // const [searchTerm, setSearchTerm] = useState("");
+  const [followers, setFollowers] = useState<any>([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [totalData, setTotalData] = useState<number>(0);
   const user_code = useSelector((state: any) => state.persist?.user?.id);
-  const { data: udata } = useGetMyProfileQuery("");
-
   const { data, isLoading, isFetching } = useGetFollowerListQuery({
     user_id: user_code,
-    // search: searchTerm,
+    page,
   });
 
-  const { data: filterdata } = useFilterFollowerQuery({
-    user_id: user_code,
-    search: searchTerm,
-  });
+  const { data: filterdata, isLoading: filterLoading } = useFilterFollowerQuery(
+    {
+      user_id: user_code,
+      search: searchTerm,
+    }
+  );
 
-  // console.log(data?.data, "follower list");
+  useEffect(() => {
+    if (data?.data?.length) {
+      // Append new data to the existing videos
+      setFollowers((prev: any) => [...prev, ...data.data]);
+      setTotalData(data.pagination.total);
+    }
+  }, [data]);
 
-  return (
-    <div className="flex flex-col gap-4 w-full no-scrollbar h-screen pb-5">
-      {isLoading || isFetching ? (
-        <div className=" flex justify-center w-full py-[200px]">
-          <div className="">
-            <img src={Loader} className="w-[70px] h-[70px]" alt="Loading" />
-          </div>
+  useEffect(() => {
+    if (totalData <= followers.length) {
+      setHasMore(false);
+    } else {
+      setHasMore(true);
+    }
+  }, [totalData, followers]);
+
+  const fetchMoreData = () => {
+    if (hasMore) {
+      setPage((prev) => prev + 1);
+    }
+  };
+
+  if (isLoading && page === 1) {
+    return (
+      <div className=" flex justify-center w-full py-[200px]">
+        <div className="">
+          <img src={Loader} className="w-[70px] h-[70px]" alt="Loading" />
         </div>
+      </div>
+    );
+  }
+  return (
+    <>
+      {/* <div className="py-2">
+        <div className="bg-[#1E1C28] w-full rounded-full shadow-md flex items-center pl-4">
+          <FaSearch />
+          <Input
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="搜索用户"
+            className="bg-[#1E1C28] rounded-full border-0 focus:border-transparent focus-visible:ring-0"
+          />
+        </div>
+      </div> */}
+      {searchTerm?.length ? (
+        <>
+          {filterdata?.data?.length ? (
+            filterdata?.data?.map((follower: any) => (
+              <FollowCard key={follower.user_code} data={follower} />
+            ))
+          ) : (
+            <div className="flex justify-center mt-[40%]">
+              <div className="flex flex-col items-center gap-3">
+                <UsersRound className="text-[#888]" />
+                <p className="text-[12px] text-[#888] w-[90px] text-center">
+                  快关注你感兴 趣的用户吧！
+                </p>
+              </div>
+            </div>
+          )}
+        </>
       ) : (
         <>
-          {searchTerm?.length ? (
+          {followers?.length ? (
             <>
-              {filterdata?.data?.length ? (
-                filterdata?.data?.map((follower: any) => (
-                  <FollowCard key={follower.user_code} data={follower} />
-                ))
-              ) : (
-                <div className="h-full flex justify-center mt-[40%]">
-                  <div className="flex flex-col items-center gap-3">
-                    <UsersRound className="text-[#888]" />
-                    <p className="text-[12px] text-[#888] w-[90px] text-center">
-                      快关注你感兴 趣的用户吧！
-                    </p>
-                  </div>
-                </div>
-              )}
+              {followers?.map((follower: any) => (
+                <FollowCard key={follower.user_code} data={follower} />
+              ))}
+              <InfinitLoad
+                data={followers}
+                fetchData={fetchMoreData}
+                hasMore={hasMore}
+              />
             </>
           ) : (
-            <>
-              {data?.data?.length ? (
-                data?.data?.map((follower: any) => (
-                  <FollowCard key={follower.user_code} data={follower} />
-                ))
-              ) : (
-                <div className="h-full flex justify-center mt-[40%]">
-                  <div className="flex flex-col items-center gap-3">
-                    <UsersRound className="text-[#888]" />
-                    <p className="text-[12px] text-[#888] w-[90px] text-center">
-                      快关注你感兴 趣的用户吧！
-                    </p>
-                  </div>
-                </div>
-              )}
-            </>
+            <div className="h-full flex justify-center mt-[40%]">
+              <div className="flex flex-col items-center gap-3">
+                <UsersRound className="text-[#888]" />
+                <p className="text-[12px] text-[#888] w-[90px] text-center">
+                  快关注你感兴 趣的用户吧！
+                </p>
+              </div>
+            </div>
           )}
         </>
       )}
-      {/* {data?.data?.map((follower: any) => (
-        <FollowCard key={follower.user_code} data={follower} />
-      ))} */}
-    </div>
+    </>
   );
 };
 
