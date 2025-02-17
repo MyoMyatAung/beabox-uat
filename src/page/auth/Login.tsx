@@ -66,7 +66,7 @@ const Login = () => {
       captcha,
       captcha_key: data?.data?.captcha_key,
     });
-    console.log(loginData, "loginData");
+    // console.log(loginData, "loginData");
     if (loginData?.status) {
       dispatch(setUser(loginData?.data));
       setShow验证码(false);

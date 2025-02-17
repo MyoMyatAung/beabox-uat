@@ -19,7 +19,7 @@ const OscrollHeader = ({ photo, name, id, visibility, dphoto }: any) => {
   const [waterfall, setWaterFall] = useState<any[]>([]);
   const { data, isLoading } = useGetLikedPostQuery({ user_id: id, page });
 
-  console.log(data, "data for os");
+  // console.log(data, "data for os");
 
   useEffect(() => {
     if (data?.data) {

@@ -6,7 +6,7 @@ import Balance from "@/assets/profile/balance1.png";
 
 const NotiDetail = () => {
   const state = useLocation();
-  console.log(state.state);
+  // console.log(state.state);
   return (
     <div className="w-full h-screen bg-[#16131C] px-5 flex flex-col items-center justify-between no-scrollbar">
       <div className="w-full">

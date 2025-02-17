@@ -39,7 +39,7 @@ const Profile = () => {
   const { data, isLoading, refetch } = useGetMyOwnProfileQuery("", {
     skip: !user,
   });
-  console.log(data, "data");
+  // console.log(data, "data");
   const [show, setShow] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const dispatch = useDispatch();
@@ -63,7 +63,7 @@ const Profile = () => {
           setDecryptedCover(coverUrl);
           return;
         }
-        console.log("coverUrl is =>", coverUrl);
+        // console.log("coverUrl is =>", coverUrl);
 
         // Fetch the encrypted image data
         const response = await fetch(coverUrl);
