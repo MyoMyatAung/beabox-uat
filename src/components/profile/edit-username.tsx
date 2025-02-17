@@ -6,7 +6,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Button } from "../ui/button";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 import { useSelector } from "react-redux";
 import { useChangeUsernameMutation } from "@/store/api/profileApi";
@@ -41,6 +41,10 @@ const EditUsername = ({
       setValue(username);
     }
   };
+
+  useEffect(() => {
+    setValue(username);
+  }, [isOpen]);
 
   return (
     <Drawer open={isOpen} onOpenChange={handleOpenChange}>
