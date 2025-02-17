@@ -11,7 +11,7 @@ import { FaSearch } from "react-icons/fa";
 import { Input } from "@/components/ui/input";
 import InfinitLoad from "@/components/shared/infinit-load";
 
-const FollowerList = ({ searchTerm }: any) => {
+const FollowerList = ({ searchTerm, id }: any) => {
   // const [searchTerm, setSearchTerm] = useState("");
   const [followers, setFollowers] = useState<any>([]);
   const [page, setPage] = useState(1);
@@ -19,13 +19,13 @@ const FollowerList = ({ searchTerm }: any) => {
   const [totalData, setTotalData] = useState<number>(0);
   const user_code = useSelector((state: any) => state.persist?.user?.id);
   const { data, isLoading, isFetching } = useGetFollowerListQuery({
-    user_id: user_code,
+    user_id: id,
     page,
   });
 
   const { data: filterdata, isLoading: filterLoading } = useFilterFollowerQuery(
     {
-      user_id: user_code,
+      user_id: id,
       search: searchTerm,
     }
   );
@@ -93,7 +93,7 @@ const FollowerList = ({ searchTerm }: any) => {
       ) : (
         <>
           {followers?.length ? (
-            <>
+            <div className="flex flex-col gap-3">
               {followers?.map((follower: any) => (
                 <FollowCard key={follower.user_code} data={follower} />
               ))}
@@ -102,7 +102,7 @@ const FollowerList = ({ searchTerm }: any) => {
                 fetchData={fetchMoreData}
                 hasMore={hasMore}
               />
-            </>
+            </div>
           ) : (
             <div className="h-full flex justify-center mt-[40%]">
               <div className="flex flex-col items-center gap-3">

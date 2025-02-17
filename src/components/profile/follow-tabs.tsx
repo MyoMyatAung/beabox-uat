@@ -7,6 +7,8 @@ import FollowingList from "./follow/following-list";
 import { act, useState } from "react";
 
 const FollowTabs = () => {
+  const user_code = useSelector((state: any) => state.persist?.user?.id);
+
   const defaultFollowTab = useSelector(
     (state: any) => state.profile.defaultFollowTab
   );
@@ -61,10 +63,10 @@ const FollowTabs = () => {
       </div>
       <div className="py-3 px-2 flex-1">
         <TabsContent value="follower">
-          <FollowerList searchTerm={searchTerm} />
+          <FollowerList searchTerm={searchTerm} id={user_code} />
         </TabsContent>
         <TabsContent value="following">
-          <FollowingList searchTerm={searchTerm} />
+          <FollowingList searchTerm={searchTerm} id={user_code} />
         </TabsContent>
       </div>
     </Tabs>
