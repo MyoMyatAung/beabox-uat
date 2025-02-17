@@ -147,9 +147,7 @@ const OtherProfile = () => {
     refetch();
   }, [id]);
 
-  console.log(userData, "user data ...");
-
-  if (userLoading || isFetching) return <Loader />;
+  if (userLoading) return <Loader />;
   return (
     <div className="h-screen flex flex-col hide-sb">
       {showHeader ? (
@@ -273,7 +271,7 @@ const OtherProfile = () => {
             )}
           </div>
         </div>
-        <h1 className="text-[12px] text-[#888] mb-5 italic px-5 z-[1900] relative">
+        <h1 className="text-[12px] text-[#888] mb-5 px-5 z-[1900] relative">
           {userData?.data?.bio && userData?.data?.hide_bio == "off"
             ? userData?.data?.bio
             : ""}

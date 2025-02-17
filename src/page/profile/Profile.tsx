@@ -1,14 +1,10 @@
 import Stats from "@/components/profile/stats";
-import { Person } from "@/assets/profile";
 import defaultCover from "@/assets/cover.jpg";
 import center from "@/assets/profile/center3.png";
 import VideoTabs from "@/components/profile/video-tabs";
 import { Link } from "react-router-dom";
 import { paths } from "@/routes/paths";
-import {
-  useGetMyOwnProfileQuery,
-  useGetMyProfileQuery,
-} from "@/store/api/profileApi";
+import { useGetMyOwnProfileQuery } from "@/store/api/profileApi";
 import { useDispatch, useSelector } from "react-redux";
 import { PenIcon as UserPen, Bell, X, Copy, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,17 +16,13 @@ import Loader from "@/components/shared/loader";
 import MaleSVG from "@/assets/profile/male";
 import FemaleSVG from "@/assets/profile/female";
 import EditCover from "@/components/profile/edit-cover";
-import AuthDrawer from "@/components/profile/auth/auth-drawer";
 import ScrollHeader from "@/components/profile/scroll-header";
 import { setIsDrawerOpen } from "@/store/slices/profileSlice";
-import normal from "@/assets/profile/normal.png";
-import gold from "@/assets/profile/gold.png";
-import silver from "@/assets/profile/silver.png";
 import BadgeImg from "@/components/shared/badge-img";
 
 // A helper function that mimdata?.data?.profile_photoics your Kotlin logic.
 // It XORs only the first 4096 bytes (or the data size if smaller) and decodes the result as text.
-const decryptImage = (arrayBuffer, key = 0x12, decryptSize = 4096) => {
+const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
   const data = new Uint8Array(arrayBuffer);
   const maxSize = Math.min(decryptSize, data.length);
   for (let i = 0; i < maxSize; i++) {
@@ -43,14 +35,12 @@ const decryptImage = (arrayBuffer, key = 0x12, decryptSize = 4096) => {
 const Profile = () => {
   const headerRef = useRef(null);
   const [showHeader, setShowHeader] = useState(false);
-  const user = useSelector((state) => state?.persist?.user) || "";
+  const user = useSelector((state: any) => state?.persist?.user) || "";
   const { data, isLoading, refetch } = useGetMyOwnProfileQuery("", {
     skip: !user,
   });
   console.log(data, "data");
   const [show, setShow] = useState(false);
-  const gender = useSelector((state) => state?.persist?.gender);
-  const region = useSelector((state) => state?.persist?.region);
   const [isCopied, setIsCopied] = useState(false);
   const dispatch = useDispatch();
   // decryptedCover and decryptedPhoto will now hold a string (for example, a data URL)
@@ -146,7 +136,7 @@ const Profile = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleCopy = (text) => {
+  const handleCopy = (text: any) => {
     navigator?.clipboard
       .writeText(text)
       .then(() => {
@@ -323,7 +313,7 @@ const Profile = () => {
           {user?.token ? (
             <>
               {data?.data?.hide_bio === "on" ? (
-                <div className="text-[12px] text-[#888] mb-5 italic">
+                <div className="text-[12px] text-[#888] mb-5">
                   {data?.data?.bio}
                 </div>
               ) : (
