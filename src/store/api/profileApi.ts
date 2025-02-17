@@ -187,8 +187,8 @@ export const profileApi = createApi({
       }),
     }),
     getFollowerList: builder.query<any, any>({
-      query: ({ user_id }) => ({
-        url: convertToSecureUrl(`/follower/follower-list?user_id=${user_id}`),
+      query: ({ user_id, page }) => ({
+        url: convertToSecureUrl(`/follower/follower-list?user_id=${user_id}&page=${page}`),
         method: "GET",
       }),
     }),
