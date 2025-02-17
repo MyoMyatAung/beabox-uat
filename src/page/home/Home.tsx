@@ -417,6 +417,7 @@ const Home = () => {
                           {!hideBar && video?.type !== "ads" && (
                             <VideoFooter
                               badge={video?.user?.badge}
+                              id={video?.user?.id}
                               tags={video?.tag}
                               title={video?.title}
                               username={video?.user?.name}
@@ -542,6 +543,7 @@ const Home = () => {
                           {!hideBar && video?.type !== "ads" && (
                             <VideoFooter
                               badge={video?.user?.badge}
+                              id={video?.user?.id}
                               tags={video?.tag}
                               title={video?.title}
                               username={video?.user?.name}

@@ -75,7 +75,6 @@ const Landing: React.FC = () => {
             src={splashScreen}
             className="h-full w-full object-cover"
             alt="Splash Screen"
-            loading="lazy"
           />
         </div>
       ) : showAd ? (
@@ -110,7 +109,6 @@ const Landing: React.FC = () => {
             src={splashScreen}
             className="h-full w-full object-cover"
             alt="Splash Screen"
-            loading="lazy"
           />
         </div>
       )}
