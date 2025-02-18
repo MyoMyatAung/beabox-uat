@@ -50,7 +50,7 @@ const OtherProfile = () => {
   // console.log(userData, "user data");
   useEffect(() => {
     const loadAndDecryptCover = async () => {
-      if (!user?.token || !userData?.data?.cover_photo) {
+      if (!userData?.data?.cover_photo) {
         setDecryptedCover(defaultCover);
         return;
       }
@@ -84,7 +84,7 @@ const OtherProfile = () => {
 
   useEffect(() => {
     const loadAndDecryptPhoto = async () => {
-      if (!user?.token || !userData?.data?.profile_photo) {
+      if (!userData?.data?.profile_photo) {
         setDecryptedPhoto("");
         return;
       }
@@ -288,7 +288,7 @@ const OtherProfile = () => {
             userData?.data?.province &&
             userData?.data?.share_region == "on" ? (
               <div className="z-[1900] flex">
-                <div className="z-[1900] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 pt-1 rounded-full justify-center shrink-0">
+                <div className="z-[1900] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
                   <span>{userData?.data?.province}</span>:
                   <span>{userData?.data?.city}</span>
                 </div>

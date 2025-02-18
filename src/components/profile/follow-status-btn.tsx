@@ -21,18 +21,24 @@ const FollowStatusBtn = ({ userData, id, refetch, userLoading }: any) => {
     await refetch();
     setFollow(!follow);
   };
+
+  const drawerHandler = async () => {
+    dispatch(setIsDrawerOpen(true));
+    if (token) await refetch();
+  };
+
+  const refetchHandler = async () => {
+    if (token?.length) await refetch();
+  };
+
   useEffect(() => {
-    if (token) {
-      refetch();
-    }
+    refetchHandler();
   }, [token]);
-  
+
   return (
     <Button
       disabled={isLoading || userLoading}
-      onClick={
-        token ? handleChangeFollowStatus : () => dispatch(setIsDrawerOpen(true))
-      }
+      onClick={token ? handleChangeFollowStatus : drawerHandler}
       className={`w-full ${
         userData?.data?.is_following
           ? "bg-[#FFFFFF0F] hover:bg-[#FFFFFF0F]"
