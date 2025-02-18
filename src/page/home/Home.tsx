@@ -40,7 +40,7 @@ const Home = () => {
   const [countNumber, setCountNumber] = useState(0); // New state for counting clicks
   const [topmovies, setTopMovies] = useState(false);
   const currentTab = useSelector((state: any) => state.home.currentTab);
-  const user = useSelector((state: any) => state.persist.user);
+  const user = useSelector((state: any) => state?.persist?.user);
   const [refresh, setRefresh] = useState(false);
   const dispatch = useDispatch();
   const [hearts, setHearts] = useState<number[]>([]); // Manage heart IDs

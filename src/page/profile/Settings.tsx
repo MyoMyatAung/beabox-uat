@@ -27,7 +27,7 @@ const Settings = ({
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [logout, { data: lgdata, isLoading }] = useLogoutMutation();
-  const user = useSelector((state: any) => state.persist.user);
+  const user = useSelector((state: any) => state?.persist?.user);
   const [device, setDevice] = useState("android");
   const [cacheSize, setCacheSize] = useState(null);
 

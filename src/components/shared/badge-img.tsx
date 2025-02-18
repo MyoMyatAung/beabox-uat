@@ -11,7 +11,7 @@ const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
 };
 
 const BadgeImg = ({ photo }: any) => {
-  const user = useSelector((state: any) => state.persist.user);
+  const user = useSelector((state: any) => state?.persist?.user);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
 
   useEffect(() => {

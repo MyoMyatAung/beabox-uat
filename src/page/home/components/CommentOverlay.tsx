@@ -54,7 +54,7 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
   const [getReply] = useReplyListMutation();
   const [commentReaction] = useCommentReactionMutation();
   const [isClosing, setIsClosing] = useState(false); // Tracks whether the portal is closing
-  const user = useSelector((state: any) => state.persist.user);
+  const user = useSelector((state: any) => state?.persist?.user);
   const observer = useRef<IntersectionObserver | null>(null);
 
   const lastCommentRef = useRef<HTMLDivElement | null>(null);

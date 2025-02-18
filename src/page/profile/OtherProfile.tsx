@@ -17,6 +17,7 @@ import OscrollHeader from "@/components/profile/oscroll-header";
 import { useSelector } from "react-redux";
 import share from "@/assets/profile/share.svg";
 import BadgeImg from "@/components/shared/badge-img";
+import SearchVideo from "@/components/profile/video/search-video";
 
 const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
   const data = new Uint8Array(arrayBuffer);
@@ -216,6 +217,8 @@ const OtherProfile = () => {
           } top-0 w-full z-[1600] py-5`}
         >
           <OscrollHeader
+            userData={userData}
+            handleCopy2={handleCopy2}
             photo={decryptedPhoto}
             name={userData?.data?.nickname}
             visibility={userData?.data?.content_visibility}
@@ -223,25 +226,10 @@ const OtherProfile = () => {
             dphoto={userData?.data?.cover_photo}
           />
         </div>
-        {/* {showHeader ? (
-          <div className="px-5 fixed top-0 w-full z-[1600] py-5">
-            <OscrollHeader
-              photo={userData?.data?.profile_photo}
-              name={userData?.data?.nickname}
-              visibility={userData?.data?.content_visibility}
-              id={id}
-              dphoto={userData?.data?.cover_photo}
-            />
-          </div>
-        ) : (
-          <></>
-        )} */}
         <div className="z-[1900] relative px-5 w-full flex gap-3 my-5 justify-between items-center">
           <ChevronLeft onClick={() => navigate(-1)} />
           <div className="flex gap-3 z-[1500] items-center">
-            {/* <div className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full">
-              <Search size={18} />
-            </div> */}
+            <SearchVideo id={userData?.data?.id} />
 
             <Link
               to={`/reports/profile/${id}`}
@@ -274,9 +262,6 @@ const OtherProfile = () => {
               <span>
                 {userData?.data?.gender == "Female" ? <FemaleSVG /> : <></>}
               </span>
-              {/* <span>
-                <BsPatchCheckFill className="z-[1200] text-[#888]" />
-              </span>{" "} */}
             </p>
             <p className="z-[1900] text-[14px] text-[#BBBBBB] flex items-center gap-2">
               B号 : {userData?.data?.user_code}{" "}

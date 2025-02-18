@@ -15,7 +15,7 @@ import {
 } from "@/store/slices/profileSlice";
 const Stats = ({ followers, followings, likes, nickname }: any) => {
   const dispatch = useDispatch();
-  const user = useSelector((state: any) => state.persist.user);
+  const user = useSelector((state: any) => state?.persist?.user);
 
   return (
     <Drawer>

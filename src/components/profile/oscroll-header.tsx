@@ -1,5 +1,5 @@
-import { ChevronLeft, EllipsisVertical } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { ChevronLeft, EllipsisVertical, Flag } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import SettingBtn2 from "./setting-btn2";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FaHeart } from "react-icons/fa";
@@ -11,8 +11,18 @@ import { useEffect, useState } from "react";
 import { useGetLikedPostQuery } from "@/store/api/profileApi";
 import VideoGrid from "./video-grid";
 import defaultCover from "@/assets/cover.jpg";
+import SearchVideo from "./video/search-video";
+import share from "@/assets/profile/share.svg";
 
-const OscrollHeader = ({ photo, name, id, visibility, dphoto }: any) => {
+const OscrollHeader = ({
+  photo,
+  name,
+  id,
+  visibility,
+  dphoto,
+  userData,
+  handleCopy2,
+}: any) => {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -58,7 +68,23 @@ const OscrollHeader = ({ photo, name, id, visibility, dphoto }: any) => {
         <p className="z-[1500]">{name}</p>
       </div>
       <div className="flex gap-3 z-[1500] items-center">
-        <SettingBtn2 id={id} />
+        {/* <SettingBtn2 id={id} /> */}
+        <div className="flex gap-3 z-[1500] items-center">
+          <SearchVideo id={userData?.data?.id} />
+
+          <Link
+            to={`/reports/profile/${id}`}
+            className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full"
+          >
+            <Flag size={18} />
+          </Link>
+          <div
+            onClick={() => handleCopy2()}
+            className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full"
+          >
+            <img src={share} alt="" />
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -17,8 +17,8 @@ const SecurityQuestion = () => {
   const [ans, setAns] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const registerUser = useSelector((state: any) => state.persist.registerUser);
-  const user = useSelector((state: any) => state.persist.user);
+  const registerUser = useSelector((state: any) => state?.persist?.registerUser);
+  const user = useSelector((state: any) => state?.persist?.user);
 
   const [storeSecurityQues, { isLoading }] = useStoreSecurityQuesMutation();
 

@@ -1,125 +1,122 @@
-import React, { useEffect, useState } from "react";
-import FollowCard from "../follow-card";
-import { useSelector } from "react-redux";
+import { useEffect, useState, useRef, useCallback } from "react";
 import {
-  useFilterFollowingQuery,
-  useGetFollowingListQuery,
-} from "@/store/api/profileApi";
-import { UsersRound } from "lucide-react";
-import Loader from "../../../page/home/vod_loader.gif";
-import InfiniteScroll from "react-infinite-scroll-component";
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { Input } from "@/components/ui/input";
+import { usePostsSearchMutation } from "@/store/api/profileApi";
+import { ChevronLeft, Search } from "lucide-react";
+import { FaSearch } from "react-icons/fa";
+import VideoCard from "../video-card";
+import loader from "@/page/home/vod_loader.gif";
 
-const FollowingList = ({ searchTerm }: any) => {
-  const user_code = useSelector((state: any) => state.persist?.user?.id);
-  const [waterfall, setWaterFall] = useState<any[]>([]);
+const SearchVideo = ({ id }: { id: string }) => {
+  const [postsSearch] = usePostsSearchMutation();
+  const [search, setSearch] = useState("");
+  const [videos, setVideos] = useState<any[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const observer = useRef<IntersectionObserver | null>(null);
 
-  const { data, isLoading, isFetching } = useGetFollowingListQuery({
-    user_id: user_code,
-    // search: searchTerm,
-    page: page,
-  });
+  const lastVideoElementRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (isLoading) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [isLoading, hasMore]
+  );
 
-  const { data: filterdata } = useFilterFollowingQuery({
-    user_id: user_code,
-    search: searchTerm,
-  });
-
-  useEffect(() => {
-    if (data?.data) {
-      setWaterFall((prev) => [...prev, ...data.data]);
-      const loadedItems =
-        data.pagination.current_page * data.pagination.per_page;
-      setHasMore(loadedItems < data.pagination.total);
+  const searchHandler = async () => {
+    setIsLoading(true);
+    setPage(1);
+    const { data } = await postsSearch({ page: 1, search });
+    if (data?.data?.list?.length) {
+      setVideos(data.data.list);
+      setHasMore(data.pagination.total > data.data.list.length);
     } else {
+      setVideos([]);
       setHasMore(false);
     }
-    // console.log(data.pagination?.total);
-  }, [data]);
-  // console.log(" this is mf", waterfall);
-  const fetchMoreData = () => {
-    setPage((prevPage) => prevPage + 1);
+    setIsLoading(false);
   };
-  // console.log(data?.data, "following");
+
+  useEffect(() => {
+    const fetchMoreData = async () => {
+      if (isLoading || !hasMore) return;
+      setIsLoading(true);
+      const { data } = await postsSearch({ page, search });
+      if (data?.data?.list?.length) {
+        setVideos((prevVideos) => [...prevVideos, ...data.data.list]);
+        setHasMore(
+          data.pagination.total > videos.length + data.data.list.length
+        );
+      } else {
+        setHasMore(false);
+      }
+      setIsLoading(false);
+    };
+
+    if (page > 1) {
+      fetchMoreData();
+    }
+  }, [page, search, isLoading, hasMore, postsSearch, videos.length]); // Added missing dependencies
+
   return (
-    <div className="flex flex-col gap-4 w-full no-scrollbar h-screen pb-5">
-      {isLoading || isFetching ? (
-        <div className=" flex justify-center w-full py-[200px]">
-          <div className="">
-            <img src={Loader} className="w-[70px] h-[70px]" alt="Loading" />
+    <Drawer>
+      <DrawerTrigger>
+        <div className="bg-[#f3e7e71f] w-10 h-10 flex justify-center items-center p-2 rounded-full">
+          <Search size={18} />
+        </div>
+      </DrawerTrigger>
+      <DrawerContent className="z-[9900] gradient-bg border-0">
+        <div className="c-height w-full gradient-bg overflow-y-auto hide-sb">
+          <div className="px-5 z-[9000] gradient-bg sticky top-0 py-5 flex items-center gap-3">
+            <DrawerClose>
+              <ChevronLeft size={18} />
+            </DrawerClose>
+            <div className="bg-gray-500/25 w-full rounded-full shadow-md flex items-center pl-4">
+              <FaSearch />
+              <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="搜索作品"
+                className="bg-gray-500/10 rounded-full border-0 focus:border-transparent focus-visible:ring-0"
+              />
+            </div>
+            <button onClick={searchHandler} className="w-[50px]">
+              搜索
+            </button>
+          </div>
+          <div className="pt-5 pb-5">
+            <div className="grid grid-cols-3 gap-1">
+              {videos.map((item: any, index: number) => (
+                <div
+                  key={item.id}
+                  ref={index === videos.length - 1 ? lastVideoElementRef : null}
+                >
+                  <VideoCard videoData={item} />
+                </div>
+              ))}
+            </div>
+            {isLoading ? (
+              <img className="w-10 mx-auto" src={loader} alt="" />
+            ) : (
+              <></>
+            )}
           </div>
         </div>
-      ) : (
-        <>
-          {searchTerm?.length ? (
-            <>
-              {filterdata?.data?.length ? (
-                filterdata?.data?.map((follower: any) => (
-                  <FollowCard key={follower.user_code} data={follower} />
-                ))
-              ) : (
-                <div className="h-full flex justify-center mt-[40%]">
-                  <div className="flex flex-col items-center gap-3">
-                    <UsersRound className="text-[#888]" />
-                    <p className="text-[12px] text-[#888] w-[90px] text-center">
-                      快关注你感兴 趣的用户吧！
-                    </p>
-                  </div>
-                </div>
-              )}
-            </>
-          ) : (
-            <>
-              {data?.data?.length ? (
-                <>
-                  {waterfall.map((follower: any) => (
-                    <FollowCard key={follower.user_code} data={follower} />
-                  ))}
-                  <InfiniteScroll
-                    className=""
-                    dataLength={data?.data?.length}
-                    next={fetchMoreData}
-                    hasMore={hasMore}
-                    loader={
-                      <div className=" flex justify-center w-screen h-[100px]">
-                        <div className="">
-                          <img
-                            src={Loader}
-                            className="w-[70px] h-[70px] hidden"
-                            alt="Loading"
-                          />
-                        </div>
-                      </div>
-                    }
-                    endMessage={
-                      <div className="flex bg-whit pt-20 justify-center items-center  w-screen absolute bottom-[-20px] left-[-20px]">
-                        <p
-                          className="py-10"
-                          style={{ textAlign: "center" }}
-                        ></p>
-                      </div>
-                    }
-                  >
-                    <></>
-                  </InfiniteScroll>
-                </>
-              ) : (
-                <div className="h-full flex justify-center mt-[40%]">
-                  <div className="flex flex-col items-center gap-3">
-                    <UsersRound className="text-[#888]" />
-                    <p className="text-[12px] text-[#888] w-[90px] text-center">
-                      快关注你感兴 趣的用户吧！
-                    </p>
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-        </>
-      )}
-    </div>
+      </DrawerContent>
+    </Drawer>
   );
 };
 
-export default FollowingList;
+export default SearchVideo;

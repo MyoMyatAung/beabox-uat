@@ -94,6 +94,10 @@ body::-webkit-scrollbar {
   @apply bg-gradient-to-r to-[#CD3EFF] from-[#FFB2E0];
 }
 
+.gradient-bg2 {
+  @apply bg-gradient-to-b to-[#CD3EFF] from-[#FFB2E0];
+}
+
 .hide-sb {
   scrollbar-width: none; /* For Firefox */
 }
@@ -180,6 +184,10 @@ input:checked + .slider:before {
     rgba(13, 12, 12, 0) 92.3%
   ); */
   height: 100vh;
+}
+
+.test-bg {
+  @apply bg-gradient-to-b from-black/5 via-black/100 to-black/100;
 }
 
 .img-bg {

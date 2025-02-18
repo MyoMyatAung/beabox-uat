@@ -7,7 +7,7 @@ import InfinitLoad from "@/components/shared/infinit-load";
 import VideoCard from "../video-card";
 
 const LikedVideos2 = ({ id }: any) => {
-  const user = useSelector((state: any) => state.persist.user);
+  const user = useSelector((state: any) => state?.persist?.user);
   const [videos, setVideos] = useState<any[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);

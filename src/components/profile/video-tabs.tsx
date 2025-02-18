@@ -10,13 +10,13 @@ import { setDefaultTab } from "@/store/slices/persistSlice";
 import CreatedVideo2 from "./video/create-video2";
 
 const VideoTabs = () => {
-  const user = useSelector((state: any) => state.persist.user);
-  const defaultTab = useSelector((state: any) => state.persist.defaultTab);
+  const user = useSelector((state: any) => state?.persist?.user);
+  const defaultTab = useSelector((state: any) => state?.persist?.defaultTab);
   const dispatch = useDispatch();
   // console.log(defaultTab, "defaultab");
   return (
     <Tabs defaultValue={user?.token ? defaultTab : "liked"} className="py-5">
-      <TabsList className="grid w-full grid-cols-3 z-[1600] bg-transparent sticky top-[100px]">
+      <TabsList className="grid w-full grid-cols-3 z-[1600] bg-transparent sticky top-[100px] px-5">
         {user?.token ? (
           <TabsTrigger
             className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2"

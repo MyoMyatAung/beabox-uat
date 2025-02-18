@@ -34,7 +34,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
   const [currentActivePost, setCurrentActivePost] = useState<any>(
     files?.post_id
   );
-  const user = useSelector((state: any) => state.persist.user);
+  const user = useSelector((state: any) => state?.persist?.user);
   const [showFullTitle, setShowFullTitle] = useState(false);
   const [countNumber, setCountNumber] = useState(0); // New state for counting clicks
   const [countdown, setCountdown] = useState(3);
