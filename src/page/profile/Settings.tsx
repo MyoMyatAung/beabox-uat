@@ -27,7 +27,7 @@ const Settings = ({
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [logout, { data: lgdata, isLoading }] = useLogoutMutation();
-  const user = useSelector((state: any) => state.persist.user);
+  const user = useSelector((state: any) => state?.persist?.user);
   const [device, setDevice] = useState("android");
   const [cacheSize, setCacheSize] = useState(null);
 
@@ -145,7 +145,7 @@ const Settings = ({
         <div className="flex justify-between items-center">
           <p className="flex items-center gap-1 text-[14px]">当前版本</p>
           <p className="flex items-center gap-1 text-[14px]">
-            V 1.0.3.7{" "}
+            V 1.0.3.8{" "}
             <ChevronRight size={15} className="text-[#777777]" />
           </p>
         </div>

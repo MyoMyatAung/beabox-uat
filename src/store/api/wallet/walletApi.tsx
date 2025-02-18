@@ -7,7 +7,7 @@ export const walletApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_API_URL,
     prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).persist.user.token; // Adjust 'auth.token' to match your Redux slice structure
+      const token = (getState() as RootState)?.persist?.user?.token; // Adjust 'auth.token' to match your Redux slice structure
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
       }

@@ -360,10 +360,22 @@ export const profileApi = createApi({
         method: "GET",
       }),
     }),
+    postsSearch: builder.mutation({
+      query: ({ page, search }) => ({
+        url: convertToSecureUrl(`/posts/search`),
+        method: "POST",
+        body: convertToSecurePayload({
+          page,
+          pageSize: 12,
+          search,
+        }),
+      }),
+    }),
   }),
 });
 
 export const {
+  usePostsSearchMutation,
   useShareInfoMutation,
   useGetMyPostsQuery,
   useGetPostsQuery,

@@ -21,8 +21,8 @@ import TranLoader from "@/components/shared/tran-loader";
 import backButton from "../../assets/backButton.svg";
 
 const ProfileDetail = () => {
-  const user = useSelector((state: any) => state.persist.user);
-  const profileData = useSelector((state: any) => state.persist.profileData);
+  const user = useSelector((state: any) => state?.persist?.user);
+  const profileData = useSelector((state: any) => state?.persist?.profileData);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
   const decryptImage = (arrayBuffer, key = 0x12, decryptSize = 4096) => {
     const data = new Uint8Array(arrayBuffer);

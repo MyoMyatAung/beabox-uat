@@ -12,7 +12,7 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
   const dispatch = useDispatch();
   return (
     <Tabs defaultValue={defaultTab2 ? defaultTab2 : "video"} className="my-5">
-      <TabsList className="grid w-full grid-cols-3 z-[1600] bg-transparent sticky top-[100px]">
+      <TabsList className="grid w-full grid-cols-3 z-[1600] bg-transparent sticky top-[100px] px-5">
         <TabsTrigger
           className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2 "
           value="video"

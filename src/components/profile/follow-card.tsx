@@ -17,7 +17,7 @@ const decryptImage = (arrayBuffer, key = 0x12, decryptSize = 4096) => {
 
 const FollowCard = ({ data }: { data: any }) => {
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
-  const me = useSelector((state: any) => state.persist?.user?.id);
+  const me = useSelector((state: any) => state?.persist?.user?.id);
   useEffect(() => {
     const loadAndDecryptPhoto = async () => {
       if (!data?.photo) {

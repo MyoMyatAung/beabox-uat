@@ -8,7 +8,7 @@ import { useChangeReferralCodeMutation } from "@/store/api/profileApi";
 const EditReferral = ({ referral_code }: any) => {
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState("");
-  const user = useSelector((state: any) => state.persist.user);
+  const user = useSelector((state: any) => state?.persist?.user);
   const [changeRerralCode, { data, isLoading }] =
     useChangeReferralCodeMutation();
 

@@ -9,7 +9,7 @@ import UserStar from "@/assets/user-star.png";
 
 const SettingBtn = ({ setShow }: any) => {
   const navigate = useNavigate();
-  const user = useSelector((state: any) => state.persist.user);
+  const user = useSelector((state: any) => state?.persist?.user);
   const [isOpen, setIsOpen] = useState(false);
 
   const data = [
