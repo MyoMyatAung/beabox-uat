@@ -73,7 +73,7 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
   // console.log(ad);
 
   return (
-    <div className="h-screen bg-transparent w-screen flex flex-col gap-[20px] justify-center items-center fixed top-0 z-[9999]">
+    <div className="h-screen bg-black/80 w-screen flex flex-col gap-[20px] justify-center items-center fixed top-0 z-[9999]">
       {/* Start Image */}
       {isLoading ? (
         <div className=" w-[268px] h-[397px] bg-white/20 animate-pulse"></div>
