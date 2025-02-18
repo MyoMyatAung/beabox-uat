@@ -9,6 +9,7 @@ type ImageWithPlaceholderProps = {
   width: string | number;
   height: string | number;
   className: string;
+  needGradient?: boolean;
 };
 
 const ImageWithPlaceholder = ({
@@ -17,6 +18,7 @@ const ImageWithPlaceholder = ({
   width,
   height,
   className,
+  needGradient,
   ...props
 }: ImageWithPlaceholderProps) => {
   const imgRef = useRef<HTMLImageElement | null>(null);
@@ -68,11 +70,13 @@ const ImageWithPlaceholder = ({
           transition: "opacity 0.3s",
         }}
       />
-      <img
-        className={`h-[170px]  absolute bottom-0`}
-        src={covergradient}
-        alt=""
-      />
+      {needGradient && (
+        <img
+          className={`h-[170px]  absolute bottom-0`}
+          src={covergradient}
+          alt=""
+        />
+      )}
     </div>
   );
 };
