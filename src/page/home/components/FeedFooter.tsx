@@ -108,6 +108,7 @@
 
 import { setHistoryData } from "@/page/search/slice/HistorySlice";
 import { decryptImage } from "@/utils/imageDecrypt";
+import useCachedImage from "@/utils/useCachedImage";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -118,7 +119,7 @@ function FeedFooter({
   city,
   username,
   badge,
-  id
+  id,
 }: {
   title: string;
   tags: string[];
@@ -130,6 +131,10 @@ function FeedFooter({
   const [isExpanded, setIsExpanded] = useState(false);
   const toggleExpand = () => setIsExpanded(!isExpanded);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
+  // const { imgSrc, isLoading: imageLoading } = useCachedImage(
+  //   decryptedPhoto || ""
+  // );
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -172,7 +177,7 @@ function FeedFooter({
   };
 
   const handleProfile = () => {
-    navigate(`/user/${id}`); 
+    navigate(`/user/${id}`);
   };
   return (
     <div className="videoFooter1 w-full">
@@ -180,7 +185,13 @@ function FeedFooter({
         <div className="flex items-center gap-3 mb-2">
           <div className="flex items-center gap-2" onClick={handleProfile}>
             <span className="footer_head_text font-cnFont">{username}</span>
-            <img src={decryptedPhoto} alt="" className="w-[18px] h-[18px]" />
+            {decryptedPhoto && (
+              <img
+                src={decryptedPhoto || ""}
+                alt=""
+                className="w-[18px] h-[18px]"
+              />
+            )}
           </div>
         </div>
 
