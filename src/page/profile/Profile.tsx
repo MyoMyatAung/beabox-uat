@@ -156,7 +156,6 @@ const Profile = () => {
     if (user) refetch();
   }, [user, data]);
 
-  console.log(data?.data?.id);
   if (isLoading) return <Loader />;
 
   return (
