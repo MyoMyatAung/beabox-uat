@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { paths } from "@/routes/paths";
 import { useGetMyOwnProfileQuery } from "@/store/api/profileApi";
 import { useDispatch, useSelector } from "react-redux";
-import { PenIcon as UserPen, Bell, X, Copy, ChevronRight } from "lucide-react";
+import { UserPen, Bell, X, Copy, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SettingBtn from "@/components/profile/setting-btn";
 import ProfileAvatar from "@/components/profile/profile-avatar";
@@ -325,7 +325,7 @@ const Profile = () => {
                   ) : (
                     <Link
                       to={paths.add_bio}
-                      className="text-[12px] text-[#FFFFFFCC] bg-[#FFFFFF14] px-2 py-1 w-[91px] text-center rounded-full"
+                      className="text-[12px] ml-5 text-[#FFFFFFCC] bg-[#FFFFFF14] px-2 py-1 w-[91px] text-center rounded-full"
                     >
                       + 个人简介
                     </Link>
@@ -359,7 +359,7 @@ const Profile = () => {
           ) : null}
         </div>
         <div ref={headerRef} className="sticky z-[1500] top-0"></div>
-        <div className="px-1">
+        <div className="">
           <VideoTabs />
         </div>
       </div>
