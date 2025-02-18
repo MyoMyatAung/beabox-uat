@@ -39,6 +39,7 @@ const Profile = () => {
   const { data, isLoading, refetch } = useGetMyOwnProfileQuery("", {
     skip: !user,
   });
+  const progressData = data?.data?.level_progress;
   // console.log(data, "data");
   const [show, setShow] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
@@ -155,6 +156,7 @@ const Profile = () => {
     if (user) refetch();
   }, [user, data]);
 
+  console.log(data?.data?.id);
   if (isLoading) return <Loader />;
 
   return (
@@ -254,7 +256,7 @@ const Profile = () => {
         </div>
         <div className="w-full flex items-center gap-3 pb-5 px-5">
           <ProfileAvatar
-            progress={data?.data?.level_progress}
+            progressData={data?.data?.level_progress}
             levelImage={data?.data?.level}
             photo={decryptedPhoto}
           />
@@ -357,7 +359,7 @@ const Profile = () => {
           ) : null}
         </div>
         <div ref={headerRef} className="sticky z-[1500] top-0"></div>
-        <div className="px-5">
+        <div className="px-1">
           <VideoTabs />
         </div>
       </div>

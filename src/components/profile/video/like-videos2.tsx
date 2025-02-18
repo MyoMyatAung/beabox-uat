@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from "react";
-import {
-  useGetLikedPostQuery,
-  useGetMyPostsQuery,
-  useGetPostsQuery,
-} from "@/store/api/profileApi";
+import { useGetLikedPostQuery } from "@/store/api/profileApi";
 import { useSelector } from "react-redux";
 import Loader from "@/page/home/vod_loader.gif";
 import { NoVideo } from "@/assets/profile";
 import InfinitLoad from "@/components/shared/infinit-load";
 import VideoCard from "../video-card";
-const CreatedVideo2 = ({ id }: any) => {
+
+const LikedVideos2 = ({ id }: any) => {
   const user = useSelector((state: any) => state.persist.user);
   const [videos, setVideos] = useState<any[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [totalData, setTotalData] = useState<number>(0);
 
-  const { data, isLoading } = useGetMyPostsQuery({ page }, { skip: !user });
+  const { data, isLoading } = useGetLikedPostQuery(
+    { user_id: id, page },
+    // { skip: !user }
+  );
 
   useEffect(() => {
     if (data?.data?.length) {
@@ -49,6 +49,7 @@ const CreatedVideo2 = ({ id }: any) => {
       </div>
     );
   }
+
   return (
     <div className="py-5">
       {!user?.token || videos.length <= 0 ? (
@@ -79,4 +80,4 @@ const CreatedVideo2 = ({ id }: any) => {
   );
 };
 
-export default CreatedVideo2;
+export default LikedVideos2;
