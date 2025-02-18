@@ -101,155 +101,295 @@
 
 // export default VideoFooter;
 
+// import { setHistoryData } from "@/page/search/slice/HistorySlice";
+// import { decryptImage } from "@/utils/imageDecrypt";
+// import { useEffect, useState } from "react";
+// import { useDispatch } from "react-redux";
+// import { useNavigate } from "react-router-dom";
+
+// function VideoFooter({
+//   title,
+//   tags,
+//   city,
+//   username,
+//   badge,
+//   id
+// }: {
+//   title: string;
+//   tags: string[];
+//   city: string;
+//   username: string;
+//   badge: string;
+//   id: string;
+// }) {
+//   const [isExpanded, setIsExpanded] = useState(false);
+//   const toggleExpand = () => setIsExpanded(!isExpanded);
+//   const [decryptedPhoto, setDecryptedPhoto] = useState("");
+
+//   // Calculate title length without spaces
+//   const titleLength = title.replace(/\s/g, "").length;
+//   const shouldExpand =
+//     titleLength > 40 || (tags?.length > 5 && titleLength > 10);
+
+//   const dispatch = useDispatch();
+//   const navigate = useNavigate();
+
+//   useEffect(() => {
+//     const loadAndDecryptPhoto = async () => {
+//       if (!badge) {
+//         setDecryptedPhoto("");
+//         return;
+//       }
+
+//       try {
+//         const photoUrl = badge;
+
+//         // If it's not a .txt file, assume it's already a valid URL
+//         if (!photoUrl.endsWith(".txt")) {
+//           setDecryptedPhoto(photoUrl);
+//           return;
+//         }
+//         const decryptedUrl = await decryptImage(photoUrl);
+//         setDecryptedPhoto(decryptedUrl);
+//       } catch (error) {
+//         console.error("Error loading profile photo:", error);
+//         setDecryptedPhoto("");
+//       }
+//     };
+
+//     loadAndDecryptPhoto();
+//   }, [badge]);
+
+//   const onSearch = (suggestion: any) => {
+//     if (suggestion.trim()) {
+//       dispatch(setHistoryData({ data: suggestion.trim() }));
+//       navigate(`/search?query=${encodeURIComponent(suggestion.trim())}`);
+//     }
+//   };
+
+//   const handleProfile = () => {
+//     navigate(`/user/${id}`);
+//   };
+
+//   return (
+//     <div className="videoFooter w-full">
+//       <div className="w-full">
+//         <div className="flex items-center gap-3 mb-2">
+//           <div className="flex items-center gap-2" onClick={handleProfile}>
+//             <span className="footer_head_text font-cnFont">{username}</span>
+//             <img src={decryptedPhoto} alt="" className="w-[18px] h-[18px]" />
+//           </div>
+//         </div>
+
+//         <div className="relative flex items-end overflow-hidden w-full">
+//           {/* Combined Title and Tags Section */}
+//           {/* {shouldExpand ? (
+//             <div
+//               onClick={toggleExpand}
+//               className={`footer_title font-cnFont transition-all ${
+//                 isExpanded ? "max-h-full" : "line-clamp-2"
+//               } w-[80%] flex flex-wrap`}
+//             >
+//               <span className="mr-2">{title}</span>
+//               {tags?.map((tag, index) => (
+//                 <span key={index} className="footer_tag mr-2">
+//                   #{tag}
+//                 </span>
+//               ))}
+//             </div>
+//           ) : (
+//             <div className="footer_title font-cnFont transition-all max-h-full w-[80%] flex flex-wrap">
+//               <span className="mr-2">{title}</span>
+//               {tags?.map((tag, index) => (
+//                 <span key={index} className="footer_tag mr-2">
+//                   #{tag}
+//                 </span>
+//               ))}
+//             </div>
+//           )} */}
+//           <div
+//             onClick={shouldExpand ? toggleExpand : undefined}
+//             className={`footer_title font-cnFont transition-all w-[80%] flex flex-wrap ${
+//               shouldExpand
+//                 ? isExpanded
+//                   ? "max-h-full"
+//                   : "line-clamp-2"
+//                 : "max-h-full"
+//             }`}
+//           >
+//             <span className="mr-2">{title}</span>
+//             {tags?.map((tag, index) => (
+//               <span
+//                 key={index}
+//                 className="footer_tag mr-1"
+//                 onClick={() => onSearch(tag)}
+//               >
+//                 #{tag}
+//               </span>
+//             ))}
+//           </div>
+
+//           {/* More/Less Button Inline */}
+//           {/* {shouldExpand && (
+//             <button
+//               className="more_text font-cnFont inline ml-[-3px]"
+//               onClick={toggleExpand}
+//             >
+//               {isExpanded ? "更多" : "收起"}
+//             </button>
+//           )} */}
+//           {shouldExpand && (
+//             <button
+//               className="more_text font-cnFont inline ml-[0px] text-primary"
+//               onClick={toggleExpand}
+//             >
+//               {isExpanded ? "收起" : "更多"}
+//             </button>
+//           )}
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+// export default VideoFooter;
+
 import { setHistoryData } from "@/page/search/slice/HistorySlice";
 import { decryptImage } from "@/utils/imageDecrypt";
-import { useEffect, useState } from "react";
+import useCachedImage from "@/utils/useCachedImage";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-function VideoFooter({
-  title,
-  tags,
-  city,
-  username,
-  badge,
-  id
-}: {
-  title: string;
-  tags: string[];
-  city: string;
-  username: string;
-  badge: string;
-  id: string;
-}) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const toggleExpand = () => setIsExpanded(!isExpanded);
-  const [decryptedPhoto, setDecryptedPhoto] = useState("");
+const VideoFooter = React.memo(
+  ({
+    id,
+    title,
+    tags,
+    city,
+    username,
+    badge,
+  }: {
+    id: any;
+    title: string;
+    tags: string[];
+    city: string;
+    username: string;
+    badge: string;
+  }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
+    const toggleExpand = () => setIsExpanded(!isExpanded);
 
-  // Calculate title length without spaces
-  const titleLength = title.replace(/\s/g, "").length;
-  const shouldExpand =
-    titleLength > 40 || (tags?.length > 5 && titleLength > 10);
+    // Ref to store previous badge value
+    const prevBadgeRef = useRef<string | null>(null);
+    const [decryptedPhoto, setDecryptedPhoto] = useState<string | null>(null);
+    // const { imgSrc, isLoading: imageLoading } = useCachedImage(
+    //   decryptedPhoto || ""
+    // );
 
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+    // Calculate title length without spaces
+    const titleLength = title.replace(/\s/g, "").length;
+    const shouldExpand =
+      titleLength > 40 || (tags?.length > 5 && titleLength > 10);
 
-  useEffect(() => {
-    const loadAndDecryptPhoto = async () => {
-      if (!badge) {
-        setDecryptedPhoto("");
-        return;
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+      // Only decrypt the image if the badge has changed
+      if (badge !== prevBadgeRef.current) {
+        const loadAndDecryptPhoto = async () => {
+          if (!badge) {
+            setDecryptedPhoto(null);
+            return;
+          }
+
+          try {
+            const photoUrl = badge;
+
+            // If it's not a .txt file, assume it's already a valid URL
+            if (!photoUrl.endsWith(".txt")) {
+              setDecryptedPhoto(photoUrl);
+              return;
+            }
+
+            // Decrypt the image if it's a .txt file
+            const decryptedUrl = await decryptImage(photoUrl);
+            setDecryptedPhoto(decryptedUrl);
+          } catch (error) {
+            console.error("Error loading profile photo:", error);
+            setDecryptedPhoto(null);
+          }
+        };
+
+        loadAndDecryptPhoto();
+        prevBadgeRef.current = badge; // Update the ref with the new badge
       }
+    }, [badge]); // Run only when the badge prop changes
 
-      try {
-        const photoUrl = badge;
-
-        // If it's not a .txt file, assume it's already a valid URL
-        if (!photoUrl.endsWith(".txt")) {
-          setDecryptedPhoto(photoUrl);
-          return;
-        }
-        const decryptedUrl = await decryptImage(photoUrl);
-        setDecryptedPhoto(decryptedUrl);
-      } catch (error) {
-        console.error("Error loading profile photo:", error);
-        setDecryptedPhoto("");
+    const onSearch = (suggestion: any) => {
+      if (suggestion.trim()) {
+        dispatch(setHistoryData({ data: suggestion.trim() }));
+        navigate(`/search?query=${encodeURIComponent(suggestion.trim())}`);
       }
     };
+    const handleProfile = () => {
+      navigate(`/user/${id}`);
+    };
 
-    loadAndDecryptPhoto();
-  }, [badge]);
+    return (
+      <div className="videoFooter w-full">
+        <div className="w-full">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="flex items-center gap-2" onClick={handleProfile}>
+              <span className="footer_head_text font-cnFont">{username}</span>
 
-  const onSearch = (suggestion: any) => {
-    if (suggestion.trim()) {
-      dispatch(setHistoryData({ data: suggestion.trim() }));
-      navigate(`/search?query=${encodeURIComponent(suggestion.trim())}`);
-    }
-  };
-
-  const handleProfile = () => {
-    navigate(`/user/${id}`); 
-  };
-
-  return (
-    <div className="videoFooter w-full">
-      <div className="w-full">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="flex items-center gap-2" onClick={handleProfile}>
-            <span className="footer_head_text font-cnFont">{username}</span>
-            <img src={decryptedPhoto} alt="" className="w-[18px] h-[18px]" />
+              {decryptedPhoto && (
+                <img
+                  src={decryptedPhoto || ""}
+                  alt="profile"
+                  className="w-[18px] h-[18px]"
+                />
+              )}
+            </div>
           </div>
-        </div>
 
-        <div className="relative flex items-end overflow-hidden w-full">
-          {/* Combined Title and Tags Section */}
-          {/* {shouldExpand ? (
+          <div className="relative flex items-end overflow-hidden w-full">
             <div
-              onClick={toggleExpand}
-              className={`footer_title font-cnFont transition-all ${
-                isExpanded ? "max-h-full" : "line-clamp-2"
-              } w-[80%] flex flex-wrap`}
+              onClick={shouldExpand ? toggleExpand : undefined}
+              className={`footer_title font-cnFont transition-all w-[80%] flex flex-wrap ${
+                shouldExpand
+                  ? isExpanded
+                    ? "max-h-full"
+                    : "line-clamp-2"
+                  : "max-h-full"
+              }`}
             >
               <span className="mr-2">{title}</span>
               {tags?.map((tag, index) => (
-                <span key={index} className="footer_tag mr-2">
+                <span
+                  key={index}
+                  className="footer_tag mr-1"
+                  onClick={() => onSearch(tag)}
+                >
                   #{tag}
                 </span>
               ))}
             </div>
-          ) : (
-            <div className="footer_title font-cnFont transition-all max-h-full w-[80%] flex flex-wrap">
-              <span className="mr-2">{title}</span>
-              {tags?.map((tag, index) => (
-                <span key={index} className="footer_tag mr-2">
-                  #{tag}
-                </span>
-              ))}
-            </div>
-          )} */}
-          <div
-            onClick={shouldExpand ? toggleExpand : undefined}
-            className={`footer_title font-cnFont transition-all w-[80%] flex flex-wrap ${
-              shouldExpand
-                ? isExpanded
-                  ? "max-h-full"
-                  : "line-clamp-2"
-                : "max-h-full"
-            }`}
-          >
-            <span className="mr-2">{title}</span>
-            {tags?.map((tag, index) => (
-              <span
-                key={index}
-                className="footer_tag mr-1"
-                onClick={() => onSearch(tag)}
-              >
-                #{tag}
-              </span>
-            ))}
-          </div>
 
-          {/* More/Less Button Inline */}
-          {/* {shouldExpand && (
-            <button
-              className="more_text font-cnFont inline ml-[-3px]"
-              onClick={toggleExpand}
-            >
-              {isExpanded ? "更多" : "收起"}
-            </button>
-          )} */}
-          {shouldExpand && (
-            <button
-              className="more_text font-cnFont inline ml-[0px] text-primary"
-              onClick={toggleExpand}
-            >
-              {isExpanded ? "收起" : "更多"}
-            </button>
-          )}
+            {shouldExpand && (
+              <button
+                className="more_text font-cnFont inline ml-[0px] text-primary"
+                onClick={toggleExpand}
+              >
+                {isExpanded ? "收起" : "更多"}
+              </button>
+            )}
+          </div>
         </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
+);
 
 export default VideoFooter;

@@ -81,6 +81,7 @@ const VideoCard = ({ videoData }: any) => {
           <div className="h-[170px] animate-pulse object-cover w-full object-center bg-[#FFFFFF1F]"></div>
         ) : (
           <ImageWithPlaceholder
+            needGradient={true}
             className="h-[170px] object-cover w-full object-center"
             width={""}
             height={""}
@@ -88,7 +89,6 @@ const VideoCard = ({ videoData }: any) => {
             src={videoData?.preview_image}
           />
         )}
-
       </div>
       <div className="absolute bottom-0 flex justify-between items-center px-2 w-full">
         <div className="flex items-center gap-1">

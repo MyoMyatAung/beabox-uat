@@ -156,7 +156,6 @@ const Profile = () => {
     if (user) refetch();
   }, [user, data]);
 
-  console.log(data?.data?.id);
   if (isLoading) return <Loader />;
 
   return (
@@ -265,7 +264,7 @@ const Profile = () => {
               onClick={() => dispatch(setIsDrawerOpen(true))}
               className="z-[1900] flex items-center gap-2 flex-1"
             >
-              <span className="z-[1200] text-[18px]">点击登陆</span>
+              <span className="z-[1200] text-[18px]">点击登录</span>
               <ChevronRight size={18} />
             </div>
           ) : (

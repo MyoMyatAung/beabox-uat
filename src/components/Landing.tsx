@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setPanding } from "../store/slices/ModelSlice";
 
-import splashScreen from "../assets/splashScreen.jpg";
+import splashScreen from "../assets/splashScreen.png";
+import splashLogo from "../assets/splashLogo.svg";
 import "../page/search/search.css";
 import { useGetAdsPopUpQuery } from "@/utils/helperService";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
@@ -69,19 +70,26 @@ const Landing: React.FC = () => {
   return (
     <>
       {showSplash ? (
-        // Splash screen view (3 seconds, no skip)
-        <div className="h-screen w-screen max-w-[480px] mx-auto">
+        // Splash screen view (3 seconds, no skip) with centered splash logo
+        <div className="relative h-screen w-screen max-w-[480px] mx-auto">
           <img
             src={splashScreen}
             className="h-full w-full object-cover"
             alt="Splash Screen"
           />
+          <div className="absolute inset-0 flex items-center justify-center mb-16">
+            <img
+              src={splashLogo}
+              alt="Splash Logo"
+              className="max-w-[200px] w-auto"
+            />
+          </div>
         </div>
       ) : showAd ? (
         // Ad view (only shows after image is fully loaded)
         <div className="max-w-[480px] mx-auto">
           <a target="_blank" rel="noopener noreferrer" href={images?.jump_url}>
-            <div className="relative h-screen w-scree max-w-[480px]">
+            <div className="relative h-screen w-screen max-w-[480px]">
               <AsyncDecryptedImage
                 className="h-full max-w-[480px] w-full object-cover"
                 imageUrl={images?.image}
@@ -96,7 +104,7 @@ const Landing: React.FC = () => {
               background: "rgba(0, 0, 0, 0.98)",
               backdropFilter: "blur(2px)",
             }}
-            className="absolute top-[2vh] right-[2vh] cursor-pointe"
+            className="absolute top-[2vh] right-[2vh] cursor-pointer"
           >
             <h1 className="text-white text-xs md:text-sm font-[400] py-[4px] px-[12px]">
               跳过广告 <span>{skip}</span>
@@ -104,12 +112,19 @@ const Landing: React.FC = () => {
           </div>
         </div>
       ) : (
-        <div className="h-screen w-screen">
+        <div className="relative h-screen w-screen max-w-[480px] mx-auto">
           <img
             src={splashScreen}
             className="h-full w-full object-cover"
             alt="Splash Screen"
           />
+          <div className="absolute inset-0 flex items-center justify-center mb-16">
+            <img
+              src={splashLogo}
+              alt="Splash Logo"
+              className="max-w-[200px] w-auto"
+            />
+          </div>
         </div>
       )}
     </>
