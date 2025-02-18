@@ -73,47 +73,22 @@ const VideoCard = ({ videoData }: any) => {
 
   return (
     <div
-      className="bg-gradient-to-r h-[153px] rounded relative"
+      className="bg-gradient-to-r h-[170px] relative"
       onClick={() => showDetailsVod(videoData)}
     >
-      {/* <img
-        src={videoData?.preview_image}
-        alt=""
-        className="h-full rounded w-full object-cover object-center"
-      /> */}
-      {/* remove if not work ;( */}
       <div className="">
         {!decryptedPhoto ? (
-          <div className="h-[153px] object-cover rounded w-full object-center bg-[#FFFFFF1F]"></div>
+          <div className="h-[170px] animate-pulse object-cover w-full object-center bg-[#FFFFFF1F]"></div>
         ) : (
-          // <AsyncDecryptedImage
-          //   className="h-[153px] object-cover rounded w-full object-center"
-          //   // onLoad={() => setImgLoad(true)}
-          //   imageUrl={videoData?.preview_image}
-          //   alt=""
-          // />
           <ImageWithPlaceholder
-            className="h-[153px] object-cover rounded w-full object-center"
+            className="h-[170px] object-cover w-full object-center"
             width={""}
             height={""}
             alt="preview"
             src={videoData?.preview_image}
           />
-          // <AsyncDecryptedImage
-          //   className="h-[153px] object-cover rounded w-full object-center"
-          //   // onLoad={() => setImgLoad(true)}
-          //   imageUrl={videoData?.preview_image}
-          //   alt=""
-          // />
         )}
 
-        {/* <ImageWithPlaceholder
-          src={videoData?.preview_image}
-          alt={videoData.title || "Video"}
-          width={""}
-          height={""}
-          className="h-[153px] object-cover rounded w-full object-center"
-        /> */}
       </div>
       <div className="absolute bottom-0 flex justify-between items-center px-2 w-full">
         <div className="flex items-center gap-1">

@@ -25,10 +25,13 @@ const FollowingList = ({ searchTerm, id }: any) => {
     page: page,
   });
 
-  const { data: filterdata } = useFilterFollowingQuery({
-    user_id: id,
-    search: searchTerm,
-  });
+  const { data: filterdata } = useFilterFollowingQuery(
+    {
+      user_id: id,
+      search: searchTerm,
+    },
+    { skip: searchTerm === "" }
+  );
 
   useEffect(() => {
     if (data?.data?.length) {

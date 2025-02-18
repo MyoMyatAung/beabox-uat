@@ -27,7 +27,8 @@ const FollowerList = ({ searchTerm, id }: any) => {
     {
       user_id: id,
       search: searchTerm,
-    }
+    },
+    { skip: searchTerm === "" }
   );
 
   useEffect(() => {

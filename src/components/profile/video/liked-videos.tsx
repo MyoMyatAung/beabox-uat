@@ -62,7 +62,7 @@ const LikedVideos = ({ id }: any) => {
       ) : (
         <>
           <div>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-1">
               {videos.map((item: any) => (
                 <VideoCard key={item.id} videoData={item} />
               ))}

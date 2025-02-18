@@ -24,7 +24,6 @@ const FollowStatusBtn = ({ userData, id, refetch, userLoading }: any) => {
 
   const drawerHandler = async () => {
     dispatch(setIsDrawerOpen(true));
-    if (token) await refetch();
   };
 
   const refetchHandler = async () => {
