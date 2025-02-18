@@ -78,6 +78,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
     }).then((response) => {
       if (response?.data?.data?.orders) {
         setTabs(response.data.data.orders); // Store tabs separately
+        console.log(response.data.data.orders[0]);
 
         setActiveTab(response.data.data.orders[0]); // Set first tab active
       }
@@ -94,6 +95,8 @@ const Results: React.FC<ResultsProps> = ({}) => {
       });
     }
   }, [activeTab, currentPage, loadingTabs]);
+
+  console.log(activeTab?.key);
 
   useEffect(() => {
     if (data?.data?.list && !loadingTabs) {

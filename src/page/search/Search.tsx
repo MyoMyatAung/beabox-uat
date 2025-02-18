@@ -100,7 +100,7 @@ const Search: React.FC<SearchProps> = ({}) => {
           alt=""
         /> */}
         {/* <FaAngleLeft size={22} onClick={() => navigate("/")}/> */}
-          <img src={backButton} alt=""  onClick={() => navigate("/")}/>
+        <img src={backButton} alt="" onClick={() => navigate("/")} />
         <div
           //   onSubmit={handleSubmit}
           className=" w-full px-[10px] py-[8px] search_input flex gap-[12px]"
@@ -116,7 +116,7 @@ const Search: React.FC<SearchProps> = ({}) => {
             type="text"
           />
         </div>
-        <button type="submit" className="search_btn w-[45px]">
+        <button type="submit" className="search_btn  w-[45px]">
           搜索
         </button>
       </form>

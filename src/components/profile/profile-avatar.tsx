@@ -15,45 +15,49 @@ const ProfileAvatar = ({ progressData, levelImage, photo }: any) => {
     //   alt=""
     // />
     <div className="w-[60px] z-[1900] h-[60px] rounded-full bg-[#FFFFFF12] flex justify-center items-center relative">
-      <svg
-        height={circleRadius * 2}
-        width={circleRadius * 2}
-        className="absolute transform rotate-[-90deg]"
-      >
-        <defs>
-          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop
-              offset="0%"
-              style={{ stopColor: "#E8B9FF", stopOpacity: 1 }}
-            />
-            <stop
-              offset="100%"
-              style={{ stopColor: "#FF94B4", stopOpacity: 1 }}
-            />
-          </linearGradient>
-        </defs>
-        {/* Background Circle */}
-        <circle
-          stroke="#888" // Tailwind gray-300
-          fill="transparent"
-          strokeWidth={strokeWidth}
-          r={normalizedRadius}
-          cx={circleRadius}
-          cy={circleRadius}
-        />
-        {/* Progress Circle */}
-        <circle
-          stroke="url(#gradient)"
-          fill="transparent"
-          strokeWidth={strokeWidth}
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          strokeDashoffset={strokeDashoffset}
-          r={normalizedRadius}
-          cx={circleRadius}
-          cy={circleRadius}
-        />
-      </svg>
+      {progressData ? (
+        <svg
+          height={circleRadius * 2}
+          width={circleRadius * 2}
+          className="absolute transform rotate-[-90deg]"
+        >
+          <defs>
+            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop
+                offset="0%"
+                style={{ stopColor: "#E8B9FF", stopOpacity: 1 }}
+              />
+              <stop
+                offset="100%"
+                style={{ stopColor: "#FF94B4", stopOpacity: 1 }}
+              />
+            </linearGradient>
+          </defs>
+          {/* Background Circle */}
+          <circle
+            stroke="#888" // Tailwind gray-300
+            fill="transparent"
+            strokeWidth={strokeWidth}
+            r={normalizedRadius}
+            cx={circleRadius}
+            cy={circleRadius}
+          />
+          {/* Progress Circle */}
+          <circle
+            stroke="url(#gradient)"
+            fill="transparent"
+            strokeWidth={strokeWidth}
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            strokeDashoffset={strokeDashoffset}
+            r={normalizedRadius}
+            cx={circleRadius}
+            cy={circleRadius}
+          />
+        </svg>
+      ) : (
+        <></>
+      )}
       {photo ? (
         <img
           className="w-[58px] h-[58px] rounded-full object-cover object-center"

@@ -101,7 +101,7 @@ const May: React.FC<MayProps> = ({}) => {
                 </>
               ) : (
                 <>
-                  <div className="w-[4px] h-[4px] rounded-full bg-[#888] flex-shrink-0"></div>
+                  <div className="w-[5px] h-[5px] rounded-full bg-[#888] flex-shrink-0"></div>
                   <h1 className="text-start truncate may_text ml-2">
                     {val?.title}
                   </h1>
