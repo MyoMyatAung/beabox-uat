@@ -33,7 +33,7 @@ const Header: React.FC<HeaderProps> = ({
           </span>
 
           <span
-            className={`h-[5px] w-[25px] rounded-md bg-white ${
+            className={`h-[3px] w-[25px] rounded-md bg-[#CD3EFF] ${
               activeTab?.name !== tt?.name ? " opacity-0" : "opacity-100"
             }`}
           ></span>

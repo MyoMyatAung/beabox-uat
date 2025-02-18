@@ -4,13 +4,7 @@
 }
 
 .search_btn {
-  background: var(
-    --Purple-Gradient,
-    linear-gradient(315deg, #cd3eff 0%, #ffb2e0 100%)
-  );
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #eaacff;
 }
 
 .history_box {
