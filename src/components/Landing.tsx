@@ -77,7 +77,7 @@ const Landing: React.FC = () => {
             className="h-full w-full object-cover"
             alt="Splash Screen"
           />
-          <div className="absolute inset-0 flex items-center justify-center mb-20">
+          <div className="absolute inset-0 flex items-center justify-center mb-16">
             <img
               src={splashLogo}
               alt="Splash Logo"
@@ -118,7 +118,7 @@ const Landing: React.FC = () => {
             className="h-full w-full object-cover"
             alt="Splash Screen"
           />
-          <div className="absolute inset-0 flex items-center justify-center mb-20">
+          <div className="absolute inset-0 flex items-center justify-center mb-16">
             <img
               src={splashLogo}
               alt="Splash Logo"
