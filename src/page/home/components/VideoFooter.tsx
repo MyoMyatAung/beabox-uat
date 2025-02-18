@@ -263,12 +263,14 @@ import { useNavigate } from "react-router-dom";
 
 const VideoFooter = React.memo(
   ({
+    id,
     title,
     tags,
     city,
     username,
     badge,
   }: {
+    id: any;
     title: string;
     tags: string[];
     city: string;
@@ -331,12 +333,15 @@ const VideoFooter = React.memo(
         navigate(`/search?query=${encodeURIComponent(suggestion.trim())}`);
       }
     };
+    const handleProfile = () => {
+      navigate(`/user/${id}`);
+    };
 
     return (
       <div className="videoFooter w-full">
         <div className="w-full">
           <div className="flex items-center gap-3 mb-2">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2" onClick={handleProfile}>
               <span className="footer_head_text font-cnFont">{username}</span>
 
               {decryptedPhoto && (
