@@ -1,4 +1,4 @@
-import { EllipsisVertical } from "lucide-react";
+import { ChevronLeft, EllipsisVertical } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import SettingBtn2 from "./setting-btn2";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -39,7 +39,7 @@ const OscrollHeader = ({ photo, name, id, visibility, dphoto }: any) => {
   return (
     <div className="flex justify-between items-center w-full z-[1800] relative">
       <div className="flex items-center gap-3">
-        {photo ? (
+        {/* {photo ? (
           <img
             className="w-[48px] z-[1500] h-[48px] rounded-full object-cover object-center"
             src={photo}
@@ -49,7 +49,11 @@ const OscrollHeader = ({ photo, name, id, visibility, dphoto }: any) => {
           <div className="w-[48px] h-[48px] rounded-full bg-[#FFFFFF12] flex justify-center items-center p-2">
             <Person />
           </div>
-        )}
+        )} */}
+
+        <button onClick={() => navigate(-1)} className="">
+          <ChevronLeft size={20} />
+        </button>
 
         <p className="z-[1500]">{name}</p>
       </div>
