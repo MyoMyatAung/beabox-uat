@@ -73,15 +73,15 @@ const VideoCard = ({ videoData }: any) => {
 
   return (
     <div
-      className="bg-gradient-to-r h-[153px] relative"
+      className="bg-gradient-to-r h-[170px] relative"
       onClick={() => showDetailsVod(videoData)}
     >
       <div className="">
         {!decryptedPhoto ? (
-          <div className="h-[153px] animate-pulse object-cover w-full object-center bg-[#FFFFFF1F]"></div>
+          <div className="h-[170px] animate-pulse object-cover w-full object-center bg-[#FFFFFF1F]"></div>
         ) : (
           <ImageWithPlaceholder
-            className="h-[153px] object-cover w-full object-center"
+            className="h-[170px] object-cover w-full object-center"
             width={""}
             height={""}
             alt="preview"

@@ -335,7 +335,7 @@ const OtherProfile = () => {
         <div ref={headerRef} className="sticky z-[1500] top-0">
           {/* {showHeader ? "Show" : "Hide"} */}
         </div>
-        <div className="px-1">
+        <div className="">
           <VideoTab2
             id={id}
             showHeader={false}
