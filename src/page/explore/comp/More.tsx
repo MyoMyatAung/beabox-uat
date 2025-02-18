@@ -19,7 +19,7 @@ interface MoreProps {}
 
 const More: React.FC<MoreProps> = () => {
   const [show, setshow] = useState<boolean>(false);
-  const { title, more_tab , tags } = useSelector((state: any) => state.explore);
+  const { title, more_tab, tags } = useSelector((state: any) => state.explore);
   // console.log(more_tab);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -88,7 +88,7 @@ const More: React.FC<MoreProps> = () => {
 
   const showDetailsVod = (file: any) => {
     dispatch(setDetails(file));
-    navigate(paths.vod_details);
+    navigate("/vod_details");
   };
 
   const handleTabChange = (ff: any) => {
@@ -123,10 +123,10 @@ const More: React.FC<MoreProps> = () => {
   // console.log(more_tab);
 
   return (
-    <div className=" flex xl:justify-center items-center">
-      <div className="px-[10px] home-main flex flex-col relative min-h-scree bg-[#16131C] mx-auto">
+    <div className="">
+      <div className="px-[10px] flex flex-col relative min-h-scree bg-[#16131C] mx-auto">
         {/* Header */}
-        <div className=" fixed z-[99] home-main w-full bg-transparent bg-[#16131C]">
+        <div className=" fixed z-[99] w-full bg-transparent bg-[#16131C]">
           <div className="grid grid-cols-3 justify-between py-[12px] bg-[#16131C] ">
             <ChevronLeft
               onClick={() => navigate("/")}
@@ -196,7 +196,7 @@ const More: React.FC<MoreProps> = () => {
                   >
                     <div
                       className=" relative flex justify-center items-center bg-[#010101] rounded-t-[4px] overflow-hidden  h-[240px]"
-                      onClick={() => showDetailsVod(item)}
+                      // onClick={() => showDetailsVod(item)}
                     >
                       <ImageWithPlaceholder
                         src={item?.preview_image}
