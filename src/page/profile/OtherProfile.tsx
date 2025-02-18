@@ -242,23 +242,24 @@ const OtherProfile = () => {
             {/* <div className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full">
               <Search size={18} />
             </div> */}
-            <div
-              onClick={() => handleCopy2()}
-              className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full"
-            >
-              <img src={share} alt="" />
-            </div>
+
             <Link
               to={`/reports/profile/${id}`}
               className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full"
             >
               <Flag size={18} />
             </Link>
+            <div
+              onClick={() => handleCopy2()}
+              className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full"
+            >
+              <img src={share} alt="" />
+            </div>
           </div>
         </div>
         <div className="w-full flex items-center gap-3 pb-5 px-5">
           <ProfileAvatar
-            progress={userData?.data?.level_progress}
+            progressData={userData?.data?.level_progress}
             levelImage={userData?.data?.level}
             photo={decryptedPhoto}
           />
@@ -334,7 +335,7 @@ const OtherProfile = () => {
         <div ref={headerRef} className="sticky z-[1500] top-0">
           {/* {showHeader ? "Show" : "Hide"} */}
         </div>
-        <div className="px-5">
+        <div className="px-1">
           <VideoTab2
             id={id}
             showHeader={false}

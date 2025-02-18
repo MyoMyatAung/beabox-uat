@@ -5,6 +5,7 @@ import CreatedVideo from "./video/created-video";
 import LikedVideos from "./video/liked-videos";
 import { useDispatch, useSelector } from "react-redux";
 import { setDefaultTab2 } from "@/store/slices/persistSlice";
+import LikedVideos2 from "./video/like-videos2";
 
 const VideoTab2 = ({ id, visibility, showHeader }: any) => {
   const defaultTab2 = useSelector((state: any) => state.persist.defaultTab2);
@@ -35,7 +36,7 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
         <CreatedVideo id={id} />
       </TabsContent>
       <TabsContent value="liked">
-        <LikedVideos id={id} />
+        <LikedVideos2 id={id} />
       </TabsContent>
     </Tabs>
   );
