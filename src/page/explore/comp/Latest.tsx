@@ -164,7 +164,7 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
                 next={fetchMoreData}
                 hasMore={hasMore}
                 loader={
-                  <div className=" flex justify-center w-screen absolute bottom-[-30px] left-[-20px]">
+                  <div className=" flex justify-center w-screen absolute bottom-[-30px] left-[-2px]">
                     <div className="">
                       <img
                         src={Loader}
