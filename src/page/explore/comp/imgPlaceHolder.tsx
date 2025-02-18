@@ -63,7 +63,7 @@ const ImageWithPlaceholder = ({
         ref={imgRef}
         src={decryptedSrc || ""}
         alt={alt}
-        className={`${className} h-[170px] image-placeholder`}
+        className={`${className} image-placeholder`}
         {...props}
         style={{
           opacity: decryptedSrc ? "1" : "0",
