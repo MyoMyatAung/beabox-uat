@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 const EditSecurity = () => {
   const securityQues = useSelector((state: any) => state.persist.securityQues);
-  console.log(securityQues);
+  // console.log(securityQues);
   const [getSecurityQuestions, { data }] = useGetSecurityQuestionsMutation();
   const navigate = useNavigate();
   useEffect(() => {

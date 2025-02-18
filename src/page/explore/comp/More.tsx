@@ -124,7 +124,7 @@ const More: React.FC<MoreProps> = () => {
 
   return (
     <div className=" flex xl:justify-center items-center">
-      <div className="px-[10px] home-main flex flex-col relative min-h-scree bg-[#16131C]">
+      <div className="px-[10px] home-main flex flex-col relative min-h-scree bg-[#16131C] mx-auto">
         {/* Header */}
         <div className=" fixed z-[99] home-main w-full bg-transparent bg-[#16131C]">
           <div className="grid grid-cols-3 justify-between py-[12px] bg-[#16131C] ">

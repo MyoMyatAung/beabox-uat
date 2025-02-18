@@ -249,7 +249,7 @@ function VideoSidebar({
             {post?.type === "ads" ? (
               <>
                 {post?.ads_info?.icon ? (
-                  <Avatar className="w-[35.25px] h-[35.25px] ">
+                  <Avatar className="w-[40.25px] h-[40.25px] ">
                     <AvatarImage src={post?.ads_info?.icon} />
                     <AvatarFallback>SM</AvatarFallback>
                   </Avatar>
@@ -281,7 +281,7 @@ function VideoSidebar({
             ) : (
               <>
                 {decryptedPhoto ? (
-                  <Avatar className="w-[35.25px] h-[35.25px]">
+                  <Avatar className="w-[40.25px] h-[40.25px]">
                     <AvatarImage src={decryptedPhoto} />
                     <AvatarFallback>SM</AvatarFallback>
                   </Avatar>

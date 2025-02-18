@@ -113,12 +113,14 @@ function VideoFooter({
   city,
   username,
   badge,
+  id
 }: {
   title: string;
   tags: string[];
   city: string;
   username: string;
   badge: string;
+  id: string;
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const toggleExpand = () => setIsExpanded(!isExpanded);
@@ -165,11 +167,15 @@ function VideoFooter({
     }
   };
 
+  const handleProfile = () => {
+    navigate(`/user/${id}`); 
+  };
+
   return (
     <div className="videoFooter w-full">
       <div className="w-full">
         <div className="flex items-center gap-3 mb-2">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2" onClick={handleProfile}>
             <span className="footer_head_text font-cnFont">{username}</span>
             <img src={decryptedPhoto} alt="" className="w-[18px] h-[18px]" />
           </div>

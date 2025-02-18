@@ -1,6 +1,9 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useGetUserProfileQuery } from "@/store/api/profileApi";
-import { ChevronLeft, Copy, Flag } from "lucide-react";
+import {
+  useGetUserProfileQuery,
+  useShareInfoMutation,
+} from "@/store/api/profileApi";
+import { ChevronLeft, Copy, Flag, Search } from "lucide-react";
 import ProfileAvatar from "@/components/profile/profile-avatar";
 import Loader from "@/components/shared/loader";
 import OtherStats from "@/components/profile/other-stats";
@@ -30,6 +33,7 @@ const OtherProfile = () => {
   const user = useSelector((state: any) => state?.persist?.user) || "";
 
   const [isCopied, setIsCopied] = useState(false);
+  const [isCopied2, setIsCopied2] = useState(false);
   const headerRef = useRef<any>(null);
   const [showHeader, setShowHeader] = useState(false);
   const navigate = useNavigate();
@@ -39,9 +43,11 @@ const OtherProfile = () => {
     refetch,
     isFetching,
   } = useGetUserProfileQuery(id || "");
+  const [shareInfo, { data: shareData, isLoading: shareLoading }] =
+    useShareInfoMutation();
   const [decryptedCover, setDecryptedCover] = useState(defaultCover);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
-  console.log(userData, "user data");
+  // console.log(userData, "user data");
   useEffect(() => {
     const loadAndDecryptCover = async () => {
       if (!user?.token || !userData?.data?.cover_photo) {
@@ -110,12 +116,26 @@ const OtherProfile = () => {
     loadAndDecryptPhoto();
   }, [userData?.data?.profile_photo]);
 
-  const handleCopy = (text: any) => {
+  const handleCopy = async (text: any) => {
+    // await shareInfo({ id });
     navigator?.clipboard
       .writeText(text)
       .then(() => {
         setIsCopied(true);
         setTimeout(() => setIsCopied(false), 2000);
+      })
+      .catch((err) => {
+        console.error("Failed to copy text: ", err);
+      });
+  };
+  const handleCopy2 = async () => {
+    const { data } = await shareInfo({ id });
+    // console.log(data, "test data");
+    navigator?.clipboard
+      .writeText(data?.data?.link)
+      .then(() => {
+        setIsCopied2(true);
+        setTimeout(() => setIsCopied2(false), 2000);
       })
       .catch((err) => {
         console.error("Failed to copy text: ", err);
@@ -143,9 +163,11 @@ const OtherProfile = () => {
     };
   }, []);
 
-  useEffect(() => {
-    refetch();
-  }, [id]);
+  // useEffect(() => {
+  //   if (id || userData) {
+  //     refetch();
+  //   }
+  // }, [id, userData]);
 
   if (userLoading) return <Loader />;
   return (
@@ -171,8 +193,17 @@ const OtherProfile = () => {
       )}
       {isCopied ? (
         <div className="w-full z-[1300] absolute top-[80vh] flex justify-center">
-          <p className="text-[14px] bg-[#FFFFFF14] px-2 py-1 rounded-lg w-[83px] text-center">
+          <p className="text-[14px] bg-[#191721] px-2 py-1 rounded-lg w-[83px] text-center">
             已复制 ID
+          </p>
+        </div>
+      ) : (
+        ""
+      )}
+      {isCopied2 ? (
+        <div className="w-full z-[1300] absolute top-[80vh] flex justify-center">
+          <p className="text-[14px] bg-[#191721] px-2 py-1 rounded-lg w-[83px] text-center">
+            {shareData?.message}
           </p>
         </div>
       ) : (
@@ -209,10 +240,10 @@ const OtherProfile = () => {
           <ChevronLeft onClick={() => navigate(-1)} />
           <div className="flex gap-3 z-[1500] items-center">
             {/* <div className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full">
-                <Search size={18} />
-              </div> */}
+              <Search size={18} />
+            </div> */}
             <div
-              onClick={() => handleCopy("Copied Link")}
+              onClick={() => handleCopy2()}
               className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full"
             >
               <img src={share} alt="" />
@@ -271,8 +302,8 @@ const OtherProfile = () => {
             )}
           </div>
         </div>
-        <h1 className="text-[12px] text-[#888] mb-5 px-5 z-[1900] relative">
-          {userData?.data?.bio && userData?.data?.hide_bio == "off"
+        <h1 className="text-[12px]  text-[#888] mb-5 px-5 z-[1900] relative xs:w-[100px] md:w-[340px] overflow-hidden break-words">
+          {userData?.data?.bio && userData?.data?.hide_bio == "on"
             ? userData?.data?.bio
             : ""}
         </h1>

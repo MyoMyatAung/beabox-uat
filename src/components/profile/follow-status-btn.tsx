@@ -22,7 +22,7 @@ const FollowStatusBtn = ({ userData, id, refetch, userLoading }: any) => {
     setFollow(!follow);
   };
   useEffect(() => {
-    if (token && refetch) {
+    if (token) {
       refetch();
     }
   }, [token]);

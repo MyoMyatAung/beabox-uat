@@ -7,12 +7,13 @@ import LikedVideos from "./video/liked-videos";
 import HistoryVideos from "./video/history-videos";
 import CreatedVideo from "./video/created-video";
 import { setDefaultTab } from "@/store/slices/persistSlice";
+import CreatedVideo2 from "./video/create-video2";
 
 const VideoTabs = () => {
   const user = useSelector((state: any) => state.persist.user);
   const defaultTab = useSelector((state: any) => state.persist.defaultTab);
   const dispatch = useDispatch();
-  console.log(defaultTab, "defaultab");
+  // console.log(defaultTab, "defaultab");
   return (
     <Tabs defaultValue={user?.token ? defaultTab : "liked"} className="py-5">
       <TabsList className="grid w-full grid-cols-3 z-[1600] bg-transparent sticky top-[100px]">
@@ -55,7 +56,7 @@ const VideoTabs = () => {
         <HistoryVideos />
       </TabsContent>
       <TabsContent value="upload">
-        <CreatedVideo id={user?.id} />
+        <CreatedVideo2 id={user?.id} />
       </TabsContent>
     </Tabs>
   );

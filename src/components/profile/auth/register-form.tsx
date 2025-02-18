@@ -92,7 +92,7 @@ const RegisterForm = ({ setIsOpen }: any) => {
       await getCaptcha("");
     }
   };
-  console.log(isError, "isError");
+  // console.log(isError, "isError");
   return (
     <div className="px-5">
       {isError ? <AuthError message={error} /> : <></>}

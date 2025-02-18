@@ -23,7 +23,7 @@ const EditNickName = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState(nickname);
-  console.log(value, ":nnv");
+  // console.log(value, ":nnv");
   const [changeNickname, { data, isLoading }] = useChangeNicknameMutation();
   const navigate = useNavigate();
   const closeRef = useRef<HTMLButtonElement>(null);

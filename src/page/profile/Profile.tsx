@@ -39,7 +39,7 @@ const Profile = () => {
   const { data, isLoading, refetch } = useGetMyOwnProfileQuery("", {
     skip: !user,
   });
-  console.log(data, "data");
+  // console.log(data, "data");
   const [show, setShow] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const dispatch = useDispatch();
@@ -63,7 +63,7 @@ const Profile = () => {
           setDecryptedCover(coverUrl);
           return;
         }
-        console.log("coverUrl is =>", coverUrl);
+        // console.log("coverUrl is =>", coverUrl);
 
         // Fetch the encrypted image data
         const response = await fetch(coverUrl);
@@ -309,11 +309,11 @@ const Profile = () => {
             </div>
           )}
         </div>
-        <h1 className="text-[12px] text-[#888] mb-5 italic px-5 z-[1900] relative">
+        <h1 className="text-[12px]  text-[#888] mb-5 z-[1900] relative">
           {user?.token ? (
             <>
               {data?.data?.hide_bio === "on" ? (
-                <div className="text-[12px] text-[#888] mb-5">
+                <div className="text-[12px] xs:w-[100px] md:w-[340px] overflow-hidden break-words px-5  text-[#888] mb-5">
                   {data?.data?.bio}
                 </div>
               ) : (
@@ -334,20 +334,6 @@ const Profile = () => {
           ) : (
             <></>
           )}
-          {/* {data?.data?.hide_bio === "on" ? null : user?.token ? (
-            data?.data?.bio ? (
-              <div className="text-[12px] text-[#888] mb-5 italic">
-                {data?.data?.bio}
-              </div>
-            ) : (
-              <Link
-                to={paths.add_bio}
-                className="text-[12px] text-[#FFFFFFCC] bg-[#FFFFFF14] px-2 py-1 w-[91px] text-center rounded-full"
-              >
-                + 个人简介
-              </Link>
-            )
-          ) : null} */}
         </h1>
         <div className={`${showHeader ? "opacity-0" : "opacity-1"}`}>
           <Stats

@@ -245,6 +245,7 @@ const VideoFeed = ({
             {!hideBar && video?.type !== "ads" && (
               <FeedFooter
                 badge={video?.user?.badge}
+                id={video?.user?.id}
                 tags={video?.tag}
                 title={video?.title}
                 username={video?.user?.name}

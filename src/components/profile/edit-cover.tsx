@@ -37,7 +37,7 @@ const EditCover = ({ decryptedCover, refetch }: any) => {
     reader.onload = async (e) => {
       if (e.target && typeof e.target.result === "string") {
         setImage(e.target.result);
-        console.log("1");
+        // console.log("1");
         await settingUpload({
           filedata: e.target.result,
           filePath: "cover_photo",
@@ -57,7 +57,7 @@ const EditCover = ({ decryptedCover, refetch }: any) => {
     // console.log(settingUploadData?.data?.url, "storage uploaded");
   }, [settingUploadData]);
 
-  console.log(changeCoverData);
+  // console.log(changeCoverData);
 
   return (
     <>

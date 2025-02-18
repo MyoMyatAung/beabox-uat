@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setPanding } from "../store/slices/ModelSlice";
 
-import splashScreen from "../assets/splashScreen.svg";
+import splashScreen from "../assets/splashScreen.jpg";
 import "../page/search/search.css";
 import { useGetAdsPopUpQuery } from "@/utils/helperService";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
@@ -70,7 +70,7 @@ const Landing: React.FC = () => {
     <>
       {showSplash ? (
         // Splash screen view (3 seconds, no skip)
-        <div className="h-screen w-screen">
+        <div className="h-screen w-screen max-w-[480px] mx-auto">
           <img
             src={splashScreen}
             className="h-full w-full object-cover"
@@ -79,11 +79,11 @@ const Landing: React.FC = () => {
         </div>
       ) : showAd ? (
         // Ad view (only shows after image is fully loaded)
-        <>
+        <div className="max-w-[480px] mx-auto">
           <a target="_blank" rel="noopener noreferrer" href={images?.jump_url}>
-            <div className="relative h-screen w-screen">
+            <div className="relative h-screen w-scree max-w-[480px]">
               <AsyncDecryptedImage
-                className="h-full w-full object-cover"
+                className="h-full max-w-[480px] w-full object-cover"
                 imageUrl={images?.image}
                 alt="Advertisement"
               />
@@ -102,7 +102,7 @@ const Landing: React.FC = () => {
               跳过广告 <span>{skip}</span>
             </h1>
           </div>
-        </>
+        </div>
       ) : (
         <div className="h-screen w-screen">
           <img

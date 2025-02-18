@@ -47,7 +47,7 @@ const ForgotPassword = () => {
       navigate(paths.check_answer);
     }
   };
-  console.log(data, "cun");
+  // console.log(data, "cun");
   return (
     <div className="w-full h-screen px-5 flex flex-col items-center justify-between bg-[#16131C]">
       <div className="w-full">

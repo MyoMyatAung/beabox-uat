@@ -7,7 +7,7 @@ const RightSideActions = () => {
   return (
     <div className="absolute right-4 bottom-32 flex flex-col items-center gap-6">
       <div className="flex flex-col items-center relative mb-4">
-        <Avatar className="w-[35.25px] h-[35.25px] border-2 border-white ">
+        <Avatar className="w-[40.25px] h-[40.25px] border-2 border-white ">
           <AvatarImage src="https://i.pinimg.com/236x/64/bf/60/64bf60f08e226ae662e83a459a28a9bf.jpg" />
           <AvatarFallback>SM</AvatarFallback>
         </Avatar>
