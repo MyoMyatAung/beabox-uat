@@ -60,7 +60,7 @@ const LikedVideos2 = ({ id }: any) => {
 
   return (
     <div className="py-5">
-      {!user?.token || videos.length <= 0 ? (
+      {videos.length <= 0 ? (
         <div>
           <div className="flex flex-col justify-center items-center w-full mt-[150px]">
             <NoVideo />
