@@ -39,6 +39,7 @@ const Profile = () => {
   const { data, isLoading, refetch } = useGetMyOwnProfileQuery("", {
     skip: !user,
   });
+  console.log(data);
   const progressData = data?.data?.level_progress;
   // console.log(data, "data");
   const [show, setShow] = useState(false);
@@ -239,7 +240,11 @@ const Profile = () => {
         </div>
         <div className="z-[1900] flex my-5 justify-between items-center px-5">
           {user?.token ? (
-            <EditCover decryptedCover={decryptedCover} refetch={refetch} />
+            <EditCover
+              coverimg={data?.data?.cover_photo}
+              decryptedCover={decryptedCover}
+              refetch={refetch}
+            />
           ) : (
             <div></div>
           )}
