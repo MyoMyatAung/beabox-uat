@@ -354,6 +354,12 @@ export const profileApi = createApi({
         method: "GET",
       }),
     }),
+    userShareInfo: builder.query<any, any>({
+      query: () => ({
+        url: convertToSecureUrl(`/user/share/info`),
+        method: "GET",
+      }),
+    }),
     shareInfo: builder.mutation({
       query: ({ id }) => ({
         url: convertToSecureUrl(`/profile/share/info?user_id=${id}`),
@@ -375,6 +381,7 @@ export const profileApi = createApi({
 });
 
 export const {
+  useUserShareInfoQuery,
   usePostsSearchMutation,
   useShareInfoMutation,
   useGetMyPostsQuery,
