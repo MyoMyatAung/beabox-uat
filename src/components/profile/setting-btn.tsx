@@ -63,7 +63,7 @@ const SettingBtn = ({ setShow }: any) => {
           <Menu />
         </button>
       </DrawerTrigger>
-      <DrawerContent className="border-0 bg-[#121012] z-[1600]">
+      <DrawerContent className="border-0 bg-[#121012] z-[3600]">
         <div className="w-full px-5 py-7">
           <div className="space-y-3">
             {(user?.token ? data : data2)?.map(
