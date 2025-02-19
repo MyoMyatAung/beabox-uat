@@ -27,9 +27,13 @@ const Question = () => {
       token: forgotData?.token,
       answer: ans,
     });
-    if (!data?.status) setError("出了点问题");
-    dispatch(setForgotToken(data?.data?.token));
-    navigate(paths.reset_password);
+    if (data) {
+      dispatch(setForgotToken(data?.data?.token));
+      navigate(paths.reset_password);
+    } else {
+      setError("答案错误");
+    }
+    // if (!data?.status)
   };
   return (
     <div className="w-full h-screen px-5 flex flex-col items-center bg-[#16131C]">
