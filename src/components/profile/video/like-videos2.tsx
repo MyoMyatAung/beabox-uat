@@ -13,10 +13,18 @@ const LikedVideos2 = ({ id }: any) => {
   const [hasMore, setHasMore] = useState(true);
   const [totalData, setTotalData] = useState<number>(0);
 
-  const { data, isLoading } = useGetLikedPostQuery(
-    { user_id: id, page },
+  const { data, isLoading, refetch } = useGetLikedPostQuery(
+    { user_id: id, page }
     // { skip: !user }
   );
+
+  useEffect(() => {
+    setVideos([]);
+    setPage(1);
+    setHasMore(true);
+    setTotalData(0);
+    refetch();
+  }, [refetch, id]);
 
   useEffect(() => {
     if (data?.data?.length) {
