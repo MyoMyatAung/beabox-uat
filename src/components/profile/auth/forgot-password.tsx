@@ -40,8 +40,8 @@ const ForgotPassword = () => {
       captcha_key: captchaData?.data?.captcha_key,
     });
     if (!data?.status) {
-      setError("验证码错误");
-      // setShow验证码(false);
+      setError("用户名不存在");
+      setShow验证码(false);
     } else {
       dispatch(setForgotData(data?.data));
       navigate(paths.check_answer);
@@ -69,7 +69,7 @@ const ForgotPassword = () => {
           <div className="relative">
             <input
               value={value}
-              className="block w-full px-3 py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none "
+              className="block w-full py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none "
               placeholder="输入用户名"
               onChange={(e) => setValue(e.target.value)}
               //   {...field}

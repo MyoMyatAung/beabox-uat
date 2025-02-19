@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setCover } from "@/store/slices/persistSlice";
 import Loader from "@/components/shared/loader";
 
-const EditCover = ({ decryptedCover, refetch }: any) => {
+const EditCover = ({ decryptedCover, refetch, coverimg }: any) => {
   const dispatch = useDispatch();
   const cover = useSelector((state: any) => state.persist.cover);
   const [isOpen, setIsOpen] = useState(false);
@@ -57,7 +57,7 @@ const EditCover = ({ decryptedCover, refetch }: any) => {
     // console.log(settingUploadData?.data?.url, "storage uploaded");
   }, [settingUploadData]);
 
-  // console.log(changeCoverData);
+  console.log(coverimg);
 
   return (
     <>
@@ -96,8 +96,12 @@ const EditCover = ({ decryptedCover, refetch }: any) => {
                   <p className="text-[14px]">上传封面</p>
                 </label>
               </div>
-              <div className="w-full h-[1px] bg-[#FFFFFF0A]"></div>
-              {decryptedCover ? (
+              {decryptedCover && coverimg ? (
+                <div className="w-full h-[1px] bg-[#FFFFFF0A]"></div>
+              ) : (
+                <></>
+              )}
+              {decryptedCover && coverimg ? (
                 <div
                   className="flex items-center gap-3"
                   onClick={removeHandler}

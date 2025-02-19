@@ -335,7 +335,7 @@ function VideoSidebar({
                 />
               </svg>
             ) : (
-              <span className="bg-red-500 py-[0.3px] px-1.5 rounded-full text-xs">
+              <span className="bg-red-500 py-[1.5px] px-1.5 rounded-full text-xs">
                 +
               </span>
             )}
