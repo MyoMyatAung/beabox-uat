@@ -85,6 +85,18 @@ const Profile = () => {
     loadAndDecryptCover();
   }, [data?.data?.cover_photo, user?.token]);
 
+  useEffect(() => {
+    if (show) {
+      document.body.style.overflow = "hidden"; // Disable scrolling
+    } else {
+      document.body.style.overflow = ""; // Reset scrolling
+    }
+  
+    return () => {
+      document.body.style.overflow = ""; // Cleanup when component unmounts
+    };
+  }, [show]);
+
   // Effect to load and decrypt profile photo
   useEffect(() => {
     const loadAndDecryptPhoto = async () => {
@@ -187,7 +199,7 @@ const Profile = () => {
         </div>
       )}
       {show && (
-        <div className="absolute top-0 z-[2300] left-0 w-full h-full mx-auto flex flex-col justify-center items-center bg-black/80">
+        <div className="fixed top-0 z-[2300] left-0 w-full h-full mx-auto flex flex-col justify-center items-center bg-black/80">
           <div className="z-[1200] px-10">
             <div className="z-[1200] h-[250px] gradient-b rounded-lg relative">
               <img
