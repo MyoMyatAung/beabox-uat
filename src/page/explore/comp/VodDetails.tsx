@@ -273,8 +273,8 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
             </div>
           </div>
 
-          <div className="absolute mt- bottom-0 add_comment w-full  py-3 z-10 ">
-            <div className="flex items-center gap-2 px-4">
+          <div className="absolute mt- bottom-0  w-full  py-3 z-10 ">
+            <div className="flex add_comment items-center gap-2 px-4 mx-2">
               <input
                 type="text"
                 className="w-full p-[6px] bg-transparent border-none outline-none"
@@ -283,7 +283,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
                 placeholder="Write a comment"
               />
               <button
-                className="comment_arrow p-3"
+                className="comment_arr p-3"
                 onClick={() => handleComment(files?.post_id)}
               >
                 <svg
