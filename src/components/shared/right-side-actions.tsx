@@ -12,7 +12,7 @@ const RightSideActions = () => {
           <AvatarFallback>SM</AvatarFallback>
         </Avatar>
         <button className="flex justify-center items-center absolute -bottom-2">
-          <span className="bg-red-500 py-[0.3px] px-1.5 rounded-full text-xs">+</span>
+          <span className="bg-red-500 py-[1.5px] px-1.5 rounded-full text-xs">+</span>
         </button>
       </div>
       <div className="flex flex-col items-center gap-2">
