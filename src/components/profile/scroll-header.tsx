@@ -16,7 +16,13 @@ import VideoGrid from "./video-grid";
 import defaultCover from "@/assets/cover.jpg";
 import Loader from "@/page/home/vod_loader.gif";
 
-const ScrollHeader = ({ photo, name, setShow, login, dphoto }: any) => {
+const ScrollHeader = ({
+  photo,
+  name,
+  login,
+  dphoto,
+  setShow,
+}: any) => {
   const user = useSelector((state: any) => state?.persist?.user);
   const [page, setPage] = useState(1);
   const [Hispage, setHisPage] = useState(1);
@@ -77,7 +83,7 @@ const ScrollHeader = ({ photo, name, setShow, login, dphoto }: any) => {
         >
           <Bell />
         </Link>
-        <SettingBtn />
+        <SettingBtn setShow={setShow} />
       </div>
     </div>
   );
