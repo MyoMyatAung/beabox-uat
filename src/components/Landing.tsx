@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { setPanding } from "../store/slices/ModelSlice";
 
 import splashScreen from "../assets/splashScreen.png";
-import splashLogo from "../assets/splashLogo.svg";
+import splashLogo from "../assets/splashLogo.png";
 import "../page/search/search.css";
 import { useGetAdsPopUpQuery } from "@/utils/helperService";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
