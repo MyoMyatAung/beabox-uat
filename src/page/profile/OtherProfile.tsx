@@ -129,18 +129,41 @@ const OtherProfile = () => {
         console.error("Failed to copy text: ", err);
       });
   };
+  const isIOSApp = () => {
+    return (
+      (window as any).webkit &&
+      (window as any).webkit.messageHandlers &&
+      (window as any).webkit.messageHandlers.jsBridge
+    );
+  };
+  const sendEventToNative = (name: string, text: string) => {
+    if (
+      (window as any).webkit &&
+      (window as any).webkit.messageHandlers &&
+      (window as any).webkit.messageHandlers.jsBridge
+    ) {
+      (window as any).webkit.messageHandlers.jsBridge.postMessage({
+        eventName: name,
+        value: text,
+      });
+    }
+  };
   const handleCopy2 = async () => {
     const { data } = await shareInfo({ id });
-    // console.log(data, "test data");
-    navigator?.clipboard
-      .writeText(data?.data?.link)
-      .then(() => {
-        setIsCopied2(true);
-        setTimeout(() => setIsCopied2(false), 2000);
-      })
-      .catch((err) => {
-        console.error("Failed to copy text: ", err);
-      });
+    const appDownloadLink = data?.data?.link;
+    if (isIOSApp()) {
+      sendEventToNative("copyAppdownloadUrl", appDownloadLink);
+    } else {
+      navigator?.clipboard
+        .writeText(data?.data?.link)
+        .then(() => {
+          setIsCopied2(true);
+          setTimeout(() => setIsCopied2(false), 2000);
+        })
+        .catch((err) => {
+          console.error("Failed to copy text: ", err);
+        });
+    }
   };
 
   useEffect(() => {
