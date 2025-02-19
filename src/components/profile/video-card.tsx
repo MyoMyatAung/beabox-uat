@@ -82,7 +82,7 @@ const VideoCard = ({ videoData }: any) => {
         ) : (
           <ImageWithPlaceholder
             needGradient={true}
-            className="h-[170px] object-cover w-full object-center"
+            className="h-[170px]  w-full  object-contain"
             width={""}
             height={""}
             alt="preview"
