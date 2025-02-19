@@ -48,6 +48,21 @@ const OtherProfile = () => {
     useShareInfoMutation();
   const [decryptedCover, setDecryptedCover] = useState(defaultCover);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
+  const [cachedDownloadLink, setCachedDownloadLink] = useState(null);
+
+  useEffect(() => {
+    const fetchShareInfo = async () => {
+      try {
+        const { data } = await shareInfo({ id });
+        const appDownloadLink = data?.data?.link;
+        setCachedDownloadLink(appDownloadLink);
+      } catch (error) {
+        console.error("Error fetching share info:", error);
+      }
+    };
+
+    fetchShareInfo();
+  }, [id]);
   // console.log(userData, "user data");
   useEffect(() => {
     const loadAndDecryptCover = async () => {
@@ -149,13 +164,28 @@ const OtherProfile = () => {
     }
   };
   const handleCopy2 = async () => {
-    const { data } = await shareInfo({ id });
-    const appDownloadLink = data?.data?.link;
+    // If we already have a cached link, use it
+    if (cachedDownloadLink) {
+      copyToClipboard(cachedDownloadLink);
+      return;
+    }
+
+    try {
+      const { data } = await shareInfo({ id });
+      const appDownloadLink = data?.data?.link;
+      setCachedDownloadLink(appDownloadLink);
+      copyToClipboard(appDownloadLink);
+    } catch (error) {
+      console.error("Error fetching share info:", error);
+    }
+  };
+
+  const copyToClipboard = (link) => {
     if (isIOSApp()) {
-      sendEventToNative("copyAppdownloadUrl", appDownloadLink);
+      sendEventToNative("copyAppdownloadUrl", link);
     } else {
-      navigator?.clipboard
-        .writeText(data?.data?.link)
+      navigator.clipboard
+        .writeText(link)
         .then(() => {
           setIsCopied2(true);
           setTimeout(() => setIsCopied2(false), 2000);
