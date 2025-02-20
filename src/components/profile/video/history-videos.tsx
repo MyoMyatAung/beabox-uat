@@ -8,6 +8,8 @@ import Loader from "@/page/home/vod_loader.gif";
 import { NoVideo } from "@/assets/profile";
 import InfinitLoad from "@/components/shared/infinit-load";
 import VideoCard from "../video-card";
+import { useSearchParams } from "react-router-dom";
+import VideoFeed from "@/page/home/components/VideoFeed";
 
 const HistoryVideos = () => {
   const user = useSelector((state: any) => state?.persist?.user);
@@ -15,6 +17,11 @@ const HistoryVideos = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [totalData, setTotalData] = useState<number>(0);
+  const [searchParams] = useSearchParams();
+  const initialQuery = searchParams.get("query") || "";
+  const [query, setQuery] = useState(initialQuery);
+  const [selectedMovieId, setSelectedMovieId] = useState(null);
+  const [showVideoFeed, setShowVideoFeed] = useState(false);
 
   const { data, isLoading } = useGetWatchHistoryQuery(
     { page },
@@ -54,32 +61,55 @@ const HistoryVideos = () => {
   }
 
   return (
-    <div className="py-5">
-      {!user?.token || videos.length <= 0 ? (
-        <div>
-          <div className="flex flex-col justify-center items-center w-full mt-[150px]">
-            <NoVideo />
-            <p className="text-[12px] text-[#888]">这里空空如也～</p>
-          </div>
+    <>
+      {showVideoFeed && selectedMovieId ? (
+        <div className="z-[9900] h-screen fixed top-0 overflow-y-scroll left-0 w-full">
+          <VideoFeed
+            videos={videos}
+            currentActiveId={selectedMovieId}
+            setShowVideoFeed={setShowVideoFeed}
+            query={query}
+          />
         </div>
       ) : (
-        <>
-          <div>
-            <div className="grid grid-cols-3 gap-1">
-              {videos.map((item: any) => (
-                <VideoCard key={item.id} videoData={item} />
-              ))}
-            </div>
-            <InfinitLoad
-              data={videos}
-              fetchData={fetchMoreData}
-              hasMore={hasMore}
-            />
-            <div className="py-[38px]"></div>
-          </div>
-        </>
+        <></>
       )}
-    </div>
+      <div className="py-5">
+        {!user?.token || videos.length <= 0 ? (
+          <div>
+            <div className="flex flex-col justify-center items-center w-full mt-[150px]">
+              <NoVideo />
+              <p className="text-[12px] text-[#888]">这里空空如也～</p>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div>
+              <div className="grid grid-cols-3 gap-1">
+                {videos.map((item: any) => (
+                  <div
+                    key={item.post_id}
+                    onClick={() => {
+                      // console.log(item);
+                      setSelectedMovieId(item?.post_id);
+                      setShowVideoFeed(true);
+                    }}
+                  >
+                    <VideoCard videoData={item} />
+                  </div>
+                ))}
+              </div>
+              <InfinitLoad
+                data={videos}
+                fetchData={fetchMoreData}
+                hasMore={hasMore}
+              />
+              <div className="py-[38px]"></div>
+            </div>
+          </>
+        )}
+      </div>
+    </>
   );
 };
 
