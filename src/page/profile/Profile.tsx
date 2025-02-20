@@ -92,7 +92,7 @@ const Profile = () => {
     } else {
       document.body.style.overflow = ""; // Reset scrolling
     }
-  
+
     return () => {
       document.body.style.overflow = ""; // Cleanup when component unmounts
     };
@@ -168,6 +168,10 @@ const Profile = () => {
   useEffect(() => {
     if (user) refetch();
   }, [user, data]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   if (isLoading) return <Loader />;
 
@@ -248,6 +252,7 @@ const Profile = () => {
             name={data?.data?.nickname}
             login={user?.token}
             dphoto={data?.data?.cover_photo}
+            setShow={setShow}
           />
         </div>
         <div className="z-[1900] flex my-5 justify-between items-center px-5">
