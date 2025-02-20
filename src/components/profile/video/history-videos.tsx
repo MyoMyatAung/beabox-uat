@@ -8,6 +8,7 @@ import Loader from "@/page/home/vod_loader.gif";
 import { NoVideo } from "@/assets/profile";
 import InfinitLoad from "@/components/shared/infinit-load";
 import VideoCard from "../video-card";
+import { useSearchParams } from "react-router-dom";
 
 const HistoryVideos = () => {
   const user = useSelector((state: any) => state?.persist?.user);
@@ -15,6 +16,11 @@ const HistoryVideos = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [totalData, setTotalData] = useState<number>(0);
+  const [searchParams] = useSearchParams();
+  const initialQuery = searchParams.get("query") || "";
+  const [query, setQuery] = useState(initialQuery);
+  const [selectedMovieId, setSelectedMovieId] = useState(null);
+  const [showVideoFeed, setShowVideoFeed] = useState(false);
 
   const { data, isLoading } = useGetWatchHistoryQuery(
     { page },

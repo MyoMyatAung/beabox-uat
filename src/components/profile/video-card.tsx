@@ -74,7 +74,7 @@ const VideoCard = ({ videoData }: any) => {
   return (
     <div
       className="bg-gradient-to-r h-[170px] relative"
-      onClick={() => showDetailsVod(videoData)}
+      // onClick={() => showDetailsVod(videoData)}
     >
       <div className="">
         {!decryptedPhoto ? (
