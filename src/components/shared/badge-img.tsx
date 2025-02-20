@@ -16,7 +16,7 @@ const BadgeImg = ({ photo }: any) => {
 
   useEffect(() => {
     const loadAndDecryptPhoto = async () => {
-      if (!user?.token || !photo) {
+      if (!photo) {
         setDecryptedPhoto("");
         return;
       }
