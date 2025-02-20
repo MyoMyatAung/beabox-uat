@@ -14,7 +14,7 @@ const Header: React.FC<HeaderProps> = ({
   setCurrentPage,
 }) => {
   return (
-    <div className=" flex mb-[26px] px-[16px]">
+    <div className=" flex mb-[5px] px-[10px]">
       {tabs?.map((tt: any, index: number) => (
         <div
           onClick={() => {
@@ -27,13 +27,13 @@ const Header: React.FC<HeaderProps> = ({
           <span
             className={`${
               activeTab?.name === tt?.name ? " text-white" : " text-white/60"
-            } text-[16px] font-[500]`}
+            } text-[16px] mb-2 font-[500]`}
           >
             {tt?.name}
           </span>
 
           <span
-            className={`h-[3px] w-[25px] rounded-md bg-[#CD3EFF] ${
+            className={`h-[3px] w-[40px] rounded-md bg-[#CD3EFF] ${
               activeTab?.name !== tt?.name ? " opacity-0" : "opacity-100"
             }`}
           ></span>

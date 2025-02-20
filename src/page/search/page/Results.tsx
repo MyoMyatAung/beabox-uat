@@ -324,7 +324,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
         />
       </div>
 
-      <div className="mt-[150px] px-[16px]">
+      <div className="mt-[130px] px-[8px]">
         {isLoading && currentPage === 1 ? (
           <div className=" flex justify-center items-center py-[200px]">
             <div className="heart">
@@ -334,7 +334,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
         ) : (
           <>
             {movies?.length > 0 && (
-              <div className=" py-[12px] w-full grid grid-cols-2 justify-center items-center  gap-[10px]">
+              <div className=" py-[12px] w-full grid grid-cols-2 justify-center items-center  gap-[8px]">
                 <>
                   {movies?.map((card: any) => (
                     <div
@@ -343,11 +343,11 @@ const Results: React.FC<ResultsProps> = ({}) => {
                         setShowVideoFeed(true);
                       }}
                       key={card.post_id}
-                      className="max-w-full pb-[12px] chinese_photo h-[325px]"
+                      className="max-w-full pb-[12px] chinese_photo  h-[325px]"
                     >
                       <div
                         // onClick={() => showDetailsVod(card)}
-                        className=" relative flex justify-center items-center bg-[#010101] rounded-t-[4px] overflow-hidden  h-[240px]"
+                        className=" relative flex justify-center  items-center bg-[#010101] rounded-[4px] overflow-hidden  h-[240px]"
                       >
                         <ImageWithPlaceholder
                           src={card?.preview_image}
