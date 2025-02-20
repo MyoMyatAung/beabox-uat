@@ -53,6 +53,9 @@ export const homeApi = createApi({
     getFollowPosts: builder.query({
       query: () => convertToSecureUrl(`posts/following`),
     }),
+    getUserShare: builder.query({
+      query: () => convertToSecureUrl(`user/share/info`),
+    }),
 
     likePost: builder.mutation<void, { post_id: any; count: any }>({
       query: ({ post_id, count }) => ({
@@ -194,6 +197,7 @@ export const homeApi = createApi({
 });
 
 export const {
+  useGetUserShareQuery,
   useFollowStatusMutation,
   useGetFollowedPostsQuery,
   useTop20PostsQuery,

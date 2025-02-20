@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 
 import {
   useGetConfigQuery,
+  useGetUserShareQuery,
   useUnInterestPostMutation,
 } from "../services/homeApi";
 import { QRCodeCanvas } from "qrcode.react";
@@ -30,6 +31,8 @@ const ShareOverlay: React.FC<any> = ({
   const { currentActivePost } = useSelector((state: any) => state.activeslice);
   const [isOpen, setIsOpen] = useState(false);
 
+  const { data, isLoading } = useGetUserShareQuery({});
+
   // const dispatch = useDispatch();
   const handleClose = () => {
     setIsClosing(true); // Trigger the closing animation
@@ -41,7 +44,8 @@ const ShareOverlay: React.FC<any> = ({
 
   if (!alertVisible && !isClosing) return null;
 
-  const shareUrl = config?.share_link;
+  const shareUrl = data?.data?.link;
+  const qrUrl = data?.data?.qrcode?.data;
   const appDownloadLink = config?.app_download_link;
 
   const isIOSApp = () => {
@@ -339,11 +343,12 @@ const ShareOverlay: React.FC<any> = ({
             </div>
             <div className="flex mb-4 justify-center items-center my-10 p-0">
               <div className="text-right bg-white p-3 rounded-xl">
-                <QRCodeCanvas
+                <img src={qrUrl} className="qr_download w-[120px] h-[120px]" />
+                {/* <QRCodeCanvas
                   value={shareUrl}
                   size={100}
                   className="qr_download"
-                />
+                /> */}
                 {/* <img src={qr} alt="" width={150} height={150} /> */}
               </div>
               {/* <div>
