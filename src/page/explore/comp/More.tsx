@@ -156,16 +156,16 @@ const More: React.FC<MoreProps> = () => {
       <div className="px-[10px] flex flex-col relative min-h-scree bg-[#16131C] mx-auto">
         {/* Header */}
         <div className=" fixed z-[99] w-full bg-transparent bg-[#16131C]">
-          <div className="grid grid-cols-3 justify-between py-[12px] bg-[#16131C] ">
+          <div className="flex justify-center w-full py-[12px] bg-[#16131C] relative">
             <ChevronLeft
               onClick={() => navigate("/")}
-              className="rec_exp_more_btn px-[2px]"
+              className="rec_exp_more_btn px-[2px] fixed left-5 z-[999]"
             />
             <h1
               // onClick={() => {
               //   window.scrollTo({ top: 0, behavior: "smooth" });
               // }}
-              className="w-2/3 text-white text-[18px] text-center font-[500]"
+              className=" pr-[10px] text-white text-[18px] font-[500]"
             >
               {tags}
             </h1>
