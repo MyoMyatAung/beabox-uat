@@ -365,7 +365,21 @@ const VideoFooter = React.memo(
                   : "max-h-full"
               }`}
             >
-              <span className="mr-2">{title}</span>
+              {" "}
+              <div className="mr-0">
+                {title}
+
+                {tags?.map((tag, index) => (
+                  <span
+                    key={index}
+                    className="footer_tag ml-1"
+                    onClick={() => onSearch(tag)}
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+              {/* <span className="mr-2">{title}</span>
               {tags?.map((tag, index) => (
                 <span
                   key={index}
@@ -374,7 +388,7 @@ const VideoFooter = React.memo(
                 >
                   #{tag}
                 </span>
-              ))}
+              ))} */}
             </div>
 
             {shouldExpand && (

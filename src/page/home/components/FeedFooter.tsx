@@ -206,16 +206,19 @@ function FeedFooter({
                 : "max-h-full"
             }`}
           >
-            <span className="mr-2">{title}</span>
-            {tags?.map((tag, index) => (
-              <span
-                key={index}
-                className="footer_tag mr-1"
-                onClick={() => onSearch(tag)}
-              >
-                #{tag}
-              </span>
-            ))}
+            <div className="mr-0">
+              {title}
+
+              {tags?.map((tag, index) => (
+                <span
+                  key={index}
+                  className="footer_tag ml-1"
+                  onClick={() => onSearch(tag)}
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
           </div>
 
           {shouldExpand && (
