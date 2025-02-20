@@ -36,6 +36,34 @@
   height: 100%;
 }
 
+.poster_change .art-poster {
+  object-fit: cover;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  height: 280px;
+  width: 100%;
+  top: 50%;
+  left: 50%;
+}
+
+@media screen and (min-width: 500px) {
+  .poster_change .art-poster {
+    height: 500px;
+  }
+}
+
+@media screen and (min-width: 880px) {
+  .poster_change .art-poster {
+    height: 550px;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .poster_change .art-poster {
+    height: 300px;
+  }
+}
+
 /* .art-video-player.art-control-show .art-bottom,
 .art-video-player.art-hover .art-bottom {
   opacity: 1 !important;

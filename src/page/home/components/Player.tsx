@@ -276,6 +276,8 @@ import { setMute } from "../services/muteSlice";
 
 const Player = ({
   src,
+  width,
+  height,
   thumbnail,
   setWidth,
   setHeight,
@@ -294,6 +296,8 @@ const Player = ({
   post_id: any;
   rotate: any;
   type: any;
+  width: any;
+  height: any;
 }) => {
   const playerContainerRef = useRef<HTMLDivElement | null>(null);
   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
@@ -312,6 +316,7 @@ const Player = ({
   const apiCalledRef = useRef(false); // Ensure API is called only once
   const [watchtPost] = useWatchtPostMutation(); // Hook for watch history API
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
+  const [p_img, setPImg] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -743,6 +748,11 @@ const Player = ({
     });
 
     artPlayerInstanceRef.current.on("ready", () => {
+      if (width > height) {
+        setPImg(true);
+      } else {
+        setPImg(false);
+      }
       if (!artPlayerInstanceRef.current?.playing) {
         if (playIconRef.current) playIconRef.current.style.display = "block";
       } else {
@@ -1000,7 +1010,12 @@ const Player = ({
     }
   }, [rotate]); // This effect runs whenever `mute` changes
 
-  return <div ref={playerContainerRef} className={`video_player w-full`} />;
+  return (
+    <div
+      ref={playerContainerRef}
+      className={`video_player w-full ${p_img ? "poster_change" : ""}`}
+    />
+  );
 };
 
 export default Player;
