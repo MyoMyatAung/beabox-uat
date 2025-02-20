@@ -358,7 +358,7 @@ const Home = () => {
           spaceBetween={10}
         > */}
 
-        <div className="app bg-black">
+        <div className="app bg-[#16131C]">
           {refresh ? (
             <div className="bg-[#232323] rounded-xl px-4 py-0">
               <img src={loader} alt="" width={50} height={50} />
@@ -368,7 +368,7 @@ const Home = () => {
               {/* <SwiperSlide> */}
               {currentTab === 0 &&
                 (isLoading && videos["follow"]?.length === 0 ? (
-                  <div className="app bg-black">
+                  <div className="app bg-[#16131C]">
                     <div
                       style={{
                         textAlign: "center",
@@ -444,7 +444,7 @@ const Home = () => {
                     )}
                   </>
                 ) : (
-                  <div className="app bg-black">
+                  <div className="app bg-[#16131C]">
                     <div style={{ textAlign: "center", padding: "20px" }}>
                       <div className="text-white flex flex-col justify-center items-center  gap-2">
                         <div>
@@ -494,7 +494,7 @@ const Home = () => {
           <SwiperSlide> */}
               {currentTab == 2 &&
                 (isLoading && videos["foryou"]?.length === 0 ? (
-                  <div className="app bg-black">
+                  <div className="app bg-[#16131C]">
                     <div
                       style={{
                         textAlign: "center",
@@ -570,7 +570,7 @@ const Home = () => {
                     )}
                   </>
                 ) : (
-                  <div className="app bg-black">
+                  <div className="app bg-[#16131C]">
                     <div style={{ textAlign: "center", padding: "20px" }}>
                       <div className="text-white flex flex-col justify-center items-center  gap-2">
                         <div>

@@ -27,11 +27,11 @@ const TopNavbar = ({
             } nav_text`}
             onClick={() => onTabClick(tab.id)}
           >
-            <div className="mb-1 capitalize">
+            <div className="mb-3 capitalize">
               {tab.text === "for_you" ? "For You" : tab.text}
             </div>
             {currentTab === tab.id && (
-              <div className="w-[30px] h-[2px] bg-white"></div>
+              <div className="w-[28px] h-[2px] bg-white"></div>
             )}
           </button>
         ))}
