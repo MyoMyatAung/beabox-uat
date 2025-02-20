@@ -14,13 +14,15 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder";
 import empty from "../../../page/home/empty.png";
 import personE from "../../../assets/explore/personE.svg";
+import VideoFeed from "@/page/home/components/VideoFeed";
 
 interface MoreProps {}
 
 const More: React.FC<MoreProps> = () => {
   const [show, setshow] = useState<boolean>(false);
   const { title, more_tab, tags } = useSelector((state: any) => state.explore);
-  // console.log(more_tab);
+  const [selectedMovieId, setSelectedMovieId] = useState(null);
+  const [showVideoFeed, setShowVideoFeed] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const dispatch = useDispatch();
@@ -86,9 +88,11 @@ const More: React.FC<MoreProps> = () => {
     setPage((prevPage) => prevPage + 1);
   };
 
-  const showDetailsVod = (file: any) => {
-    dispatch(setDetails(file));
-    navigate("/vod_details");
+  const showDetailsVod = (item: any) => {
+    // dispatch(setDetails(file));
+    // navigate("/vod_details");
+    setSelectedMovieId(item?.post_id);
+    setShowVideoFeed(true);
   };
 
   const handleTabChange = (ff: any) => {
@@ -122,8 +126,33 @@ const More: React.FC<MoreProps> = () => {
   // console.log(data?.data);
   // console.log(more_tab);
 
+  // if (showVideoFeed && selectedMovieId) {
+  //   return (
+  //     <div className="z-[9900] h-screen fixed top-0 overflow-y-scroll left-0 w-full">
+  //       <VideoFeed
+  //         videos={list}
+  //         currentActiveId={selectedMovieId}
+  //         setShowVideoFeed={setShowVideoFeed}
+  //         query={"query"}
+  //       />
+  //     </div>
+  //   );
+  // }
+
   return (
     <div className="">
+      {showVideoFeed && selectedMovieId ? (
+        <div className="z-[9900] h-screen fixed top-0 overflow-y-scroll left-0 w-full">
+          <VideoFeed
+            videos={list}
+            currentActiveId={selectedMovieId}
+            setShowVideoFeed={setShowVideoFeed}
+            query={"搜索影片"}
+          />
+        </div>
+      ) : (
+        <></>
+      )}
       <div className="px-[10px] flex flex-col relative min-h-scree bg-[#16131C] mx-auto">
         {/* Header */}
         <div className=" fixed z-[99] w-full bg-transparent bg-[#16131C]">
