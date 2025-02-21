@@ -12,15 +12,23 @@ import { FaSearch } from "react-icons/fa";
 import VideoCard from "../video-card";
 import InfinitLoad from "@/components/shared/infinit-load";
 import loader from "@/page/home/vod_loader.gif";
+import { useSearchParams } from "react-router-dom";
+import VideoFeed from "@/page/home/components/VideoFeed";
 
 const SearchVideo = ({ id }: { id: string }) => {
-  const [postsSearch, { isLoading, isFetching }] = usePostsSearchMutation();
+  const [postsSearch, { isLoading }] = usePostsSearchMutation();
   const [search, setSearch] = useState<string>("");
   const [videos, setVideos] = useState<any[]>([]);
   const [page, setPage] = useState(1);
   const [page2, setPage2] = useState(2);
   const [hasMore, setHasMore] = useState(true);
   const [totalData, setTotalData] = useState<number>(0);
+
+  const [searchParams] = useSearchParams();
+  const initialQuery = searchParams.get("query") || "";
+  const [query, setQuery] = useState(initialQuery);
+  const [selectedMovieId, setSelectedMovieId] = useState(null);
+  const [showVideoFeed, setShowVideoFeed] = useState(false);
 
   const searchHandler = async () => {
     setPage(1);
@@ -64,61 +72,86 @@ const SearchVideo = ({ id }: { id: string }) => {
   // console.log(page);
 
   return (
-    <Drawer>
-      <DrawerTrigger>
-        <div className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full">
-          <Search size={18} />
-        </div>
-      </DrawerTrigger>
-      <DrawerContent className="z-[8900] border-0 ">
-        <div className="c-height w-full overflow-y-scroll hide-sb">
-          <div className=" px-5 z-[8000]  bg-[#16131C] sticky top-0 py-5 flex items-center gap-3">
-            <DrawerClose
-              onClick={() => {
-                setSearch("");
-                setPage(1);
-                setPage2(2);
-                setVideos([]);
-                setHasMore(false);
-                setTotalData(0);
-              }}
-            >
-              <ChevronLeft size={18} />
-            </DrawerClose>
-            <div className="border border-gray-700 w-full rounded-full shadow-md flex items-center pl-4">
-              <FaSearch />
-              <Input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="搜索作品"
-                className="bg-transparent placeholder:text-white rounded-full border-0 focus:border-transparent focus-visible:ring-0"
-              />
-            </div>
-            <button onClick={searchHandler} className="w-[50px]">
-              搜索
-            </button>
+    <div className={`${showVideoFeed ? "z-[9900] relative h-screen" : ""}`}>
+      <Drawer>
+        <DrawerTrigger>
+          <div className="bg-[#FFFFFF1F] w-10 h-10 flex justify-center items-center p-2 rounded-full">
+            <Search size={18} />
           </div>
-          {isLoading && page == 1 && page2 == 2 ? (
-            <div className="w-full flex justify-center items-center mt-[100px]">
-              <img src={loader} className="w-14" alt="" />
-            </div>
-          ) : (
-            <div className="py-5">
-              <div className="grid grid-cols-3 gap-1">
-                {videos.map((item: any) => (
-                  <VideoCard key={item.id} videoData={item} />
-                ))}
+        </DrawerTrigger>
+
+        {showVideoFeed && selectedMovieId ? (
+          <div className="z-[9999] h-screen fixed top-0 overflow-y-scroll left-0 w-full">
+            <VideoFeed
+              videos={videos}
+              currentActiveId={selectedMovieId}
+              setShowVideoFeed={setShowVideoFeed}
+              query={query}
+            />
+          </div>
+        ) : (
+          <DrawerContent className="z-[8900] border-0 ">
+            <>
+              <div className="c-height w-full overflow-y-scroll hide-sb">
+                <div className=" px-5 z-[8000]  bg-[#16131C] sticky top-0 py-5 flex items-center gap-3">
+                  <DrawerClose
+                    onClick={() => {
+                      setSearch("");
+                      setPage(1);
+                      setPage2(2);
+                      setVideos([]);
+                      setHasMore(false);
+                      setTotalData(0);
+                    }}
+                  >
+                    <ChevronLeft size={18} />
+                  </DrawerClose>
+                  <div className="border border-gray-700 w-full rounded-full shadow-md flex items-center pl-4">
+                    <FaSearch />
+                    <Input
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      placeholder="搜索作品"
+                      className="bg-transparent placeholder:text-white rounded-full border-0 focus:border-transparent focus-visible:ring-0"
+                    />
+                  </div>
+                  <button onClick={searchHandler} className="w-[50px]">
+                    搜索
+                  </button>
+                </div>
+                {isLoading && page == 1 && page2 == 2 ? (
+                  <div className="w-full flex justify-center items-center mt-[100px]">
+                    <img src={loader} className="w-14" alt="" />
+                  </div>
+                ) : (
+                  <div className="py-5">
+                    <div className="grid grid-cols-3 gap-1">
+                      {videos.map((item: any) => (
+                        <div
+                          key={item.post_id}
+                          onClick={() => {
+                            // console.log(item);
+                            setSelectedMovieId(item?.post_id);
+                            setShowVideoFeed(true);
+                          }}
+                        >
+                          <VideoCard videoData={item} />
+                        </div>
+                      ))}
+                    </div>
+                    <InfinitLoad
+                      data={videos}
+                      fetchData={fetchMoreData}
+                      hasMore={hasMore}
+                    />
+                  </div>
+                )}
               </div>
-              <InfinitLoad
-                data={videos}
-                fetchData={fetchMoreData}
-                hasMore={hasMore}
-              />
-            </div>
-          )}
-        </div>
-      </DrawerContent>
-    </Drawer>
+            </>
+          </DrawerContent>
+        )}
+      </Drawer>
+    </div>
   );
 };
 
