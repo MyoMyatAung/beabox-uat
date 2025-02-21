@@ -34,7 +34,7 @@ const SearchVideo = ({ id }: { id: string }) => {
     setPage(1);
     setPage2(2);
     if (search.trim() !== "") {
-      const { data } = await postsSearch({ page: 1, search });
+      const { data } = await postsSearch({ page: 1, search, user_id: id });
       setVideos(data?.data?.list ?? []);
       setTotalData(data?.pagination?.total ?? 0);
     } else {
@@ -55,7 +55,7 @@ const SearchVideo = ({ id }: { id: string }) => {
   const fetchMoreData = async () => {
     if (search.trim() !== "") {
       setPage2((prev) => prev + 1);
-      const { data } = await postsSearch({ page: page2, search });
+      const { data } = await postsSearch({ page: page2, search, user_id: id });
       setVideos((prev) => [...prev, ...(data?.data?.list ?? [])]);
     }
   };
