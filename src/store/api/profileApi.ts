@@ -367,13 +367,14 @@ export const profileApi = createApi({
       }),
     }),
     postsSearch: builder.mutation({
-      query: ({ page, search }) => ({
+      query: ({ page, search, user_id }) => ({
         url: convertToSecureUrl(`/posts/search`),
         method: "POST",
         body: convertToSecurePayload({
           page,
           pageSize: 12,
           search,
+          user_id,
         }),
       }),
     }),
