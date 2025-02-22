@@ -46,6 +46,9 @@ const Home = () => {
   const [hearts, setHearts] = useState<number[]>([]); // Manage heart IDs
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
+  const [videosToRender, setVideosToRender] = useState<any[]>([]); // Store videos to render
+  const [videosPerLoad, setVideosPerLoad] = useState(5); // Number of videos to initially render
+  const [start, setStart] = useState(false);
 
   const removeHeart = (id: number) => {
     setHearts((prev) => prev.filter((heartId) => heartId !== id)); // Remove the heart by ID
@@ -86,6 +89,29 @@ const Home = () => {
     (currentTab === 2 && isForYouFetching);
 
   const isError = ForyouError || followError;
+
+  // useEffect(() => {
+  //   const initialVideos =
+  //     videos[
+  //       currentTab === 0 ? "follow" : currentTab === 2 ? "foryou" : ""
+  //     ]?.slice(0, videosPerLoad) || [];
+  //   console.log(initialVideos);
+  //   setVideosToRender(initialVideos);
+  // }, [videos, videosPerLoad]);
+
+  useEffect(() => {
+    if (!start) {
+      const initialVideos =
+        videos[
+          currentTab === 0 ? "follow" : currentTab === 2 ? "foryou" : ""
+        ]?.slice(0, videosPerLoad) || [];
+
+      if (initialVideos.length > 1) {
+        setVideosToRender(initialVideos);
+        setStart(true);
+      }
+    }
+  }, [videos]); // Runs only once on mount
 
   useEffect(() => {
     // Determine which data corresponds to the current tab
@@ -187,39 +213,11 @@ const Home = () => {
     const container = videoContainerRef.current;
     if (!container) return;
 
-    // const areAllVideosLoaded = () => {
-    //   const videoElements = container?.querySelectorAll("video");
-    //   return Array.from(videoElements).every((video) => video.readyState >= 3); // readyState 3 means data is loaded enough to play
-    // };
-
-    // Wait for all videos to be loaded before triggering pagination
-    // const waitForVideosToLoad = () => {
-    //   return new Promise((resolve) => {
-    //     const interval = setInterval(() => {
-    //       if (areAllVideosLoaded()) {
-    //         clearInterval(interval);
-    //         resolve(true);
-    //       }
-    //     }, 500); // Check every 500ms if the videos are loaded
-    //   });
-    // };
-
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             dispatch(setPage(page + 1)); // Load more videos
-            // dispatch(setBottomLoader(true));
-            // If videos are not fully loaded, show loading spinner
-            // // Wait for videos to be ready, then trigger pagination
-            // waitForVideosToLoad().then(() => {
-            //   if (areAllVideosLoaded()) {
-            // dispatch(setPage(page + 1)); // Load more videos
-            //     dispatch(setBottomLoader(false));
-            //   } else {
-            //     dispatch(setBottomLoader(true));
-            //   }
-            // });
           }
         });
       },
@@ -230,8 +228,51 @@ const Home = () => {
     );
 
     // Observe the last video element
-    if (videos[currentTab === 2 ? "foryou" : "follow"].length > 1) {
+    if (videosToRender.length > 5) {
       const secondLastVideo = container.children[container.children.length - 5];
+      if (secondLastVideo) {
+        observer.observe(secondLastVideo);
+      }
+    }
+
+    // Cleanup observer on component unmount or when dependencies change
+    return () => {
+      observer.disconnect();
+    };
+  }, [videosToRender, refresh]);
+
+  if (topmovies) {
+    return <Top20Movies setTopMovies={setTopMovies} />;
+  }
+
+  useEffect(() => {
+    const container = videoContainerRef.current;
+    if (!container) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const lastFiveVideos =
+              videos[
+                currentTab === 0 ? "follow" : currentTab === 2 ? "foryou" : ""
+              ]?.slice(videosToRender?.length, videosToRender?.length + 5) ||
+              [];
+
+            // console.log(initialVideos);
+            setVideosToRender((prev) => [...prev, ...lastFiveVideos]);
+          }
+        });
+      },
+      {
+        rootMargin: "100px", // Trigger the observer when 100px from the bottom
+        threshold: 0.5, // 50% visibility of the last video
+      }
+    );
+
+    // Observe the last video element
+    if (videosToRender.length > 1) {
+      const secondLastVideo = container.children[container.children.length - 2];
       if (secondLastVideo) {
         observer.observe(secondLastVideo);
       }
@@ -240,11 +281,7 @@ const Home = () => {
     return () => {
       observer.disconnect();
     };
-  }, [videos[currentTab === 2 ? "foryou" : "follow"], refresh]);
-
-  if (topmovies) {
-    return <Top20Movies setTopMovies={setTopMovies} />;
-  }
+  }, [videosToRender, refresh]);
 
   // const handleSlideChange = (swiper: any) => {
   //   const newTab = swiper.activeIndex; // Get the active slide index
@@ -367,7 +404,7 @@ const Home = () => {
             <>
               {/* <SwiperSlide> */}
               {currentTab === 0 &&
-                (isLoading && videos["follow"]?.length === 0 ? (
+                (isLoading && videosToRender?.length === 0 ? (
                   <div className="app bg-[#16131C]">
                     <div
                       style={{
@@ -493,7 +530,7 @@ const Home = () => {
               {/* </SwiperSlide>
           <SwiperSlide> */}
               {currentTab == 2 &&
-                (isLoading && videos["foryou"]?.length === 0 ? (
+                (isLoading && videosToRender?.length === 0 ? (
                   <div className="app bg-[#16131C]">
                     <div
                       style={{
@@ -516,7 +553,7 @@ const Home = () => {
                       ref={videoContainerRef}
                       className={`app__videos pb-[74px]`}
                     >
-                      {videos["foryou"]?.map((video: any, index: any) => (
+                      {videosToRender?.map((video: any, index: any) => (
                         <div
                           key={index}
                           className="video mt-[20px]"
