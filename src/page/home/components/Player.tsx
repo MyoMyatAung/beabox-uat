@@ -1,267 +1,3 @@
-// import { useEffect, useRef, useState } from "react";
-// import Artplayer from "artplayer";
-// import Hls from "hls.js";
-// import indicator from "../indicator.svg";
-// import vod_loader from "../vod_loader.gif";
-// import { useSelector } from "react-redux";
-
-// const Player = ({
-//   src,
-//   thumbnail,
-//   setWidth,
-//   setHeight,
-//   handleLike,
-// }: {
-//   src: string;
-//   thumbnail: string;
-//   setWidth: (width: number) => void;
-//   setHeight: (height: number) => void;
-//   handleLike: () => void;
-// }) => {
-//   const playerContainerRef = useRef<HTMLDivElement | null>(null);
-//   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
-//   const hlsRef = useRef<Hls | null>(null); // HLS instance for `src`
-//   const { mute } = useSelector((state: any) => state.muteSlice);
-//   const [isPaused, setIsPaused] = useState(false);
-//   const playIconRef = useRef<HTMLDivElement | null>(null); // Reference to the play icon
-
-//   // Initialize Artplayer for the current video
-//   const initializeArtplayer = () => {
-//     if (!playerContainerRef.current || artPlayerInstanceRef.current) return;
-
-//     Artplayer.DBCLICK_FULLSCREEN = false;
-//     Artplayer.MOBILE_DBCLICK_PLAY = false;
-//     Artplayer.MOBILE_CLICK_PLAY = true;
-
-//     artPlayerInstanceRef.current = new Artplayer({
-//       autoOrientation: true,
-//       container: playerContainerRef.current,
-//       url: src,
-//       volume: 0.5,
-//       muted: mute,
-//       autoplay: false,
-//       fullscreenWeb: true,
-//       moreVideoAttr: {
-//         playsInline: true,
-//         preload: "metadata",
-//       },
-
-//       // flip: true,
-//       aspectRatio: true,
-//       fullscreen: false,
-//       theme: "#d53ff0",
-//       customType: {
-//         m3u8: (videoElement, url) => {
-//           if (Hls.isSupported()) {
-//             const hls = new Hls({
-//               maxBufferLength: 30, // Limit buffer to 30 seconds of video
-//             });
-//             hls.loadSource(url);
-//             hls.attachMedia(videoElement);
-//             hlsRef.current = hls; // Store the Hls instance
-//           } else if (
-//             videoElement.canPlayType("application/vnd.apple.mpegurl")
-//           ) {
-//             videoElement.src = url;
-//           }
-//         },
-//       },
-//       icons: {
-//         loading: `<img width="100" height="100" src=${vod_loader}>`,
-//         state: "",
-//       },
-//       layers: [
-//         {
-//           html: `<div class="custom-play-icon">
-//                     <img src="${indicator}" width="50" height="50" alt="Play">
-//                  </div>`,
-//           style: {
-//             position: "absolute",
-//             top: "50%",
-//             left: "50%",
-//             transform: "translate(-50%, -50%)",
-//             zIndex: "999999",
-//             display: "none", // Initially hidden
-//           },
-//           mounted: (element) => {
-//             playIconRef.current = element; // Store reference to custom play button
-
-//             // Click the play button to resume video
-//             playIconRef?.current?.addEventListener("click", () => {
-//               artPlayerInstanceRef.current?.play();
-//             });
-//           },
-//         },
-//         {
-//           html: '<div class="click-layer"></div>',
-//           style: {
-//             position: "absolute",
-//             top: "0",
-//             left: "0",
-//             width: "90%",
-//             height: "85%",
-//             zIndex: "10",
-//             background: "transparent",
-//           },
-//           mounted: (element) => {
-//             let lastClick = 0;
-//             let singleClickTimeout: NodeJS.Timeout | null = null;
-
-//             // Add event listener to handle both single and double clicks
-//             element.addEventListener("click", () => {
-//               const now = Date.now();
-//               if (now - lastClick <= 300) {
-//                 // Double-click detected
-//                 if (singleClickTimeout) clearTimeout(singleClickTimeout); // Cancel single-click action
-//                 handleLike(); // Call the double-click function
-//               } else {
-//                 // Single-click: set a timeout to execute play/pause
-//                 singleClickTimeout = setTimeout(() => {
-//                   artPlayerInstanceRef.current?.toggle(); // Play or pause on single click
-//                 }, 300); // Wait for 300ms to ensure it's not a double-click
-//               }
-//               lastClick = now; // Update last click timestamp
-//             });
-//           },
-//         },
-//       ],
-//     });
-
-//     artPlayerInstanceRef.current.on("pause", () => {
-//       setIsPaused(true);
-//       if (playIconRef.current) playIconRef.current.style.display = "block";
-//     });
-
-//     // **Hide Play Icon When Video is Playing**
-//     artPlayerInstanceRef.current.on("play", () => {
-//       setIsPaused(false);
-//       if (playIconRef.current) playIconRef.current.style.display = "none";
-//     });
-
-//     artPlayerInstanceRef.current.on("error", () => {
-//       console.error("Error in Artplayer");
-//     });
-//   };
-
-// useEffect(() => {
-//   const container = playerContainerRef.current;
-
-//   if (!container) return;
-
-//   // Observer for initializing the player
-//   const initObserver = new IntersectionObserver(
-//     (entries) => {
-//       entries.forEach((entry) => {
-//         if (entry.isIntersecting && !artPlayerInstanceRef.current) {
-//           initializeArtplayer(); // Initialize Artplayer for the current video
-//         }
-//       });
-//     },
-//     {
-//       rootMargin: "0px", // Start initializing slightly before entering viewport
-//       threshold: 0.01, // Trigger when at least 1% of the element is visible
-//     }
-//   );
-
-//   // Observer for autoplay functionality
-//   const autoplayObserver = new IntersectionObserver(
-//     (entries) => {
-//       entries.forEach((entry) => {
-//         if (entry.isIntersecting) {
-//         } else {
-//           if (artPlayerInstanceRef.current) {
-//             artPlayerInstanceRef.current.video.src = "";
-//             artPlayerInstanceRef.current.destroy();
-//             artPlayerInstanceRef.current = null;
-//             //(artPlayerInstanceRef.current as any)?.pause();
-//           }
-//         }
-//       });
-//     },
-//     {
-//       rootMargin: "0px", // Trigger exactly at the edge of the viewport
-//       threshold: 0.01, // Trigger when 50% of the element is visible
-//     }
-//   );
-//   const autoplayObserver1 = new IntersectionObserver(
-//     (entries) => {
-//       entries.forEach((entry) => {
-//         if (entry.isIntersecting) {
-//           // Handle ready and play events for dimension updates
-//           (artPlayerInstanceRef.current as any)?.on("ready", () => {
-//             setWidth(
-//               (artPlayerInstanceRef.current as Artplayer)?.video
-//                 ?.videoWidth || 0
-//             );
-//             setHeight(
-//               (artPlayerInstanceRef.current as Artplayer)?.video
-//                 ?.videoHeight || 0
-//             );
-//           });
-
-//           (artPlayerInstanceRef.current as any)?.on("play", () => {
-//             setWidth(
-//               (artPlayerInstanceRef.current as Artplayer)?.video?.videoWidth
-//             );
-//             setHeight(
-//               (artPlayerInstanceRef.current as Artplayer)?.video?.videoHeight
-//             );
-//           });
-//           (artPlayerInstanceRef.current as any)?.play();
-//         } else {
-//           if (artPlayerInstanceRef.current) {
-//             // artPlayerInstanceRef.current.video.src = "";
-//             // artPlayerInstanceRef.current.destroy();
-//             // artPlayerInstanceRef.current = null;
-//             (artPlayerInstanceRef.current as any)?.pause();
-//           }
-//         }
-//       });
-//     },
-//     {
-//       rootMargin: "200px", // Trigger exactly at the edge of the viewport
-//       threshold: 0.5, // Trigger when 50% of the element is visible
-//     }
-//   );
-
-//   // Observe the player container for both initialization and autoplay
-//   initObserver.observe(container);
-//   autoplayObserver.observe(container);
-//   autoplayObserver1.observe(container);
-
-//   return () => {
-//     initObserver.disconnect();
-//     autoplayObserver.disconnect();
-//     autoplayObserver1.disconnect();
-
-//     if (artPlayerInstanceRef.current) {
-//       artPlayerInstanceRef.current.destroy();
-//       artPlayerInstanceRef.current = null;
-//     }
-
-//     if (hlsRef.current) {
-//       hlsRef.current.destroy();
-//       hlsRef.current = null;
-//     }
-//   };
-// }, [src]); // Re-run when `src` changes
-
-//   useEffect(() => {
-//     if (artPlayerInstanceRef.current) {
-//       artPlayerInstanceRef.current.muted = mute;
-//     }
-//   }, [mute]);
-// useEffect(() => {
-//   if (artPlayerInstanceRef.current) {
-//     artPlayerInstanceRef.current.fullscreenWeb = rotate;
-//   }
-// }, [rotate]); // This effect runs whenever `mute` changes
-
-//   return <div ref={playerContainerRef} className={`video_player w-full `} />;
-// };
-
-// export default Player;
-
 import { useEffect, useRef, useState } from "react";
 import Artplayer from "artplayer";
 import Hls from "hls.js";
@@ -286,6 +22,7 @@ const Player = ({
   rotate,
   type,
   post_id,
+  isActive,
 }: {
   src: string;
   thumbnail: string;
@@ -298,6 +35,7 @@ const Player = ({
   type: any;
   width: any;
   height: any;
+  isActive: boolean;
 }) => {
   const playerContainerRef = useRef<HTMLDivElement | null>(null);
   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
@@ -317,6 +55,7 @@ const Player = ({
   const [watchtPost] = useWatchtPostMutation(); // Hook for watch history API
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
   const [p_img, setPImg] = useState(false);
+  const preloadRef = useRef<boolean>(false);
 
   const dispatch = useDispatch();
 
@@ -381,14 +120,13 @@ const Player = ({
       container: playerContainerRef.current,
       url: src,
       volume: 0.5,
-      loop: true,
       muted: true,
-      // autoplay: false,
+      autoplay: false,
       fullscreenWeb: true,
       poster: decryptedPhoto,
       moreVideoAttr: {
         playsInline: true,
-        preload: "auto",
+        preload: "auto", // Changed to auto to ensure content loads
       },
       aspectRatio: true,
       fullscreen: false,
@@ -398,14 +136,26 @@ const Player = ({
           if (Hls.isSupported()) {
             const hls = new Hls({
               maxBufferLength: 30,
+              maxMaxBufferLength: 60,
+              maxBufferSize: 30 * 1000 * 1000,
+              maxBufferHole: 0.5,
+              highBufferWatchdogPeriod: 2,
+              startLevel: -1,
+              // Enable audio but keep it muted
+              enableWorker: true,
+              lowLatencyMode: true,
             });
+            
             hls.loadSource(url);
             hls.attachMedia(videoElement);
             hlsRef.current = hls;
-          } else if (
-            videoElement.canPlayType("application/vnd.apple.mpegurl")
-          ) {
+
+            // Always start loading but keep muted
+            hls.startLoad();
+            videoElement.muted = true;
+          } else if (videoElement.canPlayType("application/vnd.apple.mpegurl")) {
             videoElement.src = url;
+            videoElement.preload = "auto";
           }
         },
       },
@@ -658,29 +408,19 @@ const Player = ({
             display: "none",
           },
           mounted: (element) => {
-            playIconRef.current = element; // Store reference to custom play button
+            playIconRef.current = element;
 
-            // Handle play/pause events
-            artPlayerInstanceRef.current?.on("pause", () => {
-              setIsPaused(true);
-
-              if (element) element.style.display = "block";
-            });
-
-            artPlayerInstanceRef.current?.on("play", () => {
-              // progressBarRef?.current?.classList.remove("hidden");
-              setIsPaused(false);
-              if (element) element.style.display = "none";
-            });
-
-            // Click the play button to resume video
             playIconRef?.current?.addEventListener("click", () => {
-              artPlayerInstanceRef.current?.play();
+              if (artPlayerInstanceRef.current) {
+                artPlayerInstanceRef.current.play().catch((error) => {
+                  console.error('Manual play failed:', error);
+                  // Keep play button visible if play fails
+                  if (playIconRef.current) {
+                    playIconRef.current.style.display = "block";
+                  }
+                });
+              }
             });
-            // playIconRef?.current = element;
-            // playIconRef?.current?.addEventListener("click", () => {
-            //   artPlayerInstanceRef.current?.play();
-            // });
           },
         },
         {
@@ -753,31 +493,34 @@ const Player = ({
       } else {
         setPImg(false);
       }
-      if (!artPlayerInstanceRef.current?.playing) {
-        if (playIconRef.current) playIconRef.current.style.display = "block";
-      } else {
-        if (playIconRef.current) playIconRef.current.style.display = "none";
-      }
+      
       if (progressBarRef?.current) {
-        if (progressBarRef.current) {
-          progressBarRef.current.style.opacity = "1";
-        }
+        progressBarRef.current.style.opacity = "1";
       }
     });
 
-    // Handle play/pause events
+    // Enhanced error handling
+    artPlayerInstanceRef.current.on("error", (error) => {
+      console.error("Video loading error:", error);
+      if (playIconRef.current) {
+        playIconRef.current.style.display = "block";
+      }
+    });
+
+    // Show play button when video is paused
     artPlayerInstanceRef.current.on("pause", () => {
       setIsPaused(true);
-      if (playIconRef.current) playIconRef.current.style.display = "block";
+      if (playIconRef.current) {
+        playIconRef.current.style.display = "block";
+      }
     });
 
+    // Hide play button when video starts playing
     artPlayerInstanceRef.current.on("play", () => {
       setIsPaused(false);
-      if (playIconRef.current) playIconRef.current.style.display = "none";
-    });
-
-    artPlayerInstanceRef.current.on("error", () => {
-      console.error("Error in Artplayer");
+      if (playIconRef.current) {
+        playIconRef.current.style.display = "none";
+      }
     });
   };
 
@@ -810,152 +553,60 @@ const Player = ({
     watchedTimeRef.current = 0; // Reset watched time
   });
 
+  // Handle active state changes
   useEffect(() => {
-    const container = playerContainerRef.current;
+    if (!artPlayerInstanceRef.current) return;
 
-    if (!container) return;
+    if (isActive) {
+      // Video becomes active
+      artPlayerInstanceRef.current.muted = false;
+      
+      // Attempt to play
+      artPlayerInstanceRef.current.play().catch((error) => {
+        console.error('Video play failed:', error);
+        if (playIconRef.current) {
+          playIconRef.current.style.display = "block";
+        }
+        
+        // Fallback to muted playback
+        if (error.name === 'NotAllowedError') {
+          artPlayerInstanceRef.current!.muted = true;
+          artPlayerInstanceRef.current!.play().catch(err => {
+            console.error('Muted playback failed:', err);
+          });
+        }
+      });
 
-    // Observer for initializing the player
-    const initObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && !artPlayerInstanceRef.current) {
-            initializeArtplayer(); // Initialize Artplayer for the current video
-          }
-        });
-      },
-      {
-        rootMargin: "0px", // Start initializing slightly before entering viewport
-        threshold: 0.01, // Trigger when at least 1% of the element is visible
+      // Set quality to auto for active video
+      if (hlsRef.current) {
+        hlsRef.current.currentLevel = -1;
       }
-    );
-
-    // Observer for autoplay functionality
-    const autoplayObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-          } else {
-            if (artPlayerInstanceRef.current) {
-              artPlayerInstanceRef.current.video.src = "";
-              artPlayerInstanceRef.current.destroy();
-              artPlayerInstanceRef.current = null;
-              //(artPlayerInstanceRef.current as any)?.pause();
-            }
-          }
-        });
-      },
-      {
-        rootMargin: "0px", // Trigger exactly at the edge of the viewport
-        threshold: 0.01, // Trigger when 50% of the element is visible
+    } else {
+      // Video becomes inactive
+      artPlayerInstanceRef.current.pause();
+      artPlayerInstanceRef.current.muted = true;
+      
+      // Set to lowest quality when inactive
+      if (hlsRef.current) {
+        hlsRef.current.currentLevel = 0;
       }
-    );
-    const autoplayObserver1 = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setIsplay(true);
+    }
+  }, [isActive]);
 
-            (artPlayerInstanceRef.current as any)?.play();
-
-            // Handle ready and play events for dimension updates
-            (artPlayerInstanceRef.current as any)?.on("ready", () => {
-              setWidth(
-                (artPlayerInstanceRef.current as Artplayer)?.video
-                  ?.videoWidth || 0
-              );
-              setHeight(
-                (artPlayerInstanceRef.current as Artplayer)?.video
-                  ?.videoHeight || 0
-              );
-            });
-
-            (artPlayerInstanceRef.current as any)?.on("play", () => {
-              setWidth(
-                (artPlayerInstanceRef.current as Artplayer)?.video?.videoWidth
-              );
-              setHeight(
-                (artPlayerInstanceRef.current as Artplayer)?.video?.videoHeight
-              );
-            });
-
-            // if (muteRef.current) {
-            //   if (artPlayerInstanceRef?.current) {
-            //     artPlayerInstanceRef.current.muted = true;
-            //   }
-            //   // If muted, set muted immediately
-            // } else {
-            //   // Track playback time using the video:timeupdate event
-            //   const handleTimeUpdate = () => {
-            //     const currentTime =
-            //       artPlayerInstanceRef.current?.currentTime || 0;
-            //     if (currentTime >= 3) {
-            //       if (artPlayerInstanceRef.current && !muteRef?.current) {
-            //         artPlayerInstanceRef.current.muted = false;
-            //       }
-
-            //       artPlayerInstanceRef.current?.off(
-            //         "video:timeupdate",
-            //         handleTimeUpdate
-            //       ); // Stop tracking after unmuting
-            //     }
-            //   };
-
-            //   if (artPlayerInstanceRef?.current) {
-            //     artPlayerInstanceRef.current.on(
-            //       "video:timeupdate",
-            //       handleTimeUpdate
-            //     );
-            //   }
-            //   // artPlayerInstanceRef.current?.play();
-            // }
-
-            if (artPlayerInstanceRef.current) {
-              (artPlayerInstanceRef.current as any).muted = true;
-            }
-          } else {
-            if (artPlayerInstanceRef.current) {
-              dispatch(setMute(true));
-              setIsplay(false);
-              // artPlayerInstanceRef.current.video.src = "";
-              // artPlayerInstanceRef.current.destroy();
-              // artPlayerInstanceRef.current = null;
-              (artPlayerInstanceRef.current as any)?.pause();
-
-              if (artPlayerInstanceRef.current) {
-                (artPlayerInstanceRef.current as any).muted = true;
-              }
-            }
-          }
-        });
-      },
-      {
-        rootMargin: "200px 0px", // Trigger exactly at the edge of the viewport
-        threshold: 0.5, // Trigger when 50% of the element is visible
-      }
-    );
-
-    // Observe the player container for both initialization and autoplay
-    initObserver.observe(container);
-    autoplayObserver.observe(container);
-    autoplayObserver1.observe(container);
-
+  // Initialize player when component mounts
+  useEffect(() => {
+    initializeArtplayer();
     return () => {
-      initObserver.disconnect();
-      autoplayObserver.disconnect();
-      autoplayObserver1.disconnect();
-
       if (artPlayerInstanceRef.current) {
         artPlayerInstanceRef.current.destroy();
         artPlayerInstanceRef.current = null;
       }
-
       if (hlsRef.current) {
         hlsRef.current.destroy();
         hlsRef.current = null;
       }
     };
-  }, [src]); // Re-run when `src` changes
+  }, [src]); // Reinitialize when src changes
 
   useEffect(() => {
     if (
@@ -966,36 +617,6 @@ const Player = ({
       artPlayerInstanceRef.current.play();
     }
   }, [isPlay]);
-
-  // useEffect(() => {
-  //   muteRef.current = mute; // Update muteRef when mute state changes
-
-  //   if (artPlayerInstanceRef.current) {
-  //     if (mute) {
-  //       // If muting, set muted immediately
-  //       artPlayerInstanceRef.current.muted = true;
-  //     } else {
-  //       artPlayerInstanceRef.current.muted = false;
-  //       // If unmuting, check if the video has been playing for at least 2 seconds
-  //       // const currentTime = artPlayerInstanceRef.current.currentTime || 0;
-
-  //       // if (currentTime >= 3) {
-  //       //   // If the video has been playing for at least 2 seconds, unmute immediately
-  //       //   artPlayerInstanceRef.current.muted = false;
-  //       // } else {
-  //       //   // If not, wait until the video has played for 2 seconds
-  //       //   const timeToWait = 3000 - currentTime * 1000; // Calculate remaining time to reach 2 seconds
-  //       //   if (timeToWait > 0) {
-  //       //     setTimeout(() => {
-  //       //       if (artPlayerInstanceRef.current) {
-  //       //         artPlayerInstanceRef.current.muted = false;
-  //       //       }
-  //       //     }, timeToWait);
-  //       //   }
-  //       // }
-  //     }
-  //   }
-  // }, [mute]);
 
   useEffect(() => {
     muteRef.current = mute; // Update muteRef when mute state changes
@@ -1014,6 +635,7 @@ const Player = ({
     <div
       ref={playerContainerRef}
       className={`video_player w-full ${p_img ? "poster_change" : ""}`}
+      style={{ minHeight: '200px' }} // Add minimum height to prevent collapse
     />
   );
 };

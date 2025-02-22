@@ -71,7 +71,6 @@ const VideoFeed = ({
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            // Get the post ID of the currently visible video
             const postId = entry.target.getAttribute("data-post-id");
             if (postId) {
               setCurrentActivePost(postId);
@@ -79,17 +78,17 @@ const VideoFeed = ({
           }
         });
       },
-      { root: null, rootMargin: "0px", threshold: 0.5 } // Trigger when 50% of the video is visible
+      { 
+        threshold: 0.5,
+      }
     );
 
-    // Observe all video elements
+    // Observe only the videos in view
     Array.from(container.children).forEach((child) => {
       observer.observe(child);
     });
 
-    return () => {
-      observer.disconnect();
-    };
+    return () => observer.disconnect();
   }, [videos]);
 
   useEffect(() => {
