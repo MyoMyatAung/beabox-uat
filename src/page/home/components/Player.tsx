@@ -123,37 +123,41 @@ const Player = ({
       muted: true,
       autoplay: false,
       fullscreenWeb: true,
+      // fullscreen: rotate,
       poster: decryptedPhoto,
       moreVideoAttr: {
         playsInline: true,
-        preload: "auto", // Changed to auto to ensure content loads
+        preload: "auto",
       },
       aspectRatio: true,
       fullscreen: false,
       theme: "#d53ff0",
       customType: {
         m3u8: (videoElement, url) => {
-          if (Hls.isSupported()) {
-            const hls = new Hls({
-              maxBufferLength: 30,
-              maxMaxBufferLength: 60,
-              maxBufferSize: 30 * 1000 * 1000,
-              maxBufferHole: 0.5,
-              highBufferWatchdogPeriod: 2,
-              startLevel: -1,
-              // Enable audio but keep it muted
-              enableWorker: true,
-              lowLatencyMode: true,
-            });
-            
-            hls.loadSource(url);
-            hls.attachMedia(videoElement);
-            hlsRef.current = hls;
+          if (url.includes('.m3u8')) {
+            if (Hls.isSupported()) {
+              const hls = new Hls({
+                maxBufferLength: 30,
+                maxMaxBufferLength: 60,
+                maxBufferSize: 30 * 1000 * 1000,
+                maxBufferHole: 0.5,
+                highBufferWatchdogPeriod: 2,
+                startLevel: -1,
+                enableWorker: true,
+                lowLatencyMode: true,
+              });
+              
+              hls.loadSource(url);
+              hls.attachMedia(videoElement);
+              hlsRef.current = hls;
 
-            // Always start loading but keep muted
-            hls.startLoad();
-            videoElement.muted = true;
-          } else if (videoElement.canPlayType("application/vnd.apple.mpegurl")) {
+              hls.startLoad();
+              videoElement.muted = true;
+            } else if (videoElement.canPlayType("application/vnd.apple.mpegurl")) {
+              videoElement.src = url;
+              videoElement.preload = "auto";
+            }
+          } else {
             videoElement.src = url;
             videoElement.preload = "auto";
           }
@@ -625,11 +629,12 @@ const Player = ({
     }
   }, [mute]);
 
+  // Handle rotate state changes
   useEffect(() => {
     if (artPlayerInstanceRef.current) {
       artPlayerInstanceRef.current.fullscreen = rotate;
     }
-  }, [rotate]); // This effect runs whenever `mute` changes
+  }, [rotate]);
 
   return (
     <div
