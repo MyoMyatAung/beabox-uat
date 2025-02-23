@@ -47,7 +47,7 @@ const Home = () => {
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
   const [videosToRender, setVideosToRender] = useState<any[]>([]); // Store videos to render
-  const [videosPerLoad, setVideosPerLoad] = useState(5); // Number of videos to initially render
+  const [videosPerLoad, setVideosPerLoad] = useState(3); // Number of videos to initially render
   const [start, setStart] = useState(false);
 
   const removeHeart = (id: number) => {
@@ -217,29 +217,67 @@ const Home = () => {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            dispatch(setPage(page + 1)); // Load more videos
+            // Get the post ID of the intersecting video
+            const postId = entry.target.getAttribute("data-post-id");
+
+            // Check if the intersecting video is one of the last five videos in the `videos["foryou"]` list
+            const forYouVideos = videos[currentTab === 2 ? "foryou" : "follow"];
+            const lastFiveVideos = forYouVideos.slice(-5); // Get the last five videos
+
+            if (lastFiveVideos[0].post_id === postId) {
+              dispatch(setPage(page + 1)); // Load more videos
+            }
           }
         });
       },
       {
         rootMargin: "100px", // Trigger the observer when 100px from the bottom
-        threshold: 0.5, // 50% visibility of the last video
+        threshold: 0.5, // 50% visibility of the video
       }
     );
 
-    // Observe the last video element
-    if (videosToRender.length > 5) {
-      const secondLastVideo = container.children[container.children.length - 5];
-      if (secondLastVideo) {
-        observer.observe(secondLastVideo);
-      }
-    }
+    // Observe all video elements
+    Array.from(container.children).forEach((child) => {
+      observer.observe(child);
+    });
 
     // Cleanup observer on component unmount or when dependencies change
     return () => {
       observer.disconnect();
     };
   }, [videosToRender, refresh]);
+
+  // useEffect(() => {
+  //   const container = videoContainerRef.current;
+  //   if (!container) return;
+
+  //   const observer = new IntersectionObserver(
+  //     (entries) => {
+  //       entries.forEach((entry) => {
+  //         if (entry.isIntersecting) {
+  //           dispatch(setPage(page + 1)); // Load more videos
+  //         }
+  //       });
+  //     },
+  //     {
+  //       rootMargin: "100px", // Trigger the observer when 100px from the bottom
+  //       threshold: 0.5, // 50% visibility of the last video
+  //     }
+  //   );
+
+  //   // Observe the last video element
+  //   if (videosToRender.length > 5) {
+  //     const secondLastVideo = container.children[container.children.length - 5];
+  //     if (secondLastVideo) {
+  //       observer.observe(secondLastVideo);
+  //     }
+  //   }
+
+  //   // Cleanup observer on component unmount or when dependencies change
+  //   return () => {
+  //     observer.disconnect();
+  //   };
+  // }, [videosToRender, refresh]);
 
   if (topmovies) {
     return <Top20Movies setTopMovies={setTopMovies} />;
@@ -256,7 +294,7 @@ const Home = () => {
             const lastFiveVideos =
               videos[
                 currentTab === 0 ? "follow" : currentTab === 2 ? "foryou" : ""
-              ]?.slice(videosToRender?.length, videosToRender?.length + 5) ||
+              ]?.slice(videosToRender?.length, videosToRender?.length + 3) ||
               [];
 
             // console.log(initialVideos);
