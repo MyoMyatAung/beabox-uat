@@ -107,23 +107,29 @@ const Player = ({
     loadAndDecryptPhoto();
   }, [thumbnail]);
 
-  // Initialize Artplayer for the current video
-  const initializeArtplayer = () => {
+  // Initialize player function
+  const initializePlayer = () => {
     if (!playerContainerRef.current || artPlayerInstanceRef.current) return;
 
     Artplayer.DBCLICK_FULLSCREEN = false;
     Artplayer.MOBILE_DBCLICK_PLAY = false;
     Artplayer.MOBILE_CLICK_PLAY = true;
 
+    // If player already exists, destroy it first
+    if (artPlayerInstanceRef.current) {
+      artPlayerInstanceRef.current.destroy();
+      artPlayerInstanceRef.current = null;
+    }
+
+    // Create new player instance
     artPlayerInstanceRef.current = new Artplayer({
       autoOrientation: true,
       container: playerContainerRef.current,
       url: src,
       volume: 0.5,
-      muted: true,
+      muted: muteRef.current,
       autoplay: false,
       fullscreenWeb: true,
-      // fullscreen: rotate,
       poster: decryptedPhoto,
       moreVideoAttr: {
         playsInline: true,
@@ -152,7 +158,7 @@ const Player = ({
               hlsRef.current = hls;
 
               hls.startLoad();
-              videoElement.muted = true;
+              videoElement.muted = muteRef.current;
             } else if (videoElement.canPlayType("application/vnd.apple.mpegurl")) {
               videoElement.src = url;
               videoElement.preload = "auto";
@@ -165,7 +171,7 @@ const Player = ({
       },
       icons: {
         loading: `<img width="100" height="100" src=${vod_loader}>`,
-        state: "",
+        state: `<img src="${indicator}" width="50" height="50" alt="Play">`,
       },
       layers: [
         {
@@ -183,7 +189,6 @@ const Player = ({
             height: "25px",
             zIndex: "9999",
           },
-
           mounted: (element) => {
             progressBarRef.current = element.querySelector(
               ".custom-progress-bar"
@@ -559,47 +564,63 @@ const Player = ({
 
   // Handle active state changes
   useEffect(() => {
-    if (!artPlayerInstanceRef.current) return;
+    if (!playerContainerRef.current) return;
 
     if (isActive) {
-      // Video becomes active
-      artPlayerInstanceRef.current.muted = false;
+      // Initialize or reinitialize player when becoming active
+      initializePlayer();
       
-      // Attempt to play
-      artPlayerInstanceRef.current.play().catch((error) => {
-        console.error('Video play failed:', error);
-        if (playIconRef.current) {
-          playIconRef.current.style.display = "block";
-        }
-        
-        // Fallback to muted playback
-        if (error.name === 'NotAllowedError') {
-          artPlayerInstanceRef.current!.muted = true;
-          artPlayerInstanceRef.current!.play().catch(err => {
-            console.error('Muted playback failed:', err);
-          });
-        }
-      });
+      // Function to attempt playback
+      const attemptPlay = () => {
+        if (!artPlayerInstanceRef.current) return;
+        artPlayerInstanceRef.current.play().catch((error) => {
+          console.error('Video play failed:', error);
+          if (error.name === 'NotAllowedError') {
+            // Reset to poster image
+            if (artPlayerInstanceRef.current) {
+              artPlayerInstanceRef.current.currentTime = 0;
+              // Show play icon
+              artPlayerInstanceRef.current.controls.show = true;
+              // Ensure poster is visible
+              artPlayerInstanceRef.current.poster = decryptedPhoto; // Make sure posterUrl is defined in your component
+              artPlayerInstanceRef.current.video.load(); // This will force poster to show
+            }
+            // Don't auto-retry, let user click play button instead
+            // setTimeout(attemptPlay, 300); -- removed auto-retry
+          }
+        });
+      };
+
+      attemptPlay();
 
       // Set quality to auto for active video
       if (hlsRef.current) {
         hlsRef.current.currentLevel = -1;
       }
     } else {
+      // Cleanup when inactive
+      if (artPlayerInstanceRef.current) {
+        artPlayerInstanceRef.current.destroy();
+        artPlayerInstanceRef.current = null;
+      }
+      if (hlsRef.current) {
+        hlsRef.current.destroy();
+        hlsRef.current = null;
+      }
       // Video becomes inactive
-      artPlayerInstanceRef.current.pause();
-      artPlayerInstanceRef.current.muted = true;
+      // artPlayerInstanceRef.current.pause();
+      // artPlayerInstanceRef.current.muted = true;
       
       // Set to lowest quality when inactive
-      if (hlsRef.current) {
-        hlsRef.current.currentLevel = 0;
-      }
+      // if (hlsRef.current) {
+      //   hlsRef.current.currentLevel = 0;
+      // }
     }
   }, [isActive]);
 
   // Initialize player when component mounts
   useEffect(() => {
-    initializeArtplayer();
+    initializePlayer();
     return () => {
       if (artPlayerInstanceRef.current) {
         artPlayerInstanceRef.current.destroy();
@@ -635,6 +656,19 @@ const Player = ({
       artPlayerInstanceRef.current.fullscreen = rotate;
     }
   }, [rotate]);
+
+  const cleanupPlayer = () => {
+    if (artPlayerInstanceRef.current) {
+      // Force garbage collection of video resources
+      const video = artPlayerInstanceRef.current.video;
+      if (video) {
+        video.removeAttribute('src');
+        video.load();
+      }
+      artPlayerInstanceRef.current.destroy();
+      artPlayerInstanceRef.current = null;
+    }
+  };
 
   return (
     <div
