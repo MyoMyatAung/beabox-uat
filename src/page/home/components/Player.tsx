@@ -579,14 +579,9 @@ const Player = ({
             // Reset to poster image
             if (artPlayerInstanceRef.current) {
               artPlayerInstanceRef.current.currentTime = 0;
-              // Show play icon
               artPlayerInstanceRef.current.controls.show = true;
-              // Ensure poster is visible
-              artPlayerInstanceRef.current.poster = decryptedPhoto; // Make sure posterUrl is defined in your component
-              artPlayerInstanceRef.current.video.load(); // This will force poster to show
+              artPlayerInstanceRef.current.video.load(); // Load the video // Small delay to ensure video has loaded
             }
-            // Don't auto-retry, let user click play button instead
-            // setTimeout(attemptPlay, 300); -- removed auto-retry
           }
         });
       };
