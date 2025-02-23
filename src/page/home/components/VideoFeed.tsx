@@ -45,10 +45,61 @@ const VideoFeed = ({
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const [hideBar, sethideBar] = useState(false);
+  const [videosToRender, setVideosToRender] = useState<any[]>([]); // Store videos to render
+  const [videosPerLoad, setVideosPerLoad] = useState(3); // Number of videos to initially render
+  const [start, setStart] = useState(false);
 
   const removeHeart = (id: number) => {
     setHearts((prev) => prev.filter((heartId) => heartId !== id)); // Remove the heart by ID
   };
+
+  useEffect(() => {
+    if (!start) {
+      const initialVideos = videos.slice(0, videosPerLoad) || [];
+
+      if (initialVideos.length > 1) {
+        setVideosToRender(initialVideos);
+        setStart(true);
+      }
+    }
+  }, [videos]); // Runs only once on mount
+
+  useEffect(() => {
+    const container = videoContainerRef.current;
+    if (!container) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const lastFiveVideos =
+              videos?.slice(
+                videosToRender?.length,
+                videosToRender?.length + 3
+              ) || [];
+
+            setVideosToRender((prev) => [...prev, ...lastFiveVideos]);
+          }
+        });
+      },
+      {
+        rootMargin: "100px", // Trigger the observer when 100px from the bottom
+        threshold: 0.5, // 50% visibility of the last video
+      }
+    );
+
+    // Observe the last video element
+    if (videosToRender.length > 1) {
+      const secondLastVideo = container.children[container.children.length - 1];
+      if (secondLastVideo) {
+        observer.observe(secondLastVideo);
+      }
+    }
+    // Cleanup observer on component unmount or when dependencies change
+    return () => {
+      observer.disconnect();
+    };
+  }, [videosToRender]);
 
   // Scroll to the first current post when the component is mounted
   useEffect(() => {
@@ -78,7 +129,7 @@ const VideoFeed = ({
           }
         });
       },
-      { 
+      {
         threshold: 0.5,
       }
     );
@@ -218,7 +269,7 @@ const VideoFeed = ({
             />
           </div>
         </div>
-        {videos.map((video: any, index: any) => (
+        {videosToRender.map((video: any, index: any) => (
           <div
             key={index}
             className="video mt-[20px] pb-[68px]"
