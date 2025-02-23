@@ -2,14 +2,13 @@ import {
   useFilterFollowerQuery,
   useGetFollowerListQuery,
 } from "@/store/api/profileApi";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import Loader from "../../../page/home/vod_loader.gif";
 import FollowCard from "../follow-card";
 import { UsersRound } from "lucide-react";
 import { FaSearch } from "react-icons/fa";
 import { Input } from "@/components/ui/input";
-import InfinitLoad from "@/components/shared/infinit-load";
 
 const FollowerList = ({ searchTerm, id }: any) => {
   // const [searchTerm, setSearchTerm] = useState("");
@@ -30,6 +29,9 @@ const FollowerList = ({ searchTerm, id }: any) => {
     },
     { skip: searchTerm === "" }
   );
+
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (data?.data?.length) {
@@ -52,6 +54,24 @@ const FollowerList = ({ searchTerm, id }: any) => {
       setPage((prev) => prev + 1);
     }
   };
+
+  useEffect(() => {
+    if (observerRef.current) observerRef.current.disconnect();
+
+    observerRef.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasMore) {
+        fetchMoreData();
+      }
+    });
+
+    if (loadMoreRef.current) {
+      observerRef.current.observe(loadMoreRef.current);
+    }
+
+    return () => {
+      if (observerRef.current) observerRef.current.disconnect();
+    };
+  }, [hasMore, followers]);
 
   if (isLoading && page === 1) {
     return (
@@ -98,11 +118,9 @@ const FollowerList = ({ searchTerm, id }: any) => {
               {followers?.map((follower: any) => (
                 <FollowCard key={follower.user_code} data={follower} />
               ))}
-              <InfinitLoad
-                data={followers}
-                fetchData={fetchMoreData}
-                hasMore={hasMore}
-              />
+              <div ref={loadMoreRef} className="loading-indicator flex justify-center py-4">
+                {isFetching && <img src={Loader} className="w-[70px] h-[70px]" alt="Loading" />}
+              </div>
             </div>
           ) : (
             <div className="h-full flex justify-center mt-[40%]">
