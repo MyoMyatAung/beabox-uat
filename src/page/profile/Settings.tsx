@@ -153,13 +153,13 @@ const Settings = ({
 
         <div className="border-b border-white/10 my-2"></div>
 
-        <div className="flex justify-between items-center">
+        {/* <div className="flex justify-between items-center">
           <p className="flex items-center gap-1 text-[14px]">清除缓存</p>
           <p className="flex items-center gap-1 text-[14px]">
             {Math.round(cacheSize)} MB{" "}
             <ChevronRight size={15} className="text-[#777777]" />
           </p>
-        </div>
+        </div> */}
       </div>
       <div className="w-full fixed bottom-0 px-5">
         {user?.token ? (
