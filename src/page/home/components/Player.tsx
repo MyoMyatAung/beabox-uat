@@ -142,7 +142,6 @@ const Player = ({
       moreVideoAttr: {
         playsInline: true,
         preload: "metadata" as const,
-        playsinline: true,
       },
       aspectRatio: true,
       fullscreen: false,
@@ -159,65 +158,8 @@ const Player = ({
           
           // Enable range requests
           const initVideo = () => {
-            // Start with a small initial preload
+            // Start with metadata only
             video.preload = "metadata";
-            
-            // Setup buffer management
-            const handleProgress = () => {
-              if (!video.buffered.length) return;
-              
-              const currentTime = video.currentTime;
-              const buffered = video.buffered;
-              let totalBuffered = 0;
-              
-              // Calculate total buffered size
-              for (let i = 0; i < buffered.length; i++) {
-                totalBuffered += (buffered.end(i) - buffered.start(i));
-              }
-              
-              // Clear old buffers if we exceed max size
-              if (totalBuffered > MAX_BUFFER_SIZE) {
-                const mediaSource = video.src;
-                video.src = '';
-                video.load();
-                video.currentTime = currentTime;
-                video.src = mediaSource;
-              }
-            };
-
-            // Implement smart buffering
-            const handleTimeUpdate = () => {
-              if (bufferTimer.current) {
-                clearTimeout(bufferTimer.current);
-              }
-
-              bufferTimer.current = setTimeout(() => {
-                if (!video.paused && video.readyState < 4) {
-                  const currentTime = video.currentTime;
-                  const buffered = video.buffered;
-                  
-                  // Check if we need to buffer more
-                  if (buffered.length) {
-                    const lastBufferedEnd = buffered.end(buffered.length - 1);
-                    if (lastBufferedEnd - currentTime < BUFFER_THRESHOLD) {
-                      video.preload = "auto";
-                    }
-                  }
-                }
-              }, 1000);
-            };
-
-            video.addEventListener('progress', handleProgress);
-            video.addEventListener('timeupdate', handleTimeUpdate);
-
-            // Cleanup function
-            return () => {
-              video.removeEventListener('progress', handleProgress);
-              video.removeEventListener('timeupdate', handleTimeUpdate);
-              if (bufferTimer.current) {
-                clearTimeout(bufferTimer.current);
-              }
-            };
           };
 
           // Initialize video with proper settings
@@ -226,6 +168,12 @@ const Player = ({
           } else {
             initVideo();
           }
+          
+          // Clean up function
+          return () => {
+            video.src = '';
+            video.load();
+          };
         },
       },
       layers: [

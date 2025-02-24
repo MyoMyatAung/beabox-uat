@@ -170,25 +170,59 @@ const Home = () => {
 
   useEffect(() => {
     const container = videoContainerRef.current;
-    if (
-      !container ||
-      videos[currentTab === 2 ? "foryou" : "follow"].length === 0
-    )
-      return;
+    if (!container) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            // Get the post ID of the currently visible video
             const postId = entry.target.getAttribute("data-post-id");
             if (postId) {
               dispatch(setCurrentActivePost(postId));
+              
+              // Find current video index
+              const currentVideoKey = currentTab === 0 ? "follow" : currentTab === 2 ? "foryou" : "";
+              const currentVideos = videos[currentVideoKey] || [];
+              const currentIndex = currentVideos.findIndex((v: any) => v.post_id === postId);
+              
+              // Preload next 3 videos
+              if (currentIndex !== -1) {
+                for (let i = 1; i <= 3; i++) {
+                  const nextVideo = currentVideos[currentIndex + i];
+                  if (nextVideo) {
+                    // Create a video element for preloading
+                    const preloadVideo = document.createElement('video');
+                    preloadVideo.preload = 'metadata';
+                    preloadVideo.src = nextVideo.url;
+                    
+                    // Add range request headers
+                    const headers = new Headers();
+                    headers.append('Range', 'bytes=0-1048575'); // First 1MB only
+                    
+                    fetch(nextVideo.url, { headers })
+                      .then(response => {
+                        if (response.status === 206) {
+                          // Range request successful
+                          console.log('Preloaded metadata for next video');
+                        }
+                      })
+                      .catch(() => {
+                        // Ignore preload errors
+                      });
+                      
+                    // Clean up after 10 seconds
+                    setTimeout(() => {
+                      preloadVideo.src = '';
+                      preloadVideo.load();
+                    }, 10000);
+                  }
+                }
+              }
             }
           }
         });
       },
-      { root: null, rootMargin: "0px", threshold: 0.5 } // Trigger when 50% of the video is visible
+      { root: null, rootMargin: "0px", threshold: 0.5 }
     );
 
     // Observe all video elements
