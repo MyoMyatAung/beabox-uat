@@ -185,52 +185,37 @@ const Home = () => {
               const currentVideos = videos[currentVideoKey] || [];
               const currentIndex = currentVideos.findIndex((v: any) => v.post_id === postId);
               
-              // Preload next 3 videos
+              // Simple preloading logic
               if (currentIndex !== -1) {
-                // Create a preloader for managing preloads
-                const preloader = {
-                  chunks: new Map<string, boolean>(), // Track preloaded chunks
-                  preloadVideoChunk: async (url: string) => {
-                    if (preloader.chunks.has(url)) return; // Skip if already preloaded
+                const preloadedUrls = new Set<string>();
+
+                const preloadVideo = async (url: string) => {
+                  if (!url || preloadedUrls.has(url)) return;
+                  
+                  try {
+                    const headers = new Headers();
+                    headers.append('Range', 'bytes=0-1024');
                     
-                    try {
-                      const headers = new Headers();
-                      headers.append('Range', 'bytes=0-2097152'); // Load first 2MB only
-                      
-                      const response = await fetch(url, { 
-                        headers,
-                        method: 'GET',
-                      });
-                      
-                      if (response.status === 206) {
-                        // Store the chunk in browser's memory cache
-                        await response.blob();
-                        preloader.chunks.set(url, true);
-                        
-                        // Clean up old preloads when we have too many
-                        if (preloader.chunks.size > 5) {
-                          const oldestUrl = Array.from(preloader.chunks.keys())[0];
-                          preloader.chunks.delete(oldestUrl);
-                        }
-                      }
-                    } catch (error) {
-                      console.error('Failed to preload video chunk:', error);
+                    const response = await fetch(url, { headers });
+                    if (response.status === 206) {
+                      preloadedUrls.add(url);
                     }
+                  } catch (error) {
+                    console.error('Failed to preload video:', error);
                   }
                 };
 
-                // Preload next 3 videos in sequence
-                const preloadVideos = async () => {
+                // Always preload next 3 videos sequentially
+                const preloadNextVideos = async () => {
                   for (let i = 1; i <= 3; i++) {
                     const nextVideo = currentVideos[currentIndex + i];
                     if (nextVideo?.files?.[0]?.resourceURL) {
-                      await preloader.preloadVideoChunk(nextVideo.files[0].resourceURL);
+                      await preloadVideo(nextVideo.files[0].resourceURL);
                     }
                   }
                 };
 
-                // Start preloading
-                preloadVideos().catch(console.error);
+                preloadNextVideos().catch(console.error);
               }
             }
           }

@@ -154,13 +154,13 @@ const Player = ({
       customType: {
         mp4: function(video: HTMLVideoElement, url: string) {
           // Configure video element
-          video.src = url;
+          video.preload = "metadata";
           
           const loadVideo = async () => {
             try {
-              // First try to fetch with range request to see if we have a preloaded chunk
+              // Try to load just metadata first
               const headers = new Headers();
-              headers.append('Range', 'bytes=0-2097152'); // First 2MB
+              headers.append('Range', 'bytes=0-1024'); // Just get first 1KB to check range support
               
               const response = await fetch(url, { 
                 headers,
@@ -168,30 +168,23 @@ const Player = ({
               });
               
               if (response.status === 206) {
-                // We got a partial response, video supports range requests
-                video.preload = "metadata";
+                // Server supports range requests, set video source
+                video.src = url;
                 
-                // If this is the active video, start loading more
+                // If this is active video, start loading more
                 if (isActive) {
-                  // Load the next chunk in background
-                  const nextChunkResponse = await fetch(url, {
-                    headers: new Headers({
-                      'Range': 'bytes=2097153-4194304' // Next 2MB
-                    })
-                  });
-                  
-                  if (nextChunkResponse.status === 206) {
-                    // Store the next chunk in browser cache
-                    await nextChunkResponse.blob();
-                  }
+                  video.preload = "auto";
                 }
               } else {
                 // Server doesn't support range requests, fallback to normal loading
+                video.src = url;
                 video.preload = "metadata";
               }
             } catch (error) {
               console.error('Error loading video:', error);
-              video.preload = "metadata"; // Fallback to metadata only
+              // Fallback to basic loading
+              video.src = url;
+              video.preload = "metadata";
             }
           };
 
@@ -204,10 +197,10 @@ const Player = ({
             if (isActive) {
               video.preload = "auto";
             }
-          }, { once: true });
+          });
 
           video.addEventListener('waiting', () => {
-            // If video is waiting for data, ensure we're loading
+            // If video is waiting for data and is active, ensure we're loading
             if (isActive) {
               video.preload = "auto";
             }
