@@ -156,22 +156,66 @@ const Player = ({
           // Configure video element
           video.src = url;
           
-          // Enable range requests
-          const initVideo = () => {
-            // Start with metadata only
-            video.preload = "metadata";
+          const loadVideo = async () => {
+            try {
+              // First try to fetch with range request to see if we have a preloaded chunk
+              const headers = new Headers();
+              headers.append('Range', 'bytes=0-2097152'); // First 2MB
+              
+              const response = await fetch(url, { 
+                headers,
+                method: 'GET',
+              });
+              
+              if (response.status === 206) {
+                // We got a partial response, video supports range requests
+                video.preload = "metadata";
+                
+                // If this is the active video, start loading more
+                if (isActive) {
+                  // Load the next chunk in background
+                  const nextChunkResponse = await fetch(url, {
+                    headers: new Headers({
+                      'Range': 'bytes=2097153-4194304' // Next 2MB
+                    })
+                  });
+                  
+                  if (nextChunkResponse.status === 206) {
+                    // Store the next chunk in browser cache
+                    await nextChunkResponse.blob();
+                  }
+                }
+              } else {
+                // Server doesn't support range requests, fallback to normal loading
+                video.preload = "metadata";
+              }
+            } catch (error) {
+              console.error('Error loading video:', error);
+              video.preload = "metadata"; // Fallback to metadata only
+            }
           };
 
-          // Initialize video with proper settings
-          if (video.readyState === 0) {
-            video.addEventListener('loadedmetadata', initVideo, { once: true });
-          } else {
-            initVideo();
-          }
+          // Start loading process
+          loadVideo().catch(console.error);
+          
+          // Add event listeners for dynamic loading
+          video.addEventListener('canplaythrough', () => {
+            // Once we can play through current buffer, load more if active
+            if (isActive) {
+              video.preload = "auto";
+            }
+          }, { once: true });
+
+          video.addEventListener('waiting', () => {
+            // If video is waiting for data, ensure we're loading
+            if (isActive) {
+              video.preload = "auto";
+            }
+          });
           
           // Clean up function
           return () => {
-            video.src = '';
+            video.removeAttribute('src');
             video.load();
           };
         },
