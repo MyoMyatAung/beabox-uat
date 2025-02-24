@@ -147,8 +147,8 @@ const Player = ({
       fullscreen: false,
       theme: "#d53ff0",
       icons: {
-        loading: `<img width="100" height="100" src=${vod_loader}>`,
-        state: `<img src="${indicator}" width="50" height="50" alt="Play">`,
+        loading: `<div class="video-loading-indicator" style="display: none;"><img width="100" height="100" src=${vod_loader}></div>`,
+        state: `<div class="video-play-indicator" style="display: none;"><img src="${indicator}" width="50" height="50" alt="Play"></div>`,
       },
       type: 'mp4',
       customType: {
@@ -407,29 +407,68 @@ const Player = ({
       if (progressBarRef?.current) {
         progressBarRef.current.style.opacity = "1";
       }
+
+      // Initially show play button when video is ready
+      const loadingIndicator = artPlayerInstanceRef.current?.template?.$loading?.querySelector('.video-loading-indicator') as HTMLDivElement;
+      const playIndicator = artPlayerInstanceRef.current?.template?.$state?.querySelector('.video-play-indicator') as HTMLDivElement;
+      
+      if (loadingIndicator) loadingIndicator.style.display = "none";
+      if (playIndicator) playIndicator.style.display = "block";
     });
 
     // Enhanced error handling
     artPlayerInstanceRef.current.on("error", (error) => {
       console.error("Video loading error:", error);
-      if (playIconRef.current) {
-        playIconRef.current.style.display = "block";
-      }
+      const loadingIndicator = artPlayerInstanceRef.current?.template?.$loading?.querySelector('.video-loading-indicator') as HTMLDivElement;
+      const playIndicator = artPlayerInstanceRef.current?.template?.$state?.querySelector('.video-play-indicator') as HTMLDivElement;
+      
+      if (loadingIndicator) loadingIndicator.style.display = "none";
+      if (playIndicator) playIndicator.style.display = "block";
     });
 
     // Show/hide play button based on state
     artPlayerInstanceRef.current.on("pause", () => {
       setIsPaused(true);
-      if (playIconRef.current) {
-        playIconRef.current.style.display = "block";
-      }
+      const loadingIndicator = artPlayerInstanceRef.current?.template?.$loading?.querySelector('.video-loading-indicator') as HTMLDivElement;
+      const playIndicator = artPlayerInstanceRef.current?.template?.$state?.querySelector('.video-play-indicator') as HTMLDivElement;
+      
+      if (loadingIndicator) loadingIndicator.style.display = "none";
+      if (playIndicator) playIndicator.style.display = "block";
     });
 
     artPlayerInstanceRef.current.on("play", () => {
       setIsPaused(false);
-      if (playIconRef.current) {
-        playIconRef.current.style.display = "none";
-      }
+      const loadingIndicator = artPlayerInstanceRef.current?.template?.$loading?.querySelector('.video-loading-indicator') as HTMLDivElement;
+      const playIndicator = artPlayerInstanceRef.current?.template?.$state?.querySelector('.video-play-indicator') as HTMLDivElement;
+      
+      if (loadingIndicator) loadingIndicator.style.display = "none";
+      if (playIndicator) playIndicator.style.display = "none";
+    });
+
+    // Add loading state handler
+    artPlayerInstanceRef.current.on("video:waiting", () => {
+      const loadingIndicator = artPlayerInstanceRef.current?.template?.$loading?.querySelector('.video-loading-indicator') as HTMLDivElement;
+      const playIndicator = artPlayerInstanceRef.current?.template?.$state?.querySelector('.video-play-indicator') as HTMLDivElement;
+      
+      if (loadingIndicator) loadingIndicator.style.display = "block";
+      if (playIndicator) playIndicator.style.display = "none";
+    });
+
+    artPlayerInstanceRef.current.on("video:playing", () => {
+      const loadingIndicator = artPlayerInstanceRef.current?.template?.$loading?.querySelector('.video-loading-indicator') as HTMLDivElement;
+      const playIndicator = artPlayerInstanceRef.current?.template?.$state?.querySelector('.video-play-indicator') as HTMLDivElement;
+      
+      if (loadingIndicator) loadingIndicator.style.display = "none";
+      if (playIndicator) playIndicator.style.display = "none";
+    });
+
+    // Add initial loading state
+    artPlayerInstanceRef.current.on("video:loadstart", () => {
+      const loadingIndicator = artPlayerInstanceRef.current?.template?.$loading?.querySelector('.video-loading-indicator') as HTMLDivElement;
+      const playIndicator = artPlayerInstanceRef.current?.template?.$state?.querySelector('.video-play-indicator') as HTMLDivElement;
+      
+      if (loadingIndicator) loadingIndicator.style.display = "block";
+      if (playIndicator) playIndicator.style.display = "none";
     });
   };
 
