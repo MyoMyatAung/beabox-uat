@@ -10,6 +10,21 @@ import { decryptImage } from "@/utils/imageDecrypt";
 import { c } from "node_modules/framer-motion/dist/types.d-6pKw1mTI";
 import { setMute } from "../services/muteSlice";
 
+// Constants for video preloading
+const BUFFER_THRESHOLD = 10; // seconds before current position to start buffering
+const MAX_BUFFER_SIZE = 50 * 1024 * 1024; // 50MB maximum buffer size
+
+interface RootState {
+  muteSlice: {
+    mute: boolean;
+  };
+  persist: {
+    user: {
+      token: string;
+    };
+  };
+}
+
 const Player = ({
   src,
   width,
@@ -29,19 +44,19 @@ const Player = ({
   setWidth: (width: number) => void;
   setHeight: (height: number) => void;
   handleLike: () => void;
-  sethideBar: any;
-  post_id: any;
-  rotate: any;
-  type: any;
-  width: any;
-  height: any;
+  sethideBar: (hide: boolean) => void;
+  post_id: string;
+  rotate: boolean;
+  type: string;
+  width: number;
+  height: number;
   isActive: boolean;
 }) => {
   const playerContainerRef = useRef<HTMLDivElement | null>(null);
   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
   const hlsRef = useRef<Hls | null>(null);
-  const { mute } = useSelector((state: any) => state.muteSlice);
-  const user = useSelector((state: any) => state.persist.user);
+  const { mute } = useSelector((state: RootState) => state.muteSlice);
+  const user = useSelector((state: RootState) => state.persist.user);
   const [isPaused, setIsPaused] = useState(false);
   const [isPlay, setIsplay] = useState(false);
   const playIconRef = useRef<HTMLDivElement | null>(null);
@@ -56,6 +71,7 @@ const Player = ({
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
   const [p_img, setPImg] = useState(false);
   const preloadRef = useRef<boolean>(false);
+  const bufferTimer = useRef<NodeJS.Timeout | null>(null);
 
   const dispatch = useDispatch();
 
@@ -71,13 +87,11 @@ const Player = ({
 
   const handleWatchHistory = () => {
     if (!apiCalledRef.current && user?.token) {
-      apiCalledRef.current = true; // Mark API as called
-      watchtPost({ post_id: post_id }) // Replace with actual post ID
+      apiCalledRef.current = true;
+      watchtPost({ post_id: post_id })
         .unwrap()
         .then(() => console.log("Watch history updated"))
-        .catch((error) =>
-          console.error("Failed to update watch history", error)
-        );
+        .catch((error) => console.error("Failed to update watch history", error));
     }
   };
 
@@ -115,14 +129,8 @@ const Player = ({
     Artplayer.MOBILE_DBCLICK_PLAY = false;
     Artplayer.MOBILE_CLICK_PLAY = true;
 
-    // If player already exists, destroy it first
-    if (artPlayerInstanceRef.current) {
-      artPlayerInstanceRef.current.destroy();
-      artPlayerInstanceRef.current = null;
-    }
-
-    // Create new player instance
-    artPlayerInstanceRef.current = new Artplayer({
+    // Configure Artplayer options
+    const options: Artplayer["Option"] = {
       autoOrientation: true,
       container: playerContainerRef.current,
       url: src,
@@ -133,45 +141,92 @@ const Player = ({
       poster: decryptedPhoto,
       moreVideoAttr: {
         playsInline: true,
-        preload: "auto",
+        preload: "metadata" as const,
+        playsinline: true,
       },
       aspectRatio: true,
       fullscreen: false,
       theme: "#d53ff0",
-      customType: {
-        m3u8: (videoElement, url) => {
-          if (url.includes('.m3u8')) {
-            if (Hls.isSupported()) {
-              const hls = new Hls({
-                maxBufferLength: 30,
-                maxMaxBufferLength: 60,
-                maxBufferSize: 30 * 1000 * 1000,
-                maxBufferHole: 0.5,
-                highBufferWatchdogPeriod: 2,
-                startLevel: -1,
-                enableWorker: true,
-                lowLatencyMode: true,
-              });
-              
-              hls.loadSource(url);
-              hls.attachMedia(videoElement);
-              hlsRef.current = hls;
-
-              hls.startLoad();
-              videoElement.muted = muteRef.current;
-            } else if (videoElement.canPlayType("application/vnd.apple.mpegurl")) {
-              videoElement.src = url;
-              videoElement.preload = "auto";
-            }
-          } else {
-            videoElement.src = url;
-            videoElement.preload = "auto";
-          }
-        },
-      },
       icons: {
         loading: `<img width="100" height="100" src=${vod_loader}>`,
         state: `<img src="${indicator}" width="50" height="50" alt="Play">`,
+      },
+      type: 'mp4',
+      customType: {
+        mp4: function(video: HTMLVideoElement, url: string) {
+          // Configure video element
+          video.src = url;
+          
+          // Enable range requests
+          const initVideo = () => {
+            // Start with a small initial preload
+            video.preload = "metadata";
+            
+            // Setup buffer management
+            const handleProgress = () => {
+              if (!video.buffered.length) return;
+              
+              const currentTime = video.currentTime;
+              const buffered = video.buffered;
+              let totalBuffered = 0;
+              
+              // Calculate total buffered size
+              for (let i = 0; i < buffered.length; i++) {
+                totalBuffered += (buffered.end(i) - buffered.start(i));
+              }
+              
+              // Clear old buffers if we exceed max size
+              if (totalBuffered > MAX_BUFFER_SIZE) {
+                const mediaSource = video.src;
+                video.src = '';
+                video.load();
+                video.currentTime = currentTime;
+                video.src = mediaSource;
+              }
+            };
+
+            // Implement smart buffering
+            const handleTimeUpdate = () => {
+              if (bufferTimer.current) {
+                clearTimeout(bufferTimer.current);
+              }
+
+              bufferTimer.current = setTimeout(() => {
+                if (!video.paused && video.readyState < 4) {
+                  const currentTime = video.currentTime;
+                  const buffered = video.buffered;
+                  
+                  // Check if we need to buffer more
+                  if (buffered.length) {
+                    const lastBufferedEnd = buffered.end(buffered.length - 1);
+                    if (lastBufferedEnd - currentTime < BUFFER_THRESHOLD) {
+                      video.preload = "auto";
+                    }
+                  }
+                }
+              }, 1000);
+            };
+
+            video.addEventListener('progress', handleProgress);
+            video.addEventListener('timeupdate', handleTimeUpdate);
+
+            // Cleanup function
+            return () => {
+              video.removeEventListener('progress', handleProgress);
+              video.removeEventListener('timeupdate', handleTimeUpdate);
+              if (bufferTimer.current) {
+                clearTimeout(bufferTimer.current);
+              }
+            };
+          };
+
+          // Initialize video with proper settings
+          if (video.readyState === 0) {
+            video.addEventListener('loadedmetadata', initVideo, { once: true });
+          } else {
+            initVideo();
+          }
+        },
       },
       layers: [
         {
@@ -189,7 +244,7 @@ const Player = ({
             height: "25px",
             zIndex: "9999",
           },
-          mounted: (element) => {
+          mounted: (element: HTMLElement) => {
             progressBarRef.current = element.querySelector(
               ".custom-progress-bar"
             ) as HTMLInputElement;
@@ -206,200 +261,101 @@ const Player = ({
             progressBarRef.current.value = "0";
             progressBarRef.current.style.opacity = "0";
 
-            // Desktop events (existing)
+            // Desktop events
             progressBarRef.current.addEventListener("input", (e) => {
               if (!artPlayerInstanceRef.current) return;
               if (!isDraggingRef.current) {
                 sethideBar(true);
                 if (progressBarRef?.current?.style) {
                   progressBarRef.current.style.height = "10px";
-                  progressBarRef.current.style.setProperty(
-                    "--thumb-width",
-                    "16px"
-                  );
-                  progressBarRef.current.style.setProperty(
-                    "--thumb-height",
-                    "20px"
-                  );
-                  progressBarRef.current.style.setProperty(
-                    "--thumb-radius",
-                    "5px"
-                  );
+                  progressBarRef.current.style.setProperty("--thumb-width", "16px");
+                  progressBarRef.current.style.setProperty("--thumb-height", "20px");
+                  progressBarRef.current.style.setProperty("--thumb-radius", "5px");
                 }
                 isDraggingRef.current = true;
                 timeDisplayRef.current!.style.display = "block";
               }
 
               const value = parseFloat((e.target as HTMLInputElement).value);
-              seekTimeRef.current =
-                (value / 100) * artPlayerInstanceRef.current.duration;
-              progressBarRef.current?.style.setProperty(
-                "--progress",
-                `${value}%`
-              );
+              seekTimeRef.current = (value / 100) * artPlayerInstanceRef.current.duration;
+              progressBarRef.current?.style.setProperty("--progress", `${value}%`);
 
               if (timeDisplayRef.current) {
                 const currentTime = formatTime(seekTimeRef.current);
-                const duration = formatTime(
-                  artPlayerInstanceRef.current.duration
-                );
+                const duration = formatTime(artPlayerInstanceRef.current.duration);
                 timeDisplayRef.current.textContent = `${currentTime} / ${duration}`;
               }
             });
 
             progressBarRef.current.addEventListener("change", () => {
-              if (!artPlayerInstanceRef.current || !isDraggingRef.current)
-                return;
+              if (!artPlayerInstanceRef.current || !isDraggingRef.current) return;
               isDraggingRef.current = false;
               sethideBar(false);
               if (progressBarRef.current) {
                 progressBarRef.current.style.height = "4px";
-                progressBarRef.current.style.setProperty(
-                  "--thumb-width",
-                  "12px"
-                );
-                progressBarRef.current.style.setProperty(
-                  "--thumb-height",
-                  "12px"
-                );
-                progressBarRef.current.style.setProperty(
-                  "--thumb-radius",
-                  "50%"
-                );
+                progressBarRef.current.style.setProperty("--thumb-width", "12px");
+                progressBarRef.current.style.setProperty("--thumb-height", "12px");
+                progressBarRef.current.style.setProperty("--thumb-radius", "50%");
               }
               timeDisplayRef.current!.style.display = "none";
               artPlayerInstanceRef.current.currentTime = seekTimeRef.current;
             });
 
-            // Allow clicking anywhere in the container (for desktop)
-            element.addEventListener("click", (e) => {
-              if (!artPlayerInstanceRef.current || !progressBarRef.current)
-                return;
-
-              // If the click is directly on the thumb, let its own events handle it.
-              if (
-                (e.target as HTMLElement).classList.contains(
-                  "custom-progress-bar"
-                )
-              ) {
-                return;
-              }
-              const rect = element.getBoundingClientRect();
-              const clickX = e.clientX - rect.left;
-              const percent = Math.min(
-                Math.max((clickX / rect.width) * 100, 0),
-                100
-              );
-
-              progressBarRef.current.value = percent.toString();
-              progressBarRef.current.style.setProperty(
-                "--progress",
-                `${percent}%`
-              );
-              const newTime =
-                (percent / 100) * artPlayerInstanceRef.current.duration;
-              artPlayerInstanceRef.current.currentTime = newTime;
-            });
-
-            // ==== Mobile Touch Events ====
-
-            // Start dragging on touchstart
+            // Mobile touch events
             element.addEventListener("touchstart", (e) => {
-              if (!artPlayerInstanceRef.current || !progressBarRef.current)
-                return;
-              // Use the first touch
+              if (!artPlayerInstanceRef.current || !progressBarRef.current) return;
               const touch = e.touches[0];
               const rect = element.getBoundingClientRect();
               const touchX = touch.clientX - rect.left;
-              const percent = Math.min(
-                Math.max((touchX / rect.width) * 100, 0),
-                100
-              );
+              const percent = Math.min(Math.max((touchX / rect.width) * 100, 0), 100);
 
-              // Update progress bar visuals immediately
               progressBarRef.current.value = percent.toString();
-              progressBarRef.current.style.setProperty(
-                "--progress",
-                `${percent}%`
-              );
+              progressBarRef.current.style.setProperty("--progress", `${percent}%`);
               isDraggingRef.current = true;
               sethideBar(true);
               progressBarRef.current.style.height = "10px";
               progressBarRef.current.style.setProperty("--thumb-width", "16px");
-              progressBarRef.current.style.setProperty(
-                "--thumb-height",
-                "20px"
-              );
+              progressBarRef.current.style.setProperty("--thumb-height", "20px");
               progressBarRef.current.style.setProperty("--thumb-radius", "5px");
               timeDisplayRef.current!.style.display = "block";
 
-              // Update the time display
-              const newTime =
-                (percent / 100) * artPlayerInstanceRef.current.duration;
+              const newTime = (percent / 100) * artPlayerInstanceRef.current.duration;
               seekTimeRef.current = newTime;
               if (timeDisplayRef.current) {
                 const currentTime = formatTime(newTime);
-                const duration = formatTime(
-                  artPlayerInstanceRef.current.duration
-                );
+                const duration = formatTime(artPlayerInstanceRef.current.duration);
                 timeDisplayRef.current.textContent = `${currentTime} / ${duration}`;
               }
             });
 
-            // Update progress on touchmove
             element.addEventListener("touchmove", (e) => {
-              if (
-                !artPlayerInstanceRef.current ||
-                !progressBarRef.current ||
-                !isDraggingRef.current
-              )
-                return;
-              // Prevent scrolling while dragging the progress bar
+              if (!artPlayerInstanceRef.current || !progressBarRef.current || !isDraggingRef.current) return;
               e.preventDefault();
               const touch = e.touches[0];
               const rect = element.getBoundingClientRect();
               const touchX = touch.clientX - rect.left;
-              const percent = Math.min(
-                Math.max((touchX / rect.width) * 100, 0),
-                100
-              );
+              const percent = Math.min(Math.max((touchX / rect.width) * 100, 0), 100);
 
               progressBarRef.current.value = percent.toString();
-              progressBarRef.current.style.setProperty(
-                "--progress",
-                `${percent}%`
-              );
-              seekTimeRef.current =
-                (percent / 100) * artPlayerInstanceRef.current.duration;
+              progressBarRef.current.style.setProperty("--progress", `${percent}%`);
+              seekTimeRef.current = (percent / 100) * artPlayerInstanceRef.current.duration;
 
               if (timeDisplayRef.current) {
                 const currentTime = formatTime(seekTimeRef.current);
-                const duration = formatTime(
-                  artPlayerInstanceRef.current.duration
-                );
+                const duration = formatTime(artPlayerInstanceRef.current.duration);
                 timeDisplayRef.current.textContent = `${currentTime} / ${duration}`;
               }
             });
 
-            // End dragging on touchend
             element.addEventListener("touchend", () => {
-              if (
-                !artPlayerInstanceRef.current ||
-                !progressBarRef.current ||
-                !isDraggingRef.current
-              )
-                return;
+              if (!artPlayerInstanceRef.current || !progressBarRef.current || !isDraggingRef.current) return;
               isDraggingRef.current = false;
               sethideBar(false);
               progressBarRef.current.style.height = "4px";
               progressBarRef.current.style.setProperty("--thumb-width", "12px");
-              progressBarRef.current.style.setProperty(
-                "--thumb-height",
-                "12px"
-              );
+              progressBarRef.current.style.setProperty("--thumb-height", "12px");
               progressBarRef.current.style.setProperty("--thumb-radius", "50%");
               timeDisplayRef.current!.style.display = "none";
-              // Set the video time to the position chosen via touch
               artPlayerInstanceRef.current.currentTime = seekTimeRef.current;
             });
           },
@@ -416,14 +372,13 @@ const Player = ({
             zIndex: "999",
             display: "none",
           },
-          mounted: (element) => {
-            playIconRef.current = element;
+          mounted: (element: HTMLElement) => {
+            playIconRef.current = element as HTMLDivElement;
 
             playIconRef?.current?.addEventListener("click", () => {
               if (artPlayerInstanceRef.current) {
                 artPlayerInstanceRef.current.play().catch((error) => {
                   console.error('Manual play failed:', error);
-                  // Keep play button visible if play fails
                   if (playIconRef.current) {
                     playIconRef.current.style.display = "block";
                   }
@@ -443,7 +398,7 @@ const Player = ({
             zIndex: "10",
             background: "transparent",
           },
-          mounted: (element) => {
+          mounted: (element: HTMLElement) => {
             let lastClick = 0;
             let singleClickTimeout: NodeJS.Timeout | null = null;
 
@@ -454,7 +409,6 @@ const Player = ({
                 if (user?.token) {
                   handleLike();
                 } else {
-                  //  setCommentCount((prev: any) => +prev + 1);
                   dispatch(
                     showToast({
                       message: "登陆后可点赞",
@@ -472,30 +426,29 @@ const Player = ({
           },
         },
       ],
-    });
+    };
 
-    // Update progress bar while video is playing
-    artPlayerInstanceRef.current?.on("video:timeupdate", () => {
-      if (
-        progressBarRef.current &&
-        artPlayerInstanceRef.current &&
-        !isDraggingRef.current
-      ) {
+    // If player already exists, destroy it first
+    if (artPlayerInstanceRef.current) {
+      artPlayerInstanceRef.current.destroy();
+      artPlayerInstanceRef.current = null;
+    }
+
+    // Create new player instance
+    artPlayerInstanceRef.current = new Artplayer(options);
+
+    // Update progress bar while playing
+    artPlayerInstanceRef.current.on("video:timeupdate", () => {
+      if (progressBarRef.current && artPlayerInstanceRef.current && !isDraggingRef.current) {
         const currentTime = artPlayerInstanceRef.current.currentTime || 0;
         const duration = artPlayerInstanceRef.current.duration || 1;
         const newProgress = (currentTime / duration) * 100;
         progressBarRef.current.value = newProgress.toString();
-        progressBarRef.current.style.setProperty(
-          "--progress",
-          `${newProgress}%`
-        );
-        // Track watched time
+        progressBarRef.current.style.setProperty("--progress", `${newProgress}%`);
       }
     });
-    artPlayerInstanceRef?.current?.on("loading", () => {
-      if (playIconRef.current) playIconRef.current.style.display = "none";
-    });
 
+    // Add event listeners for video state
     artPlayerInstanceRef.current.on("ready", () => {
       if (width > height) {
         setPImg(true);
@@ -516,7 +469,7 @@ const Player = ({
       }
     });
 
-    // Show play button when video is paused
+    // Show/hide play button based on state
     artPlayerInstanceRef.current.on("pause", () => {
       setIsPaused(true);
       if (playIconRef.current) {
@@ -524,7 +477,6 @@ const Player = ({
       }
     });
 
-    // Hide play button when video starts playing
     artPlayerInstanceRef.current.on("play", () => {
       setIsPaused(false);
       if (playIconRef.current) {
