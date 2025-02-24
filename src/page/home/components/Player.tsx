@@ -160,7 +160,7 @@ const Player = ({
             try {
               // Try to load just metadata first
               const headers = new Headers();
-              headers.append('Range', 'bytes=0-1024'); // Just get first 1KB to check range support
+              headers.append('Range', 'bytes=0-10240'); // Just get first 1KB to check range support
               
               const response = await fetch(url, { 
                 headers,
