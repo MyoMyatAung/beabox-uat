@@ -54,15 +54,37 @@ const VideoFeed = ({
   };
 
   useEffect(() => {
-    if (!start) {
-      const initialVideos = videos.slice(0, videosPerLoad) || [];
+    if (!start && videos.length > 0) {
+      // Find the index of the video with currentActiveId
+      const activeVideoIndex = videos.findIndex(
+        (video: any) => video.post_id === currentActiveId
+      );
 
-      if (initialVideos.length > 1) {
-        setVideosToRender(initialVideos);
-        setStart(true);
+      // If the video with currentActiveId exists, move it to the beginning
+      let initialVideos = [...videos];
+      if (activeVideoIndex !== -1) {
+        const activeVideo = initialVideos.splice(activeVideoIndex, 1)[0];
+        initialVideos.unshift(activeVideo);
       }
+
+      // Slice the first `videosPerLoad` videos for initial render
+      const firstThreeVideos = initialVideos.slice(0, videosPerLoad);
+
+      setVideosToRender(firstThreeVideos);
+      setStart(true);
     }
-  }, [videos]); // Runs only once on mount
+  }, [videos, currentActiveId]); // Add currentActiveId as a dependency
+
+  // useEffect(() => {
+  //   if (!start) {
+  //     const initialVideos = videos.slice(0, videosPerLoad) || [];
+
+  //     if (initialVideos.length > 1) {
+  //       setVideosToRender(initialVideos);
+  //       setStart(true);
+  //     }
+  //   }
+  // }, [videos]); // Runs only once on mount
 
   useEffect(() => {
     const container = videoContainerRef.current;
