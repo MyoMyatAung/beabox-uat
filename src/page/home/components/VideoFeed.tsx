@@ -44,7 +44,6 @@ const VideoFeed = ({
   const [height, setHeight] = useState(0);
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
-  const [hideBar, sethideBar] = useState(false);
   const [videosToRender, setVideosToRender] = useState<any[]>([]); // Store videos to render
   const [videosPerLoad, setVideosPerLoad] = useState(3); // Number of videos to initially render
   const [start, setStart] = useState(false);
@@ -311,10 +310,8 @@ const VideoFeed = ({
               setHeight={setHeight}
               setHearts={setHearts}
               setCountdown={setCountdown}
-              sethideBar={sethideBar}
-              hideBar={hideBar}
             />
-            {!hideBar && video?.type !== "ads" && (
+            {video?.type !== "ads" && (
               <FeedFooter
                 badge={video?.user?.badge}
                 id={video?.user?.id}

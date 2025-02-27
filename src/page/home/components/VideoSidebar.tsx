@@ -76,6 +76,7 @@ function VideoSidebar({
   const { videos } = useSelector((state: any) => state.videoSlice);
   const [page, setPage] = useState(1);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
+  const { hideBar } = useSelector((state: any) => state.hideBarSlice);
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -242,6 +243,7 @@ function VideoSidebar({
         isHome ? "videoSidebar" : "videoSidebar_exp"
       } z-[999] w-[50px]
 `}
+      style={{ display: hideBar ? "none" : "block" }}
     >
       <div className="videoSidebar__button ">
         <div className="flex flex-col items-center relative mb-2">

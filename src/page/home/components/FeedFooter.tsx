@@ -110,7 +110,7 @@ import { setHistoryData } from "@/page/search/slice/HistorySlice";
 import { decryptImage } from "@/utils/imageDecrypt";
 import useCachedImage from "@/utils/useCachedImage";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 function FeedFooter({
@@ -131,6 +131,7 @@ function FeedFooter({
   const [isExpanded, setIsExpanded] = useState(false);
   const toggleExpand = () => setIsExpanded(!isExpanded);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
+  const { hideBar } = useSelector((state: any) => state.hideBarSlice);
   // const { imgSrc, isLoading: imageLoading } = useCachedImage(
   //   decryptedPhoto || ""
   // );
@@ -180,7 +181,10 @@ function FeedFooter({
     navigate(`/user/${id}`);
   };
   return (
-    <div className="videoFooter1 w-full">
+    <div
+      className="videoFooter1 w-full"
+      style={{ display: hideBar ? "none" : "block" }}
+    >
       <div className="w-full">
         <div className="flex items-center gap-3 mb-2">
           <div className="flex items-center gap-2" onClick={handleProfile}>

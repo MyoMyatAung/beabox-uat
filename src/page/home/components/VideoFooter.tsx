@@ -258,7 +258,7 @@ import { setHistoryData } from "@/page/search/slice/HistorySlice";
 import { decryptImage } from "@/utils/imageDecrypt";
 import useCachedImage from "@/utils/useCachedImage";
 import React, { useEffect, useState, useRef } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const VideoFooter = React.memo(
@@ -279,10 +279,12 @@ const VideoFooter = React.memo(
   }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const toggleExpand = () => setIsExpanded(!isExpanded);
+    const { hideBar } = useSelector((state: any) => state.hideBarSlice);
 
     // Ref to store previous badge value
     const prevBadgeRef = useRef<string | null>(null);
     const [decryptedPhoto, setDecryptedPhoto] = useState<string | null>(null);
+
     // const { imgSrc, isLoading: imageLoading } = useCachedImage(
     //   decryptedPhoto || ""
     // );
@@ -297,6 +299,7 @@ const VideoFooter = React.memo(
 
     useEffect(() => {
       // Only decrypt the image if the badge has changed
+
       if (badge !== prevBadgeRef.current) {
         const loadAndDecryptPhoto = async () => {
           if (!badge) {
@@ -325,7 +328,7 @@ const VideoFooter = React.memo(
         loadAndDecryptPhoto();
         prevBadgeRef.current = badge; // Update the ref with the new badge
       }
-    }, [badge]); // Run only when the badge prop changes
+    }, []); // Run only when the badge prop changes
 
     const onSearch = (suggestion: any) => {
       if (suggestion.trim()) {
@@ -338,7 +341,10 @@ const VideoFooter = React.memo(
     };
 
     return (
-      <div className="videoFooter w-full">
+      <div
+        className="videoFooter w-full"
+        style={{ display: hideBar ? "none" : "block" }}
+      >
         <div className="w-full">
           <div className="flex items-center gap-3 mb-2">
             <div className="flex items-center gap-2" onClick={handleProfile}>

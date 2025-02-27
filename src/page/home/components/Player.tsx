@@ -9,6 +9,7 @@ import { showToast } from "../services/errorSlice";
 import { decryptImage } from "@/utils/imageDecrypt";
 import { c } from "node_modules/framer-motion/dist/types.d-6pKw1mTI";
 import { setMute } from "../services/muteSlice";
+import { sethideBar } from "../services/hideBarSlice";
 
 // Constants for video preloading
 const BUFFER_THRESHOLD = 10; // seconds before current position to start buffering
@@ -33,7 +34,7 @@ const Player = ({
   setWidth,
   setHeight,
   handleLike,
-  sethideBar,
+
   rotate,
   type,
   post_id,
@@ -44,7 +45,7 @@ const Player = ({
   setWidth: (width: number) => void;
   setHeight: (height: number) => void;
   handleLike: () => void;
-  sethideBar: (hide: boolean) => void;
+
   post_id: string;
   rotate: boolean;
   type: string;
@@ -91,7 +92,9 @@ const Player = ({
       watchtPost({ post_id: post_id })
         .unwrap()
         .then(() => console.log("Watch history updated"))
-        .catch((error) => console.error("Failed to update watch history", error));
+        .catch((error) =>
+          console.error("Failed to update watch history", error)
+        );
     }
   };
 
@@ -110,6 +113,7 @@ const Player = ({
           setDecryptedPhoto(photoUrl);
           return;
         }
+
         const decryptedUrl = await decryptImage(photoUrl);
         setDecryptedPhoto(decryptedUrl);
       } catch (error) {
@@ -150,12 +154,12 @@ const Player = ({
         loading: `<div class="video-loading-indicator" style="display: none;"><img width="100" height="100" src=${vod_loader}></div>`,
         state: `<div class="video-play-indicator" style="display: none;"><img src="${indicator}" width="50" height="50" alt="Play"></div>`,
       },
-      type: 'mp4',
+      type: "mp4",
       customType: {
-        mp4: function(video: HTMLVideoElement, url: string) {
+        mp4: function (video: HTMLVideoElement, url: string) {
           // Configure video element
           video.preload = "metadata";
-          
+
           const loadVideo = async () => {
             try {
               const headers = new Headers();
@@ -163,13 +167,13 @@ const Player = ({
               
               const response = await fetch(url, { 
                 headers,
-                method: 'GET',
+                method: "GET",
               });
-              
+
               if (response.status === 206) {
                 // Server supports range requests, set video source
                 video.src = url;
-                
+
                 // If this is active video, start loading more
                 if (isActive) {
                   video.preload = "auto";
@@ -180,7 +184,7 @@ const Player = ({
                 video.preload = "metadata";
               }
             } catch (error) {
-              console.error('Error loading video:', error);
+              console.error("Error loading video:", error);
               // Fallback to basic loading
               video.src = url;
               video.preload = "metadata";
@@ -189,25 +193,25 @@ const Player = ({
 
           // Start loading process
           loadVideo().catch(console.error);
-          
+
           // Add event listeners for dynamic loading
-          video.addEventListener('canplaythrough', () => {
+          video.addEventListener("canplaythrough", () => {
             // Once we can play through current buffer, load more if active
             if (isActive) {
               video.preload = "auto";
             }
           });
 
-          video.addEventListener('waiting', () => {
+          video.addEventListener("waiting", () => {
             // If video is waiting for data and is active, ensure we're loading
             if (isActive) {
               video.preload = "auto";
             }
           });
-          
+
           // Clean up function
           return () => {
-            video.removeAttribute('src');
+            video.removeAttribute("src");
             video.load();
           };
         },
@@ -249,37 +253,62 @@ const Player = ({
             progressBarRef.current.addEventListener("input", (e) => {
               if (!artPlayerInstanceRef.current) return;
               if (!isDraggingRef.current) {
-                sethideBar(true);
+                dispatch(sethideBar(true));
                 if (progressBarRef?.current?.style) {
                   progressBarRef.current.style.height = "10px";
-                  progressBarRef.current.style.setProperty("--thumb-width", "16px");
-                  progressBarRef.current.style.setProperty("--thumb-height", "20px");
-                  progressBarRef.current.style.setProperty("--thumb-radius", "5px");
+                  progressBarRef.current.style.setProperty(
+                    "--thumb-width",
+                    "16px"
+                  );
+                  progressBarRef.current.style.setProperty(
+                    "--thumb-height",
+                    "20px"
+                  );
+                  progressBarRef.current.style.setProperty(
+                    "--thumb-radius",
+                    "5px"
+                  );
                 }
                 isDraggingRef.current = true;
                 timeDisplayRef.current!.style.display = "block";
               }
 
               const value = parseFloat((e.target as HTMLInputElement).value);
-              seekTimeRef.current = (value / 100) * artPlayerInstanceRef.current.duration;
-              progressBarRef.current?.style.setProperty("--progress", `${value}%`);
+              seekTimeRef.current =
+                (value / 100) * artPlayerInstanceRef.current.duration;
+              progressBarRef.current?.style.setProperty(
+                "--progress",
+                `${value}%`
+              );
 
               if (timeDisplayRef.current) {
                 const currentTime = formatTime(seekTimeRef.current);
-                const duration = formatTime(artPlayerInstanceRef.current.duration);
+                const duration = formatTime(
+                  artPlayerInstanceRef.current.duration
+                );
                 timeDisplayRef.current.textContent = `${currentTime} / ${duration}`;
               }
             });
 
             progressBarRef.current.addEventListener("change", () => {
-              if (!artPlayerInstanceRef.current || !isDraggingRef.current) return;
+              if (!artPlayerInstanceRef.current || !isDraggingRef.current)
+                return;
               isDraggingRef.current = false;
-              sethideBar(false);
+              dispatch(sethideBar(false));
               if (progressBarRef.current) {
                 progressBarRef.current.style.height = "4px";
-                progressBarRef.current.style.setProperty("--thumb-width", "12px");
-                progressBarRef.current.style.setProperty("--thumb-height", "12px");
-                progressBarRef.current.style.setProperty("--thumb-radius", "50%");
+                progressBarRef.current.style.setProperty(
+                  "--thumb-width",
+                  "12px"
+                );
+                progressBarRef.current.style.setProperty(
+                  "--thumb-height",
+                  "12px"
+                );
+                progressBarRef.current.style.setProperty(
+                  "--thumb-radius",
+                  "50%"
+                );
               }
               timeDisplayRef.current!.style.display = "none";
               artPlayerInstanceRef.current.currentTime = seekTimeRef.current;
@@ -287,57 +316,92 @@ const Player = ({
 
             // Mobile touch events
             element.addEventListener("touchstart", (e) => {
-              if (!artPlayerInstanceRef.current || !progressBarRef.current) return;
+              if (!artPlayerInstanceRef.current || !progressBarRef.current)
+                return;
               const touch = e.touches[0];
               const rect = element.getBoundingClientRect();
               const touchX = touch.clientX - rect.left;
-              const percent = Math.min(Math.max((touchX / rect.width) * 100, 0), 100);
+              const percent = Math.min(
+                Math.max((touchX / rect.width) * 100, 0),
+                100
+              );
 
               progressBarRef.current.value = percent.toString();
-              progressBarRef.current.style.setProperty("--progress", `${percent}%`);
+              progressBarRef.current.style.setProperty(
+                "--progress",
+                `${percent}%`
+              );
               isDraggingRef.current = true;
-              sethideBar(true);
+              dispatch(sethideBar(true));
               progressBarRef.current.style.height = "10px";
               progressBarRef.current.style.setProperty("--thumb-width", "16px");
-              progressBarRef.current.style.setProperty("--thumb-height", "20px");
+              progressBarRef.current.style.setProperty(
+                "--thumb-height",
+                "20px"
+              );
               progressBarRef.current.style.setProperty("--thumb-radius", "5px");
               timeDisplayRef.current!.style.display = "block";
 
-              const newTime = (percent / 100) * artPlayerInstanceRef.current.duration;
+              const newTime =
+                (percent / 100) * artPlayerInstanceRef.current.duration;
               seekTimeRef.current = newTime;
               if (timeDisplayRef.current) {
                 const currentTime = formatTime(newTime);
-                const duration = formatTime(artPlayerInstanceRef.current.duration);
+                const duration = formatTime(
+                  artPlayerInstanceRef.current.duration
+                );
                 timeDisplayRef.current.textContent = `${currentTime} / ${duration}`;
               }
             });
 
             element.addEventListener("touchmove", (e) => {
-              if (!artPlayerInstanceRef.current || !progressBarRef.current || !isDraggingRef.current) return;
+              if (
+                !artPlayerInstanceRef.current ||
+                !progressBarRef.current ||
+                !isDraggingRef.current
+              )
+                return;
               e.preventDefault();
               const touch = e.touches[0];
               const rect = element.getBoundingClientRect();
               const touchX = touch.clientX - rect.left;
-              const percent = Math.min(Math.max((touchX / rect.width) * 100, 0), 100);
+              const percent = Math.min(
+                Math.max((touchX / rect.width) * 100, 0),
+                100
+              );
 
               progressBarRef.current.value = percent.toString();
-              progressBarRef.current.style.setProperty("--progress", `${percent}%`);
-              seekTimeRef.current = (percent / 100) * artPlayerInstanceRef.current.duration;
+              progressBarRef.current.style.setProperty(
+                "--progress",
+                `${percent}%`
+              );
+              seekTimeRef.current =
+                (percent / 100) * artPlayerInstanceRef.current.duration;
 
               if (timeDisplayRef.current) {
                 const currentTime = formatTime(seekTimeRef.current);
-                const duration = formatTime(artPlayerInstanceRef.current.duration);
+                const duration = formatTime(
+                  artPlayerInstanceRef.current.duration
+                );
                 timeDisplayRef.current.textContent = `${currentTime} / ${duration}`;
               }
             });
 
             element.addEventListener("touchend", () => {
-              if (!artPlayerInstanceRef.current || !progressBarRef.current || !isDraggingRef.current) return;
+              if (
+                !artPlayerInstanceRef.current ||
+                !progressBarRef.current ||
+                !isDraggingRef.current
+              )
+                return;
               isDraggingRef.current = false;
-              sethideBar(false);
+              dispatch(sethideBar(false));
               progressBarRef.current.style.height = "4px";
               progressBarRef.current.style.setProperty("--thumb-width", "12px");
-              progressBarRef.current.style.setProperty("--thumb-height", "12px");
+              progressBarRef.current.style.setProperty(
+                "--thumb-height",
+                "12px"
+              );
               progressBarRef.current.style.setProperty("--thumb-radius", "50%");
               timeDisplayRef.current!.style.display = "none";
               artPlayerInstanceRef.current.currentTime = seekTimeRef.current;
@@ -362,7 +426,7 @@ const Player = ({
             playIconRef?.current?.addEventListener("click", () => {
               if (artPlayerInstanceRef.current) {
                 artPlayerInstanceRef.current.play().catch((error) => {
-                  console.error('Manual play failed:', error);
+                  console.error("Manual play failed:", error);
                   if (playIconRef.current) {
                     playIconRef.current.style.display = "block";
                   }
@@ -423,12 +487,19 @@ const Player = ({
 
     // Update progress bar while playing
     artPlayerInstanceRef.current.on("video:timeupdate", () => {
-      if (progressBarRef.current && artPlayerInstanceRef.current && !isDraggingRef.current) {
+      if (
+        progressBarRef.current &&
+        artPlayerInstanceRef.current &&
+        !isDraggingRef.current
+      ) {
         const currentTime = artPlayerInstanceRef.current.currentTime || 0;
         const duration = artPlayerInstanceRef.current.duration || 1;
         const newProgress = (currentTime / duration) * 100;
         progressBarRef.current.value = newProgress.toString();
-        progressBarRef.current.style.setProperty("--progress", `${newProgress}%`);
+        progressBarRef.current.style.setProperty(
+          "--progress",
+          `${newProgress}%`
+        );
       }
     });
 
@@ -439,15 +510,21 @@ const Player = ({
       } else {
         setPImg(false);
       }
-      
+
       if (progressBarRef?.current) {
         progressBarRef.current.style.opacity = "1";
       }
 
       // Initially show play button when video is ready
-      const loadingIndicator = artPlayerInstanceRef.current?.template?.$loading?.querySelector('.video-loading-indicator') as HTMLDivElement;
-      const playIndicator = artPlayerInstanceRef.current?.template?.$state?.querySelector('.video-play-indicator') as HTMLDivElement;
-      
+      const loadingIndicator =
+        artPlayerInstanceRef.current?.template?.$loading?.querySelector(
+          ".video-loading-indicator"
+        ) as HTMLDivElement;
+      const playIndicator =
+        artPlayerInstanceRef.current?.template?.$state?.querySelector(
+          ".video-play-indicator"
+        ) as HTMLDivElement;
+
       if (loadingIndicator) loadingIndicator.style.display = "none";
       if (playIndicator) playIndicator.style.display = "block";
     });
@@ -455,9 +532,15 @@ const Player = ({
     // Enhanced error handling
     artPlayerInstanceRef.current.on("error", (error) => {
       console.error("Video loading error:", error);
-      const loadingIndicator = artPlayerInstanceRef.current?.template?.$loading?.querySelector('.video-loading-indicator') as HTMLDivElement;
-      const playIndicator = artPlayerInstanceRef.current?.template?.$state?.querySelector('.video-play-indicator') as HTMLDivElement;
-      
+      const loadingIndicator =
+        artPlayerInstanceRef.current?.template?.$loading?.querySelector(
+          ".video-loading-indicator"
+        ) as HTMLDivElement;
+      const playIndicator =
+        artPlayerInstanceRef.current?.template?.$state?.querySelector(
+          ".video-play-indicator"
+        ) as HTMLDivElement;
+
       if (loadingIndicator) loadingIndicator.style.display = "none";
       if (playIndicator) playIndicator.style.display = "block";
     });
@@ -465,44 +548,74 @@ const Player = ({
     // Show/hide play button based on state
     artPlayerInstanceRef.current.on("pause", () => {
       setIsPaused(true);
-      const loadingIndicator = artPlayerInstanceRef.current?.template?.$loading?.querySelector('.video-loading-indicator') as HTMLDivElement;
-      const playIndicator = artPlayerInstanceRef.current?.template?.$state?.querySelector('.video-play-indicator') as HTMLDivElement;
-      
+      const loadingIndicator =
+        artPlayerInstanceRef.current?.template?.$loading?.querySelector(
+          ".video-loading-indicator"
+        ) as HTMLDivElement;
+      const playIndicator =
+        artPlayerInstanceRef.current?.template?.$state?.querySelector(
+          ".video-play-indicator"
+        ) as HTMLDivElement;
+
       if (loadingIndicator) loadingIndicator.style.display = "none";
       if (playIndicator) playIndicator.style.display = "block";
     });
 
     artPlayerInstanceRef.current.on("play", () => {
       setIsPaused(false);
-      const loadingIndicator = artPlayerInstanceRef.current?.template?.$loading?.querySelector('.video-loading-indicator') as HTMLDivElement;
-      const playIndicator = artPlayerInstanceRef.current?.template?.$state?.querySelector('.video-play-indicator') as HTMLDivElement;
-      
+      const loadingIndicator =
+        artPlayerInstanceRef.current?.template?.$loading?.querySelector(
+          ".video-loading-indicator"
+        ) as HTMLDivElement;
+      const playIndicator =
+        artPlayerInstanceRef.current?.template?.$state?.querySelector(
+          ".video-play-indicator"
+        ) as HTMLDivElement;
+
       if (loadingIndicator) loadingIndicator.style.display = "none";
       if (playIndicator) playIndicator.style.display = "none";
     });
 
     // Add loading state handler
     artPlayerInstanceRef.current.on("video:waiting", () => {
-      const loadingIndicator = artPlayerInstanceRef.current?.template?.$loading?.querySelector('.video-loading-indicator') as HTMLDivElement;
-      const playIndicator = artPlayerInstanceRef.current?.template?.$state?.querySelector('.video-play-indicator') as HTMLDivElement;
-      
+      const loadingIndicator =
+        artPlayerInstanceRef.current?.template?.$loading?.querySelector(
+          ".video-loading-indicator"
+        ) as HTMLDivElement;
+      const playIndicator =
+        artPlayerInstanceRef.current?.template?.$state?.querySelector(
+          ".video-play-indicator"
+        ) as HTMLDivElement;
+
       if (loadingIndicator) loadingIndicator.style.display = "block";
       if (playIndicator) playIndicator.style.display = "none";
     });
 
     artPlayerInstanceRef.current.on("video:playing", () => {
-      const loadingIndicator = artPlayerInstanceRef.current?.template?.$loading?.querySelector('.video-loading-indicator') as HTMLDivElement;
-      const playIndicator = artPlayerInstanceRef.current?.template?.$state?.querySelector('.video-play-indicator') as HTMLDivElement;
-      
+      const loadingIndicator =
+        artPlayerInstanceRef.current?.template?.$loading?.querySelector(
+          ".video-loading-indicator"
+        ) as HTMLDivElement;
+      const playIndicator =
+        artPlayerInstanceRef.current?.template?.$state?.querySelector(
+          ".video-play-indicator"
+        ) as HTMLDivElement;
+
       if (loadingIndicator) loadingIndicator.style.display = "none";
       if (playIndicator) playIndicator.style.display = "none";
     });
 
     // Add initial loading state
     artPlayerInstanceRef.current.on("video:loadstart", () => {
-      const loadingIndicator = artPlayerInstanceRef.current?.template?.$loading?.querySelector('.video-loading-indicator') as HTMLDivElement;
-      const playIndicator = artPlayerInstanceRef.current?.template?.$state?.querySelector('.video-play-indicator') as HTMLDivElement;
-      
+      const loadingIndicator =
+        artPlayerInstanceRef.current?.template?.$loading?.querySelector(
+          ".video-loading-indicator"
+        ) as HTMLDivElement;
+      const playIndicator =
+        artPlayerInstanceRef.current?.template?.$state?.querySelector(
+          ".video-play-indicator"
+        ) as HTMLDivElement;
+
       if (loadingIndicator) loadingIndicator.style.display = "block";
       if (playIndicator) playIndicator.style.display = "none";
     });
@@ -544,13 +657,13 @@ const Player = ({
     if (isActive) {
       // Initialize or reinitialize player when becoming active
       initializePlayer();
-      
+
       // Function to attempt playback
       const attemptPlay = () => {
         if (!artPlayerInstanceRef.current) return;
         artPlayerInstanceRef.current.play().catch((error) => {
-          console.error('Video play failed:', error);
-          if (error.name === 'NotAllowedError') {
+          console.error("Video play failed:", error);
+          if (error.name === "NotAllowedError") {
             // Reset to poster image
             if (artPlayerInstanceRef.current) {
               artPlayerInstanceRef.current.currentTime = 0;
@@ -580,7 +693,7 @@ const Player = ({
       // Video becomes inactive
       // artPlayerInstanceRef.current.pause();
       // artPlayerInstanceRef.current.muted = true;
-      
+
       // Set to lowest quality when inactive
       // if (hlsRef.current) {
       //   hlsRef.current.currentLevel = 0;
@@ -632,7 +745,7 @@ const Player = ({
       // Force garbage collection of video resources
       const video = artPlayerInstanceRef.current.video;
       if (video) {
-        video.removeAttribute('src');
+        video.removeAttribute("src");
         video.load();
       }
       artPlayerInstanceRef.current.destroy();
@@ -644,7 +757,7 @@ const Player = ({
     <div
       ref={playerContainerRef}
       className={`video_player w-full ${p_img ? "poster_change" : ""}`}
-      style={{ minHeight: '200px' }} // Add minimum height to prevent collapse
+      style={{ minHeight: "200px" }} // Add minimum height to prevent collapse
     />
   );
 };

@@ -30,9 +30,9 @@ const Home = () => {
   // const [videos, setVideos] = useState<any[]>([]);
   //const [page, setPage] = useState(1);
   const { currentActivePost } = useSelector((state: any) => state.activeslice);
+
   const { videos } = useSelector((state: any) => state.videoSlice);
   const { page } = useSelector((state: any) => state.pageSlice);
-  const [hideBar, sethideBar] = useState(false);
 
   //const [currentActivePost, setCurrentActivePost] = useState<any>(null); // Active post ID
 
@@ -179,29 +179,32 @@ const Home = () => {
             const postId = entry.target.getAttribute("data-post-id");
             if (postId) {
               dispatch(setCurrentActivePost(postId));
-              
+
               // Find current video index
-              const currentVideoKey = currentTab === 0 ? "follow" : currentTab === 2 ? "foryou" : "";
+              const currentVideoKey =
+                currentTab === 0 ? "follow" : currentTab === 2 ? "foryou" : "";
               const currentVideos = videos[currentVideoKey] || [];
-              const currentIndex = currentVideos.findIndex((v: any) => v.post_id === postId);
-              
+              const currentIndex = currentVideos.findIndex(
+                (v: any) => v.post_id === postId
+              );
+
               // Simple preloading logic
               if (currentIndex !== -1) {
                 const preloadedUrls = new Set<string>();
 
                 const preloadVideo = async (url: string) => {
                   if (!url || preloadedUrls.has(url)) return;
-                  
+
                   try {
                     const headers = new Headers();
-                    headers.append('Range', 'bytes=0-1024');
-                    
+                    headers.append("Range", "bytes=0-1024");
+
                     const response = await fetch(url, { headers });
                     if (response.status === 206) {
                       preloadedUrls.add(url);
                     }
                   } catch (error) {
-                    console.error('Failed to preload video:', error);
+                    console.error("Failed to preload video:", error);
                   }
                 };
 
@@ -521,11 +524,9 @@ const Home = () => {
                             setCountdown={setCountdown}
                             width={width}
                             height={height}
-                            sethideBar={sethideBar}
-                            hideBar={hideBar}
                           />
 
-                          {!hideBar && video?.type !== "ads" && (
+                          {video?.type !== "ads" && (
                             <VideoFooter
                               badge={video?.user?.badge}
                               id={video?.user?.id}
@@ -647,11 +648,9 @@ const Home = () => {
                             setCountdown={setCountdown}
                             width={width}
                             height={height}
-                            sethideBar={sethideBar}
-                            hideBar={hideBar}
                           />
 
-                          {!hideBar && video?.type !== "ads" && (
+                          {video?.type !== "ads" && (
                             <VideoFooter
                               badge={video?.user?.badge}
                               id={video?.user?.id}
