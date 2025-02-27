@@ -51,7 +51,6 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
-  const [hideBar, sethideBar] = useState(false);
 
   const removeHeart = (id: number) => {
     setHearts((prev) => prev.filter((heartId) => heartId !== id)); // Remove the heart by ID
@@ -200,11 +199,9 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
             setHeight={setHeight}
             setHearts={setHearts}
             setCountdown={setCountdown}
-            sethideBar={sethideBar}
-            hideBar={hideBar}
           />
 
-          {!hideBar && files?.type !== "ads" && (
+          {files?.type !== "ads" && (
             <FeedFooter
               badge={files?.user?.badge}
               id={files?.user?.id}
@@ -273,33 +270,33 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
           </div>
 
           <div className="absolute bottom-0 add_comment w-full  py-3 ">
-              <div className="flex items-center feed_add_comment gap-2 px-4">
-                <input
-                  type="text"
-                  className="w-full p-[6px] bg-transparent border-none outline-none"
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  placeholder="Write a comment"
-                />
-                <button
-                  className="p-3"
-                  onClick={() => handleComment(files?.post_id)}
+            <div className="flex items-center feed_add_comment gap-2 px-4">
+              <input
+                type="text"
+                className="w-full p-[6px] bg-transparent border-none outline-none"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                placeholder="Write a comment"
+              />
+              <button
+                className="p-3"
+                onClick={() => handleComment(files?.post_id)}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="22"
+                  viewBox="0 0 24 22"
+                  fill="none"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="22"
-                    viewBox="0 0 24 22"
-                    fill="none"
-                  >
-                    <path
-                      d="M12.2705 11.7305L3.00345 12.6274L0.56437 20.427C0.468914 20.7295 0.496117 21.0574 0.640043 21.3401C0.783968 21.6227 1.03349 21.8374 1.33422 21.9378C1.63518 22.0382 1.96335 22.0164 2.24826 21.8772L22.5589 12.0422C22.8198 11.9151 23.0233 11.6943 23.1289 11.424C23.2345 11.1537 23.2345 10.8535 23.1289 10.5832C23.0233 10.3129 22.8198 10.0921 22.5589 9.96495L2.26219 0.123036C1.97731 -0.0164383 1.64889 -0.038204 1.34796 0.0622005C1.04724 0.162848 0.797965 0.377508 0.65378 0.659921C0.509855 0.94258 0.482651 1.2705 0.578108 1.57295L3.01719 9.37255L12.2672 10.2695C12.6408 10.3066 12.9257 10.6209 12.9257 10.9963C12.9257 11.3719 12.6408 11.6862 12.2672 11.7231L12.2705 11.7305Z"
-                      fill="white"
-                    />
-                  </svg>
-                </button>
-              </div>
+                  <path
+                    d="M12.2705 11.7305L3.00345 12.6274L0.56437 20.427C0.468914 20.7295 0.496117 21.0574 0.640043 21.3401C0.783968 21.6227 1.03349 21.8374 1.33422 21.9378C1.63518 22.0382 1.96335 22.0164 2.24826 21.8772L22.5589 12.0422C22.8198 11.9151 23.0233 11.6943 23.1289 11.424C23.2345 11.1537 23.2345 10.8535 23.1289 10.5832C23.0233 10.3129 22.8198 10.0921 22.5589 9.96495L2.26219 0.123036C1.97731 -0.0164383 1.64889 -0.038204 1.34796 0.0622005C1.04724 0.162848 0.797965 0.377508 0.65378 0.659921C0.509855 0.94258 0.482651 1.2705 0.578108 1.57295L3.01719 9.37255L12.2672 10.2695C12.6408 10.3066 12.9257 10.6209 12.9257 10.9963C12.9257 11.3719 12.6408 11.6862 12.2672 11.7231L12.2705 11.7305Z"
+                    fill="white"
+                  />
+                </svg>
+              </button>
             </div>
+          </div>
         </div>
       </div>
       <p></p>
