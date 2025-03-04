@@ -31,7 +31,7 @@ const Balance: React.FC<BalanceProps> = () => {
         <div className="flex justify-cente items-center gap-[6px]">
           <img className="w-[18px] h-[18px]" src={coin} alt="" />
           <span className="text-white text-[14px] font-[500] leading-[20px]">
-            Balance
+            可用余额
           </span>
           {/* Toggle between icons */}
           {isHidden ? (
@@ -53,8 +53,7 @@ const Balance: React.FC<BalanceProps> = () => {
         </div>
         <div className="">
           <h1 className=" text-white text-[12px] font-[700] leading-[22px]">
-            Income from work : <span className=" text-[#CD3EFF]">748.00</span>{" "}
-            coins
+            作品收益 : <span className=" text-[#CD3EFF]">748.00</span> B币
           </h1>
         </div>
         <p className=" w-full h-[1px] bg-white/20"></p>
@@ -66,7 +65,7 @@ const Balance: React.FC<BalanceProps> = () => {
             <div className=" flex justify-center items-center gap-[6px]">
               <img src={we} alt="" />
               <span className=" text-white text-[14px] font-[400] leading-[15px]">
-                Withdraw
+              提现
               </span>
             </div>
             <ChevronRight className=" mr-" />
@@ -79,7 +78,7 @@ const Balance: React.FC<BalanceProps> = () => {
             <div className=" flex justify-center items-center gap-[6px]">
               <img src={gg} alt="" />
               <span className=" text-white text-[14px] font-[400] leading-[15px]">
-                Recharge
+              充值
               </span>
             </div>
             <ChevronRight className=" mr-" />

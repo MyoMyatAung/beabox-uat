@@ -23,17 +23,17 @@ const Transit: React.FC<TransitProps> = ({}) => {
   }, [data]);
 
   return (
-    <div className=" py-[20px]">
+    <div className=" py-[20px] h-[60vh]">
       {/* header */}
       <div className="transit_header px-[20px] py-[10px] flex items-center justify-between">
         <h1 className=" text-white text-[14px] font-[500] leading-normal">
-          Transitions
+        明细
         </h1>
         <div
           onClick={() => navigate("/wallet/transition")}
-          className=" hidden flex transit_view_all pl-[10px] py-[2px] pr-[2px]"
+          className="  flex transit_view_all pl-[10px] py-[2px] pr-[2px]"
         >
-          <span className=" capitalize">view all</span>
+          <span className=" capitalize">查看全部</span>
           <ChevronRight />
         </div>
       </div>
