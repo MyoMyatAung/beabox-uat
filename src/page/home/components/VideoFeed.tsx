@@ -47,6 +47,9 @@ const VideoFeed = ({
   const [videosToRender, setVideosToRender] = useState<any[]>([]); // Store videos to render
   const [videosPerLoad, setVideosPerLoad] = useState(3); // Number of videos to initially render
   const [start, setStart] = useState(false);
+  const abortControllerRef = useRef<AbortController[]>([]); // Array to store AbortControllers
+  const videoData = useRef<any[]>([]); // Array to store AbortControllers
+  const indexRef = useRef(0); // Track the current active video index
 
   const removeHeart = (id: number) => {
     setHearts((prev) => prev.filter((heartId) => heartId !== id)); // Remove the heart by ID
@@ -297,6 +300,9 @@ const VideoFeed = ({
             data-post-id={video.post_id} // Add post ID to the container
           >
             <VideoContainer
+              videoData={videoData}
+              indexRef={indexRef}
+              abortControllerRef={abortControllerRef}
               container={videoContainerRef.current}
               width={width}
               height={height}

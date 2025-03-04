@@ -39,6 +39,9 @@ const Player = ({
   type,
   post_id,
   isActive,
+  abortControllerRef,
+  indexRef,
+  videoData,
 }: {
   src: string;
   thumbnail: string;
@@ -52,6 +55,9 @@ const Player = ({
   width: number;
   height: number;
   isActive: boolean;
+  abortControllerRef: any;
+  indexRef: any;
+  videoData: any;
 }) => {
   const playerContainerRef = useRef<HTMLDivElement | null>(null);
   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
@@ -73,6 +79,8 @@ const Player = ({
   const [p_img, setPImg] = useState(false);
   const preloadRef = useRef<boolean>(false);
   const bufferTimer = useRef<NodeJS.Timeout | null>(null);
+  // const abortControllerRef = useRef<AbortController | null>(null);
+  // const { videoData } = useSelector((state: any) => state.previousSlice);
 
   const dispatch = useDispatch();
 
@@ -160,14 +168,20 @@ const Player = ({
           // Configure video element
           video.preload = "metadata";
 
+          // Create a new AbortController for the current request
+          const abortController = new AbortController();
+          abortControllerRef.current?.push(abortController); // Store the new controller
+          videoData?.current?.push(video);
+          // dispatch(setPrevious(video));
           const loadVideo = async () => {
             try {
               const headers = new Headers();
-              headers.append('Range', 'bytes=0-1048576');
-              
-              const response = await fetch(url, { 
+              headers.append("Range", "bytes=0-1048576");
+
+              const response = await fetch(url, {
                 headers,
                 method: "GET",
+                signal: abortController?.signal, // Important part
               });
 
               if (response.status === 206) {
@@ -211,8 +225,15 @@ const Player = ({
 
           // Clean up function
           return () => {
-            video.removeAttribute("src");
-            video.load();
+            if (video) {
+              video.pause();
+              video.removeAttribute("src");
+              video.load();
+            }
+            // // Abort fetch request
+            // if (abortControllerRef.current) {
+            //   abortControllerRef.current.abort();
+            // }
           };
         },
       },
@@ -655,7 +676,22 @@ const Player = ({
     if (!playerContainerRef.current) return;
 
     if (isActive) {
-      // Initialize or reinitialize player when becoming active
+      // Increment the index when a new video becomes active
+      indexRef.current++;
+
+      // Abort previous request when index >= 1
+      if (indexRef.current > 1 && abortControllerRef.current.length > 0) {
+        abortControllerRef.current[0].abort(); // Abort the first (oldest) request
+        abortControllerRef.current.splice(0, 1); // Remove the first item from the array
+        if (videoData?.current.length > 0) {
+          videoData?.current[0].pause();
+          videoData?.current[0].removeAttribute("src");
+          videoData?.current[0].load(); // Reset the video element
+          videoData?.current.splice(0, 1);
+          indexRef.current--; // Decrease index count
+        }
+      }
+
       initializePlayer();
 
       // Function to attempt playback
@@ -690,13 +726,9 @@ const Player = ({
         hlsRef.current.destroy();
         hlsRef.current = null;
       }
-      // Video becomes inactive
-      // artPlayerInstanceRef.current.pause();
-      // artPlayerInstanceRef.current.muted = true;
-
-      // Set to lowest quality when inactive
-      // if (hlsRef.current) {
-      //   hlsRef.current.currentLevel = 0;
+      // if (abortControllerRef.current) {
+      //   abortControllerRef.current.abort();
+      //   abortControllerRef.current = null;
       // }
     }
   }, [isActive]);
@@ -713,6 +745,10 @@ const Player = ({
         hlsRef.current.destroy();
         hlsRef.current = null;
       }
+      // if (abortControllerRef.current) {
+      //   abortControllerRef.current.abort();
+      //   abortControllerRef.current = null;
+      // }
     };
   }, [src]); // Reinitialize when src changes
 

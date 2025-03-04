@@ -25,6 +25,9 @@ const VideoContainer = ({
   width,
   height,
   container,
+  abortControllerRef,
+  indexRef,
+  videoData,
 }: {
   video: any;
   setWidth: any;
@@ -39,6 +42,9 @@ const VideoContainer = ({
   width: any;
   height: any;
   container: any;
+  abortControllerRef: any;
+  indexRef: any;
+  videoData: any;
 }) => {
   const [likeCount, setLikeCount] = useState(video?.like_count);
   const [isLiked, setIsLiked] = useState(video?.is_liked);
@@ -350,6 +356,9 @@ const VideoContainer = ({
   return (
     <>
       <Player
+        videoData={videoData}
+        indexRef={indexRef}
+        abortControllerRef={abortControllerRef}
         width={video?.files[0].width}
         height={video?.files[0].height}
         type={video?.type == "ads" ? true : false}

@@ -49,6 +49,9 @@ const Home = () => {
   const [videosToRender, setVideosToRender] = useState<any[]>([]); // Store videos to render
   const [videosPerLoad, setVideosPerLoad] = useState(3); // Number of videos to initially render
   const [start, setStart] = useState(false);
+  const abortControllerRef = useRef<AbortController[]>([]); // Array to store AbortControllers
+  const videoData = useRef<any[]>([]); // Array to store AbortControllers
+  const indexRef = useRef(0); // Track the current active video index
 
   const removeHeart = (id: number) => {
     setHearts((prev) => prev.filter((heartId) => heartId !== id)); // Remove the heart by ID
@@ -181,45 +184,45 @@ const Home = () => {
               dispatch(setCurrentActivePost(postId));
 
               // Find current video index
-              const currentVideoKey =
-                currentTab === 0 ? "follow" : currentTab === 2 ? "foryou" : "";
-              const currentVideos = videos[currentVideoKey] || [];
-              const currentIndex = currentVideos.findIndex(
-                (v: any) => v.post_id === postId
-              );
+              // const currentVideoKey =
+              //   currentTab === 0 ? "follow" : currentTab === 2 ? "foryou" : "";
+              // const currentVideos = videos[currentVideoKey] || [];
+              // const currentIndex = currentVideos.findIndex(
+              //   (v: any) => v.post_id === postId
+              // );
 
-              // Simple preloading logic
-              if (currentIndex !== -1) {
-                const preloadedUrls = new Set<string>();
+              // // Simple preloading logic
+              // if (currentIndex !== -1) {
+              //   const preloadedUrls = new Set<string>();
 
-                const preloadVideo = async (url: string) => {
-                  if (!url || preloadedUrls.has(url)) return;
+              //   const preloadVideo = async (url: string) => {
+              //     if (!url || preloadedUrls.has(url)) return;
 
-                  try {
-                    const headers = new Headers();
-                    headers.append("Range", "bytes=0-1024");
+              //     try {
+              //       const headers = new Headers();
+              //       headers.append("Range", "bytes=0-1024");
 
-                    const response = await fetch(url, { headers });
-                    if (response.status === 206) {
-                      preloadedUrls.add(url);
-                    }
-                  } catch (error) {
-                    console.error("Failed to preload video:", error);
-                  }
-                };
+              //       const response = await fetch(url, { headers });
+              //       if (response.status === 206) {
+              //         preloadedUrls.add(url);
+              //       }
+              //     } catch (error) {
+              //       console.error("Failed to preload video:", error);
+              //     }
+              //   };
 
-                // Always preload next 3 videos sequentially
-                const preloadNextVideos = async () => {
-                  for (let i = 1; i <= 3; i++) {
-                    const nextVideo = currentVideos[currentIndex + i];
-                    if (nextVideo?.files?.[0]?.resourceURL) {
-                      await preloadVideo(nextVideo.files[0].resourceURL);
-                    }
-                  }
-                };
+              //   // Always preload next 3 videos sequentially
+              //   const preloadNextVideos = async () => {
+              //     for (let i = 1; i <= 3; i++) {
+              //       const nextVideo = currentVideos[currentIndex + i];
+              //       if (nextVideo?.files?.[0]?.resourceURL) {
+              //         await preloadVideo(nextVideo.files[0].resourceURL);
+              //       }
+              //     }
+              //   };
 
-                preloadNextVideos().catch(console.error);
-              }
+              //   preloadNextVideos().catch(console.error);
+              // }
             }
           }
         });
@@ -345,7 +348,7 @@ const Home = () => {
 
     // Observe the last video element
     if (videosToRender.length > 1) {
-      const secondLastVideo = container.children[container.children.length - 1];
+      const secondLastVideo = container.children[container.children.length - 2];
       if (secondLastVideo) {
         observer.observe(secondLastVideo);
       }
@@ -511,6 +514,9 @@ const Home = () => {
                           data-post-id={video?.post_id} // Add post ID to the container
                         >
                           <VideoContainer
+                            videoData={videoData}
+                            indexRef={indexRef}
+                            abortControllerRef={abortControllerRef}
                             container={videoContainerRef.current}
                             status={true}
                             countNumber={countNumber}
@@ -635,6 +641,9 @@ const Home = () => {
                           data-post-id={video.post_id} // Add post ID to the container
                         >
                           <VideoContainer
+                            videoData={videoData}
+                            indexRef={indexRef}
+                            abortControllerRef={abortControllerRef}
                             container={videoContainerRef.current}
                             status={true}
                             countNumber={countNumber}

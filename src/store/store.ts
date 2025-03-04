@@ -23,6 +23,7 @@ import pageSlice from "@/page/home/services/pageSlice";
 import muteSlice from "@/page/home/services/muteSlice";
 import loaderSlice from "@/page/home/services/loaderSlice";
 import hideBarSlice from "@/page/home/services/hideBarSlice";
+import previousSlice from "@/page/home/services/previousSlice";
 
 const sessionStorageWrapper: Storage = {
   getItem: (key: string) => {
@@ -66,6 +67,7 @@ const rootReducer = combineReducers({
   hideBarSlice: hideBarSlice,
   home: persistReducer(persistHomeSliceConfig, homeSlice), // Apply sessionStorage for homeSlice
   model: ModelSlice,
+  previousSlice: previousSlice,
   unlike: unlikeSlice,
   errorslice: errorSlice,
   activeslice: activeSlice,
