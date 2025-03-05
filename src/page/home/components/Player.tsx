@@ -176,69 +176,78 @@ const Player = ({
           const abortController = new AbortController();
           abortControllerRef.current?.push(abortController); // Store the new controller
           videoData?.current?.push(video);
-          // dispatch(setPrevious(video));
+          
           const loadVideo = async () => {
             try {
+              // First try a direct approach without range requests
+              // This avoids CORS issues with some servers
+              video.src = url;
+              video.crossOrigin = "anonymous"; // Add cross-origin attribute
+              
+              // Listen for error events - if direct loading fails, try with fetch
+              const handleError = () => {
+                console.log("Direct loading failed, trying with fetch");
+                video.removeEventListener('error', handleError);
+                
+                // Try with fetch and range requests as fallback
+                tryFetchWithRange();
+              };
+              
+              video.addEventListener('error', handleError);
+              
+              // If active, set to auto preload
+              if (isActive) {
+                video.preload = "auto";
+              }
+              
+              // Try to load the video
+              video.load();
+            } catch (error) {
+              console.error("Error loading video:", error);
+              tryFetchWithRange();
+            }
+          };
+          
+          const tryFetchWithRange = async () => {
+            try {
+              // Create proper headers for range request
               const headers = new Headers();
               headers.append("Range", "bytes=0-1048576");
-
+              
+              // Add CORS mode to request
               const response = await fetch(url, {
                 headers,
                 method: "GET",
-                signal: abortController?.signal, // Important part
+                signal: abortController?.signal,
+                mode: 'cors', // Explicitly set CORS mode
+                credentials: 'omit' // Don't send credentials
               });
 
-              if (response.status === 206) {
-                // Server supports range requests, set video source
+              if (response.status === 206 || response.status === 200) {
+                // Server supports the request, set video source
                 video.src = url;
-
+                
                 // If this is active video, start loading more
                 if (isActive) {
                   video.preload = "auto";
                 }
               } else {
-                // Server doesn't support range requests, fallback to normal loading
+                // Last resort - try without headers
+                console.warn("Range requests not supported, trying direct load");
                 video.src = url;
-                video.preload = "metadata";
+                if (isActive) {
+                  video.preload = "auto";
+                }
               }
             } catch (error) {
-              console.error("Error loading video:", error);
-              // Fallback to basic loading
+              console.error("Failed to load video with fetch:", error);
+              // Last attempt - direct assignment
               video.src = url;
-              video.preload = "metadata";
             }
           };
-
+          
           // Start loading process
-          loadVideo().catch(console.error);
-
-          // Add event listeners for dynamic loading
-          video.addEventListener("canplaythrough", () => {
-            // Once we can play through current buffer, load more if active
-            if (isActive) {
-              video.preload = "auto";
-            }
-          });
-
-          video.addEventListener("waiting", () => {
-            // If video is waiting for data and is active, ensure we're loading
-            if (isActive) {
-              video.preload = "auto";
-            }
-          });
-
-          // Clean up function
-          return () => {
-            if (video) {
-              video.pause();
-              video.removeAttribute("src");
-              video.load();
-            }
-            // // Abort fetch request
-            // if (abortControllerRef.current) {
-            //   abortControllerRef.current.abort();
-            // }
-          };
+          loadVideo();
         },
         m3u8: function (videoElement: HTMLVideoElement, url: string) {
           if (Hls.isSupported()) {
@@ -741,59 +750,181 @@ const Player = ({
       // Increment the index when a new video becomes active
       indexRef.current++;
 
-      // Abort previous request when index >= 1
+      // Only cleanup previous videos, not the current one
       if (indexRef.current > 1 && abortControllerRef.current.length > 0) {
-        abortControllerRef.current[0].abort(); // Abort the first (oldest) request
-        abortControllerRef.current.splice(0, 1); // Remove the first item from the array
-        if (videoData?.current.length > 0) {
-          videoData?.current[0].pause();
-          videoData?.current[0].removeAttribute("src");
-          videoData?.current[0].load(); // Reset the video element
-          videoData?.current.splice(0, 1);
-          indexRef.current--; // Decrease index count
+        // Only abort requests for previous videos, not the current one
+        // Keep the last controller for the current video
+        if (abortControllerRef.current.length > 1) {
+          for (let i = 0; i < abortControllerRef.current.length - 1; i++) {
+            if (abortControllerRef.current[i]) {
+              abortControllerRef.current[i].abort(); // Abort previous controllers
+            }
+          }
+          // Keep only the most recent controller
+          abortControllerRef.current = [abortControllerRef.current[abortControllerRef.current.length - 1]];
+        }
+        
+        // Clean up previous video elements, but not the current one
+        if (videoData?.current.length > 1) {
+          // Keep only the most recent video element
+          for (let i = 0; i < videoData.current.length - 1; i++) {
+            const video = videoData.current[i];
+            if (video) {
+              video.pause();
+              video.removeAttribute("src");
+              video.load(); // Reset the video element
+            }
+          }
+          // Keep only the last video element
+          videoData.current = [videoData.current[videoData.current.length - 1]];
         }
       }
 
-      initializePlayer();
+      // Only clean up existing player if it's not playing the current source
+      if (artPlayerInstanceRef.current && artPlayerInstanceRef.current.video?.src !== src) {
+        cleanupPlayer();
+      }
+      
+      // Only initialize if we don't already have a player with the current source
+      if (!artPlayerInstanceRef.current) {
+        initializePlayer();
+      }
 
-      // Function to attempt playback
+      // Function to attempt playback with better error handling
       const attemptPlay = () => {
         if (!artPlayerInstanceRef.current) return;
-        artPlayerInstanceRef.current.play().catch((error) => {
-          console.error("Video play failed:", error);
-          if (error.name === "NotAllowedError") {
-            // Reset to poster image
-            if (artPlayerInstanceRef.current) {
-              artPlayerInstanceRef.current.currentTime = 0;
-              artPlayerInstanceRef.current.controls.show = true;
-              artPlayerInstanceRef.current.video.load(); // Load the video // Small delay to ensure video has loaded
+        
+        // For m3u8 videos, make sure HLS is properly initialized
+        const isM3u8 = src.toLowerCase().endsWith('.m3u8');
+        
+        if (isM3u8 && !hlsRef.current && typeof Hls !== 'undefined' && Hls.isSupported()) {
+          // If HLS instance doesn't exist but we need it, create it
+          hlsRef.current = new Hls({
+            maxBufferLength: 30, // Increase buffer for smoother playback
+            maxMaxBufferLength: 60,
+            enableWorker: true, // Use web workers for better performance
+          });
+          
+          if (hlsRef.current) {
+            hlsRef.current.loadSource(src);
+            hlsRef.current.attachMedia(artPlayerInstanceRef.current.video);
+            hlsRef.current.on(Hls.Events.MANIFEST_PARSED, () => {
+              artPlayerInstanceRef.current?.play().catch(error => {
+                console.error("HLS play failed:", error);
+              });
+            });
+          }
+        } else {
+          // For non-HLS videos, just play normally with exponential backoff retry
+          let retryCount = 0;
+          const maxRetries = 3;
+          
+          const tryPlay = () => {
+            artPlayerInstanceRef.current?.play().catch((error) => {
+              console.error(`Video play failed (attempt ${retryCount + 1}):`, error);
+              
+              if (error.name === "NotAllowedError") {
+                // User interaction required - show play button
+                if (artPlayerInstanceRef.current) {
+                  artPlayerInstanceRef.current.currentTime = 0;
+                  artPlayerInstanceRef.current.controls.show = true;
+                  artPlayerInstanceRef.current.video.load();
+                }
+              } else if (retryCount < maxRetries) {
+                // Retry with exponential backoff
+                retryCount++;
+                const delay = Math.pow(2, retryCount) * 100; // 200ms, 400ms, 800ms
+                console.log(`Retrying playback in ${delay}ms...`);
+                setTimeout(tryPlay, delay);
+              } else {
+                console.warn("Failed to play video after multiple attempts");
+                // Try to reset the video source as last resort
+                if (artPlayerInstanceRef.current && artPlayerInstanceRef.current.video) {
+                  const currentSrc = artPlayerInstanceRef.current.video.src;
+                  artPlayerInstanceRef.current.video.src = "";
+                  artPlayerInstanceRef.current.video.load();
+                  
+                  // Set it back after a short delay
+                  setTimeout(() => {
+                    if (artPlayerInstanceRef.current && artPlayerInstanceRef.current.video) {
+                      artPlayerInstanceRef.current.video.src = currentSrc;
+                      artPlayerInstanceRef.current.video.load();
+                      artPlayerInstanceRef.current.play().catch(e => 
+                        console.error("Final play attempt failed:", e)
+                      );
+                    }
+                  }, 100);
+                }
+              }
+            });
+          };
+          
+          tryPlay();
+        }
+      };
+
+      // Small delay before attempting playback to ensure player is ready
+      setTimeout(attemptPlay, 50);
+
+      // Set quality to auto for active video
+      if (hlsRef.current && typeof Hls !== 'undefined') {
+        hlsRef.current.currentLevel = -1; // Auto quality
+        
+        // For HLS, make sure we have error recovery
+        hlsRef.current.on(Hls.Events.ERROR, (event, data) => {
+          if (data.fatal) {
+            switch (data.type) {
+              case Hls.ErrorTypes.NETWORK_ERROR:
+                // Try to recover network error
+                console.log('Fatal network error encountered, trying to recover');
+                hlsRef.current?.startLoad();
+                break;
+              case Hls.ErrorTypes.MEDIA_ERROR:
+                console.log('Fatal media error encountered, trying to recover');
+                hlsRef.current?.recoverMediaError();
+                break;
+              default:
+                // Cannot recover
+                cleanupPlayer();
+                initializePlayer();
+                break;
             }
           }
         });
-      };
-
-      attemptPlay();
-
-      // Set quality to auto for active video
-      if (hlsRef.current) {
-        hlsRef.current.currentLevel = -1;
       }
     } else {
-      // Cleanup when inactive
+      // For inactive videos, don't immediately destroy them
+      // Just pause and lower resources, but keep the player around
+      // This prevents costly re-initialization when switching back
       if (artPlayerInstanceRef.current) {
-        artPlayerInstanceRef.current.destroy();
-        artPlayerInstanceRef.current = null;
+        artPlayerInstanceRef.current.pause();
+        
+        // For m3u8 videos, stop loading new segments but don't destroy
+        if (hlsRef.current) {
+          try {
+            hlsRef.current.stopLoad();
+          } catch (error) {
+            console.error("Error stopping HLS load:", error);
+          }
+        }
       }
-      if (hlsRef.current) {
-        hlsRef.current.destroy();
-        hlsRef.current = null;
-      }
-      // if (abortControllerRef.current) {
-      //   abortControllerRef.current.abort();
-      //   abortControllerRef.current = null;
-      // }
     }
-  }, [isActive]);
+    
+    // Cleanup function when component unmounts or before re-running effect
+    return () => {
+      // We only want to fully clean up when unmounting
+      // Not when just toggling active state
+      if (!isActive) {
+        // If becoming inactive, wait a bit before cleaning up
+        // This prevents jarring transitions
+        setTimeout(() => {
+          if (!artPlayerInstanceRef.current?.playing) {
+            cleanupPlayer();
+          }
+        }, 5000); // Wait 5 seconds before cleanup
+      }
+    };
+  }, [isActive, src]); // Re-run when isActive or src changes
 
   // Initialize player when component mounts
   useEffect(() => {
@@ -847,13 +978,23 @@ const Player = ({
         video.removeAttribute("src");
         video.load();
       }
-      artPlayerInstanceRef.current.destroy();
+      
+      try {
+        artPlayerInstanceRef.current.destroy();
+      } catch (error) {
+        console.error("Error destroying player:", error);
+      }
       artPlayerInstanceRef.current = null;
     }
     
     // Clean up HLS instance if it exists
     if (hlsRef.current) {
-      hlsRef.current.destroy();
+      try {
+        hlsRef.current.stopLoad(); // Stop loading first
+        hlsRef.current.destroy();
+      } catch (error) {
+        console.error("Error destroying HLS:", error);
+      }
       hlsRef.current = null;
     }
   };
