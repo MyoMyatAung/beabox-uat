@@ -141,6 +141,9 @@ const Player = ({
     Artplayer.MOBILE_DBCLICK_PLAY = false;
     Artplayer.MOBILE_CLICK_PLAY = true;
 
+    // Determine if the source is an m3u8 file
+    const isM3u8 = src.toLowerCase().endsWith('.m3u8');
+    
     // Configure Artplayer options
     const options: Artplayer["Option"] = {
       autoOrientation: true,
@@ -162,7 +165,8 @@ const Player = ({
         loading: `<div class="video-loading-indicator" style="display: none;"><img width="100" height="100" src=${vod_loader}></div>`,
         state: `<div class="video-play-indicator" style="display: none;"><img src="${indicator}" width="50" height="50" alt="Play"></div>`,
       },
-      type: "mp4",
+      // Set the type based on the file extension
+      type: isM3u8 ? "m3u8" : "mp4",
       customType: {
         mp4: function (video: HTMLVideoElement, url: string) {
           // Configure video element
@@ -240,12 +244,58 @@ const Player = ({
           if (Hls.isSupported()) {
             const hls = new Hls({
               maxBufferLength: 30,
+              maxMaxBufferLength: 60,
+              enableWorker: true,
+              lowLatencyMode: false,
+              startLevel: -1, // Auto level selection
             });
+            
+            // Add error handling
+            hls.on(Hls.Events.ERROR, function(event, data) {
+              if (data.fatal) {
+                console.error('HLS fatal error:', data.type, data.details);
+                switch(data.type) {
+                  case Hls.ErrorTypes.NETWORK_ERROR:
+                    // Try to recover network error
+                    console.log('Fatal network error encountered, trying to recover');
+                    hls.startLoad();
+                    break;
+                  case Hls.ErrorTypes.MEDIA_ERROR:
+                    console.log('Fatal media error encountered, trying to recover');
+                    hls.recoverMediaError();
+                    break;
+                  default:
+                    // Cannot recover
+                    hls.destroy();
+                    break;
+                }
+              } else {
+                console.warn('Non-fatal HLS error:', data.type, data.details);
+              }
+            });
+            
+            // Add manifest loaded event
+            hls.on(Hls.Events.MANIFEST_PARSED, function() {
+              console.log('HLS manifest loaded successfully');
+              // Attempt to play after manifest is loaded
+              videoElement.play().catch(error => {
+                console.warn('Auto-play prevented:', error);
+              });
+            });
+            
             hls.loadSource(url);
             hls.attachMedia(videoElement);
             hlsRef.current = hls;
           } else if (videoElement.canPlayType("application/vnd.apple.mpegurl")) {
             videoElement.src = url;
+            // Add event listener for iOS native HLS
+            videoElement.addEventListener('canplay', function() {
+              videoElement.play().catch(error => {
+                console.warn('Auto-play prevented on iOS:', error);
+              });
+            });
+          } else {
+            console.error('HLS is not supported in this browser and no fallback available');
           }
         }
       },
@@ -793,11 +843,18 @@ const Player = ({
       // Force garbage collection of video resources
       const video = artPlayerInstanceRef.current.video;
       if (video) {
+        video.pause();
         video.removeAttribute("src");
         video.load();
       }
       artPlayerInstanceRef.current.destroy();
       artPlayerInstanceRef.current = null;
+    }
+    
+    // Clean up HLS instance if it exists
+    if (hlsRef.current) {
+      hlsRef.current.destroy();
+      hlsRef.current = null;
     }
   };
 
