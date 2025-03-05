@@ -236,6 +236,18 @@ const Player = ({
             // }
           };
         },
+        m3u8: function (videoElement: HTMLVideoElement, url: string) {
+          if (Hls.isSupported()) {
+            const hls = new Hls({
+              maxBufferLength: 30,
+            });
+            hls.loadSource(url);
+            hls.attachMedia(videoElement);
+            hlsRef.current = hls;
+          } else if (videoElement.canPlayType("application/vnd.apple.mpegurl")) {
+            videoElement.src = url;
+          }
+        }
       },
       layers: [
         {
