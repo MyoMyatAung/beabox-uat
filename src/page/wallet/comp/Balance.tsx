@@ -2,19 +2,27 @@ import React, { useEffect, useState } from "react";
 import "../wallet.css";
 import coin from "../../../assets/wallet/coin.png";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
-import { useGetMyProfileQuery } from "@/store/api/profileApi";
+import {
+  useGetMyOwnProfileQuery,
+  useGetMyProfileQuery,
+} from "@/store/api/profileApi";
 import gg from "../../../assets/wallet/gg.svg";
 import we from "../../../assets/wallet/we.svg";
 import { ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { paths } from "@/routes/paths";
+import { useSelector } from "react-redux";
 
 interface BalanceProps {}
 
 const Balance: React.FC<BalanceProps> = () => {
   const [balance, setBalance] = useState("");
   const [isHidden, setIsHidden] = useState(false); // State to toggle visibility
-  const { data } = useGetMyProfileQuery("");
+  const user = useSelector((state: any) => state?.persist?.user) || "";
+  const { data, isLoading, refetch } = useGetMyOwnProfileQuery("", {
+    skip: !user,
+  });
+  console.log(data);
   const navigate = useNavigate();
   useEffect(() => {
     setBalance(data?.data.wallet_balance || "0");
@@ -53,7 +61,11 @@ const Balance: React.FC<BalanceProps> = () => {
         </div>
         <div className="">
           <h1 className=" text-white text-[12px] font-[700] leading-[22px]">
-            作品收益 : <span className=" text-[#CD3EFF]">748.00</span> B币
+            作品收益 :{" "}
+            <span className=" text-[#CD3EFF]">
+              {data?.data?.income_from_work}
+            </span>{" "}
+            B币
           </h1>
         </div>
         <p className=" w-full h-[1px] bg-white/20"></p>
@@ -65,7 +77,7 @@ const Balance: React.FC<BalanceProps> = () => {
             <div className=" flex justify-center items-center gap-[6px]">
               <img src={we} alt="" />
               <span className=" text-white text-[14px] font-[400] leading-[15px]">
-              提现
+                提现
               </span>
             </div>
             <ChevronRight className=" mr-" />
@@ -78,7 +90,7 @@ const Balance: React.FC<BalanceProps> = () => {
             <div className=" flex justify-center items-center gap-[6px]">
               <img src={gg} alt="" />
               <span className=" text-white text-[14px] font-[400] leading-[15px]">
-              充值
+                充值
               </span>
             </div>
             <ChevronRight className=" mr-" />
