@@ -917,11 +917,11 @@ const Player = ({
       if (!isActive) {
         // If becoming inactive, wait a bit before cleaning up
         // This prevents jarring transitions
-        setTimeout(() => {
-          if (!artPlayerInstanceRef.current?.playing) {
-            cleanupPlayer();
-          }
-        }, 5000); // Wait 5 seconds before cleanup
+        // setTimeout(() => {
+        //   if (!artPlayerInstanceRef.current?.playing) {
+        //     cleanupPlayer();
+        //   }
+        // }, 5000); // Wait 5 seconds before cleanup
       }
     };
   }, [isActive, src]); // Re-run when isActive or src changes
