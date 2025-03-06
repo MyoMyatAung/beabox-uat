@@ -21,6 +21,7 @@ const Transit: React.FC<TransitProps> = ({}) => {
       setTran(data?.data);
     }
   }, [data]);
+  console.log(data)
 
   return (
     <div className=" py-[20px] h-[60vh]">

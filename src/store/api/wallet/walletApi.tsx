@@ -1,5 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "../../store";
+import { decryptWithAes } from "@/lib/decrypt";
+import { convertToSecureUrl } from "@/lib/encrypt";
 
 export const walletApi = createApi({
   reducerPath: "walletApi",
@@ -11,7 +13,20 @@ export const walletApi = createApi({
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
       }
+      headers.set("Accept-Language", "cn");
+      headers.set("encrypt", "true");
       return headers;
+    },
+    responseHandler: async (response) => {
+      const encryptedData = await response.json(); // Get the encrypted response as a string
+
+      try {
+        const decryptedData = decryptWithAes(encryptedData?.data); // Decrypt the response data
+        return JSON.parse(decryptedData); // Parse the decrypted data into JSON format
+      } catch (err) {
+        console.error("Error decrypting response:", err);
+        throw new Error("Failed to decrypt response.");
+      }
     },
   }),
   endpoints: (builder) => ({
@@ -23,7 +38,9 @@ export const walletApi = createApi({
     }),
     getTransitionHistory: builder.query<any, any>({
       query: ({ period, type }) => ({
-        url: `/wallet/transaction-history?period=${period}&type=${type}`,
+        url: convertToSecureUrl(
+          `/wallet/transaction-history?period=${period}`
+        ),
         method: "GET",
       }),
     }),
@@ -62,5 +79,5 @@ export const {
   useGetCoinListQuery,
   useGetPaymentMethodQuery,
   usePostWalletWithdrawlMutation,
-  usePostWalletRechargeMutation
+  usePostWalletRechargeMutation,
 } = walletApi;

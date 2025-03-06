@@ -25,7 +25,7 @@ const Balance: React.FC<BalanceProps> = () => {
   console.log(data);
   const navigate = useNavigate();
   useEffect(() => {
-    setBalance(data?.data.wallet_balance || "0");
+    setBalance(data?.data.coins || "0");
   }, [data]);
 
   const toggleVisibility = () => {
@@ -63,7 +63,7 @@ const Balance: React.FC<BalanceProps> = () => {
           <h1 className=" text-white text-[12px] font-[700] leading-[22px]">
             作品收益 :{" "}
             <span className=" text-[#CD3EFF]">
-              {data?.data?.income_from_work}
+              {data?.data?.income_coins ? data?.data?.income_coins : "0"}
             </span>{" "}
             B币
           </h1>
