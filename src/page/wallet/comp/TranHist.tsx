@@ -30,7 +30,7 @@ const TranHist: React.FC<TranHistProps> = ({}) => {
         <Header lv={false} title="Transition History" />
         <div className=" px-[20px] flex justify-center items-center">
           {/* types */}
-          <TypePick />
+          {/* <TypePick /> */}
         </div>
         {/* time */}
         <DatePick

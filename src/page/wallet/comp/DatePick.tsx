@@ -126,14 +126,16 @@ const DatePick: React.FC<any> = ({
                 <button
                   className={`w-[150px] text-[#888] text-[16px] draw_canccel_btn p-[16px]`}
                 >
-                  Cancel
+                  {/* Cancel */}
+                  取消
                 </button>
               </DrawerClose>
               <DrawerClose asChild>
                 <button
                   className={`w-[150px] text-[#fff] text-[16px] font-[400] draw_done_btn p-[16px]`}
                 >
-                  Done
+                  {/* Done */}
+                  完毕
                 </button>
               </DrawerClose>
             </div>
