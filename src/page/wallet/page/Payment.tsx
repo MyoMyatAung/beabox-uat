@@ -4,28 +4,29 @@ import "../wallet.css";
 import { useGetMyProfileQuery } from "@/store/api/profileApi";
 import { usePostWalletRechargeMutation } from "@/store/api/wallet/walletApi";
 import { DrawerClose } from "@/components/ui/drawer";
-import { Drawer as DrawerPrimitive } from "vaul"
-
+import { Drawer as DrawerPrimitive } from "vaul";
+import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 
 interface PaymentProps {
   paymentMeth: any;
   total: string;
   selectedCoinId: any;
-  setOpen:any
+  setOpen: any;
 }
 
 const Payment: React.FC<PaymentProps> = ({
   paymentMeth,
   total,
   selectedCoinId,
-  setOpen
+  setOpen,
 }) => {
   const [imgError, setImgError] = useState(false);
   const [pay, setPay] = useState([]);
   const [selectedId, setSelectedId] = useState<number | null>(1);
   const { data } = useGetMyProfileQuery("");
   const [postWalletRecharge] = usePostWalletRechargeMutation();
-  const DrawerClose = DrawerPrimitive.Close
+  const DrawerClose = DrawerPrimitive.Close;
+  console.log(pay);
 
   useEffect(() => {
     if (paymentMeth.data) {
@@ -39,6 +40,7 @@ const Payment: React.FC<PaymentProps> = ({
   };
 
   const handleSubmit = async () => {
+    console.log("click")
     if (selectedId === 1) {
       return;
     }
@@ -51,7 +53,7 @@ const Payment: React.FC<PaymentProps> = ({
     try {
       const data = await postWalletRecharge({ formData });
       console.log(data);
-      setOpen(false)
+      setOpen(false);
     } catch (error) {}
   };
   // console.log(pay);
@@ -105,24 +107,26 @@ const Payment: React.FC<PaymentProps> = ({
               </h1>
             </div>
             <div>
-              <img
+              <AsyncDecryptedImage className=" h-[20px]" imageUrl={pp.image} />
+              {/* <img
                 onError={() => setImgError(true)}
-                src={imgError ? pp.image : ggpay}
+                // src={imgError ? pp.image : ggpay}
+                src={pp.image}
                 alt=""
-              />
+              /> */}
             </div>
           </div>
         ))}
       </div>
       {/* Total */}
       <span className="text-white text-[16px] font-[700] leading-[15px] py-[20px]">
-        Total: <span className="total_pay_text"> $ {total}</span>
+        全部的: <span className="total_pay_text"> $ {total}</span>
       </span>
       <button
         onClick={handleSubmit}
         className="comfirm_butoon w-full py-[16px] text-white text-[16px] font-[500]"
       >
-        Confirm Payment
+       确认付款
       </button>
     </div>
   );

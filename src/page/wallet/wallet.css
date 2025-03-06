@@ -91,8 +91,8 @@
 
 .coin_list_box {
   border-radius: 8px;
-  border: 1px solid #282828;
-  background: #131113;
+  border: 1px solid #312648;
+  background: #1e1928;
 }
 
 .coin_bonus_text {
@@ -103,14 +103,14 @@
 }
 
 .badge_bouns_pop {
-  border-radius: 0px 0px 0px 6px;
+  border-radius: 0px 0px 0px 8px;
   background: var(--Linear, linear-gradient(90deg, #bc68e5 0%, #fb3470 82.89%));
 }
 
 .popular_box {
   border-radius: 8px;
   border: 1px solid var(--Purple-Gradient-2, #cd3eff);
-  background: #141214;
+  background: #1e1928;
 }
 
 .total_pay_text {

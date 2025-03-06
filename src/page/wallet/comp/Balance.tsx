@@ -22,7 +22,7 @@ const Balance: React.FC<BalanceProps> = () => {
   const { data, isLoading, refetch } = useGetMyOwnProfileQuery("", {
     skip: !user,
   });
-  console.log(data);
+  // console.log(data);
   const navigate = useNavigate();
   useEffect(() => {
     setBalance(data?.data.coins || "0");

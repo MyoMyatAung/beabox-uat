@@ -38,21 +38,19 @@ export const walletApi = createApi({
     }),
     getTransitionHistory: builder.query<any, any>({
       query: ({ period, type }) => ({
-        url: convertToSecureUrl(
-          `/wallet/transaction-history?period=${period}`
-        ),
+        url: convertToSecureUrl(`/wallet/transaction-history?period=${period}`),
         method: "GET",
       }),
     }),
     getCoinList: builder.query<any, any>({
       query: () => ({
-        url: "/wallet/coin-list",
+        url: convertToSecureUrl("/wallet/coin-list"),
         method: "GET",
       }),
     }),
     getPaymentMethod: builder.query<any, any>({
       query: () => ({
-        url: "/wallet/payment-methods",
+        url:convertToSecureUrl("/wallet/payment-methods"),
         method: "GET",
       }),
     }),
