@@ -32,7 +32,7 @@ export const walletApi = createApi({
   endpoints: (builder) => ({
     getInvite: builder.query<any, string>({
       query: () => ({
-        url: `/config/data`,
+        url: convertToSecureUrl(`/config/data`),
         method: "GET",
       }),
     }),

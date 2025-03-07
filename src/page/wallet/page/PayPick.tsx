@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/select";
 import "../wallet.css";
 import ggpay from "../../../assets/wallet/ggpay.svg";
+import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 
 interface PayPickProps {
   selectedPaymentID: any;
@@ -32,7 +33,7 @@ const PayPick: React.FC<PayPickProps> = ({
   setSelectedPaymentID,
 }) => {
   const [selectedValue, setSelectedValue] = useState<string>(
-    (payment && payment?.find((p) => p.name === "Credit Card")?.name) || ""
+    payment.length > 0 ? payment[0].name : ""
   );
   // console.log(payment);
   useEffect(() => {
@@ -51,7 +52,7 @@ const PayPick: React.FC<PayPickProps> = ({
       console.error("Selected payment method not found");
     }
   };
-
+  console.log(payment);
   return (
     <div className="w-ful py-[20px]">
       <Select
@@ -61,7 +62,7 @@ const PayPick: React.FC<PayPickProps> = ({
         <SelectTrigger className="w-full payment_select_box">
           <span className=" text-white text-[16px] font-[400] leading-[20px]">
             {selectedValue}
-            {selectedValue === "Credit Card" && " (default)"}
+            {/* {selectedValue === "Credit Card" && " (default)"} */}
           </span>
           {/* <SelectValue
             placeholder={selectedValue || "Select a payment method"}
@@ -73,11 +74,14 @@ const PayPick: React.FC<PayPickProps> = ({
               <SelectItem
                 key={pp.id}
                 value={pp.name}
-                className={` w-full py-[10px] rounded-[10px] h-full bg-white/10`}
+                className={`  py-[10px] rounded-[10px] h-full bg-white/10`}
               >
-                <div className=" w-[260px] flex justify-between items-center">
+                <div className=" w-[300px] flex justify-between">
                   <h1 className=" text-white">{pp.name}</h1>
-                  <img className="" src={ggpay} alt="" />
+                  <AsyncDecryptedImage
+                    className=" h-[20px]"
+                    imageUrl={pp.image}
+                  />{" "}
                 </div>
               </SelectItem>
             ))}

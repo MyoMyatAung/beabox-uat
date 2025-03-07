@@ -9,19 +9,40 @@ import { Button } from "@/components/ui/button";
 
 interface WithDetailsProps {
   payment: any;
+  dollar_withdraw_rate: any;
+  data: any;
 }
 
-const WithDetails: React.FC<WithDetailsProps> = ({ payment }) => {
+const WithDetails: React.FC<WithDetailsProps> = ({
+  payment,
+  data,
+  dollar_withdraw_rate,
+}) => {
   const [amount, setAmount] = useState<string>("");
   const [bankAccountNumber, setBankAccountNumber] = useState<string>("");
   const [bankAccountName, setBankAccountName] = useState<string>("");
   const [selectedPayment, setSelectedPayment] = useState<string>("");
   const [selectedPaymentID, setSelectedPaymentID] = useState<any>();
   const [postWalletWithdrawl] = usePostWalletWithdrawlMutation();
-  const { data } = useGetMyProfileQuery("");
-  // console.log(data)
+  const [expectedAmount, setExpectedAmount] = useState<number>(0);
 
-  // console.log(selectedPaymentID)
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+
+    if (value === "") {
+      setAmount("");
+      setExpectedAmount(0);
+      return;
+    }
+
+    const numericValue: any = Number(value);
+    setAmount(numericValue);
+
+    if (dollar_withdraw_rate?.coins && dollar_withdraw_rate?.dollars) {
+      const rate = dollar_withdraw_rate.dollars / dollar_withdraw_rate.coins;
+      setExpectedAmount(numericValue * rate);
+    }
+  };
 
   const isFormValid = amount !== "" && bankAccountNumber !== "";
   bankAccountName.length !== 0 && selectedPayment !== "";
@@ -43,10 +64,9 @@ const WithDetails: React.FC<WithDetailsProps> = ({ payment }) => {
           throw new Error();
         }
       } catch (error) {
-         toast({
-            description:
-              "nternal server error occurred. Please try again later.",
-          });
+        toast({
+          description: "nternal server error occurred. Please try again later.",
+        });
       }
     }
   };
@@ -59,26 +79,30 @@ const WithDetails: React.FC<WithDetailsProps> = ({ payment }) => {
         {/* amount */}
         <div>
           <label className="text-white text-[16px] font-[400] leading-[20px]">
-            Withdraw amount
+            {/* Withdraw amount */}
+            提现金额
           </label>
           <input
             required
             value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder="Please enter amount (multiple of 100)"
+            // onChange={(e) => setAmount(e.target.value)}
+            onChange={handleAmountChange}
+            placeholder={`请输入金额（ ${dollar_withdraw_rate?.min_coins} 的倍数）`}
             className="withdraw_input bg-transparent focus:outline-none pt-[20px] pb-[10px] w-full text-white text-[16px] font-[400] leading-[20px]"
             type="number"
           />
           <p className="py-[5px] text-[#777] font-[300] text-[14px]">
-            100 coins = 2$
+            {dollar_withdraw_rate?.coins} 硬币 = {dollar_withdraw_rate?.dollars}
+            $
             <br />
-            Expect to receive = ---
+            {/* Expect to receive = --- */}
+            期待收到 = {expectedAmount.toFixed(2)}$
           </p>
         </div>
         {/* payment */}
         <div>
           <label className="text-white text-[16px] font-[400] leading-[20px]">
-            Payment Method
+            付款方式
           </label>
           <PayPick
             selectedPaymentID={selectedPaymentID}
