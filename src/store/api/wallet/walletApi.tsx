@@ -50,7 +50,7 @@ export const walletApi = createApi({
     }),
     getPaymentMethod: builder.query<any, any>({
       query: () => ({
-        url:convertToSecureUrl("/wallet/payment-methods"),
+        url: convertToSecureUrl("/wallet/payment-methods"),
         method: "GET",
       }),
     }),
@@ -63,7 +63,7 @@ export const walletApi = createApi({
     }),
     postWalletRecharge: builder.mutation<any, any>({
       query: ({ formData }) => ({
-        url: "/wallet/buy",
+        url: convertToSecureUrl("/wallet/purchase"),
         method: "POST",
         body: formData,
       }),
