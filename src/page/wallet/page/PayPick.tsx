@@ -35,10 +35,14 @@ const PayPick: React.FC<PayPickProps> = ({
   const [selectedValue, setSelectedValue] = useState<string>(
     payment.length > 0 ? payment[0].name : ""
   );
+  const [selectedField, setSelectedField] = useState<any>(
+    payment.length > 0 ? payment[0] : []
+  );
   // console.log(payment);
   useEffect(() => {
     if (selectedValue) {
       setSelectedPayment(selectedValue);
+      setSelectedPaymentID(selectedField);
     }
   }, [selectedValue]);
 
@@ -47,12 +51,11 @@ const PayPick: React.FC<PayPickProps> = ({
     const selectedPaymentObj = payment.find((p) => p.name === selectedName); // Find payment by name
     setSelectedValue(selectedName);
     if (selectedPaymentObj) {
-      setSelectedPaymentID(selectedPaymentObj.id); // Set the ID from the payment object
+      setSelectedPaymentID(selectedPaymentObj); // Set the ID from the payment object
     } else {
       console.error("Selected payment method not found");
     }
   };
-  console.log(payment);
   return (
     <div className="w-ful py-[20px]">
       <Select

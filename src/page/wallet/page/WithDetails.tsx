@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import "../wallet.css";
 import PayPick from "./PayPick";
 import { usePostWalletWithdrawlMutation } from "@/store/api/wallet/walletApi";
-import { useGetMyProfileQuery } from "@/store/api/profileApi";
+// import { useGetMyProfileQuery } from "@/store/api/profileApi";
 import { Toaster } from "@/components/ui/toaster";
 import { toast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 
 interface WithDetailsProps {
   payment: any;
@@ -25,6 +25,13 @@ const WithDetails: React.FC<WithDetailsProps> = ({
   const [selectedPaymentID, setSelectedPaymentID] = useState<any>();
   const [postWalletWithdrawl] = usePostWalletWithdrawlMutation();
   const [expectedAmount, setExpectedAmount] = useState<number>(0);
+  const [bankInfo, setBankInfo] = useState<{ [key: string]: string }>({});
+  const handleBankInfoChange = (fieldKey: string, value: string) => {
+    setBankInfo((prev) => ({
+      ...prev,
+      [fieldKey]: value,
+    }));
+  };
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -70,6 +77,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
       }
     }
   };
+  // console.log(selectedPaymentID?.fields);
 
   return (
     <div>
@@ -116,24 +124,21 @@ const WithDetails: React.FC<WithDetailsProps> = ({
         {/* bank info */}
         <div>
           <label className="text-white text-[16px] font-[400] leading-[20px]">
-            Bank information
+            {/* Bank information */}
+            银行信息
           </label>
-          <input
-            required
-            value={bankAccountNumber}
-            onChange={(e) => setBankAccountNumber(e.target.value)}
-            placeholder="Please enter bank account number"
-            className="withdraw_input bg-transparent focus:outline-none pt-[20px] pb-[10px] w-full text-white text-[16px] font-[400] leading-[20px]"
-            type="number"
-          />
-          <input
-            required
-            value={bankAccountName}
-            onChange={(e) => setBankAccountName(e.target.value)}
-            placeholder="Please enter bank account name"
-            className="withdraw_input bg-transparent focus:outline-none pt-[30px] pb-[10px] w-full text-white text-[16px] font-[400] leading-[20px]"
-            type="text"
-          />
+          {selectedPaymentID?.fields?.map((ff: any, index: any) => (
+            <div key={index} className=" flex flex-col gap-[12px]">
+              <input
+                required={ff.required}
+                value={bankInfo[ff.label] || ""} // onChange={(e) => setBankAccountNumber(e.target.value)}
+                onChange={(e) => handleBankInfoChange(ff.label, e.target.value)}
+                placeholder={ff.label}
+                className="withdraw_input bg-transparent focus:outline-none pt-[20px] pb-[10px] w-full text-white text-[16px] font-[400] leading-[20px]"
+                type={ff.type === "integer" ? "number" : ff.type}
+              />
+            </div>
+          ))}
         </div>
         {/* rules */}
         <div>
