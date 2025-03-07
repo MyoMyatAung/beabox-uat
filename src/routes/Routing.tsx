@@ -17,6 +17,9 @@ import Report from "@/page/report/Report";
 const Home = lazy(() => import("../page/home/Home"));
 const Explore = lazy(() => import("../page/explore/Explore"));
 const Application = lazy(() => import("../page/application/Application"));
+const CreateCenter = lazy(() => import("../page/create-center/CreateCenter"));
+const VideoDetails = lazy(() => import("../page/create-center/VideoDetails"));
+const YourVideos = lazy(() => import("../page/create-center/YourVideos"));
 const Profile = lazy(() => import("../page/profile/Profile"));
 const OtherProfile = lazy(() => import("../page/profile/OtherProfile"));
 const ProfileDetail = lazy(() => import("../page/profile/ProfileDetail"));
@@ -358,6 +361,30 @@ const Routing = () => {
       element: (
         <Suspense fallback={<Loader />}>
           <Report />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.create_center,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <CreateCenter />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.your_videos,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <YourVideos />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.video_detail,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <VideoDetails />
         </Suspense>
       ),
     },

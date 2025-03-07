@@ -35,5 +35,8 @@ export const paths = {
   check_answer2: "/manage/check-answer",
   reset_password: "/reset-password",
   add_bio: "/add-bio",
+  create_center: "/create-center",
+  your_videos: "/your-videos",
+  video_detail: "/video-detail/:id",
   getUserProfileId: (id: any) => `/user/${id}`,
 };
