@@ -45,7 +45,6 @@ const Transit: React.FC<TransitProps> = ({}) => {
         };
     }
   };
-
   return (
     <div className=" py-[20px] h-[60vh]">
       {/* header */}
@@ -103,16 +102,20 @@ const Transit: React.FC<TransitProps> = ({}) => {
                       </div>
                     </div>
                     <div className=" flex flex-col justify-center items-center gap-[6px]">
-                      <span>+ {ts.amount}</span>
-                      <div
-                        className={`${
-                          getStatusClass(ts.status).container
-                        } px-[12px] py-[2px] flex justify-center items-center`}
-                      >
-                        <span className={getStatusClass(ts.status).text}>
-                          {ts.status}
-                        </span>
-                      </div>
+                      <span>
+                        {ts.dr_cr === "cr" ? "+" : "-"} {ts.amount}
+                      </span>
+                      {ts.status && (
+                        <div
+                          className={`${
+                            getStatusClass(ts.status).container
+                          } px-[12px] py-[2px] flex justify-center items-center`}
+                        >
+                          <span className={getStatusClass(ts.status).text}>
+                            {ts.status}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
