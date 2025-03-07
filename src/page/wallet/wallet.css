@@ -164,3 +164,20 @@ option selected {
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.04);
 }
+
+.success_state {
+  border-radius: 6px;
+  background: rgba(0, 255, 195, 0.12);
+}
+
+.success_text {
+  color: #00ffc3;
+  leading-trim: both;
+  text-edge: cap;
+  font-family: "Helvetica Neue";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 15px; /* 125% */
+  letter-spacing: 0.3px;
+}
