@@ -38,5 +38,6 @@ export const paths = {
   create_center: "/create-center",
   your_videos: "/your-videos",
   video_detail: "/video-detail/:id",
+  recycle: "/recycle",
   getUserProfileId: (id: any) => `/user/${id}`,
 };

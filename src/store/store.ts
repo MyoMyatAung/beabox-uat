@@ -23,6 +23,7 @@ import pageSlice from "@/page/home/services/pageSlice";
 import muteSlice from "@/page/home/services/muteSlice";
 import loaderSlice from "@/page/home/services/loaderSlice";
 import hideBarSlice from "@/page/home/services/hideBarSlice";
+import createCenterSlice from "./slices/createCenterSlice";
 
 const sessionStorageWrapper: Storage = {
   getItem: (key: string) => {
@@ -73,6 +74,7 @@ const rootReducer = combineReducers({
   pageSlice: pageSlice,
   muteSlice: muteSlice,
   loaderSlice: loaderSlice,
+  createCenter: createCenterSlice,
   [profileApi.reducerPath]: profileApi.reducer,
   [authApi.reducerPath]: authApi.reducer,
   [walletApi.reducerPath]: walletApi.reducer,

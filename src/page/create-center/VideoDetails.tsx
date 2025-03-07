@@ -3,13 +3,8 @@ import Privacy from "@/components/create-center/privacy";
 import TopNav from "@/components/create-center/top-nav";
 import selected from "@/assets/createcenter/selected.png";
 import unselected from "@/assets/createcenter/unselected.png";
-import Upload from "@/components/profile/upload";
 import UploadVideo from "@/components/create-center/upload-video";
-const DeleteVideo = () => (
-  <div>
-    <p className="text-[16px] text-[#C23033]">Delete</p>
-  </div>
-);
+import DeleteDetail from "@/components/create-center/delete-detail";
 
 const Selected = () => (
   <img className="w-[18px] h-[18px]" src={selected} alt="" />
@@ -22,7 +17,7 @@ const VideoDetails = () => {
   return (
     <div className="flex flex-col justify-between h-screen">
       <div className="">
-        <TopNav center={"Edit Video"} right={<DeleteVideo />} />
+        <TopNav center={"Edit Video"} right={<DeleteDetail />} />
         <UploadVideo />
         <Privacy />
         <form className="px-5 py-5 flex flex-col gap-10">
