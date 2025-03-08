@@ -6,6 +6,7 @@ import transit from "../../../assets/wallet/transit.png";
 import loader from "../../home/vod_loader.gif";
 
 import "../wallet.css";
+import { useLocation } from "react-router-dom";
 
 const months = [
   "January",
@@ -25,8 +26,11 @@ const months = [
 interface RechRecordProps {}
 
 const RechRecord: React.FC<RechRecordProps> = ({}) => {
+  const location = useLocation();
+  const type = location.pathname === "/wallet/withdraw" ? "withdrawl" : "topup";
+  console.log(type);
   const [curMon, setCurMon] = useState("December");
-  const [curYr, setCurYr] = useState(2024);
+  const [curYr, setCurYr] = useState(2027);
   const [plus, setPlus] = useState(12);
   const [tran, setTran] = useState<any>();
   useEffect(() => {
@@ -37,7 +41,7 @@ const RechRecord: React.FC<RechRecordProps> = ({}) => {
   }, []);
   const { data, isLoading } = useGetTransitionHistoryQuery({
     period: `${plus}-${curYr}`,
-    type: "topup",
+    type: type,
   });
   useEffect(() => {
     if (data?.data) {

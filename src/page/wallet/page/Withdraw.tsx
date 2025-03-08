@@ -89,6 +89,7 @@ const Withdraw: React.FC<WithdrawProps> = ({}) => {
             ) : (
               <div className="">
                 <WithDetails
+                  setActiveTab={setActiveTab}
                   data={data}
                   dollar_withdraw_rate={config?.data?.dollar_withdraw_rate}
                   payment={paymentMeth?.data}

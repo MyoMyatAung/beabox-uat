@@ -23,8 +23,9 @@ const months = [
   "November",
   "December",
 ];
-
-const years = Array.from({ length: 10 }, (_, i) => 2024 - i);
+const currentYear = new Date().getFullYear();
+console.log(currentYear)
+const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
 
 const DatePick: React.FC<any> = ({
   curMon,

@@ -6,24 +6,27 @@ import { usePostWalletWithdrawlMutation } from "@/store/api/wallet/walletApi";
 import { Toaster } from "@/components/ui/toaster";
 import { toast } from "@/hooks/use-toast";
 // import { Button } from "@/components/ui/button";
+import loader from "../../home/vod_loader.gif";
 
 interface WithDetailsProps {
   payment: any;
   dollar_withdraw_rate: any;
   data: any;
+  setActiveTab: any;
 }
 
 const WithDetails: React.FC<WithDetailsProps> = ({
   payment,
   data,
   dollar_withdraw_rate,
+  setActiveTab,
 }) => {
   const [amount, setAmount] = useState<string>("");
   const [bankAccountNumber, setBankAccountNumber] = useState<string>("");
   const [bankAccountName, setBankAccountName] = useState<string>("");
   const [selectedPayment, setSelectedPayment] = useState<string>("");
   const [selectedPaymentID, setSelectedPaymentID] = useState<any>();
-  const [postWalletWithdrawl] = usePostWalletWithdrawlMutation();
+  const [postWalletWithdrawl, { isLoading }] = usePostWalletWithdrawlMutation();
   const [expectedAmount, setExpectedAmount] = useState<number>(0);
   const [bankInfo, setBankInfo] = useState<{ [key: string]: string }>({});
   const handleBankInfoChange = (fieldKey: string, value: string) => {
@@ -38,7 +41,6 @@ const WithDetails: React.FC<WithDetailsProps> = ({
     setSelectedPayment(paymentID?.id || "");
     setBankInfo({}); // Reset bank info when changing payment method
   };
-  
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -77,13 +79,15 @@ const WithDetails: React.FC<WithDetailsProps> = ({
         amount: amount,
         payment_method_id: selectedPaymentID.id,
         // reference_id: data?.data.id,
-        payment_info :bankInfo
+        payment_info: bankInfo,
       };
       try {
         const { data } = await postWalletWithdrawl({ formData });
-        console.log(data)
+        // console.log(data);
         if (!data) {
           throw new Error();
+        } else {
+          setActiveTab(2);
         }
       } catch (error) {
         console.log(error);
@@ -174,14 +178,20 @@ const WithDetails: React.FC<WithDetailsProps> = ({
         {/* button */}
         <button
           type="submit"
-          className={`rounded-[16px] py-[12px] px-[16px] text-white text-[14px] font-[600] leading-[22px] w-full ${
+          className={`rounded-[16px] flex justify-center items-center ${
+            isLoading ? " opacity-40" : " opacity-100 py-[12px] px-[16px]"
+          }  text-white text-[14px] font-[600] leading-[22px] w-full ${
             isFormValid
               ? " bg-gradient-to-tl from-[#CD3EFF] to-[#FFB2E0]"
               : "bg-white/10"
           }`}
           //   disabled={!isFormValid}
         >
-          确认提现
+          {isLoading ? (
+            <img src={loader} alt="" className="w-12" />
+          ) : (
+            "确认提现"
+          )}
         </button>
       </form>
     </div>
