@@ -48,7 +48,7 @@ const Payment: React.FC<PaymentProps> = ({
       coin_id: selectedCoinId,
       amount: total,
       payment_method_id: selectedId,
-      reference_id: data?.data.id,
+      // reference_id: data?.data.id,
     };
     try {
       const { data } = await postWalletRecharge({ formData });

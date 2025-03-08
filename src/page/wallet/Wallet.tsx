@@ -22,9 +22,8 @@ const Wallet: React.FC = () => {
             <Balance />
             <Transit />
           </div>
-          <h1 className="px-[30px] hidden pb-[20px] text-[#888] text-[14px] font-[400] leading-[20px]">
-            Tip: Gold coins are used for gifting creators to support them for
-            future content.
+          <h1 className="px-[30px]  pb-[20px] text-[#888] text-center text-[14px] font-[400] leading-[20px]">
+            提示：金币用于赠送创作者支持供将来的内容使用
           </h1>
         </div>
       </div>

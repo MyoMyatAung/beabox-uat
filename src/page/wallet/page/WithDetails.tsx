@@ -33,6 +33,13 @@ const WithDetails: React.FC<WithDetailsProps> = ({
     }));
   };
 
+  const handlePaymentChange = (paymentID: any) => {
+    setSelectedPaymentID(paymentID);
+    setSelectedPayment(paymentID?.id || "");
+    setBankInfo({}); // Reset bank info when changing payment method
+  };
+  
+
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
 
@@ -51,29 +58,38 @@ const WithDetails: React.FC<WithDetailsProps> = ({
     }
   };
 
-  const isFormValid = amount !== "" && bankAccountNumber !== "";
-  bankAccountName.length !== 0 && selectedPayment !== "";
+  const isFormValid =
+    amount !== "" &&
+    selectedPayment !== "" &&
+    selectedPaymentID?.fields?.every(
+      (ff: any) =>
+        !ff.required || (bankInfo[ff.key] && bankInfo[ff.key].trim() !== "")
+    );
+  // bankAccountName.length !== 0 && selectedPayment !== "";
 
   const submitHandler = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
+
     if (!isFormValid) {
       return;
     } else {
       const formData = {
         amount: amount,
-        payment_method_id: selectedPaymentID,
-        reference_id: data?.data.id,
+        payment_method_id: selectedPaymentID.id,
+        // reference_id: data?.data.id,
+        payment_info :bankInfo
       };
-      // console.log(formData);
       try {
         const { data } = await postWalletWithdrawl({ formData });
+        console.log(data)
         if (!data) {
           throw new Error();
         }
       } catch (error) {
-        toast({
-          description: "nternal server error occurred. Please try again later.",
-        });
+        console.log(error);
+        // toast({
+        //   description: "nternal server error occurred. Please try again later.",
+        // });
       }
     }
   };
@@ -104,7 +120,11 @@ const WithDetails: React.FC<WithDetailsProps> = ({
             $
             <br />
             {/* Expect to receive = --- */}
-            期待收到 = {expectedAmount.toFixed(2)}$
+            期待收到 ={" "}
+            <span className=" text-white">
+              {" "}
+              {expectedAmount.toFixed(2)}$
+            </span>{" "}
           </p>
         </div>
         {/* payment */}
@@ -116,8 +136,8 @@ const WithDetails: React.FC<WithDetailsProps> = ({
             selectedPaymentID={selectedPaymentID}
             payment={payment}
             selectedPayment={selectedPayment}
-            setSelectedPayment={setSelectedPayment}
-            setSelectedPaymentID={setSelectedPaymentID}
+            setSelectedPayment={handlePaymentChange}
+            setSelectedPaymentID={handlePaymentChange}
             // onSelect={setSelectedPayment}
           />
         </div>
@@ -131,8 +151,8 @@ const WithDetails: React.FC<WithDetailsProps> = ({
             <div key={index} className=" flex flex-col gap-[12px]">
               <input
                 required={ff.required}
-                value={bankInfo[ff.label] || ""} // onChange={(e) => setBankAccountNumber(e.target.value)}
-                onChange={(e) => handleBankInfoChange(ff.label, e.target.value)}
+                value={bankInfo[ff.key] || ""} // onChange={(e) => setBankAccountNumber(e.target.value)}
+                onChange={(e) => handleBankInfoChange(ff.key, e.target.value)}
                 placeholder={ff.label}
                 className="withdraw_input bg-transparent focus:outline-none pt-[20px] pb-[10px] w-full text-white text-[16px] font-[400] leading-[20px]"
                 type={ff.type === "integer" ? "number" : ff.type}
@@ -146,19 +166,9 @@ const WithDetails: React.FC<WithDetailsProps> = ({
             Withdraw rule
           </label>
           <div className="flex flex-col gap-[20px] pt-[10px] text-[#888] text-[12px] font-[300] leading-[18px]">
-            <p>
-              1. The minimum amount of cash withdrawal is 300 yuan each time,
-              and only integers of 100 can be withdrawn.
-            </p>
-            <p>
-              2. The original creator gets 60% of the profit, while the UP
-              creator gets 35% of the profit.
-            </p>
-            <p>
-              3. Only bank card withdrawals are supported. The receiving account
-              number and name must be the same. The payment will arrive within
-              24 hours.
-            </p>
+            <p>1.每次提现最低限额为300元，且只能提现100的整数倍</p>
+            <p>2.原创作者获得60%的收益，UP主获得35%的收益</p>
+            <p>3.仅支持银行卡提现，收款账号和姓名必须一致，款项24小时内到账</p>
           </div>
         </div>
         {/* button */}
@@ -171,7 +181,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
           }`}
           //   disabled={!isFormValid}
         >
-          Confirm withdraw
+          确认提现
         </button>
       </form>
     </div>

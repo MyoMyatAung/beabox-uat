@@ -56,7 +56,7 @@ export const walletApi = createApi({
     }),
     postWalletWithdrawl: builder.mutation<any, any>({
       query: ({ formData }) => ({
-        url: "/wallet/withdrawl",
+        url: convertToSecureUrl("/wallet/withdrawl"),
         method: "POST",
         body: formData,
       }),
