@@ -243,7 +243,7 @@ const Player = ({
       poster: decryptedPhoto,
       moreVideoAttr: {
         playsInline: true,
-        preload: "metadata" as const,
+        preload: "auto" as const,
       },
       aspectRatio: true,
       fullscreen: false,
@@ -328,12 +328,32 @@ const Player = ({
           };
         },
         m3u8: function (videoElement: HTMLVideoElement, url: string) {
-          if (Hls.isSupported()) {
+          // Check if it's an iOS device first
+          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+          const isMacOS = /Mac/.test(navigator.userAgent);
+          const isAppleDevice = isIOS || isMacOS;
+          
+          if (isAppleDevice && videoElement.canPlayType("application/vnd.apple.mpegurl")) {
+            // Use native HLS playback for iOS devices immediately
+            // alert('Using native HLS playback for iOS');
+            videoElement.src = url;
+            videoElement.play().catch(error => {
+              console.warn('Auto-play prevented on iOS:', error);
+            });
+            // videoElement.addEventListener('canplay', function() {
+            //   videoElement.play().catch(error => {
+            //     console.warn('Auto-play prevented on iOS:', error);
+            //   });
+            // });
+          } 
+          else if (Hls.isSupported()) {
+            // Use HLS.js for other browsers that support it
+            // alert('Using HLS.js for HLS playback');
             const hls = new Hls({
               maxBufferLength: 30,
               maxMaxBufferLength: 60,
               enableWorker: true,
-              lowLatencyMode: false,
+              lowLatencyMode: true,
               startLevel: -1, // Auto level selection
             });
             
@@ -373,16 +393,16 @@ const Player = ({
             hls.loadSource(url);
             hls.attachMedia(videoElement);
             hlsRef.current = hls;
-          } else if (videoElement.canPlayType("application/vnd.apple.mpegurl")) {
+          } 
+          else {
+            // Fallback for other browsers with native HLS support
+            console.log('Falling back to native HLS playback');
             videoElement.src = url;
-            // Add event listener for iOS native HLS
             videoElement.addEventListener('canplay', function() {
               videoElement.play().catch(error => {
-                console.warn('Auto-play prevented on iOS:', error);
+                console.warn('Auto-play prevented:', error);
               });
             });
-          } else {
-            console.error('HLS is not supported in this browser and no fallback available');
           }
         }
       },
@@ -952,15 +972,15 @@ const Player = ({
     };
   }, [src]); // Reinitialize when src changes
 
-  useEffect(() => {
-    if (
-      isPlay &&
-      artPlayerInstanceRef.current &&
-      !artPlayerInstanceRef.current.playing
-    ) {
-      artPlayerInstanceRef.current.play();
-    }
-  }, [isPlay]);
+  // useEffect(() => {
+  //   if (
+  //     isPlay &&
+  //     artPlayerInstanceRef.current &&
+  //     !artPlayerInstanceRef.current.playing
+  //   ) {
+  //     artPlayerInstanceRef.current.play();
+  //   }
+  // }, [isPlay]);
 
   useEffect(() => {
     muteRef.current = mute; // Update muteRef when mute state changes
