@@ -5,6 +5,8 @@ import selected from "@/assets/createcenter/selected.png";
 import unselected from "@/assets/createcenter/unselected.png";
 import UploadVideo from "@/components/create-center/upload-video";
 import DeleteDetail from "@/components/create-center/delete-detail";
+import { useParams } from "react-router-dom";
+import { useState } from "react";
 
 const Selected = () => (
   <img className="w-[18px] h-[18px]" src={selected} alt="" />
@@ -14,10 +16,12 @@ const Unselected = () => (
 );
 
 const VideoDetails = () => {
+  const { id } = useParams<{ id: string }>();
+  const [agree, setAgree] = useState(false);
   return (
     <div className="flex flex-col justify-between h-screen">
       <div className="">
-        <TopNav center={"Edit Video"} right={<DeleteDetail />} />
+        <TopNav center={"Edit Video"} right={<DeleteDetail id={id} />} />
         <UploadVideo />
         <Privacy />
         <form className="px-5 py-5 flex flex-col gap-10">
@@ -60,7 +64,15 @@ const VideoDetails = () => {
       </div>
       <div className="mx-5 py-5">
         <div className="flex gap-2 justify-center items-center pb-5">
-          <Unselected />
+          {agree ? (
+            <button onClick={() => setAgree(!agree)}>
+              <Selected />
+            </button>
+          ) : (
+            <button onClick={() => setAgree(!agree)}>
+              <Unselected />
+            </button>
+          )}
           <p className="text-[12px]">
             I have read and agree to the upload guidelines.
           </p>

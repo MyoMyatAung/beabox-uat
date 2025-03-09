@@ -59,6 +59,21 @@ export const createCenterApi = createApi({
         }),
       }),
     }),
+    deletePost: builder.mutation({
+      query: ({ id }: any) => ({
+        url: convertToSecureUrl("/post/delete"),
+        method: "POST",
+        body: convertToSecurePayload({
+          post_id: id,
+        }),
+      }),
+    }),
+    moveToRecycle: builder.mutation({
+      query: ({ id }: any) => ({
+        url: convertToSecureUrl(`/creator/make/post/recycle?post_id=${id}`),
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -69,4 +84,6 @@ export const {
   useGetMyOwnProfileQuery,
   useGetRecyclePostsQuery,
   useRestorePostMutation,
+  useDeletePostMutation,
+  useMoveToRecycleMutation,
 } = createCenterApi;

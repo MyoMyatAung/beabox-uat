@@ -2,6 +2,7 @@ import TopNav from "@/components/create-center/top-nav";
 import UploadCard from "@/components/create-center/upload-card";
 import UploadList from "@/components/create-center/upload-list";
 import {
+  useDeletePostMutation,
   useGetRecyclePostsQuery,
   useRestorePostMutation,
 } from "@/store/api/createCenterApi";
@@ -60,11 +61,18 @@ const DeleteCard = ({ index, setDeleteItems, item }: any) => {
 const Recycle = () => {
   const [deleteItems, setDeleteItems] = useState([]);
   const { data } = useGetRecyclePostsQuery("");
-  const [restorePost] = useRestorePostMutation();
+  const [restorePost, { data: rp }] = useRestorePostMutation();
+  const [deletePost] = useDeletePostMutation();
 
-  const postHandler = (type: any) => {
+  console.log(rp);
+  const postRestoreHandler = (type: any) => {
     deleteItems?.map(async (item: any) => {
-      await restorePost({ id: item, type: type });
+      await restorePost({ id: item?.post_id, type: type });
+    });
+  };
+  const postDeleteHandler = (type: any) => {
+    deleteItems?.map(async (item: any) => {
+      await deletePost({ id: item?.post_id });
     });
   };
 
@@ -93,13 +101,13 @@ const Recycle = () => {
         <div className="fixed bottom-10 w-full">
           <div className="flex gap-4 mx-5 ">
             <button
-              onClick={() => postHandler("delete")}
+              onClick={() => postRestoreHandler("delete")}
               className="text-[16px] bg-[#C2303333] py-3 w-full text-[#C23033] rounded-[16px]"
             >
               Delete
             </button>
             <button
-              onClick={() => postHandler("restore")}
+              onClick={() => postRestoreHandler("restore")}
               className="text-[16px] bg-[#FFFFFF1F] py-3 w-full text-[#fff] rounded-[16px]"
             >
               Restore

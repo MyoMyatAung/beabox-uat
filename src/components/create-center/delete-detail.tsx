@@ -1,13 +1,31 @@
+import {
+  useDeletePostMutation,
+  useMoveToRecycleMutation,
+} from "@/store/api/createCenterApi";
 import { useState } from "react";
+import Loader from "../shared/loader";
+import { useNavigate } from "react-router-dom";
+import { paths } from "@/routes/paths";
 
-const DeleteDetailPopUp = ({ setShow }: any) => {
+const DeleteDetailPopUp = ({ setShow, id }: any) => {
+  const [deletePost] = useDeletePostMutation();
+  const [moveToRecycle, { data, isLoading }] = useMoveToRecycleMutation();
+  const navigate = useNavigate();
+  console.log(data);
+  const handleDelete = async () => {
+    await moveToRecycle({ id });
+    if (data?.status) navigate(paths.your_videos);
+  };
   return (
     <div className="z-50 h-screen w-full fixed top-0 left-0 bg-[#000000CC] flex justify-center items-center transition-all duration-75 ease-in-out">
+      {isLoading ? <Loader /> : <></>}
       <div className="bg-[#16131C] rounded-[16px] flex flex-col justify-center items-center">
         <div className="pt-5 px-5">
           <p className="text-[16px] text-[#BBBBBB] text-center">
-            Are you sure you want to remove this<br /> video? It will be moved to the
-            recycle<br /> bin for 30 days and permanently deleted<br /> after that.
+            Are you sure you want to remove this
+            <br /> video? It will be moved to the recycle
+            <br /> bin for 30 days and permanently deleted
+            <br /> after that.
           </p>
         </div>
         <div className="bg-[#222222] h-[0.3px] mt-5 w-full"></div>
@@ -17,7 +35,7 @@ const DeleteDetailPopUp = ({ setShow }: any) => {
           </button>
           <div className="bg-[#222222] w-[0.3px] h-100"></div>
           <button
-            onClick={() => setShow(false)}
+            onClick={() => handleDelete()}
             className="flex-1 text-[17px] text-[#C23033]"
           >
             消除
@@ -28,7 +46,7 @@ const DeleteDetailPopUp = ({ setShow }: any) => {
   );
 };
 
-const DeleteDetail = () => {
+const DeleteDetail = ({ id }: any) => {
   const [show, setShow] = useState(false);
   return (
     <>
@@ -38,7 +56,7 @@ const DeleteDetail = () => {
       >
         Delete
       </button>
-      {show ? <DeleteDetailPopUp setShow={setShow} /> : <> </>}
+      {show ? <DeleteDetailPopUp setShow={setShow} id={id} /> : <> </>}
     </>
   );
 };
