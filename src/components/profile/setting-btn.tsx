@@ -13,11 +13,11 @@ const SettingBtn = ({ setShow }: any) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const data = [
-    // {
-    //   title: "Balance",
-    //   icon: <Wallet size={24} />,
-    //   link: paths.wallet,
-    // },
+    {
+      title: "我的钱包",
+      icon: <Wallet size={24} />,
+      link: paths.wallet,
+    },
     {
       title: "创作者中心",
       icon: <img src={UserStar} className="w-6" />,
