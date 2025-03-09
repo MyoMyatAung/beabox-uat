@@ -2,7 +2,7 @@ import { useChangeFollowStatusMutation } from "@/store/api/profileApi";
 import { Sparkle } from "lucide-react";
 import { useState } from "react";
 
-const RankBtn = ({ id, followBack }: any) => {
+const RankBtn = ({ id, followBack, rank }: any) => {
   const [follow, setFollow] = useState(followBack ? true : false);
   const [changeFollowStatus, { data, isLoading }] =
     useChangeFollowStatusMutation();
@@ -19,7 +19,11 @@ const RankBtn = ({ id, followBack }: any) => {
     <button
       disabled={isLoading}
       onClick={handleChangeFollowStatus}
-      className={`w-full text-[14px] text-[#080608] font-semibold rounded-[8px] py-2 bg-[#F7C09B]`}
+      className={`w-full text-[14px] z-50 text-[#080608] font-semibold rounded-[8px] py-2 ${
+        (rank == 1 && "bg-[#F7C09B]") ||
+        (rank == 2 && "bg-[#D7D7D8]") ||
+        (rank == 3 && "bg-[#DFA28E]")
+      }`}
     >
       <div className="flex items-center text-[12px] justify-between">
         <Sparkle className="mx-3" size={16} />

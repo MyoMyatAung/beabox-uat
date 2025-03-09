@@ -70,7 +70,7 @@ const Recycle = () => {
       await restorePost({ id: item?.post_id, type: type });
     });
   };
-  const postDeleteHandler = (type: any) => {
+  const postDeleteHandler = () => {
     deleteItems?.map(async (item: any) => {
       await deletePost({ id: item?.post_id });
     });
@@ -101,7 +101,7 @@ const Recycle = () => {
         <div className="fixed bottom-10 w-full">
           <div className="flex gap-4 mx-5 ">
             <button
-              onClick={() => postRestoreHandler("delete")}
+              onClick={() => postDeleteHandler("delete")}
               className="text-[16px] bg-[#C2303333] py-3 w-full text-[#C23033] rounded-[16px]"
             >
               Delete
