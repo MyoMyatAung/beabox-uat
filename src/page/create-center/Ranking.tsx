@@ -2,7 +2,7 @@ import RankingCard from "@/components/create-center/ranking-card";
 import TopNav from "@/components/create-center/top-nav";
 import TopRankCard from "@/components/create-center/top-rank-card";
 import { useGetTopCreatorQuery } from "@/store/api/createCenterApi";
-import rankbg from "@/assets/createcenter/rankbg.png";
+import topcreator from "@/assets/createcenter/topcreator.png";
 
 const Ranking = () => {
   const { data } = useGetTopCreatorQuery("");
@@ -16,6 +16,12 @@ const Ranking = () => {
           <div className="absolute top-0 left-0 w-full z-50">
             <TopNav />
           </div>
+          <div className="w-full h-full flex justify-between items-center px-5">
+            <div className="px-5"></div>
+            <div className="">
+              <img src={topcreator} className="w-[158px]" alt="" />
+            </div>
+          </div>
           <div className="rankbg-gradient absolute top-0 left-0"></div>
           <div className="absolute -bottom-28 w-full flex justify-center">
             {top3?.length ? (
@@ -27,9 +33,6 @@ const Ranking = () => {
                 <div className="pt-5">
                   <TopRankCard rank={3} data={top3[2]} />
                 </div>
-                {/* {top3?.map((item: any, index: any) => (
-            <TopRankCard rank={index + 1} data={item} />
-          ))} */}
               </div>
             ) : (
               <></>
