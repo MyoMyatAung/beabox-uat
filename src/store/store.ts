@@ -24,6 +24,7 @@ import muteSlice from "@/page/home/services/muteSlice";
 import loaderSlice from "@/page/home/services/loaderSlice";
 import hideBarSlice from "@/page/home/services/hideBarSlice";
 import createCenterSlice from "./slices/createCenterSlice";
+import { createCenterApi } from "./api/createCenterApi";
 
 const sessionStorageWrapper: Storage = {
   getItem: (key: string) => {
@@ -80,6 +81,7 @@ const rootReducer = combineReducers({
   [walletApi.reducerPath]: walletApi.reducer,
   [exploreApi.reducerPath]: exploreApi.reducer,
   [searchApi.reducerPath]: searchApi.reducer,
+  [createCenterApi.reducerPath]: createCenterApi.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -93,7 +95,8 @@ export const store: any = configureStore({
       .concat(authApi.middleware)
       .concat(walletApi.middleware)
       .concat(exploreApi.middleware)
-      .concat(searchApi.middleware),
+      .concat(searchApi.middleware)
+      .concat(createCenterApi.middleware),
 });
 
 export const persistor = persistStore(store);

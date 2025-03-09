@@ -3,8 +3,14 @@ import yourvideo from "@/assets/createcenter/yourvideo.png";
 import Divider from "./divider";
 import { Link } from "react-router-dom";
 import { paths } from "@/routes/paths";
+import { useGetMyPostStatusCountQuery } from "@/store/api/createCenterApi";
 
 const YourVideos = () => {
+  const { data } = useGetMyPostStatusCountQuery("");
+  let published = data?.data?.published || 0;
+  let review = data?.data?.published || 0;
+  let declined = data?.data?.declined || 0;
+  console.log(data, "post status");
   return (
     <section className="bg-[#24222C] p-5 rounded-[20px] mx-5">
       <div className="flex items-center gap-2 ">
@@ -18,17 +24,17 @@ const YourVideos = () => {
       </div>
       <div className="flex justify-between items-center pt-5">
         <div className="text-[12px] flex flex-col items-center justify-center">
-          <p>12</p>
+          <p>{published}</p>
           <p className="text-[#888888]">Published</p>
         </div>
         <Divider />
         <div className="text-[12px] flex flex-col items-center justify-center">
-          <p>12</p>
+          <p>{review}</p>
           <p className="text-[#888888]">Pending</p>
         </div>
         <Divider />
         <div className="text-[12px] flex flex-col items-center justify-center">
-          <p>12</p>
+          <p>{declined}</p>
           <p className="text-[#888888]">Rejected</p>
         </div>
       </div>

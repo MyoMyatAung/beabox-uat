@@ -3,8 +3,11 @@ import TopNav from "@/components/create-center/top-nav";
 import YourVideos from "@/components/create-center/your-videos";
 import WalletDetails from "@/components/create-center/wallet-details";
 import ViewAll from "@/components/create-center/view-all";
+import { useGetTopCreatorQuery } from "@/store/api/createCenterApi";
 
 const CreateCenter = () => {
+  const { data } = useGetTopCreatorQuery("");
+  console.log(data);
   return (
     <>
       <TopNav center={"Creator Centre"} />

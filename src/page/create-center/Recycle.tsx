@@ -5,12 +5,12 @@ import { setIsSelect } from "@/store/slices/createCenterSlice";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-const SelectBtn = ({ deleteItems }: any) => {
+const SelectBtn = ({ deleteItems, setDeleteItems }: any) => {
   const isSelected = useSelector((state: any) => state?.createCenter?.isSelect);
 
   return (
     <button
-      //   onClick={() => dispatch(setIsSelect(!isSelected))}
+      // onClick={() => deleteItems?.length ?}
       className={`text-[16px] bg-[#FFFFFF1F] px-2 py-1 rounded-full`}
     >
       {deleteItems?.length ? "Cancel" : "Select"}
@@ -63,7 +63,12 @@ const Recycle = () => {
     <>
       <TopNav
         center={"Recycle Bin"}
-        right={<SelectBtn deleteItems={deleteItems} />}
+        right={
+          <SelectBtn
+            deleteItems={deleteItems}
+            setDeleteItems={setDeleteItems}
+          />
+        }
       />
       <div className="space-y-3">
         {[0, 1, 2, 3, 4]?.map((item: any, index: any) => (
@@ -74,6 +79,20 @@ const Recycle = () => {
           />
         ))}
       </div>
+      {deleteItems?.length ? (
+        <div className="fixed bottom-10 w-full">
+          <div className="flex gap-4 mx-5 ">
+            <button className="text-[16px] bg-[#C2303333] py-3 w-full text-[#C23033] rounded-[16px]">
+              Delete
+            </button>
+            <button className="text-[16px] bg-[#FFFFFF1F] py-3 w-full text-[#fff] rounded-[16px]">
+              Restore
+            </button>
+          </div>
+        </div>
+      ) : (
+        <></>
+      )}
     </>
   );
 };
