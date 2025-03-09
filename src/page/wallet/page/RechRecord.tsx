@@ -7,6 +7,7 @@ import loader from "../../home/vod_loader.gif";
 
 import "../wallet.css";
 import { useLocation } from "react-router-dom";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const months = [
   "January",
@@ -32,7 +33,10 @@ const RechRecord: React.FC<RechRecordProps> = ({}) => {
   const [curMon, setCurMon] = useState("December");
   const [curYr, setCurYr] = useState(2027);
   const [plus, setPlus] = useState(12);
-  const [tran, setTran] = useState<any>();
+  const [tran, setTran] = useState<any[]>([]);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1);
+
   useEffect(() => {
     const now = new Date();
     setCurMon(months[now.getMonth()]); // Get current month name
@@ -42,12 +46,25 @@ const RechRecord: React.FC<RechRecordProps> = ({}) => {
   const { data, isLoading } = useGetTransitionHistoryQuery({
     period: `${plus}-${curYr}`,
     type: type,
+    page : page
   });
+
   useEffect(() => {
     if (data?.data) {
-      setTran(data?.data);
+      // setTran(data?.data);
+      setTran((prev) => [...prev, ...data.data]);
+      const loadedItems =
+        data?.pagination?.current_page * data?.pagination?.per_page;
+      setHasMore(loadedItems < data?.pagination?.total);
+    } else {
+      setHasMore(false);
     }
   }, [data]);
+
+  const fetchMoreData = () => {
+    setPage((prevPage) => prevPage + 1);
+  };
+
   const getStatusClass = (status: string) => {
     switch (status.toLowerCase()) {
       case "success":
@@ -154,6 +171,32 @@ const RechRecord: React.FC<RechRecordProps> = ({}) => {
                       </div>
                     </div>
                   ))}
+                  <InfiniteScroll
+                    className="py-[20px]"
+                    dataLength={tran.length}
+                    next={fetchMoreData}
+                    hasMore={hasMore}
+                    loader={
+                      <div className=" flex justify-center  bottom-[-30px] left-[-2px]">
+                        <div className="">
+                          <img
+                            src={loader}
+                            className="w-[70px] h-[70px]"
+                            alt="Loading"
+                          />
+                        </div>
+                      </div>
+                    }
+                    endMessage={
+                      <div className="flex bg-whit pt-20 justify-center items-center  w-screen absolute bottom-[-20px] left-[-20px]">
+                        <p className="py-10" style={{ textAlign: "center" }}>
+                          {/* <b>No more yet!</b> */}
+                        </p>
+                      </div>
+                    }
+                  >
+                    <></>
+                  </InfiniteScroll>
                 </>
               )}
             </>

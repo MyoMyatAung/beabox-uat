@@ -37,8 +37,10 @@ export const walletApi = createApi({
       }),
     }),
     getTransitionHistory: builder.query<any, any>({
-      query: ({ period, type }) => ({
-        url: convertToSecureUrl(`/wallet/transaction-history?period=${period}&type=${type}`),
+      query: ({ period, type, page }) => ({
+        url: convertToSecureUrl(
+          `/wallet/transaction-history?period=${period}&type=${type}&page=${page}`
+        ),
         method: "GET",
       }),
     }),
