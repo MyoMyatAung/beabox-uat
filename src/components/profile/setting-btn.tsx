@@ -21,7 +21,7 @@ const SettingBtn = ({ setShow }: any) => {
     {
       title: "创作者中心",
       icon: <img src={UserStar} className="w-6" />,
-      // link: paths.settings,
+      link: paths.create_center,
     },
     {
       title: "编辑资料",
@@ -73,8 +73,9 @@ const SettingBtn = ({ setShow }: any) => {
                     key={title}
                     onClick={() => {
                       if (title === "创作者中心") {
-                        setIsOpen(false);
-                        setShow(true);
+                        navigate(link);
+                        // setIsOpen(false);
+                        // setShow(true);
                       } else {
                         navigate(link);
                       }

@@ -2,11 +2,14 @@ import FilterNav from "@/components/create-center/filter-nav";
 import TopNav from "@/components/create-center/top-nav";
 import UploadList from "@/components/create-center/upload-list";
 import { paths } from "@/routes/paths";
+import { useGetPostListQuery } from "@/store/api/createCenterApi";
 import { Trash } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const YourVideos = () => {
   const navigate = useNavigate();
+  const { data } = useGetPostListQuery("");
+  console.log(data);
   return (
     <>
       {/* <div className="sticky top-0"> */}
@@ -16,10 +19,7 @@ const YourVideos = () => {
       />
       <FilterNav />
       {/* </div> */}
-      <UploadList />
-      <UploadList />
-      <UploadList />
-      <UploadList />
+      <UploadList list={data?.data} />
       <div className="pb-10"></div>
     </>
   );

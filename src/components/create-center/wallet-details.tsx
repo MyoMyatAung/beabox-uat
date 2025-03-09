@@ -11,12 +11,16 @@ const WalletDetails = () => {
     <section className="bg-[#24222C] p-5 rounded-[20px] mx-5 my-5">
       <div className="flex justify-around items-center">
         <div className=" flex flex-col items-center justify-center">
-          <p className="text-[18px]">1201</p>
+          <p className="text-[18px]">
+            {data?.data?.likes_sum_count ? data?.data?.likes_sum_count : 0}
+          </p>
           <p className="text-[12px] text-[#888888]">Post Likes</p>
         </div>
         <Divider />
         <div className=" flex flex-col items-center justify-center">
-          <p className="text-[18px]">1129 $</p>
+          <p className="text-[18px]">
+            {data?.data?.wallet_balance ? data?.data?.wallet_balance : 0} $
+          </p>
           <p className="text-[12px] text-[#888888]">Your Earning</p>
         </div>
       </div>
