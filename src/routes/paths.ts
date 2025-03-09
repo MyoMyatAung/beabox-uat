@@ -39,5 +39,6 @@ export const paths = {
   your_videos: "/your-videos",
   video_detail: "/video-detail/:id",
   recycle: "/recycle",
+  ranking: "/ranking",
   getUserProfileId: (id: any) => `/user/${id}`,
 };

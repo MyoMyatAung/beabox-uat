@@ -19,6 +19,7 @@ const Explore = lazy(() => import("../page/explore/Explore"));
 const Application = lazy(() => import("../page/application/Application"));
 const CreateCenter = lazy(() => import("../page/create-center/CreateCenter"));
 const Recycle = lazy(() => import("../page/create-center/Recycle"));
+const Ranking = lazy(() => import("../page/create-center/Ranking"));
 const VideoDetails = lazy(() => import("../page/create-center/VideoDetails"));
 const YourVideos = lazy(() => import("../page/create-center/YourVideos"));
 const Profile = lazy(() => import("../page/profile/Profile"));
@@ -394,6 +395,14 @@ const Routing = () => {
       element: (
         <Suspense fallback={<Loader />}>
           <Recycle />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.ranking,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <Ranking />
         </Suspense>
       ),
     },
