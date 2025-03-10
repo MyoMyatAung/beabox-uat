@@ -14,6 +14,9 @@ import { sethideBar } from "../services/hideBarSlice";
 // Constants for video preloading
 const BUFFER_THRESHOLD = 10; // seconds before current position to start buffering
 const MAX_BUFFER_SIZE = 50 * 1024 * 1024; // 50MB maximum buffer size
+// Add constants for video position remembering
+const POSITION_SAVE_INTERVAL = 5000; // Save position every 5 seconds
+const VIDEO_POSITIONS_KEY = 'video_positions'; // Local storage key
 
 interface RootState {
   muteSlice: {
@@ -39,6 +42,9 @@ const Player = ({
   type,
   post_id,
   isActive,
+  abortControllerRef,
+  indexRef,
+  videoData,
 }: {
   src: string;
   thumbnail: string;
@@ -52,6 +58,9 @@ const Player = ({
   width: number;
   height: number;
   isActive: boolean;
+  abortControllerRef: any;
+  indexRef: any;
+  videoData: any;
 }) => {
   const playerContainerRef = useRef<HTMLDivElement | null>(null);
   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
@@ -68,11 +77,14 @@ const Player = ({
   const muteRef = useRef(mute); // Store latest mute state
   const watchedTimeRef = useRef(0); // Track total watched time
   const apiCalledRef = useRef(false); // Ensure API is called only once
+  const positionSaveTimerRef = useRef<NodeJS.Timeout | null>(null); // Timer for saving position
   const [watchtPost] = useWatchtPostMutation(); // Hook for watch history API
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
   const [p_img, setPImg] = useState(false);
   const preloadRef = useRef<boolean>(false);
   const bufferTimer = useRef<NodeJS.Timeout | null>(null);
+  // const abortControllerRef = useRef<AbortController | null>(null);
+  // const { videoData } = useSelector((state: any) => state.previousSlice);
 
   const dispatch = useDispatch();
 
@@ -86,9 +98,92 @@ const Player = ({
       .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
   };
 
+  // Save video position to local storage
+  const saveVideoPosition = (position: number) => {
+    if (!user?.token || !post_id) return;
+    
+    try {
+      // Get existing positions from local storage
+      const positionsJson = localStorage.getItem(VIDEO_POSITIONS_KEY) || '{}';
+      const positions = JSON.parse(positionsJson);
+      
+      // Save position for current video
+      positions[post_id] = {
+        position,
+        timestamp: Date.now(),
+      };
+      
+      // Save back to local storage
+      localStorage.setItem(VIDEO_POSITIONS_KEY, JSON.stringify(positions));
+      console.log(`Saved position ${position} for video ${post_id}`);
+    } catch (error) {
+      console.error('Failed to save video position:', error);
+    }
+  };
+
+  // Get saved position for current video
+  const getSavedPosition = (): number | null => {
+    if (!user?.token || !post_id) return null;
+    
+    try {
+      const positionsJson = localStorage.getItem(VIDEO_POSITIONS_KEY) || '{}';
+      const positions = JSON.parse(positionsJson);
+      
+      const savedData = positions[post_id];
+      if (!savedData) return null;
+      
+      // Check if saved position is not too old (e.g., 7 days)
+      const maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+      if (Date.now() - savedData.timestamp > maxAge) {
+        // Position is too old, remove it
+        delete positions[post_id];
+        localStorage.setItem(VIDEO_POSITIONS_KEY, JSON.stringify(positions));
+        return null;
+      }
+      
+      return savedData.position;
+    } catch (error) {
+      console.error('Failed to get saved video position:', error);
+      return null;
+    }
+  };
+
+  // Start periodic position saving
+  const startPositionSaving = () => {
+    if (positionSaveTimerRef.current) {
+      clearInterval(positionSaveTimerRef.current);
+    }
+    
+    positionSaveTimerRef.current = setInterval(() => {
+      if (artPlayerInstanceRef.current && artPlayerInstanceRef.current.playing) {
+        const currentTime = artPlayerInstanceRef.current.currentTime;
+        const duration = artPlayerInstanceRef.current.duration;
+        
+        // Only save if we have a valid time and we're not at the very beginning or end
+        if (currentTime > 1 && currentTime < duration - 1) {
+          saveVideoPosition(currentTime);
+        }
+      }
+    }, POSITION_SAVE_INTERVAL);
+  };
+
+  // Stop periodic position saving
+  const stopPositionSaving = () => {
+    if (positionSaveTimerRef.current) {
+      clearInterval(positionSaveTimerRef.current);
+      positionSaveTimerRef.current = null;
+    }
+  };
+
   const handleWatchHistory = () => {
     if (!apiCalledRef.current && user?.token) {
       apiCalledRef.current = true;
+      
+      // Save current position before sending watch history
+      if (artPlayerInstanceRef.current) {
+        saveVideoPosition(artPlayerInstanceRef.current.currentTime);
+      }
+      
       watchtPost({ post_id: post_id })
         .unwrap()
         .then(() => console.log("Watch history updated"))
@@ -133,6 +228,9 @@ const Player = ({
     Artplayer.MOBILE_DBCLICK_PLAY = false;
     Artplayer.MOBILE_CLICK_PLAY = true;
 
+    // Determine if the source is an m3u8 file
+    const isM3u8 = src.toLowerCase().endsWith('.m3u8');
+    
     // Configure Artplayer options
     const options: Artplayer["Option"] = {
       autoOrientation: true,
@@ -145,7 +243,7 @@ const Player = ({
       poster: decryptedPhoto,
       moreVideoAttr: {
         playsInline: true,
-        preload: "metadata" as const,
+        preload: "auto" as const,
       },
       aspectRatio: true,
       fullscreen: false,
@@ -154,20 +252,27 @@ const Player = ({
         loading: `<div class="video-loading-indicator" style="display: none;"><img width="100" height="100" src=${vod_loader}></div>`,
         state: `<div class="video-play-indicator" style="display: none;"><img src="${indicator}" width="50" height="50" alt="Play"></div>`,
       },
-      type: "mp4",
+      // Set the type based on the file extension
+      type: isM3u8 ? "m3u8" : "mp4",
       customType: {
         mp4: function (video: HTMLVideoElement, url: string) {
           // Configure video element
           video.preload = "metadata";
 
+          // Create a new AbortController for the current request
+          const abortController = new AbortController();
+          abortControllerRef.current?.push(abortController); // Store the new controller
+          videoData?.current?.push(video);
+          // dispatch(setPrevious(video));
           const loadVideo = async () => {
             try {
               const headers = new Headers();
-              headers.append('Range', 'bytes=0-1048576');
-              
-              const response = await fetch(url, { 
+              headers.append("Range", "bytes=0-1048576");
+
+              const response = await fetch(url, {
                 headers,
                 method: "GET",
+                signal: abortController?.signal, // Important part
               });
 
               if (response.status === 206) {
@@ -211,10 +316,95 @@ const Player = ({
 
           // Clean up function
           return () => {
-            video.removeAttribute("src");
-            video.load();
+            if (video) {
+              video.pause();
+              video.removeAttribute("src");
+              video.load();
+            }
+            // // Abort fetch request
+            // if (abortControllerRef.current) {
+            //   abortControllerRef.current.abort();
+            // }
           };
         },
+        m3u8: function (videoElement: HTMLVideoElement, url: string) {
+          // Check if it's an iOS device first
+          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+          const isMacOS = /Mac/.test(navigator.userAgent);
+          const isAppleDevice = isIOS || isMacOS;
+          
+          if (isAppleDevice && videoElement.canPlayType("application/vnd.apple.mpegurl")) {
+            // Use native HLS playback for iOS devices immediately
+            // alert('Using native HLS playback for iOS');
+            videoElement.src = url;
+            videoElement.play().catch(error => {
+              console.warn('Auto-play prevented on iOS:', error);
+            });
+            // videoElement.addEventListener('canplay', function() {
+            //   videoElement.play().catch(error => {
+            //     console.warn('Auto-play prevented on iOS:', error);
+            //   });
+            // });
+          } 
+          else if (Hls.isSupported()) {
+            // Use HLS.js for other browsers that support it
+            // alert('Using HLS.js for HLS playback');
+            const hls = new Hls({
+              maxBufferLength: 30,
+              maxMaxBufferLength: 60,
+              enableWorker: true,
+              lowLatencyMode: true,
+              startLevel: -1, // Auto level selection
+            });
+            
+            // Add error handling
+            hls.on(Hls.Events.ERROR, function(event, data) {
+              if (data.fatal) {
+                console.error('HLS fatal error:', data.type, data.details);
+                switch(data.type) {
+                  case Hls.ErrorTypes.NETWORK_ERROR:
+                    // Try to recover network error
+                    console.log('Fatal network error encountered, trying to recover');
+                    hls.startLoad();
+                    break;
+                  case Hls.ErrorTypes.MEDIA_ERROR:
+                    console.log('Fatal media error encountered, trying to recover');
+                    hls.recoverMediaError();
+                    break;
+                  default:
+                    // Cannot recover
+                    hls.destroy();
+                    break;
+                }
+              } else {
+                console.warn('Non-fatal HLS error:', data.type, data.details);
+              }
+            });
+            
+            // Add manifest loaded event
+            hls.on(Hls.Events.MANIFEST_PARSED, function() {
+              console.log('HLS manifest loaded successfully');
+              // Attempt to play after manifest is loaded
+              videoElement.play().catch(error => {
+                console.warn('Auto-play prevented:', error);
+              });
+            });
+            
+            hls.loadSource(url);
+            hls.attachMedia(videoElement);
+            hlsRef.current = hls;
+          } 
+          else {
+            // Fallback for other browsers with native HLS support
+            console.log('Falling back to native HLS playback');
+            videoElement.src = url;
+            videoElement.addEventListener('canplay', function() {
+              videoElement.play().catch(error => {
+                console.warn('Auto-play prevented:', error);
+              });
+            });
+          }
+        }
       },
       layers: [
         {
@@ -485,6 +675,20 @@ const Player = ({
     // Create new player instance
     artPlayerInstanceRef.current = new Artplayer(options);
 
+    // Add ready event listener after creating the player
+    artPlayerInstanceRef.current.on("ready", () => {
+      // Check if there's a saved position for this video
+      const savedPosition = getSavedPosition();
+      if (savedPosition && artPlayerInstanceRef.current) {
+        // Set the player to the saved position
+        artPlayerInstanceRef.current.currentTime = savedPosition;
+        console.log(`Restored position ${savedPosition} for video ${post_id}`);
+      }
+      
+      // Start periodic position saving
+      startPositionSaving();
+    });
+
     // Update progress bar while playing
     artPlayerInstanceRef.current.on("video:timeupdate", () => {
       if (
@@ -559,6 +763,11 @@ const Player = ({
 
       if (loadingIndicator) loadingIndicator.style.display = "none";
       if (playIndicator) playIndicator.style.display = "block";
+      
+      // Save position when video is paused
+      if (artPlayerInstanceRef.current) {
+        saveVideoPosition(artPlayerInstanceRef.current.currentTime);
+      }
     });
 
     artPlayerInstanceRef.current.on("play", () => {
@@ -574,6 +783,9 @@ const Player = ({
 
       if (loadingIndicator) loadingIndicator.style.display = "none";
       if (playIndicator) playIndicator.style.display = "none";
+      
+      // Start position saving when video plays
+      startPositionSaving();
     });
 
     // Add loading state handler
@@ -619,6 +831,27 @@ const Player = ({
       if (loadingIndicator) loadingIndicator.style.display = "block";
       if (playIndicator) playIndicator.style.display = "none";
     });
+
+    artPlayerInstanceRef.current.on("video:ended", () => {
+      // Clear saved position when video ends
+      if (user?.token && post_id) {
+        try {
+          const positionsJson = localStorage.getItem(VIDEO_POSITIONS_KEY) || '{}';
+          const positions = JSON.parse(positionsJson);
+          
+          // Remove position for this video
+          if (positions[post_id]) {
+            delete positions[post_id];
+            localStorage.setItem(VIDEO_POSITIONS_KEY, JSON.stringify(positions));
+          }
+        } catch (error) {
+          console.error('Failed to clear video position:', error);
+        }
+      }
+      
+      // Stop position saving
+      stopPositionSaving();
+    });
   };
 
   // Track watched time for 5 seconds
@@ -655,7 +888,22 @@ const Player = ({
     if (!playerContainerRef.current) return;
 
     if (isActive) {
-      // Initialize or reinitialize player when becoming active
+      // Increment the index when a new video becomes active
+      indexRef.current++;
+
+      // Abort previous request when index >= 1
+      if (indexRef.current > 1 && abortControllerRef.current.length > 0) {
+        abortControllerRef.current[0].abort(); // Abort the first (oldest) request
+        abortControllerRef.current.splice(0, 1); // Remove the first item from the array
+        if (videoData?.current.length > 0) {
+          videoData?.current[0].pause();
+          videoData?.current[0].removeAttribute("src");
+          videoData?.current[0].load(); // Reset the video element
+          videoData?.current.splice(0, 1);
+          indexRef.current--; // Decrease index count
+        }
+      }
+
       initializePlayer();
 
       // Function to attempt playback
@@ -690,13 +938,9 @@ const Player = ({
         hlsRef.current.destroy();
         hlsRef.current = null;
       }
-      // Video becomes inactive
-      // artPlayerInstanceRef.current.pause();
-      // artPlayerInstanceRef.current.muted = true;
-
-      // Set to lowest quality when inactive
-      // if (hlsRef.current) {
-      //   hlsRef.current.currentLevel = 0;
+      // if (abortControllerRef.current) {
+      //   abortControllerRef.current.abort();
+      //   abortControllerRef.current = null;
       // }
     }
   }, [isActive]);
@@ -705,6 +949,14 @@ const Player = ({
   useEffect(() => {
     initializePlayer();
     return () => {
+      // Save position before unmounting
+      if (artPlayerInstanceRef.current) {
+        saveVideoPosition(artPlayerInstanceRef.current.currentTime);
+      }
+      
+      // Stop position saving
+      stopPositionSaving();
+      
       if (artPlayerInstanceRef.current) {
         artPlayerInstanceRef.current.destroy();
         artPlayerInstanceRef.current = null;
@@ -713,18 +965,22 @@ const Player = ({
         hlsRef.current.destroy();
         hlsRef.current = null;
       }
+      // if (abortControllerRef.current) {
+      //   abortControllerRef.current.abort();
+      //   abortControllerRef.current = null;
+      // }
     };
   }, [src]); // Reinitialize when src changes
 
-  useEffect(() => {
-    if (
-      isPlay &&
-      artPlayerInstanceRef.current &&
-      !artPlayerInstanceRef.current.playing
-    ) {
-      artPlayerInstanceRef.current.play();
-    }
-  }, [isPlay]);
+  // useEffect(() => {
+  //   if (
+  //     isPlay &&
+  //     artPlayerInstanceRef.current &&
+  //     !artPlayerInstanceRef.current.playing
+  //   ) {
+  //     artPlayerInstanceRef.current.play();
+  //   }
+  // }, [isPlay]);
 
   useEffect(() => {
     muteRef.current = mute; // Update muteRef when mute state changes
@@ -741,15 +997,30 @@ const Player = ({
   }, [rotate]);
 
   const cleanupPlayer = () => {
+    // Save position before cleanup
+    if (artPlayerInstanceRef.current) {
+      saveVideoPosition(artPlayerInstanceRef.current.currentTime);
+    }
+    
+    // Stop position saving
+    stopPositionSaving();
+    
     if (artPlayerInstanceRef.current) {
       // Force garbage collection of video resources
       const video = artPlayerInstanceRef.current.video;
       if (video) {
+        video.pause();
         video.removeAttribute("src");
         video.load();
       }
       artPlayerInstanceRef.current.destroy();
       artPlayerInstanceRef.current = null;
+    }
+    
+    // Clean up HLS instance if it exists
+    if (hlsRef.current) {
+      hlsRef.current.destroy();
+      hlsRef.current = null;
     }
   };
 

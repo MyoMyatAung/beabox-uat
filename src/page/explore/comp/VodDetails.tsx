@@ -51,6 +51,9 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
+  const abortControllerRef = useRef<AbortController[]>([]); // Array to store AbortControllers
+  const videoData = useRef<any[]>([]); // Array to store AbortControllers
+  const indexRef = useRef(0); // Track the current active video index
 
   const removeHeart = (id: number) => {
     setHearts((prev) => prev.filter((heartId) => heartId !== id)); // Remove the heart by ID
@@ -186,6 +189,9 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
           data-post-id={files.post_id}
         >
           <VideoContainer
+            videoData={videoData}
+            indexRef={indexRef}
+            abortControllerRef={abortControllerRef}
             container={videoContainerRef.current}
             width={width}
             height={height}

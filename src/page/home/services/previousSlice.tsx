@@ -1,23 +1,29 @@
 import { createSlice } from "@reduxjs/toolkit";
-// Define the initial state using that type
+
+// Define the initial state
 const initialState: any = {
-  data: [],
+  videoData: [],
 };
 
 export const previousSlice = createSlice({
-  name: "previous",
+  name: "previousSlice",
   initialState,
   reducers: {
     setPrevious: (state, { payload }) => {
-      console.log(payload);
-      state.data = [...state.data, payload];
+      state.videoData = [...state.videoData, payload]; // Store data in videoData
     },
-    removeFirstThree: (state) => {
-      state.data = state.data.slice(3); // Remove the first three elements
+    clearPrevious: (state) => {
+      state.videoData = [];
+    },
+    removeFirstPrevious: (state) => {
+      if (state.videoData.length > 0) {
+        state.videoData = state.videoData.slice(1); // Remove first item
+      }
     },
   },
 });
 
-export const { setPrevious, removeFirstThree } = previousSlice.actions;
+export const { setPrevious, clearPrevious, removeFirstPrevious } =
+  previousSlice.actions;
 
 export default previousSlice.reducer;
