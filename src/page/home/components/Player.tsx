@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Artplayer from "artplayer";
 import Hls from "hls.js";
-import indicator from "../indicator.svg";
+import indicator from "../indicator.png";
 import vod_loader from "../vod_loader.gif";
 import { useDispatch, useSelector } from "react-redux";
 import { useWatchtPostMutation } from "../services/homeApi";
