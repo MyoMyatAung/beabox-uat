@@ -19,7 +19,10 @@ const Explore = lazy(() => import("../page/explore/Explore"));
 const Application = lazy(() => import("../page/application/Application"));
 const CreateCenter = lazy(() => import("../page/create-center/CreateCenter"));
 const Recycle = lazy(() => import("../page/create-center/Recycle"));
+const Tags = lazy(() => import("../page/create-center/Tags"));
 const Ranking = lazy(() => import("../page/create-center/Ranking"));
+const CreatorUpload = lazy(() => import("../page/create-center/CreatorUpload"));
+const VideoUpload = lazy(() => import("../page/create-center/VideoUpload"));
 const VideoDetails = lazy(() => import("../page/create-center/VideoDetails"));
 const YourVideos = lazy(() => import("../page/create-center/YourVideos"));
 const Profile = lazy(() => import("../page/profile/Profile"));
@@ -403,6 +406,30 @@ const Routing = () => {
       element: (
         <Suspense fallback={<Loader />}>
           <Ranking />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.creator_upload,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <CreatorUpload />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.creator_upload_video,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <VideoUpload />
+        </Suspense>
+      ),
+    },
+    {
+      path: paths.tags,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <Tags />
         </Suspense>
       ),
     },

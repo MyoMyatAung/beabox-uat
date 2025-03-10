@@ -40,5 +40,8 @@ export const paths = {
   video_detail: "/video-detail/:id",
   recycle: "/recycle",
   ranking: "/ranking",
+  creator_upload: "/creator/upload",
+  creator_upload_video: "/creator/upload/video",
+  tags: "/creator/tags",
   getUserProfileId: (id: any) => `/user/${id}`,
 };

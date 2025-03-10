@@ -390,3 +390,148 @@ input:checked + .slider:before {
     rgba(22, 19, 28, 0.96) 102.18%
   );
 }
+.preview-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.preview-item {
+  border-radius: 12px;
+  position: relative;
+  width: 172px;
+  height: 120px;
+}
+
+.preview-image,
+.preview-video {
+  border-radius: 12px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.remove-btn {
+  border-radius: 100px;
+  background: rgba(0, 0, 0, 0.34);
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  /* color: white; */
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 5px 5px;
+}
+.submit-btn {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #447eff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.thumbnail-preview {
+  position: relative;
+  width: 172px;
+  height: 120px;
+}
+
+.upload_text {
+  color: #888;
+  font-family: Inter;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-top: 5px;
+}
+
+.upload-progress {
+  border-radius: 100px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  color: #fff;
+  font-family: Inter;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  display: inline-flex;
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  position: absolute;
+  top: 40%;
+  right: 26%;
+}
+
+.upload-progress1 {
+  border-radius: 100px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  color: #fff;
+  font-family: Inter;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  display: inline-flex;
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  position: absolute;
+  top: 40%;
+  right: 33%;
+  cursor: pointer;
+}
+
+.file-upload-container {
+  width: 100%;
+  max-width: 850px;
+  margin: auto;
+  background-color: #161619;
+}
+.dropzone {
+  border-radius: 12px;
+  background: var(
+    --Fade-Gradient,
+    linear-gradient(
+      180deg,
+      rgba(163, 133, 255, 0.12) 0%,
+      rgba(255, 255, 255, 0.12) 100%
+    )
+  );
+  width: 172px;
+  height: 120px;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 12px;
+  /* display: flex;
+  flex-wrap: wrap; */
+  /* border: 2px dashed #444; */
+  /* margin-left: auto;
+  margin-right: auto; */
+}
+
+.support {
+  color: rgba(255, 255, 255, 0.7);
+  /* font-family: Figtree; */
+  font-size: 12px;
+  font-style: italic;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.stagbg {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 178, 224, 0.32) 0%,
+    rgba(205, 62, 255, 0.32) 100%
+  );
+}

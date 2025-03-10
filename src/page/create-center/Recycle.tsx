@@ -1,6 +1,7 @@
 import TopNav from "@/components/create-center/top-nav";
 import UploadCard from "@/components/create-center/upload-card";
 import UploadList from "@/components/create-center/upload-list";
+import Loader from "@/components/shared/loader";
 import {
   useDeletePostMutation,
   useGetRecyclePostsQuery,
@@ -60,11 +61,10 @@ const DeleteCard = ({ index, setDeleteItems, item }: any) => {
 
 const Recycle = () => {
   const [deleteItems, setDeleteItems] = useState([]);
-  const { data } = useGetRecyclePostsQuery("");
+  const { data, isLoading } = useGetRecyclePostsQuery("");
   const [restorePost, { data: rp }] = useRestorePostMutation();
   const [deletePost] = useDeletePostMutation();
 
-  console.log(rp);
   const postRestoreHandler = (type: any) => {
     deleteItems?.map(async (item: any) => {
       await restorePost({ id: item?.post_id, type: type });
@@ -78,44 +78,50 @@ const Recycle = () => {
 
   return (
     <>
-      <TopNav
-        center={"Recycle Bin"}
-        right={
-          <SelectBtn
-            deleteItems={deleteItems}
-            setDeleteItems={setDeleteItems}
-          />
-        }
-      />
-      <div className="space-y-3">
-        {data?.data?.map((item: any, index: any) => (
-          <DeleteCard
-            key={index}
-            index={index}
-            setDeleteItems={setDeleteItems}
-            item={item}
-          />
-        ))}
-      </div>
-      {deleteItems?.length ? (
-        <div className="fixed bottom-10 w-full">
-          <div className="flex gap-4 mx-5 ">
-            <button
-              onClick={() => postDeleteHandler("delete")}
-              className="text-[16px] bg-[#C2303333] py-3 w-full text-[#C23033] rounded-[16px]"
-            >
-              Delete
-            </button>
-            <button
-              onClick={() => postRestoreHandler("restore")}
-              className="text-[16px] bg-[#FFFFFF1F] py-3 w-full text-[#fff] rounded-[16px]"
-            >
-              Restore
-            </button>
-          </div>
-        </div>
+      {isLoading ? (
+        <Loader />
       ) : (
-        <></>
+        <>
+          <TopNav
+            center={"Recycle Bin"}
+            right={
+              <SelectBtn
+                deleteItems={deleteItems}
+                setDeleteItems={setDeleteItems}
+              />
+            }
+          />
+          <div className="space-y-3">
+            {data?.data?.map((item: any, index: any) => (
+              <DeleteCard
+                key={index}
+                index={index}
+                setDeleteItems={setDeleteItems}
+                item={item}
+              />
+            ))}
+          </div>
+          {deleteItems?.length ? (
+            <div className="fixed bottom-10 w-full">
+              <div className="flex gap-4 mx-5 ">
+                <button
+                  onClick={() => postDeleteHandler()}
+                  className="text-[16px] bg-[#C2303333] py-3 w-full text-[#C23033] rounded-[16px]"
+                >
+                  Delete
+                </button>
+                <button
+                  onClick={() => postRestoreHandler("restore")}
+                  className="text-[16px] bg-[#FFFFFF1F] py-3 w-full text-[#fff] rounded-[16px]"
+                >
+                  Restore
+                </button>
+              </div>
+            </div>
+          ) : (
+            <></>
+          )}
+        </>
       )}
     </>
   );
