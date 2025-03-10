@@ -91,8 +91,8 @@
 
 .coin_list_box {
   border-radius: 8px;
-  border: 1px solid #282828;
-  background: #131113;
+  border: 1px solid #312648;
+  background: #1e1928;
 }
 
 .coin_bonus_text {
@@ -103,14 +103,14 @@
 }
 
 .badge_bouns_pop {
-  border-radius: 0px 0px 0px 6px;
+  border-radius: 0px 0px 0px 8px;
   background: var(--Linear, linear-gradient(90deg, #bc68e5 0%, #fb3470 82.89%));
 }
 
 .popular_box {
   border-radius: 8px;
   border: 1px solid var(--Purple-Gradient-2, #cd3eff);
-  background: #141214;
+  background: #1e1928;
 }
 
 .total_pay_text {
@@ -163,4 +163,55 @@ option selected {
 .comfirm_withdraw_btn {
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.04);
+}
+
+.success_state {
+  border-radius: 6px;
+  background: rgba(0, 255, 195, 0.12);
+}
+
+.success_text {
+  color: #00ffc3;
+  leading-trim: both;
+  text-edge: cap;
+  font-family: "Helvetica Neue";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 15px; /* 125% */
+  letter-spacing: 0.3px;
+}
+
+.pending_state {
+  border-radius: 6px;
+  background: rgba(255, 247, 0, 0.12);
+}
+
+.pending_text {
+  color: #fff600;
+  leading-trim: both;
+  text-edge: cap;
+  font-family: "Helvetica Neue";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 15px; /* 125% */
+  letter-spacing: 0.3px;
+}
+
+.failed_state {
+  border-radius: 6px;
+  background: rgba(255, 114, 69, 0.12);
+}
+
+.failed_text {
+  color: #ff7245;
+  leading-trim: both;
+  text-edge: cap;
+  font-family: "Helvetica Neue";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 15px; /* 125% */
+  letter-spacing: 0.3px;
 }

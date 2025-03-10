@@ -2,17 +2,28 @@ import React, { useState } from "react";
 import BalNew from "./BalNew";
 import { useNavigate } from "react-router-dom";
 import loader from "../../home/vod_loader.gif";
-import { useGetCoinListQuery, useGetPaymentMethodQuery } from "@/store/api/wallet/walletApi";
+import {
+  useGetCoinListQuery,
+  useGetInviteQuery,
+  useGetPaymentMethodQuery,
+} from "@/store/api/wallet/walletApi";
 import { paths } from "@/routes/paths";
 import { ChevronLeft } from "lucide-react";
 import RechRecord from "./RechRecord";
 import WithDetails from "./WithDetails";
+import { useSelector } from "react-redux";
+import { useGetMyOwnProfileQuery } from "@/store/api/profileApi";
 
 interface WithdrawProps {}
 
 const Withdraw: React.FC<WithdrawProps> = ({}) => {
   const [activeTab, setActiveTab] = useState(1);
   const { data: paymentMeth, isLoading } = useGetPaymentMethodQuery("");
+  const user = useSelector((state: any) => state?.persist?.user) || "";
+  const { data, refetch } = useGetMyOwnProfileQuery("", {
+    skip: !user,
+  });
+  const { data: config } = useGetInviteQuery("");
   const navigate = useNavigate();
   return (
     <div className=" flex justify-center items-center">
@@ -56,7 +67,15 @@ const Withdraw: React.FC<WithdrawProps> = ({}) => {
         {/* balace */}
         {activeTab === 1 ? (
           <div className="">
-            <BalNew title="可提取金额" amount={0} to={paths.wallet_recharge} />
+            <BalNew
+              balance={data?.data?.income_coins}
+              title="可提取金额"
+              amountText={"钱包充值"}
+              btnText={"钱包提款"}
+              amount={data?.data?.coins}
+              to={paths.wallet_recharge}
+              amountType={"硬币"}
+            />
             {isLoading ? (
               <div className=" flex justify-center items-center py-[100px]">
                 <div className="heart">
@@ -69,7 +88,12 @@ const Withdraw: React.FC<WithdrawProps> = ({}) => {
               </div>
             ) : (
               <div className="">
-                <WithDetails payment={paymentMeth?.data} />
+                <WithDetails
+                  setActiveTab={setActiveTab}
+                  data={data}
+                  dollar_withdraw_rate={config?.data?.dollar_withdraw_rate}
+                  payment={paymentMeth?.data}
+                />
               </div>
             )}
           </div>

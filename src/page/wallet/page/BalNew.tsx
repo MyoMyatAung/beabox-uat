@@ -10,15 +10,23 @@ interface BalNewProps {
   title: string;
   to: string;
   amount: any;
+  balance: any;
+  btnText: any;
+  amountText: string;
+  amountType: string;
 }
 
-const BalNew: React.FC<BalNewProps> = ({ title, to }) => {
-  const [balance, setBalance] = useState("");
-  const { data } = useGetMyProfileQuery("");
+const BalNew: React.FC<BalNewProps> = ({
+  title,
+  to,
+  balance,
+  amount,
+  btnText,
+  amountText,
+  amountType,
+}) => {
   const navigate = useNavigate();
-  useEffect(() => {
-    setBalance(data?.data.wallet_balance || "0");
-  }, [data]);
+
   return (
     <div className=" py-[20px]">
       <div className=" flex justify-betwee new_bal_box p-[20px] -[10px] relative">
@@ -39,8 +47,8 @@ const BalNew: React.FC<BalNewProps> = ({ title, to }) => {
           </div>
           <div className="">
             <h1 className=" text-white text-[12px] font-[700] leading-[22px]">
-              Withdrawable amount :{" "}
-              <span className=" text-[#CD3EFF]">748.00</span> coins
+              {amountText} : <span className=" text-[#CD3EFF]">{amount}</span>{" "}
+              {amountType}
             </h1>
           </div>
         </div>
@@ -48,7 +56,9 @@ const BalNew: React.FC<BalNewProps> = ({ title, to }) => {
           onClick={() => navigate(to)}
           className=" absolute z-[3] right-[20px] top-[40px] flex justify-center h-fit items-center rounded-[10px] bg-white/20 py-[4px] px-[8px]"
         >
-          <span className=" text-[white] text-[12px] font-[500]">钱包提款</span>
+          <span className=" text-[white] text-[12px] font-[500]">
+            {btnText}
+          </span>
 
           <ChevronRight width={18} height={18} />
         </button>

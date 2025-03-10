@@ -13,35 +13,56 @@ const Transit: React.FC<TransitProps> = ({}) => {
   const navigate = useNavigate();
   const [tran, setTran] = useState<any>();
   const { data, isLoading } = useGetTransitionHistoryQuery({
-    period: "12-2024",
-    type: "topup",
+    period: "",
+    type: "",
   });
   useEffect(() => {
     if (data?.data) {
       setTran(data?.data);
     }
   }, [data]);
-
+  const getStatusClass = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "success":
+        return {
+          container: "success_state",
+          text: "success_text",
+        };
+      case "pending":
+        return {
+          container: "pending_state",
+          text: "pending_text",
+        };
+      case "failed":
+        return {
+          container: "failed_state",
+          text: "failed_text",
+        };
+      default:
+        return {
+          container: "default_state",
+          text: "default_text",
+        };
+    }
+  };
   return (
-    <div className=" py-[20px]">
+    <div className=" py-[20px] h-[60vh]">
       {/* header */}
       <div className="transit_header px-[20px] py-[10px] flex items-center justify-between">
         <h1 className=" text-white text-[14px] font-[500] leading-normal">
-          Transitions
+          明细
         </h1>
         <div
           onClick={() => navigate("/wallet/transition")}
-          className=" hidden flex transit_view_all pl-[10px] py-[2px] pr-[2px]"
+          className="  flex transit_view_all pl-[10px] py-[2px] pr-[2px]"
         >
-          <span className=" capitalize">view all</span>
+          <span className=" capitalize">查看全部</span>
           <ChevronRight />
         </div>
       </div>
       <div className=" py-[12px] px-[16px]">
         {isLoading ? (
-          <div
-           className=" flex justify-center items-center py-[100px]"
-          >
+          <div className=" flex justify-center items-center py-[100px]">
             <div className="heart">
               <img src={loader} className="w-[100px] h-[100px]" alt="Loading" />
             </div>
@@ -58,7 +79,7 @@ const Transit: React.FC<TransitProps> = ({}) => {
             ) : (
               <>
                 {tran?.slice(0, 5).map((ts: any) => (
-                // {tran?.map((ts: any) => (
+                  // {tran?.map((ts: any) => (
                   <div
                     key={ts.id}
                     className=" transit_list py-[20px] flex justify-between"
@@ -80,8 +101,21 @@ const Transit: React.FC<TransitProps> = ({}) => {
                         </span>
                       </div>
                     </div>
-                    <div className="">
-                      <span>+ {ts.amount}</span>
+                    <div className=" flex flex-col justify-center items-center gap-[6px]">
+                      <span>
+                        {ts.dr_cr === "cr" ? "+" : "-"} {ts.amount}
+                      </span>
+                      {ts.status && (
+                        <div
+                          className={`${
+                            getStatusClass(ts.status).container
+                          } px-[12px] py-[2px] flex justify-center items-center`}
+                        >
+                          <span className={getStatusClass(ts.status).text}>
+                            {ts.status}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
