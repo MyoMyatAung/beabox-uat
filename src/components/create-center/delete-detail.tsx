@@ -1,5 +1,5 @@
 import {
-  useDeletePostMutation,
+  useGetPostListQuery,
   useMoveToRecycleMutation,
 } from "@/store/api/createCenterApi";
 import { useState } from "react";
@@ -8,13 +8,16 @@ import { useNavigate } from "react-router-dom";
 import { paths } from "@/routes/paths";
 
 const DeleteDetailPopUp = ({ setShow, id }: any) => {
-  const [deletePost] = useDeletePostMutation();
   const [moveToRecycle, { data, isLoading }] = useMoveToRecycleMutation();
+  const { refetch } = useGetPostListQuery("");
+
   const navigate = useNavigate();
   console.log(data);
   const handleDelete = async () => {
     await moveToRecycle({ id });
-    if (data?.status) navigate(paths.your_videos);
+    setShow(false);
+    refetch();
+    navigate(paths.your_videos);
   };
   return (
     <div className="z-50 h-screen w-full fixed top-0 left-0 bg-[#000000CC] flex justify-center items-center transition-all duration-75 ease-in-out">

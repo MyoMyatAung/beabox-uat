@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 
 const YourVideos = () => {
   const navigate = useNavigate();
-  const { data, isLoading } = useGetPostListQuery("");
+  const { data, isLoading, refetch } = useGetPostListQuery("");
   console.log(data);
   return (
     <>

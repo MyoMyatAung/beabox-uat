@@ -18,12 +18,13 @@ const Unselected = () => (
 const VideoDetails = () => {
   const { id } = useParams<{ id: string }>();
   const [agree, setAgree] = useState(false);
+  const [privacy, setPrivacy] = useState("public");
   return (
     <div className="flex flex-col justify-between h-screen">
       <div className="">
         <TopNav center={"Edit Video"} right={<DeleteDetail id={id} />} />
         <UploadVideo />
-        <Privacy />
+        <Privacy privacy={privacy} setPrivacy={setPrivacy} />
         <form className="px-5 py-5 flex flex-col gap-10">
           <div className="flex flex-col justify-start">
             <label htmlFor="" className="text-[14px]">

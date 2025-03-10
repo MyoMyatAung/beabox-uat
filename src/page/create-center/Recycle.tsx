@@ -64,16 +64,15 @@ const Recycle = () => {
   const { data, isLoading } = useGetRecyclePostsQuery("");
   const [restorePost, { data: rp }] = useRestorePostMutation();
   const [deletePost] = useDeletePostMutation();
-
-  const postRestoreHandler = (type: any) => {
-    deleteItems?.map(async (item: any) => {
-      await restorePost({ id: item?.post_id, type: type });
-    });
+  console.log(rp);
+  const postRestoreHandler = async (type: any) => {
+    await restorePost({ id: deleteItems, type: type });
   };
-  const postDeleteHandler = () => {
-    deleteItems?.map(async (item: any) => {
-      await deletePost({ id: item?.post_id });
-    });
+  const postDeleteHandler = async () => {
+    // deleteItems?.map(async (item: any) => {
+    //   await deletePost({ id: item?.post_id });
+    // });
+    await deletePost({ id: deleteItems });
   };
 
   return (
@@ -91,7 +90,7 @@ const Recycle = () => {
               />
             }
           />
-          <div className="space-y-3">
+          <div className="space-y-3 pb-24">
             {data?.data?.map((item: any, index: any) => (
               <DeleteCard
                 key={index}
@@ -102,7 +101,7 @@ const Recycle = () => {
             ))}
           </div>
           {deleteItems?.length ? (
-            <div className="fixed bottom-10 w-full">
+            <div className="fixed bottom-0 py-5 w-full z-50 bg-[#16131C]">
               <div className="flex gap-4 mx-5 ">
                 <button
                   onClick={() => postDeleteHandler()}
