@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Artplayer from "artplayer";
 import Hls from "hls.js";
-import indicator from "../indicator.svg";
+import indicator from "../indicator.png";
 import vod_loader from "../vod_loader.gif";
 import { useDispatch, useSelector } from "react-redux";
 import { useWatchtPostMutation } from "../services/homeApi";
@@ -238,9 +238,10 @@ const Player = ({
       url: src,
       volume: 0.5,
       muted: muteRef.current,
-      autoplay: false,
+      autoplay: isActive,
       fullscreenWeb: true,
       poster: decryptedPhoto,
+      loop: true,
       moreVideoAttr: {
         playsInline: true,
         preload: "auto" as const,
@@ -851,6 +852,26 @@ const Player = ({
       
       // Stop position saving
       stopPositionSaving();
+      
+      // Reset watched time for analytics
+      if (watchTimer) {
+        clearInterval(watchTimer);
+        watchTimer = null;
+      }
+      watchedTimeRef.current = 0;
+      
+      // The video will automatically loop due to the loop option
+      console.log('Video ended, looping will begin automatically');
+      
+      // Start a new timer for the looped playback if needed
+      watchTimer = setInterval(() => {
+        watchedTimeRef.current += 1; // Increment watched time every second
+        
+        // Trigger API call after 5 seconds of playback on loop
+        if (watchedTimeRef.current >= 5 && !apiCalledRef.current && !type) {
+          handleWatchHistory();
+        }
+      }, 1000);
     });
   };
 
@@ -873,14 +894,6 @@ const Player = ({
       clearInterval(watchTimer);
       watchTimer = null;
     }
-  });
-
-  artPlayerInstanceRef.current?.on("video:ended", () => {
-    if (watchTimer) {
-      clearInterval(watchTimer);
-      watchTimer = null;
-    }
-    watchedTimeRef.current = 0; // Reset watched time
   });
 
   // Handle active state changes
