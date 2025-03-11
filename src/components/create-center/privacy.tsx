@@ -7,11 +7,11 @@ import {
 import { useState } from "react";
 import { Button } from "../ui/button";
 
-const Privacy = ({ privacy, setPrivacy }) => {
+const Privacy = ({ privacy, setPrivacy }: any) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <Drawer>
+    <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>
         <div className="bg-[#FFFFFF0A] flex justify-between items-center p-3 rounded-[16px] mx-5">
           <div className="flex items-center gap-2">
@@ -19,7 +19,9 @@ const Privacy = ({ privacy, setPrivacy }) => {
             <p className="text-[14px]">Who can see your post</p>
           </div>
           <div className="flex items-center gap-1 text-[#777]">
-            <p className="text-[14px] ">Public</p>
+            <p className="text-[14px] ">
+              {privacy == "public" ? "公开" : "私密"}
+            </p>
             <ChevronRight size={14} />
           </div>
         </div>
@@ -85,7 +87,7 @@ const Privacy = ({ privacy, setPrivacy }) => {
             </div>
 
             <Button
-              // onClick={() => handler(privacy)}
+              onClick={() => setIsOpen(false)}
               className="bg-[#CD3EFF1F] hover:bg-[#CD3EFF1F] text-[#CD3EFF] w-full"
             >
               保存

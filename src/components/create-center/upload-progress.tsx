@@ -20,7 +20,7 @@ const UploadProgress = ({
     navigate("/your-videos");
   };
   return (
-    <div className="bg-[#0b0b0f]">
+    <div className="bg-[#000000A3]">
       {/* Progress Text */}
 
       <div className="flex flex-col items-center justify-center min-h-[90vh]">

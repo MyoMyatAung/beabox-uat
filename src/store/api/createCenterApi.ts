@@ -101,7 +101,7 @@ export const createCenterApi = createApi({
 
         // Return the query with the modified payload
         return {
-          url: `post/create`,
+          url: `/post/create`,
           method: "POST",
           body: convertToSecurePayload(payload),
         };

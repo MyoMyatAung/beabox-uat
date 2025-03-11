@@ -203,6 +203,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
 
   // Handle form submission from VideoUploadForm
   const handleFormSubmit = async (formData: any) => {
+    console.log(formData, "form data for submit");
     if (files.length === 0) {
       toast.error("Please upload a video.", {
         style: {

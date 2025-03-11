@@ -535,3 +535,42 @@ input:checked + .slider:before {
     rgba(205, 62, 255, 0.32) 100%
   );
 }
+
+.uploading_text1 {
+  color: var(--White, #fff);
+  font-family: "Helvetica Neue";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: 0.3px;
+  opacity: 0.8;
+}
+
+.bg-progress {
+  border-radius: 191.756px;
+  background: rgba(255, 255, 255, 0.28);
+}
+.bg-progress1 {
+  border-radius: 191.756px 0px 0px 191.756px;
+  background: linear-gradient(325deg, #bd00ff 43.64%, #ffb2e0 100%),
+    linear-gradient(90deg, #cd3eff 31.74%, #ff3eb1 109.48%);
+}
+
+.cancel_upload {
+  display: flex;
+  width: 200px;
+  padding: 16px 0px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-family: "Helvetica Neue";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  letter-spacing: 0.3px;
+}
