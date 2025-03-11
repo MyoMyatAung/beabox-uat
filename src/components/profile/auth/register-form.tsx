@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   setAlertText,
   setAuthToggle,
@@ -57,6 +58,12 @@ const RegisterForm = ({ setIsOpen }: any) => {
       password: "",
     },
   });
+
+  useEffect(() => {
+    if (data) {
+      console.log(data, "data");
+    }
+  }, [data]);
   const { watch } = form;
   const emailOrPhoneValue = watch("emailOrPhone");
   const passwordValue = watch("password");
@@ -70,13 +77,12 @@ const RegisterForm = ({ setIsOpen }: any) => {
     e.stopPropagation();
     e.preventDefault();
     const { emailOrPhone, password } = form.getValues();
-    const { data: registerData } = await register({
+    const { data: registerData, error: registerError } = await register({
       username: emailOrPhone,
       password,
       captcha,
       captcha_key: data?.data?.captcha_key,
     });
-    // console.log(registerData, "registerData");
     if (registerData?.status) {
       dispatch(setUser(registerData?.data));
       dispatch(setIsDrawerOpen(false));
@@ -87,9 +93,13 @@ const RegisterForm = ({ setIsOpen }: any) => {
       setShow验证码(false);
     } else {
       if (authErr) setError(authErr);
-      // setShow验证码(false);
-      setCaptcha("");
-      await getCaptcha("");
+      if(registerError && (registerError as any).originalStatus === 422) {
+        setCaptcha("");
+        await getCaptcha("");
+      } else {
+        setShow验证码(false);
+      }
+      
     }
   };
   // console.log(isError, "isError");
@@ -127,7 +137,7 @@ const RegisterForm = ({ setIsOpen }: any) => {
                 <FormControl>
                   <>
                     <label htmlFor="" className="text-[14px] text-[#888]">
-                      姓名
+                    用户名
                     </label>
                     <div className="relative">
                       <input

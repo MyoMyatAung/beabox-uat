@@ -73,6 +73,12 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
     dispatch(setDetails(file));
     navigate("/vod_details");
   };
+
+  const navigateToUserProfile = (userId: string, event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent triggering the parent click event
+    navigate(paths.getUserProfileId(userId));
+  };
+  
   // console.log(waterfall);
   return (
     <>
@@ -132,7 +138,10 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
                           alt=""
                         />
                       )}
-                      <h1 className=" text-[#888] text-[12px] font-[500]">
+                      <h1 
+                        className=" text-[#888] text-[12px] font-[500] cursor-pointer hover:text-white"
+                        onClick={(e) => navigateToUserProfile(card.user.id, e)}
+                      >
                         {card.user.name}
                       </h1>
                     </div>

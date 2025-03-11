@@ -10,6 +10,8 @@ import {
   useGetPaymentMethodQuery,
 } from "@/store/api/wallet/walletApi";
 import RechRecord from "./RechRecord";
+import { useGetMyOwnProfileQuery } from "@/store/api/profileApi";
+import { useSelector } from "react-redux";
 
 interface RechargeProps {}
 
@@ -18,6 +20,11 @@ const Recharge: React.FC<RechargeProps> = () => {
   const { data: paymentMeth, isLoading } = useGetPaymentMethodQuery("");
   const [activeTab, setActiveTab] = useState(1);
   const navigate = useNavigate();
+  const user = useSelector((state: any) => state?.persist?.user) || "";
+  const { data, refetch } = useGetMyOwnProfileQuery("", {
+    skip: !user,
+  });
+  // console.log(data);
 
   return (
     <div className=" flex justify-center items-center">
@@ -46,7 +53,8 @@ const Recharge: React.FC<RechargeProps> = () => {
               onClick={() => setActiveTab(2)}
             >
               <span className="text-[#fff] text-[18px] font-[500]">
-                钱包充值
+                {/* record */}
+                充值记录
               </span>
               {activeTab === 2 ? (
                 <span
@@ -61,7 +69,15 @@ const Recharge: React.FC<RechargeProps> = () => {
         {/* balace */}
         {activeTab === 1 ? (
           <div className="">
-            <BalNew title="可提现余额" amount={0} to={paths.wallet_withdraw} />
+            <BalNew
+              amount={data?.data?.income_coins}
+              title="可提现余额"
+              balance={data?.data?.coins}
+              to={paths.wallet_withdraw}
+              btnText={"钱包提款"}
+              amountText={"作品收益"}
+              amountType={"B币"}
+            />
             {coinLoading ? (
               <div className=" flex justify-center items-center py-[100px]">
                 <div className="heart">

@@ -110,7 +110,7 @@ const Register = () => {
                   <FormControl>
                     <>
                       <label htmlFor="" className="text-[14px] text-[#888]">
-                        姓名
+                      用户名
                       </label>
                       <div className="relative">
                         <input
