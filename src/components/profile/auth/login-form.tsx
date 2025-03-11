@@ -94,8 +94,11 @@ const LoginForm = ({ setIsOpen }: any) => {
           {/* Login */}
         </p>
         <div
-          onClick={() => dispatch(setIsDrawerOpen(false))}
-          className="bg-[#FFFFFF0A] p-2 rounded-full"
+          onClick={() => {
+            dispatch(setIsDrawerOpen(false));
+            if (setIsOpen) setIsOpen(false);
+          }}
+          className="bg-[#FFFFFF0A] p-2 rounded-full cursor-pointer"
         >
           <X size={18} />
         </div>
