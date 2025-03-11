@@ -231,6 +231,11 @@ const Player = ({
   const initializePlayer = () => {
     if (!playerContainerRef.current || artPlayerInstanceRef.current) return;
 
+    // Show progress bar immediately when initializing player
+    if (progressBarRef?.current) {
+      progressBarRef.current.style.opacity = "1";
+    }
+
     Artplayer.DBCLICK_FULLSCREEN = false;
     Artplayer.MOBILE_DBCLICK_PLAY = false;
     Artplayer.MOBILE_CLICK_PLAY = true;
@@ -854,10 +859,6 @@ const Player = ({
         setPImg(false);
       }
 
-      if (progressBarRef?.current) {
-        progressBarRef.current.style.opacity = "1";
-      }
-
       // Initially show play button when video is ready
       const loadingIndicator =
         artPlayerInstanceRef.current?.template?.$loading?.querySelector(
@@ -872,9 +873,33 @@ const Player = ({
       if (!isFastForwarding && playIndicator) playIndicator.style.display = "block";
     });
 
-    // Enhanced error handling
+    // Add loading state handler with progress bar visibility check
+    artPlayerInstanceRef.current.on("video:waiting", () => {
+      // Ensure progress bar is visible during loading
+      if (progressBarRef?.current) {
+        progressBarRef.current.style.opacity = "1";
+      }
+
+      const loadingIndicator =
+        artPlayerInstanceRef.current?.template?.$loading?.querySelector(
+          ".video-loading-indicator"
+        ) as HTMLDivElement;
+      const playIndicator =
+        artPlayerInstanceRef.current?.template?.$state?.querySelector(
+          ".video-play-indicator"
+        ) as HTMLDivElement;
+
+      if (loadingIndicator) loadingIndicator.style.display = "block";
+      if (playIndicator) playIndicator.style.display = "none";
+    });
+
+    // Add error handler to ensure progress bar remains visible
     artPlayerInstanceRef.current.on("error", (error) => {
       console.error("Video loading error:", error);
+      // Ensure progress bar remains visible even on error
+      if (progressBarRef?.current) {
+        progressBarRef.current.style.opacity = "1";
+      }
       showPlayButton();
       const loadingIndicator =
         artPlayerInstanceRef.current?.template?.$loading?.querySelector(
@@ -914,21 +939,6 @@ const Player = ({
       if (!isFastForwarding && !artPlayerInstanceRef.current?.playing) {
         showPlayButton();
       }
-    });
-
-    // Add loading state handler
-    artPlayerInstanceRef.current.on("video:waiting", () => {
-      const loadingIndicator =
-        artPlayerInstanceRef.current?.template?.$loading?.querySelector(
-          ".video-loading-indicator"
-        ) as HTMLDivElement;
-      const playIndicator =
-        artPlayerInstanceRef.current?.template?.$state?.querySelector(
-          ".video-play-indicator"
-        ) as HTMLDivElement;
-
-      if (loadingIndicator) loadingIndicator.style.display = "block";
-      if (playIndicator) playIndicator.style.display = "none";
     });
 
     // Add initial loading state
