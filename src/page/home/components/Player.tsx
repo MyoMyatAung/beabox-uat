@@ -669,7 +669,7 @@ const Player = ({
                 bottom: '0%',  // Changed from bottom: '0%' to center vertically
                 left: '50%',
                 transform: 'translate(-50%, -50%)',  // Center both horizontally and vertically
-                backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                backgroundColor: '#282630',
                 color: 'white',
                 padding: '8px 16px',  // Slightly increased padding
                 borderRadius: '20px',  // Increased border radius
