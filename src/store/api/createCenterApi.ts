@@ -74,10 +74,44 @@ export const createCenterApi = createApi({
         method: "GET",
       }),
     }),
+    createPosts: builder.mutation({
+      query: ({
+        update_id,
+        title,
+        tags,
+        description,
+        privacy,
+        cover_url,
+        files,
+      }) => {
+        // Create the payload
+        const payload: any = {
+          title,
+          tags,
+          description,
+          privacy,
+          cover_url,
+          files,
+        };
+
+        // Conditionally add update_id if it's provided
+        if (update_id) {
+          payload.update_id = update_id;
+        }
+
+        // Return the query with the modified payload
+        return {
+          url: `post/create`,
+          method: "POST",
+          body: convertToSecurePayload(payload),
+        };
+      },
+    }),
   }),
 });
 
 export const {
+  useCreatePostsMutation,
   useGetTopCreatorQuery,
   useGetMyPostStatusCountQuery,
   useGetPostListQuery,
