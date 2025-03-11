@@ -426,51 +426,92 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
     setIsModalVisible(true);
   };
   console.log(uploading);
-  if (uploading || successEnd) {
-    return (
-      <>
-        <UploadProgress
-          uploadPercentage={uploadPercentage}
-          uploadedSize={uploadedSize}
-          totalSize={totalSize}
-          onCancel={showModal}
-          successEnd={successEnd}
-          setsuccessEnd={setsuccessEnd}
-          refetch={refetch}
-          seteditPost={seteditPost}
-        />
+  // if (uploading || successEnd) {
+  //   return (
+  //     <>
+  //       <UploadProgress
+  //         uploadPercentage={uploadPercentage}
+  //         uploadedSize={uploadedSize}
+  //         totalSize={totalSize}
+  //         onCancel={showModal}
+  //         successEnd={successEnd}
+  //         setsuccessEnd={setsuccessEnd}
+  //         refetch={refetch}
+  //         seteditPost={seteditPost}
+  //       />
 
-        {isModalVisible && (
-          <div className="fixed inset-0 bg-[rgba(0,0,0,0.6)] backdrop-blur-sm flex justify-center items-center z-50">
-            {" "}
-            <div className="bg-[#16131C] rounded-md w-[320px] text-center">
-              <p className="text-white modal-text p-5">
-                Your Video is still Uploading. You can cancel uploading or wait
-                a moment for video uploading to finish.
-              </p>
-              <div className="flex justify-center border-t-[0.5px] border-[#2a262f]">
-                <button
-                  onClick={() => setIsModalVisible(false)}
-                  className="flex-1 cursor-pointer py-3 border-r-[0.5px] border-[#2a262f]  text-white"
-                >
-                  Continue
-                </button>
-                <button
-                  onClick={handleCancelUpload}
-                  className="flex-1 py-3 cursor-pointer  text-[#C23033]"
-                >
-                  Cancel upload
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </>
-    );
-  }
+  //       {isModalVisible && (
+  //         <div className="fixed inset-0 bg-[rgba(0,0,0,0.6)] backdrop-blur-sm flex justify-center items-center z-50">
+  //           {" "}
+  //           <div className="bg-[#16131C] rounded-md w-[320px] text-center">
+  //             <p className="text-white modal-text p-5">
+  //               Your Video is still Uploading. You can cancel uploading or wait
+  //               a moment for video uploading to finish.
+  //             </p>
+  //             <div className="flex justify-center border-t-[0.5px] border-[#2a262f]">
+  //               <button
+  //                 onClick={() => setIsModalVisible(false)}
+  //                 className="flex-1 cursor-pointer py-3 border-r-[0.5px] border-[#2a262f]  text-white"
+  //               >
+  //                 Continue
+  //               </button>
+  //               <button
+  //                 onClick={handleCancelUpload}
+  //                 className="flex-1 py-3 cursor-pointer  text-[#C23033]"
+  //               >
+  //                 Cancel upload
+  //               </button>
+  //             </div>
+  //           </div>
+  //         </div>
+  //       )}
+  //     </>
+  //   );
+  // }
 
   return (
-    <>
+    <div className="relative w-full h-screen">
+      {uploading || successEnd ? (
+        <div className="fixed top-0 left-0 w-full h-full z-50">
+          <UploadProgress
+            uploadPercentage={uploadPercentage}
+            uploadedSize={uploadedSize}
+            totalSize={totalSize}
+            onCancel={showModal}
+            successEnd={successEnd}
+            setsuccessEnd={setsuccessEnd}
+            refetch={refetch}
+            seteditPost={seteditPost}
+          />
+
+          {isModalVisible && (
+            <div className="fixed inset-0 bg-[rgba(0,0,0,0.6)] backdrop-blur-sm flex justify-center items-center z-50">
+              <div className="bg-[#16131C] rounded-md w-[320px] text-center">
+                <p className="text-white modal-text p-5">
+                  Your Video is still Uploading. You can cancel uploading or
+                  wait a moment for video uploading to finish.
+                </p>
+                <div className="flex justify-center border-t-[0.5px] border-[#2a262f]">
+                  <button
+                    onClick={() => setIsModalVisible(false)}
+                    className="flex-1 cursor-pointer py-3 border-r-[0.5px] border-[#2a262f]  text-white"
+                  >
+                    Continue
+                  </button>
+                  <button
+                    onClick={handleCancelUpload}
+                    className="flex-1 py-3 cursor-pointer  text-[#C23033]"
+                  >
+                    Cancel upload
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      ) : (
+        <></>
+      )}
       <TopNav center={"Upload Video"} />
       <div className="flex items-center justify-center mx-5 gap-3 pt-5">
         <div className="flex flex-col justify-center items-center">
@@ -672,7 +713,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
           loading={isLoading}
         />
       </div>
-    </>
+    </div>
   );
 };
 
