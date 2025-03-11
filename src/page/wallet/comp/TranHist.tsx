@@ -51,7 +51,6 @@ const TranHist: React.FC = () => {
     setHasMore(true);
     setTran([]);
   }, [curMon, curYr]);
-  
 
   useEffect(() => {
     if (data?.data) {
@@ -102,13 +101,15 @@ const TranHist: React.FC = () => {
           {/* <TypePick /> */}
         </div>
         {/* time */}
-        <DatePick
-          curMon={curMon}
-          curYr={curYr}
-          setCurMon={setCurMon}
-          setCurYr={setCurYr}
-          setplus={setPlus}
-        />
+        <div className=" fixed bg-gray-900 w-full">
+          <DatePick
+            curMon={curMon}
+            curYr={curYr}
+            setCurMon={setCurMon}
+            setCurYr={setCurYr}
+            setplus={setPlus}
+          />
+        </div>
         {/* transition */}
         <div className="py-[12px] px-[18px]">
           {isLoading ? (
@@ -134,7 +135,7 @@ const TranHist: React.FC = () => {
                 tran?.map((ts: any, index: any) => (
                   <div
                     key={index}
-                    className="transit_list py-[20px] flex justify-between"
+                    className="transit_list mt-5 py-[20px] flex justify-between"
                   >
                     <div className="flex gap-[12px] items-center">
                       <div className="bitcoin_border p-3">
