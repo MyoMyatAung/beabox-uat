@@ -10,8 +10,9 @@ import { setVideos } from "../services/videosSlice";
 import { useNavigate } from "react-router-dom";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
 import { showToast } from "../services/errorSlice";
+import VideoSidebar1 from "./VideoSidebar1";
 
-const VideoContainer = ({
+const VideoContainer1 = ({
   video,
   setWidth,
   setHeight,
@@ -28,6 +29,8 @@ const VideoContainer = ({
   abortControllerRef,
   indexRef,
   videoData,
+  setrenderVideos,
+  setVideosData,
 }: {
   video: any;
   setWidth: any;
@@ -45,6 +48,8 @@ const VideoContainer = ({
   abortControllerRef: any;
   indexRef: any;
   videoData: any;
+  setrenderVideos: any;
+  setVideosData: any;
 }) => {
   const [likeCount, setLikeCount] = useState(video?.like_count);
   const [isLiked, setIsLiked] = useState(video?.is_liked);
@@ -375,7 +380,8 @@ const VideoContainer = ({
         isActive={isActive}
       />
 
-      <VideoSidebar
+      <VideoSidebar1
+        setVideosData={setVideosData}
         status={status}
         unLike={unLike}
         handleLike={handleLike}
@@ -383,6 +389,7 @@ const VideoContainer = ({
         likeCount={likeCount}
         isLiked={isLiked}
         setIsLiked={setIsLiked}
+        setrenderVideos={setrenderVideos}
         // likes={video?.like_count}
         // is_liked={video?.is_liked}
         setCommentCount={setcommentCount}
@@ -440,4 +447,4 @@ const VideoContainer = ({
   );
 };
 
-export default VideoContainer;
+export default VideoContainer1;

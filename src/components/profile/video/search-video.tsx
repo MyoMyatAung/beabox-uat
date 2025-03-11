@@ -83,6 +83,7 @@ const SearchVideo = ({ id }: { id: string }) => {
         {showVideoFeed && selectedMovieId ? (
           <div className="z-[9999] h-screen fixed top-0 overflow-y-scroll left-0 w-full">
             <VideoFeed
+              setVideos={setVideos}
               videos={videos}
               currentActiveId={selectedMovieId}
               setShowVideoFeed={setShowVideoFeed}

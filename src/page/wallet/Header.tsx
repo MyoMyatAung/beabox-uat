@@ -18,23 +18,21 @@ const Header: React.FC<HeaderProps> = ({ title, lv }) => {
   }, [data]);
 
   const navigate = useNavigate();
+  // console.log(lv)
   return (
-    <div className=" flex px-[10px]">
-      <div className=" grid grid-cols-3 w-full justify-end items-end  py-[12px]">
-        <ChevronLeft onClick={() => navigate(-1)} />
-        <h1 className={` ${lv ? " col-span-1 text-center" : "col-span-1 text-center"} text-white text-[18px] font-[500]`}>
+    <div className=" flex px-[10px] relative pb-[20px]">
+      <div className=" fixed flex w-full justify-center items-center  py-[14px] bg-[#16131C]">
+        <ChevronLeft
+          className=" absolute left-0 z-[11]"
+          onClick={() => navigate(-1)}
+        />
+        <h1
+          className={` ${
+            lv ? " col-span-1 text-center" : "col-span-1 text-start"
+          } text-white text-[18px] font-[500]`}
+        >
           {title}
         </h1>
-        {lv && (
-          <>
-            {data?.data && (
-              <div className=" flex justify-end">
-
-              <img src={pic} className=" w-[59px] h-[26px]" alt="" />
-              </div>
-            )}
-          </>
-        )}
       </div>
     </div>
   );

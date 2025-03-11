@@ -23,6 +23,10 @@ import pageSlice from "@/page/home/services/pageSlice";
 import muteSlice from "@/page/home/services/muteSlice";
 import loaderSlice from "@/page/home/services/loaderSlice";
 import hideBarSlice from "@/page/home/services/hideBarSlice";
+
+import previousSlice from "@/page/home/services/previousSlice";
+import videoRenderSlice from "@/page/home/services/videoRenderSlice";
+import startSlice from "@/page/home/services/startSlice";
 import createCenterSlice from "./slices/createCenterSlice";
 import { createCenterApi } from "./api/createCenterApi";
 
@@ -65,9 +69,12 @@ const rootReducer = combineReducers({
   persist: persistSlice,
   explore: exploreSlice,
   history: HistorySlice,
+  startSlice: startSlice,
   hideBarSlice: hideBarSlice,
   home: persistReducer(persistHomeSliceConfig, homeSlice), // Apply sessionStorage for homeSlice
   model: ModelSlice,
+  previousSlice: previousSlice,
+  videoRenderSlice: videoRenderSlice,
   unlike: unlikeSlice,
   errorslice: errorSlice,
   activeslice: activeSlice,

@@ -123,6 +123,11 @@ const More: React.FC<MoreProps> = () => {
     return 200;
   };
 
+  const navigateToUserProfile = (userId: string, event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent triggering the parent click event
+    navigate(paths.getUserProfileId(userId));
+  };
+
   // console.log(data?.data);
   // console.log(more_tab);
 
@@ -144,6 +149,7 @@ const More: React.FC<MoreProps> = () => {
       {showVideoFeed && selectedMovieId ? (
         <div className="z-[9900] h-screen fixed top-0 overflow-y-scroll left-0 w-full">
           <VideoFeed
+            setVideos={setList}
             videos={list}
             currentActiveId={selectedMovieId}
             setShowVideoFeed={setShowVideoFeed}
@@ -260,7 +266,10 @@ const More: React.FC<MoreProps> = () => {
                             alt=""
                           />
                         )}
-                        <h1 className=" text-[#888] text-[12px] font-[500]">
+                        <h1 
+                          className=" text-[#888] text-[12px] font-[500] cursor-pointer hover:text-white"
+                          onClick={(e) => navigateToUserProfile(item.user.id, e)}
+                        >
                           {item.user.name}
                         </h1>
                       </div>

@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import VideoFeed from "@/page/home/components/VideoFeed";
 import empty from "../../home/empty.png";
 import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder";
+import { paths } from "@/routes/paths";
 
 // import ImageWithPlaceholder from "../comp/imgPlaceholder";
 import he from "he";
@@ -251,9 +252,15 @@ const Results: React.FC<ResultsProps> = ({}) => {
     });
   }, [movies]);
 
+  const navigateToUserProfile = (userId: string, event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent triggering the parent click event
+    navigate(paths.getUserProfileId(userId));
+  };
+
   if (showVideoFeed && selectedMovieId) {
     return (
       <VideoFeed
+        setVideos={setMovies}
         videos={movies}
         currentActiveId={selectedMovieId}
         setShowVideoFeed={setShowVideoFeed}
@@ -405,7 +412,10 @@ const Results: React.FC<ResultsProps> = ({}) => {
                               alt=""
                             />
                           )}
-                          <h1 className=" text-white text-[12px] font-[400] leading-[20px]">
+                          <h1 
+                            className=" text-white text-[12px] font-[400] leading-[20px] cursor-pointer hover:text-purple-300"
+                            onClick={(e) => navigateToUserProfile(card.user.id, e)}
+                          >
                             {card.user.name}
                             {/* {card?.files[0]?.width} & {card?.files[0]?.height} {} */}
                           </h1>
