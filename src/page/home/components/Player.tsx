@@ -10,7 +10,7 @@ import { decryptImage } from "@/utils/imageDecrypt";
 import { c } from "node_modules/framer-motion/dist/types.d-6pKw1mTI";
 import { setMute } from "../services/muteSlice";
 import { sethideBar } from "../services/hideBarSlice";
-
+import forward from "../forward.svg";
 // Constants for video preloading
 const BUFFER_THRESHOLD = 10; // seconds before current position to start buffering
 const MAX_BUFFER_SIZE = 50 * 1024 * 1024; // 50MB maximum buffer size
@@ -83,8 +83,15 @@ const Player = ({
   const [p_img, setPImg] = useState(false);
   const preloadRef = useRef<boolean>(false);
   const bufferTimer = useRef<NodeJS.Timeout | null>(null);
-  // const abortControllerRef = useRef<AbortController | null>(null);
-  // const { videoData } = useSelector((state: any) => state.previousSlice);
+  const [isFastForwarding, setIsFastForwarding] = useState(false);
+  const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const fastForwardIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const touchStartPosRef = useRef<{ x: number; y: number } | null>(null);
+  const LONG_PRESS_DELAY = 500; // ms before triggering fast forward
+  const FAST_FORWARD_RATE = 2; // 2x speed for fast forward
+  const FAST_FORWARD_INTERVAL = 50; // ms between each check
+  const SWIPE_THRESHOLD = 10; // pixels to determine if user is swiping
+  const wasPlayingRef = useRef(false); // Track if video was playing before fast forward
 
   const dispatch = useDispatch();
 
@@ -627,7 +634,14 @@ const Player = ({
           },
         },
         {
-          html: '<div class="click-layer"></div>',
+          html: `
+            <div class="click-layer">
+              <div class="fast-forward-indicator" style="display: none; opacity: 0;">
+                <span>快进播放 x2</span>
+                <img src="${forward}" alt="forward" style="width: 16px; height: 16px;" />
+              </div>
+            </div>
+          `,
           style: {
             position: "absolute",
             top: "0",
@@ -636,13 +650,119 @@ const Player = ({
             height: "85%",
             zIndex: "10",
             background: "transparent",
+            userSelect: "none",
+            webkitUserSelect: "none",
+            webkitTouchCallout: "none",
+            touchAction: "pan-y",
           },
           mounted: (element: HTMLElement) => {
             let lastClick = 0;
             let singleClickTimeout: NodeJS.Timeout | null = null;
+            let isLongPress = false;
+            const ffIndicator = element.querySelector('.fast-forward-indicator') as HTMLElement;
+            const ffIcon = element.querySelector('.ff-icon') as HTMLElement;
+            
+            if (ffIndicator) {
+              // Set initial styles
+              Object.assign(ffIndicator.style, {
+                position: 'absolute',
+                bottom: '0%',  // Changed from bottom: '0%' to center vertically
+                left: '50%',
+                transform: 'translate(-50%, -50%)',  // Center both horizontally and vertically
+                backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                color: 'white',
+                padding: '8px 16px',  // Slightly increased padding
+                borderRadius: '20px',  // Increased border radius
+                fontSize: '14px',
+                fontWeight: '500',  // Slightly bolder
+                display: 'none',
+                opacity: '0',
+                alignItems: 'center',
+                gap: '8px',  // Increased gap between text and icon
+                minWidth: '120px',
+                justifyContent: 'center',
+                letterSpacing: '0.5px',
+                transition: 'opacity 0.3s ease-in-out',
+                zIndex: '9999'  // Ensure it's above other UI elements
+              });
+            }
 
-            element.addEventListener("click", () => {
+            if (ffIcon) {
+              Object.assign(ffIcon.style, {
+                fontSize: '16px',
+                lineHeight: '1',
+                marginRight: '2px'
+              });
+            }
+
+            const handleLongPressStart = (e: TouchEvent | MouseEvent) => {
+              if ('touches' in e) {
+                const touch = e.touches[0];
+                touchStartPosRef.current = { x: touch.clientX, y: touch.clientY };
+              }
+
+              // Clear any existing timers
+              if (longPressTimerRef.current) {
+                clearTimeout(longPressTimerRef.current);
+              }
+
+              longPressTimerRef.current = setTimeout(() => {
+                if (touchStartPosRef.current) {
+                  isLongPress = true;
+                  startFastForward();
+                  if (ffIndicator) {
+                    ffIndicator.style.display = 'flex';
+                    // Add animation
+                    ffIndicator.style.transition = 'opacity 0.2s ease-in-out';
+                    ffIndicator.style.opacity = '1';
+                  }
+                }
+              }, LONG_PRESS_DELAY);
+            };
+
+            const handleLongPressEnd = () => {
+              if (longPressTimerRef.current) {
+                clearTimeout(longPressTimerRef.current);
+                longPressTimerRef.current = null;
+              }
+              if (isLongPress) {
+                stopFastForward();
+                if (ffIndicator) {
+                  // Fade out animation
+                  ffIndicator.style.opacity = '0';
+                  setTimeout(() => {
+                    ffIndicator.style.display = 'none';
+                  }, 200);
+                }
+              }
+              isLongPress = false;
+              touchStartPosRef.current = null;
+            };
+
+            const handleTouchMove = (e: TouchEvent) => {
+              if (!touchStartPosRef.current) return;
+
+              const touch = e.touches[0];
+              const deltaX = Math.abs(touch.clientX - touchStartPosRef.current.x);
+              const deltaY = Math.abs(touch.clientY - touchStartPosRef.current.y);
+
+              // If user is swiping (especially vertically), cancel long press
+              if (deltaX > SWIPE_THRESHOLD || deltaY > SWIPE_THRESHOLD) {
+                handleLongPressEnd();
+                return;
+              }
+
+              // Prevent default only if we're in a long press
+              if (isLongPress) {
+                e.preventDefault();
+              }
+            };
+
+            // Touch events
+            element.addEventListener('touchstart', (e) => {
               const now = Date.now();
+              
+              // Handle double tap
               if (now - lastClick <= 300) {
                 if (singleClickTimeout) clearTimeout(singleClickTimeout);
                 if (user?.token) {
@@ -656,12 +776,30 @@ const Player = ({
                   );
                 }
               } else {
+                // Handle single tap
                 singleClickTimeout = setTimeout(() => {
-                  artPlayerInstanceRef.current?.toggle();
+                  if (!isLongPress && artPlayerInstanceRef.current) {
+                    if (artPlayerInstanceRef.current.playing) {
+                      artPlayerInstanceRef.current.pause();
+                      showPlayButton();
+                    } else {
+                      artPlayerInstanceRef.current.play();
+                      hidePlayButton();
+                    }
+                  }
                 }, 300);
               }
               lastClick = now;
+              
+              handleLongPressStart(e);
             });
+
+            element.addEventListener('touchmove', handleTouchMove);
+            element.addEventListener('touchend', handleLongPressEnd);
+            element.addEventListener('touchcancel', handleLongPressEnd);
+
+            // Prevent context menu
+            element.addEventListener('contextmenu', (e) => e.preventDefault());
           },
         },
       ],
@@ -731,62 +869,51 @@ const Player = ({
         ) as HTMLDivElement;
 
       if (loadingIndicator) loadingIndicator.style.display = "none";
-      if (playIndicator) playIndicator.style.display = "block";
+      if (!isFastForwarding && playIndicator) playIndicator.style.display = "block";
     });
 
     // Enhanced error handling
     artPlayerInstanceRef.current.on("error", (error) => {
       console.error("Video loading error:", error);
+      showPlayButton();
       const loadingIndicator =
         artPlayerInstanceRef.current?.template?.$loading?.querySelector(
           ".video-loading-indicator"
         ) as HTMLDivElement;
-      const playIndicator =
-        artPlayerInstanceRef.current?.template?.$state?.querySelector(
-          ".video-play-indicator"
-        ) as HTMLDivElement;
 
       if (loadingIndicator) loadingIndicator.style.display = "none";
-      if (playIndicator) playIndicator.style.display = "block";
     });
 
-    // Show/hide play button based on state
-    artPlayerInstanceRef.current.on("pause", () => {
-      setIsPaused(true);
-      const loadingIndicator =
-        artPlayerInstanceRef.current?.template?.$loading?.querySelector(
-          ".video-loading-indicator"
-        ) as HTMLDivElement;
-      const playIndicator =
-        artPlayerInstanceRef.current?.template?.$state?.querySelector(
-          ".video-play-indicator"
-        ) as HTMLDivElement;
-
-      if (loadingIndicator) loadingIndicator.style.display = "none";
-      if (playIndicator) playIndicator.style.display = "block";
-      
-      // Save position when video is paused
-      if (artPlayerInstanceRef.current) {
-        saveVideoPosition(artPlayerInstanceRef.current.currentTime);
+    // Add play state handlers with enhanced error handling
+    artPlayerInstanceRef.current.on("play", () => {
+      if (!isFastForwarding) {
+        hidePlayButton();
       }
     });
 
-    artPlayerInstanceRef.current.on("play", () => {
-      setIsPaused(false);
-      const loadingIndicator =
-        artPlayerInstanceRef.current?.template?.$loading?.querySelector(
-          ".video-loading-indicator"
-        ) as HTMLDivElement;
-      const playIndicator =
-        artPlayerInstanceRef.current?.template?.$state?.querySelector(
-          ".video-play-indicator"
-        ) as HTMLDivElement;
+    artPlayerInstanceRef.current.on("pause", () => {
+      if (!isFastForwarding) {
+        showPlayButton();
+      }
+    });
 
-      if (loadingIndicator) loadingIndicator.style.display = "none";
-      if (playIndicator) playIndicator.style.display = "none";
-      
-      // Start position saving when video plays
-      startPositionSaving();
+    artPlayerInstanceRef.current.on("video:playing", () => {
+      if (!isFastForwarding) {
+        hidePlayButton();
+      }
+    });
+
+    artPlayerInstanceRef.current.on("video:pause", () => {
+      if (!isFastForwarding) {
+        showPlayButton();
+      }
+    });
+
+    // Handle seeking end
+    artPlayerInstanceRef.current.on("seeked", () => {
+      if (!isFastForwarding && !artPlayerInstanceRef.current?.playing) {
+        showPlayButton();
+      }
     });
 
     // Add loading state handler
@@ -801,20 +928,6 @@ const Player = ({
         ) as HTMLDivElement;
 
       if (loadingIndicator) loadingIndicator.style.display = "block";
-      if (playIndicator) playIndicator.style.display = "none";
-    });
-
-    artPlayerInstanceRef.current.on("video:playing", () => {
-      const loadingIndicator =
-        artPlayerInstanceRef.current?.template?.$loading?.querySelector(
-          ".video-loading-indicator"
-        ) as HTMLDivElement;
-      const playIndicator =
-        artPlayerInstanceRef.current?.template?.$state?.querySelector(
-          ".video-play-indicator"
-        ) as HTMLDivElement;
-
-      if (loadingIndicator) loadingIndicator.style.display = "none";
       if (playIndicator) playIndicator.style.display = "none";
     });
 
@@ -922,17 +1035,24 @@ const Player = ({
       // Function to attempt playback
       const attemptPlay = () => {
         if (!artPlayerInstanceRef.current) return;
-        artPlayerInstanceRef.current.play().catch((error) => {
-          console.error("Video play failed:", error);
-          if (error.name === "NotAllowedError") {
-            // Reset to poster image
-            if (artPlayerInstanceRef.current) {
-              artPlayerInstanceRef.current.currentTime = 0;
-              artPlayerInstanceRef.current.controls.show = true;
-              artPlayerInstanceRef.current.video.load(); // Load the video // Small delay to ensure video has loaded
+        
+        artPlayerInstanceRef.current.play()
+          .then(() => {
+            hidePlayButton();
+          })
+          .catch((error) => {
+            console.error("Video play failed:", error);
+            showPlayButton();
+            
+            // Handle autoplay blocking specifically
+            if (error.name === "NotAllowedError") {
+              if (artPlayerInstanceRef.current) {
+                artPlayerInstanceRef.current.pause();
+                // Show controls to allow manual play
+                artPlayerInstanceRef.current.controls.show = true;
+              }
             }
-          }
-        });
+          });
       };
 
       attemptPlay();
@@ -1009,6 +1129,62 @@ const Player = ({
     }
   }, [rotate]);
 
+  const hidePlayButton = () => {
+    if (playIconRef.current) {
+      playIconRef.current.style.display = 'none';
+    }
+  };
+
+  const showPlayButton = () => {
+    // Only show play button if video is paused and not fast forwarding
+    if (playIconRef.current && !artPlayerInstanceRef.current?.playing && !isFastForwarding) {
+      playIconRef.current.style.display = 'block';
+    }
+  };
+
+  const startFastForward = () => {
+    if (!artPlayerInstanceRef.current) return;
+    
+    // Store playing state before fast forward
+    wasPlayingRef.current = artPlayerInstanceRef.current.playing;
+    
+    setIsFastForwarding(true);
+    hidePlayButton(); // Always hide play button when starting fast forward
+    dispatch(sethideBar(true)); // Hide UI layers during fast forward
+    
+    const player = artPlayerInstanceRef.current;
+    
+    // Ensure video is playing during fast forward
+    player.play();
+    // Set playback rate to 2x
+    player.playbackRate = FAST_FORWARD_RATE;
+    
+    fastForwardIntervalRef.current = setInterval(() => {
+      if (player.currentTime >= player.duration - 1) {
+        stopFastForward(); // Stop at end of video
+      }
+    }, FAST_FORWARD_INTERVAL);
+  };
+
+  const stopFastForward = () => {
+    if (!artPlayerInstanceRef.current) return;
+    
+    if (fastForwardIntervalRef.current) {
+      clearInterval(fastForwardIntervalRef.current);
+      fastForwardIntervalRef.current = null;
+    }
+
+    const player = artPlayerInstanceRef.current;
+    player.playbackRate = 1; // Reset playback rate
+    
+    setIsFastForwarding(false);
+    dispatch(sethideBar(false)); // Show UI layers again
+    
+    // Always continue playing after fast forward
+    player.play();
+    hidePlayButton();
+  };
+
   const cleanupPlayer = () => {
     // Save position before cleanup
     if (artPlayerInstanceRef.current) {
@@ -1034,6 +1210,14 @@ const Player = ({
     if (hlsRef.current) {
       hlsRef.current.destroy();
       hlsRef.current = null;
+    }
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+    if (fastForwardIntervalRef.current) {
+      clearInterval(fastForwardIntervalRef.current);
+      fastForwardIntervalRef.current = null;
     }
   };
 

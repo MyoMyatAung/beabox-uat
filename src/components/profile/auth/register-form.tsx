@@ -57,6 +57,12 @@ const RegisterForm = ({ setIsOpen }: any) => {
       password: "",
     },
   });
+
+  useEffect(() => {
+    if (data) {
+      console.log(data, "data");
+    }
+  }, [data]);
   const { watch } = form;
   const emailOrPhoneValue = watch("emailOrPhone");
   const passwordValue = watch("password");
