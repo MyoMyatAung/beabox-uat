@@ -10,7 +10,7 @@ import { decryptImage } from "@/utils/imageDecrypt";
 import { c } from "node_modules/framer-motion/dist/types.d-6pKw1mTI";
 import { setMute } from "../services/muteSlice";
 import { sethideBar } from "../services/hideBarSlice";
-import forward from "../forward.svg";
+import forward from "../forward.gif";
 // Constants for video preloading
 const BUFFER_THRESHOLD = 10; // seconds before current position to start buffering
 const MAX_BUFFER_SIZE = 50 * 1024 * 1024; // 50MB maximum buffer size
