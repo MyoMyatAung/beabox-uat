@@ -254,6 +254,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
   if (showVideoFeed && selectedMovieId) {
     return (
       <VideoFeed
+        setVideos={setMovies}
         videos={movies}
         currentActiveId={selectedMovieId}
         setShowVideoFeed={setShowVideoFeed}

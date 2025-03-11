@@ -17,9 +17,9 @@ import { setAuthToggle } from "@/store/slices/profileSlice";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
 import { decryptImage } from "@/utils/imageDecrypt";
 import { setVideosToRender } from "../services/videoRenderSlice";
-import { setDetails } from "@/store/slices/exploreSlice";
 
-function VideoSidebar({
+function VideoSidebar1({
+  setVideosData,
   messages,
   setCommentCount,
   post_id,
@@ -38,7 +38,9 @@ function VideoSidebar({
   handleLike,
   unLike,
   status,
+  setrenderVideos,
 }: {
+  setVideosData: any;
   setCommentCount: any;
   unLike: any;
   setLikeCount: any;
@@ -57,6 +59,7 @@ function VideoSidebar({
   handleLike: any;
   setHearts: any;
   status: any;
+  setrenderVideos: any;
 }) {
   const [alertVisible, setAlertVisible] = useState(false);
 
@@ -231,11 +234,20 @@ function VideoSidebar({
             )
           )
         );
-        const new_post = { ...post, is_followed: !post?.is_followed };
-
-        if (new_post) {
-          dispatch(setDetails(new_post));
-        }
+        setrenderVideos((prev: any) =>
+          prev.map((video: any) =>
+            video.user.id === post?.user?.id
+              ? { ...video, is_followed: !post?.is_followed }
+              : video
+          )
+        );
+        setVideosData((prev: any) =>
+          prev.map((video: any) =>
+            video.user.id === post?.user?.id
+              ? { ...video, is_followed: !post?.is_followed }
+              : video
+          )
+        );
       } catch (error) {
         console.log(error);
       }
@@ -514,4 +526,4 @@ function VideoSidebar({
   );
 }
 
-export default VideoSidebar;
+export default VideoSidebar1;

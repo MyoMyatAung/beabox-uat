@@ -144,6 +144,7 @@ const More: React.FC<MoreProps> = () => {
       {showVideoFeed && selectedMovieId ? (
         <div className="z-[9900] h-screen fixed top-0 overflow-y-scroll left-0 w-full">
           <VideoFeed
+            setVideos={setList}
             videos={list}
             currentActiveId={selectedMovieId}
             setShowVideoFeed={setShowVideoFeed}
