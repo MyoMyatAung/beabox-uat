@@ -7,6 +7,7 @@ import selected from "@/assets/createcenter/selected.png";
 import unselected from "@/assets/createcenter/unselected.png";
 import Tags from "@/page/create-center/Tags";
 import { X } from "lucide-react";
+import Info from "./info";
 const Selected = () => (
   <img className="w-[18px] h-[18px]" src={selected} alt="" />
 );
@@ -119,7 +120,10 @@ const UploadFrom = ({ onFormSubmit, uploading, editPost, loading }: any) => {
           <div className="flex items-center w-full jsutify-start bg-transparent outline-none border border-t-0 border-x-0 py-2 border-b-[#FFFFFF99]">
             <div className="flex items-center gap-2 flex-1 flex-wrap">
               {hashtags.map((tag: any, index: any) => (
-                <div key={index} className="text-[12px] bg-[#FFFFFF14] px-2 py-0.5 rounded-full">
+                <div
+                  key={index}
+                  className="text-[12px] bg-[#FFFFFF14] px-2 py-0.5 rounded-full"
+                >
                   # {tag}
                 </div>
               ))}
@@ -135,20 +139,6 @@ const UploadFrom = ({ onFormSubmit, uploading, editPost, loading }: any) => {
               />
             </div>
           </div>
-          {/* <input
-            value={newHashtag}
-            onChange={(e) => setNewHashtag(e.target.value)}
-            type="text"
-            className="bg-transparent outline-none border border-t-0 border-x-0 py-2 border-b-[#FFFFFF99]"
-            placeholder="Add Hashtags (Maximum 5)"
-          />
-          <Tags
-            hashtags={hashtags}
-            removeTag={removeTag}
-            newHashtag={newHashtag}
-            setNewHashtag={setNewHashtag}
-            addHashtag={addHashtag}
-          /> */}
         </div>
       </div>
 
@@ -161,6 +151,7 @@ const UploadFrom = ({ onFormSubmit, uploading, editPost, loading }: any) => {
           <span className="text-[#CD3EFF]">http://d.23abcd.me</span>
         </p>
       </div>
+      {editPost ? <Info status={editPost?.status} /> : <></>}
       <div className="mx-5 pb-5 pt-10">
         <div className="flex gap-2 justify-center items-center pb-5">
           {agree ? (
