@@ -1,6 +1,7 @@
 import { paths } from "@/routes/paths";
 import { Video } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import upload from "@/assets/createcenter/upload.svg";
 
 const TopNavbar = ({
   currentTab,
@@ -22,7 +23,7 @@ const TopNavbar = ({
         onClick={() => navigate(paths.creator_upload)}
         className="flex items-center gap-1 text-[#888]"
       >
-        <Video size={16} />
+        <img src={upload} alt="" />
         <p className="text-[12px]">创作</p>
       </div>
       <div className="flex gap-2 ml-[24px] items-center text-white">

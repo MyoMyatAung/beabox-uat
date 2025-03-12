@@ -2,6 +2,7 @@ import TopNav from "@/components/create-center/top-nav";
 import React, { useState } from "react";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { ChevronLeft, X } from "lucide-react";
+import { useGetConfigQuery } from "@/store/api/createCenterApi";
 
 const TagBtn = ({
   tag,
@@ -9,6 +10,8 @@ const TagBtn = ({
   addHashtag,
   removeTag,
   index,
+  setHashtags,
+  hashtags,
 }: any) => {
   const [selected, setSelected] = useState(false);
 
@@ -21,9 +24,18 @@ const TagBtn = ({
     setSelected(!selected);
     addHashtag();
   };
+  console.log(hashtags);
+  const addTag = (tag: any) => {
+    setSelected(true);
+    setHashtags([...hashtags, tag.trim()]);
+  };
+  const remove = (indexToRemove: any) => {
+    setSelected(false);
+    setHashtags(hashtags.filter((tag: any) => tag !== indexToRemove));
+  };
   return (
     <button
-      onClick={selected ? () => handleItemClick(tag) : () => removeTag(tag)}
+      onClick={!selected ? () => addTag(tag) : () => remove(tag)}
       className={`${
         selected ? "stagbg" : "bg-[#3A3A3A33]"
       } px-3 py-1 rounded-full`}
@@ -39,24 +51,12 @@ const Tags = ({
   addHashtag,
   hashtags,
   removeTag,
+  setHashtags,
 }: any) => {
   const [selectedTags, setSelectedTags] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-
-  console.log(selectedTags);
-  const populars = [
-    "Spider man",
-    "Sony",
-    "Hero",
-    "Marvel",
-    "DC",
-    "Super man",
-    "Bat man",
-    "Wonder woman",
-    "Naruot",
-    "Basara",
-    "Vinland",
-  ];
+  const { data: newData } = useGetConfigQuery({});
+  const populars = newData?.data?.post_tags?.split(", ");
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>
@@ -90,7 +90,23 @@ const Tags = ({
             </div>
           </div>
           <div className="mt-2 flex flex-wrap gap-2 px-5">
-            {hashtags.map((tag: any, index: any) => (
+            {hashtags
+              .filter((tage: any) => !populars.includes(tage))
+              ?.map((tag: any, index: any) => (
+                <div
+                  key={index}
+                  className="stagbg px-3 py-1 rounded-full flex gap-1 items-center"
+                >
+                  <p> {tag}</p>
+                  <div
+                    onClick={() => removeTag(index)}
+                    className="bg-[#FFFFFF33] w-[18px] h-[18px] flex justify-center items-center rounded-full"
+                  >
+                    <X size={12} />
+                  </div>
+                </div>
+              ))}
+            {/* {hashtags.map((tag: any, index: any) => (
               <div
                 key={index}
                 className="stagbg px-3 py-1 rounded-full flex gap-1 items-center"
@@ -103,12 +119,12 @@ const Tags = ({
                   <X size={12} />
                 </div>
               </div>
-            ))}
+            ))} */}
           </div>
           <div className="px-5 py-5">
             <p className="text-[16px] pb-2">Popular Tags</p>
             <div className="flex flex-wrap items-center gap-3">
-              {populars?.map((tag, index) => (
+              {populars?.map((tag: any, index: any) => (
                 <TagBtn
                   key={tag}
                   tag={tag}
@@ -116,6 +132,8 @@ const Tags = ({
                   setSelectedTags={setSelectedTags}
                   addHashtag={addHashtag}
                   removeTag={removeTag}
+                  hashtags={hashtags}
+                  setHashtags={setHashtags}
                 />
               ))}
             </div>
