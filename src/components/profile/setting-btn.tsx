@@ -13,15 +13,15 @@ const SettingBtn = ({ setShow }: any) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const data = [
-    {
-      title: "我的钱包",
-      icon: <Wallet size={24} />,
-      link: paths.wallet,
-    },
+    // {
+    //   title: "我的钱包",
+    //   icon: <Wallet size={24} />,
+    //   link: paths.wallet,
+    // },
     {
       title: "创作者中心",
       icon: <img src={UserStar} className="w-6" />,
-      // link: paths.settings,
+      link: paths.create_center,
     },
     {
       title: "编辑资料",
@@ -73,6 +73,7 @@ const SettingBtn = ({ setShow }: any) => {
                     key={title}
                     onClick={() => {
                       if (title === "创作者中心") {
+                        // navigate(link);
                         setIsOpen(false);
                         setShow(true);
                       } else {

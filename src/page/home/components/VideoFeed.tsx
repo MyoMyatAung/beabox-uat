@@ -14,17 +14,20 @@ import { showToast } from "../services/errorSlice";
 import Ads from "./Ads";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
 import sc from "../../../assets/explore/sc.svg";
+import VideoContainer1 from "./VideoContainer1";
 
 const VideoFeed = ({
   videos,
   currentActiveId,
   setShowVideoFeed,
   query,
+  setVideos,
 }: {
   videos: any;
   currentActiveId: any;
   setShowVideoFeed: any;
   query: any;
+  setVideos: any;
 }) => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
   const [content, setContent] = useState("");
@@ -299,7 +302,9 @@ const VideoFeed = ({
             className="video mt-[20px] pb-[68px]"
             data-post-id={video.post_id} // Add post ID to the container
           >
-            <VideoContainer
+            <VideoContainer1
+              setVideosData={setVideos}
+              setrenderVideos={setVideosToRender}
               videoData={videoData}
               indexRef={indexRef}
               abortControllerRef={abortControllerRef}

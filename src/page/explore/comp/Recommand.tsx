@@ -89,6 +89,11 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
     return num;
   };
 
+  const navigateToUserProfile = (userId: string, event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent triggering the parent click event
+    navigate(paths.getUserProfileId(userId));
+  };
+
   // console.log(list);
   return (
     <div className=" pb-[20px] px-[10px]">
@@ -210,7 +215,10 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
                                 alt=""
                               />
                             )}
-                            <h1 className=" text-[#888] text-[12px] font-[400] leading-[20px]">
+                            <h1 
+                              className=" text-[#888] text-[12px] font-[400] leading-[20px] cursor-pointer hover:text-white"
+                              onClick={(e) => navigateToUserProfile(card.user.id, e)}
+                            >
                               {card.user.name}
                               {/* {card?.files[0]?.width} & {card?.files[0]?.height} {} */}
                             </h1>

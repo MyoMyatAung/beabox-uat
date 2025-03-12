@@ -16,6 +16,8 @@ import { setMute } from "../services/muteSlice";
 import { setAuthToggle } from "@/store/slices/profileSlice";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
 import { decryptImage } from "@/utils/imageDecrypt";
+import { setVideosToRender } from "../services/videoRenderSlice";
+import { setDetails } from "@/store/slices/exploreSlice";
 
 function VideoSidebar({
   messages,
@@ -77,6 +79,9 @@ function VideoSidebar({
   const [page, setPage] = useState(1);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
   const { hideBar } = useSelector((state: any) => state.hideBarSlice);
+  const { videosToRender } = useSelector(
+    (state: any) => state.videoRenderSlice
+  );
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -217,6 +222,20 @@ function VideoSidebar({
             ),
           })
         );
+        dispatch(
+          setVideosToRender(
+            videosToRender.map((video: any) =>
+              video.user.id === post?.user?.id
+                ? { ...video, is_followed: !post?.is_followed }
+                : video
+            )
+          )
+        );
+        const new_post = { ...post, is_followed: !post?.is_followed };
+
+        if (new_post) {
+          dispatch(setDetails(new_post));
+        }
       } catch (error) {
         console.log(error);
       }

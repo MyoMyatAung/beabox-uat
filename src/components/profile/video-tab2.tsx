@@ -19,7 +19,7 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
           onClick={() => dispatch(setDefaultTab2("video"))}
         >
           <span className="flex items-center gap-1">
-            <Play />  Ta的作品
+            <Play /> Ta的作品
           </span>
         </TabsTrigger>
         <TabsTrigger
