@@ -19,8 +19,8 @@ const UploadList = ({
             <UploadCard item={item} config={config} />
           </div>
         ))}
-        <InfinitLoad data={list} fetchData={fetchMoreData} hasMore={hasMore} />
       </div>
+      <InfinitLoad data={list} fetchData={fetchMoreData} hasMore={hasMore} />
     </div>
   );
 };

@@ -2,8 +2,8 @@ import { Link } from "react-router-dom";
 
 const UploadCard = ({ item, config }: any) => {
   let color = config?.filter((el: any) => el?.keyword == item?.status);
-  let bgcolor = color[0]?.bg_color_code;
-  let textcolor = color[0]?.text_color_code;
+  let bgcolor = color && color[0]?.bg_color_code;
+  let textcolor = color && color[0]?.text_color_code;
   // console.log(color);
   console.log(config, bgcolor, textcolor, item);
   return (

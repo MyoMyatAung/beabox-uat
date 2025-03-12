@@ -83,8 +83,8 @@ const YourVideos = () => {
     );
   }
   return (
-    <>
-      {isLoading ? (
+    <div className="overflow-y-scroll">
+      {isLoading && page === 1 ? (
         <Loader />
       ) : (
         <>
@@ -101,7 +101,7 @@ const YourVideos = () => {
             refetch={refetch}
             setHasMore={setHasMore}
           />
-          {isLoading || isFetching ? (
+          {isLoading && page === 1 ? (
             <Loader2 />
           ) : (
             <UploadList
@@ -115,7 +115,7 @@ const YourVideos = () => {
           <div className="pb-10"></div>
         </>
       )}
-    </>
+    </div>
   );
 };
 
