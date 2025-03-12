@@ -66,11 +66,10 @@ const Recycle = () => {
   const [deleteItems, setDeleteItems] = useState([]);
   const [page, setPage] = useState(1);
   const { data, isLoading, refetch } = useGetRecyclePostsQuery(page);
-  const [restorePost, { data: rp, isLoading: restoreLoading }] =
+  const [restorePost, { data: restoredata, isLoading: restoreLoading }] =
     useRestorePostMutation();
-  const [deletePost, { data: testdata, isLoading: deleteLoading }] =
+  const [deletePost, { data: deletedata, isLoading: deleteLoading }] =
     useDeletePostMutation();
-  console.log(testdata, "testdata");
   const [posts, setPosts] = useState<any>([]);
   const [hasMore, setHasMore] = useState(true);
   const [totalData, setTotalData] = useState<number>(0);
