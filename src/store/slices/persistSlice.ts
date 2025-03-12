@@ -17,7 +17,7 @@ const initialState: any = {
   authToggle: true,
   content_visibility: "",
   sanswer: "",
-  defaultTab: "liked",
+  defaultTab: "upload",
   defaultTab2: "video",
 };
 
