@@ -83,37 +83,43 @@ const YourVideos = () => {
     );
   }
   return (
-    <div className="overflow-y-scroll">
+    <div className="">
       {isLoading && page === 1 ? (
         <Loader />
       ) : (
-        <>
-          <TopNav
-            center={"Your Videos"}
-            right={<Trash onClick={() => navigate(paths.recycle)} size={18} />}
-          />
-          <FilterNav
-            config={config}
-            setIsActive={setIsActive}
-            isActive={isActive}
-            setPage={setPage}
-            setPosts={setPosts}
-            refetch={refetch}
-            setHasMore={setHasMore}
-          />
-          {isLoading && page === 1 ? (
-            <Loader2 />
-          ) : (
-            <UploadList
-              config={config}
-              list={posts}
-              fetchMoreData={fetchMoreData}
-              hasMore={hasMore}
-              handleEdit={handleEdit}
+        <div>
+          <div className="sticky top-0 bg-[#16131C] pb-2">
+            <TopNav
+              center={"Your Videos"}
+              right={
+                <Trash onClick={() => navigate(paths.recycle)} size={18} />
+              }
             />
-          )}
-          <div className="pb-10"></div>
-        </>
+            <FilterNav
+              config={config}
+              setIsActive={setIsActive}
+              isActive={isActive}
+              setPage={setPage}
+              setPosts={setPosts}
+              refetch={refetch}
+              setHasMore={setHasMore}
+            />
+          </div>
+          <div className="">
+            {isLoading && page === 1 ? (
+              <Loader2 />
+            ) : (
+              <UploadList
+                config={config}
+                list={posts}
+                fetchMoreData={fetchMoreData}
+                hasMore={hasMore}
+                handleEdit={handleEdit}
+              />
+            )}
+            <div className="pb-10"></div>
+          </div>
+        </div>
       )}
     </div>
   );
