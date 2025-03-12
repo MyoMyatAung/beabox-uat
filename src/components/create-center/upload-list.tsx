@@ -9,10 +9,9 @@ const UploadList = ({
   fetchMoreData,
   hasMore,
   config,
-  imgdomain
+  imgdomain,
+  isFetching,
 }: any) => {
- 
-
   return (
     <div className="px-5 py-5">
       {/* <p className="text-[10px] text-[#FFEAEA] py-5">Today</p> */}

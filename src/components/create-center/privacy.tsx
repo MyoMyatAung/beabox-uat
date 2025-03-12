@@ -1,4 +1,4 @@
-import { ChevronRight, EarthLock } from "lucide-react";
+import { ChevronRight, EarthLock, X } from "lucide-react";
 import {
   Drawer,
   DrawerContent,
@@ -27,9 +27,12 @@ const Privacy = ({ privacy, setPrivacy }: any) => {
         </div>
       </DrawerTrigger>
       <DrawerContent className="border-0 bg-[#121012] z-[1000]">
-        <div className="w-full px-5 py-7">
-          <div className="space-y-6">
-            <h1 className="text-[18px]">
+        <div className="w-full px-5">
+          <div onClick={() => setIsOpen(false)} className="">
+            <X className="ml-auto" size={18} />
+          </div>
+          <div className="space-y-6 pb-7">
+            <h1 className="text-[18px] pt-5 text-center">
               {/* Who can see your Works? */}
               谁可以看到您的作品
             </h1>
@@ -37,7 +40,7 @@ const Privacy = ({ privacy, setPrivacy }: any) => {
               {/* public  */}
               <div
                 onClick={() => setPrivacy("public")}
-                className="flex items-start justify-between bg-[#FFFFFF0A] p-3 rounded-xl"
+                className="flex items-center justify-between bg-[#FFFFFF0A] p-3 rounded-xl"
               >
                 <div className="">
                   <p
@@ -62,7 +65,7 @@ const Privacy = ({ privacy, setPrivacy }: any) => {
               {/* private  */}
               <div
                 onClick={() => setPrivacy("private")}
-                className="flex items-start justify-between bg-[#FFFFFF0A] p-3 rounded-xl"
+                className="flex items-center justify-between bg-[#FFFFFF0A] p-3 rounded-xl"
               >
                 <div className="">
                   <p

@@ -12,10 +12,12 @@ const CreatorUpload = () => {
       <TopNav center={"Select Upload Method"} />
 
       <div className="px-5 w-full flex justify-center items-center flex-col gap-10 py-5">
-        <img
-          onClick={() => navigate(paths.creator_upload_video)}
-          src={uwebsite}
-        />
+        <a href="https://taupe-vacherin-31f51c.netlify.app/">
+          <img
+            // onClick={() => navigate(paths.creator_upload_video)}
+            src={uwebsite}
+          />
+        </a>
         <div className="">
           <p className="text-[16px] text-[#FFFFFF99] text-center">
             Web upload is available, <br />

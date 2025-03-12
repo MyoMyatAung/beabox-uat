@@ -21,12 +21,12 @@ const TopNavbar = ({
     <div className="absolute top-5 left-0 px-5 right-0 flex justify-between items-center z-[9999] max-w-[480px] mx-auto">
       <div
         onClick={() => navigate(paths.creator_upload)}
-        className="flex items-center gap-1 mb-2"
+        className="flex items-center gap-1"
       >
         <img src={upload} alt="" />
         <p className="text-[16px]">创作</p>
       </div>
-      <div className="flex gap-2 items-center text-white">
+      <div className="flex gap-2 items-center text-white mr-5">
         {TABS.map((tab, index) => (
           <button
             key={index}
@@ -37,8 +37,8 @@ const TopNavbar = ({
             } nav_text`}
             onClick={() => onTabClick(tab.id)}
           >
-            <div className="mb-3 capitalize">
-              {tab.text === "for_you" ? "For You" : tab.text}
+            <div className="capitalize">
+              {tab.text === "for_you" ? "For Y mr-5ou" : tab.text}
             </div>
             {currentTab === tab.id && (
               <div className="w-[28px] h-[2px] bg-white"></div>

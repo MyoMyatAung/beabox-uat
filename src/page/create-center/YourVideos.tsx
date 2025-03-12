@@ -32,6 +32,8 @@ const YourVideos = () => {
     page,
     status: isActive,
   });
+
+  console.log(isLoading, isFetching);
   const [posts, setPosts] = useState<any>([]);
   const [hasMore, setHasMore] = useState(true);
   const [totalData, setTotalData] = useState<number>(0);
@@ -107,7 +109,7 @@ const YourVideos = () => {
             />
           </div>
           <div className="">
-            {isLoading && page === 1 ? (
+            {isFetching && page === 1 ? (
               <Loader2 />
             ) : (
               <UploadList
@@ -117,6 +119,7 @@ const YourVideos = () => {
                 fetchMoreData={fetchMoreData}
                 hasMore={hasMore}
                 handleEdit={handleEdit}
+                isFetching={isFetching}
               />
             )}
             <div className="pb-10"></div>
