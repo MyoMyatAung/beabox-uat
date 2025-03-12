@@ -8,7 +8,7 @@ import { paths } from "@/routes/paths";
 const CreatorUpload = () => {
   const navigate = useNavigate();
   return (
-    <>
+    <div>
       <TopNav center={"Select Upload Method"} />
 
       <div className="px-5 w-full flex justify-center items-center flex-col gap-10 py-5">
@@ -29,7 +29,7 @@ const CreatorUpload = () => {
         />
         <img src={ptips} />
       </div>
-    </>
+    </div>
   );
 };
 
