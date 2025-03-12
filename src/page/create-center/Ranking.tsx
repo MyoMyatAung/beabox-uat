@@ -1,16 +1,34 @@
 import RankingCard from "@/components/create-center/ranking-card";
 import TopNav from "@/components/create-center/top-nav";
 import TopRankCard from "@/components/create-center/top-rank-card";
-import { useGetTopCreatorQuery } from "@/store/api/createCenterApi";
+import {
+  useGetTopCreatorQuery,
+  useGetConfigQuery,
+} from "@/store/api/createCenterApi";
 import topcreator from "@/assets/createcenter/topcreator.png";
 import topcrown from "@/assets/createcenter/topcrown.png";
 import Loader from "@/components/shared/loader";
+import { useEffect, useState } from "react";
 
 const Ranking = () => {
-  const { data, isLoading } = useGetTopCreatorQuery("");
-  console.log(data?.data);
+  const [keyword, setKeyword] = useState("");
+  const { data, isLoading, refetch } = useGetTopCreatorQuery(keyword);
+  const { data: newData } = useGetConfigQuery({});
+  const tags = newData?.data?.creator_center_ranking_filter;
+  console.log(tags);
   let top3 = data?.data?.slice(0, 3);
   let otherrank = data?.data?.slice(3);
+
+  useEffect(() => {
+    if (tags) setKeyword(tags[0]?.keyword);
+  }, [newData, tags]);
+
+  useEffect(() => {
+    refetch();
+  }, [refetch, keyword]);
+
+  console.log(keyword);
+
   return (
     <>
       {isLoading ? (
@@ -28,11 +46,11 @@ const Ranking = () => {
                 <div className="relative">
                   <img src={topcreator} className="w-[158px]" alt="" />
                   <p className="text-[15px] font-light">September, 2024</p>
-                  <img
+                  {/* <img
                     src={topcrown}
                     className="w-[30px] absolute -top-8 left-4"
                     alt=""
-                  />
+                  /> */}
                 </div>
               </div>
               <div className="rankbg-gradient absolute top-0 left-0"></div>
@@ -54,6 +72,19 @@ const Ranking = () => {
             </div>
           </div>
           <div className="py-[60px]"></div>
+          <div className="px-5 w-full flex items-center gap-2">
+            {tags?.map((tag: any) => (
+              <button
+                className={`${
+                  keyword == tag?.keyword ? "bg-[#FFFFFF14]" : ""
+                } px-2 py-1 rounded-full text-[14px]`}
+                onClick={() => setKeyword(tag?.keyword)}
+                key={tag?.title}
+              >
+                {tag?.title}
+              </button>
+            ))}
+          </div>
           <div className="px-5 py-5 space-y-4">
             {otherrank?.map((item: any, index: any) => (
               <div className="flex items-center gap-3" key={item?.id}>
