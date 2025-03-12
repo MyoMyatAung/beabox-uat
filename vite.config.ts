@@ -15,6 +15,7 @@ export default defineConfig({
       },
       workbox: {
         navigateFallback: "/index.html", // Ensures deep links work
+        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024, // 4 MB
       },
     }),
     react(),
