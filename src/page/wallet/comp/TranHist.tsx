@@ -39,7 +39,7 @@ const TranHist: React.FC = () => {
     setCurYr(now.getFullYear()); // Get current year
     setPlus(now.getMonth() + 1); // Month index starts from 0, so +1
   }, []);
-
+  console.log(plus, curYr);
   const { data, isLoading, isFetching } = useGetTransitionHistoryQuery({
     period: `${plus}-${curYr}`,
     type: "",
@@ -111,7 +111,7 @@ const TranHist: React.FC = () => {
           />
         </div>
         {/* transition */}
-        <div className="py-[12px] px-[18px]">
+        <div className="py-[12px] px-[18px] mt-5">
           {isLoading ? (
             <div className=" flex justify-center items-center py-[100px]">
               <div className="heart">
@@ -135,7 +135,7 @@ const TranHist: React.FC = () => {
                 tran?.map((ts: any, index: any) => (
                   <div
                     key={index}
-                    className="transit_list mt-5 py-[20px] flex justify-between"
+                    className="transit_list py-[16px] flex justify-between"
                   >
                     <div className="flex gap-[12px] items-center">
                       <div className="bitcoin_border p-3">

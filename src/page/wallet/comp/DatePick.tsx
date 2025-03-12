@@ -24,7 +24,8 @@ const months = [
   "December",
 ];
 const currentYear = new Date().getFullYear();
-console.log(currentYear)
+const defaultMonth = months[new Date().getMonth()];
+const defaultYear = new Date().getFullYear();
 const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
 
 const DatePick: React.FC<any> = ({
@@ -32,14 +33,14 @@ const DatePick: React.FC<any> = ({
   curYr,
   setCurMon,
   setCurYr,
-  setplus
+  setplus,
 }) => {
   const swiperRef = useRef<any>(null);
   const swiperYrRef = useRef<any>(null);
 
   const handleSlideChange = (swiper: any) => {
     const activeIndex = swiper.activeIndex;
-    setplus(activeIndex + 1)
+    setplus(activeIndex + 1);
     const activeMonth = months[activeIndex];
     setCurMon(activeMonth);
   };
@@ -53,11 +54,11 @@ const DatePick: React.FC<any> = ({
   const resetSwiperPosition = () => {
     if (swiperRef.current) {
       const monthIndex = months.indexOf(curMon);
-      swiperRef.current.slideTo(monthIndex, 0); 
+      swiperRef.current.slideTo(monthIndex, 0);
     }
     if (swiperYrRef.current) {
       const yearIndex = years.indexOf(curYr);
-      swiperYrRef.current.slideTo(yearIndex, 0); 
+      swiperYrRef.current.slideTo(yearIndex, 0);
     }
   };
 
@@ -82,7 +83,7 @@ const DatePick: React.FC<any> = ({
           <div className="flex relative h-[50px] mt-[40px] justify-around items-center border border-white/20 border-x-black">
             <div className="fixed z-[99] left-20 top-14">
               <Swiper
-                className="h-[100px]"
+                className="h-[80px]"
                 direction="vertical"
                 spaceBetween={1}
                 slidesPerView={2}
@@ -93,16 +94,24 @@ const DatePick: React.FC<any> = ({
               >
                 {months.map((mt) => (
                   <SwiperSlide key={mt}>
-                    <h1 className="py-[16px] text-white text-[20px] font-[400]">
-                      {mt}
-                    </h1>
+                    {({ isActive }) => (
+                      <h1
+                        className={`py-[16px] font-[400] ${
+                          isActive
+                            ? "text-[20px] text-white"
+                            : "text-[16px] text-[#888] "
+                        }`}
+                      >
+                        {mt}
+                      </h1>
+                    )}
                   </SwiperSlide>
                 ))}
               </Swiper>
             </div>
-            <div className="fixed z-[99] right-20 top-[60px]">
+            <div className="fixed z-[99] right-20 top-14">
               <Swiper
-                className="h-[120px]"
+                className="h-[80px]"
                 direction="vertical"
                 spaceBetween={1}
                 slidesPerView={2}
@@ -113,9 +122,17 @@ const DatePick: React.FC<any> = ({
               >
                 {years.map((yr) => (
                   <SwiperSlide key={yr}>
-                    <h1 className="py-[12px] text-white text-[20px] font-[400]">
-                      {yr}
-                    </h1>
+                    {({ isActive }) => (
+                      <h1
+                        className={`py-[16px] font-[400] ${
+                          isActive
+                            ? "text-[20px] text-white"
+                            : "text-[16px] text-[#888] "
+                        }`}
+                      >
+                        {yr}
+                      </h1>
+                    )}
                   </SwiperSlide>
                 ))}
               </Swiper>
@@ -123,17 +140,22 @@ const DatePick: React.FC<any> = ({
           </div>
           <div className="flex flex-col items-center">
             <div className="flex items-center gap-[20px]">
+              {/* <DrawerClose asChild> */}
+              <button
+                onClick={() => {
+                  const now = new Date();
+                  setCurYr(now.getFullYear()); // Get current year
+                  setplus(now.getMonth() + 1);
+                }}
+                className={`w-[160px] text-[#888] text-[16px] draw_canccel_btn p-[16px]`}
+              >
+                {/* Cancel */}
+                取消
+              </button>
+              {/* </DrawerClose> */}
               <DrawerClose asChild>
                 <button
-                  className={`w-[150px] text-[#888] text-[16px] draw_canccel_btn p-[16px]`}
-                >
-                  {/* Cancel */}
-                  取消
-                </button>
-              </DrawerClose>
-              <DrawerClose asChild>
-                <button
-                  className={`w-[150px] text-[#fff] text-[16px] font-[400] draw_done_btn p-[16px]`}
+                  className={`w-[160px] text-[#fff] text-[16px] font-[400] draw_done_btn p-[16px]`}
                 >
                   {/* Done */}
                   完毕
