@@ -60,10 +60,9 @@
 
 .draw_done_btn {
   border-radius: 12px;
-  background: linear-gradient(
-    315deg,
-    rgba(205, 62, 255, 0.32) 0%,
-    rgba(255, 178, 224, 0.32) 100%
+  background: var(
+    --Purple-Gradient-2,
+    linear-gradient(325deg, #cd3eff 43.64%, #ffb2e0 100%)
   );
 }
 

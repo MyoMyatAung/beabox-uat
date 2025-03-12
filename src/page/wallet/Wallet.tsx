@@ -13,12 +13,12 @@ const Wallet: React.FC = () => {
     <>
       {/* Fixed Background */}
       <div
-        className="fixed left-0 top-0 w-full h-[400px] bg-cover bg-center bg-no-repeat z-0"
+        className=" absolute left-0 top-0 w-full h-screen bg-cover bg-center bg-no-repeat z-0"
         style={{ backgroundImage: `url(${banner})` }}
       ></div>
 
       {/* Content */}
-      <div className="relative flex justify-center items-center backdrop-blur-2xl bg-gradient-to-t from-black to-black/10">
+      <div className="relative flex justify-center items-center backdrop-blur-2xl bg-gradient-to-t from-black to-black/15">
         <div className="relative w-screen xl:w-[800px] min-h-screen">
           <div className="relative backdrop-brightness-[0.8] backdrop-blur-xl">
             {/* <Header lv={false} title="钱包" /> */}
