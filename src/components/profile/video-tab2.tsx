@@ -13,7 +13,7 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
   return (
     <Tabs defaultValue={"liked"} className="my-5">
       <TabsList className="grid w-full grid-cols-3 z-[1600] bg-transparent sticky top-[100px] px-5">
-        {/* <TabsTrigger
+        <TabsTrigger
           className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2 "
           value="video"
           onClick={() => dispatch(setDefaultTab2("video"))}
@@ -21,7 +21,7 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
           <span className="flex items-center gap-1">
             <Play />  Ta的作品
           </span>
-        </TabsTrigger> */}
+        </TabsTrigger>
         <TabsTrigger
           className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2 "
           value="liked"
