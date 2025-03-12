@@ -1,3 +1,4 @@
+import { paths } from "@/routes/paths";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -17,7 +18,7 @@ const UploadProgress = ({
     seteditPost(null);
     setsuccessEnd(false);
     refetch();
-    navigate("/your-videos");
+    navigate(paths.your_videos);
   };
   return (
     // <div className="bg-transparent h-screen">

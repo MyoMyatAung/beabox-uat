@@ -26,6 +26,7 @@ const YourVideos = () => {
   const [page, setPage] = useState(1);
   const { data: newData } = useGetConfigQuery({});
   const config = newData?.data?.creator_center_post_filter;
+  const imgdomain = newData?.data?.post_domain?.image;
   // const { data, isLoading, refetch } = useGetPostListQuery("");
   const { data, isLoading, isFetching, refetch } = useGetPostsQuery({
     page,
@@ -110,6 +111,7 @@ const YourVideos = () => {
               <Loader2 />
             ) : (
               <UploadList
+                imgdomain={imgdomain}
                 config={config}
                 list={posts}
                 fetchMoreData={fetchMoreData}

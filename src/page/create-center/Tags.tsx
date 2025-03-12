@@ -15,16 +15,6 @@ const TagBtn = ({
 }: any) => {
   const [selected, setSelected] = useState(false);
 
-  const handleItemClick = (index: number) => {
-    setSelectedTags((prevItems: any) =>
-      prevItems.includes(index)
-        ? prevItems.filter((item: any) => item !== index)
-        : [...prevItems, index]
-    );
-    setSelected(!selected);
-    addHashtag();
-  };
-  console.log(hashtags);
   const addTag = (tag: any) => {
     setSelected(true);
     setHashtags([...hashtags, tag.trim()]);

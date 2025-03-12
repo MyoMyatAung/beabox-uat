@@ -1,18 +1,17 @@
 import { Link } from "react-router-dom";
 
-const UploadCard = ({ item, config }: any) => {
+const UploadCard = ({ item, config, imgdomain }: any) => {
   let color = config?.filter((el: any) => el?.keyword == item?.status);
   let bgcolor = color && color[0]?.bg_color_code;
   let textcolor = color && color[0]?.text_color_code;
-  // console.log(color);
-  console.log(config, bgcolor, textcolor, item);
+  console.log(`${imgdomain}/${item?.preview_image}`);
   return (
     <div
       // to={`/video-detail/${item?.post_id}`}
       className="grid grid-cols-2 items-center"
     >
       <img
-        src={item?.preview_image}
+        src={`${imgdomain}/${item?.preview_image}`}
         className="w-[128px] h-[80px] object-cover object-center rounded-[8px]"
         alt=""
       />
