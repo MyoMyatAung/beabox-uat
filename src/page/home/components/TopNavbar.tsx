@@ -21,12 +21,12 @@ const TopNavbar = ({
     <div className="absolute top-5 left-0 px-5 right-0 flex justify-between items-center z-[9999] max-w-[480px] mx-auto">
       <div
         onClick={() => navigate(paths.creator_upload)}
-        className="flex items-center gap-1 text-[#888]"
+        className="flex items-center gap-1 mb-2"
       >
         <img src={upload} alt="" />
-        <p className="text-[12px]">创作</p>
+        <p className="text-[16px]">创作</p>
       </div>
-      <div className="flex gap-2 ml-[24px] items-center text-white">
+      <div className="flex gap-2 items-center text-white">
         {TABS.map((tab, index) => (
           <button
             key={index}
