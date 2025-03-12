@@ -13,6 +13,7 @@ import TopNav from "@/components/create-center/top-nav";
 import selected from "@/assets/createcenter/selected.png";
 import unselected from "@/assets/createcenter/unselected.png";
 import UploadProgress from "@/components/create-center/upload-progress";
+import DeleteDetail from "@/components/create-center/delete-detail";
 const Selected = () => (
   <img className="w-[18px] h-[18px]" src={selected} alt="" />
 );
@@ -512,7 +513,15 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
       ) : (
         <></>
       )}
-      <TopNav center={"Upload Video"} />
+      {editPost ? (
+        <TopNav
+          center={"Edit Video"}
+          right={<DeleteDetail id={editPost?.post_id} />}
+        />
+      ) : (
+        <TopNav center={"Upload Video"} />
+      )}
+
       <div className="flex items-center justify-center mx-5 gap-3 pt-5">
         <div className="flex flex-col justify-center items-center">
           <div className="preview-container">

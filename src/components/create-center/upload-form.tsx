@@ -131,6 +131,7 @@ const UploadFrom = ({ onFormSubmit, uploading, editPost, loading }: any) => {
                 newHashtag={newHashtag}
                 setNewHashtag={setNewHashtag}
                 addHashtag={addHashtag}
+                setHashtags={setHashtags}
               />
             </div>
           </div>

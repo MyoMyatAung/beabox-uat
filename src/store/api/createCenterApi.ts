@@ -32,8 +32,8 @@ export const createCenterApi = createApi({
   }),
   endpoints: (builder) => ({
     getTopCreator: builder.query({
-      query: () =>
-        convertToSecureUrl(`/top/creator/dashboard?ranking=follower`),
+      query: (tag) =>
+        convertToSecureUrl(`/top/creator/dashboard?ranking=${tag}`),
     }),
     getMyPostStatusCount: builder.query({
       query: () => convertToSecureUrl(`/my/post/status/count`),
@@ -107,10 +107,21 @@ export const createCenterApi = createApi({
         };
       },
     }),
+    getPosts: builder.query({
+      query: ({ page, status }) =>
+        convertToSecureUrl(
+          `creator/post/list?pageSize=10&status=${status}&page=${page}`
+        ),
+    }),
+    getConfig: builder.query({
+      query: () => convertToSecureUrl(`/config/data`),
+    }),
   }),
 });
 
 export const {
+  useGetConfigQuery,
+  useGetPostsQuery,
   useCreatePostsMutation,
   useGetTopCreatorQuery,
   useGetMyPostStatusCountQuery,

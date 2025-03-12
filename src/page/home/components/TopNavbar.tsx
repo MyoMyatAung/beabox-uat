@@ -1,4 +1,7 @@
-import { Link } from "react-router-dom";
+import { paths } from "@/routes/paths";
+import { Video } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import upload from "@/assets/createcenter/upload.svg";
 
 const TopNavbar = ({
   currentTab,
@@ -7,6 +10,7 @@ const TopNavbar = ({
   currentTab: number;
   onTabClick: (tab: number) => void;
 }) => {
+  const navigate = useNavigate();
   const TABS = [
     { text: "关注", id: 0 },
     { text: "探索", id: 1 },
@@ -15,7 +19,13 @@ const TopNavbar = ({
 
   return (
     <div className="absolute top-5 left-0 px-5 right-0 flex justify-between items-center z-[9999] max-w-[480px] mx-auto">
-      <div></div>
+      <div
+        onClick={() => navigate(paths.creator_upload)}
+        className="flex items-center gap-1 text-[#888]"
+      >
+        <img src={upload} alt="" />
+        <p className="text-[12px]">创作</p>
+      </div>
       <div className="flex gap-2 ml-[24px] items-center text-white">
         {TABS.map((tab, index) => (
           <button
