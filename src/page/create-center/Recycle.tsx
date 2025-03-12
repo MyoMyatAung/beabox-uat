@@ -1,17 +1,16 @@
 import TopNav from "@/components/create-center/top-nav";
-import UploadCard from "@/components/create-center/upload-card";
-import UploadList from "@/components/create-center/upload-list";
+import loader from "@/page/home/vod_loader.gif";
 import InfinitLoad from "@/components/shared/infinit-load";
 import Loader from "@/components/shared/loader";
+import TranLoader from "@/components/shared/tran-loader";
 import {
   useDeletePostMutation,
   useGetConfigQuery,
   useGetRecyclePostsQuery,
   useRestorePostMutation,
 } from "@/store/api/createCenterApi";
-import { setIsSelect } from "@/store/slices/createCenterSlice";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 const SelectBtn = ({ deleteItems, setDeleteItems }: any) => {
   const isSelected = useSelector((state: any) => state?.createCenter?.isSelect);
@@ -66,20 +65,24 @@ const DeleteCard = ({ index, setDeleteItems, item }: any) => {
 const Recycle = () => {
   const [deleteItems, setDeleteItems] = useState([]);
   const [page, setPage] = useState(1);
-  const { data, isLoading } = useGetRecyclePostsQuery(page);
-  const [restorePost, { data: rp }] = useRestorePostMutation();
-  const [deletePost] = useDeletePostMutation();
+  const { data, isLoading, refetch } = useGetRecyclePostsQuery(page);
+  const [restorePost, { data: rp, isLoading: restoreLoading }] =
+    useRestorePostMutation();
+  const [deletePost, { data: testdata, isLoading: deleteLoading }] =
+    useDeletePostMutation();
+  console.log(testdata, "testdata");
   const [posts, setPosts] = useState<any>([]);
   const [hasMore, setHasMore] = useState(true);
   const [totalData, setTotalData] = useState<number>(0);
   const postRestoreHandler = async (type: any) => {
     await restorePost({ id: deleteItems, type: type });
+    setDeleteItems([]);
   };
-  const postDeleteHandler = async () => {
-    // deleteItems?.map(async (item: any) => {
-    //   await deletePost({ id: item?.post_id });
-    // });
-    await deletePost({ id: deleteItems });
+  const postDeleteHandler = () => {
+    deleteItems?.map(async (item: any) => {
+      await deletePost({ id: item });
+    });
+    setDeleteItems([]);
   };
 
   useEffect(() => {
@@ -104,60 +107,65 @@ const Recycle = () => {
     }
   };
 
+  console.log(restoreLoading, deleteLoading);
+  if (isLoading && page == 1) return <Loader />;
   return (
     <div className="relative">
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <>
-          <div className="sticky top-0 bg-[#16131C]">
-            <TopNav
-              center={"Recycle Bin"}
-              right={
-                <SelectBtn
-                  deleteItems={deleteItems}
-                  setDeleteItems={setDeleteItems}
-                />
-              }
-            />
+      <>
+        {restoreLoading || deleteLoading ? (
+          <div className="w-full bg-[#000000A3] h-screen fixed top-0 left-0 flex justify-center items-center z-50">
+            <img src={loader} alt="" className="w-20" />
           </div>
-          <div className="space-y-3 pb-24">
-            {posts?.map((item: any, index: any) => (
-              <DeleteCard
-                key={index}
-                index={index}
+        ) : (
+          <></>
+        )}
+        <div className="sticky top-0 bg-[#16131C]">
+          <TopNav
+            center={"Recycle Bin"}
+            right={
+              <SelectBtn
+                deleteItems={deleteItems}
                 setDeleteItems={setDeleteItems}
-                item={item}
               />
-            ))}
-            <InfinitLoad
-              data={posts}
-              fetchData={fetchMoreData}
-              hasMore={hasMore}
+            }
+          />
+        </div>
+        <div className="space-y-3 pb-24">
+          {posts?.map((item: any, index: any) => (
+            <DeleteCard
+              key={index}
+              index={index}
+              setDeleteItems={setDeleteItems}
+              item={item}
             />
-          </div>
-          {deleteItems?.length ? (
-            <div className="fixed bottom-0 py-5 w-full z-50 bg-[#16131C]">
-              <div className="flex gap-4 mx-5 ">
-                <button
-                  onClick={() => postDeleteHandler()}
-                  className="text-[16px] bg-[#C2303333] py-3 w-full text-[#C23033] rounded-[16px]"
-                >
-                  Delete
-                </button>
-                <button
-                  onClick={() => postRestoreHandler("restore")}
-                  className="text-[16px] bg-[#FFFFFF1F] py-3 w-full text-[#fff] rounded-[16px]"
-                >
-                  Restore
-                </button>
-              </div>
+          ))}
+          <InfinitLoad
+            data={posts}
+            fetchData={fetchMoreData}
+            hasMore={hasMore}
+          />
+        </div>
+        {deleteItems?.length ? (
+          <div className="fixed bottom-0 py-5 w-full z-50 bg-[#16131C]">
+            <div className="flex gap-4 mx-5 ">
+              <button
+                onClick={() => postDeleteHandler()}
+                className="text-[16px] bg-[#C2303333] py-3 w-full text-[#C23033] rounded-[16px]"
+              >
+                Delete
+              </button>
+              <button
+                onClick={() => postRestoreHandler("restore")}
+                className="text-[16px] bg-[#FFFFFF1F] py-3 w-full text-[#fff] rounded-[16px]"
+              >
+                Restore
+              </button>
             </div>
-          ) : (
-            <></>
-          )}
-        </>
-      )}
+          </div>
+        ) : (
+          <></>
+        )}
+      </>
     </div>
   );
 };
