@@ -46,8 +46,10 @@ export const createCenterApi = createApi({
       query: () => convertToSecureUrl(`/profile/get-own-profile`),
     }),
     getRecyclePosts: builder.query({
-      query: () =>
-        convertToSecureUrl(`/creator/recycle/post/list?page=1&pageSize=10`),
+      query: (page) =>
+        convertToSecureUrl(
+          `/creator/recycle/post/list?page=${page}&pageSize=10`
+        ),
     }),
     restorePost: builder.mutation({
       query: ({ id, type }: any) => ({

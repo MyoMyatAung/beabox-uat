@@ -1,14 +1,16 @@
 import TopNav from "@/components/create-center/top-nav";
 import UploadCard from "@/components/create-center/upload-card";
 import UploadList from "@/components/create-center/upload-list";
+import InfinitLoad from "@/components/shared/infinit-load";
 import Loader from "@/components/shared/loader";
 import {
   useDeletePostMutation,
+  useGetConfigQuery,
   useGetRecyclePostsQuery,
   useRestorePostMutation,
 } from "@/store/api/createCenterApi";
 import { setIsSelect } from "@/store/slices/createCenterSlice";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const SelectBtn = ({ deleteItems, setDeleteItems }: any) => {
@@ -25,6 +27,8 @@ const SelectBtn = ({ deleteItems, setDeleteItems }: any) => {
 };
 
 const DeleteCard = ({ index, setDeleteItems, item }: any) => {
+  const { data: newData } = useGetConfigQuery({});
+  const imgdomain = newData?.data?.post_domain?.image;
   const [selected, setSelected] = useState(false);
   const handleItemClick = (index: number) => {
     setDeleteItems((prevItems: any) =>
@@ -41,7 +45,7 @@ const DeleteCard = ({ index, setDeleteItems, item }: any) => {
     >
       <div className="grid grid-cols-2 items-center">
         <img
-          src={item?.preview_image}
+          src={`${imgdomain}/${item?.preview_image}`}
           className="w-[128px] h-[80px] object-cover object-center rounded-[8px]"
           alt=""
         />
@@ -61,10 +65,13 @@ const DeleteCard = ({ index, setDeleteItems, item }: any) => {
 
 const Recycle = () => {
   const [deleteItems, setDeleteItems] = useState([]);
-  const { data, isLoading } = useGetRecyclePostsQuery("");
+  const [page, setPage] = useState(1);
+  const { data, isLoading } = useGetRecyclePostsQuery(page);
   const [restorePost, { data: rp }] = useRestorePostMutation();
   const [deletePost] = useDeletePostMutation();
-  console.log(rp);
+  const [posts, setPosts] = useState<any>([]);
+  const [hasMore, setHasMore] = useState(true);
+  const [totalData, setTotalData] = useState<number>(0);
   const postRestoreHandler = async (type: any) => {
     await restorePost({ id: deleteItems, type: type });
   };
@@ -75,23 +82,47 @@ const Recycle = () => {
     await deletePost({ id: deleteItems });
   };
 
+  useEffect(() => {
+    if (data?.data?.length) {
+      // Append new data to the existing videos
+      setPosts((prev: any) => [...prev, ...data.data]);
+      setTotalData(data.pagination.total);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (totalData <= posts.length) {
+      setHasMore(false);
+    } else {
+      setHasMore(true);
+    }
+  }, [totalData, posts]);
+
+  const fetchMoreData = () => {
+    if (hasMore) {
+      setPage((prev) => prev + 1);
+    }
+  };
+
   return (
-    <>
+    <div className="relative">
       {isLoading ? (
         <Loader />
       ) : (
         <>
-          <TopNav
-            center={"Recycle Bin"}
-            right={
-              <SelectBtn
-                deleteItems={deleteItems}
-                setDeleteItems={setDeleteItems}
-              />
-            }
-          />
+          <div className="sticky top-0 bg-[#16131C]">
+            <TopNav
+              center={"Recycle Bin"}
+              right={
+                <SelectBtn
+                  deleteItems={deleteItems}
+                  setDeleteItems={setDeleteItems}
+                />
+              }
+            />
+          </div>
           <div className="space-y-3 pb-24">
-            {data?.data?.map((item: any, index: any) => (
+            {posts?.map((item: any, index: any) => (
               <DeleteCard
                 key={index}
                 index={index}
@@ -99,6 +130,11 @@ const Recycle = () => {
                 item={item}
               />
             ))}
+            <InfinitLoad
+              data={posts}
+              fetchData={fetchMoreData}
+              hasMore={hasMore}
+            />
           </div>
           {deleteItems?.length ? (
             <div className="fixed bottom-0 py-5 w-full z-50 bg-[#16131C]">
@@ -122,7 +158,7 @@ const Recycle = () => {
           )}
         </>
       )}
-    </>
+    </div>
   );
 };
 
