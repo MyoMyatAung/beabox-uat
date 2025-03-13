@@ -16,7 +16,7 @@ const TagBtn = ({
   const [selected, setSelected] = useState(false);
 
   const isInclued = (tag: any) => {
-    hashtags?.filter((item) => item == tag);
+    hashtags?.filter((item: any) => item == tag);
   };
 
   console.log(isInclued, "tags");

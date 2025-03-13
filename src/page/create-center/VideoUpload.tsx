@@ -455,6 +455,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
       )}
       {editPost ? (
         <TopNav
+          left={() => seteditPost(null)}
           center={"Edit Video"}
           right={
             <DeleteDetail

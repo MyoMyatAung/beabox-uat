@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import Privacy from "./privacy";
-import { Link } from "react-router-dom";
-import { paths } from "@/routes/paths";
+
 import selected from "@/assets/createcenter/selected.png";
 import unselected from "@/assets/createcenter/unselected.png";
 import Tags from "@/page/create-center/Tags";
-import { X } from "lucide-react";
 import Info from "./info";
+import { useGetConfigQuery } from "@/store/api/createCenterApi";
 const Selected = () => (
   <img className="w-[18px] h-[18px]" src={selected} alt="" />
 );
@@ -17,12 +16,15 @@ const Unselected = () => (
 
 const UploadFrom = ({ onFormSubmit, uploading, editPost, loading }: any) => {
   const [agree, setAgree] = useState(false);
+  const { data } = useGetConfigQuery({});
+  const link = data?.data?.website_upload_link;
+
+  console.log(link);
 
   const [privacy, setPrivacy] = useState(editPost?.privacy || "public");
   const [contentTitle, setContentTitle] = useState(editPost?.title || "");
   const [hashtags, setHashtags] = useState(editPost?.tag || []);
   const [newHashtag, setNewHashtag] = useState("");
-  const [agreeToGuidelines, setAgreeToGuidelines] = useState(false);
 
   const addHashtag = () => {
     if (newHashtag.trim() === "") {
@@ -148,7 +150,13 @@ const UploadFrom = ({ onFormSubmit, uploading, editPost, loading }: any) => {
         </p>
         <p>
           Web upload is also available, open the link to upload from web :
-          <span className="text-[#CD3EFF]">http://d.23abcd.me</span>
+          <a
+            target="__blank"
+            href={link ? link : "https://taupe-vacherin-31f51c.netlify.app/"}
+            className="text-[#CD3EFF]"
+          >
+            {link ? link : "https://taupe-vacherin-31f51c.netlify.app/"}
+          </a>
         </p>
       </div>
       {editPost ? (
