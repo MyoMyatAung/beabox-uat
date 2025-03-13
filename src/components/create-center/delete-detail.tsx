@@ -7,17 +7,17 @@ import Loader from "../shared/loader";
 import { useNavigate } from "react-router-dom";
 import { paths } from "@/routes/paths";
 
-const DeleteDetailPopUp = ({ setShow, id }: any) => {
+const DeleteDetailPopUp = ({ setShow, id, refetch, seteditPost }: any) => {
   const [moveToRecycle, { data, isLoading }] = useMoveToRecycleMutation();
-  const { refetch } = useGetPostListQuery("");
 
   const navigate = useNavigate();
   console.log(data);
   const handleDelete = async () => {
     await moveToRecycle({ id });
     setShow(false);
-    refetch();
-    navigate(paths.your_videos);
+    await refetch();
+    seteditPost(null);
+    // navigate(paths.your_videos);
   };
   return (
     <div className="z-50 h-screen w-full fixed top-0 left-0 bg-[#000000CC] flex justify-center items-center transition-all duration-75 ease-in-out">
@@ -49,7 +49,7 @@ const DeleteDetailPopUp = ({ setShow, id }: any) => {
   );
 };
 
-const DeleteDetail = ({ id }: any) => {
+const DeleteDetail = ({ id, refetch, seteditPost }: any) => {
   const [show, setShow] = useState(false);
   return (
     <>
@@ -59,7 +59,16 @@ const DeleteDetail = ({ id }: any) => {
       >
         Delete
       </button>
-      {show ? <DeleteDetailPopUp setShow={setShow} id={id} /> : <> </>}
+      {show ? (
+        <DeleteDetailPopUp
+          refetch={refetch}
+          seteditPost={seteditPost}
+          setShow={setShow}
+          id={id}
+        />
+      ) : (
+        <> </>
+      )}
     </>
   );
 };

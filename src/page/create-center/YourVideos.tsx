@@ -76,6 +76,10 @@ const YourVideos = () => {
     }
   }, [config]);
 
+  // useEffect(() => {
+  //   if (!editPost) refetch();
+  // }, [editPost]);
+
   if (editPost) {
     return (
       <UploadVideos

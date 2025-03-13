@@ -112,7 +112,7 @@ export const createCenterApi = createApi({
     getPosts: builder.query({
       query: ({ page, status }) =>
         convertToSecureUrl(
-          `creator/post/list?pageSize=10&status=${status}&page=${page}`
+          `/creator/post/list?pageSize=10&status=${status}&page=${page}`
         ),
     }),
     getConfig: builder.query({
