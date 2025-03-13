@@ -19,6 +19,8 @@ import LoginDrawer from "@/components/profile/auth/login-drawer";
 import sc from "../../../assets/explore/sc.svg";
 // import { FaAngleLeft } from "react-icons/fa";
 import backButton from "../../../assets/backButton.svg";
+import ShowHeartCom from "@/page/home/components/ShowHeartCom";
+import CountdownCircle from "@/page/home/components/CountdownCircle";
 
 interface VodDetailsProps {
   // setshow: (value: boolean) => void;
@@ -34,6 +36,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
     files?.post_id
   );
   const user = useSelector((state: any) => state?.persist?.user);
+  const profile = useSelector((state: any) => state?.persist?.profileData);
   const [showFullTitle, setShowFullTitle] = useState(false);
   const [countNumber, setCountNumber] = useState(0); // New state for counting clicks
   const [countdown, setCountdown] = useState(3);
@@ -54,6 +57,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
   const abortControllerRef = useRef<AbortController[]>([]); // Array to store AbortControllers
   const videoData = useRef<any[]>([]); // Array to store AbortControllers
   const indexRef = useRef(0); // Track the current active video index
+  const [showHeart, setShowHeart] = useState(false);
 
   const removeHeart = (id: number) => {
     setHearts((prev) => prev.filter((heartId) => heartId !== id)); // Remove the heart by ID
@@ -205,6 +209,8 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
             setHeight={setHeight}
             setHearts={setHearts}
             setCountdown={setCountdown}
+            setShowHeart={setShowHeart}
+            coin={profile?.coins}
           />
 
           {files?.type !== "ads" && (
@@ -220,9 +226,19 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
 
           {files?.type === "ads" && <Ads ads={files?.ads_info} />}
 
-          {hearts.map((id: any) => (
-            <HeartCount id={id} key={id} remove={removeHeart} />
-          ))}
+          {showHeart && (
+            <ShowHeartCom
+              countNumber={countNumber}
+              nickname={profile?.nickname}
+              photo={profile?.profile_photo}
+            />
+          )}
+
+          {showHeart && (
+            <div className="absolute bottom-[350px] right-[70px] transform z-[999]">
+              <CountdownCircle countNumber={countNumber} />
+            </div>
+          )}
 
           <div className="absolute top-3 left-0 z-50 flex gap-2 items-center w-full">
             <button onClick={handleBack} className="p-3">

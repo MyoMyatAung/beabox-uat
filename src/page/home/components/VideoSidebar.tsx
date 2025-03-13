@@ -36,11 +36,11 @@ function VideoSidebar({
   setIsLiked,
   setHearts,
   handleLike,
-  unLike,
+  // unLike,
   status,
 }: {
   setCommentCount: any;
-  unLike: any;
+  // unLike: any;
   setLikeCount: any;
   likeCount: any;
   isLiked: any;
@@ -366,7 +366,7 @@ function VideoSidebar({
 
       <div className="videoSidebar__button ">
         {isLiked ? (
-          <button onClick={unLike}>
+          <button onClick={handleLike}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="27"

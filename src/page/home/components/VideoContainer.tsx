@@ -28,6 +28,8 @@ const VideoContainer = ({
   abortControllerRef,
   indexRef,
   videoData,
+  setShowHeart,
+  coin,
 }: {
   video: any;
   setWidth: any;
@@ -45,6 +47,8 @@ const VideoContainer = ({
   abortControllerRef: any;
   indexRef: any;
   videoData: any;
+  setShowHeart: any;
+  coin: any;
 }) => {
   const [likeCount, setLikeCount] = useState(video?.like_count);
   const [isLiked, setIsLiked] = useState(video?.is_liked);
@@ -64,73 +68,113 @@ const VideoContainer = ({
   // Add state to track if this video is active
   const [isActive, setIsActive] = useState(false);
 
+  const coin_per_like = config?.data?.coin_per_like;
+
   const handleLike = (() => {
     const likeTimeout = useRef<NodeJS.Timeout | null>(null); // Track the debounce timeout
-    const [nextId, setNextId] = useState(0); // Generate unique IDs for hearts
 
     const handleLikeClick = () => {
       if (user?.token) {
-        // if (pendingLike) return; // Prevent further actions if a like is already pending
-        const newId = nextId;
-        setNextId((prev: any) => prev + 1); // Increment the next ID
-        setHearts((prev: any) => [...prev, newId]); // Add the new heart
-        setLikeCount(+likeCount + 1);
-        if (status) {
+        if (coin > coin_per_like) {
+          setLikeCount(+likeCount + 1);
+          setCountNumber((prev: any) => prev + 1);
+          setShowHeart(true);
+          if (status) {
+            dispatch(
+              setVideos({
+                ...videos,
+                [currentTab === 2 ? "foryou" : "follow"]: videos[
+                  currentTab === 2 ? "foryou" : "follow"
+                ]?.map((video: any) =>
+                  video.post_id === post_id
+                    ? {
+                        ...video,
+                        is_liked: true,
+                        like_count: +video?.like_count + 1,
+                      }
+                    : video
+                ),
+              })
+            );
+          }
+
+          setIsLiked(true);
+          // Clear any existing debounce timer
+          if (likeTimeout.current) {
+            clearTimeout(likeTimeout.current);
+          }
+
+          // Set up a new debounce timer
+          likeTimeout.current = setTimeout(async () => {
+            try {
+              const res = await likePost({ post_id, count: countNumber + 1 }); // Pass the accumulated count to the API
+
+              if (res.error) {
+                setLikeCount(+likeCount - countNumber);
+                if (status) {
+                  dispatch(
+                    setVideos({
+                      ...videos,
+                      [currentTab === 2 ? "foryou" : "follow"]: videos[
+                        currentTab === 2 ? "foryou" : "follow"
+                      ]?.map((video: any) =>
+                        video.post_id === post_id
+                          ? {
+                              ...video,
+                              is_liked: false,
+                              like_count: +video?.like_count - countNumber,
+                            }
+                          : video
+                      ),
+                    })
+                  );
+                }
+                const msg = JSON.parse(res.error?.data);
+                setIsLiked(false);
+                dispatch(
+                  showToast({
+                    message: msg.message,
+                    type: "error",
+                  })
+                );
+              }
+              setShowHeart(false);
+              setCountNumber(0); // Reset pending likes after a successful API call
+            } catch (error) {
+              setLikeCount(+likeCount - countNumber);
+              if (status) {
+                dispatch(
+                  setVideos({
+                    ...videos,
+                    [currentTab === 2 ? "foryou" : "follow"]: videos[
+                      currentTab === 2 ? "foryou" : "follow"
+                    ]?.map((video: any) =>
+                      video.post_id === post_id
+                        ? {
+                            ...video,
+                            is_liked: false,
+                            like_count: +video?.like_count - countNumber,
+                          }
+                        : video
+                    ),
+                  })
+                );
+              }
+
+              setIsLiked(false);
+              setShowHeart(false);
+              setCountNumber(0);
+              console.error("Error liking the post:", error);
+            }
+          }, 3000); // Call API 1 second after the last click
+        } else {
           dispatch(
-            setVideos({
-              ...videos,
-              [currentTab === 2 ? "foryou" : "follow"]: videos[
-                currentTab === 2 ? "foryou" : "follow"
-              ]?.map((video: any) =>
-                video.post_id === post_id
-                  ? {
-                      ...video,
-                      is_liked: true,
-                      like_count: +video?.like_count + 1,
-                    }
-                  : video
-              ),
+            showToast({
+              message: "硬币不足",
+              type: "success",
             })
           );
         }
-
-        setIsLiked(true);
-        // Clear any existing debounce timer
-        if (likeTimeout.current) {
-          clearTimeout(likeTimeout.current);
-        }
-
-        // Set up a new debounce timer
-        likeTimeout.current = setTimeout(async () => {
-          try {
-            await likePost({ post_id, count: 1 }); // Pass the accumulated count to the API
-
-            setCountNumber(0); // Reset pending likes after a successful API call
-          } catch (error) {
-            setLikeCount(+likeCount - 1);
-            if (status) {
-              dispatch(
-                setVideos({
-                  ...videos,
-                  [currentTab === 2 ? "foryou" : "follow"]: videos[
-                    currentTab === 2 ? "foryou" : "follow"
-                  ]?.map((video: any) =>
-                    video.post_id === post_id
-                      ? {
-                          ...video,
-                          is_liked: false,
-                          like_count: +video?.like_count - 1,
-                        }
-                      : video
-                  ),
-                })
-              );
-            }
-
-            setIsLiked(false);
-            console.error("Error liking the post:", error);
-          }
-        }, 1000); // Call API 1 second after the last click
       } else {
         dispatch(
           showToast({
@@ -153,97 +197,98 @@ const VideoContainer = ({
     return handleLikeClick;
   })();
 
-  const unLike = (() => {
-    const likeTimeout = useRef<NodeJS.Timeout | null>(null); // Track the debounce timeout
-    // const [nextId, setNextId] = useState(0); // Generate unique IDs for hearts
+  // const unLike = (() => {
+  //   const likeTimeout = useRef<NodeJS.Timeout | null>(null); // Track the debounce timeout
+  //   // const [nextId, setNextId] = useState(0); // Generate unique IDs for hearts
 
-    const handleUnLikeClick = () => {
-      if (user?.token) {
-        // Clear any existing debounce timer
+  //   const handleUnLikeClick = () => {
+  //     if (user?.token) {
+  //       // Clear any existing debounce timer
 
-        setLikeCount(+likeCount - 1);
-        if (status) {
-          dispatch(
-            setVideos({
-              ...videos,
-              [currentTab === 2 ? "foryou" : "follow"]: videos[
-                currentTab === 2 ? "foryou" : "follow"
-              ]?.map((video: any) =>
-                video.post_id === post_id
-                  ? {
-                      ...video,
-                      is_liked: false,
-                      like_count: +video?.like_count - 1,
-                    }
-                  : video
-              ),
-            })
-          );
-        }
+  //       setLikeCount(+likeCount - 1);
+  //       if (status) {
+  //         dispatch(
+  //           setVideos({
+  //             ...videos,
+  //             [currentTab === 2 ? "foryou" : "follow"]: videos[
+  //               currentTab === 2 ? "foryou" : "follow"
+  //             ]?.map((video: any) =>
+  //               video.post_id === post_id
+  //                 ? {
+  //                     ...video,
+  //                     is_liked: false,
+  //                     like_count: +video?.like_count - 1,
+  //                   }
+  //                 : video
+  //             ),
+  //           })
+  //         );
+  //       }
 
-        setIsLiked(false);
+  //       setIsLiked(false);
 
-        if (likeTimeout.current) {
-          clearTimeout(likeTimeout.current);
-        }
+  //       if (likeTimeout.current) {
+  //         clearTimeout(likeTimeout.current);
+  //       }
 
-        // Set up a new debounce timer
-        likeTimeout.current = setTimeout(async () => {
-          try {
-            await unlikePost({ post_id }); // Pass the accumulated count to the API
+  //       // Set up a new debounce timer
+  //       likeTimeout.current = setTimeout(async () => {
+  //         try {
+  //           await unlikePost({ post_id }); // Pass the accumulated count to the API
 
-            setCountNumber(0); // Reset pending likes after a successful API call
-          } catch (error) {
-            setLikeCount(+likeCount + 1);
-            if (status) {
-              dispatch(
-                setVideos({
-                  ...videos,
-                  [currentTab === 2 ? "foryou" : "follow"]: videos[
-                    currentTab === 2 ? "foryou" : "follow"
-                  ]?.map((video: any) =>
-                    video.post_id === post_id
-                      ? {
-                          ...video,
-                          is_liked: true,
-                          like_count: +video?.like_count + 1,
-                        }
-                      : video
-                  ),
-                })
-              );
-            }
+  //           setCountNumber(0); // Reset pending likes after a successful API call
+  //         } catch (error) {
+  //           setLikeCount(+likeCount + 1);
+  //           if (status) {
+  //             dispatch(
+  //               setVideos({
+  //                 ...videos,
+  //                 [currentTab === 2 ? "foryou" : "follow"]: videos[
+  //                   currentTab === 2 ? "foryou" : "follow"
+  //                 ]?.map((video: any) =>
+  //                   video.post_id === post_id
+  //                     ? {
+  //                         ...video,
+  //                         is_liked: true,
+  //                         like_count: +video?.like_count + 1,
+  //                       }
+  //                     : video
+  //                 ),
+  //               })
+  //             );
+  //           }
 
-            setIsLiked(true);
+  //           setIsLiked(true);
 
-            console.error("Error liking the post:", error);
-          }
-        }, 1000); // Call API 1 second after the last click
-      } else {
-        setIsOpen(true);
-      }
-    };
+  //           console.error("Error liking the post:", error);
+  //         }
+  //       }, 1000); // Call API 1 second after the last click
+  //     } else {
+  //       setIsOpen(true);
+  //     }
+  //   };
 
-    useEffect(() => {
-      // Cleanup on component unmount
-      return () => {
-        if (likeTimeout.current) {
-          clearTimeout(likeTimeout.current);
-        }
-      };
-    }, []);
+  //   useEffect(() => {
+  //     // Cleanup on component unmount
+  //     return () => {
+  //       if (likeTimeout.current) {
+  //         clearTimeout(likeTimeout.current);
+  //       }
+  //     };
+  //   }, []);
 
-    return handleUnLikeClick;
-  })();
+  //   return handleUnLikeClick;
+  // })();
 
   useEffect(() => {
     const handleIosEvent = (event: CustomEvent) => {
       if (event.detail.post_id === post_id) {
         if (event.detail.isLiked === "true") {
           handleLike(); // Call the handleLike function
-        } else if (event.detail.isLiked === "false") {
-          unLike();
         }
+        // } else if (event.detail.isLiked === "false") {
+        //   unLike();
+        // }
       }
     };
 
@@ -377,7 +422,7 @@ const VideoContainer = ({
 
       <VideoSidebar
         status={status}
-        unLike={unLike}
+        // unLike={unLike}
         handleLike={handleLike}
         setLikeCount={setLikeCount}
         likeCount={likeCount}

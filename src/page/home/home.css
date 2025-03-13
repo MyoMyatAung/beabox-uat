@@ -929,3 +929,36 @@ html {
   background: #cd3eff !important;
   cursor: pointer;
 }
+
+.clock-counter {
+  top: 50px;
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(0deg, #8b5cf6, #ec4899);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: rotateAndColor 3s linear forwards;
+}
+
+.count-text {
+  position: relative;
+  z-index: 1;
+  color: white;
+  font-size: 2em;
+  font-weight: bold;
+}
+
+@keyframes rotateAndColor {
+  0% {
+    background: linear-gradient(0deg, #8b5cf6, #ec4899);
+  }
+  50% {
+    background: linear-gradient(180deg, #8b5cf6, #cf3ffb);
+  }
+  100% {
+    background: linear-gradient(360deg, #8b5cf6, #ec4899);
+  }
+}

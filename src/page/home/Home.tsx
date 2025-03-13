@@ -24,11 +24,14 @@ import HeartCount from "./components/Heart";
 import VideoContainer from "./components/VideoContainer";
 import Ads from "./components/Ads";
 import { setBottomLoader } from "./services/loaderSlice";
+import ShowHeartCom from "./components/ShowHeartCom";
 import {
   appendVideosToRender,
   setVideosToRender,
 } from "./services/videoRenderSlice";
 import { setStart } from "./services/startSlice";
+import CircleCountDown from "./components/CircleCountDown";
+import CountdownCircle from "./components/CountdownCircle";
 
 const Home = () => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
@@ -49,7 +52,7 @@ const Home = () => {
   const [countNumber, setCountNumber] = useState(0); // New state for counting clicks
   const [topmovies, setTopMovies] = useState(false);
   const currentTab = useSelector((state: any) => state.home.currentTab);
-  const user = useSelector((state: any) => state?.persist?.user);
+  const user = useSelector((state: any) => state?.persist?.profileData);
   const [refresh, setRefresh] = useState(false);
   const dispatch = useDispatch();
   const [hearts, setHearts] = useState<number[]>([]); // Manage heart IDs
@@ -61,10 +64,7 @@ const Home = () => {
   const abortControllerRef = useRef<AbortController[]>([]); // Array to store AbortControllers
   const videoData = useRef<any[]>([]); // Array to store AbortControllers
   const indexRef = useRef(0); // Track the current active video index
-
-  const removeHeart = (id: number) => {
-    setHearts((prev) => prev.filter((heartId) => heartId !== id)); // Remove the heart by ID
-  };
+  const [showHeart, setShowHeart] = useState(false);
 
   // const [currentTab, setCurrentTab] = useState(2);
   const swiperRef = useRef<any>(null);
@@ -119,7 +119,6 @@ const Home = () => {
         ]?.slice(0, videosPerLoad) || [];
 
       if (initialVideos.length > 1) {
-        console.log("winn");
         dispatch(setVideosToRender(initialVideos));
         dispatch(setStart(true));
       }
@@ -201,83 +200,6 @@ const Home = () => {
       }
     }
   }, []); // Add currentActivePost as a dependency
-
-  useEffect(() => {
-    const container = videoContainerRef.current;
-    if (!container) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const postId = entry.target.getAttribute("data-post-id");
-            if (postId) {
-              dispatch(setCurrentActivePost(postId));
-
-              // Find current video index
-              // const currentVideoKey =
-              //   currentTab === 0 ? "follow" : currentTab === 2 ? "foryou" : "";
-              // const currentVideos = videos[currentVideoKey] || [];
-              // const currentIndex = currentVideos.findIndex(
-              //   (v: any) => v.post_id === postId
-              // );
-
-              // // Simple preloading logic
-              // if (currentIndex !== -1) {
-              //   const preloadedUrls = new Set<string>();
-
-              //   const preloadVideo = async (url: string) => {
-              //     if (!url || preloadedUrls.has(url)) return;
-
-              //     try {
-              //       const headers = new Headers();
-              //       headers.append("Range", "bytes=0-1024");
-
-              //       const response = await fetch(url, { headers });
-              //       if (response.status === 206) {
-              //         preloadedUrls.add(url);
-              //       }
-              //     } catch (error) {
-              //       console.error("Failed to preload video:", error);
-              //     }
-              //   };
-
-              //   // Always preload next 3 videos sequentially
-              //   const preloadNextVideos = async () => {
-              //     for (let i = 1; i <= 3; i++) {
-              //       const nextVideo = currentVideos[currentIndex + i];
-              //       if (nextVideo?.files?.[0]?.resourceURL) {
-              //         await preloadVideo(nextVideo.files[0].resourceURL);
-              //       }
-              //     }
-              //   };
-
-              //   preloadNextVideos().catch(console.error);
-              // }
-            }
-          }
-        });
-      },
-      { root: null, rootMargin: "0px", threshold: 0.5 }
-    );
-
-    // Observe all video elements
-    Array.from(container.children).forEach((child) => {
-      observer.observe(child);
-    });
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [videos[currentTab === 2 ? "foryou" : "follow"], videosToRender]);
-
-  useEffect(() => {
-    if (currentActivePost) {
-      // Reset state when the active post changes
-      setCountdown(3);
-      setCountNumber(0);
-    }
-  }, [currentActivePost]);
 
   useEffect(() => {
     const container = videoContainerRef.current;
@@ -551,6 +473,7 @@ const Home = () => {
                             status={true}
                             countNumber={countNumber}
                             video={video}
+                            coin={user?.coins}
                             setCountNumber={setCountNumber}
                             config={config}
                             countdown={countdown}
@@ -560,6 +483,7 @@ const Home = () => {
                             setCountdown={setCountdown}
                             width={width}
                             height={height}
+                            setShowHeart={setShowHeart}
                           />
 
                           {video?.type !== "ads" && (
@@ -577,9 +501,18 @@ const Home = () => {
                             <Ads ads={video?.ads_info} />
                           )}
 
-                          {hearts.map((id: any) => (
-                            <HeartCount id={id} key={id} remove={removeHeart} />
-                          ))}
+                          {showHeart && (
+                            <ShowHeartCom
+                              countNumber={countNumber}
+                              nickname={user?.nickname}
+                              photo={user?.profile_photo}
+                            />
+                          )}
+                          {showHeart && (
+                            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[999]">
+                              <CountdownCircle countNumber={countNumber} />
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -680,6 +613,7 @@ const Home = () => {
                             video={video}
                             setCountNumber={setCountNumber}
                             config={config}
+                            coin={user?.coins}
                             countdown={countdown}
                             setWidth={setWidth}
                             setHeight={setHeight}
@@ -687,6 +621,7 @@ const Home = () => {
                             setCountdown={setCountdown}
                             width={width}
                             height={height}
+                            setShowHeart={setShowHeart}
                           />
 
                           {video?.type !== "ads" && (
@@ -704,9 +639,19 @@ const Home = () => {
                             <Ads ads={video?.ads_info} />
                           )}
 
-                          {hearts.map((id: any) => (
-                            <HeartCount id={id} key={id} remove={removeHeart} />
-                          ))}
+                          {showHeart && (
+                            <ShowHeartCom
+                              countNumber={countNumber}
+                              nickname={user?.nickname}
+                              photo={user?.profile_photo}
+                            />
+                          )}
+
+                          {showHeart && (
+                            <div className="absolute bottom-[300px] right-[70px] transform z-[999]">
+                              <CountdownCircle countNumber={countNumber} />
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -731,7 +676,7 @@ const Home = () => {
                             fill="none"
                           >
                             <path
-                              d="M11.4031 4.62095L11.403 4.62082C14.0022 3.54025 16.8802 3.35193 19.5939 4.08509C22.3076 4.81823 24.7089 6.43272 26.4261 8.68014L26.4263 8.68032C26.4937 8.76877 26.5718 8.84833 26.6556 8.91565L27.2033 9.35581L26.5006 9.36052L21.7383 9.39246C20.9726 9.39847 20.3567 10.0226 20.3627 10.7872L20.3627 10.7877C20.3672 11.5526 20.9924 12.1689 21.7575 12.1629L21.7578 12.1629L29.9185 12.1079L29.9188 12.1079M11.4031 4.62095L31.5441 10.6738C31.5566 11.1139 31.3915 11.5398 31.0863 11.8574C30.7811 12.1751 30.3605 12.3543 29.9205 12.3579L29.9188 12.1079M11.4031 4.62095C8.80635 5.69987 6.62978 7.61268 5.21499 10.066C3.80005 12.5178 3.22479 15.3727 3.57938 18.1896C3.93397 21.0065 5.19865 23.6248 7.17475 25.6426L7.17484 25.6426C9.15302 27.6604 11.732 28.9637 14.5143 29.3547C17.2967 29.7475 20.1293 29.2043 22.578 27.8108L22.5781 27.8107C25.0249 26.417 26.9521 24.2493 28.0576 21.6402C28.3569 20.9349 29.1703 20.6058 29.8752 20.905L29.8755 20.905C30.5785 21.2025 30.9079 22.0155 30.6087 22.7208L30.6086 22.7209C29.2671 25.888 26.9264 28.5235 23.9488 30.2193C20.9694 31.9151 17.5185 32.5769 14.1274 32.0984L14.1273 32.0984C10.7378 31.6215 7.59926 30.0339 5.19598 27.5819C2.79267 25.1299 1.25895 21.9508 0.829223 18.5357C0.399503 15.1204 1.09649 11.6584 2.81532 8.68015L2.81534 8.68011C4.53244 5.70358 7.17669 3.37559 10.341 2.06238L10.3411 2.06233C13.5054 0.747344 17.01 0.518603 20.3157 1.41094M11.4031 4.62095L31.2942 10.6809M29.9188 12.1079C30.2921 12.1048 30.648 11.9527 30.9061 11.6842C31.165 11.4147 31.3048 11.0538 31.2942 10.6809M29.9188 12.1079L31.2942 10.6809M31.2942 10.6809L31.0405 2.09452C31.0179 1.33093 30.3788 0.728074 29.6155 0.750614L29.6155 0.750615C28.8505 0.773158 28.2491 1.41193 28.2716 2.17735L28.2716 2.1774L28.3834 5.99257L28.4037 6.68592L27.9458 6.16495C25.9267 3.8682 23.2757 2.21083 20.3157 1.41094M20.3157 1.41094C20.3157 1.41095 20.3157 1.41095 20.3157 1.41096L20.3809 1.16961L20.3157 1.41094ZM20.1127 10.7892C20.118 11.6924 20.8562 12.42 21.7594 12.4129L21.7364 9.14247C20.8331 9.14956 20.1056 9.88598 20.1127 10.7892Z"
+                              d="M11.4031 4.62095L11.403 4.62082C14.0022 3.54025 16.8802 3.35193 19.5939 4.08509C22.3076 4.81823 24.7089 6.43272 26.4261 8.68014L26.4263 8.68032C26.4937 8.76877 26.5718 8.84833 26.6556 8.91565L27.2033 9.35581L26.5006 9.36052L21.7383 9.39246C20.9726 9.39847 20.3567 10.0226 20.3627 10.7872L20.3627 10.7877C20.3672 11.5526 20.9924 12.1689 21.7575 12.1629L21.7578 12.1629L29.9185 12.1079L29.9188 12.1079M11.4031 4.62095L31.5441 10.6738C31.5566 11.1139 31.3915 11.5398 31.0863 11.8574C30.7811 12.1751 30.3605 12.3543 29.9205 12.3579L29.9188 12.1079M11.4031 4.62095C8.80635 5.69987 6.62978 7.61268 5.21499 10.066C3.80005 12.5178 3.22479 15.3727 3.57938 18.1896C3.93397 21.0065 5.19865 23.6248 7.17475 25.6426L7.17484 25.6426C9.15302 27.6604 11.732 28.9637 14.5143 29.3547C17.2967 29.7475 20.1293 29.2043 22.578 27.8108L22.5781 27.8107C25.0249 26.417 26.9521 24.2493 28.0576 21.6402C28.3569 20.9349 29.1703 20.6058 29.8752 20.905L29.8755 20.905C30.5785 21.2025 30.9079 22.0155 30.6087 22.7208L30.6086 22.7209C29.2671 25.888 26.9264 28.5235 23.9488 30.2193C20.9694 31.9151 17.5185 32.5769 14.1274 32.0984L14.1273 32.0984C10.7378 31.6215 7.59926 30.0339 5.19598 27.5819C2.79267 25.1299 1.25895 21.9508 0.829223 18.5357C0.399503 15.1204 1.09649 11.6584 2.81532 8.68015L2.81534 8.68011C4.53244 5.70358 7.17669 3.37559 10.341 2.06238L10.3411 2.06233C13.5054 0.747344 17.01 0.518603 20.3157 1.41094M11.4031 4.62095L31.2942 10.6809C31.5566 11.1139 31.3915 11.5398 31.0863 11.8574C30.7811 12.1751 30.3605 12.3543 29.9205 12.3579L29.9188 12.1079M11.4031 4.62095L31.2942 10.6809M29.9188 12.1079C30.2921 12.1048 30.648 11.9527 30.9061 11.6842C31.165 11.4147 31.3048 11.0538 31.2942 10.6809M29.9188 12.1079L31.2942 10.6809M31.2942 10.6809L31.0405 2.09452C31.0179 1.33093 30.3788 0.728074 29.6155 0.750614L29.6155 0.750615C28.8505 0.773158 28.2491 1.41193 28.2716 2.17735L28.2716 2.1774L28.3834 5.99257L28.4037 6.68592L27.9458 6.16495C25.9267 3.8682 23.2757 2.21083 20.3157 1.41094M20.3157 1.41094C20.3157 1.41095 20.3157 1.41095 20.3157 1.41096L20.3809 1.16961L20.3157 1.41094ZM20.1127 10.7892C20.118 11.6924 20.8562 12.42 21.7594 12.4129L21.7364 9.14247C20.8331 9.14956 20.1056 9.88598 20.1127 10.7892Z"
                               fill="white"
                               stroke="#16131C"
                               stroke-width="0.5"
