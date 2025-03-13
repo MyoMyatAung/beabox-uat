@@ -52,7 +52,7 @@ const Home = () => {
   const [countNumber, setCountNumber] = useState(0); // New state for counting clicks
   const [topmovies, setTopMovies] = useState(false);
   const currentTab = useSelector((state: any) => state.home.currentTab);
-  const user = useSelector((state: any) => state?.persist?.user);
+  const user = useSelector((state: any) => state?.persist?.profileData);
   const [refresh, setRefresh] = useState(false);
   const dispatch = useDispatch();
   const [hearts, setHearts] = useState<number[]>([]); // Manage heart IDs
@@ -119,7 +119,6 @@ const Home = () => {
         ]?.slice(0, videosPerLoad) || [];
 
       if (initialVideos.length > 1) {
-        console.log("winn");
         dispatch(setVideosToRender(initialVideos));
         dispatch(setStart(true));
       }
@@ -416,8 +415,6 @@ const Home = () => {
     }
   };
 
-  console.log(countNumber);
-
   return (
     <div className="flex justify-center items-center">
       <div className="max-w-[1024px] home-main w-full">
@@ -476,6 +473,7 @@ const Home = () => {
                             status={true}
                             countNumber={countNumber}
                             video={video}
+                            coin={user?.coins}
                             setCountNumber={setCountNumber}
                             config={config}
                             countdown={countdown}
@@ -504,7 +502,16 @@ const Home = () => {
                           )}
 
                           {showHeart && (
-                            <ShowHeartCom countNumber={countNumber} />
+                            <ShowHeartCom
+                              countNumber={countNumber}
+                              nickname={user?.nickname}
+                              photo={user?.profile_photo}
+                            />
+                          )}
+                          {showHeart && (
+                            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[999]">
+                              <CountdownCircle countNumber={countNumber} />
+                            </div>
                           )}
                         </div>
                       ))}
@@ -606,6 +613,7 @@ const Home = () => {
                             video={video}
                             setCountNumber={setCountNumber}
                             config={config}
+                            coin={user?.coins}
                             countdown={countdown}
                             setWidth={setWidth}
                             setHeight={setHeight}
@@ -632,11 +640,15 @@ const Home = () => {
                           )}
 
                           {showHeart && (
-                            <ShowHeartCom countNumber={countNumber} />
+                            <ShowHeartCom
+                              countNumber={countNumber}
+                              nickname={user?.nickname}
+                              photo={user?.profile_photo}
+                            />
                           )}
 
                           {showHeart && (
-                            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[999]">
+                            <div className="absolute bottom-[300px] right-[70px] transform z-[999]">
                               <CountdownCircle countNumber={countNumber} />
                             </div>
                           )}
