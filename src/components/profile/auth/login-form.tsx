@@ -275,7 +275,7 @@ const LoginForm = ({ setIsOpen }: any) => {
             </DialogContent>
           </Dialog>
           <div className="w-full flex flex-col items-center">
-            <p className="text-[14px] text-[#333333] text-center mb-5">或者</p>
+            <p className="text-[14px] text-[#777] text-center mb-5">或者</p>
             <>
               <Button
                 onClick={(e) => {
