@@ -26,7 +26,7 @@ const TopNavbar = ({
     <div className="absolute top-5 left-0 px-5 right-0 flex justify-between items-center z-[9999] max-w-[480px] mx-auto">
       <div
         onClick={
-          user?.toke
+          user?.token
             ? () => navigate(paths.creator_upload)
             : () => dispatch(setIsDrawerOpen(true))
         }
