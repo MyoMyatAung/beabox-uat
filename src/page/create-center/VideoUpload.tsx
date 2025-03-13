@@ -473,7 +473,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
       {editPost ? (
         <TopNav
           center={"Edit Video"}
-          right={<DeleteDetail id={editPost?.post_id} />}
+          right={<DeleteDetail seteditPost={seteditPost} refetch={refetch} id={editPost?.post_id} />}
         />
       ) : (
         <TopNav center={"Upload Video"} />
