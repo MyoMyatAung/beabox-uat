@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import "swiper/css";
 import {
   Drawer,
@@ -38,17 +38,24 @@ const DatePick: React.FC<any> = ({
   const swiperRef = useRef<any>(null);
   const swiperYrRef = useRef<any>(null);
 
+  // Temporary state to hold selection before confirmation
+  const [selectedMonth, setSelectedMonth] = useState(curMon);
+  const [selectedYear, setSelectedYear] = useState(curYr);
+
   const handleSlideChange = (swiper: any) => {
     const activeIndex = swiper.activeIndex;
-    setplus(activeIndex + 1);
-    const activeMonth = months[activeIndex];
-    setCurMon(activeMonth);
+    setSelectedMonth(months[activeIndex]);
   };
 
   const handleSlideChangeYr = (swiper: any) => {
     const activeIndex = swiper.activeIndex;
-    const activeYear = years[activeIndex];
-    setCurYr(activeYear);
+    setSelectedYear(years[activeIndex]);
+  };
+
+  const handleDoneClick = () => {
+    setCurMon(selectedMonth);
+    setCurYr(selectedYear);
+    setplus(months.indexOf(selectedMonth) + 1);
   };
 
   const resetSwiperPosition = () => {
@@ -64,13 +71,15 @@ const DatePick: React.FC<any> = ({
 
   useEffect(() => {
     resetSwiperPosition();
+    setSelectedMonth(curMon);
+    setSelectedYear(curYr);
   }, [curMon, curYr]);
 
   return (
     <Drawer handleOnly={true} onOpenChange={resetSwiperPosition}>
       <div className="flex justify-between items-center">
         <DrawerTrigger asChild>
-          <div className="bg-white/5 w-full flex gap-[4px] items-center px-[20px] py-[8px]">
+          <div className="bg-[#201c25] w-full flex gap-[4px] items-center px-[20px] py-[8px]">
             <h1 className="text-white text-[14px] font-[500] leading-[20px]">
               {curYr} {curMon}
             </h1>
@@ -140,25 +149,22 @@ const DatePick: React.FC<any> = ({
           </div>
           <div className="flex flex-col items-center">
             <div className="flex items-center gap-[20px]">
-              {/* <DrawerClose asChild> */}
               <button
                 onClick={() => {
                   const now = new Date();
-                  setCurMon(defaultMonth)
-                  setCurYr(now.getFullYear()); // Get current year
+                  setCurMon(defaultMonth);
+                  setCurYr(now.getFullYear());
                   setplus(now.getMonth() + 1);
                 }}
-                className={`w-[160px] text-[#888] text-[16px] draw_canccel_btn p-[16px]`}
+                className="w-[160px] text-[#888] draw_canccel_btn text-[16px] p-[16px]"
               >
-                {/* Cancel */}
                 取消
               </button>
-              {/* </DrawerClose> */}
               <DrawerClose asChild>
                 <button
-                  className={`w-[160px] text-[#fff] text-[16px] font-[400] draw_done_btn p-[16px]`}
+                  onClick={handleDoneClick}
+                  className="w-[160px] text-[#fff] draw_done_btn text-[16px] font-[400] p-[16px]"
                 >
-                  {/* Done */}
                   完毕
                 </button>
               </DrawerClose>
