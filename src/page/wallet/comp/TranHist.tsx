@@ -3,7 +3,10 @@ import Header from "../Header";
 import "../wallet.css";
 import transit from "../../../assets/wallet/transit.png";
 import noTran from "../../../assets/wallet/noTran.svg";
-import { useGetTransitionHistoryQuery } from "@/store/api/wallet/walletApi";
+import {
+  useGetInviteQuery,
+  useGetTransitionHistoryQuery,
+} from "@/store/api/wallet/walletApi";
 import DatePick from "./DatePick";
 import TypePick from "./TypePick";
 import Loader from "../../../page/home/vod_loader.gif";
@@ -33,13 +36,15 @@ const TranHist: React.FC = () => {
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
 
+  const [status, setStatus] = useState([]);
+  const { data: config } = useGetInviteQuery("");
+
   useEffect(() => {
     const now = new Date();
     setCurMon(months[now.getMonth()]); // Get current month name
     setCurYr(now.getFullYear()); // Get current year
     setPlus(now.getMonth() + 1); // Month index starts from 0, so +1
   }, []);
-  console.log(plus, curYr);
   const { data, isLoading, isFetching } = useGetTransitionHistoryQuery({
     period: `${plus}-${curYr}`,
     type: "",
@@ -53,6 +58,12 @@ const TranHist: React.FC = () => {
   }, [curMon, curYr]);
 
   useEffect(() => {
+    if (config?.data) {
+      setStatus(config?.data?.transaction_status_list);
+    }
+  }, [config]);
+
+  useEffect(() => {
     if (data?.data) {
       // setTran(data?.data);
       setTran((prev) => [...prev, ...data.data]);
@@ -64,29 +75,39 @@ const TranHist: React.FC = () => {
     }
   }, [data]);
 
-  const getStatusClass = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "approved":
-        return {
-          container: "success_state",
-          text: "success_text",
-        };
-      case "pending":
-        return {
-          container: "pending_state",
-          text: "pending_text",
-        };
-      case "rejected":
-        return {
-          container: "failed_state",
-          text: "failed_text",
-        };
-      default:
-        return {
-          container: "default_state",
-          text: "default_text",
-        };
-    }
+  // const getStatusClass = (status: string) => {
+  //   switch (status.toLowerCase()) {
+  //     case "approved":
+  //       return {
+  //         container: "success_state",
+  //         text: "success_text",
+  //       };
+  //     case "pending":
+  //       return {
+  //         container: "pending_state",
+  //         text: "pending_text",
+  //       };
+  //     case "rejected":
+  //       return {
+  //         container: "failed_state",
+  //         text: "failed_text",
+  //       };
+  //     default:
+  //       return {
+  //         container: "default_state",
+  //         text: "default_text",
+  //       };
+  //   }
+  // };
+
+  const getStatusClass = (keyword: string) => {
+    const statusObj: any = status.find(
+      (s: any) => s.keyword.toLowerCase() === keyword.toLowerCase()
+    );
+    return {
+      backgroundColor: statusObj?.bg_color_code || "#777", // Default grey if not found
+      color: statusObj?.text_color_code || "#FFF", // Default white if not found
+    };
   };
 
   const fetchMoreData = () => {
@@ -160,13 +181,19 @@ const TranHist: React.FC = () => {
                       </span>
                       {ts.status && (
                         <div
-                          className={`${
-                            getStatusClass(ts.status).container
-                          } px-[12px] py-[2px] flex justify-center items-center`}
+                          style={{
+                            backgroundColor: getStatusClass(ts.status)
+                              .backgroundColor,
+                            color: getStatusClass(ts.status).color,
+                          }}
+                          className="px-[12px] py-[2px] flex justify-center items-center rounded-md  text-[12px] font-[400] leading-[15px]"
                         >
-                          <span className={getStatusClass(ts.status).text}>
-                            {ts.status}
-                          </span>
+                          {/* <span
+                            style={{}}
+                            className=" text-[12px] font-[400] leading-[15px]"
+                          > */}
+                          {ts.status}
+                          {/* </span> */}
                         </div>
                       )}
                     </div>

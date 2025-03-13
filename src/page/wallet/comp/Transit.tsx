@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 import "../wallet.css";
 import { ChevronRight, ScrollText } from "lucide-react";
 import transit from "../../../assets/wallet/transit.png";
-import { useGetTransitionHistoryQuery } from "@/store/api/wallet/walletApi";
+import {
+  useGetInviteQuery,
+  useGetTransitionHistoryQuery,
+} from "@/store/api/wallet/walletApi";
 import noTran from "../../../assets/wallet/noTran.svg";
 import { useNavigate } from "react-router-dom";
 import loader from "../../home/vod_loader.gif";
@@ -16,34 +19,50 @@ const Transit: React.FC<TransitProps> = ({}) => {
     period: "",
     type: "",
   });
+  const [status, setStatus] = useState([]);
+  const { data: config } = useGetInviteQuery("");
   useEffect(() => {
     if (data?.data) {
       setTran(data?.data);
     }
-  }, [data]);
-  const getStatusClass = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "approved":
-        return {
-          container: "success_state",
-          text: "success_text",
-        };
-      case "pending":
-        return {
-          container: "pending_state",
-          text: "pending_text",
-        };
-      case "rejected":
-        return {
-          container: "failed_state",
-          text: "failed_text",
-        };
-      default:
-        return {
-          container: "default_state",
-          text: "default_text",
-        };
+    if (config?.data) {
+      setStatus(config?.data?.transaction_status_list);
     }
+  }, [data, config]);
+
+  // console.log(status)
+  // const getStatusClass = (status: string) => {
+  //   switch (status.toLowerCase()) {
+  //     case "approved":
+  //       return {
+  //         container: "success_state",
+  //         text: "success_text",
+  //       };
+  //     case "pending":
+  //       return {
+  //         container: "pending_state",
+  //         text: "pending_text",
+  //       };
+  //     case "rejected":
+  //       return {
+  //         container: "failed_state",
+  //         text: "failed_text",
+  //       };
+  //     default:
+  //       return {
+  //         container: "default_state",
+  //         text: "default_text",
+  //       };
+  //   }
+  // };
+  const getStatusClass = (keyword: string) => {
+    const statusObj: any = status.find(
+      (s: any) => s.keyword.toLowerCase() === keyword.toLowerCase()
+    );
+    return {
+      backgroundColor: statusObj?.bg_color_code || "#777", // Default grey if not found
+      color: statusObj?.text_color_code || "#FFF", // Default white if not found
+    };
   };
   return (
     <div className=" py-[20px]">
@@ -107,13 +126,16 @@ const Transit: React.FC<TransitProps> = ({}) => {
                       </span>
                       {ts.status && (
                         <div
-                          className={`${
-                            getStatusClass(ts.status).container
-                          } px-[12px] py-[2px] flex justify-center items-center`}
+                          style={{
+                            backgroundColor: getStatusClass(ts.status)
+                              .backgroundColor,
+                            color: getStatusClass(ts.status).color,
+                          }}
+                          className="px-[12px] py-[2px] flex justify-center items-center rounded-md  text-[12px] font-[400] leading-[15px]"
                         >
-                          <span className={getStatusClass(ts.status).text}>
-                            {ts.status}
-                          </span>
+                          {/* <span className={getStatusClass(ts.status).text}> */}
+                          {ts.status}
+                          {/* </span> */}
                         </div>
                       )}
                     </div>
