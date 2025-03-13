@@ -122,7 +122,7 @@ const TranHist: React.FC = () => {
           {/* <TypePick /> */}
         </div>
         {/* time */}
-        <div className=" fixed bg-gray-900 w-full">
+        <div className=" fixed bg-[#201c25] w-full">
           <DatePick
             curMon={curMon}
             curYr={curYr}
@@ -133,7 +133,7 @@ const TranHist: React.FC = () => {
         </div>
         {/* transition */}
         <div className="py-[12px] px-[18px] mt-5">
-          {isLoading ? (
+          {/* {isLoading && isFetching && (
             <div className=" flex justify-center items-center py-[100px]">
               <div className="heart">
                 <img
@@ -143,91 +143,85 @@ const TranHist: React.FC = () => {
                 />
               </div>
             </div>
-          ) : (
-            <>
-              {tran?.length === 0 ? (
-                <div className="flex flex-col justify-center items-center h-[600px]">
-                  <img src={noTran} alt="" />
-                  <h1 className="text-white font-[400] text-[14px]">
-                    No Transition Yet
-                  </h1>
+          )} */}
+
+          {data?.data.length === 0 && (
+            <div className="flex flex-col justify-center items-center h-[600px]">
+              <img src={noTran} alt="" />
+              <h1 className="text-white font-[400] text-[14px]">
+                No Transition Yet
+              </h1>
+            </div>
+          )}
+
+          {tran?.map((ts: any, index: any) => (
+            <div
+              key={index}
+              className="transit_list py-[16px] flex justify-between"
+            >
+              <div className="flex gap-[12px] items-center">
+                <div className="bitcoin_border p-3">
+                  <img className="w-[26px] h-[26px]" src={transit} alt="" />
                 </div>
-              ) : (
-                tran?.map((ts: any, index: any) => (
+                <div className="flex flex-col gap-[4px]">
+                  <span className="text-white text-[14px] font-[500] leading-[20px]">
+                    {ts.description}
+                  </span>
+                  <span className="text-[#777] text-[12px] font-[400] leading-[20px]">
+                    {ts.date}
+                  </span>
+                </div>
+              </div>
+              <div className=" flex flex-col justify-center items-center gap-[6px]">
+                <span>
+                  {ts.dr_cr === "cr" ? "+" : "-"} {ts.amount}
+                </span>
+                {ts.status && (
                   <div
-                    key={index}
-                    className="transit_list py-[16px] flex justify-between"
+                    style={{
+                      backgroundColor: getStatusClass(ts.status)
+                        .backgroundColor,
+                      color: getStatusClass(ts.status).color,
+                    }}
+                    className="px-[12px] py-[2px] flex justify-center items-center rounded-md  text-[12px] font-[400] leading-[15px]"
                   >
-                    <div className="flex gap-[12px] items-center">
-                      <div className="bitcoin_border p-3">
-                        <img
-                          className="w-[26px] h-[26px]"
-                          src={transit}
-                          alt=""
-                        />
-                      </div>
-                      <div className="flex flex-col gap-[4px]">
-                        <span className="text-white text-[14px] font-[500] leading-[20px]">
-                          {ts.description}
-                        </span>
-                        <span className="text-[#777] text-[12px] font-[400] leading-[20px]">
-                          {ts.date}
-                        </span>
-                      </div>
-                    </div>
-                    <div className=" flex flex-col justify-center items-center gap-[6px]">
-                      <span>
-                        {ts.dr_cr === "cr" ? "+" : "-"} {ts.amount}
-                      </span>
-                      {ts.status && (
-                        <div
-                          style={{
-                            backgroundColor: getStatusClass(ts.status)
-                              .backgroundColor,
-                            color: getStatusClass(ts.status).color,
-                          }}
-                          className="px-[12px] py-[2px] flex justify-center items-center rounded-md  text-[12px] font-[400] leading-[15px]"
-                        >
-                          {/* <span
+                    {/* <span
                             style={{}}
                             className=" text-[12px] font-[400] leading-[15px]"
                           > */}
-                          {ts.status}
-                          {/* </span> */}
-                        </div>
-                      )}
-                    </div>
+                    {ts.status}
+                    {/* </span> */}
                   </div>
-                ))
-              )}
-              <InfiniteScroll
-                className="py-[20px]"
-                dataLength={tran.length}
-                next={fetchMoreData}
-                hasMore={hasMore}
-                loader={
-                  <div className=" flex justify-center  bottom-[-30px] left-[-2px]">
-                    <div className="">
-                      <img
-                        src={Loader}
-                        className="w-[70px] h-[70px]"
-                        alt="Loading"
-                      />
-                    </div>
-                  </div>
-                }
-                endMessage={
-                  <div className="flex bg-whit pt-20 justify-center items-center  w-screen absolute bottom-[-20px] left-[-20px]">
-                    <p className="py-10" style={{ textAlign: "center" }}>
-                      {/* <b>No more yet!</b> */}
-                    </p>
-                  </div>
-                }
-              >
-                <></>
-              </InfiniteScroll>
-            </>
-          )}
+                )}
+              </div>
+            </div>
+          ))}
+          <InfiniteScroll
+            className="py-[20px]"
+            dataLength={tran.length}
+            next={fetchMoreData}
+            hasMore={hasMore}
+            loader={
+              <div className=" flex justify-center  bottom-[-30px] left-[-2px]">
+                <div className="">
+                  <img
+                    src={Loader}
+                    className="w-[70px] h-[70px]"
+                    alt="Loading"
+                  />
+                </div>
+              </div>
+            }
+            endMessage={
+              <div className="flex bg-whit pt-20 justify-center items-center  w-screen absolute bottom-[-20px] left-[-20px]">
+                <p className="py-10" style={{ textAlign: "center" }}>
+                  {/* <b>No more yet!</b> */}
+                </p>
+              </div>
+            }
+          >
+            <></>
+          </InfiniteScroll>
         </div>
       </div>
     </div>
