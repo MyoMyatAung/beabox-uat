@@ -22,7 +22,7 @@ const UploadImg = ({ imgsrc }: any) => {
   return (
     <img
       src={`${decryptImg}`}
-      className="w-[128px] h-[80px] object-cover object-center rounded-[8px]"
+      className="w-[128px] border border-gray-800 h-[80px] object-cover object-center rounded-[8px]"
       alt=""
     />
   );
