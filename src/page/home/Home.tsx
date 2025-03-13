@@ -24,11 +24,13 @@ import HeartCount from "./components/Heart";
 import VideoContainer from "./components/VideoContainer";
 import Ads from "./components/Ads";
 import { setBottomLoader } from "./services/loaderSlice";
+import ShowHeartCom from "./components/ShowHeartCom";
 import {
   appendVideosToRender,
   setVideosToRender,
 } from "./services/videoRenderSlice";
 import { setStart } from "./services/startSlice";
+import CircleCountDown from "./components/CircleCountDown";
 
 const Home = () => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
@@ -61,10 +63,7 @@ const Home = () => {
   const abortControllerRef = useRef<AbortController[]>([]); // Array to store AbortControllers
   const videoData = useRef<any[]>([]); // Array to store AbortControllers
   const indexRef = useRef(0); // Track the current active video index
-
-  const removeHeart = (id: number) => {
-    setHearts((prev) => prev.filter((heartId) => heartId !== id)); // Remove the heart by ID
-  };
+  const [showHeart, setShowHeart] = useState(false);
 
   // const [currentTab, setCurrentTab] = useState(2);
   const swiperRef = useRef<any>(null);
@@ -493,6 +492,8 @@ const Home = () => {
     }
   };
 
+  console.log(countNumber);
+
   return (
     <div className="flex justify-center items-center">
       <div className="max-w-[1024px] home-main w-full">
@@ -577,9 +578,9 @@ const Home = () => {
                             <Ads ads={video?.ads_info} />
                           )}
 
-                          {hearts.map((id: any) => (
-                            <HeartCount id={id} key={id} remove={removeHeart} />
-                          ))}
+                          {showHeart && (
+                            <ShowHeartCom countNumber={countNumber} />
+                          )}
                         </div>
                       ))}
                     </div>
@@ -687,6 +688,7 @@ const Home = () => {
                             setCountdown={setCountdown}
                             width={width}
                             height={height}
+                            setShowHeart={setShowHeart}
                           />
 
                           {video?.type !== "ads" && (
@@ -704,9 +706,15 @@ const Home = () => {
                             <Ads ads={video?.ads_info} />
                           )}
 
-                          {hearts.map((id: any) => (
-                            <HeartCount id={id} key={id} remove={removeHeart} />
-                          ))}
+                          {showHeart && (
+                            <ShowHeartCom countNumber={countNumber} />
+                          )}
+
+                          {showHeart && (
+                            <div className="clock-counter">
+                              <span className="count-text">x{countNumber}</span>
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
