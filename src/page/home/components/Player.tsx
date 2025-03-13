@@ -859,18 +859,8 @@ const Player = ({
         setPImg(false);
       }
 
-      // Initially show play button when video is ready
-      const loadingIndicator =
-        artPlayerInstanceRef.current?.template?.$loading?.querySelector(
-          ".video-loading-indicator"
-        ) as HTMLDivElement;
-      const playIndicator =
-        artPlayerInstanceRef.current?.template?.$state?.querySelector(
-          ".video-play-indicator"
-        ) as HTMLDivElement;
-
-      if (loadingIndicator) loadingIndicator.style.display = "none";
-      if (!isFastForwarding && playIndicator) playIndicator.style.display = "block";
+      // Don't show any indicators in the ready event
+      // The video:loadstart or video:canplay events will handle showing the appropriate indicator
     });
 
     // Add loading state handler with progress bar visibility check
@@ -880,6 +870,7 @@ const Player = ({
         progressBarRef.current.style.opacity = "1";
       }
 
+      // Show loading indicator and hide play button
       const loadingIndicator =
         artPlayerInstanceRef.current?.template?.$loading?.querySelector(
           ".video-loading-indicator"
@@ -891,6 +882,11 @@ const Player = ({
 
       if (loadingIndicator) loadingIndicator.style.display = "block";
       if (playIndicator) playIndicator.style.display = "none";
+      
+      // Also hide the custom play icon
+      if (playIconRef.current) {
+        playIconRef.current.style.display = "none";
+      }
     });
 
     // Add error handler to ensure progress bar remains visible
@@ -943,6 +939,7 @@ const Player = ({
 
     // Add initial loading state
     artPlayerInstanceRef.current.on("video:loadstart", () => {
+      // Show loading indicator and hide play button
       const loadingIndicator =
         artPlayerInstanceRef.current?.template?.$loading?.querySelector(
           ".video-loading-indicator"
@@ -954,6 +951,28 @@ const Player = ({
 
       if (loadingIndicator) loadingIndicator.style.display = "block";
       if (playIndicator) playIndicator.style.display = "none";
+      
+      // Also hide the custom play icon
+      if (playIconRef.current) {
+        playIconRef.current.style.display = "none";
+      }
+    });
+
+    // Add canplay event to hide loading indicator and show play button if needed
+    artPlayerInstanceRef.current.on("video:canplay", () => {
+      const loadingIndicator =
+        artPlayerInstanceRef.current?.template?.$loading?.querySelector(
+          ".video-loading-indicator"
+        ) as HTMLDivElement;
+      
+      if (loadingIndicator) loadingIndicator.style.display = "none";
+      
+      // Only show play button if video is not playing
+      if (artPlayerInstanceRef.current && !artPlayerInstanceRef.current.playing && !isFastForwarding) {
+        showPlayButton();
+      } else {
+        hidePlayButton();
+      }
     });
 
     artPlayerInstanceRef.current.on("video:ended", () => {
@@ -1143,12 +1162,39 @@ const Player = ({
     if (playIconRef.current) {
       playIconRef.current.style.display = 'none';
     }
+    
+    // Also hide the template play indicator
+    if (artPlayerInstanceRef.current?.template?.$state) {
+      const playIndicator = artPlayerInstanceRef.current.template.$state.querySelector(
+        ".video-play-indicator"
+      ) as HTMLDivElement;
+      if (playIndicator) playIndicator.style.display = "none";
+    }
   };
 
   const showPlayButton = () => {
     // Only show play button if video is paused and not fast forwarding
-    if (playIconRef.current && !artPlayerInstanceRef.current?.playing && !isFastForwarding) {
-      playIconRef.current.style.display = 'block';
+    if (!artPlayerInstanceRef.current?.playing && !isFastForwarding) {
+      // First ensure loading indicator is hidden
+      if (artPlayerInstanceRef.current?.template?.$loading) {
+        const loadingIndicator = artPlayerInstanceRef.current.template.$loading.querySelector(
+          ".video-loading-indicator"
+        ) as HTMLDivElement;
+        if (loadingIndicator) loadingIndicator.style.display = "none";
+      }
+      
+      // Then show play button
+      if (playIconRef.current) {
+        playIconRef.current.style.display = 'block';
+      }
+      
+      // Also show template play indicator
+      if (artPlayerInstanceRef.current?.template?.$state) {
+        const playIndicator = artPlayerInstanceRef.current.template.$state.querySelector(
+          ".video-play-indicator"
+        ) as HTMLDivElement;
+        if (playIndicator) playIndicator.style.display = "block";
+      }
     }
   };
 

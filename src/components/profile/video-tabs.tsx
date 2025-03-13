@@ -20,7 +20,7 @@ const VideoTabs = () => {
         {user?.token ? (
           <TabsTrigger
             className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2"
-            onClick={() => dispatch(setDefaultTab("upload"))}
+            onClick={() => dispatch(setDefaultTab ? defaultTab : "liked"("upload"))}
             value="upload"
           >
             <span className="flex items-center gap-1">
