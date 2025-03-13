@@ -116,7 +116,7 @@ const LoginForm = ({ setIsOpen }: any) => {
                 <FormControl>
                   <>
                     <label htmlFor="" className="text-[14px] text-[#888]">
-                      密码
+                      用户名
                     </label>
                     <div className="relative">
                       <input
