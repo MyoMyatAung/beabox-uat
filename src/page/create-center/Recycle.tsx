@@ -11,6 +11,7 @@ import {
 } from "@/store/api/createCenterApi";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import UploadImg from "@/components/create-center/upload-img";
 
 const SelectBtn = ({ deleteItems, setDeleteItems }: any) => {
   const isSelected = useSelector((state: any) => state?.createCenter?.isSelect);
@@ -43,11 +44,20 @@ const DeleteCard = ({ index, setDeleteItems, item }: any) => {
       onClick={() => handleItemClick(item?.post_id)}
     >
       <div className="grid grid-cols-2 items-center">
-        <img
+        {item?.preview_image?.endsWith(".txt") ? (
+          <UploadImg imgsrc={item?.preview_image} />
+        ) : (
+          <img
+            src={`${imgdomain}/${item?.preview_image}`}
+            className="w-[128px] h-[80px] object-cover object-center rounded-[8px]"
+            alt=""
+          />
+        )}
+        {/* <img
           src={`${imgdomain}/${item?.preview_image}`}
           className="w-[128px] h-[80px] object-cover object-center rounded-[8px]"
           alt=""
-        />
+        /> */}
         <div className="flex flex-col gap-4">
           <p className="text-[14px] text-[#888] truncate">{item?.title}</p>
           <div className="flex justify-between items-center">

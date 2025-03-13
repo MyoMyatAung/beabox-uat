@@ -51,8 +51,8 @@ const UploadFrom = ({ onFormSubmit, uploading, editPost, loading }: any) => {
   };
 
   const handleSubmit = () => {
-    console.log("testing");
-    console.log(privacy, contentTitle, setContentTitle, setHashtags, hashtags);
+    // console.log("testing");
+    // console.log(privacy, contentTitle, setContentTitle, setHashtags, hashtags);
 
     // if (!contentTitle) {
     //   toast.error("Please enter a content title.", {

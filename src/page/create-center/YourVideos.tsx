@@ -13,6 +13,7 @@ import { Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import UploadVideos from "./VideoUpload";
+import { decryptImage } from "@/utils/image-decrypt";
 
 const Loader2 = () => (
   <div className="flex justify-center items-center w-full mt-[200px]">
@@ -75,6 +76,8 @@ const YourVideos = () => {
       setIsActive(config[0].keyword);
     }
   }, [config]);
+
+console.log(data)
 
   // useEffect(() => {
   //   if (!editPost) refetch();
