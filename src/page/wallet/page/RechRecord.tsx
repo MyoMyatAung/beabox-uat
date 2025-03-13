@@ -1,4 +1,7 @@
-import { useGetTransitionHistoryQuery } from "@/store/api/wallet/walletApi";
+import {
+  useGetInviteQuery,
+  useGetTransitionHistoryQuery,
+} from "@/store/api/wallet/walletApi";
 import React, { useEffect, useState } from "react";
 import DatePick from "../comp/DatePick";
 import noTran from "../../../assets/wallet/noTran.svg";
@@ -29,13 +32,14 @@ interface RechRecordProps {}
 const RechRecord: React.FC<RechRecordProps> = ({}) => {
   const location = useLocation();
   const type = location.pathname === "/wallet/withdraw" ? "withdrawl" : "topup";
-  console.log(type);
   const [curMon, setCurMon] = useState("December");
   const [curYr, setCurYr] = useState(2027);
   const [plus, setPlus] = useState(12);
   const [tran, setTran] = useState<any[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
+  const [status, setStatus] = useState([]);
+  const { data: config } = useGetInviteQuery("");
 
   useEffect(() => {
     const now = new Date();
@@ -46,7 +50,7 @@ const RechRecord: React.FC<RechRecordProps> = ({}) => {
   const { data, isLoading } = useGetTransitionHistoryQuery({
     period: `${plus}-${curYr}`,
     type: type,
-    page : page
+    page: page,
   });
 
   useEffect(() => {
@@ -61,34 +65,50 @@ const RechRecord: React.FC<RechRecordProps> = ({}) => {
     }
   }, [data]);
 
+  useEffect(() => {
+    if (config?.data) {
+      setStatus(config?.data?.transaction_status_list);
+    }
+  }, [config]);
+
   const fetchMoreData = () => {
     setPage((prevPage) => prevPage + 1);
   };
 
-  const getStatusClass = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "approved":
-        return {
-          container: "success_state",
-          text: "success_text",
-        };
-      case "pending":
-        return {
-          container: "pending_state",
-          text: "pending_text",
-        };
-      case "rejected":
-        return {
-          container: "failed_state",
-          text: "failed_text",
-        };
-      default:
-        return {
-          container: "default_state",
-          text: "default_text",
-        };
-    }
+  // const getStatusClass = (status: string) => {
+  //   switch (status.toLowerCase()) {
+  //     case "approved":
+  //       return {
+  //         container: "success_state",
+  //         text: "success_text",
+  //       };
+  //     case "pending":
+  //       return {
+  //         container: "pending_state",
+  //         text: "pending_text",
+  //       };
+  //     case "rejected":
+  //       return {
+  //         container: "failed_state",
+  //         text: "failed_text",
+  //       };
+  //     default:
+  //       return {
+  //         container: "default_state",
+  //         text: "default_text",
+  //       };
+  //   }
+  // };
+  const getStatusClass = (keyword: string) => {
+    const statusObj: any = status.find(
+      (s: any) => s.keyword.toLowerCase() === keyword.toLowerCase()
+    );
+    return {
+      backgroundColor: statusObj?.bg_color_code || "#777", // Default grey if not found
+      color: statusObj?.text_color_code || "#FFF", // Default white if not found
+    };
   };
+
   return (
     <div className=" flex justify-center items-center py-[20px]">
       <div className="w-screen xl:w-[800px]">
@@ -159,13 +179,19 @@ const RechRecord: React.FC<RechRecordProps> = ({}) => {
                         </span>
                         {ts.status && (
                           <div
-                            className={`${
-                              getStatusClass(ts.status).container
-                            } px-[12px] py-[2px] flex justify-center items-center`}
+                            style={{
+                              backgroundColor: getStatusClass(ts.status)
+                                .backgroundColor,
+                              color: getStatusClass(ts.status).color,
+                            }}
+                            className="px-[12px] py-[2px] flex justify-center items-center rounded-md  text-[12px] font-[400] leading-[15px]"
                           >
-                            <span className={getStatusClass(ts.status).text}>
-                              {ts.status}
-                            </span>
+                            {/* <span
+                            style={{}}
+                            className=" text-[12px] font-[400] leading-[15px]"
+                          > */}
+                            {ts.status}
+                            {/* </span> */}
                           </div>
                         )}
                       </div>
