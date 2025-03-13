@@ -118,10 +118,14 @@ export const createCenterApi = createApi({
     getConfig: builder.query({
       query: () => convertToSecureUrl(`/config/data`),
     }),
+    getS3: builder.query({
+      query: () => convertToSecureUrl(`/s3/signed-url`),
+    }),
   }),
 });
 
 export const {
+  useGetS3Query,
   useGetConfigQuery,
   useGetPostsQuery,
   useCreatePostsMutation,

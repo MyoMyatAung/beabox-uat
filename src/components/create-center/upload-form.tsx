@@ -151,7 +151,11 @@ const UploadFrom = ({ onFormSubmit, uploading, editPost, loading }: any) => {
           <span className="text-[#CD3EFF]">http://d.23abcd.me</span>
         </p>
       </div>
-      {editPost ? <Info status={editPost?.status} /> : <></>}
+      {editPost ? (
+        <Info status={editPost?.status} reason={editPost?.reason} />
+      ) : (
+        <></>
+      )}
       <div className="mx-5 pb-5 pt-10">
         <div className="flex gap-2 justify-center items-center pb-5">
           {agree ? (

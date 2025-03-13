@@ -15,8 +15,15 @@ const TagBtn = ({
 }: any) => {
   const [selected, setSelected] = useState(false);
 
+  const isInclued = (tag: any) => {
+    hashtags?.filter((item) => item == tag);
+  };
+
+  console.log(isInclued, "tags");
+
   const addTag = (tag: any) => {
     setSelected(true);
+    isInclued(tag);
     setHashtags([...hashtags, tag.trim()]);
   };
   const remove = (indexToRemove: any) => {
@@ -25,9 +32,9 @@ const TagBtn = ({
   };
   return (
     <button
-      onClick={!selected ? () => addTag(tag) : () => remove(tag)}
+      onClick={!hashtags?.includes(tag) ? () => addTag(tag) : () => remove(tag)}
       className={`${
-        selected ? "stagbg" : "bg-[#3A3A3A33]"
+        hashtags?.includes(tag) ? "stagbg" : "bg-[#3A3A3A33]"
       } px-3 py-1 rounded-full`}
     >
       {tag}

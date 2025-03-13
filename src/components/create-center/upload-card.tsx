@@ -19,7 +19,7 @@ const UploadCard = ({ item, config, imgdomain }: any) => {
         <p className="text-[14px] text-[#888] truncate">{item?.title}</p>
         <div className="flex justify-between items-center">
           <button
-            className={`bg-[${bgcolor}] text-[${textcolor}] rounded-full px-2 py-1`}
+            className={`bg-[${bgcolor}] text-[${textcolor}] rounded-full px-2 py-1 capitalize`}
           >
             {item?.status}
           </button>

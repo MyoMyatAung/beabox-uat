@@ -8,7 +8,10 @@ import UploadForm from "@/components/create-center/upload-form";
 import { memo } from "react";
 import toast from "react-hot-toast";
 import { decryptImage } from "@/utils/image-decrypt";
-import { useCreatePostsMutation } from "@/store/api/createCenterApi";
+import {
+  useCreatePostsMutation,
+  useGetS3Query,
+} from "@/store/api/createCenterApi";
 import TopNav from "@/components/create-center/top-nav";
 import selected from "@/assets/createcenter/selected.png";
 import unselected from "@/assets/createcenter/unselected.png";
@@ -24,6 +27,7 @@ const Unselected = () => (
 const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   const [agree, setAgree] = useState(false);
 
+  const { data } = useGetS3Query({});
   const [files, setFiles] = useState(editPost?.files || []);
   const [thumbnail, setThumbnail] = useState(editPost?.preview_image || null);
   const [uploading, setUploading] = useState(false);
@@ -31,6 +35,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   const [videoDuration, setVideoDuration] = useState(
     editPost?.files[0].duration || 0
   );
+  const resData = data?.data?.data;
   const [videoWidth, setVideoWidth] = useState(editPost?.files[0].width || 0);
   const [videoHeight, setVideoHeight] = useState(
     editPost?.files[0].height || 0
@@ -153,7 +158,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
       video.src = URL.createObjectURL(videoFile);
 
       video.onloadeddata = () => {
-        video.currentTime = 1; // Seek to a specific timestamp
+        video.currentTime = 0; // Seek to a specific timestamp
       };
 
       video.onseeked = () => {
@@ -202,9 +207,16 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
     onDrop: onThumbnailDrop,
   });
 
+  const bucket = resData?.bucket;
+  const base_url = resData?.base_url;
+  const region = resData?.region;
+  const accessKeyId = resData?.credentials?.accessKeyId;
+  const secretAccessKey = resData?.credentials?.secretAccessKey;
+  const sessionToken = resData?.credentials?.sessionToken;
+  const directory = resData?.uploadPath;
+
   // Handle form submission from VideoUploadForm
   const handleFormSubmit = async (formData: any) => {
-    console.log(formData, "form data for submit");
     if (files.length === 0) {
       toast.error("Please upload a video.", {
         style: {
@@ -239,20 +251,6 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
     abortController.current = new AbortController(); // Create abort controller
 
     try {
-      // Fetch AWS S3 credentials
-      const response = await axios.get(
-        "http://156.251.244.194:5343/upload.php"
-      );
-      const {
-        accessKeyId,
-        secretAccessKey,
-        sessionToken,
-        region,
-        bucket,
-        publicUrl,
-        directory,
-      } = response.data;
-
       // Initialize S3 client (AWS SDK v2)
       const s3 = new AWS.S3({
         region,
@@ -426,7 +424,6 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   const showModal = () => {
     setIsModalVisible(true);
   };
-
   return (
     <div className="relative w-full h-screen">
       {uploading || successEnd ? (
@@ -473,7 +470,13 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
       {editPost ? (
         <TopNav
           center={"Edit Video"}
-          right={<DeleteDetail seteditPost={seteditPost} refetch={refetch} id={editPost?.post_id} />}
+          right={
+            <DeleteDetail
+              seteditPost={seteditPost}
+              refetch={refetch}
+              id={editPost?.post_id}
+            />
+          }
         />
       ) : (
         <TopNav center={"Upload Video"} />
