@@ -13,20 +13,36 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import UploadImg from "@/components/create-center/upload-img";
 
-const SelectBtn = ({ deleteItems, setDeleteItems }: any) => {
+const SelectBtn = ({
+  deleteItems,
+  setDeleteItems,
+  multiRestoreHandler,
+}: any) => {
   const isSelected = useSelector((state: any) => state?.createCenter?.isSelect);
-
+  const cancelHandler = () => setDeleteItems([]);
+  // console.log(deleteItems, "di");
   return (
-    <button
-      // onClick={() => deleteItems?.length ?}
-      className={`text-[16px] bg-[#FFFFFF1F] px-2 py-1 rounded-full`}
-    >
-      {deleteItems?.length ? "Cancel" : "Select"}
-    </button>
+    <>
+      {deleteItems?.length ? (
+        <button
+          onClick={() => cancelHandler()}
+          className={`text-[16px] bg-[#FFFFFF1F] px-2 py-1 rounded-full`}
+        >
+          Cancel
+        </button>
+      ) : (
+        <button
+          onClick={() => multiRestoreHandler()}
+          className={`text-[16px] bg-[#FFFFFF1F] px-2 py-1 rounded-full`}
+        >
+          Select
+        </button>
+      )}
+    </>
   );
 };
 
-const DeleteCard = ({ index, setDeleteItems, item }: any) => {
+const DeleteCard = ({ index, setDeleteItems, item, deleteItems }: any) => {
   const { data: newData } = useGetConfigQuery({});
   const imgdomain = newData?.data?.post_domain?.image;
   const [selected, setSelected] = useState(false);
@@ -36,11 +52,13 @@ const DeleteCard = ({ index, setDeleteItems, item }: any) => {
         ? prevItems.filter((item: any) => item !== index)
         : [...prevItems, index]
     );
-    setSelected(!selected);
+    // setSelected(!selected);
   };
   return (
     <div
-      className={`px-5 ${selected ? "bg-[#FFFFFF0D]" : ""} py-2 `}
+      className={`px-5 ${
+        deleteItems?.includes(item?.post_id) ? "bg-[#FFFFFF0D]" : ""
+      } py-2 `}
       onClick={() => handleItemClick(item?.post_id)}
     >
       <div className="grid grid-cols-2 items-center">
@@ -61,8 +79,8 @@ const DeleteCard = ({ index, setDeleteItems, item }: any) => {
         <div className="flex flex-col gap-4">
           <p className="text-[14px] text-[#888] truncate">{item?.title}</p>
           <div className="flex justify-between items-center">
-            <button className="bg-[#00FFC31F] text-[#00FFC3] rounded-full px-2 py-1">
-              {item?.status}
+            <button className="bg-[#FFFFFF1F] text-[#fff] rounded-full px-2 py-1 capitalize">
+              {item?.status?.replace("_", " ")}
             </button>
             <p className="text-[10px] text-[#bbb]">{item?.time_ago}</p>
           </div>
@@ -73,7 +91,7 @@ const DeleteCard = ({ index, setDeleteItems, item }: any) => {
 };
 
 const Recycle = () => {
-  const [deleteItems, setDeleteItems] = useState([]);
+  const [deleteItems, setDeleteItems] = useState<any>([]);
   const [page, setPage] = useState(1);
   const { data, isLoading, refetch } = useGetRecyclePostsQuery(page);
   const [restorePost, { data: restoredata, isLoading: restoreLoading }] =
@@ -87,6 +105,13 @@ const Recycle = () => {
     await restorePost({ id: deleteItems, type: type });
     setDeleteItems([]);
   };
+
+  console.log();
+
+  const multiRestoreHandler = () => {
+    if (posts) setDeleteItems([...posts?.map((item: any) => item?.post_id)]);
+  };
+
   const postDeleteHandler = () => {
     deleteItems?.map(async (item: any) => {
       await deletePost({ id: item });
@@ -135,6 +160,7 @@ const Recycle = () => {
               <SelectBtn
                 deleteItems={deleteItems}
                 setDeleteItems={setDeleteItems}
+                multiRestoreHandler={multiRestoreHandler}
               />
             }
           />
@@ -145,6 +171,7 @@ const Recycle = () => {
               key={index}
               index={index}
               setDeleteItems={setDeleteItems}
+              deleteItems={deleteItems}
               item={item}
             />
           ))}
