@@ -66,7 +66,7 @@ const TranHist: React.FC = () => {
 
   const getStatusClass = (status: string) => {
     switch (status.toLowerCase()) {
-      case "success":
+      case "approved":
         return {
           container: "success_state",
           text: "success_text",
@@ -76,7 +76,7 @@ const TranHist: React.FC = () => {
           container: "pending_state",
           text: "pending_text",
         };
-      case "failed":
+      case "rejected":
         return {
           container: "failed_state",
           text: "failed_text",

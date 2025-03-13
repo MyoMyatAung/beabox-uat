@@ -144,6 +144,7 @@ const DatePick: React.FC<any> = ({
               <button
                 onClick={() => {
                   const now = new Date();
+                  setCurMon(defaultMonth)
                   setCurYr(now.getFullYear()); // Get current year
                   setplus(now.getMonth() + 1);
                 }}
