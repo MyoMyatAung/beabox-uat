@@ -1,4 +1,9 @@
-import { Link } from "react-router-dom";
+import { paths } from "@/routes/paths";
+import { Video } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import upload from "@/assets/createcenter/upload.svg";
+import { useDispatch, useSelector } from "react-redux";
+import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 
 const TopNavbar = ({
   currentTab,
@@ -7,6 +12,10 @@ const TopNavbar = ({
   currentTab: number;
   onTabClick: (tab: number) => void;
 }) => {
+  const isOpen = useSelector((state: any) => state.profile.isDrawerOpen);
+  const user = useSelector((state: any) => state?.persist?.user) || "";
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const TABS = [
     { text: "关注", id: 0 },
     { text: "探索", id: 1 },
@@ -15,8 +24,18 @@ const TopNavbar = ({
 
   return (
     <div className="absolute top-5 left-0 px-5 right-0 flex justify-between items-center z-[9999] max-w-[480px] mx-auto">
-      <div></div>
-      <div className="flex gap-2 ml-[24px] items-center text-white">
+      <div
+        onClick={
+          user?.token
+            ? () => navigate(paths.creator_upload)
+            : () => dispatch(setIsDrawerOpen(true))
+        }
+        className="flex items-center gap-1"
+      >
+        <img src={upload} alt="" />
+        <p className="text-[16px]">创作</p>
+      </div>
+      <div className="flex gap-2 items-center text-white mr-5">
         {TABS.map((tab, index) => (
           <button
             key={index}
@@ -27,8 +46,8 @@ const TopNavbar = ({
             } nav_text`}
             onClick={() => onTabClick(tab.id)}
           >
-            <div className="mb-3 capitalize">
-              {tab.text === "for_you" ? "For You" : tab.text}
+            <div className="capitalize">
+              {tab.text === "for_you" ? "For Y mr-5ou" : tab.text}
             </div>
             {currentTab === tab.id && (
               <div className="w-[28px] h-[2px] bg-white"></div>

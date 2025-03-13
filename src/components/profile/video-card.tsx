@@ -7,7 +7,7 @@ import { FaHeart } from "react-icons/fa";
 import { FaEarthAmericas } from "react-icons/fa6";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-const decryptImage = (arrayBuffer, key = 0x12, decryptSize = 4096) => {
+const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
   const data = new Uint8Array(arrayBuffer);
   const maxSize = Math.min(decryptSize, data.length);
   for (let i = 0; i < maxSize; i++) {
