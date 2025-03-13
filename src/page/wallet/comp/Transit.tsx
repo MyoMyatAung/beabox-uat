@@ -23,7 +23,7 @@ const Transit: React.FC<TransitProps> = ({}) => {
   }, [data]);
   const getStatusClass = (status: string) => {
     switch (status.toLowerCase()) {
-      case "success":
+      case "approved":
         return {
           container: "success_state",
           text: "success_text",
@@ -33,7 +33,7 @@ const Transit: React.FC<TransitProps> = ({}) => {
           container: "pending_state",
           text: "pending_text",
         };
-      case "failed":
+      case "rejected":
         return {
           container: "failed_state",
           text: "failed_text",
