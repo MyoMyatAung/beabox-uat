@@ -115,12 +115,20 @@ const WithDetails: React.FC<WithDetailsProps> = ({
             value={amount}
             // onChange={(e) => setAmount(e.target.value)}
             onChange={handleAmountChange}
-            placeholder={`请输入金额（ ${dollar_withdraw_rate?.min_coins} 的倍数）`}
+            placeholder={`请输入金额（ ${
+              dollar_withdraw_rate?.min_coins
+                ? dollar_withdraw_rate.min_coins
+                : "100"
+            } 的倍数`}
             className="withdraw_input bg-transparent focus:outline-none pt-[20px] pb-[10px] w-full text-white text-[16px] font-[400] leading-[20px]"
             type="number"
           />
           <p className="py-[5px] text-[#777] font-[300] text-[14px]">
-            {dollar_withdraw_rate?.coins} 硬币 = {dollar_withdraw_rate?.dollars}
+            {dollar_withdraw_rate?.coins ? dollar_withdraw_rate?.coins : "100"}{" "}
+            硬币 ={" "}
+            {dollar_withdraw_rate?.dollars
+              ? dollar_withdraw_rate?.dollars
+              : "1"}
             $
             <br />
             {/* Expect to receive = --- */}
