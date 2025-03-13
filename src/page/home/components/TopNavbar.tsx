@@ -2,6 +2,8 @@ import { paths } from "@/routes/paths";
 import { Video } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import upload from "@/assets/createcenter/upload.svg";
+import { useDispatch, useSelector } from "react-redux";
+import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 
 const TopNavbar = ({
   currentTab,
@@ -10,6 +12,9 @@ const TopNavbar = ({
   currentTab: number;
   onTabClick: (tab: number) => void;
 }) => {
+  const isOpen = useSelector((state: any) => state.profile.isDrawerOpen);
+  const user = useSelector((state: any) => state?.persist?.user) || "";
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const TABS = [
     { text: "关注", id: 0 },
@@ -20,7 +25,11 @@ const TopNavbar = ({
   return (
     <div className="absolute top-5 left-0 px-5 right-0 flex justify-between items-center z-[9999] max-w-[480px] mx-auto">
       <div
-        onClick={() => navigate(paths.creator_upload)}
+        onClick={
+          user?.toke
+            ? () => navigate(paths.creator_upload)
+            : () => dispatch(setIsDrawerOpen(true))
+        }
         className="flex items-center gap-1"
       >
         <img src={upload} alt="" />

@@ -116,7 +116,7 @@ const LoginForm = ({ setIsOpen }: any) => {
                 <FormControl>
                   <>
                     <label htmlFor="" className="text-[14px] text-[#888]">
-                      密码
+                    用户名
                     </label>
                     <div className="relative">
                       <input
@@ -150,7 +150,7 @@ const LoginForm = ({ setIsOpen }: any) => {
               <FormItem className="relative">
                 <FormControl>
                   <>
-                    <label htmlFor="" className="text-[14px] text-[#888]">
+                    <label htmlFor="" className="text-[14px] text-[#777]">
                       密码
                     </label>
                     <div className="relative">
@@ -275,7 +275,7 @@ const LoginForm = ({ setIsOpen }: any) => {
             </DialogContent>
           </Dialog>
           <div className="w-full flex flex-col items-center">
-            <p className="text-[14px] text-[#333333] text-center mb-5">或者</p>
+            <p className="text-[14px] text-[#888] text-center mb-5">或者</p>
             <>
               <Button
                 onClick={(e) => {
