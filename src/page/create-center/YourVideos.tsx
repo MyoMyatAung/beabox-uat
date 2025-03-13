@@ -25,7 +25,7 @@ const YourVideos = () => {
   const navigate = useNavigate();
   const [isActive, setIsActive] = useState("all");
   const [page, setPage] = useState(1);
-  const { data: newData } = useGetConfigQuery({});
+  const { data: newData, isLoading: cfloading } = useGetConfigQuery({});
   const config = newData?.data?.creator_center_post_filter;
   const imgdomain = newData?.data?.post_domain?.image;
   // const { data, isLoading, refetch } = useGetPostListQuery("");
@@ -77,8 +77,6 @@ const YourVideos = () => {
     }
   }, [config]);
 
-console.log(data)
-
   // useEffect(() => {
   //   if (!editPost) refetch();
   // }, [editPost]);
@@ -94,7 +92,7 @@ console.log(data)
   }
   return (
     <div className="">
-      {isLoading && page === 1 ? (
+      {isLoading && cfloading && page === 1 ? (
         <Loader />
       ) : (
         <div>

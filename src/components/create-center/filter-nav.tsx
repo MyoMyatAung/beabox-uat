@@ -1,4 +1,4 @@
-import { SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal, X } from "lucide-react";
 import {
   Drawer,
   DrawerContent,
@@ -26,7 +26,10 @@ const FilterNav = ({
 }: any) => {
   const [selectedTitle, setSelectedTitle] = useState("All Videos");
   const [isOpen, setIsOpen] = useState(false);
-
+  const selectedColor = config?.find(
+    (item: any) => item?.title == selectedTitle && item?.text_color_code
+  );
+  console.log(selectedColor, "sc");
   const selectedHandler = (title: any) => {
     setIsActive(title);
     setPage(1);
@@ -36,9 +39,35 @@ const FilterNav = ({
     setIsOpen(false);
   };
 
+  const xHandler = () => {
+    if (config) {
+      setIsActive(config[0]?.keyword);
+      setSelectedTitle(config[0]?.title);
+      setPage(1);
+      setPosts([]);
+      setHasMore(true);
+      refetch();
+      setIsOpen(false);
+    }
+  };
+
   return (
     <div className="flex justify-between items-center px-5">
-      <p className="text-[16px]">{selectedTitle}</p>
+      <p
+        className={`text-[16px] flex items-center gap-2 text-[${selectedColor?.text_color_code}]`}
+      >
+        {selectedTitle}
+        {isActive === config[0]?.keyword ? (
+          <></>
+        ) : (
+          <button
+            onClick={xHandler}
+            className="w-[18px] h-[18px] bg-[#505050] rounded-full text-white flex justify-center items-center"
+          >
+            <X size={14} />
+          </button>
+        )}
+      </p>
       <Drawer open={isOpen} onOpenChange={setIsOpen}>
         <DrawerTrigger asChild>
           <SlidersHorizontal size={18} />
@@ -55,7 +84,7 @@ const FilterNav = ({
                     }}
                     className="flex justify-between items-center "
                   >
-                    <p className="text-[16px]">{item?.title}</p>
+                    <p className={`text-[16px]`}>{item?.title}</p>
                     {isActive == item?.keyword ? <Selected /> : <Unselected />}
                   </div>
                   {index == 5 ? (

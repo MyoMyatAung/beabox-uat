@@ -20,14 +20,27 @@ const Info = ({ status, reason }: any) => {
     refetch();
   }, [status]);
   return (
-    <div className={`bg-[${bg_color_code}] m-5 p-3 rounded-[12px]`}>
+    <div
+      style={{
+        background: bg_color_code,
+      }}
+      className={`m-5 p-3 rounded-[12px]`}
+    >
       <p>
         <span
-          className={`text-[${text_color_code}] text-[18px] capitalize font-semibold`}
+          style={{
+            color: text_color_code,
+          }}
+          className={`text-[18px] capitalize font-semibold`}
         >
           {status} -
         </span>
-        <span className={`text-[16px] text-[${text_color_code}]`}>
+        <span
+          style={{
+            color: text_color_code,
+          }}
+          className={`text-[16px]`}
+        >
           {reason}
         </span>
       </p>
