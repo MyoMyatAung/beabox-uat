@@ -44,9 +44,9 @@ const CountdownCircle: React.FC<CountdownCircleProps> = ({ countNumber }) => {
         style={{
           background: `conic-gradient(
             transparent 0deg,
+            #5151fc ${progress * 3.6}deg,
             transparent ${progress * 3.6}deg,
-            rgba(22, 19, 28, 0.8) ${progress * 3.6}deg,
-            rgba(22, 19, 28, 0.8) 360deg
+            transparent 360deg
           )`,
           transform: "rotate(0deg)",
         }}

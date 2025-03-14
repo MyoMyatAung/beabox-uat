@@ -122,7 +122,6 @@ const Player = ({
       
       // Save back to local storage
       localStorage.setItem(VIDEO_POSITIONS_KEY, JSON.stringify(positions));
-      console.log(`Saved position ${position} for video ${post_id}`);
     } catch (error) {
       console.error('Failed to save video position:', error);
     }
@@ -826,7 +825,6 @@ const Player = ({
       if (savedPosition && artPlayerInstanceRef.current) {
         // Set the player to the saved position
         artPlayerInstanceRef.current.currentTime = savedPosition;
-        console.log(`Restored position ${savedPosition} for video ${post_id}`);
       }
       
       // Start periodic position saving
