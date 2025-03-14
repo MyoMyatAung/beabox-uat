@@ -13,6 +13,7 @@ import { showToast } from "../services/errorSlice";
 import VideoSidebar1 from "./VideoSidebar1";
 
 const VideoContainer1 = ({
+  refetchUser,
   video,
   setWidth,
   setHeight,
@@ -34,6 +35,7 @@ const VideoContainer1 = ({
   setShowHeart,
   coin,
 }: {
+  refetchUser: any;
   video: any;
   setWidth: any;
   setHeight: any;
@@ -80,7 +82,7 @@ const VideoContainer1 = ({
 
     const handleLikeClick = () => {
       if (user?.token) {
-        if (coin > coin_per_like) {
+        if (coin >= coin_per_like) {
           setLikeCount(+likeCount + 1);
           setCountNumber((prev: any) => prev + 1);
           setShowHeart(true);
@@ -143,6 +145,7 @@ const VideoContainer1 = ({
                   })
                 );
               }
+              refetchUser();
               setShowHeart(false);
               setCountNumber(0); // Reset pending likes after a successful API call
             } catch (error) {

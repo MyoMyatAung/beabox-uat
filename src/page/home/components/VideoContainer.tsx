@@ -29,6 +29,7 @@ const VideoContainer = ({
   indexRef,
   videoData,
   setShowHeart,
+  refetchUser,
   coin,
 }: {
   video: any;
@@ -45,6 +46,7 @@ const VideoContainer = ({
   height: any;
   container: any;
   abortControllerRef: any;
+  refetchUser: any;
   indexRef: any;
   videoData: any;
   setShowHeart: any;
@@ -75,7 +77,7 @@ const VideoContainer = ({
 
     const handleLikeClick = () => {
       if (user?.token) {
-        if (coin > coin_per_like) {
+        if (coin >= coin_per_like) {
           setLikeCount(+likeCount + 1);
           setCountNumber((prev: any) => prev + 1);
           setShowHeart(true);
@@ -138,6 +140,7 @@ const VideoContainer = ({
                   })
                 );
               }
+              refetchUser();
               setShowHeart(false);
               setCountNumber(0); // Reset pending likes after a successful API call
             } catch (error) {

@@ -21,6 +21,7 @@ import sc from "../../../assets/explore/sc.svg";
 import backButton from "../../../assets/backButton.svg";
 import ShowHeartCom from "@/page/home/components/ShowHeartCom";
 import CountdownCircle from "@/page/home/components/CountdownCircle";
+import { useGetMyOwnProfileQuery } from "@/store/api/profileApi";
 
 interface VodDetailsProps {
   // setshow: (value: boolean) => void;
@@ -36,7 +37,9 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
     files?.post_id
   );
   const user = useSelector((state: any) => state?.persist?.user);
-  const profile = useSelector((state: any) => state?.persist?.profileData);
+  // const profile = useSelector((state: any) => state?.persist?.profileData);
+  const { data: user1, refetch: refetchUser } = useGetMyOwnProfileQuery({});
+  const profile = user1?.data;
   const [showFullTitle, setShowFullTitle] = useState(false);
   const [countNumber, setCountNumber] = useState(0); // New state for counting clicks
   const [countdown, setCountdown] = useState(3);
@@ -193,6 +196,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
           data-post-id={files.post_id}
         >
           <VideoContainer
+            refetchUser={refetchUser}
             videoData={videoData}
             indexRef={indexRef}
             abortControllerRef={abortControllerRef}

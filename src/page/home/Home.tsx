@@ -32,6 +32,7 @@ import {
 import { setStart } from "./services/startSlice";
 import CircleCountDown from "./components/CircleCountDown";
 import CountdownCircle from "./components/CountdownCircle";
+import { useGetMyOwnProfileQuery } from "@/store/api/profileApi";
 
 const Home = () => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
@@ -46,13 +47,15 @@ const Home = () => {
   );
   const { page } = useSelector((state: any) => state.pageSlice);
 
+  const { data: profile, refetch: refetchUser } = useGetMyOwnProfileQuery({});
+
   //const [currentActivePost, setCurrentActivePost] = useState<any>(null); // Active post ID
 
   const [countdown, setCountdown] = useState(3);
   const [countNumber, setCountNumber] = useState(0); // New state for counting clicks
   const [topmovies, setTopMovies] = useState(false);
   const currentTab = useSelector((state: any) => state.home.currentTab);
-  const user = useSelector((state: any) => state?.persist?.profileData);
+  //const user = useSelector((state: any) => state?.persist?.profileData);
   const [refresh, setRefresh] = useState(false);
   const dispatch = useDispatch();
   const [hearts, setHearts] = useState<number[]>([]); // Manage heart IDs
@@ -70,6 +73,7 @@ const Home = () => {
   const swiperRef = useRef<any>(null);
 
   const { data: config } = useGetConfigQuery({});
+  const user = profile?.data;
 
   // Fetch data based on the current tab
   const {
@@ -466,6 +470,7 @@ const Home = () => {
                           data-post-id={video?.post_id} // Add post ID to the container
                         >
                           <VideoContainer
+                            refetchUser={refetchUser}
                             videoData={videoData}
                             indexRef={indexRef}
                             abortControllerRef={abortControllerRef}
@@ -604,6 +609,7 @@ const Home = () => {
                           data-post-id={video.post_id} // Add post ID to the container
                         >
                           <VideoContainer
+                            refetchUser={refetchUser}
                             videoData={videoData}
                             indexRef={indexRef}
                             abortControllerRef={abortControllerRef}

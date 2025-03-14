@@ -17,6 +17,7 @@ import sc from "../../../assets/explore/sc.svg";
 import VideoContainer1 from "./VideoContainer1";
 import ShowHeartCom from "./ShowHeartCom";
 import CountdownCircle from "./CountdownCircle";
+import { useGetMyOwnProfileQuery } from "@/store/api/profileApi";
 
 const VideoFeed = ({
   videos,
@@ -41,7 +42,9 @@ const VideoFeed = ({
   const [topmovies, setTopMovies] = useState(false);
   const { data: config } = useGetConfigQuery({});
   const user = useSelector((state: any) => state.persist.user);
-  const profile = useSelector((state: any) => state.persist.profileData);
+  // const profile = useSelector((state: any) => state.persist.profileData);
+  const { data: user1, refetch: refetchUser } = useGetMyOwnProfileQuery({});
+  const profile = user1?.data;
 
   const [postComment] = usePostCommentMutation();
 
@@ -304,6 +307,7 @@ const VideoFeed = ({
             data-post-id={video.post_id} // Add post ID to the container
           >
             <VideoContainer1
+              refetchUser={refetchUser}
               setVideosData={setVideos}
               setrenderVideos={setVideosToRender}
               videoData={videoData}
