@@ -8,26 +8,27 @@ import {
   useGetTopCreatorQuery,
 } from "@/store/api/createCenterApi";
 import TopRankCard2 from "./top-rank-card2";
+import topgp from "@/assets/createcenter/topgp.png";
 
 const ViewAll = () => {
   const navigate = useNavigate();
-  const [keyword, setKeyword] = useState("");
-  const [isload, setIsload] = useState(false);
-  const { data, isLoading, refetch } = useGetTopCreatorQuery(keyword);
-  const { data: newData } = useGetConfigQuery({});
-  const tags = newData?.data?.creator_center_ranking_filter;
-  console.log(tags);
-  let top3 = data?.data?.slice(0, 3);
-  let otherrank = data?.data?.slice(3);
+  // const [keyword, setKeyword] = useState("");
+  // const [isload, setIsload] = useState(false);
+  // const { data, isLoading, refetch } = useGetTopCreatorQuery(keyword);
+  // const { data: newData } = useGetConfigQuery({});
+  // const tags = newData?.data?.creator_center_ranking_filter;
+  // console.log(tags);
+  // let top3 = data?.data?.slice(0, 3);
+  // let otherrank = data?.data?.slice(3);
 
-  useEffect(() => {
-    if (tags) setKeyword(tags[0]?.keyword);
-  }, [newData, tags]);
+  // useEffect(() => {
+  //   if (tags) setKeyword(tags[0]?.keyword);
+  // }, [newData, tags]);
 
-  useEffect(() => {
-    refetch();
-    setIsload(false);
-  }, [refetch, keyword]);
+  // useEffect(() => {
+  //   refetch();
+  //   setIsload(false);
+  // }, [refetch, keyword]);
 
   return (
     <div
@@ -50,21 +51,7 @@ const ViewAll = () => {
         </p>
       </div>
       <div className="w-full px-2 z-50">
-        {top3?.length ? (
-          <div className=" grid grid-cols-3 w-full justify-center gap-1">
-            <div className="mt-3">
-              <TopRankCard2 rank={2} data={top3[1]} />
-            </div>
-            <div className="">
-              <TopRankCard2 rank={1} data={top3[0]} />
-            </div>
-            <div className="mt-3">
-              <TopRankCard2 rank={3} data={top3[2]} />
-            </div>
-          </div>
-        ) : (
-          <></>
-        )}
+        <img src={topgp} className="object-contain" alt="" />
       </div>
       <div className="w-full px-2 z-50 mx-auto pb-2">
         <p className="text-[#FFFFFF99] text-[12px] z-50">

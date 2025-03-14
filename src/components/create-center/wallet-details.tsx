@@ -8,7 +8,7 @@ const WalletDetails = () => {
   console.log(data);
   const navigate = useNavigate();
   return (
-    <section className="bg-[#24222C] w-full h-[246px] flex justify-between items-center flex-col rounded-[20px] p-3">
+    <section className="bg-[#24222C] w-full min-h-[246px] flex justify-between items-center flex-col rounded-[20px] p-3">
       <div className=" flex flex-col items-center justify-center mt-4">
         <p className="text-[18px]">
           {data?.data?.likes_sum_count ? data?.data?.likes_sum_count : 0}
