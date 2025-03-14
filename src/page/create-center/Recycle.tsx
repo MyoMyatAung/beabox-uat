@@ -12,15 +12,14 @@ import {
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import UploadImg from "@/components/create-center/upload-img";
+import RecyclePopup from "@/components/create-center/recycle-popup";
 
 const SelectBtn = ({
   deleteItems,
   setDeleteItems,
   multiRestoreHandler,
 }: any) => {
-  const isSelected = useSelector((state: any) => state?.createCenter?.isSelect);
   const cancelHandler = () => setDeleteItems([]);
-  // console.log(deleteItems, "di");
   return (
     <>
       {deleteItems?.length ? (
@@ -92,6 +91,9 @@ const DeleteCard = ({ index, setDeleteItems, item, deleteItems }: any) => {
 
 const Recycle = () => {
   const [deleteItems, setDeleteItems] = useState<any>([]);
+  const [show, setShow] = useState(false);
+  const [action, setAction] = useState("");
+
   const [page, setPage] = useState(1);
   const { data, isLoading, refetch } = useGetRecyclePostsQuery(page);
   const [restorePost, { data: restoredata, isLoading: restoreLoading }] =
@@ -104,9 +106,8 @@ const Recycle = () => {
   const postRestoreHandler = async (type: any) => {
     await restorePost({ id: deleteItems, type: type });
     setDeleteItems([]);
+    setShow(false);
   };
-
-  console.log();
 
   const multiRestoreHandler = () => {
     if (posts) setDeleteItems([...posts?.map((item: any) => item?.post_id)]);
@@ -117,6 +118,7 @@ const Recycle = () => {
       await deletePost({ id: item });
     });
     setDeleteItems([]);
+    setShow(false);
   };
 
   useEffect(() => {
@@ -141,10 +143,19 @@ const Recycle = () => {
     }
   };
 
-  console.log(restoreLoading, deleteLoading);
   if (isLoading && page == 1) return <Loader />;
   return (
     <div className="relative">
+      {show ? (
+        <RecyclePopup
+          action={action}
+          setShow={setShow}
+          postDeleteHandler={postDeleteHandler}
+          postRestoreHandler={postRestoreHandler}
+        />
+      ) : (
+        <></>
+      )}
       <>
         {restoreLoading || deleteLoading ? (
           <div className="w-full bg-[#000000A3] h-screen fixed top-0 left-0 flex justify-center items-center z-50">
@@ -185,13 +196,21 @@ const Recycle = () => {
           <div className="fixed bottom-0 py-5 w-full z-50 bg-[#16131C]">
             <div className="flex gap-4 mx-5 ">
               <button
-                onClick={() => postDeleteHandler()}
+                onClick={() => {
+                  setAction("delete");
+                  setShow(true);
+                }}
+                // onClick={() => postDeleteHandler()}
                 className="text-[16px] bg-[#C2303333] py-3 w-full text-[#C23033] rounded-[16px]"
               >
                 Delete
               </button>
               <button
-                onClick={() => postRestoreHandler("restore")}
+                onClick={() => {
+                  setAction("restore");
+                  setShow(true);
+                }}
+                // onClick={() => postRestoreHandler("restore")}
                 className="text-[16px] bg-[#FFFFFF1F] py-3 w-full text-[#fff] rounded-[16px]"
               >
                 Restore
