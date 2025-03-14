@@ -335,26 +335,42 @@ const Profile = () => {
         <h1 className="text-[12px]  text-[#888] mb-5 z-[1900] relative">
           {user?.token ? (
             <>
-              {data?.data?.hide_bio === "on" ? (
+              {data?.data?.hide_bio?.length ? (
                 <div className="text-[12px] xs:w-[100px] md:w-[340px] overflow-hidden break-words px-5  text-[#888] mb-5">
                   {data?.data?.bio}
                 </div>
               ) : (
-                <>
-                  {data?.data?.hide_bio?.length ? (
-                    <></>
-                  ) : (
-                    <Link
-                      to={paths.add_bio}
-                      className="text-[12px] ml-5 text-[#FFFFFFCC] bg-[#FFFFFF14] px-2 py-1 w-[91px] text-center rounded-full"
-                    >
-                      + 个人简介
-                    </Link>
-                  )}
-                </>
+                <Link
+                  to={paths.add_bio}
+                  className="text-[12px] ml-5 text-[#FFFFFFCC] bg-[#FFFFFF14] px-2 py-1 w-[91px] text-center rounded-full"
+                >
+                  + 个人简介
+                </Link>
               )}
             </>
           ) : (
+            // <>
+            //   {data?.data?.hide_bio === "on" ? (
+            //     <div className="text-[12px] xs:w-[100px] md:w-[340px] overflow-hidden break-words px-5  text-[#888] mb-5">
+            //       {data?.data?.bio}
+            //     </div>
+            //   ) : (
+            //     <>
+            //       {data?.data?.hide_bio?.length ? (
+            //         <div className="text-[12px] xs:w-[100px] md:w-[340px] overflow-hidden break-words px-5  text-[#888] mb-5">
+            //           {data?.data?.bio}
+            //         </div>
+            //       ) : (
+            //         <Link
+            //           to={paths.add_bio}
+            //           className="text-[12px] ml-5 text-[#FFFFFFCC] bg-[#FFFFFF14] px-2 py-1 w-[91px] text-center rounded-full"
+            //         >
+            //           + 个人简介
+            //         </Link>
+            //       )}
+            //     </>
+            //   )}
+            // </>
             <></>
           )}
         </h1>
