@@ -74,6 +74,10 @@ const VideoContainer1 = ({
 
   const [coins, setCoins] = useState(coin);
 
+  useEffect(() => {
+    setCoins(coin);
+  }, [coin]);
+
   // Add state to track if this video is active
   const [isActive, setIsActive] = useState(false);
 

@@ -43,7 +43,12 @@ const VideoFeed = ({
   const { data: config } = useGetConfigQuery({});
   const user = useSelector((state: any) => state.persist.user);
   // const profile = useSelector((state: any) => state.persist.profileData);
-  const { data: user1, refetch: refetchUser } = useGetMyOwnProfileQuery({});
+  // const { data: user1, refetch: refetchUser } = useGetMyOwnProfileQuery({});
+
+  const { data: user1, refetch: refetchUser } = useGetMyOwnProfileQuery("", {
+    skip: !user,
+  });
+
   const profile = user1?.data;
 
   const [postComment] = usePostCommentMutation();

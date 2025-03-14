@@ -32,6 +32,8 @@ const Balance: React.FC<BalanceProps> = () => {
     setIsHidden((prev) => !prev);
   };
 
+  console.log(user);
+
   return (
     <div className="p-[20px]">
       <div className="balance_box p-[22px] flex flex-col gap-[12px]">

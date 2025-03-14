@@ -71,6 +71,10 @@ const VideoContainer = ({
   // Add state to track if this video is active
   const [isActive, setIsActive] = useState(false);
 
+  useEffect(() => {
+    setCoins(coin);
+  }, [coin]);
+
   const coin_per_like = config?.data?.coin_per_like;
 
   // const handleLike = (() => {
