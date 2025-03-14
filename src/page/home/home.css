@@ -625,7 +625,7 @@ html {
 .nav_text {
   color: var(--White, #fff);
   font-family: cnFont, sans-serif;
-  font-size: 16px;
+  font-size: 20px;
   font-style: normal;
   line-height: 20px; /* 125% */
   letter-spacing: 0.25px;
