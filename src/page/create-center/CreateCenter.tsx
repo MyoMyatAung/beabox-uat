@@ -12,7 +12,7 @@ const CreateCenter = () => {
     <>
       <TopNav center={"Creator Centre"} />
       <YourVideos />
-      <div className="flex items-center w-full justify-center p-5 gap-3">
+      <div className="grid grid-cols-2 items-center w-full justify-center p-5 gap-3">
         <div className="flex-1">
           <ViewAll />
         </div>
