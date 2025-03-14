@@ -27,7 +27,7 @@ const TopNavbar = ({
       <div
         onClick={
           user?.token
-            ? () => navigate(paths.creator_upload)
+            ? () => navigate(paths.creator_upload_video)
             : () => dispatch(setIsDrawerOpen(true))
         }
         className="flex items-center gap-1"
