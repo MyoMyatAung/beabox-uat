@@ -64,13 +64,13 @@ const Privacy = ({ privacy, setPrivacy }: any) => {
               </div>
               {/* private  */}
               <div
-                onClick={() => setPrivacy("private")}
+                onClick={() => setPrivacy("onlyme")}
                 className="flex items-center justify-between bg-[#FFFFFF0A] p-3 rounded-xl"
               >
                 <div className="">
                   <p
                     className={`text-[14px] ${
-                      privacy == "private" ? "text-white" : "text-[#888]"
+                      privacy == "onlyme" ? "text-white" : "text-[#888]"
                     }`}
                   >
                     {/* Private */}
@@ -83,7 +83,7 @@ const Privacy = ({ privacy, setPrivacy }: any) => {
                 </div>
                 <div
                   className={`w-3 h-3 ${
-                    privacy == "private" ? "bg-[#CD3EFF]" : "bg-[#FFFFFF52]"
+                    privacy == "onlyme" ? "bg-[#CD3EFF]" : "bg-[#FFFFFF52]"
                   } rounded-full`}
                 ></div>
               </div>
