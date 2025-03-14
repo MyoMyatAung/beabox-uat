@@ -12,11 +12,18 @@ const CreateCenter = () => {
     <>
       <TopNav center={"Creator Centre"} />
       <YourVideos />
-      <WalletDetails />
-      <ViewAll />
+      <div className="grid grid-cols-2 items-center w-full justify-center p-5 gap-3">
+        <div className="flex-1">
+          <ViewAll />
+        </div>
+        <div className="flex-1">
+          <WalletDetails />
+        </div>
+      </div>
+      {/* <ViewAll />
       <div className="mt-5 rounded-full mx-5 pb-10">
         <img src={tips} className="w-full" alt="" />
-      </div>
+      </div> */}
     </>
   );
 };
