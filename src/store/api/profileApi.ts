@@ -127,7 +127,7 @@ export const profileApi = createApi({
       }),
     }),
     changePrivateProfileStats: builder.mutation({
-      query: ({ status }) => ({
+      query: (status) => ({
         url: convertToSecureUrl(`/profile/private-profile-status`),
         method: "POST",
         body: convertToSecurePayload({
