@@ -1,11 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
-import axios from "axios";
 import AWS from "aws-sdk"; // Use AWS SDK v2
-// import VideoUploadForm from "./VideoUploadForm"; // Import the new form component
-// import UploadProgress from "./UploadProgress";
 import UploadForm from "@/components/create-center/upload-form";
-import { memo } from "react";
 import toast from "react-hot-toast";
 import { decryptImage } from "@/utils/image-decrypt";
 import {
@@ -13,20 +9,10 @@ import {
   useGetS3Query,
 } from "@/store/api/createCenterApi";
 import TopNav from "@/components/create-center/top-nav";
-import selected from "@/assets/createcenter/selected.png";
-import unselected from "@/assets/createcenter/unselected.png";
 import UploadProgress from "@/components/create-center/upload-progress";
 import DeleteDetail from "@/components/create-center/delete-detail";
-const Selected = () => (
-  <img className="w-[18px] h-[18px]" src={selected} alt="" />
-);
-const Unselected = () => (
-  <img className="w-[18px] h-[18px]" src={unselected} alt="" />
-);
 
 const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
-  const [agree, setAgree] = useState(false);
-
   const { data } = useGetS3Query({});
   const [files, setFiles] = useState(editPost?.files || []);
   const [thumbnail, setThumbnail] = useState(editPost?.preview_image || null);
@@ -35,7 +21,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   const [videoDuration, setVideoDuration] = useState(
     editPost?.files[0].duration || 0
   );
-  const resData = data?.data?.data;
+  const resData = data?.data;
   const [videoWidth, setVideoWidth] = useState(editPost?.files[0].width || 0);
   const [videoHeight, setVideoHeight] = useState(
     editPost?.files[0].height || 0
@@ -469,6 +455,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
       )}
       {editPost ? (
         <TopNav
+          left={() => seteditPost(null)}
           center={"Edit Video"}
           right={
             <DeleteDetail

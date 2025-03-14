@@ -35,24 +35,45 @@ const TopNavbar = ({
         <img src={upload} alt="" />
         <p className="text-[16px]">创作</p>
       </div>
-      <div className="flex gap-2 items-center text-white mr-5">
+      <div className="flex gap-5 items-center text-white mr-5">
         {TABS.map((tab, index) => (
-          <button
-            key={index}
-            className={`px-2 py-1   flex flex-col items-center justify-center ${
-              currentTab === tab.id
-                ? "opacity-100 font-semibold"
-                : "opacity-50 font-normal"
-            } nav_text`}
+          <div
             onClick={() => onTabClick(tab.id)}
+            key={index}
+            className="flex flex-col items-center"
           >
-            <div className="capitalize">
-              {tab.text === "for_you" ? "For Y mr-5ou" : tab.text}
-            </div>
-            {currentTab === tab.id && (
-              <div className="w-[28px] h-[2px] bg-white"></div>
+            <div className="w-[24px] h-[3px] bg-transparent rounded-full"></div>
+            <p
+              className={`${
+                currentTab == tab.id
+                  ? "text-[20px] opacity-100 font-semibold"
+                  : "text-[15px] opacity-50 font-normal"
+              }`}
+            >
+              {tab.text}
+            </p>
+            {currentTab === tab.id ? (
+              <div className="w-[24px] h-[3px] bg-white rounded-full"></div>
+            ) : (
+              <div className="w-[24px] h-[3px] bg-transparent rounded-full"></div>
             )}
-          </button>
+          </div>
+          // <button
+          //   key={index}
+          //   className={`px-2 py-1 flex flex-col items-center justify-center ${
+          //     currentTab === tab.id
+          //       ? "opacity-100 font-semibold text-[20px] border-b-2"
+          //       : "opacity-50 font-normal text-[15px]"
+          //   }`}
+          //   onClick={() => onTabClick(tab.id)}
+          // >
+          //   <div className="capitalize">
+          //     {tab.text === "for_you" ? "For Y mr-5ou" : tab.text}
+          //   </div>
+          //   {currentTab === tab.id && (
+          //     <div className="w-[28px] mt-1 h-[2px] bg-white"></div>
+          //   )}
+          // </button>
         ))}
       </div>
 

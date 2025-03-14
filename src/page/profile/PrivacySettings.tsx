@@ -5,6 +5,7 @@ import ShareRegion from "@/components/profile/share-region";
 import { paths } from "@/routes/paths";
 import backButton from "../../assets/backButton.svg";
 import { Link } from "react-router-dom";
+import HideMe from "@/components/profile/hide-me";
 
 const PrivacySettings = () => {
   return (
@@ -27,8 +28,8 @@ const PrivacySettings = () => {
 
           {/* <DisableFollow />
           <div className="border-b border-white/10"></div> */}
-
-          <HideBio />
+          <HideMe />
+          {/* <HideBio /> */}
           <div className="border-b border-white/10"></div>
           <ShareRegion />
         </div>

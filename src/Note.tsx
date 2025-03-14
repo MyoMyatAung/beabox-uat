@@ -9,6 +9,7 @@ import selected from "@/assets/createcenter/selected.png";
 import unselected from "@/assets/createcenter/unselected.png";
 import { Link } from "react-router-dom";
 import { paths } from "@/routes/paths";
+import { useGetConfigQuery } from "./store/api/createCenterApi";
 const Selected = () => (
   <img className="w-[18px] h-[18px]" src={selected} alt="" />
 );
@@ -18,7 +19,8 @@ const Unselected = () => (
 
 const VideoUpload = () => {
   const [agree, setAgree] = useState(false);
-
+  const { data: cdata } = useGetConfigQuery({});
+  const link = cdata?.data?.website_upload_link;
   const [files, setFiles] = useState<any>([]);
   const [thumbnail, setThumbnail] = useState<any>(null);
   const [uploading, setUploading] = useState(false);
@@ -427,7 +429,13 @@ const VideoUpload = () => {
           </p>
           <p>
             Web upload is also available, open the link to upload from web :
-            <span className="text-[#CD3EFF]">http://d.23abcd.me</span>
+            <a
+              target="__blank"
+              href={link ? link : "https://taupe-vacherin-31f51c.netlify.app/"}
+              className="text-[#CD3EFF]"
+            >
+              {link ? link : "https://taupe-vacherin-31f51c.netlify.app/"}
+            </a>
           </p>
         </div>
       </div>

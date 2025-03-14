@@ -15,6 +15,9 @@ import Ads from "./Ads";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
 import sc from "../../../assets/explore/sc.svg";
 import VideoContainer1 from "./VideoContainer1";
+import ShowHeartCom from "./ShowHeartCom";
+import CountdownCircle from "./CountdownCircle";
+import { useGetMyOwnProfileQuery } from "@/store/api/profileApi";
 
 const VideoFeed = ({
   videos,
@@ -39,6 +42,10 @@ const VideoFeed = ({
   const [topmovies, setTopMovies] = useState(false);
   const { data: config } = useGetConfigQuery({});
   const user = useSelector((state: any) => state.persist.user);
+  // const profile = useSelector((state: any) => state.persist.profileData);
+  const { data: user1, refetch: refetchUser } = useGetMyOwnProfileQuery({});
+  const profile = user1?.data;
+
   const [postComment] = usePostCommentMutation();
 
   const navigate = useNavigate();
@@ -53,10 +60,7 @@ const VideoFeed = ({
   const abortControllerRef = useRef<AbortController[]>([]); // Array to store AbortControllers
   const videoData = useRef<any[]>([]); // Array to store AbortControllers
   const indexRef = useRef(0); // Track the current active video index
-
-  const removeHeart = (id: number) => {
-    setHearts((prev) => prev.filter((heartId) => heartId !== id)); // Remove the heart by ID
-  };
+  const [showHeart, setShowHeart] = useState(false);
 
   useEffect(() => {
     if (!start && videos.length > 0) {
@@ -303,6 +307,7 @@ const VideoFeed = ({
             data-post-id={video.post_id} // Add post ID to the container
           >
             <VideoContainer1
+              refetchUser={refetchUser}
               setVideosData={setVideos}
               setrenderVideos={setVideosToRender}
               videoData={videoData}
@@ -321,6 +326,8 @@ const VideoFeed = ({
               setHeight={setHeight}
               setHearts={setHearts}
               setCountdown={setCountdown}
+              setShowHeart={setShowHeart}
+              coin={profile?.coins}
             />
             {video?.type !== "ads" && (
               <FeedFooter
@@ -335,9 +342,19 @@ const VideoFeed = ({
 
             {video?.type === "ads" && <Ads ads={video?.ads_info} />}
 
-            {hearts.map((id: any) => (
-              <HeartCount id={id} key={id} remove={removeHeart} />
-            ))}
+            {showHeart && (
+              <ShowHeartCom
+                countNumber={countNumber}
+                nickname={profile?.nickname}
+                photo={profile?.profile_photo}
+              />
+            )}
+
+            {showHeart && (
+              <div className="absolute bottom-[350px] right-[70px] transform z-[999]">
+                <CountdownCircle countNumber={countNumber} />
+              </div>
+            )}
             <div className="absolute bottom-0 add_comment w-full  py-3 ">
               <div className="flex items-center feed_add_comment gap-2 px-4">
                 <input

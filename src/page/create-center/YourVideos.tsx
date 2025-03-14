@@ -13,6 +13,7 @@ import { Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import UploadVideos from "./VideoUpload";
+import { decryptImage } from "@/utils/image-decrypt";
 
 const Loader2 = () => (
   <div className="flex justify-center items-center w-full mt-[200px]">
@@ -24,7 +25,7 @@ const YourVideos = () => {
   const navigate = useNavigate();
   const [isActive, setIsActive] = useState("all");
   const [page, setPage] = useState(1);
-  const { data: newData } = useGetConfigQuery({});
+  const { data: newData, isLoading: cfloading } = useGetConfigQuery({});
   const config = newData?.data?.creator_center_post_filter;
   const imgdomain = newData?.data?.post_domain?.image;
   // const { data, isLoading, refetch } = useGetPostListQuery("");
@@ -91,7 +92,7 @@ const YourVideos = () => {
   }
   return (
     <div className="">
-      {isLoading && page === 1 ? (
+      {isLoading && cfloading && page === 1 ? (
         <Loader />
       ) : (
         <div>

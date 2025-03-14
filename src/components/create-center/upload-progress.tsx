@@ -56,7 +56,7 @@ const UploadProgress = ({
             </button>
             <button
               className="px-2 w-full bg-[#FFFFFF14] text-[14px] py-2 rounded-[16px] cursor-pointer"
-              onClick={govideos}
+              onClick={() => navigate(paths.your_videos)}
             >
               View Post Status
             </button>
