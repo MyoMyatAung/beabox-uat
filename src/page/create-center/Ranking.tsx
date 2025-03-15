@@ -41,10 +41,12 @@ const Ranking = () => {
   }, [refetch, keyword]);
 
   useEffect(() => {
-    if (data?.data?.length) {
+    if (data?.data?.list?.length) {
+      // console.log(data?.data?.list, "top creator data");
+
       // Append new data to the existing videos
-      setRankingData((prev: any) => [...prev, ...data.data]);
-      setTotalData(data.pagination.total);
+      setRankingData((prev: any) => [...prev, ...data?.data?.list]);
+      setTotalData(data?.pagination?.total);
     }
   }, [data]);
 
