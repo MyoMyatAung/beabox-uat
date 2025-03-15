@@ -90,8 +90,9 @@ const Player = ({
   const LONG_PRESS_DELAY = 500; // ms before triggering fast forward
   const FAST_FORWARD_RATE = 2; // 2x speed for fast forward
   const FAST_FORWARD_INTERVAL = 50; // ms between each check
-  const SWIPE_THRESHOLD = 10; // pixels to determine if user is swiping
+  const SWIPE_THRESHOLD = 30; // Increased from 10 to 30 pixels to be more tolerant of small movements
   const wasPlayingRef = useRef(false); // Track if video was playing before fast forward
+  const isLongPressActiveRef = useRef(false); // Track if long press is active to prevent early cancellation
 
   const dispatch = useDispatch();
 
@@ -422,7 +423,7 @@ const Player = ({
         {
           html: `
             <div class="custom-progress-container">
-              <input type="range" min="0" max="100" step="0.1" class="custom-progress-bar" />
+              <input type="range" min="0" max="100" step="0.1" class="custom-progress-bar chrome-fix" />
                 <div class="custom-time-display"></div>
             </div>
           `,
@@ -433,6 +434,9 @@ const Player = ({
             width: "90%",
             height: "25px",
             zIndex: "9999",
+            pointerEvents: "auto", // Ensure it can receive pointer events
+            display: "block", // Always display the container
+            visibility: "visible", // Ensure visibility
           },
           mounted: (element: HTMLElement) => {
             progressBarRef.current = element.querySelector(
@@ -449,7 +453,24 @@ const Player = ({
 
             // Initial setup for the progress bar
             progressBarRef.current.value = "0";
-            progressBarRef.current.style.opacity = "0";
+            
+            // Force visibility for Chrome
+            progressBarRef.current.style.opacity = "1";
+            progressBarRef.current.style.display = "block";
+            progressBarRef.current.style.visibility = "visible";
+            
+            // Add specific Chrome styles
+            const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+            if (isChrome) {
+              progressBarRef.current.style.webkitAppearance = "none";
+              progressBarRef.current.style.appearance = "none";
+              progressBarRef.current.style.background = "rgba(255, 255, 255, 0.2)";
+              progressBarRef.current.style.height = "4px";
+              progressBarRef.current.style.borderRadius = "2px";
+              progressBarRef.current.style.outline = "none";
+              progressBarRef.current.style.transition = "opacity 0.2s";
+              progressBarRef.current.style.cursor = "pointer";
+            }
 
             // Desktop events
             progressBarRef.current.addEventListener("input", (e) => {
@@ -713,6 +734,7 @@ const Player = ({
               longPressTimerRef.current = setTimeout(() => {
                 if (touchStartPosRef.current) {
                   isLongPress = true;
+                  isLongPressActiveRef.current = true; // Set the ref to true when long press becomes active
                   startFastForward();
                   if (ffIndicator) {
                     ffIndicator.style.display = 'flex';
@@ -740,6 +762,7 @@ const Player = ({
                 }
               }
               isLongPress = false;
+              isLongPressActiveRef.current = false; // Reset the ref when long press ends
               touchStartPosRef.current = null;
             };
 
@@ -750,15 +773,21 @@ const Player = ({
               const deltaX = Math.abs(touch.clientX - touchStartPosRef.current.x);
               const deltaY = Math.abs(touch.clientY - touchStartPosRef.current.y);
 
-              // If user is swiping (especially vertically), cancel long press
-              if (deltaX > SWIPE_THRESHOLD || deltaY > SWIPE_THRESHOLD) {
+              // If user is swiping significantly (especially vertically), cancel long press
+              // But only if long press hasn't already activated
+              if ((deltaX > SWIPE_THRESHOLD || deltaY > SWIPE_THRESHOLD) && !isLongPressActiveRef.current) {
                 handleLongPressEnd();
                 return;
               }
 
-              // Prevent default only if we're in a long press
-              if (isLongPress) {
-                e.preventDefault();
+              // If long press is already active, be more tolerant of movement
+              if (isLongPressActiveRef.current) {
+                // Allow more movement once fast forward is active
+                if (deltaX > SWIPE_THRESHOLD * 3 || deltaY > SWIPE_THRESHOLD * 3) {
+                  handleLongPressEnd();
+                  return;
+                }
+                e.preventDefault(); // Prevent scrolling when in fast forward mode
               }
             };
 
@@ -846,6 +875,11 @@ const Player = ({
           "--progress",
           `${newProgress}%`
         );
+        
+        // Ensure progress bar is always visible in Chrome
+        if (progressBarRef.current.style.opacity !== "1") {
+          progressBarRef.current.style.opacity = "1";
+        }
       }
     });
 
@@ -1108,7 +1142,82 @@ const Player = ({
   // Initialize player when component mounts
   useEffect(() => {
     initializePlayer();
+    
+    // Force progress bar visibility after a short delay
+    // This helps with Chrome visibility issues
+    const progressBarVisibilityTimer = setTimeout(() => {
+      if (progressBarRef.current) {
+        progressBarRef.current.style.opacity = "1";
+        progressBarRef.current.style.display = "block";
+        
+        // Add Chrome-specific styles
+        const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+        if (isChrome) {
+          // Add styles to the head
+          const styleEl = document.createElement('style');
+          styleEl.textContent = `
+            .chrome-fix {
+              -webkit-appearance: none !important;
+              appearance: none !important;
+              background: rgba(255, 255, 255, 0.2) !important;
+              height: 4px !important;
+              border-radius: 2px !important;
+              outline: none !important;
+              opacity: 1 !important;
+              display: block !important;
+              visibility: visible !important;
+              cursor: pointer !important;
+            }
+            
+            .chrome-fix::-webkit-slider-thumb {
+              -webkit-appearance: none !important;
+              appearance: none !important;
+              width: 12px !important;
+              height: 12px !important;
+              background: #d53ff0 !important;
+              border-radius: 50% !important;
+              cursor: pointer !important;
+            }
+            
+            .custom-progress-container {
+              display: block !important;
+              visibility: visible !important;
+              opacity: 1 !important;
+            }
+          `;
+          document.head.appendChild(styleEl);
+          
+          // Create a MutationObserver to ensure the progress bar is always visible
+          if (playerContainerRef.current) {
+            const observer = new MutationObserver((mutations) => {
+              // Check if our progress bar exists
+              if (progressBarRef.current) {
+                // Force visibility
+                progressBarRef.current.style.opacity = "1";
+                progressBarRef.current.style.display = "block";
+                progressBarRef.current.style.visibility = "visible";
+              }
+            });
+            
+            // Start observing the player container for DOM changes
+            observer.observe(playerContainerRef.current, { 
+              childList: true, 
+              subtree: true,
+              attributes: true,
+              attributeFilter: ['style', 'class']
+            });
+            
+            // Return cleanup function
+            return () => {
+              observer.disconnect();
+            };
+          }
+        }
+      }
+    }, 500);
+    
     return () => {
+      clearTimeout(progressBarVisibilityTimer);
       // Save position before unmounting
       if (artPlayerInstanceRef.current) {
         saveVideoPosition(artPlayerInstanceRef.current.currentTime);
@@ -1125,12 +1234,8 @@ const Player = ({
         hlsRef.current.destroy();
         hlsRef.current = null;
       }
-      // if (abortControllerRef.current) {
-      //   abortControllerRef.current.abort();
-      //   abortControllerRef.current = null;
-      // }
     };
-  }, [src]); // Reinitialize when src changes
+  }, [src, post_id, user]);
 
   // useEffect(() => {
   //   if (
@@ -1203,6 +1308,7 @@ const Player = ({
     wasPlayingRef.current = artPlayerInstanceRef.current.playing;
     
     setIsFastForwarding(true);
+    isLongPressActiveRef.current = true; // Ensure the ref is set when fast forward starts
     hidePlayButton(); // Always hide play button when starting fast forward
     dispatch(sethideBar(true)); // Hide UI layers during fast forward
     
@@ -1213,9 +1319,27 @@ const Player = ({
     // Set playback rate to 2x
     player.playbackRate = FAST_FORWARD_RATE;
     
+    // Ensure progress bar is visible during fast forward
+    if (progressBarRef.current) {
+      progressBarRef.current.style.opacity = "1";
+      progressBarRef.current.style.display = "block";
+    }
+    
     fastForwardIntervalRef.current = setInterval(() => {
       if (player.currentTime >= player.duration - 1) {
         stopFastForward(); // Stop at end of video
+      }
+      
+      // Update progress bar during fast forward
+      if (progressBarRef.current) {
+        const currentTime = player.currentTime || 0;
+        const duration = player.duration || 1;
+        const newProgress = (currentTime / duration) * 100;
+        progressBarRef.current.value = newProgress.toString();
+        progressBarRef.current.style.setProperty(
+          "--progress",
+          `${newProgress}%`
+        );
       }
     }, FAST_FORWARD_INTERVAL);
   };
@@ -1232,6 +1356,7 @@ const Player = ({
     player.playbackRate = 1; // Reset playback rate
     
     setIsFastForwarding(false);
+    isLongPressActiveRef.current = false; // Reset the ref when fast forward stops
     dispatch(sethideBar(false)); // Show UI layers again
     
     // Always continue playing after fast forward
