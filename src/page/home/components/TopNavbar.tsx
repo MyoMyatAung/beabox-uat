@@ -27,7 +27,7 @@ const TopNavbar = ({
       <div
         onClick={
           user?.token
-            ? () => navigate(paths.creator_upload)
+            ? () => navigate(paths.creator_upload_video)
             : () => dispatch(setIsDrawerOpen(true))
         }
         className="flex items-center gap-1"
@@ -47,7 +47,7 @@ const TopNavbar = ({
               className={`${
                 currentTab == tab.id
                   ? "text-[20px] opacity-100 font-semibold"
-                  : "text-[15px] opacity-50 font-normal"
+                  : "home-normal-text"
               }`}
             >
               {tab.text}

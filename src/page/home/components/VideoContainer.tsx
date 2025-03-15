@@ -66,18 +66,155 @@ const VideoContainer = ({
   const post_id = video?.post_id;
   const [rotateVideoId, setRotateVideoId] = useState<string | null>(null); // For controlling fullscreen per video
   const [isOpen, setIsOpen] = useState(false);
+  const [coins, setCoins] = useState(coin);
 
   // Add state to track if this video is active
   const [isActive, setIsActive] = useState(false);
 
+  useEffect(() => {
+    setCoins(coin);
+  }, [coin]);
+
   const coin_per_like = config?.data?.coin_per_like;
+
+  // const handleLike = (() => {
+  //   const likeTimeout = useRef<NodeJS.Timeout | null>(null); // Track the debounce timeout
+
+  //   const handleLikeClick = () => {
+  //     if (user?.token) {
+  //       if (coin >= coin_per_like) {
+  //         setLikeCount(+likeCount + 1);
+  //         setCountNumber((prev: any) => prev + 1);
+  //         setShowHeart(true);
+  //         if (status) {
+  //           dispatch(
+  //             setVideos({
+  //               ...videos,
+  //               [currentTab === 2 ? "foryou" : "follow"]: videos[
+  //                 currentTab === 2 ? "foryou" : "follow"
+  //               ]?.map((video: any) =>
+  //                 video.post_id === post_id
+  //                   ? {
+  //                       ...video,
+  //                       is_liked: true,
+  //                       like_count: +video?.like_count + 1,
+  //                     }
+  //                   : video
+  //               ),
+  //             })
+  //           );
+  //         }
+
+  //         setIsLiked(true);
+  //         // Clear any existing debounce timer
+  //         if (likeTimeout.current) {
+  //           clearTimeout(likeTimeout.current);
+  //         }
+
+  //         // Set up a new debounce timer
+  //         likeTimeout.current = setTimeout(async () => {
+  //           setShowHeart(false);
+  //           setCountNumber(0); // Reset pending likes after a successful API call
+
+  //           try {
+  //             const res = await likePost({ post_id, count: countNumber + 1 }); // Pass the accumulated count to the API
+
+  //             if (res.error) {
+  //               setLikeCount(+likeCount - countNumber);
+  //               if (status) {
+  //                 dispatch(
+  //                   setVideos({
+  //                     ...videos,
+  //                     [currentTab === 2 ? "foryou" : "follow"]: videos[
+  //                       currentTab === 2 ? "foryou" : "follow"
+  //                     ]?.map((video: any) =>
+  //                       video.post_id === post_id
+  //                         ? {
+  //                             ...video,
+  //                             is_liked: false,
+  //                             like_count: +video?.like_count - countNumber,
+  //                           }
+  //                         : video
+  //                     ),
+  //                   })
+  //                 );
+  //               }
+  //               const msg = JSON.parse(res.error?.data);
+  //               setIsLiked(false);
+  //               dispatch(
+  //                 showToast({
+  //                   message: msg.message,
+  //                   type: "error",
+  //                 })
+  //               );
+  //             }
+  //             refetchUser();
+  //           } catch (error) {
+  //             setLikeCount(+likeCount - countNumber);
+  //             if (status) {
+  //               dispatch(
+  //                 setVideos({
+  //                   ...videos,
+  //                   [currentTab === 2 ? "foryou" : "follow"]: videos[
+  //                     currentTab === 2 ? "foryou" : "follow"
+  //                   ]?.map((video: any) =>
+  //                     video.post_id === post_id
+  //                       ? {
+  //                           ...video,
+  //                           is_liked: false,
+  //                           like_count: +video?.like_count - countNumber,
+  //                         }
+  //                       : video
+  //                   ),
+  //                 })
+  //               );
+  //             }
+
+  //             setIsLiked(false);
+  //             setShowHeart(false);
+  //             setCountNumber(0);
+  //             console.error("Error liking the post:", error);
+  //           }
+  //         }, 3000); // Call API 1 second after the last click
+  //       } else {
+  //         dispatch(
+  //           showToast({
+  //             message: "硬币不足",
+  //             type: "success",
+  //           })
+  //         );
+  //       }
+  //     } else {
+  //       dispatch(
+  //         showToast({
+  //           message: "登陆后可点赞",
+  //           type: "success",
+  //         })
+  //       );
+  //     }
+  //   };
+
+  //   useEffect(() => {
+  //     // Cleanup on component unmount
+  //     return () => {
+  //       if (likeTimeout.current) {
+  //         clearTimeout(likeTimeout.current);
+  //       }
+  //     };
+  //   }, []);
+
+  //   return handleLikeClick;
+  // })();
 
   const handleLike = (() => {
     const likeTimeout = useRef<NodeJS.Timeout | null>(null); // Track the debounce timeout
 
     const handleLikeClick = () => {
       if (user?.token) {
-        if (coin >= coin_per_like) {
+        if (coins >= coin_per_like) {
+          // Deduct coins immediately
+          setCoins(coins - coin_per_like);
+
           setLikeCount(+likeCount + 1);
           setCountNumber((prev: any) => prev + 1);
           setShowHeart(true);
@@ -108,11 +245,16 @@ const VideoContainer = ({
 
           // Set up a new debounce timer
           likeTimeout.current = setTimeout(async () => {
+            setShowHeart(false);
+            setCountNumber(0); // Reset pending likes after a successful API call
+
             try {
               const res = await likePost({ post_id, count: countNumber + 1 }); // Pass the accumulated count to the API
 
               if (res.error) {
                 setLikeCount(+likeCount - countNumber);
+                // Revert the coin deduction if the API call fails
+                setCoins(coins + coin_per_like);
                 if (status) {
                   dispatch(
                     setVideos({
@@ -141,10 +283,10 @@ const VideoContainer = ({
                 );
               }
               refetchUser();
-              setShowHeart(false);
-              setCountNumber(0); // Reset pending likes after a successful API call
             } catch (error) {
               setLikeCount(+likeCount - countNumber);
+              // Revert the coin deduction if the API call fails
+              setCoins(coins + coin_per_like);
               if (status) {
                 dispatch(
                   setVideos({

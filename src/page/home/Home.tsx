@@ -47,7 +47,10 @@ const Home = () => {
   );
   const { page } = useSelector((state: any) => state.pageSlice);
 
-  const { data: profile, refetch: refetchUser } = useGetMyOwnProfileQuery({});
+  const user1 = useSelector((state: any) => state?.persist?.user) || "";
+  const { data: profile, refetch: refetchUser } = useGetMyOwnProfileQuery("", {
+    skip: !user1,
+  });
 
   //const [currentActivePost, setCurrentActivePost] = useState<any>(null); // Active post ID
 
