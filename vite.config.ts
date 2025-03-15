@@ -29,9 +29,12 @@ export default defineConfig({
   define: {
     global: {},
   },
+  optimizeDeps: {
+    include: ['zod']
+  },
   build: {
-    rollupOptions: {
-      external: ['zod']
+    commonjsOptions: {
+      include: [/zod/, /node_modules/]
     }
   }
 });
