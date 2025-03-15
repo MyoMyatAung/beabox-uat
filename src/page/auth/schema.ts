@@ -1,4 +1,4 @@
-import * as z from "zod";
+import { z } from "zod";
 export const loginSchema = z.object({
   emailOrPhone: z.string().min(1, "Username is required"),
   // .regex(

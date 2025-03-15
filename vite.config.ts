@@ -26,15 +26,4 @@ export default defineConfig({
     },
   },
   base: "./",
-  define: {
-    global: {},
-  },
-  optimizeDeps: {
-    include: ['zod']
-  },
-  build: {
-    commonjsOptions: {
-      include: [/zod/, /node_modules/]
-    }
-  }
 });
