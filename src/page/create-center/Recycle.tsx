@@ -27,14 +27,14 @@ const SelectBtn = ({
           onClick={() => cancelHandler()}
           className={`text-[16px] bg-[#FFFFFF1F] px-2 py-1 rounded-full`}
         >
-          Cancel
+          取消
         </button>
       ) : (
         <button
           onClick={() => multiRestoreHandler()}
           className={`text-[16px] bg-[#FFFFFF1F] px-2 py-1 rounded-full`}
         >
-          Select
+          选择
         </button>
       )}
     </>
@@ -166,7 +166,7 @@ const Recycle = () => {
         )}
         <div className="sticky top-0 bg-[#16131C]">
           <TopNav
-            center={"Recycle Bin"}
+            center={"回收站"}
             right={
               <SelectBtn
                 deleteItems={deleteItems}
@@ -203,7 +203,7 @@ const Recycle = () => {
                 // onClick={() => postDeleteHandler()}
                 className="text-[16px] bg-[#C2303333] py-3 w-full text-[#C23033] rounded-[16px]"
               >
-                Delete
+                删除
               </button>
               <button
                 onClick={() => {
@@ -213,7 +213,7 @@ const Recycle = () => {
                 // onClick={() => postRestoreHandler("restore")}
                 className="text-[16px] bg-[#FFFFFF1F] py-3 w-full text-[#fff] rounded-[16px]"
               >
-                Restore
+                恢复
               </button>
             </div>
           </div>

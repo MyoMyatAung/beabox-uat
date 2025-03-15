@@ -16,7 +16,7 @@ const YourVideos = () => {
       <div className="flex items-center gap-2 ">
         <img src={yourvideo} className="w-9" alt="" />
         <Link to={paths.your_videos} className="text-[14px]">
-          Your Videos
+        你的视频
         </Link>
         <Link to={paths.your_videos}>
           <ChevronRight size={14} />
@@ -25,17 +25,17 @@ const YourVideos = () => {
       <div className="flex justify-between items-center pt-5">
         <div className="text-[12px] flex flex-col items-center justify-center">
           <p>{published}</p>
-          <p className="text-[#888888]">Published</p>
+          <p className="text-[#888888]">已发布</p>
         </div>
         <Divider />
         <div className="text-[12px] flex flex-col items-center justify-center">
           <p>{review}</p>
-          <p className="text-[#888888]">Pending</p>
+          <p className="text-[#888888]">待处理</p>
         </div>
         <Divider />
         <div className="text-[12px] flex flex-col items-center justify-center">
           <p>{declined}</p>
-          <p className="text-[#888888]">Rejected</p>
+          <p className="text-[#888888]">已拒绝</p>
         </div>
       </div>
     </section>

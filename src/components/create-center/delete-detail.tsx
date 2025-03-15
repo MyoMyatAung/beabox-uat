@@ -22,13 +22,10 @@ const DeleteDetailPopUp = ({ setShow, id, refetch, seteditPost }: any) => {
   return (
     <div className="z-50 h-screen w-full fixed top-0 left-0 bg-[#000000CC] flex justify-center items-center transition-all duration-75 ease-in-out">
       {isLoading ? <Loader /> : <></>}
-      <div className="bg-[#16131C] rounded-[16px] flex flex-col justify-center items-center">
+      <div className="bg-[#16131C] mx-5 pt-5 rounded-[16px] flex flex-col justify-center items-center">
         <div className="pt-5 px-5">
           <p className="text-[16px] text-[#BBBBBB] text-center">
-            Are you sure you want to remove this
-            <br /> video? It will be moved to the recycle
-            <br /> bin for 30 days and permanently deleted
-            <br /> after that.
+            你确定要删除此视频吗？它将被移至回收站保存30天，之后将被永久删除。
           </p>
         </div>
         <div className="bg-[#222222] h-[0.3px] mt-5 w-full"></div>
@@ -57,7 +54,7 @@ const DeleteDetail = ({ id, refetch, seteditPost }: any) => {
         onClick={() => setShow(true)}
         className="text-[16px] text-[#C23033]"
       >
-        Delete
+        删除
       </button>
       {show ? (
         <DeleteDetailPopUp
