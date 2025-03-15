@@ -98,7 +98,7 @@ const YourVideos = () => {
         <div>
           <div className="sticky top-0 bg-[#16131C] pb-2">
             <TopNav
-              center={"Your Videos"}
+              center={"你的视频"}
               right={
                 <Trash onClick={() => navigate(paths.recycle)} size={18} />
               }

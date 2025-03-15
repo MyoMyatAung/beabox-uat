@@ -58,31 +58,31 @@ const Tags = ({
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>
         <button className="px-2 bg-[#F0C3FF66] border-[1px] border-[#F0C3FF] py-1 rounded-full text-[12px] text-[#F0C3FF]">
-          Select Tag
+        选择标签
         </button>
       </DrawerTrigger>
       <DrawerContent className="border-0 h-screen">
         <>
           <nav className="flex justify-between items-center p-5">
             <ChevronLeft onClick={() => setIsOpen(false)} />
-            <p className="text-[16px]">Select Tags</p>
+            <p className="text-[16px]">选择标签</p>
             <div className="px-3" />
           </nav>
           <div className="px-5 py-5">
-            <p className="text-[16px] pb-2">Custom Tags</p>
+            <p className="text-[16px] pb-2">自定义标签</p>
             <div className="flex items-center gap-3">
               <input
                 value={newHashtag}
                 onChange={(e) => setNewHashtag(e.target.value)}
                 type="text"
                 className="w-full bg-[#FFFFFF14] px-3 py-2 rounded-full"
-                placeholder="Enter Your Tags Name"
+                placeholder="请输入你的标签名称"
               />
               <button
                 onClick={addHashtag}
-                className="text-[#CD3EFF] text-[16px]"
+                className="text-[#CD3EFF] w-[40px] text-[16px]"
               >
-                Add
+                添加
               </button>
             </div>
           </div>
@@ -119,7 +119,7 @@ const Tags = ({
             ))} */}
           </div>
           <div className="px-5 py-5">
-            <p className="text-[16px] pb-2">Popular Tags</p>
+            <p className="text-[16px] pb-2">热门标签</p>
             <div className="flex flex-wrap items-center gap-3">
               {populars?.map((tag: any, index: any) => (
                 <TagBtn
@@ -140,7 +140,7 @@ const Tags = ({
               onClick={() => setIsOpen(false)}
               className={`text-[16px] font-semibold bg-gradient-to-b from-[#FFB2E0] to-[#CD3EFF] text-white    w-full rounded-[16px] py-3`}
             >
-              Continue
+              继续
             </button>
           </div>
         </>

@@ -17,7 +17,7 @@ const CreateCenter = () => {
   return (
     <>
       <TopNav
-        center={"Creator Centre"}
+        center={"创作者中心"}
         right={
           <div
             onClick={

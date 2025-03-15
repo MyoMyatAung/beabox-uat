@@ -456,7 +456,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
       {editPost ? (
         <TopNav
           left={() => seteditPost(null)}
-          center={"Edit Video"}
+          center={"编辑视频"}
           right={
             <DeleteDetail
               seteditPost={seteditPost}
@@ -466,7 +466,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
           }
         />
       ) : (
-        <TopNav center={"Upload Video"} />
+        <TopNav center={"上传视频"} />
       )}
 
       <div className="flex items-center justify-center mx-5 gap-3 pt-5">
@@ -526,8 +526,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
             )}
           </div>
           <p className="text-[12px] text-[#888] text-center pt-2">
-            Video size must not exceed <br />
-            100MB
+            视频大小不得超过 <br /> 100MB
           </p>
         </div>
         <div className="flex flex-col justify-center items-center">
@@ -602,8 +601,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
             )}
           </div>
           <p className="text-[12px] text-[#888] text-center pt-2">
-            Tap to Select an image <br />
-            (Optional)
+            点击选择图片 <br />
+            (可选)
           </p>
         </div>
       </div>
