@@ -1,16 +1,37 @@
-import tips from "@/assets/createcenter/tips.png";
+import upload from "@/assets/createcenter/upload.svg";
 import TopNav from "@/components/create-center/top-nav";
 import YourVideos from "@/components/create-center/your-videos";
 import WalletDetails from "@/components/create-center/wallet-details";
 import ViewAll from "@/components/create-center/view-all";
 import { useGetTopCreatorQuery } from "@/store/api/createCenterApi";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { paths } from "@/routes/paths";
+import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 
 const CreateCenter = () => {
   const { data } = useGetTopCreatorQuery("");
-  console.log(data);
+  const user = useSelector((state: any) => state?.persist?.user) || "";
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   return (
     <>
-      <TopNav center={"Creator Centre"} />
+      <TopNav
+        center={"Creator Centre"}
+        right={
+          <div
+            onClick={
+              user?.token
+                ? () => navigate(paths.creator_upload_video)
+                : () => dispatch(setIsDrawerOpen(true))
+            }
+            className="flex items-center gap-1"
+          >
+            <img src={upload} alt="" />
+            <p className="text-[16px]">创作</p>
+          </div>
+        }
+      />
       <YourVideos />
       <div className="grid grid-cols-2 items-center w-full justify-center p-5 gap-3">
         <div className="flex-1">
