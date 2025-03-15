@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { showToast } from "../services/errorSlice";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
+import { getDeviceInfo } from "@/lib/deviceInfo";
 
 interface CommentOverlayProps {
   setCommentCount: any;
@@ -83,11 +84,16 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
     if (user?.token) {
       if (!replyContent.trim()) return;
       try {
+        // Get device information
+        const deviceInfo = getDeviceInfo();
+        
         const response = await postComment({
           post_id: post_id,
           content: replyContent,
           comment_id: commentId,
           reply_id: replyId || undefined,
+          device: deviceInfo.deviceName,
+          app_version: deviceInfo.appVersion
         }).unwrap();
         setActiveReply({ commentId: null, replyId: null });
         setReplyContent("");
@@ -185,9 +191,14 @@ const CommentOverlay: React.FC<CommentOverlayProps> = ({
       if (!content.trim()) return;
 
       try {
+        // Get device information
+        const deviceInfo = getDeviceInfo();
+        
         const response = await postComment({
           post_id: post_id, // Assuming all comments belong to the same post
           content: content,
+          device: deviceInfo.deviceName,
+          app_version: deviceInfo.appVersion
         }).unwrap();
         setContent("");
 

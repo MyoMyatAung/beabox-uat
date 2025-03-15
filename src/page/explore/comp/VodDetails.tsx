@@ -22,6 +22,7 @@ import backButton from "../../../assets/backButton.svg";
 import ShowHeartCom from "@/page/home/components/ShowHeartCom";
 import CountdownCircle from "@/page/home/components/CountdownCircle";
 import { useGetMyOwnProfileQuery } from "@/store/api/profileApi";
+import { getDeviceInfo } from "@/lib/deviceInfo";
 
 interface VodDetailsProps {
   // setshow: (value: boolean) => void;
@@ -123,9 +124,14 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
       if (!content.trim()) return;
 
       try {
+        // Get device information
+        const deviceInfo = getDeviceInfo();
+        
         await postComment({
           post_id: files.post_id, // Assuming all comments belong to the same post
           content: content,
+          device: deviceInfo.deviceName,
+          app_version: deviceInfo.appVersion
         }).unwrap();
         setContent("");
         setShowTip(true);

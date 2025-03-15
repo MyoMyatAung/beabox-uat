@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Landing from "./components/Landing";
 import Routing from "./routes/Routing";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,6 +8,7 @@ import ErrorToast from "./page/home/services/ErrorToast";
 
 import { Toaster } from "./components/ui/toaster";
 import { useGetApplicationAdsQuery } from "./store/api/explore/exploreApi";
+import { initDeviceInfoListener } from "./lib/deviceInfo";
 
 const App = () => {
   const { panding } = useSelector((state: any) => state.model);
@@ -25,21 +26,8 @@ const App = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    console.log("wionnn");
-    const handleIosEvent = (event: CustomEvent) => {
-      console.log(event);
-    };
-
-    // Listen for the `iosEvent`
-    window.addEventListener("getDeviceInfo", handleIosEvent as EventListener);
-
-    // Cleanup the event listener when the component unmounts
-    return () => {
-      window.removeEventListener(
-        "getDeviceInfo",
-        handleIosEvent as EventListener
-      );
-    };
+    // Initialize device info listener
+    initDeviceInfoListener();
   }, []);
 
   const sendNativeEvent = (message: string) => {
