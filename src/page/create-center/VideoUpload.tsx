@@ -427,23 +427,22 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
 
           {isModalVisible && (
             <div className="fixed inset-0 bg-[rgba(0,0,0,0.6)] backdrop-blur-sm flex justify-center items-center z-50">
-              <div className="bg-[#16131C] rounded-md w-[320px] text-center">
+              <div className="bg-[#16131C] rounded-md w-[320px] text-center pt-5">
                 <p className="text-white modal-text p-5">
-                  Your Video is still Uploading. You can cancel uploading or
-                  wait a moment for video uploading to finish.
+                  你的视频仍在上传中。你可以取消上传或稍等片刻，等待上传完成。
                 </p>
                 <div className="flex justify-center border-t-[0.5px] border-[#2a262f]">
                   <button
                     onClick={() => setIsModalVisible(false)}
                     className="flex-1 cursor-pointer py-3 border-r-[0.5px] border-[#2a262f]  text-white"
                   >
-                    Continue
+                    继续
                   </button>
                   <button
                     onClick={handleCancelUpload}
                     className="flex-1 py-3 cursor-pointer  text-[#C23033]"
                   >
-                    Cancel upload
+                    取消上传
                   </button>
                 </div>
               </div>
