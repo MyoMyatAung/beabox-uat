@@ -74,10 +74,6 @@ const VideoContainer1 = ({
 
   const [coins, setCoins] = useState(coin);
 
-  useEffect(() => {
-    setCoins(coin);
-  }, [coin]);
-
   // Add state to track if this video is active
   const [isActive, setIsActive] = useState(false);
 
@@ -211,18 +207,29 @@ const VideoContainer1 = ({
   //   return handleLikeClick;
   // })();
 
+  useEffect(() => {
+    setCoins(coin);
+  }, [coin]);
+
+  const maxLikeCount = (coins: number, coinPerLike: number): number => {
+    return Math.floor(coins / coinPerLike);
+  };
+
   const handleLike = (() => {
     const likeTimeout = useRef<NodeJS.Timeout | null>(null); // Track the debounce timeout
 
     const handleLikeClick = () => {
       if (user?.token) {
-        if (coins >= coin_per_like) {
+        const maxLikes = maxLikeCount(coins, coin_per_like);
+
+        if (maxLikes > 0) {
           // Deduct coins immediately
           setCoins(coins - coin_per_like);
 
           setLikeCount(+likeCount + 1);
           setCountNumber((prev: any) => prev + 1);
           setShowHeart(true);
+
           if (status) {
             dispatch(
               setVideos({
@@ -243,6 +250,7 @@ const VideoContainer1 = ({
           }
 
           setIsLiked(true);
+
           // Clear any existing debounce timer
           if (likeTimeout.current) {
             clearTimeout(likeTimeout.current);
