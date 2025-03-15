@@ -89,6 +89,7 @@ const Withdraw: React.FC<WithdrawProps> = ({}) => {
             ) : (
               <div className="">
                 <WithDetails
+                refetch={refetch}
                   setActiveTab={setActiveTab}
                   data={data}
                   dollar_withdraw_rate={config?.data?.dollar_withdraw_rate}

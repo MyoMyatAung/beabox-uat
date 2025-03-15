@@ -13,6 +13,7 @@ interface WithDetailsProps {
   dollar_withdraw_rate: any;
   data: any;
   setActiveTab: any;
+  refetch: any;
 }
 
 const WithDetails: React.FC<WithDetailsProps> = ({
@@ -20,6 +21,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
   data,
   dollar_withdraw_rate,
   setActiveTab,
+  refetch,
 }) => {
   const [amount, setAmount] = useState<string>("");
   const [bankAccountNumber, setBankAccountNumber] = useState<string>("");
@@ -87,6 +89,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
         if (!data) {
           throw new Error();
         } else {
+          refetch()
           setActiveTab(2);
         }
       } catch (error) {
