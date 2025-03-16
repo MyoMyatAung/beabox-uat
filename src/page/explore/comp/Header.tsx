@@ -77,7 +77,7 @@ const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
             <div
               key={index}
               ref={(el) => (tabRefs.current[index] = el)}
-              className="flex flex-col justify-center items-center py-[10px] gap-[3px] pr-[16px]"
+              className="flex flex-col justify-center items-center py-[10px] gap-[3px] pr-[16px] relative"
             >
               <h1
                 className={`cursor-pointer transition duration-300 text-[18px] ${
