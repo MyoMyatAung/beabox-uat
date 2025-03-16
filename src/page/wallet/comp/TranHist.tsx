@@ -117,7 +117,7 @@ const TranHist: React.FC = () => {
   return (
     <div className="flex justify-center items-center">
       <div className="w-screen xl:w-[800px]">
-        <Header lv={false} title="Transition History" />
+        <Header lv={false} title="转账历史" />
         <div className="px-[20px] py-[16px] flex justify-center items-center">
           {/* <TypePick /> */}
         </div>
@@ -133,23 +133,23 @@ const TranHist: React.FC = () => {
         </div>
         {/* transition */}
         <div className="py-[12px] px-[18px] mt-5">
-          {/* {isLoading && isFetching && (
+          {isLoading && isFetching && (
             <div className=" flex justify-center items-center py-[100px]">
               <div className="heart">
                 <img
                   src={loader}
                   className="w-[100px] h-[100px]"
-                  alt="Loading"
+                  alt="加载中"
                 />
               </div>
             </div>
-          )} */}
+          )}
 
           {data?.data.length === 0 && (
             <div className="flex flex-col justify-center items-center h-[600px]">
               <img src={noTran} alt="" />
               <h1 className="text-white font-[400] text-[14px]">
-                No Transition Yet
+                暂无转账
               </h1>
             </div>
           )}
@@ -185,12 +185,12 @@ const TranHist: React.FC = () => {
                     }}
                     className="px-[12px] py-[2px] flex justify-center items-center rounded-md  text-[12px] font-[400] leading-[15px]"
                   >
-                    {/* <span
-                            style={{}}
-                            className=" text-[12px] font-[400] leading-[15px]"
-                          > */}
-                    {ts.status}
-                    {/* </span> */}
+                    {ts.status === "approved" && "已批准"}
+                    {ts.status === "pending" && "待处理"}
+                    {ts.status === "rejected" && "已拒绝"}
+                    {ts.status === "success" && "成功"}
+                    {ts.status === "failed" && "失败"}
+                    {ts.status === "default" && "默认"}
                   </div>
                 )}
               </div>
@@ -215,7 +215,7 @@ const TranHist: React.FC = () => {
             endMessage={
               <div className="flex bg-whit pt-20 justify-center items-center  w-screen absolute bottom-[-20px] left-[-20px]">
                 <p className="py-10" style={{ textAlign: "center" }}>
-                  {/* <b>No more yet!</b> */}
+                  <b>没有更多了！</b>
                 </p>
               </div>
             }
