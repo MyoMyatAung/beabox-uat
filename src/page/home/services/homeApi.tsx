@@ -1,6 +1,7 @@
 import { decryptWithAes } from "@/lib/decrypt";
 import { convertToSecurePayload, convertToSecureUrl } from "@/lib/encrypt";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { getDeviceInfo } from "@/lib/deviceInfo";
 
 export const homeApi = createApi({
   reducerPath: "homeApi",
@@ -117,15 +118,17 @@ export const homeApi = createApi({
     }),
     postComment: builder.mutation<
       void,
-      { post_id: any; content: any; comment_id?: any; reply_id?: any }
+      { post_id: any; content: any; comment_id?: any; reply_id?: any; device?: string; app_version?: string }
     >({
-      query: ({ post_id, content, comment_id, reply_id }) => {
+      query: ({ post_id, content, comment_id, reply_id, device, app_version }) => {
         // Construct the body object conditionally
         const body: {
           post_id: any;
           content: any;
           comment_id?: any;
           reply_id?: any;
+          device?: string;
+          app_version?: string;
         } = {
           post_id,
           content,
@@ -139,10 +142,16 @@ export const homeApi = createApi({
           body.reply_id = reply_id;
         }
 
+        // Get device information
+        const deviceInfo = getDeviceInfo();
+        
+        // Add device information to the request
+        body.device = device || deviceInfo.deviceName;
+        body.app_version = app_version || deviceInfo.appVersion;
+
         return {
           url: `post/comment`,
           method: "POST",
-
           body: convertToSecurePayload(body), // Pass the body object
         };
       },

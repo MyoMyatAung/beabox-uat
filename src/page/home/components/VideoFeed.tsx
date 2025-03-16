@@ -18,6 +18,7 @@ import VideoContainer1 from "./VideoContainer1";
 import ShowHeartCom from "./ShowHeartCom";
 import CountdownCircle from "./CountdownCircle";
 import { useGetMyOwnProfileQuery } from "@/store/api/profileApi";
+import { getDeviceInfo } from "@/lib/deviceInfo";
 
 const VideoFeed = ({
   videos,
@@ -195,9 +196,14 @@ const VideoFeed = ({
       if (!content.trim()) return;
 
       try {
+        // Get device information
+        const deviceInfo = getDeviceInfo();
+        
         const response = await postComment({
           post_id: post_id, // Assuming all comments belong to the same post
           content: content,
+          device: deviceInfo.deviceName,
+          app_version: deviceInfo.appVersion
         }).unwrap();
         setContent("");
         dispatch(

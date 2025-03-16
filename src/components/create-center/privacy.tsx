@@ -16,7 +16,7 @@ const Privacy = ({ privacy, setPrivacy }: any) => {
         <div className="bg-[#FFFFFF0A] flex justify-between items-center p-3 rounded-[16px] mx-5">
           <div className="flex items-center gap-2">
             <EarthLock size={18} />
-            <p className="text-[14px]">Who can see your post</p>
+            <p className="text-[14px]">谁可以看到你的帖子</p>
           </div>
           <div className="flex items-center gap-1 text-[#777]">
             <p className="text-[14px] ">

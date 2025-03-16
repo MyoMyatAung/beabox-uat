@@ -100,35 +100,40 @@ const UploadFrom = ({ onFormSubmit, uploading, editPost, loading }: any) => {
       <div className="px-5 py-5 flex flex-col gap-10">
         <div className="flex flex-col justify-start">
           <label htmlFor="" className="text-[14px]">
-            Content Title
+            内容标题
           </label>
           <input
             value={contentTitle}
             onChange={(e) => setContentTitle(e.target.value)}
             type="text"
             className="bg-transparent outline-none border border-t-0 border-x-0 py-2 border-b-[#FFFFFF99]"
-            placeholder="Please enter the title"
+            placeholder="请输入标题"
           />
           <p className="text-[10px] text-[#FFFFFF99] my-1">
-            Enter a title. A good title can increase the video click-through
-            rate.
+            请输入标题。一个好的标题可以提高视频的点击率。
           </p>
         </div>
 
         <div className="flex flex-col justify-start relative">
           <label htmlFor="" className="text-[14px]">
-            Hashtags
+            话题标签
           </label>
           <div className="flex items-center w-full jsutify-start bg-transparent outline-none border border-t-0 border-x-0 py-2 border-b-[#FFFFFF99]">
             <div className="flex items-center gap-2 flex-1 flex-wrap">
-              {hashtags.map((tag: any, index: any) => (
-                <div
-                  key={index}
-                  className="text-[12px] bg-[#FFFFFF14] px-2 py-0.5 rounded-full"
-                >
-                  # {tag}
-                </div>
-              ))}
+              {hashtags?.length ? (
+                hashtags.map((tag: any, index: any) => (
+                  <div
+                    key={index}
+                    className="text-[12px] bg-[#FFFFFF14] px-2 py-0.5 rounded-full"
+                  >
+                    # {tag}
+                  </div>
+                ))
+              ) : (
+                <p className="text-[16px] text-[#FFFFFF52]">
+                  添加话题标签（最多5个）
+                </p>
+              )}
             </div>
             <div className="">
               <Tags
@@ -149,7 +154,7 @@ const UploadFrom = ({ onFormSubmit, uploading, editPost, loading }: any) => {
           <span>Note</span> <span className="mx-2">:</span>
         </p>
         <p>
-          Web upload is also available, open the link to upload from web :
+        网页上传同样可用，打开链接即可从网页上传 :
           <a
             target="__blank"
             href={link ? link : "https://taupe-vacherin-31f51c.netlify.app/"}
@@ -164,7 +169,7 @@ const UploadFrom = ({ onFormSubmit, uploading, editPost, loading }: any) => {
       ) : (
         <></>
       )}
-      <div className="mx-5 pb-5 pt-10">
+      <div className="mx-5 pb-5 pt-10 mt-5">
         <div className="flex gap-2 justify-center items-center pb-5">
           {agree ? (
             <button onClick={() => setAgree(!agree)}>
@@ -175,9 +180,7 @@ const UploadFrom = ({ onFormSubmit, uploading, editPost, loading }: any) => {
               <Unselected />
             </button>
           )}
-          <p className="text-[12px]">
-            I have read and agree to the upload guidelines.
-          </p>
+          <p className="text-[12px]">我已阅读并同意上传指南。</p>
         </div>
         <button
           onClick={handleSubmit}
@@ -188,7 +191,7 @@ const UploadFrom = ({ onFormSubmit, uploading, editPost, loading }: any) => {
               : "bg-[#FFFFFF0A] text-[#444444]"
           }    w-full rounded-[16px] py-3`}
         >
-          Submit
+          提交
         </button>
       </div>
     </div>

@@ -41,10 +41,12 @@ const Ranking = () => {
   }, [refetch, keyword]);
 
   useEffect(() => {
-    if (data?.data?.length) {
+    if (data?.data?.list?.length) {
+      // console.log(data?.data?.list, "top creator data");
+
       // Append new data to the existing videos
-      setRankingData((prev: any) => [...prev, ...data.data]);
-      setTotalData(data.pagination.total);
+      setRankingData((prev: any) => [...prev, ...data?.data?.list]);
+      setTotalData(data?.pagination?.total);
     }
   }, [data]);
 
@@ -76,7 +78,7 @@ const Ranking = () => {
                 <div className="px-5"></div>
                 <div className="relative">
                   <img src={topcreator} className="w-[158px]" alt="" />
-                  <p className="text-[15px] font-light">September, 2024</p>
+                  {/* <p className="text-[15px] font-light">September, 2024</p> */}
                   {/* <img
                     src={topcrown}
                     className="w-[30px] absolute -top-8 left-4"

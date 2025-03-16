@@ -13,7 +13,7 @@ import { Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import UploadVideos from "./VideoUpload";
-import { decryptImage } from "@/utils/image-decrypt";
+import upload from "@/assets/createcenter/upload.svg";
 
 const Loader2 = () => (
   <div className="flex justify-center items-center w-full mt-[200px]">
@@ -98,7 +98,7 @@ const YourVideos = () => {
         <div>
           <div className="sticky top-0 bg-[#16131C] pb-2">
             <TopNav
-              center={"Your Videos"}
+              center={"你的视频"}
               right={
                 <Trash onClick={() => navigate(paths.recycle)} size={18} />
               }

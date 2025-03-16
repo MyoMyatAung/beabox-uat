@@ -13,7 +13,7 @@ const WalletDetails = () => {
         <p className="text-[18px]">
           {data?.data?.likes_sum_count ? data?.data?.likes_sum_count : 0}
         </p>
-        <p className="text-[12px] text-[#888888]">Post Likes</p>
+        <p className="text-[12px] text-[#888888]">帖子点赞</p>
       </div>
       <div className="bg-[#FFFFFF1F] w-[60px] h-[1px]"></div>
       <div className=" flex flex-col items-center justify-center">
@@ -21,14 +21,14 @@ const WalletDetails = () => {
           {data?.data?.wallet_balance ? data?.data?.wallet_balance : 0}{" "}
           <img src={dollar} className="w-[13px] h-[13px]" alt="" />
         </p>
-        <p className="text-[12px] text-[#888888]">Your Earning</p>
+        <p className="text-[12px] text-[#888888]">你的收益</p>
       </div>
 
       <button
         onClick={() => navigate(paths.wallet)}
         className="text-[14px] rounded-[12px] bg-[#FFFFFF1F] text-center w-full py-2"
       >
-        View In Wallet
+        在钱包中查看
       </button>
     </section>
   );
