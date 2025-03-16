@@ -54,8 +54,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   }, [editPost]);
 
   // Handle video file drop
-  const onDrop = useCallback(async (acceptedFiles: any) => {
-    const videoFile = acceptedFiles.find((file: any) =>
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
+    const videoFile = acceptedFiles.find((file) =>
       file.type.startsWith("video/")
     );
 
@@ -81,34 +81,82 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
       return;
     }
 
-    // Generate thumbnail for the video
-    const generatedThumbnail = await generateThumbnail(videoFile);
-    setThumbnail(generatedThumbnail);
+    try {
+      // Generate thumbnail for the video
+      const generatedThumbnail = await generateThumbnail(videoFile);
+      setThumbnail(generatedThumbnail);
 
-    // Create a video element to extract metadata
-    const video = document.createElement("video");
-    video.src = URL.createObjectURL(videoFile);
+      // Create a video element to extract metadata
+      const video = document.createElement("video");
+      video.src = URL.createObjectURL(videoFile);
+      
+      // Add muted attribute to allow autoplay on iOS
+      video.muted = true;
+      
+      // Add a promise to handle iOS autoplay restrictions
+      const metadataPromise = new Promise<void>((resolve) => {
+        video.onloadedmetadata = async () => {
+          try {
+            // Try to play the video briefly to ensure metadata is loaded on iOS
+            await video.play().catch(() => {
+              console.log("Play prevented, but metadata should be loaded");
+            });
+            
+            // Pause immediately after starting playback
+            video.pause();
+            
+            setVideoDuration(video.duration || 0); // Set duration
+            setVideoWidth(video.videoWidth || 0); // Set width
+            setVideoHeight(video.videoHeight || 0); // Set height
+            resolve();
+          } catch (error: unknown) {
+            console.error("Error loading video metadata:", error);
+            // Set default values if metadata extraction fails
+            setVideoDuration(0);
+            setVideoWidth(0);
+            setVideoHeight(0);
+            resolve();
+          }
+        };
+        
+        // Handle errors
+        video.onerror = () => {
+          console.error("Error loading video:", video.error);
+          // Set default values if metadata extraction fails
+          setVideoDuration(0);
+          setVideoWidth(0);
+          setVideoHeight(0);
+          resolve();
+        };
+      });
+      
+      // Wait for metadata to be loaded
+      await metadataPromise;
 
-    video.onloadedmetadata = () => {
-      setVideoDuration(video.duration); // Set duration
-      setVideoWidth(video.videoWidth); // Set width
-      setVideoHeight(video.videoHeight); // Set height
-    };
+      // Add video to files state
+      setFiles([
+        {
+          video: videoFile,
+          size: videoFile.size,
+          type: "video",
+        },
+      ]);
+      setTotalSize((videoFile.size / (1024 * 1024)).toFixed(2)); // Convert to MB
 
-    // Add video to files state
-    setFiles([
-      {
-        video: videoFile,
-        size: videoFile.size,
-        type: "video",
-      },
-    ]);
-    setTotalSize((videoFile.size / (1024 * 1024)).toFixed(2)); // Convert to MB
-
-    if (videoUrlRef.current) {
-      URL.revokeObjectURL(videoUrlRef.current);
+      if (videoUrlRef.current) {
+        URL.revokeObjectURL(videoUrlRef.current);
+      }
+      videoUrlRef.current = URL.createObjectURL(videoFile);
+    } catch (error: unknown) {
+      console.error("Error processing video:", error);
+      toast.error("处理视频时出错。请重试。", {
+        // Error processing video. Please try again.
+        style: {
+          background: "#25212a",
+          color: "white",
+        },
+      });
     }
-    videoUrlRef.current = URL.createObjectURL(videoFile);
   }, []);
 
   // Handle thumbnail drop
@@ -142,63 +190,158 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   }, []);
 
   // Generate thumbnail from video
-  const generateThumbnail = (videoFile: any) => {
+  const generateThumbnail = (videoFile: File): Promise<File> => {
     return new Promise((resolve, reject) => {
       const video = document.createElement("video");
-      video.src = URL.createObjectURL(videoFile);
+      
+      // Add attributes to help with iOS playback
+      video.muted = true;
+      video.playsInline = true;
+      video.crossOrigin = "anonymous";
+      
+      // Create object URL
+      const objectUrl = URL.createObjectURL(videoFile);
+      video.src = objectUrl;
 
-      video.onloadeddata = () => {
-        video.currentTime = 0; // Seek to a specific timestamp
+      // Set up event handlers
+      video.onloadeddata = async () => {
+        try {
+          // Try to play the video briefly to ensure it's loaded on iOS
+          await video.play().catch(() => {
+            console.log("Play prevented, but video should be loaded");
+          });
+          
+          // Seek to the first frame
+          video.currentTime = 0;
+          
+          // Pause immediately after starting playback
+          video.pause();
+        } catch (error: unknown) {
+          console.error("Error playing video for thumbnail:", error);
+        }
       };
 
       video.onseeked = () => {
-        const canvas = document.createElement("canvas");
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
+        try {
+          const canvas = document.createElement("canvas");
+          canvas.width = video.videoWidth || 320; // Fallback width if videoWidth is 0
+          canvas.height = video.videoHeight || 240; // Fallback height if videoHeight is 0
 
-        const ctx: any = canvas.getContext("2d");
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const ctx = canvas.getContext("2d");
+          if (!ctx) {
+            throw new Error("Could not get canvas context");
+          }
+          
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        canvas.toBlob(
-          (blob) => {
-            if (blob) {
-              const fileName = `${Date.now()}.jpg`; // Generate a unique file name
-              const file = new File([blob], fileName, {
-                type: "image/jpeg",
-              });
-              resolve(file); // Resolve with the File object
-            } else {
-              reject(new Error("Failed to generate thumbnail"));
-            }
-          },
-          "image/jpeg",
-          0.9 // Quality factor for JPEG compression
-        );
-
-        URL.revokeObjectURL(video.src); // Clean up resources
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                const fileName = `${Date.now()}.jpg`; // Generate a unique file name
+                const file = new File([blob], fileName, {
+                  type: "image/jpeg",
+                });
+                
+                // Clean up resources
+                URL.revokeObjectURL(objectUrl);
+                
+                resolve(file); // Resolve with the File object
+              } else {
+                // If blob creation fails, create a default thumbnail
+                createDefaultThumbnail().then(resolve).catch(reject);
+              }
+            },
+            "image/jpeg",
+            0.9 // Quality factor for JPEG compression
+          );
+        } catch (error: unknown) {
+          console.error("Error generating thumbnail:", error);
+          // If thumbnail generation fails, create a default thumbnail
+          createDefaultThumbnail().then(resolve).catch(reject);
+        }
       };
 
-      video.onerror = () => reject(new Error("Failed to generate thumbnail"));
+      video.onerror = () => {
+        console.error("Video error:", video.error);
+        // If video loading fails, create a default thumbnail
+        createDefaultThumbnail().then(resolve).catch(reject);
+      };
+      
+      // Set a timeout in case the video never triggers the events
+      setTimeout(() => {
+        if (video.readyState < 2) { // HAVE_CURRENT_DATA
+          console.warn("Video loading timeout - creating default thumbnail");
+          createDefaultThumbnail().then(resolve).catch(reject);
+        }
+      }, 5000); // 5 second timeout
+    });
+  };
+  
+  // Create a default thumbnail if video thumbnail generation fails
+  const createDefaultThumbnail = async () => {
+    // Create a simple colored canvas as a fallback thumbnail
+    const canvas = document.createElement("canvas");
+    canvas.width = 320;
+    canvas.height = 240;
+    
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      // Fill with a gradient background
+      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      gradient.addColorStop(0, "#3498db");
+      gradient.addColorStop(1, "#2980b9");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Add a play icon
+      ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+      ctx.beginPath();
+      ctx.moveTo(canvas.width / 2 + 30, canvas.height / 2);
+      ctx.lineTo(canvas.width / 2 - 15, canvas.height / 2 + 25);
+      ctx.lineTo(canvas.width / 2 - 15, canvas.height / 2 - 25);
+      ctx.closePath();
+      ctx.fill();
+    }
+    
+    return new Promise<File>((resolve, reject) => {
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            const fileName = `default_thumbnail_${Date.now()}.jpg`;
+            const file = new File([blob], fileName, {
+              type: "image/jpeg",
+            });
+            resolve(file);
+          } else {
+            reject(new Error("Failed to create default thumbnail"));
+          }
+        },
+        "image/jpeg",
+        0.9
+      );
     });
   };
 
   // Dropzone for video upload
-  const { getRootProps, getInputProps } = useDropzone({
+  const { getRootProps, getInputProps, open } = useDropzone({
     accept: { "video/*": [] },
     onDrop,
+    noClick: true, // Disable click behavior to fix iOS issues
   });
 
   // Dropzone for thumbnail upload
   const {
     getRootProps: getThumbnailRootProps,
     getInputProps: getThumbnailInputProps,
+    open: openThumbnailDialog,
   } = useDropzone({
     accept: { "image/*": [] },
     onDrop: onThumbnailDrop,
+    noClick: true, // Disable click behavior to fix iOS issues
   });
 
   const bucket = resData?.bucket;
-  const base_url = resData?.base_url;
+  // const base_url = resData?.base_url; // Commented out as it's not used
   const region = resData?.region;
   const accessKeyId = resData?.credentials?.accessKeyId;
   const secretAccessKey = resData?.credentials?.secretAccessKey;
@@ -206,7 +349,13 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   const directory = resData?.uploadPath;
 
   // Handle form submission from VideoUploadForm
-  const handleFormSubmit = async (formData: any) => {
+  const handleFormSubmit = async (formData: {
+    contentTitle: string;
+    hashtags: string[];
+    privacy: string;
+    setContentTitle: (value: string) => void;
+    setHashtags: (value: string[]) => void;
+  }) => {
     if (files.length === 0) {
       toast.error("请上传一个视频。", {
         // Please upload a video.
@@ -510,7 +659,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
                 )}
               </div>
             ) : (
-              <div {...getRootProps()} className="dropzone">
+              <div {...getRootProps()} className="dropzone" onClick={open}>
                 <div className="flex items-center justify-center">
                   <input {...getInputProps()} />
                   <div className="flex flex-col items-center">
@@ -576,7 +725,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
                 </button>
               </div>
             ) : (
-              <div {...getThumbnailRootProps()} className="dropzone">
+              <div {...getThumbnailRootProps()} className="dropzone" onClick={openThumbnailDialog}>
                 <div className="flex items-center justify-center">
                   <input {...getThumbnailInputProps()} />
                   <div className="flex flex-col items-center gap-2">
