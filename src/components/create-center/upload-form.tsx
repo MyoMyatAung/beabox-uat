@@ -150,8 +150,8 @@ const UploadFrom = ({ onFormSubmit, uploading, editPost, loading }: any) => {
       </div>
 
       <div className="text-[14px] text-[#FFFFFF99] flex items-start mx-5">
-        <p className="flex">
-          <span>Note</span> <span className="mx-2">:</span>
+        <p className="flex min-w-16">
+          <span>备注</span> <span className="mx-2">:</span>
         </p>
         <p>
         网页上传同样可用，打开链接即可从网页上传 :

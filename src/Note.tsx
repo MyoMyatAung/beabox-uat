@@ -424,8 +424,8 @@ const VideoUpload = () => {
         </div>
 
         <div className="text-[14px] text-[#FFFFFF99] flex items-start mx-5">
-          <p className="flex">
-            <span>Note</span> <span className="mx-2">:</span>
+          <p className="flex min-w-16">
+            <span>备注</span> <span className="mx-2">:</span>
           </p>
           <p>
             Web upload is also available, open the link to upload from web :

@@ -60,7 +60,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
     );
 
     if (!videoFile) {
-      toast.error("Please select a valid video file.", {
+      toast.error("请选择一个有效的视频文件。", {
+        // Please select a valid video file.
         style: {
           background: "#25212a",
           color: "white",
@@ -70,7 +71,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
     }
 
     if (acceptedFiles.length > 1) {
-      toast.error("You can only upload one video.", {
+      toast.error("你只能上传一个视频。", {
+        // You can only upload one video.
         style: {
           background: "#25212a",
           color: "white",
@@ -116,7 +118,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
     );
 
     if (acceptedFiles.length > 1) {
-      toast.error("You can only upload one image for the thumbnail.", {
+      toast.error("你只能上传一个缩略图图像。", {
+        // You can only upload one image for the thumbnail.
         style: {
           background: "#25212a",
           color: "white",
@@ -128,7 +131,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
     if (thumbnailImage) {
       setThumbnail(thumbnailImage);
     } else {
-      toast.error("Please upload a valid image for the thumbnail.", {
+      toast.error("请上传一个有效的缩略图图像。", {
+        // Please upload a valid image for the thumbnail.
         style: {
           background: "#25212a",
           color: "white",
@@ -204,7 +208,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   // Handle form submission from VideoUploadForm
   const handleFormSubmit = async (formData: any) => {
     if (files.length === 0) {
-      toast.error("Please upload a video.", {
+      toast.error("请上传一个视频。", {
+        // Please upload a video.
         style: {
           background: "#25212a",
           color: "white",
@@ -215,7 +220,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
     }
 
     if (!thumbnail) {
-      toast.error("Please upload a thumbnail.", {
+      toast.error("请上传一个缩略图。", {
+        // Please upload a thumbnail.
         style: {
           background: "#25212a",
           color: "white",
@@ -313,7 +319,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
 
       // Ensure both video and thumbnail URLs are available before proceeding
       if (!videoUrl || !thumbnailUrl) {
-        toast.error("Failed to upload video", {
+        toast.error("视频上传失败。请重试。", {
+          // Failed to upload video. Please try again.
           style: {
             background: "#25212a",
             color: "white",
@@ -351,7 +358,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
         await createPosts(payload).unwrap();
 
         // Show success message
-        toast.success("Video uploaded successfully!", {
+        toast.success("视频上传成功！", {
+          // Video uploaded successfully!
           style: {
             background: "#25212a",
             color: "white",
@@ -373,7 +381,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
         setsuccessEnd(false);
 
         console.error("Upload failed:", error);
-        toast.error("Failed to upload video. Please try again.", {
+        toast.error("视频上传失败。请重试。", {
+          // Failed to upload video. Please try again.
           style: {
             background: "#25212a",
             color: "white",
@@ -386,7 +395,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
       setUploading(false);
       setsuccessEnd(false);
       console.error("Upload failed:", error);
-      toast.error("Failed to upload video. Please try again.", {
+      toast.error("视频上传失败。请重试。", {
+        // Failed to upload video. Please try again.
         style: {
           background: "#25212a",
           color: "white",
@@ -430,6 +440,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
               <div className="bg-[#16131C] rounded-md w-[320px] text-center pt-5">
                 <p className="text-white modal-text p-5">
                   你的视频仍在上传中。你可以取消上传或稍等片刻，等待上传完成。
+                  {/* Your video is still uploading. You can cancel the upload or wait a moment for it to complete. */}
                 </p>
                 <div className="flex justify-center border-t-[0.5px] border-[#2a262f]">
                   <button
@@ -437,12 +448,14 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
                     className="flex-1 cursor-pointer py-3 border-r-[0.5px] border-[#2a262f]  text-white"
                   >
                     继续
+                    {/* Continue */}
                   </button>
                   <button
                     onClick={handleCancelUpload}
                     className="flex-1 py-3 cursor-pointer  text-[#C23033]"
                   >
                     取消上传
+                    {/* Cancel Upload */}
                   </button>
                 </div>
               </div>
@@ -517,7 +530,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
                       />
                     </svg>
                     <span className="text-[10px] text-[#888] mt-2">
-                      Click to Upload Video
+                      点击上传视频
+                      {/* Click to Upload Video */}
                     </span>
                   </div>
                 </div>
@@ -526,6 +540,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
           </div>
           <p className="text-[12px] text-[#888] text-center pt-2">
             视频大小不得超过 <br /> 100MB
+            {/* Video size must not exceed 100MB */}
           </p>
         </div>
         <div className="flex flex-col justify-center items-center">
@@ -590,9 +605,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
                       />
                     </svg>
                     <span className="text-[10px] text-[#888] text-center">
-                      Click to Upload Cover
-                      <br />
-                      (optional)
+                      点击选择图片 <br /> (可选)
+                      {/* Click to Upload Cover (optional) */}
                     </span>
                   </div>
                 </div>
