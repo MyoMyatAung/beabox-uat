@@ -31,7 +31,7 @@ interface RechRecordProps {}
 
 const RechRecord: React.FC<RechRecordProps> = ({}) => {
   const location = useLocation();
-  const type = location.pathname === "/wallet/withdraw" ? "withdrawl" : "topup";
+  const type = location.pathname === "/wallet/withdraw" ? "withdraw" : "topup";
   const [curMon, setCurMon] = useState("December");
   const [curYr, setCurYr] = useState(2027);
   const [plus, setPlus] = useState(12);
