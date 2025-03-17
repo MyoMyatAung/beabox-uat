@@ -14,8 +14,14 @@ const Unselected = () => (
   <img className="w-[18px] h-[18px]" src={unselected} alt="" />
 );
 
-const UploadFrom = ({ onFormSubmit, uploading, editPost, loading }: any) => {
-  const [agree, setAgree] = useState(false);
+const UploadFrom = ({
+  onFormSubmit,
+  uploading,
+  editPost,
+  loading,
+  agree,
+  setAgree,
+}: any) => {
   const { data } = useGetConfigQuery({});
   const link = data?.data?.website_upload_link;
 
@@ -154,7 +160,7 @@ const UploadFrom = ({ onFormSubmit, uploading, editPost, loading }: any) => {
           <span>备注</span> <span className="mx-2">:</span>
         </p>
         <p>
-        网页上传同样可用，打开链接即可从网页上传 :
+          网页上传同样可用，打开链接即可从网页上传 :
           <a
             target="__blank"
             href={link ? link : "https://taupe-vacherin-31f51c.netlify.app/"}
