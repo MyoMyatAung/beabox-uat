@@ -133,7 +133,7 @@ const TranHist: React.FC = () => {
         </div>
         {/* transition */}
         <div className="py-[12px] px-[18px] mt-5">
-          {isLoading && isFetching && (
+          {/* {isLoading && isFetching && (
             <div className=" flex justify-center items-center py-[100px]">
               <div className="heart">
                 <img
@@ -143,7 +143,7 @@ const TranHist: React.FC = () => {
                 />
               </div>
             </div>
-          )}
+          )} */}
 
           {data?.data.length === 0 && (
             <div className="flex flex-col justify-center items-center h-[600px]">
@@ -213,7 +213,7 @@ const TranHist: React.FC = () => {
               </div>
             }
             endMessage={
-              <div className="flex bg-whit pt-20 justify-center items-center  w-screen absolute bottom-[-20px] left-[-20px]">
+              <div className="fle bg-whit hidden pt-20 justify-center items-center  w-screen absolute bottom-[-20px] left-[-20px]">
                 <p className="py-10" style={{ textAlign: "center" }}>
                   <b>没有更多了！</b>
                 </p>

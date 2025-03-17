@@ -77,7 +77,7 @@ const PayPick: React.FC<PayPickProps> = ({
               <SelectItem
                 key={pp.id}
                 value={pp.name}
-                className={`  py-[10px] rounded-[10px] h-full bg-white/10`}
+                className={`  py-[10px] rounded-[10px] h-full bg-[#201c25]`}
               >
                 <div className=" w-[300px] flex justify-between">
                   <h1 className=" text-white">{pp.name}</h1>

@@ -32,7 +32,7 @@ const Balance: React.FC<BalanceProps> = () => {
     setIsHidden((prev) => !prev);
   };
 
-  console.log(user);
+  // console.log(user);
 
   return (
     <div className="p-[20px]">
