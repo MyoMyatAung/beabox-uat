@@ -14,6 +14,22 @@
   touch-action: pan-y !important; /* Disable horizontal dragging */
 }
 
+.video1 {
+  position: relative;
+  background-color: black;
+  width: 100%;
+  height: 100vh;
+  height: calc(100dvh - 12px);
+  /* height: 100%; */
+
+  overflow-x: hidden; /* Prevent horizontal scroll */
+  overflow-y: scroll; /* Enable vertical scroll */
+  scroll-snap-type: y mandatory; /* Snap vertically */
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  touch-action: pan-y !important; /* Disable horizontal dragging */
+}
+
 .art-video-player {
   touch-action: pan-y !important; /* Disable horizontal dragging */
 }
