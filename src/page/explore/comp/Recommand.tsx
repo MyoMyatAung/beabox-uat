@@ -15,6 +15,7 @@ import { setDetails, setTag, setTitle } from "@/store/slices/exploreSlice";
 import { paths } from "@/routes/paths";
 import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder";
 import { FaHeart } from "react-icons/fa";
+import empty from "../../../page/home/empty.png";
 
 interface RecommandProps {
   title: string;
@@ -94,7 +95,7 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
     navigate(paths.getUserProfileId(userId));
   };
 
-  // console.log(list);
+  // console.log(data);
   return (
     <div className=" pb-[20px] px-[10px]">
       {isLoading ? (
@@ -154,7 +155,7 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
                 </div>
               )}
               {/* content */}
-              {ll.posts.length !== 0 && (
+              {ll.posts.length !== 0 ? (
                 <div className=" py-[12px] w-full grid grid-cols-2 justify-center items-center  gap-[10px]">
                   <>
                     {ll.posts.map((card: any) => (
@@ -215,9 +216,11 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
                                 alt=""
                               />
                             )}
-                            <h1 
+                            <h1
                               className=" text-[#888] text-[12px] font-[400] leading-[20px] cursor-pointer hover:text-white"
-                              onClick={(e) => navigateToUserProfile(card.user.id, e)}
+                              onClick={(e) =>
+                                navigateToUserProfile(card.user.id, e)
+                              }
                             >
                               {card.user.name}
                               {/* {card?.files[0]?.width} & {card?.files[0]?.height} {} */}
@@ -246,6 +249,17 @@ const Recommand: React.FC<RecommandProps> = ({ title, list_id }) => {
                       </div>
                     ))}
                   </>
+                </div>
+              ) : (
+                <div className=" mt-[20px]">
+                  <div className={`flex justify-center items-center py-[60px]`}>
+                    <div className="flex flex-col items-center">
+                      <img src={empty} className="w-[80px]" alt="" />
+                      <h1 className="text-center text-white/60">
+                        这里空空如也～
+                      </h1>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
