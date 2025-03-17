@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useId, useState } from "react";
 import {
   useGetLikedPostQuery,
   useGetMyPostsQuery,
@@ -23,7 +23,7 @@ const CreatedVideo2 = ({ id }: any) => {
   const [selectedMovieId, setSelectedMovieId] = useState(null);
   const [showVideoFeed, setShowVideoFeed] = useState(false);
 
-  const { data, isLoading } = useGetMyPostsQuery({ page }, { skip: !user });
+  const { data, isLoading } = useGetPostsQuery({ id: id, page: page }, { skip: !user });
 
   useEffect(() => {
     if (data?.data?.length) {

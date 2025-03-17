@@ -54,13 +54,14 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   }, [editPost]);
 
   // Handle video file drop
-  const onDrop = useCallback(async (acceptedFiles: any) => {
-    const videoFile = acceptedFiles.find((file: any) =>
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
+    const videoFile = acceptedFiles.find((file) =>
       file.type.startsWith("video/")
     );
 
     if (!videoFile) {
-      toast.error("Please select a valid video file.", {
+      toast.error("请选择一个有效的视频文件。", {
+        // Please select a valid video file.
         style: {
           background: "#25212a",
           color: "white",
@@ -70,7 +71,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
     }
 
     if (acceptedFiles.length > 1) {
-      toast.error("You can only upload one video.", {
+      toast.error("你只能上传一个视频。", {
+        // You can only upload one video.
         style: {
           background: "#25212a",
           color: "white",
@@ -79,34 +81,82 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
       return;
     }
 
-    // Generate thumbnail for the video
-    const generatedThumbnail = await generateThumbnail(videoFile);
-    setThumbnail(generatedThumbnail);
+    try {
+      // Generate thumbnail for the video
+      const generatedThumbnail = await generateThumbnail(videoFile);
+      setThumbnail(generatedThumbnail);
 
-    // Create a video element to extract metadata
-    const video = document.createElement("video");
-    video.src = URL.createObjectURL(videoFile);
+      // Create a video element to extract metadata
+      const video = document.createElement("video");
+      video.src = URL.createObjectURL(videoFile);
+      
+      // Add muted attribute to allow autoplay on iOS
+      video.muted = true;
+      
+      // Add a promise to handle iOS autoplay restrictions
+      const metadataPromise = new Promise<void>((resolve) => {
+        video.onloadedmetadata = async () => {
+          try {
+            // Try to play the video briefly to ensure metadata is loaded on iOS
+            await video.play().catch(() => {
+              console.log("Play prevented, but metadata should be loaded");
+            });
+            
+            // Pause immediately after starting playback
+            video.pause();
+            
+            setVideoDuration(video.duration || 0); // Set duration
+            setVideoWidth(video.videoWidth || 0); // Set width
+            setVideoHeight(video.videoHeight || 0); // Set height
+            resolve();
+          } catch (error: unknown) {
+            console.error("Error loading video metadata:", error);
+            // Set default values if metadata extraction fails
+            setVideoDuration(0);
+            setVideoWidth(0);
+            setVideoHeight(0);
+            resolve();
+          }
+        };
+        
+        // Handle errors
+        video.onerror = () => {
+          console.error("Error loading video:", video.error);
+          // Set default values if metadata extraction fails
+          setVideoDuration(0);
+          setVideoWidth(0);
+          setVideoHeight(0);
+          resolve();
+        };
+      });
+      
+      // Wait for metadata to be loaded
+      await metadataPromise;
 
-    video.onloadedmetadata = () => {
-      setVideoDuration(video.duration); // Set duration
-      setVideoWidth(video.videoWidth); // Set width
-      setVideoHeight(video.videoHeight); // Set height
-    };
+      // Add video to files state
+      setFiles([
+        {
+          video: videoFile,
+          size: videoFile.size,
+          type: "video",
+        },
+      ]);
+      setTotalSize((videoFile.size / (1024 * 1024)).toFixed(2)); // Convert to MB
 
-    // Add video to files state
-    setFiles([
-      {
-        video: videoFile,
-        size: videoFile.size,
-        type: "video",
-      },
-    ]);
-    setTotalSize((videoFile.size / (1024 * 1024)).toFixed(2)); // Convert to MB
-
-    if (videoUrlRef.current) {
-      URL.revokeObjectURL(videoUrlRef.current);
+      if (videoUrlRef.current) {
+        URL.revokeObjectURL(videoUrlRef.current);
+      }
+      videoUrlRef.current = URL.createObjectURL(videoFile);
+    } catch (error: unknown) {
+      console.error("Error processing video:", error);
+      toast.error("处理视频时出错。请重试。", {
+        // Error processing video. Please try again.
+        style: {
+          background: "#25212a",
+          color: "white",
+        },
+      });
     }
-    videoUrlRef.current = URL.createObjectURL(videoFile);
   }, []);
 
   // Handle thumbnail drop
@@ -116,7 +166,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
     );
 
     if (acceptedFiles.length > 1) {
-      toast.error("You can only upload one image for the thumbnail.", {
+      toast.error("你只能上传一个缩略图图像。", {
+        // You can only upload one image for the thumbnail.
         style: {
           background: "#25212a",
           color: "white",
@@ -128,7 +179,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
     if (thumbnailImage) {
       setThumbnail(thumbnailImage);
     } else {
-      toast.error("Please upload a valid image for the thumbnail.", {
+      toast.error("请上传一个有效的缩略图图像。", {
+        // Please upload a valid image for the thumbnail.
         style: {
           background: "#25212a",
           color: "white",
@@ -138,63 +190,158 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   }, []);
 
   // Generate thumbnail from video
-  const generateThumbnail = (videoFile: any) => {
+  const generateThumbnail = (videoFile: File): Promise<File> => {
     return new Promise((resolve, reject) => {
       const video = document.createElement("video");
-      video.src = URL.createObjectURL(videoFile);
+      
+      // Add attributes to help with iOS playback
+      video.muted = true;
+      video.playsInline = true;
+      video.crossOrigin = "anonymous";
+      
+      // Create object URL
+      const objectUrl = URL.createObjectURL(videoFile);
+      video.src = objectUrl;
 
-      video.onloadeddata = () => {
-        video.currentTime = 0; // Seek to a specific timestamp
+      // Set up event handlers
+      video.onloadeddata = async () => {
+        try {
+          // Try to play the video briefly to ensure it's loaded on iOS
+          await video.play().catch(() => {
+            console.log("Play prevented, but video should be loaded");
+          });
+          
+          // Seek to the first frame
+          video.currentTime = 0;
+          
+          // Pause immediately after starting playback
+          video.pause();
+        } catch (error: unknown) {
+          console.error("Error playing video for thumbnail:", error);
+        }
       };
 
       video.onseeked = () => {
-        const canvas = document.createElement("canvas");
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
+        try {
+          const canvas = document.createElement("canvas");
+          canvas.width = video.videoWidth || 320; // Fallback width if videoWidth is 0
+          canvas.height = video.videoHeight || 240; // Fallback height if videoHeight is 0
 
-        const ctx: any = canvas.getContext("2d");
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const ctx = canvas.getContext("2d");
+          if (!ctx) {
+            throw new Error("Could not get canvas context");
+          }
+          
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        canvas.toBlob(
-          (blob) => {
-            if (blob) {
-              const fileName = `${Date.now()}.jpg`; // Generate a unique file name
-              const file = new File([blob], fileName, {
-                type: "image/jpeg",
-              });
-              resolve(file); // Resolve with the File object
-            } else {
-              reject(new Error("Failed to generate thumbnail"));
-            }
-          },
-          "image/jpeg",
-          0.9 // Quality factor for JPEG compression
-        );
-
-        URL.revokeObjectURL(video.src); // Clean up resources
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                const fileName = `${Date.now()}.jpg`; // Generate a unique file name
+                const file = new File([blob], fileName, {
+                  type: "image/jpeg",
+                });
+                
+                // Clean up resources
+                URL.revokeObjectURL(objectUrl);
+                
+                resolve(file); // Resolve with the File object
+              } else {
+                // If blob creation fails, create a default thumbnail
+                createDefaultThumbnail().then(resolve).catch(reject);
+              }
+            },
+            "image/jpeg",
+            0.9 // Quality factor for JPEG compression
+          );
+        } catch (error: unknown) {
+          console.error("Error generating thumbnail:", error);
+          // If thumbnail generation fails, create a default thumbnail
+          createDefaultThumbnail().then(resolve).catch(reject);
+        }
       };
 
-      video.onerror = () => reject(new Error("Failed to generate thumbnail"));
+      video.onerror = () => {
+        console.error("Video error:", video.error);
+        // If video loading fails, create a default thumbnail
+        createDefaultThumbnail().then(resolve).catch(reject);
+      };
+      
+      // Set a timeout in case the video never triggers the events
+      setTimeout(() => {
+        if (video.readyState < 2) { // HAVE_CURRENT_DATA
+          console.warn("Video loading timeout - creating default thumbnail");
+          createDefaultThumbnail().then(resolve).catch(reject);
+        }
+      }, 5000); // 5 second timeout
+    });
+  };
+  
+  // Create a default thumbnail if video thumbnail generation fails
+  const createDefaultThumbnail = async () => {
+    // Create a simple colored canvas as a fallback thumbnail
+    const canvas = document.createElement("canvas");
+    canvas.width = 320;
+    canvas.height = 240;
+    
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      // Fill with a gradient background
+      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      gradient.addColorStop(0, "#3498db");
+      gradient.addColorStop(1, "#2980b9");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Add a play icon
+      ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+      ctx.beginPath();
+      ctx.moveTo(canvas.width / 2 + 30, canvas.height / 2);
+      ctx.lineTo(canvas.width / 2 - 15, canvas.height / 2 + 25);
+      ctx.lineTo(canvas.width / 2 - 15, canvas.height / 2 - 25);
+      ctx.closePath();
+      ctx.fill();
+    }
+    
+    return new Promise<File>((resolve, reject) => {
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            const fileName = `default_thumbnail_${Date.now()}.jpg`;
+            const file = new File([blob], fileName, {
+              type: "image/jpeg",
+            });
+            resolve(file);
+          } else {
+            reject(new Error("Failed to create default thumbnail"));
+          }
+        },
+        "image/jpeg",
+        0.9
+      );
     });
   };
 
   // Dropzone for video upload
-  const { getRootProps, getInputProps } = useDropzone({
+  const { getRootProps, getInputProps, open } = useDropzone({
     accept: { "video/*": [] },
     onDrop,
+    noClick: true, // Disable click behavior to fix iOS issues
   });
 
   // Dropzone for thumbnail upload
   const {
     getRootProps: getThumbnailRootProps,
     getInputProps: getThumbnailInputProps,
+    open: openThumbnailDialog,
   } = useDropzone({
     accept: { "image/*": [] },
     onDrop: onThumbnailDrop,
+    noClick: true, // Disable click behavior to fix iOS issues
   });
 
   const bucket = resData?.bucket;
-  const base_url = resData?.base_url;
+  // const base_url = resData?.base_url; // Commented out as it's not used
   const region = resData?.region;
   const accessKeyId = resData?.credentials?.accessKeyId;
   const secretAccessKey = resData?.credentials?.secretAccessKey;
@@ -202,9 +349,16 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   const directory = resData?.uploadPath;
 
   // Handle form submission from VideoUploadForm
-  const handleFormSubmit = async (formData: any) => {
+  const handleFormSubmit = async (formData: {
+    contentTitle: string;
+    hashtags: string[];
+    privacy: string;
+    setContentTitle: (value: string) => void;
+    setHashtags: (value: string[]) => void;
+  }) => {
     if (files.length === 0) {
-      toast.error("Please upload a video.", {
+      toast.error("请上传一个视频。", {
+        // Please upload a video.
         style: {
           background: "#25212a",
           color: "white",
@@ -215,7 +369,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
     }
 
     if (!thumbnail) {
-      toast.error("Please upload a thumbnail.", {
+      toast.error("请上传一个缩略图。", {
+        // Please upload a thumbnail.
         style: {
           background: "#25212a",
           color: "white",
@@ -313,7 +468,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
 
       // Ensure both video and thumbnail URLs are available before proceeding
       if (!videoUrl || !thumbnailUrl) {
-        toast.error("Failed to upload video", {
+        toast.error("视频上传失败。请重试。", {
+          // Failed to upload video. Please try again.
           style: {
             background: "#25212a",
             color: "white",
@@ -351,7 +507,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
         await createPosts(payload).unwrap();
 
         // Show success message
-        toast.success("Video uploaded successfully!", {
+        toast.success("视频上传成功！", {
+          // Video uploaded successfully!
           style: {
             background: "#25212a",
             color: "white",
@@ -373,7 +530,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
         setsuccessEnd(false);
 
         console.error("Upload failed:", error);
-        toast.error("Failed to upload video. Please try again.", {
+        toast.error("视频上传失败。请重试。", {
+          // Failed to upload video. Please try again.
           style: {
             background: "#25212a",
             color: "white",
@@ -386,7 +544,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
       setUploading(false);
       setsuccessEnd(false);
       console.error("Upload failed:", error);
-      toast.error("Failed to upload video. Please try again.", {
+      toast.error("视频上传失败。请重试。", {
+        // Failed to upload video. Please try again.
         style: {
           background: "#25212a",
           color: "white",
@@ -430,6 +589,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
               <div className="bg-[#16131C] rounded-md w-[320px] text-center pt-5">
                 <p className="text-white modal-text p-5">
                   你的视频仍在上传中。你可以取消上传或稍等片刻，等待上传完成。
+                  {/* Your video is still uploading. You can cancel the upload or wait a moment for it to complete. */}
                 </p>
                 <div className="flex justify-center border-t-[0.5px] border-[#2a262f]">
                   <button
@@ -437,12 +597,14 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
                     className="flex-1 cursor-pointer py-3 border-r-[0.5px] border-[#2a262f]  text-white"
                   >
                     继续
+                    {/* Continue */}
                   </button>
                   <button
                     onClick={handleCancelUpload}
                     className="flex-1 py-3 cursor-pointer  text-[#C23033]"
                   >
                     取消上传
+                    {/* Cancel Upload */}
                   </button>
                 </div>
               </div>
@@ -497,7 +659,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
                 )}
               </div>
             ) : (
-              <div {...getRootProps()} className="dropzone">
+              <div {...getRootProps()} className="dropzone" onClick={open}>
                 <div className="flex items-center justify-center">
                   <input {...getInputProps()} />
                   <div className="flex flex-col items-center">
@@ -517,7 +679,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
                       />
                     </svg>
                     <span className="text-[10px] text-[#888] mt-2">
-                      Click to Upload Video
+                      点击上传视频
+                      {/* Click to Upload Video */}
                     </span>
                   </div>
                 </div>
@@ -526,6 +689,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
           </div>
           <p className="text-[12px] text-[#888] text-center pt-2">
             视频大小不得超过 <br /> 100MB
+            {/* Video size must not exceed 100MB */}
           </p>
         </div>
         <div className="flex flex-col justify-center items-center">
@@ -561,7 +725,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
                 </button>
               </div>
             ) : (
-              <div {...getThumbnailRootProps()} className="dropzone">
+              <div {...getThumbnailRootProps()} className="dropzone" onClick={openThumbnailDialog}>
                 <div className="flex items-center justify-center">
                   <input {...getThumbnailInputProps()} />
                   <div className="flex flex-col items-center gap-2">
@@ -590,9 +754,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
                       />
                     </svg>
                     <span className="text-[10px] text-[#888] text-center">
-                      Click to Upload Cover
-                      <br />
-                      (optional)
+                      点击选择图片 <br /> (可选)
+                      {/* Click to Upload Cover (optional) */}
                     </span>
                   </div>
                 </div>
