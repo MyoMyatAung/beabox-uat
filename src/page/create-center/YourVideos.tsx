@@ -13,8 +13,6 @@ import { Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import UploadVideos from "./VideoUpload";
-import upload from "@/assets/createcenter/upload.svg";
-
 const Loader2 = () => (
   <div className="flex justify-center items-center w-full mt-[200px]">
     <img src={loader} alt="" className="w-20" />
@@ -23,6 +21,7 @@ const Loader2 = () => (
 
 const YourVideos = () => {
   const navigate = useNavigate();
+
   const [isActive, setIsActive] = useState("all");
   const [page, setPage] = useState(1);
   const { data: newData, isLoading: cfloading } = useGetConfigQuery({});
@@ -34,7 +33,6 @@ const YourVideos = () => {
     status: isActive,
   });
 
-  console.log(isLoading, isFetching);
   const [posts, setPosts] = useState<any>([]);
   const [hasMore, setHasMore] = useState(true);
   const [totalData, setTotalData] = useState<number>(0);

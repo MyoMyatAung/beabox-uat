@@ -1,5 +1,7 @@
 import { paths } from "@/routes/paths";
-import React from "react";
+import { useGetConfigQuery } from "@/store/api/createCenterApi";
+import { useGetPostsQuery } from "@/store/api/profileApi";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const UploadProgress = ({
@@ -13,7 +15,17 @@ const UploadProgress = ({
   seteditPost,
 }: any) => {
   const navigate = useNavigate();
-
+  const [page, setPage] = useState(1);
+  const [isActive, setIsActive] = useState("all");
+  const {
+    data,
+    isLoading,
+    isFetching,
+    refetch: yvrefetch,
+  } = useGetPostsQuery({
+    page,
+    status: isActive,
+  });
   const govideos = () => {
     seteditPost(null);
     setsuccessEnd(false);
@@ -56,7 +68,10 @@ const UploadProgress = ({
             </button>
             <button
               className="px-2 w-full bg-[#FFFFFF14] text-[14px] py-2 rounded-[16px] cursor-pointer"
-              onClick={() => navigate(paths.your_videos)}
+              onClick={() => {
+                yvrefetch();
+                navigate(paths.your_videos);
+              }}
             >
               查看帖子状态
             </button>

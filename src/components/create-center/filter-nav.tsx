@@ -24,7 +24,7 @@ const FilterNav = ({
   setHasMore,
   refetch,
 }: any) => {
-  const [selectedTitle, setSelectedTitle] = useState("All Videos");
+  const [selectedTitle, setSelectedTitle] = useState("所有帖子");
   const [isOpen, setIsOpen] = useState(false);
   const selectedColor = config?.find(
     (item: any) => item?.title == selectedTitle && item?.text_color_code
