@@ -149,17 +149,19 @@ const DatePick: React.FC<any> = ({
           </div>
           <div className="flex flex-col items-center">
             <div className="flex items-center gap-[20px]">
-              <button
-                onClick={() => {
-                  const now = new Date();
-                  setCurMon(defaultMonth);
-                  setCurYr(now.getFullYear());
-                  setplus(now.getMonth() + 1);
-                }}
-                className="w-[160px] text-[#888] draw_canccel_btn text-[16px] p-[16px]"
-              >
-                取消
-              </button>
+              <DrawerClose asChild>
+                <button
+                  onClick={() => {
+                    const now = new Date();
+                    setCurMon(defaultMonth);
+                    setCurYr(now.getFullYear());
+                    setplus(now.getMonth() + 1);
+                  }}
+                  className="w-[160px] text-[#888] draw_canccel_btn text-[16px] p-[16px]"
+                >
+                  取消
+                </button>
+              </DrawerClose>
               <DrawerClose asChild>
                 <button
                   onClick={handleDoneClick}

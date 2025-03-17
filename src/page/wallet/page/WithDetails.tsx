@@ -122,7 +122,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
               dollar_withdraw_rate?.min_coins
                 ? dollar_withdraw_rate.min_coins
                 : "100"
-            } 的倍数`}
+            } 的倍数 )`}
             className="withdraw_input bg-transparent focus:outline-none pt-[20px] pb-[10px] w-full text-white text-[16px] font-[400] leading-[20px]"
             type="number"
           />

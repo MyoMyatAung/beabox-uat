@@ -138,9 +138,10 @@
 }
 
 .payment_select_box {
-  border-radius: 12px;
-  border: 0.5px solid #888;
-  background: #111011;
+  border-radius: 17.171px 17.171px 8.585px 8.585px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #16131C;
+  backdrop-filter: blur(8.651399612426758px);
 }
 
 .payment_select_box:focus {
