@@ -126,12 +126,12 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
       try {
         // Get device information
         const deviceInfo = getDeviceInfo();
-        
+
         await postComment({
           post_id: files.post_id, // Assuming all comments belong to the same post
           content: content,
           device: deviceInfo.deviceName,
-          app_version: deviceInfo.appVersion
+          app_version: deviceInfo.appVersion,
         }).unwrap();
         setContent("");
         setShowTip(true);
@@ -201,7 +201,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
       <div ref={videoContainerRef} className={`app__videos`}>
         <div
           // key={index}
-          className="video mt-[10px] pb-[68px]"
+          className="video1 mt-[10px] pb-[68px]"
           data-post-id={files.post_id}
         >
           <VideoContainer

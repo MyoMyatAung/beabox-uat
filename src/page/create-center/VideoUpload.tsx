@@ -18,6 +18,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   const [thumbnail, setThumbnail] = useState(editPost?.preview_image || null);
   const [uploading, setUploading] = useState(false);
   const [uploadPercentage, setUploadPercentage] = useState(0);
+  const [agree, setAgree] = useState(false);
+
   const [videoDuration, setVideoDuration] = useState(
     editPost?.files[0].duration || 0
   );
@@ -89,10 +91,10 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
       // Create a video element to extract metadata
       const video = document.createElement("video");
       video.src = URL.createObjectURL(videoFile);
-      
+
       // Add muted attribute to allow autoplay on iOS
       video.muted = true;
-      
+
       // Add a promise to handle iOS autoplay restrictions
       const metadataPromise = new Promise<void>((resolve) => {
         video.onloadedmetadata = async () => {
@@ -101,10 +103,10 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
             await video.play().catch(() => {
               console.log("Play prevented, but metadata should be loaded");
             });
-            
+
             // Pause immediately after starting playback
             video.pause();
-            
+
             setVideoDuration(video.duration || 0); // Set duration
             setVideoWidth(video.videoWidth || 0); // Set width
             setVideoHeight(video.videoHeight || 0); // Set height
@@ -118,7 +120,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
             resolve();
           }
         };
-        
+
         // Handle errors
         video.onerror = () => {
           console.error("Error loading video:", video.error);
@@ -129,7 +131,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
           resolve();
         };
       });
-      
+
       // Wait for metadata to be loaded
       await metadataPromise;
 
@@ -193,12 +195,12 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   const generateThumbnail = (videoFile: File): Promise<File> => {
     return new Promise((resolve, reject) => {
       const video = document.createElement("video");
-      
+
       // Add attributes to help with iOS playback
       video.muted = true;
       video.playsInline = true;
       video.crossOrigin = "anonymous";
-      
+
       // Create object URL
       const objectUrl = URL.createObjectURL(videoFile);
       video.src = objectUrl;
@@ -210,10 +212,10 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
           await video.play().catch(() => {
             console.log("Play prevented, but video should be loaded");
           });
-          
+
           // Seek to the first frame
           video.currentTime = 0;
-          
+
           // Pause immediately after starting playback
           video.pause();
         } catch (error: unknown) {
@@ -231,7 +233,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
           if (!ctx) {
             throw new Error("Could not get canvas context");
           }
-          
+
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
           canvas.toBlob(
@@ -241,10 +243,10 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
                 const file = new File([blob], fileName, {
                   type: "image/jpeg",
                 });
-                
+
                 // Clean up resources
                 URL.revokeObjectURL(objectUrl);
-                
+
                 resolve(file); // Resolve with the File object
               } else {
                 // If blob creation fails, create a default thumbnail
@@ -266,33 +268,39 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
         // If video loading fails, create a default thumbnail
         createDefaultThumbnail().then(resolve).catch(reject);
       };
-      
+
       // Set a timeout in case the video never triggers the events
       setTimeout(() => {
-        if (video.readyState < 2) { // HAVE_CURRENT_DATA
+        if (video.readyState < 2) {
+          // HAVE_CURRENT_DATA
           console.warn("Video loading timeout - creating default thumbnail");
           createDefaultThumbnail().then(resolve).catch(reject);
         }
       }, 5000); // 5 second timeout
     });
   };
-  
+
   // Create a default thumbnail if video thumbnail generation fails
   const createDefaultThumbnail = async () => {
     // Create a simple colored canvas as a fallback thumbnail
     const canvas = document.createElement("canvas");
     canvas.width = 320;
     canvas.height = 240;
-    
+
     const ctx = canvas.getContext("2d");
     if (ctx) {
       // Fill with a gradient background
-      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      const gradient = ctx.createLinearGradient(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
       gradient.addColorStop(0, "#3498db");
       gradient.addColorStop(1, "#2980b9");
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
+
       // Add a play icon
       ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
       ctx.beginPath();
@@ -302,7 +310,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
       ctx.closePath();
       ctx.fill();
     }
-    
+
     return new Promise<File>((resolve, reject) => {
       canvas.toBlob(
         (blob) => {
@@ -524,6 +532,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
         setFiles([]);
         formData.setContentTitle("");
         formData.setHashtags([]);
+        setAgree(false);
         setThumbnail(null);
       } catch (error) {
         setUploading(false);
@@ -725,7 +734,11 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
                 </button>
               </div>
             ) : (
-              <div {...getThumbnailRootProps()} className="dropzone" onClick={openThumbnailDialog}>
+              <div
+                {...getThumbnailRootProps()}
+                className="dropzone"
+                onClick={openThumbnailDialog}
+              >
                 <div className="flex items-center justify-center">
                   <input {...getThumbnailInputProps()} />
                   <div className="flex flex-col items-center gap-2">
@@ -774,6 +787,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
           uploading={uploading}
           editPost={editPost}
           loading={isLoading}
+          agree={agree}
+          setAgree={setAgree}
         />
       </div>
     </div>

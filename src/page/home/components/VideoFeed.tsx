@@ -198,12 +198,12 @@ const VideoFeed = ({
       try {
         // Get device information
         const deviceInfo = getDeviceInfo();
-        
+
         const response = await postComment({
           post_id: post_id, // Assuming all comments belong to the same post
           content: content,
           device: deviceInfo.deviceName,
-          app_version: deviceInfo.appVersion
+          app_version: deviceInfo.appVersion,
         }).unwrap();
         setContent("");
         dispatch(
@@ -314,7 +314,7 @@ const VideoFeed = ({
         {videosToRender.map((video: any, index: any) => (
           <div
             key={index}
-            className="video mt-[20px] pb-[68px]"
+            className="video1 mt-[20px] pb-[68px]"
             data-post-id={video.post_id} // Add post ID to the container
           >
             <VideoContainer1
