@@ -30,12 +30,21 @@ const App = () => {
     const adjustVideoHeight = () => {
       const videoElement = document.querySelector(".video");
       const videoElement1 = document.querySelector(".video1");
+
+      const videoFooter = document.querySelector(".videoFooter");
       if (videoElement) {
         if (isMobileBrowser) {
           // Adjusted height for mobile browsers
-          videoElement.style.height = "calc(100dvh - 70px)";
+          videoElement.style.height = "calc(100dvh - 64px)";
         }
       }
+      if (videoFooter) {
+        if (isMobileBrowser) {
+          // Adjusted height for mobile browsers
+          videoFooter.style.bottom = "40px";
+        }
+      }
+
       if (videoElement1) {
         if (isMobileBrowser) {
           // Adjusted height for mobile browsers
