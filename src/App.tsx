@@ -30,12 +30,21 @@ const App = () => {
     const adjustVideoHeight = () => {
       const videoElement = document.querySelector(".video");
       const videoElement1 = document.querySelector(".video1");
+
+      const videoFooter = document.querySelector(".videoFooter");
       if (videoElement) {
         if (isMobileBrowser) {
           // Adjusted height for mobile browsers
-          videoElement.style.height = "calc(100dvh - 70px)";
+          videoElement.style.height = "calc(100dvh - 64px)";
         }
       }
+      if (videoFooter) {
+        if (isMobileBrowser) {
+          // Adjusted height for mobile browsers
+          videoFooter.style.bottom = "40px";
+        }
+      }
+
       if (videoElement1) {
         if (isMobileBrowser) {
           // Adjusted height for mobile browsers
@@ -58,6 +67,17 @@ const App = () => {
       window.removeEventListener("resize", adjustVideoHeight);
     };
   }, [isMobileBrowser]);
+
+  useEffect(() => {
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    if (isAndroid) {
+      document.body.classList.add("android");
+      document.body.classList.remove("not-android");
+    } else {
+      document.body.classList.add("not-android");
+      document.body.classList.remove("android");
+    }
+  }, []);
 
   const dispatch = useDispatch();
 
