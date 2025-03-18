@@ -14,6 +14,7 @@ interface WithDetailsProps {
   data: any;
   setActiveTab: any;
   refetch: any;
+  balance: any;
 }
 
 const WithDetails: React.FC<WithDetailsProps> = ({
@@ -22,6 +23,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
   dollar_withdraw_rate,
   setActiveTab,
   refetch,
+  balance,
 }) => {
   const [amount, setAmount] = useState<string>("");
   const [bankAccountNumber, setBankAccountNumber] = useState<string>("");
@@ -63,16 +65,20 @@ const WithDetails: React.FC<WithDetailsProps> = ({
   };
 
   const isFormValid =
-    amount !== "" &&
+    balance >= amount && // Ensure balance is greater than or equal to amount
+    amount !== "" && // Ensure amount is not empty
     selectedPayment !== "" &&
     selectedPaymentID?.fields?.every(
       (ff: any) =>
         !ff.required || (bankInfo[ff.key] && bankInfo[ff.key].trim() !== "")
     );
-  // bankAccountName.length !== 0 && selectedPayment !== "";
 
   const submitHandler = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
+    if (balance < amount) {
+      console.log(balance, amount);
+      return;
+    }
 
     if (!isFormValid) {
       return;
@@ -89,7 +95,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
         if (!data) {
           throw new Error();
         } else {
-          refetch()
+          refetch();
           setActiveTab(2);
         }
       } catch (error) {
@@ -178,7 +184,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
         {/* rules */}
         <div>
           <label className="text-white text-[16px] font-[400] leading-[20px]">
-          撤回规则
+            撤回规则
           </label>
           <div className="flex flex-col gap-[20px] pt-[10px] text-[#888] text-[12px] font-[300] leading-[18px]">
             <p>1.每次提现最低限额为300元，且只能提现100的整数倍</p>

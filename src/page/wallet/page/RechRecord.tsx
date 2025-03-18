@@ -121,6 +121,7 @@ const RechRecord: React.FC<RechRecordProps> = ({}) => {
           setCurMon={setCurMon}
           setCurYr={setCurYr}
           setplus={setPlus}
+          setTran={setTran}
         />
         {/* transition */}
         <div className=" py-[12px] px-[18px]">
@@ -157,7 +158,7 @@ const RechRecord: React.FC<RechRecordProps> = ({}) => {
                       className=" transit_list py-[20px] flex justify-between"
                     >
                       <div className=" flex gap-[12px] items-center">
-                        <div className="bitcoin_border p-3">
+                        <div className="bitcoin_border w-[56px] h-[56px] flex justify-center items-center">
                           <img
                             className=" w-[26px] h-[26px]"
                             src={transit}

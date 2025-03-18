@@ -104,7 +104,7 @@ const Transit: React.FC<TransitProps> = ({}) => {
                     className=" transit_list py-[20px] flex justify-between"
                   >
                     <div className=" flex gap-[12px] items-center">
-                      <div className="bitcoin_border p-3">
+                      <div className="bitcoin_border w-[56px] h-[56px] flex justify-center items-center">
                         <img
                           className=" w-[26px] h-[26px]"
                           src={transit}

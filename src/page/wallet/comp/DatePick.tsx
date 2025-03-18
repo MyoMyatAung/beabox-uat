@@ -34,6 +34,7 @@ const DatePick: React.FC<any> = ({
   setCurMon,
   setCurYr,
   setplus,
+  setTran
 }) => {
   const swiperRef = useRef<any>(null);
   const swiperYrRef = useRef<any>(null);
@@ -53,6 +54,7 @@ const DatePick: React.FC<any> = ({
   };
 
   const handleDoneClick = () => {
+    setTran([])
     setCurMon(selectedMonth);
     setCurYr(selectedYear);
     setplus(months.indexOf(selectedMonth) + 1);

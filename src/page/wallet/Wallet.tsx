@@ -19,7 +19,7 @@ const Wallet: React.FC = () => {
       ></div>
 
       {/* Content */}
-      <div className="relative flex justify-center items-center bg-gradient-to-t from-black to-black/5">
+      <div className="relative flex justify-center items-center">
         <div className="relative w-screen xl:w-[800px] min-h-screen">
           <div className="relative backdrop-brightness-[0.8] backdrop-blur min-h-screen">
             {/* <Header lv={false} title="钱包" /> */}
