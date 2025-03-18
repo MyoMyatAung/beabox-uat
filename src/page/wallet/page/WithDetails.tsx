@@ -178,7 +178,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
         {/* rules */}
         <div>
           <label className="text-white text-[16px] font-[400] leading-[20px]">
-            Withdraw rule
+          撤回规则
           </label>
           <div className="flex flex-col gap-[20px] pt-[10px] text-[#888] text-[12px] font-[300] leading-[18px]">
             <p>1.每次提现最低限额为300元，且只能提现100的整数倍</p>
