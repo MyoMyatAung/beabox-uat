@@ -68,7 +68,7 @@ const Transit: React.FC<TransitProps> = ({}) => {
     <div className=" py-[20px]">
       {/* header */}
       <div className="transit_header px-[20px] py-[10px] flex items-center justify-between">
-        <h1 className=" text-white text-[14px] font-[500] leading-normal">
+        <h1 className=" text-white text-[16px] font-[500] leading-normal">
           明细
         </h1>
         <div
@@ -104,7 +104,7 @@ const Transit: React.FC<TransitProps> = ({}) => {
                     className=" transit_list py-[20px] flex justify-between"
                   >
                     <div className=" flex gap-[12px] items-center">
-                      <div className="bitcoin_border p-3">
+                      <div className="bitcoin_border w-[56px] h-[56px] flex justify-center items-center">
                         <img
                           className=" w-[26px] h-[26px]"
                           src={transit}

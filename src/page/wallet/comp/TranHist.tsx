@@ -124,6 +124,7 @@ const TranHist: React.FC = () => {
         {/* time */}
         <div className=" fixed bg-[#201c25] w-full">
           <DatePick
+            setTran={setTran}
             curMon={curMon}
             curYr={curYr}
             setCurMon={setCurMon}
@@ -148,9 +149,7 @@ const TranHist: React.FC = () => {
           {data?.data.length === 0 && (
             <div className="flex flex-col justify-center items-center h-[600px]">
               <img src={noTran} alt="" />
-              <h1 className="text-white font-[400] text-[14px]">
-                暂无转账
-              </h1>
+              <h1 className="text-white font-[400] text-[14px]">暂无转账</h1>
             </div>
           )}
 
@@ -160,7 +159,7 @@ const TranHist: React.FC = () => {
               className="transit_list py-[16px] flex justify-between"
             >
               <div className="flex gap-[12px] items-center">
-                <div className="bitcoin_border p-3">
+                <div className="bitcoin_border w-[56px] h-[56px] flex justify-center items-center">
                   <img className="w-[26px] h-[26px]" src={transit} alt="" />
                 </div>
                 <div className="flex flex-col gap-[4px]">

@@ -12,6 +12,7 @@ import { ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { paths } from "@/routes/paths";
 import { useSelector } from "react-redux";
+import balc from '../../../assets/wallet/balc.png'
 
 interface BalanceProps {}
 
@@ -38,6 +39,7 @@ const Balance: React.FC<BalanceProps> = () => {
     <div className="p-[20px]">
       <div className="balance_box p-[22px] flex flex-col gap-[12px]">
         {/* head */}
+        {/* <img src={balc} alt="" /> */}
         <div className="flex justify-cente items-center gap-[6px]">
           <img className="w-[18px] h-[18px]" src={coin} alt="" />
           <span className="text-white text-[14px] font-[500] leading-[20px]">

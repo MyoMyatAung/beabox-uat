@@ -77,7 +77,7 @@ const Payment: React.FC<PaymentProps> = ({
             <div
               key={pp.id}
               onClick={() => handleSelection(pp.id)}
-              className={`py-[12px] rounded-[12px] px-[12px] w-full flex justify-between items-center bg-white/10`}
+              className={`py-[12px] rounded-[12px] px-[12px] w-full flex justify-between items-center bg-white/5`}
             >
               <div className="flex justify-center items-center gap-[12px]">
                 <span>
