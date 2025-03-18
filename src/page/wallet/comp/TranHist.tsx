@@ -182,7 +182,7 @@ const TranHist: React.FC = () => {
                         .backgroundColor,
                       color: getStatusClass(ts.status).color,
                     }}
-                    className="px-[12px] py-[2px] flex justify-center items-center rounded-md  text-[12px] font-[400] leading-[15px]"
+                    className="px-[12px] py-[6px] flex justify-center items-center rounded-[6px]  text-[12px] font-[400] leading-[15px]"
                   >
                     {ts.status === "approved" && "已批准"}
                     {ts.status === "pending" && "待处理"}
