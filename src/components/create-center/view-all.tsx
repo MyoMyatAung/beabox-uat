@@ -38,7 +38,7 @@ const ViewAll = () => {
       <div className="absolute w-full h-[246px] rounded-[20px] top-0 left-0 bg-[#000000A3] z-10"></div>
       <div className="w-full py-1 px-2">
         <button className="text-[12px] text-white z-20 flex items-center gap-1 ml-auto">
-          <span className="text-white z-50">View All</span>
+          <span className="text-white z-50">查看全部</span>
           <ChevronRight size={14} className="text-white z-50" />
         </button>
       </div>

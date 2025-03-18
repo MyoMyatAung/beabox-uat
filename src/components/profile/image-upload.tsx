@@ -45,7 +45,7 @@ const ImageUpload = ({ imgurl }: any) => {
       <div className="relative">
         {loading1 || loading2 ? <TranLoader /> : <></>}
         <div>
-          {image && (
+          {image ? (
             <label htmlFor="image-upload" className="">
               <div className="flex justify-center items-center relative">
                 <AsyncDecryptedImage
@@ -58,6 +58,8 @@ const ImageUpload = ({ imgurl }: any) => {
                 </div>
               </div>
             </label>
+          ) : (
+            <></>
           )}
           <input
             type="file"
@@ -66,14 +68,16 @@ const ImageUpload = ({ imgurl }: any) => {
             className="hidden"
             id="image-upload"
           />
-          {!image && !imgurl?.length && (
+          {!image && !imgurl?.length ? (
             <label htmlFor="image-upload" className="">
               <div className="w-[80px] h-[80px] rounded-full bg-[#FFFFFF12] flex justify-center items-center mx-auto">
                 <Camera />
               </div>
             </label>
+          ) : (
+            <></>
           )}
-          {!image && imgurl?.length && (
+          {!image && imgurl?.length ? (
             <label htmlFor="image-upload" className="">
               <div className="flex justify-center items-center relative">
                 <img
@@ -86,6 +90,8 @@ const ImageUpload = ({ imgurl }: any) => {
                 </div>
               </div>
             </label>
+          ) : (
+            <></>
           )}
         </div>
       </div>
