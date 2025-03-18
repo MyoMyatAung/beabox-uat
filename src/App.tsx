@@ -68,6 +68,17 @@ const App = () => {
     };
   }, [isMobileBrowser]);
 
+  useEffect(() => {
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    if (isAndroid) {
+      document.body.classList.add("android");
+      document.body.classList.remove("not-android");
+    } else {
+      document.body.classList.add("not-android");
+      document.body.classList.remove("android");
+    }
+  }, []);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
