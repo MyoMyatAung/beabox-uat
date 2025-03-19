@@ -12,6 +12,7 @@ import { useEffect, useRef, useState } from "react";
 import InfinitLoad from "@/components/shared/infinit-load";
 import MyRank from "@/components/create-center/my-rank";
 import { useSelector } from "react-redux";
+import loader from "@/page/home/vod_loader.gif";
 
 const Ranking = () => {
   const [keyword, setKeyword] = useState("");
@@ -24,11 +25,10 @@ const Ranking = () => {
   const [rankingData, setRankingData] = useState<any>([]);
   const [hasMore, setHasMore] = useState(true);
   const [totalData, setTotalData] = useState<number>(0);
-  const { data, isLoading, refetch } = useGetTopCreatorQuery({
+  const { data, isLoading, refetch, isFetching } = useGetTopCreatorQuery({
     tag: keyword,
     page,
   });
-  console.log(data);
   const { data: newData } = useGetConfigQuery({});
   const tags = newData?.data?.creator_center_ranking_filter;
   console.log(tags);
@@ -96,6 +96,13 @@ const Ranking = () => {
 
   return (
     <div className="relative">
+      {isFetching ? (
+        <div className="fixed top-0 left-0 w-full h-screen bg-[#000000CC] flex justify-center items-center z-[3000]">
+          <img src={loader} alt="" className="w-20" />
+        </div>
+      ) : (
+        <></>
+      )}
       {showHeader ? (
         <div className="sticky top-0 w-full z-[9999] bg-[#16131C] pb-5">
           <TopNav center="热门创作者" />

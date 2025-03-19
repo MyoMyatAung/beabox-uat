@@ -70,10 +70,10 @@ const YourVideos = () => {
   //   refetch();
   // }, [isActive, refetch]);
   useEffect(() => {
-    if (config) {
-      setIsActive(config[0].keyword);
+    if (newData?.data?.creator_center_post_filter) {
+      setIsActive(newData?.data?.creator_center_post_filter[0]?.keyword);
     }
-  }, [config]);
+  }, [newData]);
 
   // useEffect(() => {
   //   if (!editPost) refetch();
