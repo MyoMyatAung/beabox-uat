@@ -54,7 +54,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
           setThumbnail(editPost.preview_image); // Fallback to the original URL
         }
       } else {
-        setThumbnail(`${domain}/${editPost?.preview_image}`);
+        if (editPost) setThumbnail(`${domain}/${editPost?.preview_image}`);
       }
     };
 
@@ -650,7 +650,14 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
           <div className="preview-container">
             {files?.length > 0 ? (
               <div className="preview-item">
-                <video src={`${domain}/${videoUrlRef.current}`} className="preview-video" />
+                <video
+                  src={
+                    editPost
+                      ? `${domain}/${videoUrlRef.current}`
+                      : videoUrlRef.current
+                  }
+                  className="preview-video"
+                />
 
                 {!uploading && (
                   <button
