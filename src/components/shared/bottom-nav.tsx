@@ -9,6 +9,8 @@ import ProfileSVG from "@/assets/icons/Profile.svg";
 import Profile1SVG from "@/assets/icons/Profile1.svg";
 import Explore1SVG from "@/assets/icons/Explore1.svg";
 import App1SVG from "@/assets/icons/App1.svg";
+import ranksvg from "@/assets/icons/rank.svg";
+import selectedrank from "@/assets/icons/selecteRank.svg";
 import { useSelector } from "react-redux";
 
 const navItems = [
@@ -26,6 +28,12 @@ const navItems = [
     icon: AppSVG,
     href: "/application",
   },
+  // {
+  //   name: "排名",
+  //   selectedIcon: selectedrank,
+  //   icon: ranksvg,
+  //   href: "/ranking",
+  // },
   {
     name: "个人中心",
     selectedIcon: Profile1SVG,
