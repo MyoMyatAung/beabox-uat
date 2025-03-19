@@ -69,29 +69,63 @@ const ShareOverlay: React.FC<any> = ({
     }
   };
 
-  const onDownload = () => {
+  const onDownload = async () => {
     if (isIOSApp()) {
       sendEventToNative("saveVideo", post?.files[0].downloadURL);
     } else {
-      dispatch(
-        showToast({
-          message: "无法保存视频",
-          type: "success",
-        })
-      );
-      // For web
-      //     const link = document.createElement('a');
-      // link.href = post.files[0].downloadURL;
-      // link.download = 'video.mp4';
-      // document.body.appendChild(link);
-      // link.click();
-      // document.body.removeChild(link);
-      // // Add a delayed redirect in case download didn't trigger
-      // setTimeout(() => {
-      //   window.location.href = post.files[0].downloadURL;
-      // }, 1000);
+      try {
+        const response = await fetch(post.files[0].downloadURL);
+        const blob = await response.blob();
+
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+
+        link.download = new Date().getTime().toString();
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        setTimeout(() => {
+          window.open(post.files[0].downloadURL, "_blank"); // Open in new tab
+        }, 1000); // 1-second delay to ensure the download starts
+
+        handleClose();
+      } catch (error) {
+        console.error("Download failed:", error);
+        dispatch(
+          showToast({
+            message: "下载失败",
+            type: "error",
+          })
+        );
+      }
     }
   };
+
+  // const onDownload = () => {
+  //   if (isIOSApp()) {
+  //     sendEventToNative("saveVideo", post?.files[0].downloadURL);
+  //   } else {
+  //     // dispatch(
+  //     //   showToast({
+  //     //     message: "无法保存视频",
+  //     //     type: "success",
+  //     //   })
+  //     // );
+  //     // For web
+  //     const link = document.createElement("a");
+  //     link.href = post.files[0].downloadURL;
+  //     link.download = "video.mp4";
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     document.body.removeChild(link);
+  //     // Add a delayed redirect in case download didn't trigger
+  //     setTimeout(() => {
+  //       window.location.href = post.files[0].downloadURL;
+  //     }, 1000);
+  //   }
+  // };
 
   const handleShare = () => {
     if (isIOSApp()) {
@@ -194,6 +228,8 @@ const ShareOverlay: React.FC<any> = ({
     return <LoginDrawer isOpen={isOpen} setIsOpen={setIsOpen} />;
   }
 
+  console.log(isIOSApp());
+
   return ReactDOM.createPortal(
     <div className="fixed inset-0 z-[999999] flex justify-center items-end">
       <div
@@ -240,6 +276,65 @@ const ShareOverlay: React.FC<any> = ({
                 </svg>
                 <span className="download-text">保存视频</span>
               </button>
+              {/* {isIOSApp() ? (
+                <button
+                  onClick={onDownload}
+                  className="flex flex-col items-center"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="41"
+                    height="40"
+                    viewBox="0 0 41 40"
+                    fill="none"
+                  >
+                    <path
+                      d="M40.5 20C40.5 31.0457 31.5457 40 20.5 40C9.4543 40 0.5 31.0457 0.5 20C0.5 8.9543 9.4543 0 20.5 0C31.5457 0 40.5 8.9543 40.5 20Z"
+                      fill="white"
+                      fill-opacity="0.08"
+                    />
+                    <path
+                      d="M26.0209 28.8891H13.8682C12.3172 28.8891 11.0557 27.6808 11.0557 26.197V24.4447C11.0557 23.8312 11.5533 23.3336 12.1668 23.3336C12.7802 23.3336 13.2779 23.8312 13.2779 24.4447V26.197C13.2779 26.4516 13.5487 26.6669 13.8682 26.6669H26.0209C26.3404 26.6669 26.6112 26.4516 26.6112 26.197V24.4447C26.6112 23.8312 27.1089 23.3336 27.7223 23.3336C28.3358 23.3336 28.8334 23.8312 28.8334 24.4447V26.197C28.8334 27.6808 27.5719 28.8891 26.0209 28.8891ZM19.9446 11.1113C19.3311 11.1113 18.8334 11.609 18.8334 12.2224V22.2224C18.8334 22.8359 19.3311 23.3336 19.9446 23.3336C20.558 23.3336 21.0557 22.8359 21.0557 22.2224V12.2224C21.0557 11.609 20.558 11.1113 19.9446 11.1113Z"
+                      fill="white"
+                    />
+                    <path
+                      d="M22.6364 19.1184C22.3516 19.1184 22.0669 19.2272 21.8516 19.4448L19.9442 21.3498L18.0391 19.4448C17.6039 19.0096 16.9026 19.0096 16.4674 19.4448C16.0322 19.8799 16.0322 20.5813 16.4674 21.0165L19.1595 23.7086C19.5947 24.1438 20.2961 24.1438 20.7313 23.7086L23.4234 21.0165C23.8586 20.5813 23.8586 19.8799 23.4234 19.4448C23.2035 19.2272 22.9188 19.1184 22.6364 19.1184Z"
+                      fill="white"
+                    />
+                  </svg>
+                  <span className="download-text">保存视频</span>
+                </button>
+              ) : (
+                <a
+                  href={post.files[0].downloadURL}
+                  download={true}
+                  className="flex flex-col items-center"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="41"
+                    height="40"
+                    viewBox="0 0 41 40"
+                    fill="none"
+                  >
+                    <path
+                      d="M40.5 20C40.5 31.0457 31.5457 40 20.5 40C9.4543 40 0.5 31.0457 0.5 20C0.5 8.9543 9.4543 0 20.5 0C31.5457 0 40.5 8.9543 40.5 20Z"
+                      fill="white"
+                      fill-opacity="0.08"
+                    />
+                    <path
+                      d="M26.0209 28.8891H13.8682C12.3172 28.8891 11.0557 27.6808 11.0557 26.197V24.4447C11.0557 23.8312 11.5533 23.3336 12.1668 23.3336C12.7802 23.3336 13.2779 23.8312 13.2779 24.4447V26.197C13.2779 26.4516 13.5487 26.6669 13.8682 26.6669H26.0209C26.3404 26.6669 26.6112 26.4516 26.6112 26.197V24.4447C26.6112 23.8312 27.1089 23.3336 27.7223 23.3336C28.3358 23.3336 28.8334 23.8312 28.8334 24.4447V26.197C28.8334 27.6808 27.5719 28.8891 26.0209 28.8891ZM19.9446 11.1113C19.3311 11.1113 18.8334 11.609 18.8334 12.2224V22.2224C18.8334 22.8359 19.3311 23.3336 19.9446 23.3336C20.558 23.3336 21.0557 22.8359 21.0557 22.2224V12.2224C21.0557 11.609 20.558 11.1113 19.9446 11.1113Z"
+                      fill="white"
+                    />
+                    <path
+                      d="M22.6364 19.1184C22.3516 19.1184 22.0669 19.2272 21.8516 19.4448L19.9442 21.3498L18.0391 19.4448C17.6039 19.0096 16.9026 19.0096 16.4674 19.4448C16.0322 19.8799 16.0322 20.5813 16.4674 21.0165L19.1595 23.7086C19.5947 24.1438 20.2961 24.1438 20.7313 23.7086L23.4234 21.0165C23.8586 20.5813 23.8586 19.8799 23.4234 19.4448C23.2035 19.2272 22.9188 19.1184 22.6364 19.1184Z"
+                      fill="white"
+                    />
+                  </svg>
+                  <span className="download-text">保存视频</span>
+                </a>
+              )} */}
+
               <button
                 onClick={handleLinkCopy}
                 className="flex flex-col items-center"
