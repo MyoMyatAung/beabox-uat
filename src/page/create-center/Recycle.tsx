@@ -43,6 +43,10 @@ const SelectBtn = ({
 
 const DeleteCard = ({ index, setDeleteItems, item, deleteItems }: any) => {
   const { data: newData } = useGetConfigQuery({});
+  const filter = newData?.data?.creator_center_post_filter?.find(
+    (data: any) => data?.keyword === item?.status
+  );
+  console.log(filter);
   const imgdomain = newData?.data?.post_domain?.image;
   const [selected, setSelected] = useState(false);
   const handleItemClick = (index: number) => {
@@ -70,16 +74,17 @@ const DeleteCard = ({ index, setDeleteItems, item, deleteItems }: any) => {
             alt=""
           />
         )}
-        {/* <img
-          src={`${imgdomain}/${item?.preview_image}`}
-          className="w-[128px] h-[80px] object-cover object-center rounded-[8px]"
-          alt=""
-        /> */}
         <div className="flex flex-col gap-4">
           <p className="text-[14px] text-[#888] truncate">{item?.title}</p>
           <div className="flex justify-between items-center">
-            <button className="bg-[#FFFFFF1F] text-[#fff] rounded-full px-2 py-1 capitalize">
-              {item?.status?.replace("_", " ")}
+            <button
+              style={{
+                color: filter?.text_color_code,
+                backgroundColor: filter?.bg_color_code,
+              }}
+              className={`rounded-full px-2 py-1`}
+            >
+              {filter?.title}
             </button>
             <p className="text-[10px] text-[#bbb]">{item?.time_ago}</p>
           </div>

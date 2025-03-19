@@ -28,7 +28,6 @@ const Ranking = () => {
     tag: keyword,
     page,
   });
-  console.log(data);
   const { data: newData } = useGetConfigQuery({});
   const tags = newData?.data?.creator_center_ranking_filter;
   console.log(tags);
