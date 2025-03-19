@@ -33,7 +33,7 @@ const CreateCenter = () => {
         }
       />
       <YourVideos />
-      {/* <Ads /> */}
+      <Ads />
       <div className="grid grid-cols-2 items-center w-full justify-center p-5 gap-3">
         <div className="flex-1">
           <ViewAll />
