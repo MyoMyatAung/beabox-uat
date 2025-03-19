@@ -123,10 +123,14 @@ export const createCenterApi = createApi({
     getS3: builder.query({
       query: () => convertToSecureUrl(`/s3/signed-url`),
     }),
+    getAds: builder.query({
+      query: () => convertToSecureUrl(`/app/ads`),
+    }),
   }),
 });
 
 export const {
+  useGetAdsQuery,
   useGetS3Query,
   useGetConfigQuery,
   useGetPostsQuery,
