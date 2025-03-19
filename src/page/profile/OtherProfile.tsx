@@ -342,9 +342,7 @@ const OtherProfile = () => {
           </div>
         </div>
         <h1 className="text-[12px]  text-[#888] mb-5 px-5 z-[1900] relative xs:w-[100px] md:w-[340px] overflow-hidden break-words">
-          {userData?.data?.bio && userData?.data?.hide_bio == "on"
-            ? userData?.data?.bio
-            : ""}
+          {userData?.data?.bio ? userData?.data?.bio : ""}
         </h1>
         <div className={`${showHeader ? "opacity-0" : "opacity-1"}`}>
           <OtherStats
