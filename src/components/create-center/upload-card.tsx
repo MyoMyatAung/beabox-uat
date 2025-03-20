@@ -5,8 +5,11 @@ const UploadCard = ({ item, config, imgdomain }: any) => {
   let color = config?.find((el: any) => el?.keyword == item?.status);
   let bgcolor = color?.bg_color_code;
   let textcolor = color?.text_color_code;
-
-  console.log(bgcolor);
+  console.log(config);
+  const filterStatus = config?.find(
+    (data: any) => data?.keyword == item?.status
+  );
+  console.log(filterStatus, "filterStatus");
 
   return (
     <div className="grid grid-cols-2 items-center">
@@ -30,7 +33,7 @@ const UploadCard = ({ item, config, imgdomain }: any) => {
             }}
             className={`rounded-full px-2 py-1 capitalize`}
           >
-            {item?.status}
+            {filterStatus?.title}
           </button>
           <p className="text-[10px] text-[#bbb]">{item?.time_ago}</p>
         </div>

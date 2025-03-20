@@ -617,3 +617,11 @@ input:checked + .slider:before {
   opacity: 0.5;
 }
 
+.myrank-bg {
+  background: linear-gradient(
+    324.57deg,
+    #cd3eff1f 100%,
+    #ffb2e01f 100%
+  );
+  /* @apply bg-gradient-to-b form-[#cd3eff1f] to-[#ffb2e01f]; */
+}

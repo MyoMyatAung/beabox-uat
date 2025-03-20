@@ -46,6 +46,7 @@ const OtherProfile = () => {
   } = useGetUserProfileQuery(id || "");
   const [shareInfo, { data: shareData, isLoading: shareLoading }] =
     useShareInfoMutation();
+  console.log(shareData, "share data");
   const [decryptedCover, setDecryptedCover] = useState(defaultCover);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
   const [cachedDownloadLink, setCachedDownloadLink] = useState(null);
@@ -257,7 +258,8 @@ const OtherProfile = () => {
       {isCopied2 ? (
         <div className="w-full z-[1300] absolute top-[80vh] flex justify-center">
           <p className="text-[14px] bg-[#191721] px-2 py-1 rounded-lg w-[83px] text-center">
-            {shareData?.message}
+            {/* {shareData?.message} */}
+            复制成功
           </p>
         </div>
       ) : (
@@ -342,9 +344,7 @@ const OtherProfile = () => {
           </div>
         </div>
         <h1 className="text-[12px]  text-[#888] mb-5 px-5 z-[1900] relative xs:w-[100px] md:w-[340px] overflow-hidden break-words">
-          {userData?.data?.bio && userData?.data?.hide_bio == "on"
-            ? userData?.data?.bio
-            : ""}
+          {userData?.data?.bio ? userData?.data?.bio : ""}
         </h1>
         <div className={`${showHeader ? "opacity-0" : "opacity-1"}`}>
           <OtherStats

@@ -24,7 +24,7 @@ const ProfileDetail = () => {
   const user = useSelector((state: any) => state?.persist?.user);
   const profileData = useSelector((state: any) => state?.persist?.profileData);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
-  const decryptImage = (arrayBuffer, key = 0x12, decryptSize = 4096) => {
+  const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
     const data = new Uint8Array(arrayBuffer);
     const maxSize = Math.min(decryptSize, data.length);
     for (let i = 0; i < maxSize; i++) {

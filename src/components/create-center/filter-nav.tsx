@@ -87,7 +87,7 @@ const FilterNav = ({
                     <p className={`text-[16px]`}>{item?.title}</p>
                     {isActive == item?.keyword ? <Selected /> : <Unselected />}
                   </div>
-                  {index == 5 ? (
+                  {index == config?.length - 1 ? (
                     <></>
                   ) : (
                     <div className="bg-[#222222] h-[0.3px] my-5"></div>

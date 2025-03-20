@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { decryptImage } from "@/utils/image-decrypt";
 import {
   useCreatePostsMutation,
+  useGetConfigQuery,
   useGetS3Query,
 } from "@/store/api/createCenterApi";
 import TopNav from "@/components/create-center/top-nav";
@@ -13,13 +14,15 @@ import UploadProgress from "@/components/create-center/upload-progress";
 import DeleteDetail from "@/components/create-center/delete-detail";
 
 const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
+  const { data: configData } = useGetConfigQuery({});
+  const domain = configData?.data?.post_domain?.image;
   const { data } = useGetS3Query({});
   const [files, setFiles] = useState(editPost?.files || []);
   const [thumbnail, setThumbnail] = useState(editPost?.preview_image || null);
   const [uploading, setUploading] = useState(false);
   const [uploadPercentage, setUploadPercentage] = useState(0);
   const [agree, setAgree] = useState(false);
-
+  console.log(editPost, "ed post");
   const [videoDuration, setVideoDuration] = useState(
     editPost?.files[0].duration || 0
   );
@@ -29,6 +32,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
     editPost?.files[0].height || 0
   );
   const videoUrlRef = useRef(editPost?.files[0].resourceURL || null);
+  console.log(videoUrlRef, "ref");
   const [uploadedSize, setUploadedSize] = useState(0); // Added
   const [totalSize, setTotalSize] = useState(
     (editPost?.files[0].size / (1024 * 1024)).toFixed(2) || 0
@@ -49,6 +53,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
           console.error("Error decrypting preview image:", error);
           setThumbnail(editPost.preview_image); // Fallback to the original URL
         }
+      } else {
+        if (editPost) setThumbnail(`${domain}/${editPost?.preview_image}`);
       }
     };
 
@@ -644,7 +650,14 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
           <div className="preview-container">
             {files?.length > 0 ? (
               <div className="preview-item">
-                <video src={videoUrlRef.current} className="preview-video" />
+                <video
+                  src={
+                    editPost
+                      ? `${domain}/${videoUrlRef.current}`
+                      : videoUrlRef.current
+                  }
+                  className="preview-video"
+                />
 
                 {!uploading && (
                   <button
