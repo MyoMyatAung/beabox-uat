@@ -218,3 +218,10 @@ option selected {
   line-height: 15px; /* 125% */
   letter-spacing: 0.3px;
 }
+
+.income_box {
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 8px 12px;
+
+}

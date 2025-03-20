@@ -12,6 +12,7 @@ import TypePick from "./TypePick";
 import Loader from "../../../page/home/vod_loader.gif";
 import loader from "../../home/vod_loader.gif";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { useLocation } from "react-router-dom";
 
 const months = [
   "January",
@@ -35,7 +36,8 @@ const TranHist: React.FC = () => {
   const [tran, setTran] = useState<any[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
-
+  const location = useLocation();
+  const pageHead = location.pathname === "/wallet/income" ? "收入" : "转账历史";
   const [status, setStatus] = useState([]);
   const { data: config } = useGetInviteQuery("");
 
@@ -75,31 +77,6 @@ const TranHist: React.FC = () => {
     }
   }, [data]);
 
-  // const getStatusClass = (status: string) => {
-  //   switch (status.toLowerCase()) {
-  //     case "approved":
-  //       return {
-  //         container: "success_state",
-  //         text: "success_text",
-  //       };
-  //     case "pending":
-  //       return {
-  //         container: "pending_state",
-  //         text: "pending_text",
-  //       };
-  //     case "rejected":
-  //       return {
-  //         container: "failed_state",
-  //         text: "failed_text",
-  //       };
-  //     default:
-  //       return {
-  //         container: "default_state",
-  //         text: "default_text",
-  //       };
-  //   }
-  // };
-
   const getStatusClass = (keyword: string) => {
     const statusObj: any = status.find(
       (s: any) => s.keyword.toLowerCase() === keyword.toLowerCase()
@@ -113,11 +90,10 @@ const TranHist: React.FC = () => {
   const fetchMoreData = () => {
     setPage((prevPage) => prevPage + 1);
   };
-
   return (
     <div className="flex justify-center items-center">
       <div className="w-screen xl:w-[800px]">
-        <Header lv={false} title="转账历史" />
+        <Header lv={false} title={pageHead} />
         <div className="px-[20px] py-[16px] flex justify-center items-center">
           {/* <TypePick /> */}
         </div>

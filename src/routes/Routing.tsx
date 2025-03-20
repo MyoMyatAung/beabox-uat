@@ -322,6 +322,14 @@ const Routing = () => {
       ),
     },
     {
+      path: paths.wallet_income,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <TranHist />
+        </Suspense>
+      ),
+    },
+    {
       path: paths.wallet_recharge,
       element: (
         <Suspense fallback={<Loader />}>
