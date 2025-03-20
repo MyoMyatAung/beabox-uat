@@ -73,7 +73,7 @@ const Transit: React.FC<TransitProps> = ({}) => {
         </h1>
         <div
           onClick={() => navigate("/wallet/transition")}
-          className="  flex transit_view_all pl-[10px] py-[2px] pr-[2px]"
+          className="  flex transit_view_all pl-[10px] py-[4px] pr-[2px]"
         >
           <span className=" capitalize">查看全部</span>
           <ChevronRight />

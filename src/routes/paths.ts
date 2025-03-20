@@ -25,6 +25,7 @@ export const paths = {
   wallet_history: "/wallet/Transition",
   wallet_recharge: "/wallet/recharge",
   wallet_withdraw: "/wallet/withdraw",
+  wallet_income : "/wallet/income",
   search: "/search_overlay",
   reports: "/reports/:type/:id",
   search_result: "/search",
