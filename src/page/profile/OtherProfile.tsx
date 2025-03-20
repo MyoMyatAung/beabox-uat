@@ -371,12 +371,17 @@ const OtherProfile = () => {
             />
           </div>
         )}
+        <div
+          className={`px-5 relative z-[1900] ${
+            showHeader ? "opacity-0" : "opacity-1"
+          }`}
+        >
+          <OtherAds />
+        </div>
         <div ref={headerRef} className="sticky z-[1500] top-0">
           {/* {showHeader ? "Show" : "Hide"} */}
         </div>
-        <div className="px-5">
-          <OtherAds />
-        </div>
+
         <div className="">
           <VideoTab2
             id={id}

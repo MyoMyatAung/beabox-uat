@@ -238,6 +238,62 @@ export const Heart = () => {
   );
 };
 
+export const Horin = ({ active }: any) => {
+  return (
+    <svg
+      width="15"
+      height="21"
+      viewBox="0 0 15 21"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect
+        width="2.25"
+        height="9"
+        rx="1.125"
+        fill={!active ? "#888888" : "white"}
+      />
+      <rect
+        x="6"
+        width="2.25"
+        height="9"
+        rx="1.125"
+        fill={!active ? "#888888" : "white"}
+      />
+      <rect
+        x="12"
+        width="2.25"
+        height="9"
+        rx="1.125"
+        fill={!active ? "#888888" : "white"}
+      />
+      <rect
+        y="11.25"
+        width="2.25"
+        height="9"
+        rx="1.125"
+        fill={!active ? "#888888" : "white"}
+      />
+      <rect
+        x="6"
+        y="11.25"
+        width="2.25"
+        height="9"
+        rx="1.125"
+        fill={!active ? "#888888" : "white"}
+      />
+      <rect
+        x="12"
+        y="11.25"
+        width="2.25"
+        height="9"
+        rx="1.125"
+        fill={!active ? "#888888" : "white"}
+      />
+    </svg>
+  );
+};
+
 export const Play = () => {
   return (
     <svg
