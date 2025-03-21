@@ -110,7 +110,7 @@ const TranHist: React.FC = () => {
         </div>
         {/* transition */}
         <div className="py-[12px] px-[18px] mt-5">
-          {/* {isLoading && isFetching && (
+          {isLoading ? (
             <div className=" flex justify-center items-center py-[100px]">
               <div className="heart">
                 <img
@@ -120,83 +120,93 @@ const TranHist: React.FC = () => {
                 />
               </div>
             </div>
-          )} */}
-
-          {data?.data.length === 0 && (
-            <div className="flex flex-col justify-center items-center h-[600px]">
-              <img src={noTran} alt="" />
-              <h1 className="text-white font-[400] text-[14px]">暂无转账</h1>
-            </div>
-          )}
-
-          {tran?.map((ts: any, index: any) => (
-            <div
-              key={index}
-              className="transit_list py-[16px] flex justify-between"
-            >
-              <div className="flex gap-[12px] items-center">
-                <div className="bitcoin_border w-[56px] h-[56px] flex justify-center items-center">
-                  <img className="w-[26px] h-[26px]" src={transit} alt="" />
+          ) : (
+            <>
+              {data?.data.length === 0 || tran.length === 0 ? (
+                <div className="flex flex-col justify-center items-center h-[600px]">
+                  <img src={noTran} alt="" />
+                  <h1 className="text-white font-[400] text-[14px]">
+                    暂无转账
+                  </h1>
                 </div>
-                <div className="flex flex-col gap-[4px]">
-                  <span className="text-white text-[14px] font-[500] leading-[20px]">
-                    {ts.description}
-                  </span>
-                  <span className="text-[#777] text-[12px] font-[400] leading-[20px]">
-                    {ts.date}
-                  </span>
-                </div>
-              </div>
-              <div className=" flex flex-col justify-center items-center gap-[6px]">
-                <span>
-                  {ts.dr_cr === "cr" ? "+" : "-"} {ts.amount}
-                </span>
-                {ts.status && (
-                  <div
-                    style={{
-                      backgroundColor: getStatusClass(ts.status)
-                        .backgroundColor,
-                      color: getStatusClass(ts.status).color,
-                    }}
-                    className="px-[12px] py-[6px] flex justify-center items-center rounded-[6px]  text-[12px] font-[400] leading-[15px]"
+              ) : (
+                <>
+                  {tran?.map((ts: any, index: any) => (
+                    <div
+                      key={index}
+                      className="transit_list py-[16px] flex justify-between"
+                    >
+                      <div className="flex gap-[12px] items-center">
+                        <div className="bitcoin_border w-[56px] h-[56px] flex justify-center items-center">
+                          <img
+                            className="w-[26px] h-[26px]"
+                            src={transit}
+                            alt=""
+                          />
+                        </div>
+                        <div className="flex flex-col gap-[4px]">
+                          <span className="text-white text-[14px] font-[500] leading-[20px]">
+                            {ts.description}
+                          </span>
+                          <span className="text-[#777] text-[12px] font-[400] leading-[20px]">
+                            {ts.date}
+                          </span>
+                        </div>
+                      </div>
+                      <div className=" flex flex-col justify-center items-center gap-[6px]">
+                        <span>
+                          {ts.dr_cr === "cr" ? "+" : "-"} {ts.amount}
+                        </span>
+                        {ts.status && (
+                          <div
+                            style={{
+                              backgroundColor: getStatusClass(ts.status)
+                                .backgroundColor,
+                              color: getStatusClass(ts.status).color,
+                            }}
+                            className="px-[12px] py-[6px] flex justify-center items-center rounded-[6px]  text-[12px] font-[400] leading-[15px]"
+                          >
+                            {ts.status === "approved" && "已批准"}
+                            {ts.status === "pending" && "待处理"}
+                            {ts.status === "rejected" && "已拒绝"}
+                            {ts.status === "success" && "成功"}
+                            {ts.status === "failed" && "失败"}
+                            {ts.status === "default" && "默认"}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  <InfiniteScroll
+                    className="py-[20px]"
+                    dataLength={tran.length}
+                    next={fetchMoreData}
+                    hasMore={hasMore}
+                    loader={
+                      <div className=" flex justify-center  bottom-[-30px] left-[-2px]">
+                        <div className="">
+                          <img
+                            src={Loader}
+                            className="w-[70px] h-[70px]"
+                            alt="Loading"
+                          />
+                        </div>
+                      </div>
+                    }
+                    endMessage={
+                      <div className="fle bg-whit hidden pt-20 justify-center items-center  w-screen absolute bottom-[-20px] left-[-20px]">
+                        <p className="py-10" style={{ textAlign: "center" }}>
+                          <b>没有更多了！</b>
+                        </p>
+                      </div>
+                    }
                   >
-                    {ts.status === "approved" && "已批准"}
-                    {ts.status === "pending" && "待处理"}
-                    {ts.status === "rejected" && "已拒绝"}
-                    {ts.status === "success" && "成功"}
-                    {ts.status === "failed" && "失败"}
-                    {ts.status === "default" && "默认"}
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-          <InfiniteScroll
-            className="py-[20px]"
-            dataLength={tran.length}
-            next={fetchMoreData}
-            hasMore={hasMore}
-            loader={
-              <div className=" flex justify-center  bottom-[-30px] left-[-2px]">
-                <div className="">
-                  <img
-                    src={Loader}
-                    className="w-[70px] h-[70px]"
-                    alt="Loading"
-                  />
-                </div>
-              </div>
-            }
-            endMessage={
-              <div className="fle bg-whit hidden pt-20 justify-center items-center  w-screen absolute bottom-[-20px] left-[-20px]">
-                <p className="py-10" style={{ textAlign: "center" }}>
-                  <b>没有更多了！</b>
-                </p>
-              </div>
-            }
-          >
-            <></>
-          </InfiniteScroll>
+                    <></>
+                  </InfiniteScroll>
+                </>
+              )}
+            </>
+          )}
         </div>
       </div>
     </div>
