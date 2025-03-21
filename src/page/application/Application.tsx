@@ -163,7 +163,7 @@ const Application: React.FC<any> = () => {
                         {appSection.title}
                       </h1>
                     )}
-                    <div className="grid grid-cols-5 gap-[20px]">
+                    <div className="grid grid-cols-6 gap-[10px]">
                       {appSection?.apps?.map((app: any) => (
                         <a
                           key={app.id}

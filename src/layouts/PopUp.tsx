@@ -130,7 +130,7 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
       {!showStart && showAppContent && (
         <div className="w-[330px] flex flex-col gap-0 justify-center items-center">
           <img src={header} alt="" />
-          <div className="initial_popup_ad_box w-full h-[304px] overflow-hidde p-[10px]">
+          <div className="initial_popup_ad_box w-full h-[304px] overflow-hidden p-[10px]">
             {isLoading ? (
               <div className="grid grid-cols-4 gap-[20px]">
                 {/* Loading placeholders */}
@@ -142,31 +142,33 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-4 gap-[10px] h-[304px overflow-scroll scrollbar-hide">
-                {ad?.map((app: any) => (
-                  <a
-                    key={app.id}
-                    href={app.url}
-                    target="_blank"
-                    className="flex h-[75px] flex-col justify-center items-center gap-[4px]"
-                  >
-                    {/* <AsyncDecryptedImage
+              <div className=" h-full  overflow-scroll scrollbar-hide">
+                <div className="grid grid-cols-4 gap-[10px]">
+                  {ad?.map((app: any) => (
+                    <a
+                      key={app.id}
+                      href={app.url}
+                      target="_blank"
+                      className="flex h-[75px] flex-col justify-center items-center gap-[4px]"
+                    >
+                      {/* <AsyncDecryptedImage
                       className="w-[56px] h-[53px] rounded-[6px] border-[#222]"
                       imageUrl={app.image}
                       alt=""
                     /> */}
-                    <ImageWithPlaceholder
-                      src={app.image}
-                      width={""}
-                      height={""}
-                      alt="start"
-                      className="w-[56px] h-[53px] rounded-[6px] border-[#222]"
-                    />
-                    <h1 className="text-white text-[10px] font-[400]">
-                      {app.title}
-                    </h1>
-                  </a>
-                ))}
+                      <ImageWithPlaceholder
+                        src={app.image}
+                        width={""}
+                        height={""}
+                        alt="start"
+                        className="w-[52px] h-[50px] rounded-[6px] border-[#222]"
+                      />
+                      <h1 className="text-white text-[10px] font-[400]">
+                        {app.title}
+                      </h1>
+                    </a>
+                  ))}
+                </div>
               </div>
             )}
           </div>
