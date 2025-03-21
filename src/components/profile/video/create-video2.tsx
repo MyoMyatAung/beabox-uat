@@ -23,7 +23,10 @@ const CreatedVideo2 = ({ id }: any) => {
   const [selectedMovieId, setSelectedMovieId] = useState(null);
   const [showVideoFeed, setShowVideoFeed] = useState(false);
 
-  const { data, isLoading } = useGetPostsQuery({ id: id, page: page }, { skip: !user });
+  const { data, isLoading } = useGetPostsQuery(
+    { id: id, page: page },
+    { skip: !user }
+  );
 
   useEffect(() => {
     if (data?.data?.length) {
@@ -87,7 +90,6 @@ const CreatedVideo2 = ({ id }: any) => {
                   <div
                     key={item.post_id}
                     onClick={() => {
-                      // console.log(item);
                       setSelectedMovieId(item?.post_id);
                       setShowVideoFeed(true);
                     }}
