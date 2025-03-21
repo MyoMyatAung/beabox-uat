@@ -147,7 +147,7 @@ const RechRecord: React.FC<RechRecordProps> = ({}) => {
                 <div className=" flex flex-col justify-center items-center h-[600px]">
                   <img src={noTran} alt="" />
                   <h1 className=" text-white font-[400] text-[14px]">
-                    No Transition Yet
+                    暂无提现记录
                   </h1>
                 </div>
               ) : (

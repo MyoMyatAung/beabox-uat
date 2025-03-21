@@ -14,7 +14,7 @@ interface TransitProps {}
 
 const Transit: React.FC<TransitProps> = ({}) => {
   const navigate = useNavigate();
-  const [tran, setTran] = useState<any>();
+  const [tran, setTran] = useState<any[]>([]);
   const { data, isLoading } = useGetTransitionHistoryQuery({
     period: "",
     type: "",
@@ -88,11 +88,11 @@ const Transit: React.FC<TransitProps> = ({}) => {
           </div>
         ) : (
           <>
-            {data?.data.length === 0 ? (
-              <div className=" flex flex-col justify-center items-center h-[300px]">
+            {data?.data.length === 0 || tran.length === 0 ? (
+              <div className=" flex flex-col justify-center items-center h-[400px]">
                 <img src={noTran} alt="" />
                 <h1 className=" text-white font-[400] text-[14px]">
-                  No Transition Yet
+                  暂无提现记录
                 </h1>
               </div>
             ) : (
