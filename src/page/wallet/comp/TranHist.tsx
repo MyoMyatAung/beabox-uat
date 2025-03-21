@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Header from "../Header";
+import empty from "./empty.svg";
 import "../wallet.css";
 import transit from "../../../assets/wallet/transit.png";
 import noTran from "../../../assets/wallet/noTran.svg";
@@ -123,11 +124,19 @@ const TranHist: React.FC = () => {
           ) : (
             <>
               {data?.data.length === 0 || tran.length === 0 ? (
-                <div className="flex flex-col justify-center items-center h-[600px]">
-                  <img src={noTran} alt="" />
-                  <h1 className="text-white font-[400] text-[14px]">
-                    暂无转账
-                  </h1>
+                <div className="flex flex-col justify-center items-center h-[600px] gap-[16px]">
+                  <img src={empty} alt="" />
+                  <div className=" flex flex-col justify-center items-center">
+                    <h1 className="text-white font-[400] text-[14px]">
+                      {location.pathname === "/wallet/income" ? "暂无转账" : ""}
+                    </h1>
+                    <span className=" text-[#888] text-[12px] font-[400]">
+                      {" "}
+                      {location.pathname === "/wallet/income"
+                        ? "您的收入记录将在这里显示"
+                        : "您还没有任何过渡记录"}{""}
+                    </span>
+                  </div>
                 </div>
               ) : (
                 <>

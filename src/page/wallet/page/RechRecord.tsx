@@ -7,6 +7,7 @@ import DatePick from "../comp/DatePick";
 import noTran from "../../../assets/wallet/noTran.svg";
 import transit from "../../../assets/wallet/transit.png";
 import loader from "../../home/vod_loader.gif";
+import empty from "../comp/empty.svg";
 
 import "../wallet.css";
 import { useLocation } from "react-router-dom";
@@ -144,11 +145,16 @@ const RechRecord: React.FC<RechRecordProps> = ({}) => {
           ) : (
             <>
               {data?.data.length === 0 ? (
-                <div className=" flex flex-col justify-center items-center h-[600px]">
-                  <img src={noTran} alt="" />
-                  <h1 className=" text-white font-[400] text-[14px]">
-                    暂无提现记录
-                  </h1>
+                <div className=" flex flex-col justify-center items-center h-[600px] gap-[16px]">
+                  <img src={empty} alt="" />
+                  <div className=" flex flex-col justify-center items-center">
+                    <h1 className="text-white font-[400] text-[14px]">
+                      暂时没有提现记录
+                    </h1>
+                    <span className=" text-[#888] text-[12px] font-[400]">
+                      您的提现记录将在这里显示
+                    </span>
+                  </div>
                 </div>
               ) : (
                 <>
