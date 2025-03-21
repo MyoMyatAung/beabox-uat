@@ -80,7 +80,7 @@ const LikedVideos2 = ({ id }: any) => {
       ) : (
         <></>
       )}
-      <div className="py-5">
+      <div className="pb-5 pt-3">
         {videos.length <= 0 ? (
           <div>
             <div className="flex flex-col justify-center items-center w-full mt-[150px]">

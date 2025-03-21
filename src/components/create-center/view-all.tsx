@@ -12,23 +12,6 @@ import topgp from "@/assets/createcenter/topgp.png";
 
 const ViewAll = () => {
   const navigate = useNavigate();
-  // const [keyword, setKeyword] = useState("");
-  // const [isload, setIsload] = useState(false);
-  // const { data, isLoading, refetch } = useGetTopCreatorQuery(keyword);
-  // const { data: newData } = useGetConfigQuery({});
-  // const tags = newData?.data?.creator_center_ranking_filter;
-  // console.log(tags);
-  // let top3 = data?.data?.slice(0, 3);
-  // let otherrank = data?.data?.slice(3);
-
-  // useEffect(() => {
-  //   if (tags) setKeyword(tags[0]?.keyword);
-  // }, [newData, tags]);
-
-  // useEffect(() => {
-  //   refetch();
-  //   setIsload(false);
-  // }, [refetch, keyword]);
 
   return (
     <div
@@ -44,9 +27,9 @@ const ViewAll = () => {
       </div>
       <div className="w-full px-2 z-50">
         <p className="text-[24px] font-extrabold leading-6 z-50">
-          Creator <br />
+          创作者 <br />
           <span className="bg-gradient-to-r bg-clip-text text-transparent from-[#FFB2E0] to-[#CD3EFF]">
-            Ranking
+            排名
           </span>
         </p>
       </div>
@@ -54,8 +37,8 @@ const ViewAll = () => {
         <img src={topgp} className="object-contain" alt="" />
       </div>
       <div className="w-full px-2 z-50 mx-auto pb-2">
-        <p className="text-[#FFFFFF99] text-[12px] z-50">
-          Creator becomes shining stars , start as an creator.
+        <p className="text-[#FFFFFF99] text-center text-[12px] z-50">
+          创作者成为闪亮之星，从创作者开始。
         </p>
       </div>
     </div>

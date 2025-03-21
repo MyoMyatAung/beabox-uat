@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { paths } from "@/routes/paths";
 import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 import Ads from "@/components/create-center/ads";
+import OtherAds from "@/components/profile/other-ads";
 
 const CreateCenter = () => {
   const user = useSelector((state: any) => state?.persist?.user) || "";
@@ -17,6 +18,7 @@ const CreateCenter = () => {
   return (
     <>
       <TopNav
+      styles={"ml-4"}
         center={"创作者中心"}
         right={
           <div
@@ -33,7 +35,9 @@ const CreateCenter = () => {
         }
       />
       <YourVideos />
-      <Ads />
+      <div className="px-5">
+        <OtherAds />
+      </div>
       <div className="grid grid-cols-2 items-center w-full justify-center p-5 gap-3">
         <div className="flex-1">
           <ViewAll />
@@ -42,10 +46,7 @@ const CreateCenter = () => {
           <WalletDetails />
         </div>
       </div>
-      {/* <ViewAll />
-      <div className="mt-5 rounded-full mx-5 pb-10">
-        <img src={tips} className="w-full" alt="" />
-      </div> */}
+      <Ads />
     </>
   );
 };
