@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../wallet.css";
 import { ChevronRight, ScrollText } from "lucide-react";
 import transit from "../../../assets/wallet/transit.png";
+import empty from "./empty.svg";
 import {
   useGetInviteQuery,
   useGetTransitionHistoryQuery,
@@ -89,10 +90,10 @@ const Transit: React.FC<TransitProps> = ({}) => {
         ) : (
           <>
             {data?.data.length === 0 || tran.length === 0 ? (
-              <div className=" flex flex-col justify-center items-center h-[400px]">
-                <img src={noTran} alt="" />
-                <h1 className=" text-white font-[400] text-[14px]">
-                  暂无提现记录
+              <div className=" flex flex-col justify-center items-center h-[400px] gap-[16px]">
+                <img src={empty} alt="" />
+                <h1 className=" text-[#888] font-[400] text-[14px]">
+                  您还没有任何过渡记录
                 </h1>
               </div>
             ) : (
