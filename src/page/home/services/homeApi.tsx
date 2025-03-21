@@ -12,6 +12,8 @@ export const homeApi = createApi({
       const accessToken = state.persist?.user?.token;
       headers.set("encrypt", "true");
       headers.set("Accept-Language", "cn");
+      headers.set("X-Client-Version", "2001");
+
       if (accessToken) {
         headers.set("Authorization", `Bearer ${accessToken}`);
       }
@@ -118,9 +120,23 @@ export const homeApi = createApi({
     }),
     postComment: builder.mutation<
       void,
-      { post_id: any; content: any; comment_id?: any; reply_id?: any; device?: string; app_version?: string }
+      {
+        post_id: any;
+        content: any;
+        comment_id?: any;
+        reply_id?: any;
+        device?: string;
+        app_version?: string;
+      }
     >({
-      query: ({ post_id, content, comment_id, reply_id, device, app_version }) => {
+      query: ({
+        post_id,
+        content,
+        comment_id,
+        reply_id,
+        device,
+        app_version,
+      }) => {
         // Construct the body object conditionally
         const body: {
           post_id: any;
@@ -144,7 +160,7 @@ export const homeApi = createApi({
 
         // Get device information
         const deviceInfo = getDeviceInfo();
-        
+
         // Add device information to the request
         body.device = device || deviceInfo.deviceName;
         body.app_version = app_version || deviceInfo.appVersion;

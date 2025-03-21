@@ -15,6 +15,7 @@ export const exploreApi = createApi({
         headers.set("Authorization", `Bearer ${token}`);
       }
       headers.set("Accept-Language", "cn");
+      headers.set("X-Client-Version", "2001");
       headers.set("encrypt", "true");
 
       return headers;

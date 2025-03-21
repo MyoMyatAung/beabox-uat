@@ -13,6 +13,7 @@ export const authApi = createApi({
       const accessToken = state.persist?.user?.token;
       headers.set("encrypt", "true");
       headers.set("Accept-Language", "cn");
+      headers.set("X-Client-Version", "2001");
       if (accessToken) {
         headers.set("Authorization", `Bearer ${accessToken}`);
       }

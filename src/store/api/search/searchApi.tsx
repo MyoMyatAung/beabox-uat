@@ -11,6 +11,7 @@ export const searchApi = createApi({
     prepareHeaders: (headers) => {
       headers.set("Accept-Language", "cn");
       headers.set("encrypt", "true");
+      headers.set("X-Client-Version", "2001");
     },
     responseHandler: async (response) => {
       const encryptedData = await response.json(); // Get the encrypted response as a string

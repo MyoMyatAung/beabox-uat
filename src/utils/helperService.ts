@@ -16,9 +16,9 @@ export const getAdsData = async () => {
   try {
     const response: any = await api.get(convertToSecureUrl("/app/ads"), {
       headers: {
-        "X-Client-Version": 3098,
+        "X-Client-Version": 2001,
         "Accept-Language": "cn",
-        "encrypt": "true"
+        encrypt: "true",
       },
     });
 
@@ -49,7 +49,7 @@ export const useGetAdsPopUpQuery = () => {
       if (cachedData && !forceRefresh) {
         setData(JSON.parse(cachedData));
         setIsLoading(false);
-        await new Promise(resolve => setTimeout(resolve, 5000)); // 5000ms = 5 seconds
+        await new Promise((resolve) => setTimeout(resolve, 5000)); // 5000ms = 5 seconds
       }
       // **Step 2: Fetch Fresh Data in the Background**
       const response = await getAdsData();

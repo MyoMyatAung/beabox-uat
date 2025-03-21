@@ -5,6 +5,7 @@ const token =
 export const getMyProfile = async () => {
   const res = await fetch(`${base_url}/profile/me`, {
     headers: {
+      "X-Client-Version": "2001",
       Authorization: `Bearer ${token}`,
     },
   });
