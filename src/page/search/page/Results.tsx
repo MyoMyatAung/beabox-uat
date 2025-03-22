@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { setHistoryData } from "../slice/HistorySlice";
@@ -49,6 +49,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
   const [postSearch, { data, isLoading }] = usePostSearchMutation();
   const [selectedMovieId, setSelectedMovieId] = useState(null);
   const [showVideoFeed, setShowVideoFeed] = useState(false);
+  const [page, setPage] = useState(1);
   const [suggestions, setSuggestions] = useState<any[]>([]); // Store autocomplete suggestions
   const [isFocused, setIsFocused] = useState(false); // Manage input focus
   const [triggerAutocomplete, { data: autocompleteData }] =
@@ -56,6 +57,10 @@ const Results: React.FC<ResultsProps> = ({}) => {
   const [decryptedAvatars, setDecryptedAvatars] = useState<{
     [key: string]: string;
   }>({});
+
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const handleMoreRef = useRef<HTMLButtonElement | null>(null);
+  const listRef = useRef<(HTMLLIElement | null)[]>([]);
 
   // const res = filter?.data?.post_filter;
   // const firstKey = res ? Object.keys(res)[0] : null;
@@ -79,7 +84,6 @@ const Results: React.FC<ResultsProps> = ({}) => {
     }).then((response) => {
       if (response?.data?.data?.orders) {
         setTabs(response.data.data.orders); // Store tabs separately
-        console.log(response.data.data.orders[0]);
 
         setActiveTab(response.data.data.orders[0]); // Set first tab active
       }
@@ -96,8 +100,6 @@ const Results: React.FC<ResultsProps> = ({}) => {
       });
     }
   }, [activeTab, currentPage, loadingTabs]);
-
-  console.log(activeTab?.key);
 
   useEffect(() => {
     if (data?.data?.list && !loadingTabs) {
@@ -144,11 +146,32 @@ const Results: React.FC<ResultsProps> = ({}) => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [data]);
 
-  // Fetch autocomplete suggestions when the query changes
+  // // Fetch autocomplete suggestions when the query changes
+  // useEffect(() => {
+  //   if (query.trim()) {
+  //     const timer = setTimeout(() => {
+  //       triggerAutocomplete({ query, page });
+  //     }, 300); // Debounce to avoid too many API calls
+  //     return () => clearTimeout(timer);
+  //   } else {
+  //     setSuggestions([]); // Clear suggestions if query is empty
+  //   }
+  // }, [query, triggerAutocomplete]);
+
+  // // Update suggestions when autocomplete data arrives
+  // useEffect(() => {
+  //   if (autocompleteData) {
+  //     setSuggestions(autocompleteData.data);
+  //   }
+  // }, [autocompleteData]);
+
   useEffect(() => {
     if (query.trim()) {
+      // Reset the page to 1 when query changes
+      setPage(1);
+
       const timer = setTimeout(() => {
-        triggerAutocomplete(query);
+        triggerAutocomplete({ query, page: 1 }); // Always pass page as 1
       }, 300); // Debounce to avoid too many API calls
       return () => clearTimeout(timer);
     } else {
@@ -156,10 +179,25 @@ const Results: React.FC<ResultsProps> = ({}) => {
     }
   }, [query, triggerAutocomplete]);
 
-  // Update suggestions when autocomplete data arrives
+  useEffect(() => {
+    if (page !== 1 && query.trim()) {
+      const timer = setTimeout(() => {
+        triggerAutocomplete({ query, page }); // Call API with the updated page
+      }, 300); // Debounce for API calls
+      return () => clearTimeout(timer);
+    }
+  }, [page, query, triggerAutocomplete]);
+
   useEffect(() => {
     if (autocompleteData) {
-      setSuggestions(autocompleteData.data);
+      if (page === 1) {
+        setSuggestions(autocompleteData.data);
+      } else {
+        setSuggestions((prevSuggestions) => [
+          ...prevSuggestions,
+          ...autocompleteData.data, // Append new suggestions to the existing ones
+        ]);
+      }
     }
   }, [autocompleteData]);
 
@@ -179,11 +217,16 @@ const Results: React.FC<ResultsProps> = ({}) => {
     setSuggestions([]); // Clear suggestions after click
     onSearch(suggestion);
   };
+  function escapeRegExp(string: string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
 
   const highlightKeywords = (text: string, keyword: string) => {
     if (!keyword.trim()) return he.decode(text);
-    const parts = he.decode(text).split(new RegExp(`(${keyword})`, "gi"));
-    return parts.map((part: any, index: any) =>
+    const safeKeyword = escapeRegExp(keyword); // Escape special chars
+    const parts = he.decode(text).split(new RegExp(`(${safeKeyword})`, "gi"));
+
+    return parts.map((part: string, index: number) =>
       part.toLowerCase() === keyword.toLowerCase() ? (
         <span key={index} className="search_btn">
           {part}
@@ -257,6 +300,49 @@ const Results: React.FC<ResultsProps> = ({}) => {
     navigate(paths.getUserProfileId(userId));
   };
 
+  // Handle Load More button click
+  const handleLoadMore = () => {
+    setPage((prevPage) => prevPage + 1); // Increment page number to fetch more results
+  };
+
+  useEffect(() => {
+    const bodyElement = document.querySelector("body");
+
+    if (suggestions.length > 0 && isFocused) {
+      if (bodyElement) {
+        bodyElement.style.overflow = "hidden";
+      }
+    } else {
+      if (bodyElement) {
+        bodyElement.style.overflow = "auto";
+      }
+    }
+  }, [isFocused, suggestions]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+
+      const clickedInsideAListItem = listRef.current.some(
+        (ref) => ref && ref.contains(target)
+      );
+
+      if (
+        inputRef.current &&
+        !inputRef.current.contains(target) &&
+        !clickedInsideAListItem &&
+        (!handleMoreRef.current || !handleMoreRef.current.contains(target))
+      ) {
+        setIsFocused(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   if (showVideoFeed && selectedMovieId) {
     return (
       <VideoFeed
@@ -292,7 +378,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
               onChange={(e) => setQuery(e.target.value)} // Update the query state on input change
               placeholder="搜索影片"
               onFocus={() => setIsFocused(true)}
-              onBlur={() => setTimeout(() => setIsFocused(false), 200)} // Delay to allow clicks on suggestions
+              ref={inputRef}
               className=" bg-transparent focus:outline-none text-[16px] font-[400] text-white w-full"
               type="text"
             />
@@ -396,7 +482,6 @@ const Results: React.FC<ResultsProps> = ({}) => {
                         <div className=" flex justify-cente  items-center gap-[4px]">
                           {card.user.avatar ? (
                             <img
-                              // onError={() => console.log("gg")}
                               className=" w-[20px] h-[20px] rounded-full"
                               src={
                                 decryptedAvatars[card.user.id] ||
@@ -412,9 +497,11 @@ const Results: React.FC<ResultsProps> = ({}) => {
                               alt=""
                             />
                           )}
-                          <h1 
+                          <h1
                             className=" text-white text-[12px] font-[400] leading-[20px] cursor-pointer hover:text-purple-300"
-                            onClick={(e) => navigateToUserProfile(card.user.id, e)}
+                            onClick={(e) =>
+                              navigateToUserProfile(card.user.id, e)
+                            }
                           >
                             {card.user.name}
                             {/* {card?.files[0]?.width} & {card?.files[0]?.height} {} */}
@@ -796,7 +883,73 @@ const Results: React.FC<ResultsProps> = ({}) => {
         {/* <div ref={observerRef} className="h-[1px]" /> */}
       </div>
 
-      {isFocused && suggestions.length > 0 && (
+      {query.length > 0 && isFocused && suggestions.length > 0 && (
+        <ul className="fixed top-[60px] px-[16px] left-0 pt-[20px] pb-[80px] h-screen w-full bg-[#16131C] text-white z-[99999] overflow-y-auto">
+          {suggestions.map((suggestion: any, index) => (
+            <li
+              ref={(el) => (listRef.current[index] = el)}
+              key={index}
+              onClick={() => handleSuggestionClick(suggestion.title)}
+              className="cursor-pointer gap-5 mb-4 flex items-center justify-between"
+            >
+              <div className="flex truncate gap-5 items-center">
+                <span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                  >
+                    <path
+                      d="M13.9521 9.53764C14.1523 8.90982 14.2603 8.24084 14.2603 7.54667C14.2603 3.93104 11.3293 1 7.71367 1C4.09804 1 1.16699 3.93104 1.16699 7.54667C1.16699 11.1623 4.09804 14.0934 7.71367 14.0934C9.43465 14.0934 11.0006 13.4293 12.1691 12.3433M12.267 12.44L14.8336 15"
+                      stroke="#AAAAAA"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+                <span className="truncate">
+                  {highlightKeywords(suggestion?.title, query)}
+                </span>
+              </div>
+
+              <span className="">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="32"
+                  height="32"
+                  viewBox="0 0 32 32"
+                  fill="none"
+                >
+                  <path
+                    d="M11 17V11M11 11H17M11 11L20.5 21"
+                    stroke="white"
+                    stroke-opacity="0.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+            </li>
+          ))}
+          {autocompleteData?.pagination?.current_page <
+            autocompleteData?.pagination?.last_page && (
+            <li className="flex justify-center mt-4">
+              <button
+                ref={handleMoreRef}
+                onClick={handleLoadMore}
+                className="text-[#888] text-[14px] py-2 px-6 rounded"
+              >
+                点击加载更多
+              </button>
+            </li>
+          )}
+        </ul>
+      )}
+
+      {/* {isFocused && suggestions.length > 0 && (
         <ul className="fixed top-[60px] px-[16px] left-0 pt-[20px] pb-[80px] h-screen w-full bg-black text-white z-[99999] overflow-y-auto">
           {suggestions.map((suggestion: any, index) => (
             <li
@@ -847,7 +1000,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
             </li>
           ))}
         </ul>
-      )}
+      )} */}
     </div>
   );
 };

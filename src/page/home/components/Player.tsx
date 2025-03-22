@@ -16,7 +16,7 @@ const BUFFER_THRESHOLD = 10; // seconds before current position to start bufferi
 const MAX_BUFFER_SIZE = 50 * 1024 * 1024; // 50MB maximum buffer size
 // Add constants for video position remembering
 const POSITION_SAVE_INTERVAL = 5000; // Save position every 5 seconds
-const VIDEO_POSITIONS_KEY = 'video_positions'; // Local storage key
+const VIDEO_POSITIONS_KEY = "video_positions"; // Local storage key
 
 interface RootState {
   muteSlice: {
@@ -109,36 +109,36 @@ const Player = ({
   // Save video position to local storage
   const saveVideoPosition = (position: number) => {
     if (!user?.token || !post_id) return;
-    
+
     try {
       // Get existing positions from local storage
-      const positionsJson = localStorage.getItem(VIDEO_POSITIONS_KEY) || '{}';
+      const positionsJson = localStorage.getItem(VIDEO_POSITIONS_KEY) || "{}";
       const positions = JSON.parse(positionsJson);
-      
+
       // Save position for current video
       positions[post_id] = {
         position,
         timestamp: Date.now(),
       };
-      
+
       // Save back to local storage
       localStorage.setItem(VIDEO_POSITIONS_KEY, JSON.stringify(positions));
     } catch (error) {
-      console.error('Failed to save video position:', error);
+      console.error("Failed to save video position:", error);
     }
   };
 
   // Get saved position for current video
   const getSavedPosition = (): number | null => {
     if (!user?.token || !post_id) return null;
-    
+
     try {
-      const positionsJson = localStorage.getItem(VIDEO_POSITIONS_KEY) || '{}';
+      const positionsJson = localStorage.getItem(VIDEO_POSITIONS_KEY) || "{}";
       const positions = JSON.parse(positionsJson);
-      
+
       const savedData = positions[post_id];
       if (!savedData) return null;
-      
+
       // Check if saved position is not too old (e.g., 7 days)
       const maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
       if (Date.now() - savedData.timestamp > maxAge) {
@@ -147,10 +147,10 @@ const Player = ({
         localStorage.setItem(VIDEO_POSITIONS_KEY, JSON.stringify(positions));
         return null;
       }
-      
+
       return savedData.position;
     } catch (error) {
-      console.error('Failed to get saved video position:', error);
+      console.error("Failed to get saved video position:", error);
       return null;
     }
   };
@@ -160,12 +160,15 @@ const Player = ({
     if (positionSaveTimerRef.current) {
       clearInterval(positionSaveTimerRef.current);
     }
-    
+
     positionSaveTimerRef.current = setInterval(() => {
-      if (artPlayerInstanceRef.current && artPlayerInstanceRef.current.playing) {
+      if (
+        artPlayerInstanceRef.current &&
+        artPlayerInstanceRef.current.playing
+      ) {
         const currentTime = artPlayerInstanceRef.current.currentTime;
         const duration = artPlayerInstanceRef.current.duration;
-        
+
         // Only save if we have a valid time and we're not at the very beginning or end
         if (currentTime > 1 && currentTime < duration - 1) {
           saveVideoPosition(currentTime);
@@ -185,12 +188,12 @@ const Player = ({
   const handleWatchHistory = () => {
     if (!apiCalledRef.current && user?.token) {
       apiCalledRef.current = true;
-      
+
       // Save current position before sending watch history
       if (artPlayerInstanceRef.current) {
         saveVideoPosition(artPlayerInstanceRef.current.currentTime);
       }
-      
+
       watchtPost({ post_id: post_id })
         .unwrap()
         .then(() => console.log("Watch history updated"))
@@ -241,8 +244,8 @@ const Player = ({
     Artplayer.MOBILE_CLICK_PLAY = true;
 
     // Determine if the source is an m3u8 file
-    const isM3u8 = src.toLowerCase().endsWith('.m3u8');
-    
+    const isM3u8 = src.toLowerCase().endsWith(".m3u8");
+
     // Configure Artplayer options
     const options: Artplayer["Option"] = {
       autoOrientation: true,
@@ -342,24 +345,27 @@ const Player = ({
         },
         m3u8: function (videoElement: HTMLVideoElement, url: string) {
           // Check if it's an iOS device first
-          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+          const isIOS =
+            /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
           const isMacOS = /Mac/.test(navigator.userAgent);
           const isAppleDevice = isIOS || isMacOS;
-          
-          if (isAppleDevice && videoElement.canPlayType("application/vnd.apple.mpegurl")) {
+
+          if (
+            isAppleDevice &&
+            videoElement.canPlayType("application/vnd.apple.mpegurl")
+          ) {
             // Use native HLS playback for iOS devices immediately
             // alert('Using native HLS playback for iOS');
             videoElement.src = url;
-            videoElement.play().catch(error => {
-              console.warn('Auto-play prevented on iOS:', error);
+            videoElement.play().catch((error) => {
+              console.warn("Auto-play prevented on iOS:", error);
             });
             // videoElement.addEventListener('canplay', function() {
             //   videoElement.play().catch(error => {
             //     console.warn('Auto-play prevented on iOS:', error);
             //   });
             // });
-          } 
-          else if (Hls.isSupported()) {
+          } else if (Hls.isSupported()) {
             // Use HLS.js for other browsers that support it
             // alert('Using HLS.js for HLS playback');
             const hls = new Hls({
@@ -369,19 +375,23 @@ const Player = ({
               lowLatencyMode: true,
               startLevel: -1, // Auto level selection
             });
-            
+
             // Add error handling
-            hls.on(Hls.Events.ERROR, function(event, data) {
+            hls.on(Hls.Events.ERROR, function (event, data) {
               if (data.fatal) {
-                console.error('HLS fatal error:', data.type, data.details);
-                switch(data.type) {
+                console.error("HLS fatal error:", data.type, data.details);
+                switch (data.type) {
                   case Hls.ErrorTypes.NETWORK_ERROR:
                     // Try to recover network error
-                    console.log('Fatal network error encountered, trying to recover');
+                    console.log(
+                      "Fatal network error encountered, trying to recover"
+                    );
                     hls.startLoad();
                     break;
                   case Hls.ErrorTypes.MEDIA_ERROR:
-                    console.log('Fatal media error encountered, trying to recover');
+                    console.log(
+                      "Fatal media error encountered, trying to recover"
+                    );
                     hls.recoverMediaError();
                     break;
                   default:
@@ -390,34 +400,37 @@ const Player = ({
                     break;
                 }
               } else {
-                console.warn('Non-fatal HLS error:', data.type, data.details);
+                console.warn("Non-fatal HLS error:", data.type, data.details);
               }
             });
-            
+
             // Add manifest loaded event
-            hls.on(Hls.Events.MANIFEST_PARSED, function() {
-              console.log('HLS manifest loaded successfully');
+            hls.on(Hls.Events.MANIFEST_PARSED, function () {
+              console.log("HLS manifest loaded successfully");
               // Attempt to play after manifest is loaded
-              videoElement.play().catch(error => {
-                console.warn('Auto-play prevented:', error);
-              });
+              if (isActive) {
+                videoElement.play().catch((error) => {
+                  console.warn("Auto-play prevented:", error);
+                });
+              }
             });
-            
+
             hls.loadSource(url);
             hls.attachMedia(videoElement);
             hlsRef.current = hls;
-          } 
-          else {
+          } else {
             // Fallback for other browsers with native HLS support
-            console.log('Falling back to native HLS playback');
+            console.log("Falling back to native HLS playback");
             videoElement.src = url;
-            videoElement.addEventListener('canplay', function() {
-              videoElement.play().catch(error => {
-                console.warn('Auto-play prevented:', error);
-              });
+            videoElement.addEventListener("canplay", function () {
+              if (isActive) {
+                videoElement.play().catch((error) => {
+                  console.warn("Auto-play prevented:", error);
+                });
+              }
             });
           }
-        }
+        },
       },
       layers: [
         {
@@ -453,18 +466,21 @@ const Player = ({
 
             // Initial setup for the progress bar
             progressBarRef.current.value = "0";
-            
+
             // Force visibility for Chrome
             progressBarRef.current.style.opacity = "1";
             progressBarRef.current.style.display = "block";
             progressBarRef.current.style.visibility = "visible";
-            
+
             // Add specific Chrome styles
-            const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+            const isChrome =
+              /Chrome/.test(navigator.userAgent) &&
+              /Google Inc/.test(navigator.vendor);
             if (isChrome) {
               progressBarRef.current.style.webkitAppearance = "none";
               progressBarRef.current.style.appearance = "none";
-              progressBarRef.current.style.background = "rgba(255, 255, 255, 0.2)";
+              progressBarRef.current.style.background =
+                "rgba(255, 255, 255, 0.2)";
               progressBarRef.current.style.height = "4px";
               progressBarRef.current.style.borderRadius = "2px";
               progressBarRef.current.style.outline = "none";
@@ -684,46 +700,51 @@ const Player = ({
             let lastClick = 0;
             let singleClickTimeout: NodeJS.Timeout | null = null;
             let isLongPress = false;
-            const ffIndicator = element.querySelector('.fast-forward-indicator') as HTMLElement;
-            const ffIcon = element.querySelector('.ff-icon') as HTMLElement;
-            
+            const ffIndicator = element.querySelector(
+              ".fast-forward-indicator"
+            ) as HTMLElement;
+            const ffIcon = element.querySelector(".ff-icon") as HTMLElement;
+
             if (ffIndicator) {
               // Set initial styles
               Object.assign(ffIndicator.style, {
-                position: 'absolute',
-                bottom: '0%',  // Changed from bottom: '0%' to center vertically
-                left: '50%',
-                transform: 'translate(-50%, -50%)',  // Center both horizontally and vertically
-                backgroundColor: '#282630',
-                color: 'white',
-                padding: '8px 16px',  // Slightly increased padding
-                borderRadius: '20px',  // Increased border radius
-                fontSize: '14px',
-                fontWeight: '500',  // Slightly bolder
-                display: 'none',
-                opacity: '0',
-                alignItems: 'center',
-                gap: '8px',  // Increased gap between text and icon
-                minWidth: '120px',
-                justifyContent: 'center',
-                letterSpacing: '0.5px',
-                transition: 'opacity 0.3s ease-in-out',
-                zIndex: '9999'  // Ensure it's above other UI elements
+                position: "absolute",
+                bottom: "0%", // Changed from bottom: '0%' to center vertically
+                left: "50%",
+                transform: "translate(-50%, -50%)", // Center both horizontally and vertically
+                backgroundColor: "#282630",
+                color: "white",
+                padding: "8px 16px", // Slightly increased padding
+                borderRadius: "20px", // Increased border radius
+                fontSize: "14px",
+                fontWeight: "500", // Slightly bolder
+                display: "none",
+                opacity: "0",
+                alignItems: "center",
+                gap: "8px", // Increased gap between text and icon
+                minWidth: "120px",
+                justifyContent: "center",
+                letterSpacing: "0.5px",
+                transition: "opacity 0.3s ease-in-out",
+                zIndex: "9999", // Ensure it's above other UI elements
               });
             }
 
             if (ffIcon) {
               Object.assign(ffIcon.style, {
-                fontSize: '16px',
-                lineHeight: '1',
-                marginRight: '2px'
+                fontSize: "16px",
+                lineHeight: "1",
+                marginRight: "2px",
               });
             }
 
             const handleLongPressStart = (e: TouchEvent | MouseEvent) => {
-              if ('touches' in e) {
+              if ("touches" in e) {
                 const touch = e.touches[0];
-                touchStartPosRef.current = { x: touch.clientX, y: touch.clientY };
+                touchStartPosRef.current = {
+                  x: touch.clientX,
+                  y: touch.clientY,
+                };
               }
 
               // Clear any existing timers
@@ -737,10 +758,10 @@ const Player = ({
                   isLongPressActiveRef.current = true; // Set the ref to true when long press becomes active
                   startFastForward();
                   if (ffIndicator) {
-                    ffIndicator.style.display = 'flex';
+                    ffIndicator.style.display = "flex";
                     // Add animation
-                    ffIndicator.style.transition = 'opacity 0.2s ease-in-out';
-                    ffIndicator.style.opacity = '1';
+                    ffIndicator.style.transition = "opacity 0.2s ease-in-out";
+                    ffIndicator.style.opacity = "1";
                   }
                 }
               }, LONG_PRESS_DELAY);
@@ -755,9 +776,9 @@ const Player = ({
                 stopFastForward();
                 if (ffIndicator) {
                   // Fade out animation
-                  ffIndicator.style.opacity = '0';
+                  ffIndicator.style.opacity = "0";
                   setTimeout(() => {
-                    ffIndicator.style.display = 'none';
+                    ffIndicator.style.display = "none";
                   }, 200);
                 }
               }
@@ -770,12 +791,19 @@ const Player = ({
               if (!touchStartPosRef.current) return;
 
               const touch = e.touches[0];
-              const deltaX = Math.abs(touch.clientX - touchStartPosRef.current.x);
-              const deltaY = Math.abs(touch.clientY - touchStartPosRef.current.y);
+              const deltaX = Math.abs(
+                touch.clientX - touchStartPosRef.current.x
+              );
+              const deltaY = Math.abs(
+                touch.clientY - touchStartPosRef.current.y
+              );
 
               // If user is swiping significantly (especially vertically), cancel long press
               // But only if long press hasn't already activated
-              if ((deltaX > SWIPE_THRESHOLD || deltaY > SWIPE_THRESHOLD) && !isLongPressActiveRef.current) {
+              if (
+                (deltaX > SWIPE_THRESHOLD || deltaY > SWIPE_THRESHOLD) &&
+                !isLongPressActiveRef.current
+              ) {
                 handleLongPressEnd();
                 return;
               }
@@ -783,7 +811,10 @@ const Player = ({
               // If long press is already active, be more tolerant of movement
               if (isLongPressActiveRef.current) {
                 // Allow more movement once fast forward is active
-                if (deltaX > SWIPE_THRESHOLD * 3 || deltaY > SWIPE_THRESHOLD * 3) {
+                if (
+                  deltaX > SWIPE_THRESHOLD * 3 ||
+                  deltaY > SWIPE_THRESHOLD * 3
+                ) {
                   handleLongPressEnd();
                   return;
                 }
@@ -792,9 +823,9 @@ const Player = ({
             };
 
             // Touch events
-            element.addEventListener('touchstart', (e) => {
+            element.addEventListener("touchstart", (e) => {
               const now = Date.now();
-              
+
               // Handle double tap
               if (now - lastClick <= 300) {
                 if (singleClickTimeout) clearTimeout(singleClickTimeout);
@@ -823,16 +854,16 @@ const Player = ({
                 }, 300);
               }
               lastClick = now;
-              
+
               handleLongPressStart(e);
             });
 
-            element.addEventListener('touchmove', handleTouchMove);
-            element.addEventListener('touchend', handleLongPressEnd);
-            element.addEventListener('touchcancel', handleLongPressEnd);
+            element.addEventListener("touchmove", handleTouchMove);
+            element.addEventListener("touchend", handleLongPressEnd);
+            element.addEventListener("touchcancel", handleLongPressEnd);
 
             // Prevent context menu
-            element.addEventListener('contextmenu', (e) => e.preventDefault());
+            element.addEventListener("contextmenu", (e) => e.preventDefault());
           },
         },
       ],
@@ -855,7 +886,7 @@ const Player = ({
         // Set the player to the saved position
         artPlayerInstanceRef.current.currentTime = savedPosition;
       }
-      
+
       // Start periodic position saving
       startPositionSaving();
     });
@@ -875,7 +906,7 @@ const Player = ({
           "--progress",
           `${newProgress}%`
         );
-        
+
         // Ensure progress bar is always visible in Chrome
         if (progressBarRef.current.style.opacity !== "1") {
           progressBarRef.current.style.opacity = "1";
@@ -914,7 +945,7 @@ const Player = ({
 
       if (loadingIndicator) loadingIndicator.style.display = "block";
       if (playIndicator) playIndicator.style.display = "none";
-      
+
       // Also hide the custom play icon
       if (playIconRef.current) {
         playIconRef.current.style.display = "none";
@@ -983,7 +1014,7 @@ const Player = ({
 
       if (loadingIndicator) loadingIndicator.style.display = "block";
       if (playIndicator) playIndicator.style.display = "none";
-      
+
       // Also hide the custom play icon
       if (playIconRef.current) {
         playIconRef.current.style.display = "none";
@@ -996,11 +1027,15 @@ const Player = ({
         artPlayerInstanceRef.current?.template?.$loading?.querySelector(
           ".video-loading-indicator"
         ) as HTMLDivElement;
-      
+
       if (loadingIndicator) loadingIndicator.style.display = "none";
-      
+
       // Only show play button if video is not playing
-      if (artPlayerInstanceRef.current && !artPlayerInstanceRef.current.playing && !isFastForwarding) {
+      if (
+        artPlayerInstanceRef.current &&
+        !artPlayerInstanceRef.current.playing &&
+        !isFastForwarding
+      ) {
         showPlayButton();
       } else {
         hidePlayButton();
@@ -1011,36 +1046,40 @@ const Player = ({
       // Clear saved position when video ends
       if (user?.token && post_id) {
         try {
-          const positionsJson = localStorage.getItem(VIDEO_POSITIONS_KEY) || '{}';
+          const positionsJson =
+            localStorage.getItem(VIDEO_POSITIONS_KEY) || "{}";
           const positions = JSON.parse(positionsJson);
-          
+
           // Remove position for this video
           if (positions[post_id]) {
             delete positions[post_id];
-            localStorage.setItem(VIDEO_POSITIONS_KEY, JSON.stringify(positions));
+            localStorage.setItem(
+              VIDEO_POSITIONS_KEY,
+              JSON.stringify(positions)
+            );
           }
         } catch (error) {
-          console.error('Failed to clear video position:', error);
+          console.error("Failed to clear video position:", error);
         }
       }
-      
+
       // Stop position saving
       stopPositionSaving();
-      
+
       // Reset watched time for analytics
       if (watchTimer) {
         clearInterval(watchTimer);
         watchTimer = null;
       }
       watchedTimeRef.current = 0;
-      
+
       // The video will automatically loop due to the loop option
-      console.log('Video ended, looping will begin automatically');
-      
+      console.log("Video ended, looping will begin automatically");
+
       // Start a new timer for the looped playback if needed
       watchTimer = setInterval(() => {
         watchedTimeRef.current += 1; // Increment watched time every second
-        
+
         // Trigger API call after 5 seconds of playback on loop
         if (watchedTimeRef.current >= 5 && !apiCalledRef.current && !type) {
           handleWatchHistory();
@@ -1096,15 +1135,16 @@ const Player = ({
       // Function to attempt playback
       const attemptPlay = () => {
         if (!artPlayerInstanceRef.current) return;
-        
-        artPlayerInstanceRef.current.play()
+
+        artPlayerInstanceRef.current
+          .play()
           .then(() => {
             hidePlayButton();
           })
           .catch((error) => {
             console.error("Video play failed:", error);
             showPlayButton();
-            
+
             // Handle autoplay blocking specifically
             if (error.name === "NotAllowedError") {
               if (artPlayerInstanceRef.current) {
@@ -1142,19 +1182,21 @@ const Player = ({
   // Initialize player when component mounts
   useEffect(() => {
     initializePlayer();
-    
+
     // Force progress bar visibility after a short delay
     // This helps with Chrome visibility issues
     const progressBarVisibilityTimer = setTimeout(() => {
       if (progressBarRef.current) {
         progressBarRef.current.style.opacity = "1";
         progressBarRef.current.style.display = "block";
-        
+
         // Add Chrome-specific styles
-        const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+        const isChrome =
+          /Chrome/.test(navigator.userAgent) &&
+          /Google Inc/.test(navigator.vendor);
         if (isChrome) {
           // Add styles to the head
-          const styleEl = document.createElement('style');
+          const styleEl = document.createElement("style");
           styleEl.textContent = `
             .chrome-fix {
               -webkit-appearance: none !important;
@@ -1186,7 +1228,7 @@ const Player = ({
             }
           `;
           document.head.appendChild(styleEl);
-          
+
           // Create a MutationObserver to ensure the progress bar is always visible
           if (playerContainerRef.current) {
             const observer = new MutationObserver((mutations) => {
@@ -1198,15 +1240,15 @@ const Player = ({
                 progressBarRef.current.style.visibility = "visible";
               }
             });
-            
+
             // Start observing the player container for DOM changes
-            observer.observe(playerContainerRef.current, { 
-              childList: true, 
+            observer.observe(playerContainerRef.current, {
+              childList: true,
               subtree: true,
               attributes: true,
-              attributeFilter: ['style', 'class']
+              attributeFilter: ["style", "class"],
             });
-            
+
             // Return cleanup function
             return () => {
               observer.disconnect();
@@ -1215,17 +1257,17 @@ const Player = ({
         }
       }
     }, 500);
-    
+
     return () => {
       clearTimeout(progressBarVisibilityTimer);
       // Save position before unmounting
       if (artPlayerInstanceRef.current) {
         saveVideoPosition(artPlayerInstanceRef.current.currentTime);
       }
-      
+
       // Stop position saving
       stopPositionSaving();
-      
+
       if (artPlayerInstanceRef.current) {
         artPlayerInstanceRef.current.destroy();
         artPlayerInstanceRef.current = null;
@@ -1263,14 +1305,15 @@ const Player = ({
 
   const hidePlayButton = () => {
     if (playIconRef.current) {
-      playIconRef.current.style.display = 'none';
+      playIconRef.current.style.display = "none";
     }
-    
+
     // Also hide the template play indicator
     if (artPlayerInstanceRef.current?.template?.$state) {
-      const playIndicator = artPlayerInstanceRef.current.template.$state.querySelector(
-        ".video-play-indicator"
-      ) as HTMLDivElement;
+      const playIndicator =
+        artPlayerInstanceRef.current.template.$state.querySelector(
+          ".video-play-indicator"
+        ) as HTMLDivElement;
       if (playIndicator) playIndicator.style.display = "none";
     }
   };
@@ -1280,22 +1323,24 @@ const Player = ({
     if (!artPlayerInstanceRef.current?.playing && !isFastForwarding) {
       // First ensure loading indicator is hidden
       if (artPlayerInstanceRef.current?.template?.$loading) {
-        const loadingIndicator = artPlayerInstanceRef.current.template.$loading.querySelector(
-          ".video-loading-indicator"
-        ) as HTMLDivElement;
+        const loadingIndicator =
+          artPlayerInstanceRef.current.template.$loading.querySelector(
+            ".video-loading-indicator"
+          ) as HTMLDivElement;
         if (loadingIndicator) loadingIndicator.style.display = "none";
       }
-      
+
       // Then show play button
       if (playIconRef.current) {
-        playIconRef.current.style.display = 'block';
+        playIconRef.current.style.display = "block";
       }
-      
+
       // Also show template play indicator
       if (artPlayerInstanceRef.current?.template?.$state) {
-        const playIndicator = artPlayerInstanceRef.current.template.$state.querySelector(
-          ".video-play-indicator"
-        ) as HTMLDivElement;
+        const playIndicator =
+          artPlayerInstanceRef.current.template.$state.querySelector(
+            ".video-play-indicator"
+          ) as HTMLDivElement;
         if (playIndicator) playIndicator.style.display = "block";
       }
     }
@@ -1303,33 +1348,33 @@ const Player = ({
 
   const startFastForward = () => {
     if (!artPlayerInstanceRef.current) return;
-    
+
     // Store playing state before fast forward
     wasPlayingRef.current = artPlayerInstanceRef.current.playing;
-    
+
     setIsFastForwarding(true);
     isLongPressActiveRef.current = true; // Ensure the ref is set when fast forward starts
     hidePlayButton(); // Always hide play button when starting fast forward
     dispatch(sethideBar(true)); // Hide UI layers during fast forward
-    
+
     const player = artPlayerInstanceRef.current;
-    
+
     // Ensure video is playing during fast forward
     player.play();
     // Set playback rate to 2x
     player.playbackRate = FAST_FORWARD_RATE;
-    
+
     // Ensure progress bar is visible during fast forward
     if (progressBarRef.current) {
       progressBarRef.current.style.opacity = "1";
       progressBarRef.current.style.display = "block";
     }
-    
+
     fastForwardIntervalRef.current = setInterval(() => {
       if (player.currentTime >= player.duration - 1) {
         stopFastForward(); // Stop at end of video
       }
-      
+
       // Update progress bar during fast forward
       if (progressBarRef.current) {
         const currentTime = player.currentTime || 0;
@@ -1346,7 +1391,7 @@ const Player = ({
 
   const stopFastForward = () => {
     if (!artPlayerInstanceRef.current) return;
-    
+
     if (fastForwardIntervalRef.current) {
       clearInterval(fastForwardIntervalRef.current);
       fastForwardIntervalRef.current = null;
@@ -1354,11 +1399,11 @@ const Player = ({
 
     const player = artPlayerInstanceRef.current;
     player.playbackRate = 1; // Reset playback rate
-    
+
     setIsFastForwarding(false);
     isLongPressActiveRef.current = false; // Reset the ref when fast forward stops
     dispatch(sethideBar(false)); // Show UI layers again
-    
+
     // Always continue playing after fast forward
     player.play();
     hidePlayButton();
@@ -1369,10 +1414,10 @@ const Player = ({
     if (artPlayerInstanceRef.current) {
       saveVideoPosition(artPlayerInstanceRef.current.currentTime);
     }
-    
+
     // Stop position saving
     stopPositionSaving();
-    
+
     if (artPlayerInstanceRef.current) {
       // Force garbage collection of video resources
       const video = artPlayerInstanceRef.current.video;
@@ -1384,7 +1429,7 @@ const Player = ({
       artPlayerInstanceRef.current.destroy();
       artPlayerInstanceRef.current = null;
     }
-    
+
     // Clean up HLS instance if it exists
     if (hlsRef.current) {
       hlsRef.current.destroy();

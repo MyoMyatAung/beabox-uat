@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Play } from "@/assets/profile";
+import { Horin, Play } from "@/assets/profile";
 import { FaHeart } from "react-icons/fa";
 import CreatedVideo from "./video/created-video";
 import LikedVideos from "./video/liked-videos";
@@ -14,22 +14,46 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
     <Tabs defaultValue={defaultTab2 ? defaultTab2 : "video"} className="my-5">
       <TabsList className="grid w-full grid-cols-3 z-[1600] bg-transparent sticky top-[100px] px-5">
         <TabsTrigger
-          className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2 "
+          className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
           value="video"
           onClick={() => dispatch(setDefaultTab2("video"))}
         >
-          <span className="flex items-center gap-1">
-            <Play /> Ta的作品
+          <span className="flex items-center gap-2 flex-col justify-center">
+            <div className="w-[52px] h-[3px] bg-transparent"></div>
+            <Horin active={defaultTab2 == "video" ? true : false} />
+            {/* <div className="flex flex-col items-center justify-center">
+                          <LuTally3 size={12} />
+                          <LuTally3 size={12} />
+                        </div> */}
+            {/* 我的作品 */}
+            <div
+              className={`w-[52px] h-[3px] ${
+                defaultTab2 == "video" && "bg-white"
+              }`}
+            ></div>
           </span>
+          {/* <span className="flex items-center gap-1">
+            <Play /> 的作品
+          </span> */}
         </TabsTrigger>
         <TabsTrigger
-          className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2 "
+          className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
           value="liked"
           onClick={() => dispatch(setDefaultTab2("liked"))}
         >
-          <span className="flex items-center gap-1">
-            <FaHeart /> 已点赞视频
+          <span className="flex items-center gap-2 flex-col justify-center">
+            <div className={`w-[52px] h-[3px] bg-transparent`}></div>
+            <FaHeart />
+            <div
+              className={`w-[52px] h-[3px] ${
+                defaultTab2 == "liked" && "bg-white"
+              }`}
+            ></div>
+            {/* 已点赞视频 */}
           </span>
+          {/* <span className="flex items-center gap-1">
+            <FaHeart /> 已点赞视频
+          </span> */}
         </TabsTrigger>
       </TabsList>
       <TabsContent value="video">

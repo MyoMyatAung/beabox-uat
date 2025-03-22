@@ -11,6 +11,7 @@ export const searchApi = createApi({
     prepareHeaders: (headers) => {
       headers.set("Accept-Language", "cn");
       headers.set("encrypt", "true");
+      headers.set("X-Client-Version", "2001");
     },
     responseHandler: async (response) => {
       const encryptedData = await response.json(); // Get the encrypted response as a string
@@ -39,9 +40,11 @@ export const searchApi = createApi({
         method: "POST",
       }),
     }),
-    getSuggestions: builder.query<any, string>({
-      query: (query: any) => ({
-        url: convertToSecureUrl(`/post-suggestions?search=${query}`),
+    getSuggestions: builder.query<any, any>({
+      query: ({ query, page }: any) => ({
+        url: convertToSecureUrl(
+          `/post-suggestions?search=${query}&page=${page}`
+        ),
         method: "GET",
       }),
     }),

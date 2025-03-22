@@ -75,7 +75,7 @@ const HistoryVideos = () => {
       ) : (
         <></>
       )}
-      <div className="py-5">
+      <div className="pb-5 pt-3">
         {!user?.token || videos.length <= 0 ? (
           <div>
             <div className="flex flex-col justify-center items-center w-full mt-[150px]">
