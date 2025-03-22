@@ -60,6 +60,10 @@ const Explore = () => {
   }, [exp_header]);
 
   useEffect(() => {
+    window.scrollTo(0, 5);
+  }, []);
+
+  useEffect(() => {
     if (swiperRef.current) {
       const index = tabs?.indexOf(exp_header);
       if (index >= 0) {
@@ -79,7 +83,6 @@ const Explore = () => {
   return (
     <>
       {/* {show && <VodDetails  />} */}
-
 
       <div className="flex max-w-[1024px home-main bg-[#16131C] justify-center items-center min-h-screen overflow-clip">
         <div className="explore_sec w-full flex flex-col justify-center items-cente px-[10px pb-[100px] mt-14">
