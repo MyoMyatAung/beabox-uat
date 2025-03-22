@@ -6,6 +6,8 @@ import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder.tsx";
 import Notice from "./Notice";
 import { useGetAdsPopUpQuery } from "@/utils/helperService";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
+import { useDispatch } from "react-redux";
+import { setPlay } from "@/page/home/services/playSlice";
 
 interface PopUpProps {
   setShowAd: any;
@@ -23,6 +25,7 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
   const { data, isLoading } = useGetAdsPopUpQuery();
   const { data: notice, isLoading: noticeLoading } = useGetAdsNoticeQuery("");
   const [currentIndex, setCurrentIndex] = useState(0);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -51,6 +54,9 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
   };
 
   const handleAppClose = () => {
+    console.log("ccc");
+    dispatch(setPlay(true));
+
     setShowAppContent(false);
     // setShowNotice(true);
     setShowAd(false);

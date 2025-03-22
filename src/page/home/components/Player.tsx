@@ -67,6 +67,7 @@ const Player = ({
   const hlsRef = useRef<Hls | null>(null);
   const { mute } = useSelector((state: RootState) => state.muteSlice);
   const user = useSelector((state: RootState) => state.persist.user);
+  const { playstart } = useSelector((state: any) => state.playSlice);
   const [isPaused, setIsPaused] = useState(false);
   const [isPlay, setIsplay] = useState(false);
   const playIconRef = useRef<HTMLDivElement | null>(null);
@@ -93,6 +94,7 @@ const Player = ({
   const SWIPE_THRESHOLD = 30; // Increased from 10 to 30 pixels to be more tolerant of small movements
   const wasPlayingRef = useRef(false); // Track if video was playing before fast forward
   const isLongPressActiveRef = useRef(false); // Track if long press is active to prevent early cancellation
+  const [newStart, setnewStart] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -357,9 +359,11 @@ const Player = ({
             // Use native HLS playback for iOS devices immediately
             // alert('Using native HLS playback for iOS');
             videoElement.src = url;
+
             videoElement.play().catch((error) => {
               console.warn("Auto-play prevented on iOS:", error);
             });
+
             // videoElement.addEventListener('canplay', function() {
             //   videoElement.play().catch(error => {
             //     console.warn('Auto-play prevented on iOS:', error);
@@ -1109,6 +1113,31 @@ const Player = ({
     }
   });
 
+  const attemptPlay = () => {
+    if (!artPlayerInstanceRef.current) return;
+
+    if (playstart) {
+      artPlayerInstanceRef.current
+        .play()
+        .then(() => {
+          hidePlayButton();
+        })
+        .catch((error) => {
+          console.error("Video play failed:", error);
+          showPlayButton();
+
+          // Handle autoplay blocking specifically
+          if (error.name === "NotAllowedError") {
+            if (artPlayerInstanceRef.current) {
+              artPlayerInstanceRef.current.pause();
+              // Show controls to allow manual play
+              artPlayerInstanceRef.current.controls.show = true;
+            }
+          }
+        });
+    }
+  };
+
   // Handle active state changes
   useEffect(() => {
     if (!playerContainerRef.current) return;
@@ -1132,30 +1161,6 @@ const Player = ({
 
       initializePlayer();
 
-      // Function to attempt playback
-      const attemptPlay = () => {
-        if (!artPlayerInstanceRef.current) return;
-
-        artPlayerInstanceRef.current
-          .play()
-          .then(() => {
-            hidePlayButton();
-          })
-          .catch((error) => {
-            console.error("Video play failed:", error);
-            showPlayButton();
-
-            // Handle autoplay blocking specifically
-            if (error.name === "NotAllowedError") {
-              if (artPlayerInstanceRef.current) {
-                artPlayerInstanceRef.current.pause();
-                // Show controls to allow manual play
-                artPlayerInstanceRef.current.controls.show = true;
-              }
-            }
-          });
-      };
-
       attemptPlay();
 
       // Set quality to auto for active video
@@ -1172,12 +1177,24 @@ const Player = ({
         hlsRef.current.destroy();
         hlsRef.current = null;
       }
-      // if (abortControllerRef.current) {
-      //   abortControllerRef.current.abort();
-      //   abortControllerRef.current = null;
-      // }
     }
   }, [isActive]);
+
+  useEffect(() => {
+    if (isActive && playstart && !newStart) {
+      attemptPlay();
+      setnewStart(true);
+    }
+  }, [isActive, playstart]);
+
+  // useEffect(() => {
+  //   if (playstart && prevPlaystartRef.current === false) {
+  //     // playstart has changed from false to true, trigger autoplay
+  //     console.log("Playstart changed to true, attempting to play video...");
+  //     attemptPlay();
+  //   }
+  //   prevPlaystartRef.current = playstart; // update the ref value
+  // }, [playstart]);
 
   // Initialize player when component mounts
   useEffect(() => {

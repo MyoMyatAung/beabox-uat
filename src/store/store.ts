@@ -29,6 +29,7 @@ import videoRenderSlice from "@/page/home/services/videoRenderSlice";
 import startSlice from "@/page/home/services/startSlice";
 import createCenterSlice from "./slices/createCenterSlice";
 import { createCenterApi } from "./api/createCenterApi";
+import playSlice from "@/page/home/services/playSlice";
 
 const sessionStorageWrapper: Storage = {
   getItem: (key: string) => {
@@ -67,6 +68,7 @@ const rootReducer = combineReducers({
   [homeApi.reducerPath]: homeApi.reducer,
   profile: profileSlice,
   persist: persistSlice,
+  playSlice: playSlice,
   explore: exploreSlice,
   history: HistorySlice,
   startSlice: startSlice,
