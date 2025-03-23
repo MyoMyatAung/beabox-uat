@@ -1198,7 +1198,7 @@ const Player = ({
 
   // Initialize player when component mounts
   useEffect(() => {
-    initializePlayer();
+    //    initializePlayer();
 
     // Force progress bar visibility after a short delay
     // This helps with Chrome visibility issues

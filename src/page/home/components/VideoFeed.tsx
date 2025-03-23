@@ -67,7 +67,9 @@ const VideoFeed = ({
   const videoData = useRef<any[]>([]); // Array to store AbortControllers
   const indexRef = useRef(0); // Track the current active video index
   const [showHeart, setShowHeart] = useState(false);
-
+  const removeHeart = (id: number) => {
+    setHearts((prev) => prev.filter((heartId) => heartId !== id)); // Remove the heart by ID
+  };
   useEffect(() => {
     if (!start && videos.length > 0) {
       // Find the index of the video with currentActiveId
@@ -318,7 +320,7 @@ const VideoFeed = ({
             data-post-id={video.post_id} // Add post ID to the container
           >
             <VideoContainer1
-              refetchUser={refetchUser}
+              // refetchUser={refetchUser}
               setVideosData={setVideos}
               setrenderVideos={setVideosToRender}
               videoData={videoData}
@@ -337,8 +339,8 @@ const VideoFeed = ({
               setHeight={setHeight}
               setHearts={setHearts}
               setCountdown={setCountdown}
-              setShowHeart={setShowHeart}
-              coin={profile?.coins}
+              // setShowHeart={setShowHeart}
+              // coin={profile?.coins}
             />
             {video?.type !== "ads" && (
               <FeedFooter
@@ -353,6 +355,11 @@ const VideoFeed = ({
 
             {video?.type === "ads" && <Ads ads={video?.ads_info} />}
 
+            {hearts.map((id: any) => (
+              <HeartCount id={id} key={id} remove={removeHeart} />
+            ))}
+
+            {/* 
             {showHeart && (
               <ShowHeartCom
                 countNumber={countNumber}
@@ -365,7 +372,7 @@ const VideoFeed = ({
               <div className="absolute bottom-[350px] right-[70px] transform z-[999]">
                 <CountdownCircle countNumber={countNumber} />
               </div>
-            )}
+            )} */}
             <div className="absolute bottom-0 add_comment w-full  py-3 ">
               <div className="flex items-center feed_add_comment gap-2 px-4">
                 <input

@@ -75,6 +75,10 @@ const Home = () => {
   // const [currentTab, setCurrentTab] = useState(2);
   const swiperRef = useRef<any>(null);
 
+  const removeHeart = (id: number) => {
+    setHearts((prev) => prev.filter((heartId) => heartId !== id)); // Remove the heart by ID
+  };
+
   const { data: config } = useGetConfigQuery({});
   const user = profile?.data;
 
@@ -473,7 +477,7 @@ const Home = () => {
                           data-post-id={video?.post_id} // Add post ID to the container
                         >
                           <VideoContainer
-                            refetchUser={refetchUser}
+                            // refetchUser={refetchUser}
                             videoData={videoData}
                             indexRef={indexRef}
                             abortControllerRef={abortControllerRef}
@@ -481,7 +485,7 @@ const Home = () => {
                             status={true}
                             countNumber={countNumber}
                             video={video}
-                            coin={user?.coins}
+                            // coin={user?.coins}
                             setCountNumber={setCountNumber}
                             config={config}
                             countdown={countdown}
@@ -491,7 +495,7 @@ const Home = () => {
                             setCountdown={setCountdown}
                             width={width}
                             height={height}
-                            setShowHeart={setShowHeart}
+                            // setShowHeart={setShowHeart}
                           />
 
                           {video?.type !== "ads" && (
@@ -509,7 +513,11 @@ const Home = () => {
                             <Ads ads={video?.ads_info} />
                           )}
 
-                          {showHeart && (
+                          {hearts.map((id: any) => (
+                            <HeartCount id={id} key={id} remove={removeHeart} />
+                          ))}
+
+                          {/* {showHeart && (
                             <ShowHeartCom
                               countNumber={countNumber}
                               nickname={user?.nickname}
@@ -520,7 +528,7 @@ const Home = () => {
                             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[999]">
                               <CountdownCircle countNumber={countNumber} />
                             </div>
-                          )}
+                          )} */}
                         </div>
                       ))}
                     </div>
@@ -612,7 +620,7 @@ const Home = () => {
                           data-post-id={video.post_id} // Add post ID to the container
                         >
                           <VideoContainer
-                            refetchUser={refetchUser}
+                            // refetchUser={refetchUser}
                             videoData={videoData}
                             indexRef={indexRef}
                             abortControllerRef={abortControllerRef}
@@ -622,7 +630,7 @@ const Home = () => {
                             video={video}
                             setCountNumber={setCountNumber}
                             config={config}
-                            coin={user?.coins}
+                            // coin={user?.coins}
                             countdown={countdown}
                             setWidth={setWidth}
                             setHeight={setHeight}
@@ -630,7 +638,7 @@ const Home = () => {
                             setCountdown={setCountdown}
                             width={width}
                             height={height}
-                            setShowHeart={setShowHeart}
+                            // setShowHeart={setShowHeart}
                           />
 
                           {video?.type !== "ads" && (
@@ -648,7 +656,11 @@ const Home = () => {
                             <Ads ads={video?.ads_info} />
                           )}
 
-                          {showHeart && (
+                          {hearts.map((id: any) => (
+                            <HeartCount id={id} key={id} remove={removeHeart} />
+                          ))}
+
+                          {/* {showHeart && (
                             <ShowHeartCom
                               countNumber={countNumber}
                               nickname={user?.nickname}
@@ -660,7 +672,7 @@ const Home = () => {
                             <div className="absolute bottom-[300px] right-[70px] transform z-[999]">
                               <CountdownCircle countNumber={countNumber} />
                             </div>
-                          )}
+                          )} */}
                         </div>
                       ))}
                     </div>

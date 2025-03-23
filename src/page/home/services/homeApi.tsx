@@ -2,6 +2,9 @@ import { decryptWithAes } from "@/lib/decrypt";
 import { convertToSecurePayload, convertToSecureUrl } from "@/lib/encrypt";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { getDeviceInfo } from "@/lib/deviceInfo";
+import { useDispatch } from "react-redux";
+import { logOutUser } from "@/store/slices/persistSlice";
+import { store } from "@/store/store";
 
 export const homeApi = createApi({
   reducerPath: "homeApi",
@@ -20,6 +23,33 @@ export const homeApi = createApi({
       return headers;
     },
     responseHandler: async (response) => {
+      if (response.status === 401) {
+        // Get the current persist:root data from localStorage
+        const persistRoot = localStorage.getItem("persist:root");
+
+        if (persistRoot) {
+          // Parse the persist:root data
+          const persistData = JSON.parse(persistRoot);
+
+          // Parse the "persist" key (which contains the user data)
+          const persistUserData = JSON.parse(persistData.persist);
+
+          // Remove or set the token to null
+          if (persistUserData.user && persistUserData.user.token) {
+            persistUserData.user.token = null; // Or delete persistUserData.user.token;
+          }
+
+          // Update the "persist" key with the modified user data
+          persistData.persist = JSON.stringify(persistUserData);
+
+          // Save the updated data back to localStorage
+          localStorage.setItem("persist:root", JSON.stringify(persistData));
+        }
+
+        // Optionally, redirect to the login page or show a notification
+        return Promise.reject("Unauthorized - Token Expired");
+      }
+
       // console.log(response.headers.values());
       // const customHeader = response.headers.get("Encrypt"); // Replace "custom-header" with the actual header name you need
 

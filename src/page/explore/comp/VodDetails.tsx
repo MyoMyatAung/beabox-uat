@@ -205,7 +205,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
           data-post-id={files.post_id}
         >
           <VideoContainer
-            refetchUser={refetchUser}
+            // refetchUser={refetchUser}
             videoData={videoData}
             indexRef={indexRef}
             abortControllerRef={abortControllerRef}
@@ -222,8 +222,8 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
             setHeight={setHeight}
             setHearts={setHearts}
             setCountdown={setCountdown}
-            setShowHeart={setShowHeart}
-            coin={profile?.coins}
+            // setShowHeart={setShowHeart}
+            // coin={profile?.coins}
           />
 
           {files?.type !== "ads" && (
@@ -239,7 +239,11 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
 
           {files?.type === "ads" && <Ads ads={files?.ads_info} />}
 
-          {showHeart && (
+          {hearts.map((id: any) => (
+            <HeartCount id={id} key={id} remove={removeHeart} />
+          ))}
+
+          {/* {showHeart && (
             <ShowHeartCom
               countNumber={countNumber}
               nickname={profile?.nickname}
@@ -251,7 +255,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
             <div className="absolute bottom-[350px] right-[70px] transform z-[999]">
               <CountdownCircle countNumber={countNumber} />
             </div>
-          )}
+          )} */}
 
           <div className="absolute top-3 left-0 z-50 flex gap-2 items-center w-full">
             <button onClick={handleBack} className="p-3">
