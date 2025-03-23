@@ -9,12 +9,16 @@ import RegisterForm from "@/components/profile/auth/register-form";
 import LoginForm from "@/components/profile/auth/login-form";
 import AuthDrawer from "@/components/profile/auth/auth-drawer";
 import AlertToast from "@/components/shared/alert-toast";
+import { setPlay } from "@/page/home/services/playSlice";
 
 const RootLayout = ({ children }: any) => {
   const [showAd, setShowAd] = useState(false);
   const dispatch = useDispatch();
   useEffect(() => {
     const hasSeenAdPopUp = sessionStorage.getItem("hasSeenAdPopUp");
+    if (hasSeenAdPopUp) {
+      dispatch(setPlay(true));
+    }
     if (!hasSeenAdPopUp) {
       setShowAd(true);
       sessionStorage.setItem("hasSeenAdPopUp", "true");
