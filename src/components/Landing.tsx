@@ -67,25 +67,71 @@ const Landing: React.FC = () => {
     }
   }, [adLoaded, dispatch]);
 
+  console.log(images, showSplash);
+
   return (
+    // <>
+    //   {showSplash ? (
+    //     // Splash screen view (3 seconds, no skip) with centered splash logo
+    //     <div className="relative h-screen w-screen max-w-[480px] mx-auto">
+    //       <img
+    //         src={splashScreen}
+    //         className="h-full w-full object-cover"
+    //         alt="Splash Screen"
+    //       />
+    //       <div className="absolute inset-0 flex items-center justify-center mb-16">
+    //         <img
+    //           src={splashLogo}
+    //           alt="Splash Logo"
+    //           className="max-w-[200px] w-auto"
+    //         />
+    //       </div>
+    //     </div>
+    //   ) : showAd ? (
+    //     // Ad view (only shows after image is fully loaded)
+    //     <div className="max-w-[480px] mx-auto">
+    //       <a target="_blank" rel="noopener noreferrer" href={images?.jump_url}>
+    //         <div className="relative h-screen w-screen max-w-[480px]">
+    //           <AsyncDecryptedImage
+    //             className="h-full max-w-[480px] w-full object-cover"
+    //             imageUrl={images?.image}
+    //             alt="Advertisement"
+    //           />
+    //         </div>
+    //       </a>
+    //       <div
+    //         onClick={() => dispatch(setPanding(false))}
+    //         style={{
+    //           borderRadius: "52px",
+    //           background: "rgba(0, 0, 0, 0.98)",
+    //           backdropFilter: "blur(2px)",
+    //         }}
+    //         className="absolute top-[2vh] right-[2vh] cursor-pointer"
+    //       >
+    //         <h1 className="text-white text-xs md:text-sm font-[400] py-[4px] px-[12px]">
+    //           跳过广告 <span>{skip}</span>
+    //         </h1>
+    //       </div>
+    //     </div>
+    //   ) : (
+    //     <div className="relative h-screen w-screen max-w-[480px] mx-auto">
+    //       <img
+    //         src={splashScreen}
+    //         className="h-full w-full object-cover"
+    //         alt="Splash Screen"
+    //       />
+    //       <div className="absolute inset-0 flex items-center justify-center mb-16">
+    //         <img
+    //           src={splashLogo}
+    //           alt="Splash Logo"
+    //           className="max-w-[200px] w-auto"
+    //         />
+    //       </div>
+    //     </div>
+    //   )}
+    // </>
     <>
-      {showSplash ? (
-        // Splash screen view (3 seconds, no skip) with centered splash logo
-        <div className="relative h-screen w-screen max-w-[480px] mx-auto">
-          <img
-            src={splashScreen}
-            className="h-full w-full object-cover"
-            alt="Splash Screen"
-          />
-          <div className="absolute inset-0 flex items-center justify-center mb-16">
-            <img
-              src={splashLogo}
-              alt="Splash Logo"
-              className="max-w-[200px] w-auto"
-            />
-          </div>
-        </div>
-      ) : showAd ? (
+      {data?.data ? (
         // Ad view (only shows after image is fully loaded)
         <div className="max-w-[480px] mx-auto">
           <a target="_blank" rel="noopener noreferrer" href={images?.jump_url}>
