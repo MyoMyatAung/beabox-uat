@@ -2,21 +2,23 @@ import { Menu, Wallet, Settings, QrCode, UserPen, UserCog } from "lucide-react";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { Link, useNavigate } from "react-router-dom";
 import { paths } from "@/routes/paths";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import Divider from "../shared/divider";
 import UserStar from "@/assets/user-star.png";
+import { setAlertText, setShowAlert } from "@/store/slices/profileSlice";
 
 const SettingBtn = ({ setShow }: any) => {
   const navigate = useNavigate();
   const user = useSelector((state: any) => state?.persist?.user);
   const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useDispatch();
 
   const data = [
     {
       title: "我的钱包",
       icon: <Wallet size={24} />,
-      link: paths.wallet,
+      // link: paths.wallet,
     },
     {
       title: "创作者中心",
@@ -72,6 +74,11 @@ const SettingBtn = ({ setShow }: any) => {
                   <div
                     key={title}
                     onClick={() => {
+                      if (title === "我的钱包") {
+                        console.log("this is mf");
+                        dispatch(setShowAlert(true));
+                        dispatch(setAlertText("功能正在开发中"));
+                      }
                       if (title === "创作者中心") {
                         navigate(link);
                         // setIsOpen(false);
