@@ -257,7 +257,7 @@ const Player = ({
       muted: muteRef.current, // Mute initially unless user has interacted
       autoplay: isActive, //
       fullscreenWeb: true,
-      poster: thumbnail,
+      // poster: thumbnail,
       loop: true,
       moreVideoAttr: {
         playsInline: true,
@@ -1137,7 +1137,7 @@ const Player = ({
 
         // Force show poster if video is not playing
         if (!artPlayerInstanceRef.current.playing) {
-          artPlayerInstanceRef.current.template.$poster.style.display = "block";
+          artPlayerInstanceRef.current.template.$poster.style.display = "none";
         }
       }
 
@@ -1225,7 +1225,7 @@ const Player = ({
 
         // Force show poster if video is not playing
         if (!artPlayerInstanceRef.current.playing) {
-          artPlayerInstanceRef.current.template.$poster.style.display = "block";
+          artPlayerInstanceRef.current.template.$poster.style.display = "none";
         }
       }
 
