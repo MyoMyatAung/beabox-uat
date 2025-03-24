@@ -11,14 +11,21 @@ import { setPlay } from "@/page/home/services/playSlice";
 
 interface PopUpProps {
   setShowAd: any;
+  setShowAlert: any;
+  isBrowser: any;
 }
 
-const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
+const PopUp: React.FC<PopUpProps> = ({
+  setShowAd,
+  setShowAlert,
+  isBrowser,
+}) => {
   const [multiStart, setMultiStart] = useState([]);
   const [ad, setAd] = useState([]);
   const [start, setStart] = useState<any>();
   const [showStart, setShowStart] = useState(true);
   const [showAppContent, setShowAppContent] = useState(false);
+
   const [showNotice, setShowNotice] = useState(false);
   const [NotList, setNotList] = useState<any>();
 
@@ -54,9 +61,12 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
   };
 
   const handleAppClose = () => {
-    console.log("ccc");
-    dispatch(setPlay(true));
-
+    if (!isBrowser) {
+      setShowAlert(false);
+      dispatch(setPlay(true));
+    } else {
+      setShowAlert(true);
+    }
     setShowAppContent(false);
     // setShowNotice(true);
     setShowAd(false);
@@ -207,6 +217,7 @@ const PopUp: React.FC<PopUpProps> = ({ setShowAd }) => {
           </div>
         </div>
       )}
+
       {!showStart && !showAppContent && showNotice && NotList && (
         <Notice handleNoticeClose={handleNoticeClose} notice={NotList} />
       )}
