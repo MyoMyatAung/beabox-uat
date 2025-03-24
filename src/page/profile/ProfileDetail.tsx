@@ -19,8 +19,12 @@ import EditRegion from "@/components/profile/edit-region";
 import ImageUpload from "@/components/profile/image-upload";
 import TranLoader from "@/components/shared/tran-loader";
 import backButton from "../../assets/backButton.svg";
+import Avatars from "@/components/avatar/avatars";
+import AvatarUpload from "@/components/avatar/avatar-upload";
 
 const ProfileDetail = () => {
+  const [showAvatar, setShowAvatar] = useState(false);
+  const [avatarId, setAvatarId] = useState("");
   const user = useSelector((state: any) => state?.persist?.user);
   const profileData = useSelector((state: any) => state?.persist?.profileData);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
@@ -85,10 +89,21 @@ const ProfileDetail = () => {
     refetch();
   }, [private_profile]);
 
+  console.log(avatarId);
+
   return (
     <>
       {/* <TranLoader /> */}
       <div className="w-full h-screen px-5 bg-[#16131C]">
+        {showAvatar ? (
+          <Avatars
+            setShowAvatar={setShowAvatar}
+            avatarId={avatarId}
+            setAvatarId={setAvatarId}
+          />
+        ) : (
+          <></>
+        )}
         <div className="flex justify-between items-center py-5">
           <Link to={paths.profile}>
             {/* <FaAngleLeft size={22} /> */}
@@ -97,7 +112,13 @@ const ProfileDetail = () => {
           <p className="text-[16px] mr-5">资料</p>
           <div></div>
         </div>
-        <ImageUpload imgurl={decryptedPhoto} />
+        <AvatarUpload
+          imgurl={decryptedPhoto}
+          setShowAvatar={setShowAvatar}
+          avatarId={avatarId}
+          setAvatarId={setAvatarId}
+        />
+        {/* <ImageUpload imgurl={decryptedPhoto} /> */}
         <div className="flex flex-col gap-7 my-7">
           <h1 className="text-[12px] text-[#888]">关于你</h1>
           <EditUsername

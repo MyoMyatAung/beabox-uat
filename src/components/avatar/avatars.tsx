@@ -2,12 +2,22 @@ import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder";
 import { useGetAvatarListQuery } from "@/store/api/createCenterApi";
 import { X } from "lucide-react";
 import AvatarImage from "./avatar-image";
+import { useAvatarUploadMutation } from "@/store/api/profileApi";
+import TranLoader from "../shared/tran-loader";
 
-const Avatars = ({ setShowAvatar }: any) => {
+const Avatars = ({ setShowAvatar, avatarId, setAvatarId }: any) => {
   const { data } = useGetAvatarListQuery("");
-  console.log(data?.data, "avatars");
+  const [avatarUpload, { data: avatarUploadData, isLoading: loading2 }] =
+    useAvatarUploadMutation();
+
+  const handleUpload = async () => {
+    await avatarUpload({ id: avatarId });
+    setShowAvatar(false);
+  };
+  console.log(avatarUploadData, "avatars");
   return (
     <div className="bg-[#000000CC] w-full flex justify-center items-center h-screen absolute top-0 left-0 z-50">
+      {loading2 ? <TranLoader /> : <></>}
       <div className="bg-[#16131C] rounded-[22px] w-[90%] h-[90%] flex flex-col justify-between">
         <div className="">
           <TopBar setShowAvatar={setShowAvatar} />
@@ -25,9 +35,17 @@ const Avatars = ({ setShowAvatar }: any) => {
                 </h1>
                 <div className="flex justify-between">
                   {list?.list?.map((item: any) => (
-                    <div className="" key={item?.image}>
+                    <div
+                      className=""
+                      key={item?.image}
+                      onClick={() => setAvatarId(item?.id)}
+                    >
                       <AvatarImage
-                        className={`w-[60px] h-[60px] rounded-full ${
+                        className={`w-[60px] h-[60px] ${
+                          avatarId == item?.id
+                            ? "border-2 border-[#CD3EFF]"
+                            : ""
+                        } rounded-full ${
                           !list?.is_available ? "brightness-50" : ""
                         }`}
                         src={item.image}
@@ -43,7 +61,10 @@ const Avatars = ({ setShowAvatar }: any) => {
           </div>
         </div>
         <div className="p-5">
-          <button className="gradient-bg w-full text-[14px] py-4 rounded-[16px]">
+          <button
+            onClick={handleUpload}
+            className="gradient-bg w-full text-[14px] py-4 rounded-[16px]"
+          >
             保存
           </button>
         </div>
