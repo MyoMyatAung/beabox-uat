@@ -7,19 +7,24 @@ import { useState } from "react";
 import Divider from "../shared/divider";
 import UserStar from "@/assets/user-star.png";
 import { setAlertText, setShowAlert } from "@/store/slices/profileSlice";
+import { TbBrandTelegram } from "react-icons/tb";
+import { useGetInviteQuery } from "@/store/api/wallet/walletApi";
 
 const SettingBtn = ({ setShow }: any) => {
   const navigate = useNavigate();
   const user = useSelector((state: any) => state?.persist?.user);
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
+  const { data: config } = useGetInviteQuery("");
+  const tgLink = config?.data.support_telegram_link;
+  console.log(tgLink);
 
   const data = [
-    {
-      title: "我的钱包",
-      icon: <Wallet size={24} />,
-      // link: paths.wallet,
-    },
+    // {
+    //   title: "我的钱包",
+    //   icon: <Wallet size={24} />,
+    //   // link: paths.wallet,
+    // },
     {
       title: "创作者中心",
       icon: <img src={UserStar} className="w-6" />,
@@ -30,6 +35,12 @@ const SettingBtn = ({ setShow }: any) => {
       icon: <UserPen size={24} />,
       link: paths.profileDetail,
     },
+    {
+      title: "联系客服",
+      icon: <TbBrandTelegram size={24} />,
+      link: tgLink,
+    },
+
     {
       title: "邀请码",
       icon: <QrCode size={24} />,
@@ -78,11 +89,12 @@ const SettingBtn = ({ setShow }: any) => {
                         console.log("this is mf");
                         dispatch(setShowAlert(true));
                         dispatch(setAlertText("功能正在开发中"));
-                      }
-                      if (title === "创作者中心") {
-                        navigate(link);
-                        // setIsOpen(false);
-                        // setShow(true);
+                      } else if (title === "联系客服") {
+                        if (tgLink) {
+                          window.open(tgLink, "_blank", "noopener,noreferrer");
+                        } else {
+                          console.warn("Telegram link not available");
+                        }
                       } else {
                         navigate(link);
                       }
