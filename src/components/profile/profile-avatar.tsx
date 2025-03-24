@@ -1,5 +1,14 @@
 import { Person } from "@/assets/profile";
-
+import { useEffect, useState } from "react";
+const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
+  const data = new Uint8Array(arrayBuffer);
+  const maxSize = Math.min(decryptSize, data.length);
+  for (let i = 0; i < maxSize; i++) {
+    data[i] ^= key;
+  }
+  // Decode the entire data as text.
+  return new TextDecoder().decode(data);
+};
 const ProfileAvatar = ({ progressData, levelImage, photo }: any) => {
   const progress = progressData || 0;
   const circleRadius = 30; // Adjusted radius to fit within 60px
@@ -7,6 +16,42 @@ const ProfileAvatar = ({ progressData, levelImage, photo }: any) => {
   const normalizedRadius = circleRadius - strokeWidth / 2;
   const circumference = 2 * Math.PI * normalizedRadius;
   const strokeDashoffset = circumference - (progress / 100) * circumference;
+
+  const [decryptedPhoto, setDecryptedPhoto] = useState("");
+
+  useEffect(() => {
+    const loadAndDecryptPhoto = async () => {
+      if (!levelImage) {
+        setDecryptedPhoto("");
+        return;
+      }
+
+      try {
+        const photoUrl = levelImage;
+
+        // If it's not a .txt file, assume it's already a valid URL
+        if (!photoUrl.endsWith(".txt")) {
+          setDecryptedPhoto(photoUrl);
+          return;
+        }
+
+        // Fetch encrypted image data
+        const response = await fetch(photoUrl);
+        const arrayBuffer = await response.arrayBuffer();
+
+        // Decrypt the first 4096 bytes and decode as text.
+        const decryptedStr = decryptImage(arrayBuffer);
+
+        // Set the decrypted profile photo source
+        setDecryptedPhoto(decryptedStr);
+      } catch (error) {
+        console.error("Error loading profile photo:", error);
+        setDecryptedPhoto("");
+      }
+    };
+
+    loadAndDecryptPhoto();
+  }, [levelImage]);
 
   return (
     // <img
@@ -70,7 +115,7 @@ const ProfileAvatar = ({ progressData, levelImage, photo }: any) => {
         </div>
       )}
 
-      <img src={levelImage} className="absolute -bottom-3 right-1" alt="" />
+      <img src={decryptedPhoto} className="absolute -bottom-3 right-1" alt="" />
     </div>
   );
 };
