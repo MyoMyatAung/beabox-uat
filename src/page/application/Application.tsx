@@ -123,7 +123,7 @@ const Application: React.FC<any> = () => {
             </Carousel> */}
             <Slider ads={ad} />
             {/* Custom Dots */}
-            <ul className="flex justify-center items-center gap-[4px] w-full mt-2">
+            {/* <ul className="flex justify-center items-center gap-[4px] w-full mt-2">
               {ad.map((_, dotIndex) => (
                 <li
                   key={dotIndex}
@@ -135,7 +135,7 @@ const Application: React.FC<any> = () => {
                   tabIndex={0}
                 ></li>
               ))}
-            </ul>
+            </ul> */}
 
             {/* Header Section */}
             <div className="mt-[20px]">
