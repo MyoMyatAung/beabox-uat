@@ -33,6 +33,7 @@ import { setStart } from "./services/startSlice";
 import CircleCountDown from "./components/CircleCountDown";
 import CountdownCircle from "./components/CountdownCircle";
 import { useGetMyOwnProfileQuery } from "@/store/api/profileApi";
+import { decryptImage } from "@/utils/imageDecrypt";
 
 const Home = () => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
@@ -122,19 +123,72 @@ const Home = () => {
   //   setVideosToRender(initialVideos);
   // }, [videos, videosPerLoad]);
 
-  useEffect(() => {
-    if (!start) {
-      const initialVideos =
-        videos[
-          currentTab === 0 ? "follow" : currentTab === 2 ? "foryou" : ""
-        ]?.slice(0, videosPerLoad) || [];
+  // Add at the top of your Home component
+  const decryptionCache = useRef(new Map<string, string>());
 
-      if (initialVideos.length > 1) {
-        dispatch(setVideosToRender(initialVideos));
-        dispatch(setStart(true));
-      }
+  // Add this utility function inside your Home component
+  const decryptThumbnail = async (thumbnail: string): Promise<string> => {
+    if (!thumbnail) return "";
+
+    // Check cache first
+    if (decryptionCache.current.has(thumbnail)) {
+      return decryptionCache.current.get(thumbnail) || "";
     }
-  }, [videos]); // Runs only once on mount
+
+    // If it's not a .txt file, cache and return as-is
+    if (!thumbnail.endsWith(".txt")) {
+      decryptionCache.current.set(thumbnail, thumbnail);
+      return thumbnail;
+    }
+
+    try {
+      const decryptedUrl = await decryptImage(thumbnail);
+      decryptionCache.current.set(thumbnail, decryptedUrl);
+      return decryptedUrl;
+    } catch (error) {
+      console.error("Error decrypting thumbnail:", error);
+      return "";
+    }
+  };
+
+  useEffect(() => {
+    const prepareInitialVideos = async () => {
+      if (!start) {
+        const initialVideos =
+          videos[
+            currentTab === 0 ? "follow" : currentTab === 2 ? "foryou" : ""
+          ]?.slice(0, videosPerLoad) || [];
+
+        if (initialVideos.length > 1) {
+          const videosWithDecryptedPreviews = await Promise.all(
+            initialVideos.map(async (video: any) => ({
+              ...video,
+              decryptedPreview: await decryptThumbnail(video.preview_image),
+            }))
+          );
+
+          dispatch(setVideosToRender(videosWithDecryptedPreviews));
+          dispatch(setStart(true));
+        }
+      }
+    };
+
+    prepareInitialVideos();
+  }, [videos]);
+
+  // useEffect(() => {
+  //   if (!start) {
+  //     const initialVideos =
+  //       videos[
+  //         currentTab === 0 ? "follow" : currentTab === 2 ? "foryou" : ""
+  //       ]?.slice(0, videosPerLoad) || [];
+
+  //     if (initialVideos.length > 1) {
+  //       dispatch(setVideosToRender(initialVideos));
+  //       dispatch(setStart(true));
+  //     }
+  //   }
+  // }, [videos]); // Runs only once on mount
 
   useEffect(() => {
     // Determine which data corresponds to the current tab
@@ -292,14 +346,24 @@ const Home = () => {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
+        entries.forEach(async (entry) => {
           if (entry.isIntersecting) {
             const lastFiveVideos =
               videos[
                 currentTab === 0 ? "follow" : currentTab === 2 ? "foryou" : ""
               ]?.slice(videosToRender?.length, videosToRender?.length + 3) ||
               [];
-            dispatch(appendVideosToRender(lastFiveVideos));
+            if (lastFiveVideos.length > 0) {
+              const videosWithDecryptedPreviews = await Promise.all(
+                lastFiveVideos.map(async (video: any) => ({
+                  ...video,
+                  decryptedPreview: await decryptThumbnail(video.preview_image),
+                }))
+              );
+
+              dispatch(appendVideosToRender(videosWithDecryptedPreviews));
+            }
+            // dispatch(appendVideosToRender(lastFiveVideos));
           }
         });
       },

@@ -1143,10 +1143,7 @@ const VideoContainer = ({
         type={video?.type == "ads" ? true : false}
         rotate={rotateVideoId === video?.post_id}
         src={video?.files[0].resourceURL}
-        thumbnail={
-          video?.preview_image ||
-          "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg"
-        }
+        thumbnail={video?.decryptedPreview || video?.preview_image}
         handleLike={handleLike}
         setWidth={setWidth}
         setHeight={setHeight}
