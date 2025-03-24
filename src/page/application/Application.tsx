@@ -7,6 +7,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
 import ImageWithPlaceholder from "../explore/comp/imgPlaceHolder.tsx";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage.tsx";
+import Slider from "@/components/shared/slider.tsx";
 
 const Application: React.FC<any> = () => {
   const [ad, setAd] = useState([]);
@@ -88,7 +89,7 @@ const Application: React.FC<any> = () => {
         {!isLoading && applicationData && (
           <>
             {/* Carousel Section */}
-            <Carousel
+            {/* <Carousel
               showThumbs={false}
               showArrows={false}
               showStatus={false}
@@ -119,9 +120,10 @@ const Application: React.FC<any> = () => {
                   />
                 </a>
               ))}
-            </Carousel>
+            </Carousel> */}
+            <Slider ads={ad} />
             {/* Custom Dots */}
-            <ul className="flex justify-center items-center gap-[4px] w-full mt-2">
+            {/* <ul className="flex justify-center items-center gap-[4px] w-full mt-2">
               {ad.map((_, dotIndex) => (
                 <li
                   key={dotIndex}
@@ -133,7 +135,7 @@ const Application: React.FC<any> = () => {
                   tabIndex={0}
                 ></li>
               ))}
-            </ul>
+            </ul> */}
 
             {/* Header Section */}
             <div className="mt-[20px]">

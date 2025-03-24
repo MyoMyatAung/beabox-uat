@@ -127,10 +127,14 @@ export const createCenterApi = createApi({
     getAds: builder.query({
       query: () => convertToSecureUrl(`/app/ads`),
     }),
+    getAvatarList: builder.query({
+      query: () => convertToSecureUrl(`/avatar/list`),
+    }),
   }),
 });
 
 export const {
+  useGetAvatarListQuery,
   useGetAdsQuery,
   useGetS3Query,
   useGetConfigQuery,

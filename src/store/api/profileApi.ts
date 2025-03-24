@@ -256,6 +256,13 @@ export const profileApi = createApi({
         body: { file_url },
       }),
     }),
+    avatarUpload: builder.mutation<any, any>({
+      query: ({ id }: any) => ({
+        url: convertToSecureUrl(`/avatar/upload`),
+        method: "Post",
+        body: { avatar_id: id },
+      }),
+    }),
     changeCover: builder.mutation<any, any>({
       query: ({ file_url }: any) => ({
         url: convertToSecureUrl(`/profile/change-cover-photo`),
@@ -383,6 +390,7 @@ export const profileApi = createApi({
 });
 
 export const {
+  useAvatarUploadMutation,
   useUserShareInfoQuery,
   usePostsSearchMutation,
   useShareInfoMutation,
