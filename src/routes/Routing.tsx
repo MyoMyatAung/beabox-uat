@@ -405,7 +405,9 @@ const Routing = () => {
       path: paths.ranking,
       element: (
         <Suspense fallback={<Loader />}>
-          <Ranking />
+          <RootLayout>
+            <Ranking />
+          </RootLayout>
         </Suspense>
       ),
     },

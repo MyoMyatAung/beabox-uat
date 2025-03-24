@@ -32,9 +32,9 @@ export const createCenterApi = createApi({
   }),
   endpoints: (builder) => ({
     getTopCreator: builder.query({
-      query: ({ tag, page }) =>
+      query: ({ tag, page, type }) =>
         convertToSecureUrl(
-          `/top/creator/dashboard?ranking=${tag}&page=${page}`
+          `/top/creator/dashboard?ranking=${tag}&page=${page}&type=${type}`
         ),
     }),
     getMyPostStatusCount: builder.query({
