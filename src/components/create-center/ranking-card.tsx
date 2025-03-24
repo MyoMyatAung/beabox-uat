@@ -67,8 +67,9 @@ const RankingCard = ({ data }: { data: any }) => {
         <div className="text-[14px] space-y-2">
           <h1>{data?.nickname}</h1>
           <h1 className="text-[#888]">
-            {data?.total >= 1000 ? formatToK(data?.total) : data?.total}{" "}
-            followers
+            {/* {data?.total >= 1000 ? formatToK(data?.total) : data?.total}{" "}
+            followers */}
+            {data?.total_followers}
           </h1>
         </div>
       </Link>

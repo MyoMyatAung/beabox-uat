@@ -18,7 +18,7 @@ const CreateCenter = () => {
   return (
     <>
       <TopNav
-      styles={"ml-4"}
+        styles={"ml-4"}
         center={"创作者中心"}
         right={
           <div

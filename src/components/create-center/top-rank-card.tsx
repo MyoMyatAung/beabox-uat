@@ -72,10 +72,13 @@ const TopRankCard = ({ data, rank }: { data: any; rank: any }) => {
       </Avatar>
       <h1 className="text-[14px] font-semibold z-50">{data?.nickname}</h1>
       <h1 className="text-[#AAA] text-[12px] z-50">
-        {data?.total >= 1000 ? formatToK(data?.total) : data?.total} followers
+        {/* {data?.total >= 1000 ? formatToK(data?.total) : data?.total} followers */}
+        {data?.total_followers}
       </h1>
       {data?.id == me ? (
-        <></>
+        <div className="opacity-0">
+          <RankBtn id={data?.id} followBack={data?.follows_back} rank={rank} />
+        </div>
       ) : (
         <RankBtn id={data?.id} followBack={data?.follows_back} rank={rank} />
       )}
