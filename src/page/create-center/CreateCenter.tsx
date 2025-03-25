@@ -47,6 +47,7 @@ const CreateCenter = () => {
         </div>
       </div>
       <Ads />
+      <div className="pb-10"></div>
     </>
   );
 };
