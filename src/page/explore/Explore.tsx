@@ -14,9 +14,15 @@ import VodDetails from "./comp/VodDetails";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setExpHeader } from "@/store/slices/exploreSlice";
+import VideoFeed from "../home/components/VideoFeed";
 
 const Explore = () => {
   const [activeTab, setActiveTab] = useState("Recommend");
+
+  const [list, setList] = useState<any[]>([]);
+  const [selectedMovieId, setSelectedMovieId] = useState(null);
+  const [showVideoFeed, setShowVideoFeed] = useState(false);
+
   const { exp_header } = useSelector((state: any) => state.explore);
   // console.log(exp_header);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -59,9 +65,9 @@ const Explore = () => {
     // window.scrollTo({ top: 0, behavior: "smooth" });
   }, [exp_header]);
 
-  useEffect(() => {
-    window.scrollTo(0, 5);
-  }, []);
+  // useEffect(() => {
+  //   window.scrollTo(0, 5);
+  // }, []);
 
   useEffect(() => {
     if (swiperRef.current) {
@@ -78,11 +84,21 @@ const Explore = () => {
     dispatch(setExpHeader(newActiveTab));
     // setSearchParams({ query: tabToQuery(newActiveTab) }); // Convert tab to query value
   };
-  // console.log(data?.data?.tabs);
+  // console.log(selectedMovieId);
 
   return (
     <>
-      {/* {show && <VodDetails  />} */}
+      {showVideoFeed && selectedMovieId && (
+        <div className="z-[999999] h-screen fixed top-0 overflow-y-scroll left-0 w-full">
+          <VideoFeed
+            setVideos={setList}
+            videos={list}
+            currentActiveId={selectedMovieId}
+            setShowVideoFeed={setShowVideoFeed}
+            query={"搜索影片"}
+          />
+        </div>
+      )}
 
       <div className="flex max-w-[1024px home-main bg-[#16131C] justify-center items-center min-h-screen overflow-clip">
         <div className="explore_sec w-full flex flex-col justify-center items-cente px-[10px pb-[100px] mt-14">
@@ -121,7 +137,13 @@ const Explore = () => {
                         {gg.type === "topic" ? (
                           <Recommand list_id={gg.id} title="Chinese Drama" />
                         ) : (
-                          <Latest list_id={gg.id} />
+                          <Latest
+                            setSelectedMovieId={setSelectedMovieId}
+                            setShowVideoFeed={setShowVideoFeed}
+                            list_id={gg.id}
+                            waterfall={list}
+                            setWaterFall={setList}
+                          />
                         )}
                       </div>
                     )}
