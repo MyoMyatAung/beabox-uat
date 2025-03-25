@@ -85,7 +85,7 @@ const Poppizza: React.FC<PoppizzaProps> = ({}) => {
         </div>
       ) : (
         <div className=" grid grid-cols-6 gap-[10px]">
-          {/* {ad?.map((app: any) => (
+          {ad?.map((app: any) => (
             <a
               key={app.id}
               href={app.url}
@@ -101,12 +101,12 @@ const Poppizza: React.FC<PoppizzaProps> = ({}) => {
                 {app.title}
               </h1>
             </a>
-          ))} */}
-          {
+          ))}
+          {/* {
             ad?.map((item, index) => (
               <AdItemComponent key={index} item={item} />
             ))
-          }
+          } */}
         </div>
       )}
     </div>
