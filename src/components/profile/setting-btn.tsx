@@ -53,11 +53,11 @@ const SettingBtn = ({ setShow }: any) => {
     },
   ];
   const data2 = [
-    {
-      title: "创作者中心",
-      icon: <img src={UserStar} className="w-6" />,
-      // link: paths.settings,
-    },
+    // {
+    //   title: "创作者中心",
+    //   icon: <img src={UserStar} className="w-6" />,
+    //   link: paths.settings,
+    // },
     // {
     //   title: "创作者中心",
     //   icon: <UserPen size={24} />,
