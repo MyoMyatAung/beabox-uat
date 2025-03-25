@@ -22,10 +22,12 @@ const Explore = () => {
   const [list, setList] = useState<any[]>([]);
   const [selectedMovieId, setSelectedMovieId] = useState(null);
   const [showVideoFeed, setShowVideoFeed] = useState(false);
+  const [showVideoFeedTopic, setShowVideoFeedTopic] = useState(false);
 
   const { exp_header } = useSelector((state: any) => state.explore);
   // console.log(exp_header);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [selectedList, setSelectedList] = useState<any[]>([]);
   const [tabs, setTabs] = useState<any[]>([]);
   const [dyId, setDyId] = useState<any>("");
   const { data, isLoading } = useGetExploreHeaderQuery("");
@@ -84,7 +86,7 @@ const Explore = () => {
     dispatch(setExpHeader(newActiveTab));
     // setSearchParams({ query: tabToQuery(newActiveTab) }); // Convert tab to query value
   };
-  // console.log(selectedMovieId);
+  console.log(selectedMovieId, selectedList, showVideoFeedTopic);
 
   return (
     <>
@@ -95,6 +97,18 @@ const Explore = () => {
             videos={list}
             currentActiveId={selectedMovieId}
             setShowVideoFeed={setShowVideoFeed}
+            query={"搜索影片"}
+          />
+        </div>
+      )}
+
+      {showVideoFeedTopic && selectedMovieId && (
+        <div className="z-[999999] h-screen fixed top-0 overflow-y-scroll left-0 w-full">
+          <VideoFeed
+            setVideos={setSelectedList}
+            videos={selectedList}
+            currentActiveId={selectedMovieId}
+            setShowVideoFeed={setShowVideoFeedTopic}
             query={"搜索影片"}
           />
         </div>
@@ -135,7 +149,14 @@ const Explore = () => {
                     {exp_header === gg.name && (
                       <div className=" min-h-screen text-white">
                         {gg.type === "topic" ? (
-                          <Recommand list_id={gg.id} title="Chinese Drama" />
+                          <Recommand
+                            selectedList={selectedList}
+                            setSelectedList={setSelectedList}
+                            list_id={gg.id}
+                            title="Chinese Drama"
+                            setShowVideoFeedTopic={setShowVideoFeedTopic}
+                            setSelectedMovieId={setSelectedMovieId}
+                          />
                         ) : (
                           <Latest
                             setSelectedMovieId={setSelectedMovieId}
