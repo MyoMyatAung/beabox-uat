@@ -11,7 +11,7 @@ const OtherAds = () => {
       {applicationData?.application?.length > 0 &&
         applicationData?.application.map((appSection: any) => (
           <div key={appSection.id} className="">
-            <div className="grid grid-cols-5 gap-[20px]">
+            <div className="grid grid-cols-6 gap-[20px]">
               {appSection?.apps?.map((app: any) => (
                 <a
                   key={app.id}
