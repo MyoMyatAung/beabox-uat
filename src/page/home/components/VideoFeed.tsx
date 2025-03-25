@@ -72,33 +72,33 @@ const VideoFeed = ({
     setHearts((prev) => prev.filter((heartId) => heartId !== id)); // Remove the heart by ID
   };
 
-  // // Add at the top of your Home component
-  // const decryptionCache = useRef(new Map<string, string>());
+  // Add at the top of your Home component
+  const decryptionCache = useRef(new Map<string, string>());
 
-  // // Add this utility function inside your Home component
-  // const decryptThumbnail = async (thumbnail: string): Promise<string> => {
-  //   if (!thumbnail) return "";
+  // Add this utility function inside your Home component
+  const decryptThumbnail = async (thumbnail: string): Promise<string> => {
+    if (!thumbnail) return "";
 
-  //   // Check cache first
-  //   if (decryptionCache.current.has(thumbnail)) {
-  //     return decryptionCache.current.get(thumbnail) || "";
-  //   }
+    // Check cache first
+    if (decryptionCache.current.has(thumbnail)) {
+      return decryptionCache.current.get(thumbnail) || "";
+    }
 
-  //   // If it's not a .txt file, cache and return as-is
-  //   if (!thumbnail.endsWith(".txt")) {
-  //     decryptionCache.current.set(thumbnail, thumbnail);
-  //     return thumbnail;
-  //   }
+    // If it's not a .txt file, cache and return as-is
+    if (!thumbnail.endsWith(".txt")) {
+      decryptionCache.current.set(thumbnail, thumbnail);
+      return thumbnail;
+    }
 
-  //   try {
-  //     const decryptedUrl = await decryptImage(thumbnail);
-  //     decryptionCache.current.set(thumbnail, decryptedUrl);
-  //     return decryptedUrl;
-  //   } catch (error) {
-  //     console.error("Error decrypting thumbnail:", error);
-  //     return "";
-  //   }
-  // };
+    try {
+      const decryptedUrl = await decryptImage(thumbnail);
+      decryptionCache.current.set(thumbnail, decryptedUrl);
+      return decryptedUrl;
+    } catch (error) {
+      console.error("Error decrypting thumbnail:", error);
+      return "";
+    }
+  };
 
   useEffect(() => {
     if (!start && videos.length > 0) {
@@ -117,18 +117,18 @@ const VideoFeed = ({
       // Slice the first `videosPerLoad` videos for initial render
       const firstThreeVideos = initialVideos.slice(0, videosPerLoad);
 
-      // const run = async () => {
-      //   const videosWithDecryptedPreviews = await Promise.all(
-      //     firstThreeVideos.map(async (video: any) => ({
-      //       ...video,
-      //       decryptedPreview: await decryptThumbnail(video.preview_image),
-      //     }))
-      //   );
-      //   setVideosToRender(videosWithDecryptedPreviews);
-      // };
+      const run = async () => {
+        const videosWithDecryptedPreviews = await Promise.all(
+          firstThreeVideos.map(async (video: any) => ({
+            ...video,
+            decryptedPreview: await decryptThumbnail(video.preview_image),
+          }))
+        );
+        setVideosToRender(videosWithDecryptedPreviews);
+      };
 
-      // run();
-      setVideosToRender(firstThreeVideos);
+      run();
+      // setVideosToRender(firstThreeVideos);
 
       setStart(true);
     }
@@ -159,14 +159,17 @@ const VideoFeed = ({
                 videosToRender?.length + 3
               ) || [];
 
-            // const videosWithDecryptedPreviews = await Promise.all(
-            //   lastFiveVideos.map(async (video: any) => ({
-            //     ...video,
-            //     decryptedPreview: await decryptThumbnail(video.preview_image),
-            //   }))
-            // );
+            const videosWithDecryptedPreviews = await Promise.all(
+              lastFiveVideos.map(async (video: any) => ({
+                ...video,
+                decryptedPreview: await decryptThumbnail(video.preview_image),
+              }))
+            );
 
-            setVideosToRender((prev) => [...prev, ...lastFiveVideos]);
+            setVideosToRender((prev) => [
+              ...prev,
+              ...videosWithDecryptedPreviews,
+            ]);
           }
         });
       },

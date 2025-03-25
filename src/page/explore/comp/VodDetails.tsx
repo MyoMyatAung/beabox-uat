@@ -23,6 +23,7 @@ import ShowHeartCom from "@/page/home/components/ShowHeartCom";
 import CountdownCircle from "@/page/home/components/CountdownCircle";
 import { useGetMyOwnProfileQuery } from "@/store/api/profileApi";
 import { getDeviceInfo } from "@/lib/deviceInfo";
+import { decryptImage } from "@/utils/imageDecrypt";
 
 interface VodDetailsProps {
   // setshow: (value: boolean) => void;
@@ -81,6 +82,35 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
       }
     }
   }, [files?.post_id]);
+
+  console.log(files);
+
+  const decryptionCache = useRef(new Map<string, string>());
+
+  // Add this utility function inside your Home component
+  const decryptThumbnail = async (thumbnail: string): Promise<string> => {
+    if (!thumbnail) return "";
+
+    // Check cache first
+    if (decryptionCache.current.has(thumbnail)) {
+      return decryptionCache.current.get(thumbnail) || "";
+    }
+
+    // If it's not a .txt file, cache and return as-is
+    if (!thumbnail.endsWith(".txt")) {
+      decryptionCache.current.set(thumbnail, thumbnail);
+      return thumbnail;
+    }
+
+    try {
+      const decryptedUrl = await decryptImage(thumbnail);
+      decryptionCache.current.set(thumbnail, decryptedUrl);
+      return decryptedUrl;
+    } catch (error) {
+      console.error("Error decrypting thumbnail:", error);
+      return "";
+    }
+  };
 
   useEffect(() => {
     const container = videoContainerRef.current;
@@ -194,7 +224,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
       {showTip && (
         <div className="absolute top-[100px] z-[999991] w-screen flex justify-center">
           <div className="py-[8px] px-[12px] text-white text-[14px] font-[500] leading-[20px] tip_comment">
-            Comment added
+            添加评论
           </div>
         </div>
       )}

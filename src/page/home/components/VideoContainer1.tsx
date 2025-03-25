@@ -1017,8 +1017,8 @@ const VideoContainer1 = ({
         type={video?.type == "ads" ? true : false}
         rotate={rotateVideoId === video?.post_id}
         src={video?.files[0].resourceURL}
-        thumbnail={video?.preview_image || ""}
-        // thumbnail={video?.decryptedPreview || video?.preview_image}
+        //  thumbnail={video?.preview_image || ""}
+        thumbnail={video?.decryptedPreview || video?.preview_image}
         handleLike={handleLike}
         setWidth={setWidth}
         setHeight={setHeight}
