@@ -19,6 +19,7 @@ import share from "@/assets/profile/share.svg";
 import BadgeImg from "@/components/shared/badge-img";
 import SearchVideo from "@/components/profile/video/search-video";
 import OtherAds from "@/components/profile/other-ads";
+import logo from "@/assets/logo.svg";
 
 const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
   const data = new Uint8Array(arrayBuffer);
@@ -257,11 +258,14 @@ const OtherProfile = () => {
         ""
       )}
       {isCopied2 ? (
-        <div className="w-full z-[1300] absolute top-[80vh] flex justify-center">
-          <p className="text-[14px] bg-[#191721] px-2 py-1 rounded-lg w-[83px] text-center">
-            {/* {shareData?.message} */}
-            复制成功
-          </p>
+        <div className="fixed w-full h-screen bg-[#000000CC]  z-[3000] top-0 left-0">
+          <div className="w-full z-[1300] absolute top-[80vh] flex justify-center">
+            <div className="text-[14px] bg-[#191721] px-2 py-1 rounded-lg w-[103px] flex items-center gap-2 text-center">
+              <img src={logo} className="w-5" alt="" />
+              <span>复制成功</span>
+            </div>
+          </div>
+          {/* 1 */}
         </div>
       ) : (
         ""
