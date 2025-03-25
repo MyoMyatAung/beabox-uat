@@ -14,15 +14,24 @@ import personE from "../../../assets/explore/personE.svg";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 import empty from "../../../page/home/empty.png";
 
-
 interface LatestPorp {
   list_id: string;
+  setShowVideoFeed: any;
+  setSelectedMovieId: any;
+  waterfall: any;
+  setWaterFall: any;
 }
 
-const Latest: React.FC<LatestPorp> = ({ list_id }) => {
+const Latest: React.FC<LatestPorp> = ({
+  list_id,
+  setShowVideoFeed,
+  setSelectedMovieId,
+  waterfall,
+  setWaterFall,
+}) => {
   // const [searchParams, setSearchParams] = useSearchParams();
   const dispatch = useDispatch();
-  const [waterfall, setWaterFall] = useState<any[]>([]);
+  // const [waterfall, setWaterFall] = useState<any[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
   const { data, isLoading } = useGetExploreListQuery({ id: list_id, page });
@@ -71,9 +80,11 @@ const Latest: React.FC<LatestPorp> = ({ list_id }) => {
   };
 
   const showDetailsVod = (file: any) => {
-    scrollPositionRef.current = contentRef.current?.scrollTop || 0;
-    dispatch(setDetails(file));
-    navigate("/vod_details");
+    // scrollPositionRef.current = contentRef.current?.scrollTop || 0;
+    // dispatch(setDetails(file));
+    // navigate("/vod_details");
+    setSelectedMovieId(file?.post_id);
+    setShowVideoFeed(true);
   };
 
   const navigateToUserProfile = (userId: string, event: React.MouseEvent) => {
