@@ -5,8 +5,15 @@ import AvatarImage from "./avatar-image";
 import { useAvatarUploadMutation } from "@/store/api/profileApi";
 import TranLoader from "../shared/tran-loader";
 
-const Avatars = ({ setShowAvatar, avatarId, setAvatarId }: any) => {
+const Avatars = ({
+  setShowAvatar,
+  avatarId,
+  setAvatarId,
+  srcImg,
+  setSrcImg,
+}: any) => {
   const { data } = useGetAvatarListQuery("");
+  console.log(data);
   const [avatarUpload, { data: avatarUploadData, isLoading: loading2 }] =
     useAvatarUploadMutation();
 
@@ -38,7 +45,14 @@ const Avatars = ({ setShowAvatar, avatarId, setAvatarId }: any) => {
                     <div
                       className=""
                       key={item?.image}
-                      onClick={() => setAvatarId(item?.id)}
+                      onClick={
+                        list?.is_available
+                          ? () => {
+                              setSrcImg(item?.image);
+                              setAvatarId(item?.id);
+                            }
+                          : () => {}
+                      }
                     >
                       <AvatarImage
                         className={`w-[60px] h-[60px] ${

@@ -19,6 +19,7 @@ import EditCover from "@/components/profile/edit-cover";
 import ScrollHeader from "@/components/profile/scroll-header";
 import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 import BadgeImg from "@/components/shared/badge-img";
+import Covers from "@/components/avatar/covers";
 
 // A helper function that mimdata?.data?.profile_photoics your Kotlin logic.
 // It XORs only the first 4096 bytes (or the data size if smaller) and decodes the result as text.
@@ -177,6 +178,7 @@ const Profile = () => {
 
   return (
     <div className="h-screen flex flex-col hide-sb max-w-[480px] mx-auto">
+      {/* <Covers /> */}
       {showHeader ? (
         <>
           <div className="gradient-overlay2"></div>

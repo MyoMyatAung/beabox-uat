@@ -24,6 +24,7 @@ import AvatarUpload from "@/components/avatar/avatar-upload";
 
 const ProfileDetail = () => {
   const [showAvatar, setShowAvatar] = useState(false);
+  const [srcImg, setSrcImg] = useState("");
   const [avatarId, setAvatarId] = useState("");
   const user = useSelector((state: any) => state?.persist?.user);
   const profileData = useSelector((state: any) => state?.persist?.profileData);
@@ -100,6 +101,8 @@ const ProfileDetail = () => {
             setShowAvatar={setShowAvatar}
             avatarId={avatarId}
             setAvatarId={setAvatarId}
+            srcImg={srcImg}
+            setSrcImg={setSrcImg}
           />
         ) : (
           <></>
@@ -117,6 +120,8 @@ const ProfileDetail = () => {
           setShowAvatar={setShowAvatar}
           avatarId={avatarId}
           setAvatarId={setAvatarId}
+          srcImg={srcImg}
+          setSrcImg={setSrcImg}
         />
         {/* <ImageUpload imgurl={decryptedPhoto} /> */}
         <div className="flex flex-col gap-7 my-7">

@@ -15,10 +15,9 @@ const AvatarUpload = ({
   setShowAvatar,
   avatarId,
   setAvatarId,
+  srcImg,
+  setSrcImg,
 }: any) => {
-  const [image, setImage] = useState<string | null>(null);
-  console.log(imgurl);
-
   return (
     <>
       {imgurl ? (
@@ -27,7 +26,8 @@ const AvatarUpload = ({
           className="flex justify-center items-center relative"
         >
           <AsyncDecryptedImage
-            imageUrl={imgurl || "/placeholder.svg"}
+            // imageUrl={imgurl || "/placeholder.svg"}
+            imageUrl={srcImg ? srcImg : imgurl}
             alt="Preview"
             className="w-[80px] h-[80px] rounded-full bg-[#FFFFFF12] flex justify-center items-center object-cover object-center filter saturate-50 brightness-75"
           />

@@ -9,8 +9,10 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { setCover } from "@/store/slices/persistSlice";
 import Loader from "@/components/shared/loader";
+import Covers from "../avatar/covers";
 
 const EditCover = ({ decryptedCover, refetch, coverimg }: any) => {
+  const [showCovers, setShowCovers] = useState(false);
   const dispatch = useDispatch();
   const cover = useSelector((state: any) => state.persist.cover);
   const [isOpen, setIsOpen] = useState(false);
@@ -57,10 +59,9 @@ const EditCover = ({ decryptedCover, refetch, coverimg }: any) => {
     // console.log(settingUploadData?.data?.url, "storage uploaded");
   }, [settingUploadData]);
 
-  console.log(coverimg);
-
   return (
     <>
+      {showCovers ? <Covers setShowCovers={setShowCovers} /> : <></>}
       {load1 || load2 ? (
         <div className="fixed left-0 right-0 top-[100px] flex justify-center items-center h-screen text-red-500 z-[9000]">
           <Loader />
@@ -68,7 +69,14 @@ const EditCover = ({ decryptedCover, refetch, coverimg }: any) => {
       ) : (
         <></>
       )}
-      <Drawer open={isOpen} onOpenChange={setIsOpen}>
+      <div
+        onClick={() => setShowCovers(true)}
+        className="flex gap-2 z-[1900] bg-[#FFFFFF14] px-4 justify-center py-1 rounded-lg items-center"
+      >
+        <PencilLine size={14} />
+        <p className="text-[12px]">设置封面</p>
+      </div>
+      {/* <Drawer open={isOpen} onOpenChange={setIsOpen}>
         <DrawerTrigger asChild>
           <div className="flex gap-2 z-[1900] bg-[#FFFFFF14] px-4 justify-center py-1 rounded-lg items-center">
             <PencilLine size={14} />
@@ -117,7 +125,7 @@ const EditCover = ({ decryptedCover, refetch, coverimg }: any) => {
             </div>
           </div>
         </DrawerContent>
-      </Drawer>
+      </Drawer> */}
     </>
   );
 };
