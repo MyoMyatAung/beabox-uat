@@ -4,7 +4,7 @@ import { paths } from "@/routes/paths";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import RankBtn from "./rank-btn";
-import rank1 from "@/assets/createcenter/rank1.jpeg";
+import { MdPerson } from "react-icons/md";
 
 const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
   const data = new Uint8Array(arrayBuffer);
@@ -56,7 +56,7 @@ const TopRankCard = ({ data, rank }: { data: any; rank: any }) => {
 
     loadAndDecryptPhoto();
   }, [data?.photo]);
-
+  console.log(data?.photo);
   return (
     <div
       // onClick={() => navigate(paths.getUserProfileId(data?.id))}
@@ -67,9 +67,19 @@ const TopRankCard = ({ data, rank }: { data: any; rank: any }) => {
       } rank1 w-[110px] h-[131px] border-[0px] relative flex flex-col justify-center items-center rounded-[8px] pt-5`}
     >
       <div className="bg-gradient-to-b from-[#00000000] absolute top-0 left-0  to-[#000000] w-[110px] h-[131px]  rounded-[8px]"></div>
-      <Avatar>
+      {data?.photo ? (
+        <Avatar>
+          <AvatarImage src={decryptedPhoto} alt="@shadcn" />
+        </Avatar>
+      ) : (
+        <div className="bg-gray-800 rounded-full p-2 mb-1">
+          <MdPerson size={28} className="" />
+        </div>
+      )}
+      {/* <Avatar>
         <AvatarImage src={decryptedPhoto} alt="@shadcn" />
-      </Avatar>
+      </Avatar> */}
+
       <h1 className="text-[14px] font-semibold z-50">{data?.nickname}</h1>
       <h1 className="text-[#AAA] text-[12px] z-50">
         {/* {data?.total >= 1000 ? formatToK(data?.total) : data?.total} followers */}
