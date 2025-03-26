@@ -34,6 +34,7 @@ import CircleCountDown from "./components/CircleCountDown";
 import CountdownCircle from "./components/CountdownCircle";
 // import { useGetMyOwnProfileQuery } from "@/store/api/profileApi";
 import { decryptImage } from "@/utils/imageDecrypt";
+import { useLayoutEffect } from "react";
 
 const Home = () => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
@@ -219,92 +220,91 @@ const Home = () => {
     }
   }, []); // Add currentActivePost as a dependency
 
-  useEffect(() => {
-    const setupObserver = () => {
-      const container = videoContainerRef.current;
-      if (!container) {
-        console.log("Container not ready yet");
-        return;
-      }
-
-      const currentVideos =
-        videos[currentTab === 2 ? "foryou" : "follow"] || [];
-      console.log("Videos length:", currentVideos.length);
-      console.log("Container children:", container.children.length);
-
-      if (currentVideos.length <= 1 || container.children.length <= 1) {
-        console.log("Not enough videos or children to observe");
-        return;
-      }
-
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              console.log("Intersection triggered for element:", entry.target);
-              dispatch(setPage(page + 1));
-            }
-          });
-        },
-        {
-          rootMargin: "200px",
-          threshold: 0.1,
-        }
-      );
-
-      const targetIndex = Math.max(container.children.length - 5, 0);
-      const targetElement = container.children[targetIndex];
-      if (targetElement) {
-        console.log("Observing element at index:", targetIndex);
-        observer.observe(targetElement);
-      } else {
-        console.log("No target element found at index:", targetIndex);
-      }
-
-      return () => {
-        observer.disconnect();
-        console.log("Observer cleaned up");
-      };
-    };
-
-    // Delay the observer setup until after initial render
-    const timer = setTimeout(setupObserver, 0);
-    return () => clearTimeout(timer);
-  }, [videos, refresh]);
-
   // useEffect(() => {
-  //   console.log("css", videos[currentTab === 2 ? "foryou" : "follow"].length);
-  //   const container = videoContainerRef.current;
-  //   console.log("c", container);
-  //   if (!container) return;
-
-  //   const observer = new IntersectionObserver(
-  //     (entries) => {
-  //       entries.forEach((entry) => {
-  //         if (entry.isIntersecting) {
-  //           dispatch(setPage(page + 1)); // Load more videos
-  //         }
-  //       });
-  //     },
-  //     {
-  //       rootMargin: "100px", // Trigger the observer when 100px from the bottom
-  //       threshold: 0.5, // 50% visibility of the last video
+  //   console.log(videoContainerRef.current);
+  //   const setupObserver = () => {
+  //     const container = videoContainerRef.current;
+  //     if (!container) {
+  //       console.log("Container not ready yet");
+  //       return;
   //     }
-  //   );
 
-  //   console.log(videos[currentTab === 2 ? "foryou" : "follow"]);
+  //     const currentVideos =
+  //       videos[currentTab === 2 ? "foryou" : "follow"] || [];
 
-  //   // Observe the last video element
-  //   if (videos[currentTab === 2 ? "foryou" : "follow"].length > 1) {
-  //     console.log("cacjcjcj");
-  //     const secondLastVideo = container.children[container.children.length - 5];
-  //     observer.observe(secondLastVideo);
-  //   }
-  //   // Cleanup observer on component unmount or when dependencies change
-  //   return () => {
-  //     observer.disconnect();
+  //     if (currentVideos.length <= 1 || container.children.length <= 1) {
+  //       console.log("Not enough videos or children to observe");
+  //       return;
+  //     }
+
+  //     const observer = new IntersectionObserver(
+  //       (entries) => {
+  //         entries.forEach((entry) => {
+  //           if (entry.isIntersecting) {
+  //             console.log("Intersection triggered for element:", entry.target);
+  //             dispatch(setPage(page + 1));
+  //           }
+  //         });
+  //       },
+  //       {
+  //         rootMargin: "200px 0px",
+  //         threshold: 0.5,
+  //       }
+  //     );
+
+  //     const targetIndex = Math.max(container.children.length - 5, 0);
+  //     const targetElement = container.children[targetIndex];
+  //     if (targetElement) {
+  //       console.log("Observing element at index:", targetIndex);
+  //       observer.observe(targetElement);
+  //     } else {
+  //       console.log("No target element found at index:", targetIndex);
+  //     }
+
+  //     return () => {
+  //       observer.disconnect();
+  //       console.log("Observer cleaned up");
+  //     };
   //   };
+
+  //   // Delay the observer setup until after initial render
+  //   const timer = setTimeout(setupObserver, 0);
+  //   return () => clearTimeout(timer);
   // }, [videos[currentTab === 2 ? "foryou" : "follow"], refresh]);
+
+  useLayoutEffect(() => {
+    const container = videoContainerRef.current;
+
+    if (!container) return; // Ensure the container is available before proceeding.
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            dispatch(setPage(page + 1)); // Load more videos
+          }
+        });
+      },
+      {
+        rootMargin: "100px", // Trigger the observer when 100px from the bottom
+        threshold: 0.5, // 50% visibility of the last video
+      }
+    );
+
+    // Ensure videos are available
+    const currentVideos = videos[currentTab === 2 ? "foryou" : "follow"];
+    if (currentVideos.length > 1) {
+      const secondLastVideo = container.children[container.children.length - 5];
+      if (secondLastVideo) {
+        observer.observe(secondLastVideo);
+      }
+    }
+
+    // Cleanup observer on component unmount or when dependencies change
+    return () => {
+      observer.disconnect();
+    };
+  }, [videos[currentTab === 2 ? "foryou" : "follow"], refresh]); // Dependencies (excluding videoContainerRef.current as it's stable)
 
   // useEffect(() => {
   //   const container = videoContainerRef.current;
@@ -451,6 +451,24 @@ const Home = () => {
         <TopNavbar currentTab={currentTab} onTabClick={handleTabClick} />
 
         <div className="app bg-[#16131C]">
+          {isDecrypting && (
+            <div className="app bg-[#16131C]">
+              <div
+                style={{
+                  textAlign: "center",
+                  padding: "20px",
+                }}
+              >
+                <div className="heart">
+                  <img
+                    src={loader}
+                    className="w-[100px] h-[100px]"
+                    alt="Loading"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
           {refresh ? (
             <div className="bg-[#232323] rounded-xl px-4 py-0">
               <img src={loader} alt="" width={50} height={50} />
@@ -458,7 +476,7 @@ const Home = () => {
           ) : (
             <>
               {currentTab === 0 &&
-                (isDecrypting || (isLoading && videos["follow"] === 0) ? (
+                (isLoading && videos["follow"] === 0 ? (
                   <div className="app bg-[#16131C]">
                     <div
                       style={{
@@ -599,8 +617,7 @@ const Home = () => {
               )}
 
               {currentTab == 2 &&
-                (isDecrypting ||
-                (isLoading && videos["foryou"]?.length === 0) ? (
+                (isLoading && videos["foryou"]?.length === 0 ? (
                   <div className="app bg-[#16131C]">
                     <div
                       style={{
