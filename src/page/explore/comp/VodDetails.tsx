@@ -83,7 +83,6 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
     }
   }, [files?.post_id]);
 
-  console.log(files);
 
   const decryptionCache = useRef(new Map<string, string>());
 
