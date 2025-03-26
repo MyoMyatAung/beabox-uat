@@ -1137,14 +1137,17 @@ const Player = ({
           ".video-play-indicator"
         ) as HTMLDivElement;
 
-      // if (artPlayerInstanceRef.current && thumbnail) {
-      //   artPlayerInstanceRef.current.poster = thumbnail;
+      if (artPlayerInstanceRef.current && thumbnail) {
+        artPlayerInstanceRef.current.poster = thumbnail;
 
-      //   // Force show poster if video is not playing
-      //   if (!artPlayerInstanceRef.current.playing) {
-      //     artPlayerInstanceRef.current.template.$poster.style.display = "block";
-      //   }
-      // }
+        // Force show poster if video is not playing
+        if (
+          !artPlayerInstanceRef.current.playing &&
+          artPlayerInstanceRef.current.currentTime === 0
+        ) {
+          artPlayerInstanceRef.current.template.$poster.style.display = "block";
+        }
+      }
 
       if (loadingIndicator) loadingIndicator.style.display = "block";
       if (playIndicator) playIndicator.style.display = "none";
