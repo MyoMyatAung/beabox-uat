@@ -133,10 +133,14 @@ export const createCenterApi = createApi({
     getCoverList: builder.query({
       query: () => convertToSecureUrl(`/cover-photo/list`),
     }),
+    getTopList: builder.query({
+      query: () => convertToSecureUrl(`/top/account/list`),
+    }),
   }),
 });
 
 export const {
+  useGetTopListQuery,
   useGetCoverListQuery,
   useGetAvatarListQuery,
   useGetAdsQuery,

@@ -9,6 +9,7 @@ import { paths } from "@/routes/paths";
 import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 import Ads from "@/components/create-center/ads";
 import OtherAds from "@/components/profile/other-ads";
+import RankList from "@/components/ranking/rank-list";
 
 const CreateCenter = () => {
   const user = useSelector((state: any) => state?.persist?.user) || "";
@@ -35,18 +36,22 @@ const CreateCenter = () => {
         }
       />
       <YourVideos />
-      <div className="px-5">
-        <OtherAds />
+      <div className="px-5">{/* <OtherAds /> */}</div>
+      <div className="p-5">
+        <ViewAll />
       </div>
-      <div className="grid grid-cols-2 items-center w-full justify-center p-5 gap-3">
+      <div className="px-5 pb-5">
+        <RankList />
+      </div>
+      {/* <div className="grid grid-cols-2 items-center w-full justify-center p-5 gap-3">
         <div className="flex-1">
           <ViewAll />
         </div>
         <div className="flex-1">
           <WalletDetails />
         </div>
-      </div>
-      <Ads />
+      </div> */}
+      {/* <Ads /> */}
       <div className="pb-10"></div>
     </>
   );
