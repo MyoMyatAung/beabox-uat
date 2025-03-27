@@ -20,6 +20,7 @@ import CountdownCircle from "./CountdownCircle";
 import { useGetMyOwnProfileQuery } from "@/store/api/profileApi";
 import { getDeviceInfo } from "@/lib/deviceInfo";
 import { decryptImage } from "@/utils/imageDecrypt";
+import PreventSwipeBack from "@/components/shared/PreventSwipeBack";
 
 const VideoFeed = ({
   videos,
@@ -144,6 +145,19 @@ const VideoFeed = ({
   //     }
   //   }
   // }, [videos]); // Runs only once on mount
+
+  useEffect(() => {
+
+    const handlePopState = () => {
+        setShowVideoFeed(false);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+        window.removeEventListener('popstate', handlePopState);
+    };
+}, []);
 
   useEffect(() => {
     const container = videoContainerRef.current;
@@ -316,6 +330,7 @@ const VideoFeed = ({
 
   return (
     <div className="app bg-black">
+      <PreventSwipeBack />
       <div ref={videoContainerRef} className={`app__videos`}>
         <div className="fixed top-3 left-0  flex gap-2 items-center w-full z-[9999]">
           <button className="p-3" onClick={() => setShowVideoFeed(false)}>
