@@ -5,13 +5,16 @@ const Top3 = ({ rankingData }: any) => {
 
   return (
     <div>
+      {/* <TopRankCard /> */}
       {top3?.length ? (
-        <div className="flex w-full justify-center gap-3">
-          <div className="pt-5">
+        <div className="flex justify-center items-center gap-2 px-1.5">
+          <div className="flex-1 pt-10">
             <TopRankCard rank={2} data={top3[1]} />
           </div>
-          <TopRankCard rank={1} data={top3[0]} />
-          <div className="pt-5">
+          <div className="flex-1 ">
+            <TopRankCard rank={1} data={top3[0]} />
+          </div>
+          <div className="flex-1 pt-10">
             <TopRankCard rank={3} data={top3[2]} />
           </div>
         </div>
