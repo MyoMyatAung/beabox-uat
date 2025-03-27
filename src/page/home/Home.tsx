@@ -160,7 +160,7 @@ const Home = () => {
             (video: any) => video?.post_id === newPost?.post_id
           )
       );
-      console.log("winn1");
+
       if (page === 1) {
         setIsDecrypting(true);
       }
@@ -197,8 +197,9 @@ const Home = () => {
           decryptAndUpdateVideos();
         } catch (error) {
         } finally {
-          console.log("winn");
         }
+      } else {
+        setIsDecrypting(false);
       }
     }
   }, [followData, forYouData, currentTab, page]);
@@ -219,58 +220,6 @@ const Home = () => {
       }
     }
   }, []); // Add currentActivePost as a dependency
-
-  // useEffect(() => {
-  //   console.log(videoContainerRef.current);
-  //   const setupObserver = () => {
-  //     const container = videoContainerRef.current;
-  //     if (!container) {
-  //       console.log("Container not ready yet");
-  //       return;
-  //     }
-
-  //     const currentVideos =
-  //       videos[currentTab === 2 ? "foryou" : "follow"] || [];
-
-  //     if (currentVideos.length <= 1 || container.children.length <= 1) {
-  //       console.log("Not enough videos or children to observe");
-  //       return;
-  //     }
-
-  //     const observer = new IntersectionObserver(
-  //       (entries) => {
-  //         entries.forEach((entry) => {
-  //           if (entry.isIntersecting) {
-  //             console.log("Intersection triggered for element:", entry.target);
-  //             dispatch(setPage(page + 1));
-  //           }
-  //         });
-  //       },
-  //       {
-  //         rootMargin: "200px 0px",
-  //         threshold: 0.5,
-  //       }
-  //     );
-
-  //     const targetIndex = Math.max(container.children.length - 5, 0);
-  //     const targetElement = container.children[targetIndex];
-  //     if (targetElement) {
-  //       console.log("Observing element at index:", targetIndex);
-  //       observer.observe(targetElement);
-  //     } else {
-  //       console.log("No target element found at index:", targetIndex);
-  //     }
-
-  //     return () => {
-  //       observer.disconnect();
-  //       console.log("Observer cleaned up");
-  //     };
-  //   };
-
-  //   // Delay the observer setup until after initial render
-  //   const timer = setTimeout(setupObserver, 0);
-  //   return () => clearTimeout(timer);
-  // }, [videos[currentTab === 2 ? "foryou" : "follow"], refresh]);
 
   useLayoutEffect(() => {
     const container = videoContainerRef.current;
@@ -305,47 +254,6 @@ const Home = () => {
       observer.disconnect();
     };
   }, [videos[currentTab === 2 ? "foryou" : "follow"], refresh]); // Dependencies (excluding videoContainerRef.current as it's stable)
-
-  // useEffect(() => {
-  //   const container = videoContainerRef.current;
-  //   if (!container) return;
-
-  //   const observer = new IntersectionObserver(
-  //     (entries) => {
-  //       entries.forEach((entry) => {
-  //         if (entry.isIntersecting) {
-  //           // Get the post ID of the intersecting video
-  //           const postId = entry.target.getAttribute("data-post-id");
-
-  //           // Check if the intersecting video is one of the last five videos in the `videos["foryou"]` list
-  //           const forYouVideos = videos[currentTab === 2 ? "foryou" : "follow"];
-  //           const lastFiveVideos = forYouVideos.slice(-3); // Get the last five videos
-  //           console.log(forYouVideos);
-  //           console.log(lastFiveVideos);
-
-  //           if (lastFiveVideos[0].post_id === postId) {
-  //             console.log("winnn");
-  //             dispatch(setPage(page + 1)); // Load more videos
-  //           }
-  //         }
-  //       });
-  //     },
-  //     {
-  //       rootMargin: "200px", // Trigger the observer when 100px from the bottom
-  //       threshold: 0.5, // 50% visibility of the video
-  //     }
-  //   );
-
-  //   // Observe all video elements
-  //   Array.from(container.children).forEach((child) => {
-  //     observer.observe(child);
-  //   });
-
-  //   // Cleanup observer on component unmount or when dependencies change
-  //   return () => {
-  //     observer.disconnect();
-  //   };
-  // }, [videos, refresh]);
 
   if (topmovies) {
     return <Top20Movies setTopMovies={setTopMovies} />;
@@ -424,6 +332,38 @@ const Home = () => {
       setRefresh(true);
     }
   };
+
+  // Track the currently visible video and update currentActivePost
+  useLayoutEffect(() => {
+    const container = videoContainerRef.current;
+    if (!container) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const postId = entry.target.getAttribute("data-post-id");
+            if (postId && postId !== currentActivePost) {
+              dispatch(setCurrentActivePost(postId)); // Update the active post ID in Redux
+            }
+          }
+        });
+      },
+      {
+        root: container,
+        threshold: 0.6, // Trigger when 60% of the video is visible
+      }
+    );
+
+    // Observe all video elements
+    const videoElements = container.querySelectorAll(".video");
+    videoElements.forEach((video) => observer.observe(video));
+
+    // Cleanup observer on unmount or when videos change
+    return () => {
+      observer.disconnect();
+    };
+  }, [videos[currentTab === 2 ? "foryou" : "follow"], currentTab, dispatch]);
 
   const handleRefresh = () => {
     const videoKey =
