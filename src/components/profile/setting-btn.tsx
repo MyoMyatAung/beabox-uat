@@ -28,7 +28,7 @@ const SettingBtn = ({ setShow }: any) => {
     {
       title: "创作者中心",
       icon: <img src={UserStar} className="w-6" />,
-      // link: paths.create_center,
+      link: paths.create_center,
     },
     {
       title: "编辑资料",

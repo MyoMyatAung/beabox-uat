@@ -25,15 +25,15 @@ const TopNavbar = ({
   return (
     <div className="absolute top-5 left-0 px-5 right-0 flex justify-between items-center z-[9999] max-w-[480px] mx-auto">
       <div
-        // onClick={
-        //   user?.token
-        //     ? () => navigate(paths.creator_upload_video)
-        //     : () => dispatch(setIsDrawerOpen(true))
-        // }
+        onClick={
+          user?.token
+            ? () => navigate(paths.creator_upload_video)
+            : () => dispatch(setIsDrawerOpen(true))
+        }
         className="flex items-center gap-1"
       >
-        {/* <img src={upload} alt="" />
-        <p className="text-[16px]">创作</p> */}
+        <img src={upload} alt="" />
+        <p className="text-[16px]">创作</p>
       </div>
       <div className="flex gap-5 items-center text-white">
         {TABS.map((tab, index) => (

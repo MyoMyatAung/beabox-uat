@@ -18,7 +18,7 @@ const ranges = [
 ];
 
 const Ranking = () => {
-  const user = useSelector((state: any) => state?.persist?.profileData);
+  const user = useSelector((state: any) => state?.persist?.user);
   const [showHeader, setShowHeader] = useState(false);
   const headerRef = useRef(null);
 
@@ -146,7 +146,7 @@ const Ranking = () => {
             </div>
           )}
         </div>
-        <MyRankCard myrank={data?.data?.my_rank} />
+        {user?.token ? <MyRankCard myrank={data?.data?.my_rank} /> : <></>}
       </div>
       <div className="py-20"></div>
     </div>
