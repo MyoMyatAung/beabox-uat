@@ -5,6 +5,7 @@ import {
   useGetConfigQuery,
   useGetTopCreatorQuery,
 } from "@/store/api/createCenterApi";
+import { UsersRound } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -39,7 +40,10 @@ const Ranking = () => {
   }, [configData]);
   console.log(user, data?.data);
   return (
-    <div>
+    <div className="ccbg fixed top-0 left-0 overflow-y-scroll">
+      <div className="pt-5">
+        <h1 className="text-[18px] text-center">排行榜</h1>
+      </div>
       <div className="py-5">
         <Top3 rankingData={data?.data?.list} />
       </div>
@@ -85,13 +89,28 @@ const Ranking = () => {
           </button>
         ))}
       </div>
-      <div className="px-5 py-5 space-y-4">
-        {data?.data?.list?.slice(3)?.map((item: any, index: any) => (
+      <div className="px-5 py-5 space-y-4 sticky">
+        {/* {data?.data?.list?.slice(3)?.map((item: any, index: any) => (
           <div className="flex items-center gap-3" key={item?.id}>
             <p className="text-[16px] font-semibold w-8">{item?.rank}</p>
             <RankingCard data={item} />
           </div>
-        ))}
+        ))} */}
+        {data?.data?.list?.slice(3)?.length ? (
+          data?.data?.list?.slice(3)?.map((item: any, index: any) => (
+            <div className="flex items-center gap-3" key={item?.id}>
+              <p className="text-[16px] font-semibold w-8">{item?.rank}</p>
+              <RankingCard data={item} />
+            </div>
+          ))
+        ) : (
+          <div className="w-full flex justify-center items-center mt-[100px]">
+            <div className="flex flex-col justify-center items-center gap-3">
+              <UsersRound className="text-[#888888]" />
+              <p className="text-[12px] text-[#888888]">当前没有创作者展示</p>
+            </div>
+          </div>
+        )}
       </div>
       <MyRankCard myrank={data?.data?.my_rank} />
       <div className="py-20"></div>

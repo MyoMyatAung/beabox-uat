@@ -179,7 +179,9 @@ const TopRankCard = ({ data, rank }: { data: any; rank: any }) => {
           </>
         )}
       </div> */}
-      <p className="text-[14px] pt-3 z-50">{data?.nickname}</p>
+      <p className="text-[14px] pt-3 z-50">
+        {data?.nickname ? data?.nickname : "未知"}
+      </p>
       <p className="text-[#AAA] text-[12px] z-50 pb-1">
         {data?.total_followers}
       </p>
