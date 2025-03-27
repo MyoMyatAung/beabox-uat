@@ -7,7 +7,10 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
 import ImageWithPlaceholder from "../explore/comp/imgPlaceHolder.tsx";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage.tsx";
-import Slider from "@/components/shared/slider.tsx";
+import "swiper/css";
+import "swiper/css/autoplay"; // Import Swiper autoplay styles
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper/modules"; // Import Swiper's autoplay module
 
 const Application: React.FC<any> = () => {
   const [ad, setAd] = useState([]);
@@ -21,8 +24,12 @@ const Application: React.FC<any> = () => {
     setAutoPlay(true); // Activate autoPlay once on mount
   }, []);
 
-  const handleOnChange = (index: number) => {
-    setSelectedIndex(index);
+  // const handleOnChange = (index: number) => {
+  //   setSelectedIndex(index);
+  // };
+
+  const handleOnChange = (swiper: any) => {
+    setSelectedIndex(swiper.realIndex);
   };
 
   // Update carousel only when applicationData changes
@@ -121,7 +128,6 @@ const Application: React.FC<any> = () => {
                 </a>
               ))}
             </Carousel> */}
-            <Slider ads={ad} />
             {/* Custom Dots */}
             {/* <ul className="flex justify-center items-center gap-[4px] w-full mt-2">
               {ad.map((_, dotIndex) => (
@@ -136,6 +142,54 @@ const Application: React.FC<any> = () => {
                 ></li>
               ))}
             </ul> */}
+            <div className=" relative py-[20px]">
+              <Swiper
+                className=""
+                slidesPerView={1.5}
+                spaceBetween={110}
+                centeredSlides={true}
+                loop={true}
+                autoplay={{ delay: 3000, disableOnInteraction: false }}
+                modules={[Autoplay]}
+                onSlideChange={handleOnChange}
+              >
+                {ad.map((cc: any, index: number) => (
+                  <SwiperSlide className=" w-full rounded-[12px]" key={index}>
+                    <a
+                      href={cc.url}
+                      target="_blank"
+                      className={`flex rounded-[12px] justify-center w-full items-center px-[8px] flex-col relative transition-all duration-300 `}
+                    >
+                      <div className=" w-[332px] h-[162px] px-2 overflow-hidden rounded-[12px]">
+                        <img
+                          className={`object-cove w-full h-full transition-all rounded-[12px] duration-300 ${
+                            selectedIndex === index
+                              ? "p-0 m-0 opacity-100"
+                              : "p-2 opacity-70 "
+                          }`}
+                          src={cc.image}
+                          alt={`Slide ${index + 1}`}
+                        />
+                      </div>
+                    </a>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+
+              <ul className="flex justify-center items-center gap-[10px] w-full  mt-2 absolute bottom-0 left-0">
+                {ad.map((_, dotIndex) => (
+                  <li
+                    key={dotIndex}
+                    className={`w-[6px] h-[6px] rounded-full ${
+                      selectedIndex === dotIndex ? "bg-white" : "bg-[#888]"
+                    }`}
+                    onClick={() => handleOnChange(dotIndex)}
+                    role="button"
+                    tabIndex={0}
+                  ></li>
+                ))}
+              </ul>
+            </div>
 
             {/* Header Section */}
             <div className="mt-[20px]">

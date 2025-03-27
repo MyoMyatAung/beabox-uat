@@ -205,32 +205,32 @@ const Player = ({
     }
   };
 
-  useEffect(() => {
-    const loadAndDecryptPhoto = async () => {
-      if (!thumbnail) {
-        setDecryptedPhoto("");
-        return;
-      }
+  // useEffect(() => {
+  //   const loadAndDecryptPhoto = async () => {
+  //     if (!thumbnail) {
+  //       setDecryptedPhoto("");
+  //       return;
+  //     }
 
-      try {
-        const photoUrl = thumbnail;
+  //     try {
+  //       const photoUrl = thumbnail;
 
-        // If it's not a .txt file, assume it's already a valid URL
-        if (!photoUrl.endsWith(".txt")) {
-          setDecryptedPhoto(photoUrl);
-          return;
-        }
+  //       // If it's not a .txt file, assume it's already a valid URL
+  //       if (!photoUrl.endsWith(".txt")) {
+  //         setDecryptedPhoto(photoUrl);
+  //         return;
+  //       }
 
-        const decryptedUrl = await decryptImage(photoUrl);
-        setDecryptedPhoto(decryptedUrl);
-      } catch (error) {
-        console.error("Error loading profile photo:", error);
-        setDecryptedPhoto("");
-      }
-    };
+  //       const decryptedUrl = await decryptImage(photoUrl);
+  //       setDecryptedPhoto(decryptedUrl);
+  //     } catch (error) {
+  //       console.error("Error loading profile photo:", error);
+  //       setDecryptedPhoto("");
+  //     }
+  //   };
 
-    loadAndDecryptPhoto();
-  }, [thumbnail]);
+  //   loadAndDecryptPhoto();
+  // }, [thumbnail]);
 
   // Initialize player function
   const initializePlayer = () => {
@@ -254,10 +254,10 @@ const Player = ({
       container: playerContainerRef.current,
       url: src,
       volume: 0.5,
-      muted: muteRef.current,
-      autoplay: isActive,
+      muted: muteRef.current, // Mute initially unless user has interacted
+      autoplay: isActive, //
       fullscreenWeb: true,
-      poster: decryptedPhoto,
+      poster: thumbnail,
       loop: true,
       moreVideoAttr: {
         playsInline: true,
@@ -345,89 +345,274 @@ const Player = ({
             // }
           };
         },
+        // m3u8: function (videoElement: HTMLVideoElement, url: string) {
+        //   // Check if it's an iOS device first
+        //   const isIOS =
+        //     /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        //   const isMacOS = /Mac/.test(navigator.userAgent);
+        //   const isAppleDevice = isIOS || isMacOS;
+
+        //   if (
+        //     isAppleDevice &&
+        //     videoElement.canPlayType("application/vnd.apple.mpegurl")
+        //   ) {
+        //     // Use native HLS playback for iOS devices immediately
+        //     // alert('Using native HLS playback for iOS');
+        //     videoElement.src = url;
+
+        //     if (playstart) {
+        //       videoElement.play().catch((error) => {
+        //         console.warn("Auto-play prevented on iOS:", error);
+        //       });
+        //     }
+
+        //     // videoElement.addEventListener('canplay', function() {
+        //     //   videoElement.play().catch(error => {
+        //     //     console.warn('Auto-play prevented on iOS:', error);
+        //     //   });
+        //     // });
+        //   } else if (Hls.isSupported()) {
+        //     // Use HLS.js for other browsers that support it
+        //     // alert('Using HLS.js for HLS playback');
+        //     const hls = new Hls({
+        //       maxBufferLength: 30,
+        //       maxMaxBufferLength: 60,
+        //       enableWorker: true,
+        //       lowLatencyMode: true,
+        //       startLevel: -1, // Auto level selection
+        //     });
+
+        //     // Add error handling
+        //     hls.on(Hls.Events.ERROR, function (event, data) {
+        //       if (data.fatal) {
+        //         console.error("HLS fatal error:", data.type, data.details);
+        //         switch (data.type) {
+        //           case Hls.ErrorTypes.NETWORK_ERROR:
+        //             // Try to recover network error
+        //             console.log(
+        //               "Fatal network error encountered, trying to recover"
+        //             );
+        //             hls.startLoad();
+        //             break;
+        //           case Hls.ErrorTypes.MEDIA_ERROR:
+        //             console.log(
+        //               "Fatal media error encountered, trying to recover"
+        //             );
+        //             hls.recoverMediaError();
+        //             break;
+        //           default:
+        //             // Cannot recover
+        //             hls.destroy();
+        //             break;
+        //         }
+        //       } else {
+        //         console.warn("Non-fatal HLS error:", data.type, data.details);
+        //       }
+        //     });
+
+        //     // Add manifest loaded event
+        //     hls.on(Hls.Events.MANIFEST_PARSED, function () {
+        //       console.log("HLS manifest loaded successfully");
+        //       // Attempt to play after manifest is loaded
+        //       if (isActive && playstart) {
+        //         videoElement.play().catch((error) => {
+        //           console.warn("Auto-play prevented:", error);
+        //         });
+        //       }
+        //     });
+
+        //     hls.loadSource(url);
+        //     hls.attachMedia(videoElement);
+        //     hlsRef.current = hls;
+        //   } else {
+        //     // Fallback for other browsers with native HLS support
+        //     console.log("Falling back to native HLS playback");
+        //     videoElement.src = url;
+        //     videoElement.addEventListener("canplay", function () {
+        //       if (isActive && playstart) {
+        //         videoElement.play().catch((error) => {
+        //           console.warn("Auto-play prevented:", error);
+        //         });
+        //       }
+        //     });
+        //   }
+        // },
+        // Update the m3u8 customType in your Artplayer options
         m3u8: function (videoElement: HTMLVideoElement, url: string) {
           // Check if it's an iOS device first
-          const isIOS =
-            /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-          const isMacOS = /Mac/.test(navigator.userAgent);
-          const isAppleDevice = isIOS || isMacOS;
+          // const isIOS =
+          //   /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+          // const isMacOS = /Mac/.test(navigator.userAgent);
+          // const isAppleDevice = isIOS || isMacOS;
 
-          if (
-            isAppleDevice &&
-            videoElement.canPlayType("application/vnd.apple.mpegurl")
-          ) {
-            // Use native HLS playback for iOS devices immediately
-            // alert('Using native HLS playback for iOS');
-            videoElement.src = url;
+          // console.log(isAppleDevice);
 
-            videoElement.play().catch((error) => {
-              console.warn("Auto-play prevented on iOS:", error);
-            });
+          // if (
+          //   isAppleDevice &&
+          //   videoElement.canPlayType("application/vnd.apple.mpegurl")
+          // ) {
+          //   console.log("winnn");
+          //   // Native HLS for Apple devices with preload optimization
+          //   videoElement.preload = "auto";
+          //   videoElement.src = url;
 
-            // videoElement.addEventListener('canplay', function() {
-            //   videoElement.play().catch(error => {
-            //     console.warn('Auto-play prevented on iOS:', error);
-            //   });
-            // });
-          } else if (Hls.isSupported()) {
-            // Use HLS.js for other browsers that support it
-            // alert('Using HLS.js for HLS playback');
+          //   // Pre-warm the video element for iOS
+          //   if (isIOS) {
+          //     videoElement.load();
+          //     videoElement.play().catch(() => {});
+          //     videoElement.pause();
+          //   }
+
+          //   if (playstart) {
+          //     videoElement.play().catch((error) => {
+          //       console.warn("Auto-play prevented on iOS:", error);
+          //     });
+          //   }
+          if (Hls.isSupported()) {
+            // Optimized HLS.js configuration
             const hls = new Hls({
-              maxBufferLength: 30,
-              maxMaxBufferLength: 60,
               enableWorker: true,
               lowLatencyMode: true,
-              startLevel: -1, // Auto level selection
+              backBufferLength: 30, // Reduced from default 60 to save memory
+              maxBufferLength: 30,
+              maxMaxBufferLength: 60,
+              maxBufferSize: 50 * 1000 * 1000, // 50MB
+              maxBufferHole: 0.5, // Reduced from default 1 to minimize gaps
+              maxFragLookUpTolerance: 0.25,
+              startLevel: -1, // Auto quality
+              abrEwmaDefaultEstimate: 500000, // Initial bandwidth estimate
+              abrBandWidthFactor: 0.95,
+              abrBandWidthUpFactor: 0.7,
+              abrMaxWithRealBitrate: true,
+              startFragPrefetch: false, // Prefetch fragments
+              fpsDroppedMonitoringThreshold: 0.2,
+              fpsDroppedMonitoringPeriod: 1000,
+              capLevelToPlayerSize: true, // Match quality to player size
+              initialLiveManifestSize: 1,
+              stretchShortVideoTrack: true,
+              forceKeyFrameOnDiscontinuity: true,
+              // Manifest loading optimizations
+              manifestLoadingTimeOut: 10000,
+              manifestLoadingMaxRetry: 3,
+              manifestLoadingRetryDelay: 500,
+              manifestLoadingMaxRetryTimeout: 5000,
+              levelLoadingTimeOut: 10000,
+              levelLoadingMaxRetry: 3,
+              levelLoadingRetryDelay: 500,
+              levelLoadingMaxRetryTimeout: 5000,
+              fragLoadingTimeOut: 20000, // Increased timeout for mobile
+              fragLoadingMaxRetry: 6,
+              fragLoadingRetryDelay: 500,
+              fragLoadingMaxRetryTimeout: 5000,
             });
 
-            // Add error handling
+            // Improved error handling
             hls.on(Hls.Events.ERROR, function (event, data) {
+              console.log("HLS error:", data.type, data.details);
+
               if (data.fatal) {
-                console.error("HLS fatal error:", data.type, data.details);
                 switch (data.type) {
                   case Hls.ErrorTypes.NETWORK_ERROR:
-                    // Try to recover network error
-                    console.log(
-                      "Fatal network error encountered, trying to recover"
-                    );
-                    hls.startLoad();
+                    console.log("Network error, trying to recover");
+                    if (
+                      data.details === Hls.ErrorDetails.MANIFEST_LOAD_ERROR ||
+                      data.details === Hls.ErrorDetails.MANIFEST_LOAD_TIMEOUT ||
+                      data.details === Hls.ErrorDetails.MANIFEST_PARSING_ERROR
+                    ) {
+                      // Try to reload the manifest
+                      hls.startLoad();
+                    } else if (
+                      data.details === Hls.ErrorDetails.FRAG_LOAD_ERROR ||
+                      data.details === Hls.ErrorDetails.FRAG_LOAD_TIMEOUT ||
+                      data.details === Hls.ErrorDetails.KEY_LOAD_ERROR ||
+                      data.details === Hls.ErrorDetails.KEY_LOAD_TIMEOUT
+                    ) {
+                      // Try to recover fragment loading
+                      hls.startLoad();
+                    }
                     break;
                   case Hls.ErrorTypes.MEDIA_ERROR:
-                    console.log(
-                      "Fatal media error encountered, trying to recover"
-                    );
+                    console.log("Media error, trying to recover");
                     hls.recoverMediaError();
                     break;
                   default:
-                    // Cannot recover
+                    console.log("Unrecoverable error, destroying HLS");
                     hls.destroy();
                     break;
                 }
-              } else {
-                console.warn("Non-fatal HLS error:", data.type, data.details);
               }
             });
 
-            // Add manifest loaded event
-            hls.on(Hls.Events.MANIFEST_PARSED, function () {
-              console.log("HLS manifest loaded successfully");
-              // Attempt to play after manifest is loaded
-              if (isActive) {
-                videoElement.play().catch((error) => {
-                  console.warn("Auto-play prevented:", error);
-                });
+            // Pre-warm the player before playback starts
+            hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+              console.log("Manifest loaded, pre-warming fragments");
+
+              // Start loading but don't play yet
+              hls.startLoad(-1);
+
+              // For mobile, preload more aggressively
+              if (
+                /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+                  navigator.userAgent
+                )
+              ) {
+                // Load first 3 fragments immediately
+                const levels = hls.levels;
+                if (levels && levels.length > 0) {
+                  const startLevel = hls.currentLevel;
+                  const frags = hls.levels[startLevel].details?.fragments;
+                  if (frags && frags.length > 3) {
+                    hls.nextLoadLevel = startLevel;
+                    for (let i = 0; i < 3; i++) {
+                      hls.loadFragment(frags[i], startLevel, null);
+                    }
+                  }
+                }
+              }
+            });
+
+            // When enough data is buffered, start playback
+            hls.on(Hls.Events.FRAG_BUFFERED, function () {
+              if (!isActive) return;
+
+              const buffered = videoElement.buffered;
+              if (buffered && buffered.length > 0) {
+                const bufferedEnd = buffered.end(buffered.length - 1);
+                const currentTime = videoElement.currentTime || 0;
+
+                // If we have at least 2 seconds buffered ahead, start playback
+                if (bufferedEnd - currentTime > 2) {
+                  if (playstart && videoElement.paused) {
+                    videoElement
+                      .play()
+                      .catch((e) => console.log("Playback error:", e));
+                  }
+                }
               }
             });
 
             hls.loadSource(url);
             hls.attachMedia(videoElement);
             hlsRef.current = hls;
+
+            // Start loading immediately
+            hls.startLoad(-1);
           } else {
-            // Fallback for other browsers with native HLS support
-            console.log("Falling back to native HLS playback");
+            // Fallback with more aggressive preloading
             videoElement.src = url;
+            videoElement.preload = "auto";
+
+            // For mobile fallback, try to force loading
+            if (
+              /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+                navigator.userAgent
+              )
+            ) {
+              videoElement.load();
+            }
+
             videoElement.addEventListener("canplay", function () {
-              if (isActive) {
+              if (isActive && playstart) {
                 videoElement.play().catch((error) => {
                   console.warn("Auto-play prevented:", error);
                 });
@@ -932,6 +1117,11 @@ const Player = ({
 
     // Add loading state handler with progress bar visibility check
     artPlayerInstanceRef.current.on("video:waiting", () => {
+      if (width > height) {
+        setPImg(true);
+      } else {
+        setPImg(false);
+      }
       // Ensure progress bar is visible during loading
       if (progressBarRef?.current) {
         progressBarRef.current.style.opacity = "1";
@@ -946,6 +1136,18 @@ const Player = ({
         artPlayerInstanceRef.current?.template?.$state?.querySelector(
           ".video-play-indicator"
         ) as HTMLDivElement;
+
+      if (artPlayerInstanceRef.current && thumbnail) {
+        artPlayerInstanceRef.current.poster = thumbnail;
+
+        // Force show poster if video is not playing
+        if (
+          !artPlayerInstanceRef.current.playing &&
+          artPlayerInstanceRef.current.currentTime === 0
+        ) {
+          artPlayerInstanceRef.current.template.$poster.style.display = "block";
+        }
+      }
 
       if (loadingIndicator) loadingIndicator.style.display = "block";
       if (playIndicator) playIndicator.style.display = "none";
@@ -974,6 +1176,9 @@ const Player = ({
 
     // Add play state handlers with enhanced error handling
     artPlayerInstanceRef.current.on("play", () => {
+      if (artPlayerInstanceRef.current) {
+        artPlayerInstanceRef.current.template.$poster.style.display = "none";
+      }
       if (!isFastForwarding) {
         hidePlayButton();
       }
@@ -986,6 +1191,9 @@ const Player = ({
     });
 
     artPlayerInstanceRef.current.on("video:playing", () => {
+      if (artPlayerInstanceRef.current) {
+        artPlayerInstanceRef.current.template.$poster.style.display = "none";
+      }
       if (!isFastForwarding) {
         hidePlayButton();
       }
@@ -1006,6 +1214,11 @@ const Player = ({
 
     // Add initial loading state
     artPlayerInstanceRef.current.on("video:loadstart", () => {
+      if (width > height) {
+        setPImg(true);
+      } else {
+        setPImg(false);
+      }
       // Show loading indicator and hide play button
       const loadingIndicator =
         artPlayerInstanceRef.current?.template?.$loading?.querySelector(
@@ -1017,7 +1230,17 @@ const Player = ({
         ) as HTMLDivElement;
 
       if (loadingIndicator) loadingIndicator.style.display = "block";
+
       if (playIndicator) playIndicator.style.display = "none";
+
+      if (artPlayerInstanceRef.current && thumbnail) {
+        artPlayerInstanceRef.current.poster = thumbnail;
+
+        // Force show poster if video is not playing
+        if (!artPlayerInstanceRef.current.playing) {
+          artPlayerInstanceRef.current.template.$poster.style.display = "block";
+        }
+      }
 
       // Also hide the custom play icon
       if (playIconRef.current) {
@@ -1159,7 +1382,7 @@ const Player = ({
         }
       }
 
-      initializePlayer();
+      //initializePlayer();
 
       attemptPlay();
 
@@ -1187,18 +1410,31 @@ const Player = ({
     }
   }, [isActive, playstart]);
 
-  // useEffect(() => {
-  //   if (playstart && prevPlaystartRef.current === false) {
-  //     // playstart has changed from false to true, trigger autoplay
-  //     console.log("Playstart changed to true, attempting to play video...");
-  //     attemptPlay();
-  //   }
-  //   prevPlaystartRef.current = playstart; // update the ref value
-  // }, [playstart]);
+  // Track user interaction
+  useEffect(() => {
+    const handleUserInteraction = () => {
+      localStorage.setItem("userInteracted", "true");
+      document.removeEventListener("scroll", handleUserInteraction);
+      document.removeEventListener("touchstart", handleUserInteraction);
+    };
+
+    document.addEventListener("scroll", handleUserInteraction, { once: true });
+    document.addEventListener("touchstart", handleUserInteraction, {
+      once: true,
+    });
+
+    return () => {
+      document.removeEventListener("scroll", handleUserInteraction);
+      document.removeEventListener("touchstart", handleUserInteraction);
+    };
+  }, []);
 
   // Initialize player when component mounts
   useEffect(() => {
-    initializePlayer();
+    // initializePlayer();
+    const container = playerContainerRef.current;
+
+    if (!container) return;
 
     // Force progress bar visibility after a short delay
     // This helps with Chrome visibility issues
@@ -1275,7 +1511,32 @@ const Player = ({
       }
     }, 500);
 
+    // Observer for initializing the player
+    const initObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !artPlayerInstanceRef.current) {
+            if (width > height) {
+              setPImg(true);
+            } else {
+              setPImg(false);
+            }
+            initializePlayer();
+          }
+        });
+      },
+      {
+        rootMargin: "200px 0px", // Start initializing slightly before entering viewport
+        threshold: 0.5, // Trigger when at least 1% of the element is visible
+      }
+    );
+
+    // Observe the player container for both initialization and autoplay
+    initObserver.observe(container);
+
     return () => {
+      initObserver.disconnect();
+
       clearTimeout(progressBarVisibilityTimer);
       // Save position before unmounting
       if (artPlayerInstanceRef.current) {

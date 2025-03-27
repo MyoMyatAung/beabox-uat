@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { setHistoryData } from "../slice/HistorySlice";
 import back from "../../../assets/explore/back.svg";
 import sc from "../../../assets/explore/sc.svg";
@@ -61,6 +61,9 @@ const Results: React.FC<ResultsProps> = ({}) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const handleMoreRef = useRef<HTMLButtonElement | null>(null);
   const listRef = useRef<(HTMLLIElement | null)[]>([]);
+  const scrollPositionRef = useRef(0);
+  // const scrollPositions = useSelector((state: any) => state.scroll.positions);
+  // const location = useLocation();
 
   // const res = filter?.data?.post_filter;
   // const firstKey = res ? Object.keys(res)[0] : null;
@@ -238,7 +241,6 @@ const Results: React.FC<ResultsProps> = ({}) => {
   };
 
   const calculateHeight = (width: number, height: number) => {
-    // console.log(width,height)
     if (width > height) {
       return 112; // Portrait
     }
@@ -343,13 +345,28 @@ const Results: React.FC<ResultsProps> = ({}) => {
     };
   }, []);
 
+  const handleVideoClick = (postId: any) => {
+    // Save current scroll position before showing VideoFeed
+    scrollPositionRef.current = window.scrollY;
+    setSelectedMovieId(postId);
+    setShowVideoFeed(true);
+  };
+
   if (showVideoFeed && selectedMovieId) {
     return (
       <VideoFeed
         setVideos={setMovies}
         videos={movies}
         currentActiveId={selectedMovieId}
-        setShowVideoFeed={setShowVideoFeed}
+        setShowVideoFeed={(value: any) => {
+          setShowVideoFeed(value);
+          if (!value) {
+            // Restore scroll position when closing VideoFeed
+            setTimeout(() => {
+              window.scrollTo(0, scrollPositionRef.current);
+            }, 50);
+          }
+        }}
         query={query}
       />
     );
@@ -431,10 +448,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
                 <>
                   {movies?.map((card: any) => (
                     <div
-                      onClick={() => {
-                        setSelectedMovieId(card?.post_id);
-                        setShowVideoFeed(true);
-                      }}
+                      onClick={() => handleVideoClick(card?.post_id)}
                       key={card.post_id}
                       className="max-w-full pb-[12px] chinese_photo  h-[325px]"
                     >

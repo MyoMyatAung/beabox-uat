@@ -30,6 +30,7 @@ import startSlice from "@/page/home/services/startSlice";
 import createCenterSlice from "./slices/createCenterSlice";
 import { createCenterApi } from "./api/createCenterApi";
 import playSlice from "@/page/home/services/playSlice";
+import scrollSlice from "@/page/home/services/scrollSlice";
 
 const sessionStorageWrapper: Storage = {
   getItem: (key: string) => {
@@ -70,6 +71,7 @@ const rootReducer = combineReducers({
   persist: persistSlice,
   playSlice: playSlice,
   explore: exploreSlice,
+  scrollSlice: scrollSlice,
   history: HistorySlice,
   startSlice: startSlice,
   hideBarSlice: hideBarSlice,

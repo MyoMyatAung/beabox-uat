@@ -36,13 +36,13 @@ function VideoSidebar1({
   setIsLiked,
   setHearts,
   handleLike,
-
+  unLike,
   status,
   setrenderVideos,
 }: {
   setVideosData: any;
   setCommentCount: any;
-
+  unLike: any;
   setLikeCount: any;
   likeCount: any;
   isLiked: any;
@@ -89,7 +89,7 @@ function VideoSidebar1({
   const [isOpen, setIsOpen] = useState(false);
 
   const location = useLocation();
-  const isHome = location.pathname === "/";
+  const isHome = currentTab !== 1;
 
   // Handle comment list fetching and visibility
   const handleCommentList = async () => {
@@ -378,7 +378,7 @@ function VideoSidebar1({
 
       <div className="videoSidebar__button ">
         {isLiked ? (
-          <button onClick={handleLike}>
+          <button onClick={unLike}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="27"
