@@ -11,11 +11,13 @@ import AuthDrawer from "@/components/profile/auth/auth-drawer";
 import AlertToast from "@/components/shared/alert-toast";
 import { setPlay } from "@/page/home/services/playSlice";
 import AlertRedirect from "./AlertRedirect";
+import { useGetConfigQuery } from "@/page/home/services/homeApi";
 
 const RootLayout = ({ children }: any) => {
   const [showAd, setShowAd] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [isBrowser, setIsBrowser] = useState(false);
+  const { data: conig } = useGetConfigQuery({});
   const dispatch = useDispatch();
   useEffect(() => {
     const hasSeenAdPopUp = sessionStorage.getItem("hasSeenAdPopUp");
@@ -29,6 +31,8 @@ const RootLayout = ({ children }: any) => {
   }, []);
 
   const { data, isLoading } = useGetApplicationAdsQuery("");
+
+  const app_download_link = conig?.data?.app_download_link;
 
   useEffect(() => {
     if (data?.data) {
@@ -75,8 +79,11 @@ const RootLayout = ({ children }: any) => {
           isBrowser={isBrowser}
         />
       )}
-      {!showAd && showAlert && isBrowser && (
-        <AlertRedirect setShowAlert={setShowAlert} />
+      {!showAd && showAlert && isBrowser && app_download_link && (
+        <AlertRedirect
+          setShowAlert={setShowAlert}
+          app_download_link={app_download_link}
+        />
       )}
       {isOpen ? <AuthDrawer /> : <></>}
 
