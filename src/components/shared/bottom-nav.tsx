@@ -28,12 +28,12 @@ const navItems = [
     icon: AppSVG,
     href: "/application",
   },
-  // {
-  //   name: "排名",
-  //   selectedIcon: selectedrank,
-  //   icon: ranksvg,
-  //   href: "/ranking",
-  // },
+  {
+    name: "排名",
+    selectedIcon: selectedrank,
+    icon: ranksvg,
+    href: "/ranking",
+  },
   {
     name: "个人中心",
     selectedIcon: Profile1SVG,

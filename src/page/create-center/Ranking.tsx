@@ -94,15 +94,6 @@ const Ranking = () => {
         ))}
       </div>
       <MyRankCard myrank={data?.data?.my_rank} />
-      {/* <div className="bg-red-500 w-full py-5 fixed bottom-[78px] flex items-center justify-between px-5">
-        <div className="">
-          <p className="text-[16px] font-semibold">{data?.data?.my_rank}</p>
-          <div className=""></div>
-        </div>
-        <button className="text-[14px] text-white bg-[#FFFFFF17] px-3 py-1 rounded-[8px]">
-          你的排名
-        </button>
-      </div> */}
       <div className="py-20"></div>
     </div>
   );
