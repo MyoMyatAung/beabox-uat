@@ -452,7 +452,7 @@ const VideoFeed = ({
                   className="w-full p-[6px] bg-transparent border-none outline-none"
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  placeholder="Write a comment"
+                  placeholder="写评论"
                 />
                 <button
                   className="p-3"
