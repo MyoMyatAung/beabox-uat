@@ -4,7 +4,7 @@ import logo from "../assets/alertlogo.png";
 import { useDispatch } from "react-redux";
 import { setPlay } from "@/page/home/services/playSlice";
 
-const AlertRedirect: React.FC<any> = ({ setShowAlert }) => {
+const AlertRedirect: React.FC<any> = ({ setShowAlert, app_download_link }) => {
   // State to track the platform and show/hide the alert section for Android
   // const [isAndroid, setIsAndroid] = useState(false);
   // const [isVisible, setIsVisible] = useState(false); // Track visibility
@@ -72,7 +72,7 @@ const AlertRedirect: React.FC<any> = ({ setShowAlert }) => {
             </div>
             <div>
               <a
-                href="https://d1.b3he.com/"
+                href={app_download_link}
                 target="_blank"
                 className="alert-body-btn"
               >
