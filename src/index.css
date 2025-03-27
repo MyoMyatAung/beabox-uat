@@ -378,9 +378,26 @@ input:checked + .slider:before {
   background: linear-gradient(0deg, #f0ae99, #f0ae99),
     linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 93.89%);
 }
-.rankg3-test {
-  background: linear-gradient(0deg, #f0ae99, #f0ae99),
-    linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 93.89%);
+
+.ccbg {
+  width: 100%;
+  height: 100vh;
+  background-image: url("./assets/createcenter/ccbg.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* position: fixed;
+  top: 0%;
+  left: 0; */
+}
+
+.ccbg2 {
+  width: 100%;
+  /* height: auto; */
+  background-image: url("./assets/createcenter/ccbg.jpg");
+  background-size: cover;
+  /* background-position: center; */
+  background-repeat: no-repeat;
 }
 
 .rankbg {
