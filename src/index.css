@@ -386,6 +386,18 @@ input:checked + .slider:before {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  /* position: fixed;
+  top: 0%;
+  left: 0; */
+}
+
+.ccbg2 {
+  width: 100%;
+  /* height: auto; */
+  background-image: url("./assets/createcenter/ccbg.jpg");
+  background-size: cover;
+  /* background-position: center; */
+  background-repeat: no-repeat;
 }
 
 .rankbg {

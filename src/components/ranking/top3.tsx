@@ -11,25 +11,25 @@ const Top3 = ({ rankingData }: any) => {
       {top3?.length ? (
         <div className="flex justify-center items-center gap-3 px-3">
           <div className="flex-1 pt-10">
-            <TopRankCard rank={2} data={top3[1]} />
+            <TopRankCard rank={2} data={top3?.length ? top3[1] : ""} />
           </div>
           <div className="flex-1 ">
-            <TopRankCard rank={1} data={top3[0]} />
+            <TopRankCard rank={1} data={top3?.length ? top3[0] : ""} />
           </div>
           <div className="flex-1 pt-10">
-            <TopRankCard rank={3} data={top3[2]} />
+            <TopRankCard rank={3} data={top3?.length ? top3[2] : ""} />
           </div>
         </div>
       ) : (
         <div className="flex justify-center items-center gap-3 px-3">
           <div className="flex-1 pt-10">
-            <TopRankCard rank={2} data={top3[1]} />
+            <TopRankCard rank={2} data={top3?.length ? top3[1] : ""} />
           </div>
           <div className="flex-1 ">
-            <TopRankCard rank={1} data={top3[0]} />
+            <TopRankCard rank={1} data={top3?.length ? top3[0] : ""} />
           </div>
           <div className="flex-1 pt-10">
-            <TopRankCard rank={3} data={top3[2]} />
+            <TopRankCard rank={3} data={top3?.length ? top3[2] : ""} />
           </div>
         </div>
       )}
