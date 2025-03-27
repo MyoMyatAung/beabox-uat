@@ -245,6 +245,11 @@ const VideoFeed = ({
     return <Top20Movies setTopMovies={setTopMovies} />;
   }
 
+  const handleBack = () => {
+    setShowVideoFeed(false);
+    // Restore scroll position after a small delay to ensure component has rendered
+  };
+
   const handleComment = async (post_id: { post_id: any }) => {
     if (user?.token) {
       if (!content.trim()) return;
@@ -318,7 +323,7 @@ const VideoFeed = ({
     <div className="app bg-black">
       <div ref={videoContainerRef} className={`app__videos`}>
         <div className="fixed top-3 left-0  flex gap-2 items-center w-full z-[9999]">
-          <button className="p-3" onClick={() => setShowVideoFeed(false)}>
+          <button className="p-3" onClick={handleBack}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="10"

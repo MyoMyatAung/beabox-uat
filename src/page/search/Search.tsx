@@ -268,8 +268,6 @@ const Search: React.FC<SearchProps> = ({}) => {
     }
   }, [query, triggerAutocomplete]);
 
-  console.log(suggestions);
-
   useEffect(() => {
     if (page !== 1 && query.trim()) {
       const timer = setTimeout(() => {
