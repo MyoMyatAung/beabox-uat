@@ -88,8 +88,8 @@ function VideoSidebar1({
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const location = useLocation();
-  const isHome = currentTab !== 1;
+  const { pathname } = useLocation();
+  const isHome = currentTab !== 1 && pathname === "/";
 
   // Handle comment list fetching and visibility
   const handleCommentList = async () => {
