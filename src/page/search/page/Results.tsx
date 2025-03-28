@@ -410,6 +410,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
     <div className="">
       {showVideoFeed && selectedMovieId && (
         <VideoFeed
+          search={true}
           setVideos={setMovies}
           videos={movies}
           currentActiveId={selectedMovieId}

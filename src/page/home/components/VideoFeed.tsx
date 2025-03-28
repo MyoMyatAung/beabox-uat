@@ -29,12 +29,14 @@ const VideoFeed = ({
   setShowVideoFeed,
   query,
   setVideos,
+  search = false,
 }: {
   videos: any;
   currentActiveId: any;
   setShowVideoFeed: any;
   query: any;
   setVideos: any;
+  search: any;
 }) => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
   const [content, setContent] = useState("");
@@ -290,7 +292,8 @@ const VideoFeed = ({
 
   return (
     <div className="app bg-black">
-      {/* <PreventSwipeBack /> */}
+      {!search && <PreventSwipeBack />}
+
       {isDecrypting ? (
         <div className="app bg-[#16131C]">
           <div
