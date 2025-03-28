@@ -290,7 +290,7 @@ const VideoFeed = ({
 
   return (
     <div className="app bg-black">
-      <PreventSwipeBack />
+      {/* <PreventSwipeBack /> */}
       {isDecrypting ? (
         <div className="app bg-[#16131C]">
           <div
