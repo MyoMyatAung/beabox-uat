@@ -29,7 +29,7 @@ const navItems = [
     href: "/application",
   },
   {
-    name: "排名",
+    name: "名人堂",
     selectedIcon: selectedrank,
     icon: ranksvg,
     href: "/ranking",
