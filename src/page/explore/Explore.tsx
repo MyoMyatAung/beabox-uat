@@ -71,6 +71,11 @@ const Explore = () => {
   //   window.scrollTo(0, 5);
   // }, []);
 
+  // useEffect(() => {
+  //   setList([]); // Reset list when switching tabs
+  // }, [exp_header,tabs]);
+  
+
   useEffect(() => {
     if (swiperRef.current) {
       const index = tabs?.indexOf(exp_header);
@@ -86,8 +91,8 @@ const Explore = () => {
     dispatch(setExpHeader(newActiveTab));
     // setSearchParams({ query: tabToQuery(newActiveTab) }); // Convert tab to query value
   };
-  console.log(selectedMovieId, selectedList, showVideoFeedTopic);
-
+  // console.log(selectedMovieId, selectedList, showVideoFeedTopic);
+  // console.log(list)
   return (
     <>
       {showVideoFeed && selectedMovieId && (
@@ -145,7 +150,7 @@ const Explore = () => {
                 // loop={true}
               >
                 {data?.data?.tabs?.map((gg: any, index: any) => (
-                  <SwiperSlide className=" w-full" key={index}>
+                  <SwiperSlide className=" w-full" key={gg.id}>
                     {exp_header === gg.name && (
                       <div className=" min-h-screen text-white">
                         {gg.type === "topic" ? (
@@ -159,6 +164,7 @@ const Explore = () => {
                           />
                         ) : (
                           <Latest
+                          exp_header={exp_header}
                             setSelectedMovieId={setSelectedMovieId}
                             setShowVideoFeed={setShowVideoFeed}
                             list_id={gg.id}

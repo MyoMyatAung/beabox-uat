@@ -445,41 +445,49 @@ const Home = () => {
                           className="video mt-[20px]"
                           data-post-id={video?.post_id} // Add post ID to the container
                         >
-                          <VideoContainer
-                            // refetchUser={refetchUser}
-                            videoData={videoData}
-                            indexRef={indexRef}
-                            abortControllerRef={abortControllerRef}
-                            container={videoContainerRef.current}
-                            status={true}
-                            countNumber={countNumber}
-                            video={video}
-                            // coin={user?.coins}
-                            setCountNumber={setCountNumber}
-                            config={config}
-                            countdown={countdown}
-                            setWidth={setWidth}
-                            setHeight={setHeight}
-                            setHearts={setHearts}
-                            setCountdown={setCountdown}
-                            width={width}
-                            height={height}
-                            // setShowHeart={setShowHeart}
-                          />
-
-                          {video?.type !== "ads" && (
-                            <VideoFooter
-                              badge={video?.user?.badge}
-                              id={video?.user?.id}
-                              tags={video?.tag}
-                              title={video?.title}
-                              username={video?.user?.name}
-                              city={video?.city}
+                          {video?.file_type !== "video" ? (
+                            <div>
+                              <img src={video?.files[0]?.resourceURL} alt="" />
+                            </div>
+                          ) : (
+                            <VideoContainer
+                              // refetchUser={refetchUser}
+                              videoData={videoData}
+                              indexRef={indexRef}
+                              abortControllerRef={abortControllerRef}
+                              container={videoContainerRef.current}
+                              status={true}
+                              countNumber={countNumber}
+                              video={video}
+                              // coin={user?.coins}
+                              setCountNumber={setCountNumber}
+                              config={config}
+                              countdown={countdown}
+                              setWidth={setWidth}
+                              setHeight={setHeight}
+                              setHearts={setHearts}
+                              setCountdown={setCountdown}
+                              width={width}
+                              height={height}
+                              // setShowHeart={setShowHeart}
                             />
                           )}
 
-                          {video?.type === "ads" && (
-                            <Ads ads={video?.ads_info} />
+                          {video?.type !== "ads" &&
+                            video?.type !== "ads_virtual" && (
+                              <VideoFooter
+                                badge={video?.user?.badge}
+                                id={video?.user?.id}
+                                tags={video?.tag}
+                                title={video?.title}
+                                username={video?.user?.name}
+                                city={video?.city}
+                              />
+                            )}
+
+                          {(video?.type === "ads" ||
+                            video?.type === "ads_virtual") && (
+                            <Ads ads={video?.ads_info} type={video?.type} />
                           )}
 
                           {hearts.map((id: any) => (
@@ -586,42 +594,54 @@ const Home = () => {
                           className="video mt-[20px]"
                           data-post-id={video.post_id} // Add post ID to the container
                         >
-                          <VideoContainer
-                            // refetchUser={refetchUser}
-                            videoData={videoData}
-                            indexRef={indexRef}
-                            abortControllerRef={abortControllerRef}
-                            container={videoContainerRef.current}
-                            status={true}
-                            countNumber={countNumber}
-                            video={video}
-                            setCountNumber={setCountNumber}
-                            config={config}
-                            // coin={user?.coins}
-                            countdown={countdown}
-                            setWidth={setWidth}
-                            setHeight={setHeight}
-                            setHearts={setHearts}
-                            setCountdown={setCountdown}
-                            width={width}
-                            height={height}
-                            // setShowHeart={setShowHeart}
-                          />
-
-                          {video?.type !== "ads" && (
-                            <VideoFooter
-                              badge={video?.user?.badge}
-                              id={video?.user?.id}
-                              tags={video?.tag}
-                              title={video?.title}
-                              username={video?.user?.name}
-                              city={video?.city}
+                          {video?.file_type !== "video" ? (
+                            <div>
+                              <img src={video?.files[0]?.resourceURL} alt="" />
+                            </div>
+                          ) : (
+                            <VideoContainer
+                              // refetchUser={refetchUser}
+                              videoData={videoData}
+                              indexRef={indexRef}
+                              abortControllerRef={abortControllerRef}
+                              container={videoContainerRef.current}
+                              status={true}
+                              countNumber={countNumber}
+                              video={video}
+                              // coin={user?.coins}
+                              setCountNumber={setCountNumber}
+                              config={config}
+                              countdown={countdown}
+                              setWidth={setWidth}
+                              setHeight={setHeight}
+                              setHearts={setHearts}
+                              setCountdown={setCountdown}
+                              width={width}
+                              height={height}
+                              // setShowHeart={setShowHeart}
                             />
                           )}
 
+                          {video?.type !== "ads" &&
+                            video?.type !== "ads_virtual" && (
+                              <VideoFooter
+                                badge={video?.user?.badge}
+                                id={video?.user?.id}
+                                tags={video?.tag}
+                                title={video?.title}
+                                username={video?.user?.name}
+                                city={video?.city}
+                              />
+                            )}
+
+                          {(video?.type === "ads" ||
+                            video?.type === "ads_virtual") && (
+                            <Ads ads={video?.ads_info} type={video?.type} />
+                          )}
+                          {/* 
                           {video?.type === "ads" && (
                             <Ads ads={video?.ads_info} />
-                          )}
+                          )} */}
 
                           {hearts.map((id: any) => (
                             <HeartCount id={id} key={id} remove={removeHeart} />
