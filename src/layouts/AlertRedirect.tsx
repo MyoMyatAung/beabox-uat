@@ -4,7 +4,7 @@ import logo from "../assets/alertlogo.png";
 import { useDispatch } from "react-redux";
 import { setPlay } from "@/page/home/services/playSlice";
 
-const AlertRedirect: React.FC<any> = ({ setShowAlert }) => {
+const AlertRedirect: React.FC<any> = ({ setShowAlert, app_download_link }) => {
   // State to track the platform and show/hide the alert section for Android
   // const [isAndroid, setIsAndroid] = useState(false);
   // const [isVisible, setIsVisible] = useState(false); // Track visibility
@@ -55,10 +55,7 @@ const AlertRedirect: React.FC<any> = ({ setShowAlert }) => {
   // }, [setShowAlert]);
 
   return (
-    <div
-      className=" bg-black/80 w-screen flex flex-col gap-[20px] justify-center items-center fixed top-0 z-[9999]"
-      style={{ height: "100dvh" }}
-    >
+    <div className=" bg-black/80 w-screen flex flex-col gap-[20px] justify-center items-center fixed top-0 z-[9999] alert-height">
       <div className="absolute bottom-0 w-full bg-alert p-5" ref={alertRef}>
         <h1 className="alert-head-title">强烈推荐下载APP观看</h1>
         <div className="flex flex-col mt-8 gap-5">
@@ -72,7 +69,7 @@ const AlertRedirect: React.FC<any> = ({ setShowAlert }) => {
             </div>
             <div>
               <a
-                href="https://d1.b3he.com/"
+                href={app_download_link}
                 target="_blank"
                 className="alert-body-btn"
               >

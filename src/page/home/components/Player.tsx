@@ -257,7 +257,7 @@ const Player = ({
       muted: muteRef.current, // Mute initially unless user has interacted
       autoplay: isActive, //
       fullscreenWeb: true,
-      // poster: thumbnail,
+      poster: thumbnail,
       loop: true,
       moreVideoAttr: {
         playsInline: true,
@@ -1117,6 +1117,11 @@ const Player = ({
 
     // Add loading state handler with progress bar visibility check
     artPlayerInstanceRef.current.on("video:waiting", () => {
+      if (width > height) {
+        setPImg(true);
+      } else {
+        setPImg(false);
+      }
       // Ensure progress bar is visible during loading
       if (progressBarRef?.current) {
         progressBarRef.current.style.opacity = "1";
@@ -1136,8 +1141,11 @@ const Player = ({
         artPlayerInstanceRef.current.poster = thumbnail;
 
         // Force show poster if video is not playing
-        if (!artPlayerInstanceRef.current.playing) {
-          artPlayerInstanceRef.current.template.$poster.style.display = "none";
+        if (
+          !artPlayerInstanceRef.current.playing &&
+          artPlayerInstanceRef.current.currentTime === 0
+        ) {
+          artPlayerInstanceRef.current.template.$poster.style.display = "block";
         }
       }
 
@@ -1206,6 +1214,11 @@ const Player = ({
 
     // Add initial loading state
     artPlayerInstanceRef.current.on("video:loadstart", () => {
+      if (width > height) {
+        setPImg(true);
+      } else {
+        setPImg(false);
+      }
       // Show loading indicator and hide play button
       const loadingIndicator =
         artPlayerInstanceRef.current?.template?.$loading?.querySelector(
@@ -1225,7 +1238,7 @@ const Player = ({
 
         // Force show poster if video is not playing
         if (!artPlayerInstanceRef.current.playing) {
-          artPlayerInstanceRef.current.template.$poster.style.display = "none";
+          artPlayerInstanceRef.current.template.$poster.style.display = "block";
         }
       }
 
@@ -1503,6 +1516,11 @@ const Player = ({
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting && !artPlayerInstanceRef.current) {
+            if (width > height) {
+              setPImg(true);
+            } else {
+              setPImg(false);
+            }
             initializePlayer();
           }
         });
