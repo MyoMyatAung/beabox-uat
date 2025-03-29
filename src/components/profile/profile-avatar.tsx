@@ -19,6 +19,8 @@ const ProfileAvatar = ({ progressData, levelImage, photo }: any) => {
 
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
 
+  
+
   useEffect(() => {
     const loadAndDecryptPhoto = async () => {
       if (!levelImage) {

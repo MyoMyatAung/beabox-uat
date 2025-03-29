@@ -109,6 +109,8 @@ import { useSelector } from "react-redux";
 import RankBtn from "./rank-btn";
 import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder";
 import AvatarImage from "../avatar/avatar-image";
+import { Link } from "react-router-dom";
+import { paths } from "@/routes/paths";
 
 const TopRankCard = ({ data, rank }: { data: any; rank: any }) => {
   const me = useSelector((state: any) => state?.persist?.user?.id);
@@ -128,22 +130,24 @@ const TopRankCard = ({ data, rank }: { data: any; rank: any }) => {
         {rank}
       </p>
       {data?.photo ? (
-        <div className="w-10 h-10 relative">
-          <AvatarImage
-            src={data?.photo}
-            width={""}
-            height={""}
-            className="w-10 h-10 rounded-full"
-            alt=""
-          />
-          <FaCrown
-            className={` ${
-              (rank == 1 && "text-[#F7E29B]") ||
-              (rank == 2 && "text-[#D7D7D8]") ||
-              (rank == 3 && "text-[#FF9C7B] ")
-            }  absolute -top-3 -rotate-45 -left-2`}
-          />
-        </div>
+        <Link to={paths.getUserProfileId(data?.id)}>
+          <div className="w-10 h-10 relative">
+            <AvatarImage
+              src={data?.photo}
+              width={""}
+              height={""}
+              className="w-10 h-10 rounded-full"
+              alt=""
+            />
+            <FaCrown
+              className={` ${
+                (rank == 1 && "text-[#F7E29B]") ||
+                (rank == 2 && "text-[#D7D7D8]") ||
+                (rank == 3 && "text-[#FF9C7B] ")
+              }  absolute -top-3 -rotate-45 -left-2`}
+            />
+          </div>
+        </Link>
       ) : (
         <div className="bg-[#FFFFFF52] w-10 h-10 rounded-full flex justify-center items-center border relative">
           <BsPersonFill size={24} />

@@ -4,6 +4,7 @@ import { paths } from "@/routes/paths";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import FollowBtn from "../profile/follow-btn";
+import davatar from "@/assets/davatar.png";
 
 const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
   const data = new Uint8Array(arrayBuffer);
@@ -54,17 +55,19 @@ const RankingCard = ({ data }: { data: any }) => {
 
     loadAndDecryptPhoto();
   }, [data?.photo]);
-
   return (
     <div className="w-full flex justify-between items-center py-1">
       <Link
         to={paths.getUserProfileId(data?.id)}
         className="flex items-center gap-4"
       >
-        <Avatar className="border-[0.5px]">
-          <AvatarImage src={decryptedPhoto} alt="@shadcn" />
+        <Avatar className="">
+          <AvatarImage
+            src={data?.photo ? decryptedPhoto : davatar}
+            alt="@shadcn"
+          />
         </Avatar>
-        <div className="text-[14px] space-y-2">
+        <div className="text-[14px] space-y-0.5">
           <h1>{data?.nickname}</h1>
           <h1 className="text-[#888]">
             {/* {data?.total >= 1000 ? formatToK(data?.total) : data?.total}{" "}

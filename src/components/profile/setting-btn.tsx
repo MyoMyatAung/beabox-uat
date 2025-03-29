@@ -6,7 +6,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import Divider from "../shared/divider";
 import UserStar from "@/assets/user-star.png";
-import { setAlertText, setShowAlert } from "@/store/slices/profileSlice";
+import {
+  setAlertText,
+  setIsDrawerOpen,
+  setShowAlert,
+} from "@/store/slices/profileSlice";
 import { TbBrandTelegram } from "react-icons/tb";
 import { useGetInviteQuery } from "@/store/api/wallet/walletApi";
 
@@ -53,11 +57,16 @@ const SettingBtn = ({ setShow }: any) => {
     },
   ];
   const data2 = [
-    // {
-    //   title: "创作者中心",
-    //   icon: <img src={UserStar} className="w-6" />,
-    //   link: paths.settings,
-    // },
+    {
+      title: "创作者中心",
+      icon: <img src={UserStar} className="w-6" />,
+      // link: paths.settings,
+    },
+    {
+      title: "联系客服",
+      icon: <TbBrandTelegram size={24} />,
+      link: tgLink,
+    },
     // {
     //   title: "创作者中心",
     //   icon: <UserPen size={24} />,
@@ -69,6 +78,7 @@ const SettingBtn = ({ setShow }: any) => {
       link: paths.settings,
     },
   ];
+  // dispatch(setIsDrawerOpen(true))
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>
@@ -85,10 +95,15 @@ const SettingBtn = ({ setShow }: any) => {
                   <div
                     key={title}
                     onClick={() => {
-                      if (title === "我的钱包") {
-                        console.log("this is mf");
-                        dispatch(setShowAlert(true));
-                        dispatch(setAlertText("功能正在开发中"));
+                      if (title === "创作者中心") {
+                        if (!user?.token) {
+                          console.log("this is mf");
+                          setIsOpen(false);
+                          dispatch(setIsDrawerOpen(true));
+                        } else {
+                          dispatch(setShowAlert(true));
+                          dispatch(setAlertText("功能正在开发中"));
+                        }
                       } else if (title === "联系客服") {
                         if (tgLink) {
                           window.open(tgLink, "_blank", "noopener,noreferrer");

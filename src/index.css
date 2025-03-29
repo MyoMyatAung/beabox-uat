@@ -714,3 +714,11 @@ input:checked + .slider:before {
   line-height: 22px; /* 157.143% */
   padding: 6px 26px;
 }
+
+.line-bg {
+  background: linear-gradient(
+    180deg,
+    rgba(163, 133, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.12) 100%
+  );
+}

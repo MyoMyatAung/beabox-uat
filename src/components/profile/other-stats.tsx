@@ -26,7 +26,7 @@ const OtherStats = ({ followers, followings, likes, nickname, id }: any) => {
             <div className="z-[1900] text-gray-400 text-[14px]">粉丝</div>
           </div>
         </DrawerTrigger>
-        <span className="z-[1900] w-[1px] h-[12px] bg-gradient-to-b from-[#A385FF] to-[#FFFFFF]"></span>
+        <span className="z-[1900] w-[1px] h-[12px] line-bg"></span>
         <div className="z-[1900] text-center">
           <DrawerTrigger
             asChild
@@ -41,7 +41,7 @@ const OtherStats = ({ followers, followings, likes, nickname, id }: any) => {
             </div>
           </DrawerTrigger>
         </div>
-        <span className="z-[1900] w-[1px] h-[12px] bg-gradient-to-b from-[#A385FF] to-[#FFFFFF]"></span>
+        <span className="z-[1900] w-[1px] h-[12px] line-bg"></span>
         <div className="z-[1900] text-center">
           <div className="z-[1900] text-[14px] font-semibold">
             {likes ? likes : "0"}

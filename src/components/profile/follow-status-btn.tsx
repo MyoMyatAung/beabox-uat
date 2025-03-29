@@ -35,14 +35,14 @@ const FollowStatusBtn = ({ userData, id, refetch, userLoading }: any) => {
   }, [token]);
 
   return (
-    <Button
+    <button
       disabled={isLoading || userLoading}
       onClick={token ? handleChangeFollowStatus : drawerHandler}
       className={`w-full ${
         userData?.data?.is_following
           ? "bg-[#FFFFFF0F] hover:bg-[#FFFFFF0F]"
           : "gradient-bg hover:gradient-bg"
-      } rounded-[12px] z-[1200]`}
+      } rounded-[12px] z-[1200] h-[51px] flex justify-center items-center`}
     >
       {isLoading ? (
         <img src={loader} alt="" className="w-12" />
@@ -51,7 +51,7 @@ const FollowStatusBtn = ({ userData, id, refetch, userLoading }: any) => {
       ) : (
         "关注"
       )}
-    </Button>
+    </button>
   );
 };
 

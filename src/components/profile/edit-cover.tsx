@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setCover } from "@/store/slices/persistSlice";
 import Loader from "@/components/shared/loader";
 import Covers from "../avatar/covers";
+import pensvg from "@/assets/pensvg.svg";
 
 const EditCover = ({ decryptedCover, refetch, coverimg }: any) => {
   const [showCovers, setShowCovers] = useState(false);
@@ -71,9 +72,10 @@ const EditCover = ({ decryptedCover, refetch, coverimg }: any) => {
       )}
       <div
         onClick={() => setShowCovers(true)}
-        className="flex gap-2 z-[1900] bg-[#FFFFFF14] px-4 justify-center py-1 rounded-lg items-center"
+        className="flex gap-2 z-[1900] bg-[#FFFFFF14]  justify-center min-w-[55px] px-3 h-[34px] rounded-[12px] items-center"
       >
-        <PencilLine size={14} />
+        {/* <PencilLine size={14} /> */}
+        <img src={pensvg} className="w-[14px] h-auto" alt="" />
         <p className="text-[12px]">设置封面</p>
       </div>
       {/* <Drawer open={isOpen} onOpenChange={setIsOpen}>

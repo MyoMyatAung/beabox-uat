@@ -16,17 +16,17 @@ const FollowBtn = ({ id, followBack }: any) => {
   };
   // console.log(data);
   return (
-    <Button
+    <button
       disabled={isLoading}
       onClick={handleChangeFollowStatus}
-      className={`w-[88px] ${
+      className={`w-[88px] h-[33px] rounded-[8px] flex justify-center items-center text-[14px] ${
         follow
           ? "bg-[#FFFFFF0F] hover:bg-[#FFFFFF0F]"
           : "gradient-bg hover:gradient-bg"
       }`}
     >
       {follow ? "已关注" : "关注"}
-    </Button>
+    </button>
   );
 };
 

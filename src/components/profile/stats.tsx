@@ -44,7 +44,7 @@ const Stats = ({ followers, followings, likes, nickname }: any) => {
             </div>
           )}
         </div>
-        <span className="z-[1900] w-[1px] h-[12px] bg-gradient-to-b from-[#A385FF] to-[#FFFFFF]"></span>
+        <span className="z-[1900] w-[1px] h-[12px] line-bg"></span>
         <div className="z-[1900] text-center">
           {user?.token ? (
             <DrawerTrigger
@@ -69,7 +69,7 @@ const Stats = ({ followers, followings, likes, nickname }: any) => {
             </div>
           )}
         </div>
-        <span className="z-[1900] w-[1px] h-[12px] bg-gradient-to-b from-[#A385FF] to-[#FFFFFF]"></span>
+        <span className="z-[1900] w-[1px] h-[12px] line-bg"></span>
         <div className="z-[1900] text-center">
           <div className="z-[1900] text-[14px] font-semibold">
             {likes ? likes : "0"}

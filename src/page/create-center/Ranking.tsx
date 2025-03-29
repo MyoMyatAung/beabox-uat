@@ -9,6 +9,10 @@ import {
 import { UsersRound } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
+import "swiper/css";
+import "swiper/css/autoplay";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper/modules"; // Import Swiper's autoplay module
 
 const ranges = [
   { value: "today", title: "今日" },
@@ -18,11 +22,16 @@ const ranges = [
 ];
 
 const Ranking = () => {
-  const user = useSelector((state: any) => state?.persist?.user);
+  const user = useSelector((state: any) => state?.persist?.profileData);
+  const [ad, setAd] = useState([]);
+
   const [showHeader, setShowHeader] = useState(false);
   const headerRef = useRef(null);
+  const { applicationData } = useSelector((state: any) => state.explore);
 
   const [page, setPage] = useState(1);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
   const [selectedRange, setSelectedRange] = useState({
     value: "today",
     title: "今日",
@@ -57,6 +66,14 @@ const Ranking = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
   console.log(showHeader);
+  const handleOnChange = (swiper: any) => {
+    setSelectedIndex(swiper.realIndex);
+  };
+  useEffect(() => {
+    if (applicationData) {
+      setAd(applicationData.carousel);
+    }
+  }, [applicationData]);
 
   if (loading1 && isLoading) return <Loader />;
 
@@ -67,7 +84,43 @@ const Ranking = () => {
         <div className="pt-5 z-50">
           <h1 className="text-[18px] text-center">排行榜</h1>
         </div>
-        <div className="py-5">
+        <div className="test">
+          <div className=" relative pt-[10px]">
+            <Swiper
+              className=""
+              slidesPerView={1.5}
+              spaceBetween={50}
+              centeredSlides={true}
+              loop={true}
+              autoplay={{ delay: 3000, disableOnInteraction: false }}
+              modules={[Autoplay]}
+              onSlideChange={handleOnChange}
+            >
+              {ad.map((cc: any, index: number) => (
+                <SwiperSlide className=" w-full rounded-[12px]" key={index}>
+                  <a
+                    href={cc.url}
+                    target="_blank"
+                    className={`flex rounded-[12px] justify-center w-full items-center px-[8px] flex-col relative transition-all duration-300 `}
+                  >
+                    <div className=" w-[332px] h-[90px] px-2 overflow-hidden rounded-[12px]">
+                      <img
+                        className={`object-cover object-center w-full h-full transition-all rounded-[12px] duration-300 ${
+                          selectedIndex === index
+                            ? "p-0 m-0 opacity-100"
+                            : "p-2 opacity-70 "
+                        }`}
+                        src={cc.image}
+                        alt={`Slide ${index + 1}`}
+                      />
+                    </div>
+                  </a>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+        </div>
+        <div className="pb-5">
           <Top3 rankingData={data?.data?.list} />
         </div>
         <div ref={headerRef} className="sticky w-full top-0"></div>
@@ -146,7 +199,7 @@ const Ranking = () => {
             </div>
           )}
         </div>
-        {user?.token ? <MyRankCard myrank={data?.data?.my_rank} /> : <></>}
+        <MyRankCard myrank={data?.data?.my_rank} />
       </div>
       <div className="py-20"></div>
     </div>

@@ -227,11 +227,6 @@ const Application: React.FC<any> = () => {
                           target="_blank"
                           className="flex flex-col justify-center items-center gap-[4px]"
                         >
-                          {/* <AsyncDecryptedImage
-                            className="w-[52px] h-[52px] rounded-[6px] border-[#222]"
-                            imageUrl={app.image}
-                            alt={app.title}
-                          /> */}
                           <ImageWithPlaceholder
                             className="w-[52px] h-[52px] rounded-[6px] border-[#222]"
                             src={app.image}
