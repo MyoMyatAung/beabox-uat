@@ -363,30 +363,37 @@ const VideoFeed = ({
               className="video1 mt-[20px] pb-[68px]"
               data-post-id={video.post_id} // Add post ID to the container
             >
-              <VideoContainer1
-                // refetchUser={refetchUser}
-                setVideosData={setVideos}
-                setrenderVideos={setVideosToRender}
-                videoData={videoData}
-                indexRef={indexRef}
-                abortControllerRef={abortControllerRef}
-                container={videoContainerRef.current}
-                width={width}
-                height={height}
-                status={false}
-                countNumber={countNumber}
-                video={video}
-                setCountNumber={setCountNumber}
-                config={config}
-                countdown={countdown}
-                setWidth={setWidth}
-                setHeight={setHeight}
-                setHearts={setHearts}
-                setCountdown={setCountdown}
-                // setShowHeart={setShowHeart}
-                // coin={profile?.coins}
-              />
-              {video?.type !== "ads" && (
+              {video?.file_type !== "video" ? (
+                <div>
+                  <img src={video?.files[0]?.resourceURL} alt="" />
+                </div>
+              ) : (
+                <VideoContainer1
+                  // refetchUser={refetchUser}
+                  setVideosData={setVideos}
+                  setrenderVideos={setVideosToRender}
+                  videoData={videoData}
+                  indexRef={indexRef}
+                  abortControllerRef={abortControllerRef}
+                  container={videoContainerRef.current}
+                  width={width}
+                  height={height}
+                  status={false}
+                  countNumber={countNumber}
+                  video={video}
+                  setCountNumber={setCountNumber}
+                  config={config}
+                  countdown={countdown}
+                  setWidth={setWidth}
+                  setHeight={setHeight}
+                  setHearts={setHearts}
+                  setCountdown={setCountdown}
+                  // setShowHeart={setShowHeart}
+                  // coin={profile?.coins}
+                />
+              )}
+
+              {video?.type !== "ads" && video?.type !== "ads_virtual" && (
                 <FeedFooter
                   badge={video?.user?.badge}
                   id={video?.user?.id}
@@ -397,7 +404,9 @@ const VideoFeed = ({
                 />
               )}
 
-              {video?.type === "ads" && <Ads ads={video?.ads_info} />}
+              {(video?.type === "ads" || video?.type === "ads_virtual") && (
+                <Ads ads={video?.ads_info} type={video?.type} />
+              )}
 
               {hearts.map((id: any) => (
                 <HeartCount id={id} key={id} remove={removeHeart} />
