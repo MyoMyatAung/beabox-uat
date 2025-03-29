@@ -391,11 +391,17 @@ const Profile = () => {
         >
           {user?.token ? (
             <Link to={paths.profileDetail}>
-              <Button className="z-[1900] w-full bg-[#FFFFFF0F] hover:bg-[#FFFFFF0F] relative rounded-[12px]">
-                <UserPen /> 编辑资料
-              </Button>
+              <div className="w-full flex justify-center items-center gap-3 bg-[#FFFFFF0F] hover:bg-[#FFFFFF0F] rounded-[12px] z-[1900] relative h-[51px]">
+                <UserPen />
+                <p className="text-[16px] mt-1">编辑资料</p>
+              </div>
             </Link>
-          ) : null}
+          ) : // <Link to={paths.profileDetail}>
+          //   <button className="z-[1900] py-2 gap-2 w-full flex justify-center items-center bg-[#FFFFFF0F] hover:bg-[#FFFFFF0F] relative rounded-[12px]">
+          //     <UserPen /> <span className="text-[16px]">编辑资料</span>
+          //   </button>
+          // </Link>
+          null}
         </div>
         <div ref={headerRef} className="sticky z-[1500] top-0"></div>
         <div className="">

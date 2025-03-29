@@ -67,7 +67,7 @@ const RankingCard = ({ data }: { data: any }) => {
             alt="@shadcn"
           />
         </Avatar>
-        <div className="text-[14px] space-y-2">
+        <div className="text-[14px] space-y-0.5">
           <h1>{data?.nickname}</h1>
           <h1 className="text-[#888]">
             {/* {data?.total >= 1000 ? formatToK(data?.total) : data?.total}{" "}
