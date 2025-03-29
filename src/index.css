@@ -653,8 +653,7 @@ input:checked + .slider:before {
 }
 
 .bg-alert {
-  background: #444153;
-  backdrop-filter: blur(16px);
+  background: linear-gradient(0deg, #16131c, #16131c);
 }
 
 .alert-head-title {

@@ -19,6 +19,8 @@ import ShowHeartCom from "./ShowHeartCom";
 import CountdownCircle from "./CountdownCircle";
 import { useGetMyOwnProfileQuery } from "@/store/api/profileApi";
 import { getDeviceInfo } from "@/lib/deviceInfo";
+import { decryptImage } from "@/utils/imageDecrypt";
+import PreventSwipeBack from "@/components/shared/PreventSwipeBack";
 
 const VideoFeed = ({
   videos,
@@ -46,11 +48,11 @@ const VideoFeed = ({
   // const profile = useSelector((state: any) => state.persist.profileData);
   // const { data: user1, refetch: refetchUser } = useGetMyOwnProfileQuery({});
 
-  const { data: user1, refetch: refetchUser } = useGetMyOwnProfileQuery("", {
-    skip: !user,
-  });
+  // const { data: user1, refetch: refetchUser } = useGetMyOwnProfileQuery("", {
+  //   skip: !user,
+  // });
 
-  const profile = user1?.data;
+  // const profile = user1?.data;
 
   const [postComment] = usePostCommentMutation();
 
@@ -67,6 +69,37 @@ const VideoFeed = ({
   const videoData = useRef<any[]>([]); // Array to store AbortControllers
   const indexRef = useRef(0); // Track the current active video index
   const [showHeart, setShowHeart] = useState(false);
+  const removeHeart = (id: number) => {
+    setHearts((prev) => prev.filter((heartId) => heartId !== id)); // Remove the heart by ID
+  };
+
+  // Add at the top of your Home component
+  const decryptionCache = useRef(new Map<string, string>());
+
+  // Add this utility function inside your Home component
+  const decryptThumbnail = async (thumbnail: string): Promise<string> => {
+    if (!thumbnail) return "";
+
+    // Check cache first
+    if (decryptionCache.current.has(thumbnail)) {
+      return decryptionCache.current.get(thumbnail) || "";
+    }
+
+    // If it's not a .txt file, cache and return as-is
+    if (!thumbnail.endsWith(".txt")) {
+      decryptionCache.current.set(thumbnail, thumbnail);
+      return thumbnail;
+    }
+
+    try {
+      const decryptedUrl = await decryptImage(thumbnail);
+      decryptionCache.current.set(thumbnail, decryptedUrl);
+      return decryptedUrl;
+    } catch (error) {
+      console.error("Error decrypting thumbnail:", error);
+      return "";
+    }
+  };
 
   useEffect(() => {
     if (!start && videos.length > 0) {
@@ -85,7 +118,19 @@ const VideoFeed = ({
       // Slice the first `videosPerLoad` videos for initial render
       const firstThreeVideos = initialVideos.slice(0, videosPerLoad);
 
-      setVideosToRender(firstThreeVideos);
+      const run = async () => {
+        const videosWithDecryptedPreviews = await Promise.all(
+          firstThreeVideos.map(async (video: any) => ({
+            ...video,
+            decryptedPreview: await decryptThumbnail(video.preview_image),
+          }))
+        );
+        setVideosToRender(videosWithDecryptedPreviews);
+      };
+
+      run();
+      // setVideosToRender(firstThreeVideos);
+
       setStart(true);
     }
   }, [videos, currentActiveId]); // Add currentActiveId as a dependency
@@ -102,12 +147,25 @@ const VideoFeed = ({
   // }, [videos]); // Runs only once on mount
 
   useEffect(() => {
+
+    const handlePopState = () => {
+        setShowVideoFeed(false);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+        window.removeEventListener('popstate', handlePopState);
+    };
+}, []);
+
+  useEffect(() => {
     const container = videoContainerRef.current;
     if (!container) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
+        entries.forEach(async (entry) => {
           if (entry.isIntersecting) {
             const lastFiveVideos =
               videos?.slice(
@@ -115,7 +173,17 @@ const VideoFeed = ({
                 videosToRender?.length + 3
               ) || [];
 
-            setVideosToRender((prev) => [...prev, ...lastFiveVideos]);
+            const videosWithDecryptedPreviews = await Promise.all(
+              lastFiveVideos.map(async (video: any) => ({
+                ...video,
+                decryptedPreview: await decryptThumbnail(video.preview_image),
+              }))
+            );
+
+            setVideosToRender((prev) => [
+              ...prev,
+              ...videosWithDecryptedPreviews,
+            ]);
           }
         });
       },
@@ -191,6 +259,11 @@ const VideoFeed = ({
     return <Top20Movies setTopMovies={setTopMovies} />;
   }
 
+  const handleBack = () => {
+    setShowVideoFeed(false);
+    // Restore scroll position after a small delay to ensure component has rendered
+  };
+
   const handleComment = async (post_id: { post_id: any }) => {
     if (user?.token) {
       if (!content.trim()) return;
@@ -262,9 +335,10 @@ const VideoFeed = ({
 
   return (
     <div className="app bg-black">
+      <PreventSwipeBack />
       <div ref={videoContainerRef} className={`app__videos`}>
         <div className="fixed top-3 left-0  flex gap-2 items-center w-full z-[9999]">
-          <button className="p-3" onClick={() => setShowVideoFeed(false)}>
+          <button className="p-3" onClick={handleBack}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="10"
@@ -318,7 +392,7 @@ const VideoFeed = ({
             data-post-id={video.post_id} // Add post ID to the container
           >
             <VideoContainer1
-              refetchUser={refetchUser}
+              // refetchUser={refetchUser}
               setVideosData={setVideos}
               setrenderVideos={setVideosToRender}
               videoData={videoData}
@@ -337,8 +411,8 @@ const VideoFeed = ({
               setHeight={setHeight}
               setHearts={setHearts}
               setCountdown={setCountdown}
-              setShowHeart={setShowHeart}
-              coin={profile?.coins}
+              // setShowHeart={setShowHeart}
+              // coin={profile?.coins}
             />
             {video?.type !== "ads" && (
               <FeedFooter
@@ -353,6 +427,11 @@ const VideoFeed = ({
 
             {video?.type === "ads" && <Ads ads={video?.ads_info} />}
 
+            {hearts.map((id: any) => (
+              <HeartCount id={id} key={id} remove={removeHeart} />
+            ))}
+
+            {/* 
             {showHeart && (
               <ShowHeartCom
                 countNumber={countNumber}
@@ -365,7 +444,7 @@ const VideoFeed = ({
               <div className="absolute bottom-[350px] right-[70px] transform z-[999]">
                 <CountdownCircle countNumber={countNumber} />
               </div>
-            )}
+            )} */}
             <div className="absolute bottom-0 add_comment w-full  py-3 ">
               <div className="flex items-center feed_add_comment gap-2 px-4">
                 <input
@@ -373,7 +452,7 @@ const VideoFeed = ({
                   className="w-full p-[6px] bg-transparent border-none outline-none"
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  placeholder="Write a comment"
+                  placeholder="写评论"
                 />
                 <button
                   className="p-3"

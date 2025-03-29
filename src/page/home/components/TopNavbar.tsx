@@ -35,7 +35,7 @@ const TopNavbar = ({
         <img src={upload} alt="" />
         <p className="text-[16px]">创作</p>
       </div>
-      <div className="flex gap-5 items-center text-white mr-5">
+      <div className="flex gap-5 items-center text-white">
         {TABS.map((tab, index) => (
           <div
             onClick={() => onTabClick(tab.id)}
