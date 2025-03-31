@@ -113,19 +113,13 @@ const Ranking = () => {
       if (page === 1) {
         setRankingList(data.data.list); // Replace ranking list when filter changes
       } else {
-        setRankingList((prev) => [...prev, ...data.data.list]); // Append new results for infinite scroll
+        setRankingList((prev: any) => [...prev, ...data.data.list]); // Append new results for infinite scroll
       }
       setTotalData(data?.pagination?.total);
     }
   }, [data]);
 
-  useEffect(() => {
-    if (totalData <= rankingList.length) {
-      setHasMore(false);
-    } else {
-      setHasMore(true);
-    }
-  }, [totalData, rankingList]);
+
 
   if (loading1 && isLoading && page === 1) return <Loader />;
 

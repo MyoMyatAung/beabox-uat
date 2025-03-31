@@ -170,8 +170,8 @@ export const profileApi = createApi({
       }),
     }),
     getPosts: builder.query<any, any>({
-      query: ({ id, page }) => ({
-        url: convertToSecureUrl(`/user/post?user_id=${id}&page=${page}`),
+      query: ({ id, page, sort }) => ({
+        url: convertToSecureUrl(`/user/post?user_id=${id}&page=${page}&sort=${sort}`),
         method: "GET",
       }),
     }),

@@ -101,8 +101,9 @@ const SettingBtn = ({ setShow }: any) => {
                           setIsOpen(false);
                           dispatch(setIsDrawerOpen(true));
                         } else {
-                          dispatch(setShowAlert(true));
-                          dispatch(setAlertText("功能正在开发中"));
+                          navigate(link);
+                          // dispatch(setShowAlert(true));
+                          // dispatch(setAlertText("功能正在开发中"));
                         }
                       } else if (title === "联系客服") {
                         if (tgLink) {
