@@ -13,6 +13,7 @@ import "swiper/css";
 import "swiper/css/autoplay";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules"; // Import Swiper's autoplay module
+import InfinitLoad from "@/components/shared/infinit-load";
 
 const ranges = [
   { value: "today", title: "今日" },
@@ -24,7 +25,9 @@ const ranges = [
 const Ranking = () => {
   const user = useSelector((state: any) => state?.persist?.profileData);
   const [ad, setAd] = useState([]);
-
+  const [rankingList, setRankingList] = useState<any>([]);
+  const [totalData, setTotalData] = useState<number>(0);
+  const [hasMore, setHasMore] = useState(true);
   const [showHeader, setShowHeader] = useState(false);
   const headerRef = useRef(null);
   const { applicationData } = useSelector((state: any) => state.explore);
@@ -75,7 +78,56 @@ const Ranking = () => {
     }
   }, [applicationData]);
 
-  if (loading1 && isLoading) return <Loader />;
+  useEffect(() => {
+    if (data?.data?.list?.length) {
+      // Append new data to the existing videos
+      setRankingList((pev: any) => [...pev, ...data?.data?.list]);
+      setTotalData(data?.pagination?.total);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (totalData <= rankingList.length) {
+      setHasMore(false);
+    } else {
+      setHasMore(true);
+    }
+  }, [totalData, rankingList]);
+
+  console.log(data, "rl");
+
+  const fetchMoreData = () => {
+    if (hasMore) {
+      setPage((prev) => prev + 1);
+    }
+  };
+
+  useEffect(() => {
+    setPage(1); // Reset pagination
+    setRankingList([]); // Clear existing ranking data
+    setHasMore(true); // Reset infinite scroll
+  }, [selectedRange, selectedType]);
+
+  useEffect(() => {
+    if (data?.data?.list) {
+      if (page === 1) {
+        setRankingList(data.data.list); // Replace ranking list when filter changes
+      } else {
+        setRankingList((prev) => [...prev, ...data.data.list]); // Append new results for infinite scroll
+      }
+      setTotalData(data?.pagination?.total);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (totalData <= rankingList.length) {
+      setHasMore(false);
+    } else {
+      setHasMore(true);
+    }
+  }, [totalData, rankingList]);
+
+  if (loading1 && isLoading && page === 1) return <Loader />;
 
   return (
     <div className="">
@@ -121,7 +173,7 @@ const Ranking = () => {
           </div>
         </div>
         <div className="pb-5">
-          <Top3 rankingData={data?.data?.list} />
+          <Top3 rankingData={rankingList} />
         </div>
         <div ref={headerRef} className="sticky w-full top-0"></div>
 
@@ -183,8 +235,8 @@ const Ranking = () => {
           </div>
         </div>
         <div className="px-5 py-5 space-y-4 sticky">
-          {data?.data?.list?.slice(3)?.length ? (
-            data?.data?.list?.slice(3)?.map((item: any, index: any) => (
+          {rankingList?.slice(3)?.length ? (
+            rankingList?.slice(3)?.map((item: any, index: any) => (
               <div className="flex items-center gap-3" key={item?.id}>
                 <p className="text-[16px] font-semibold w-8">{item?.rank}</p>
                 <RankingCard data={item} />
@@ -199,6 +251,11 @@ const Ranking = () => {
             </div>
           )}
         </div>
+        <InfinitLoad
+          data={rankingList}
+          fetchData={fetchMoreData}
+          hasMore={hasMore}
+        />
         <MyRankCard myrank={data?.data?.my_rank} />
       </div>
       <div className="py-20"></div>
