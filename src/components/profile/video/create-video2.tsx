@@ -22,9 +22,11 @@ const CreatedVideo2 = ({ id }: any) => {
   const [query, setQuery] = useState(initialQuery);
   const [selectedMovieId, setSelectedMovieId] = useState(null);
   const [showVideoFeed, setShowVideoFeed] = useState(false);
+  const sort = useSelector((state: any) => state.profile.sort);
+  console.log(sort);
 
-  const { data, isLoading } = useGetPostsQuery(
-    { id: id, page: page },
+  const { data, isLoading, refetch, isFetching } = useGetPostsQuery(
+    { id: id, page: page, sort },
     { skip: !user }
   );
 
@@ -35,6 +37,12 @@ const CreatedVideo2 = ({ id }: any) => {
       setTotalData(data.pagination.total);
     }
   }, [data]);
+
+  useEffect(() => {
+    setPage(1);
+    setVideos([]);
+    setHasMore(true);
+  }, [sort]);
 
   useEffect(() => {
     if (totalData <= videos.length) {
@@ -50,7 +58,18 @@ const CreatedVideo2 = ({ id }: any) => {
     }
   };
 
-  if (isLoading && page === 1) {
+  useEffect(() => {
+    if (data?.data) {
+      if (page === 1) {
+        setVideos(data.data); // Replace ranking list when filter changes
+      } else {
+        setVideos((prev: any) => [...prev, ...data.data]); // Append new results for infinite scroll
+      }
+      setTotalData(data?.pagination?.total);
+    }
+  }, [data]);
+
+  if ((isLoading && page === 1) || isFetching) {
     return (
       <div className="flex justify-center w-full py-[200px]">
         <div>

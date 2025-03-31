@@ -6,36 +6,95 @@ import LikedVideos from "./video/liked-videos";
 import { useDispatch, useSelector } from "react-redux";
 import { setDefaultTab2 } from "@/store/slices/persistSlice";
 import LikedVideos2 from "./video/like-videos2";
+import { useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import upsort from "@/assets/upsort.svg";
+import { setSort } from "@/store/slices/profileSlice";
+import { Check } from "lucide-react";
 
 const VideoTab2 = ({ id, visibility, showHeader }: any) => {
   const defaultTab2 = useSelector((state: any) => state.persist.defaultTab2);
+  const [isOpen, setIsOpen] = useState(false);
+  const sort = useSelector((state: any) => state.profile.sort);
+
   const dispatch = useDispatch();
   return (
     <Tabs defaultValue={defaultTab2 ? defaultTab2 : "video"} className="my-5">
       <TabsList className="grid w-full grid-cols-3 z-[1600] bg-transparent sticky top-[100px] px-5">
-        <TabsTrigger
-          className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
-          value="video"
-          onClick={() => dispatch(setDefaultTab2("video"))}
-        >
-          <span className="flex items-center gap-2 flex-col justify-center">
-            <div className="w-[52px] h-[3px] bg-transparent"></div>
-            <Horin active={defaultTab2 == "video" ? true : false} />
-            {/* <div className="flex flex-col items-center justify-center">
-                          <LuTally3 size={12} />
-                          <LuTally3 size={12} />
-                        </div> */}
-            {/* 我的作品 */}
-            <div
-              className={`w-[52px] h-[3px] ${
-                defaultTab2 == "video" && "bg-white"
-              }`}
-            ></div>
-          </span>
-          {/* <span className="flex items-center gap-1">
-            <Play /> 的作品
-          </span> */}
-        </TabsTrigger>
+        {defaultTab2 == "video" ? (
+          <TabsTrigger
+            className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
+            // onClick={() => dispatch(setDefaultTab("upload"))}
+            value="video"
+            asChild
+          >
+            <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+              <DropdownMenuTrigger asChild>
+                <span className="flex items-center gap-2 flex-col justify-center">
+                  <div className="w-[52px] h-[3px] bg-transparent"></div>
+
+                  {isOpen ? (
+                    <img src={upsort} alt="" />
+                  ) : (
+                    <Horin active={defaultTab2 == "video" ? true : false} />
+                  )}
+                  {/*  */}
+
+                  <div
+                    className={`w-[52px] h-[3px] ${
+                      defaultTab2 == "video" && "bg-white"
+                    }`}
+                  ></div>
+                </span>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-[97px] bg-[#252525EB] border-0">
+                <DropdownMenuGroup>
+                  <DropdownMenuItem>
+                    <div
+                      className="w-full flex items-center justify-between text-white"
+                      onClick={() => dispatch(setSort("created_at"))}
+                    >
+                      <p className="text-white text-[12px]">最新</p>
+                      {sort == "created_at" ? <Check /> : <></>}
+                    </div>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <div
+                      className="w-full flex items-center justify-between text-white"
+                      onClick={() => dispatch(setSort("score"))}
+                    >
+                      <p className="text-white text-[12px]">热门</p>
+                      {sort == "score" ? <Check /> : <></>}
+                    </div>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </TabsTrigger>
+        ) : (
+          <TabsTrigger
+            className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
+            value="video"
+            onClick={() => dispatch(setDefaultTab2("video"))}
+          >
+            <span className="flex items-center gap-2 flex-col justify-center">
+              <div className="w-[52px] h-[3px] bg-transparent"></div>
+              <Horin active={defaultTab2 == "video" ? true : false} />
+              <div
+                className={`w-[52px] h-[3px] ${
+                  defaultTab2 == "video" && "bg-white"
+                }`}
+              ></div>
+            </span>
+          </TabsTrigger>
+        )}
+
         <TabsTrigger
           className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
           value="liked"

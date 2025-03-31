@@ -6,12 +6,16 @@ const initialState: any = {
   authToggle: true,
   showAlert: false,
   alertText: "",
+  sort: "created_at",
 };
 
 export const profileSlice = createSlice({
   name: "profile",
   initialState,
   reducers: {
+    setSort: (state, { payload }) => {
+      state.sort = payload;
+    },
     setAuthToggle: (state, { payload }) => {
       state.authToggle = payload;
     },
@@ -31,6 +35,7 @@ export const profileSlice = createSlice({
 });
 
 export const {
+  setSort,
   setIsDrawerOpen,
   setDefaultFollowTab,
   setAuthToggle,
