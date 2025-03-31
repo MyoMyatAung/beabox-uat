@@ -17,6 +17,7 @@ const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
 };
 
 const RankingCard = ({ data }: { data: any }) => {
+  const user = useSelector((state: any) => state?.persist?.user);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
   const me = useSelector((state: any) => state?.persist?.user?.id);
   function formatToK(number: any) {
