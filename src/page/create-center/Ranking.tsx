@@ -23,7 +23,7 @@ const ranges = [
 ];
 
 const Ranking = () => {
-  const user = useSelector((state: any) => state?.persist?.profileData);
+  const user = useSelector((state: any) => state?.persist?.user);
   const [ad, setAd] = useState([]);
   const [rankingList, setRankingList] = useState<any>([]);
   const [totalData, setTotalData] = useState<number>(0);
@@ -118,8 +118,6 @@ const Ranking = () => {
       setTotalData(data?.pagination?.total);
     }
   }, [data]);
-
-
 
   if (loading1 && isLoading && page === 1) return <Loader />;
 
@@ -250,7 +248,7 @@ const Ranking = () => {
           fetchData={fetchMoreData}
           hasMore={hasMore}
         />
-        <MyRankCard myrank={data?.data?.my_rank} />
+        {user?.token ? <MyRankCard myrank={data?.data?.my_rank} /> : <></>}
       </div>
       <div className="py-20"></div>
     </div>
