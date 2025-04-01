@@ -1,13 +1,19 @@
 import { useState } from "react";
 
-const Ads = ({ ads }: { ads: any }) => {
+const Ads = ({ ads, type }: { ads: any; type: any }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
+
   return (
-    <div className="videoFooter w-full">
+    <div
+      className={`videoFooter w-full`}
+      style={{
+        bottom: type === "ads_virtual" ? "10px" : "30px",
+      }}
+    >
       <div className="w-full">
         <div className="flex items-center gap-3 mb-2">
           <div className="flex items-center gap-2">
@@ -73,70 +79,77 @@ const Ads = ({ ads }: { ads: any }) => {
             </button>
           )}
         </div>
-        <div className="spon px-3 py-2 mb-3 inline-block">{ads?.profile_text}</div>
-        <a
-          className={`ads-btn w-[75%] flex items-center justify-center py-2`}
-          target="_blank"
-          href={ads?.jump_url}
-        >
-          <span>{ads?.btn_text}</span>
-          <svg
-            className="mt-3"
-            xmlns="http://www.w3.org/2000/svg"
-            width="14"
-            height="19"
-            viewBox="0 0 14 19"
-            fill="none"
-          >
-            <g filter="url(#filter0_d_4978_17314)">
-              <path
-                d="M5.18164 1.5L8.818 5.5L5.18164 9.5"
-                stroke="white"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                shape-rendering="crispEdges"
-              />
-            </g>
-            <defs>
-              <filter
-                id="filter0_d_4978_17314"
-                x="0.431641"
-                y="0.75"
-                width="13.1367"
-                height="17.5"
-                filterUnits="userSpaceOnUse"
-                color-interpolation-filters="sRGB"
+
+        {type !== "ads_virtual" && (
+          <>
+            <div className="spon px-3 py-2 mb-3 inline-block">
+              {ads?.profile_text}
+            </div>
+            <a
+              className={`ads-btn w-[75%] flex items-center justify-center py-2`}
+              target="_blank"
+              href={ads?.jump_url}
+            >
+              <span>{ads?.btn_text}</span>
+              <svg
+                className="mt-3"
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="19"
+                viewBox="0 0 14 19"
+                fill="none"
               >
-                <feFlood flood-opacity="0" result="BackgroundImageFix" />
-                <feColorMatrix
-                  in="SourceAlpha"
-                  type="matrix"
-                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-                  result="hardAlpha"
-                />
-                <feOffset dy="4" />
-                <feGaussianBlur stdDeviation="2" />
-                <feComposite in2="hardAlpha" operator="out" />
-                <feColorMatrix
-                  type="matrix"
-                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"
-                />
-                <feBlend
-                  mode="normal"
-                  in2="BackgroundImageFix"
-                  result="effect1_dropShadow_4978_17314"
-                />
-                <feBlend
-                  mode="normal"
-                  in="SourceGraphic"
-                  in2="effect1_dropShadow_4978_17314"
-                  result="shape"
-                />
-              </filter>
-            </defs>
-          </svg>
-        </a>
+                <g filter="url(#filter0_d_4978_17314)">
+                  <path
+                    d="M5.18164 1.5L8.818 5.5L5.18164 9.5"
+                    stroke="white"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    shape-rendering="crispEdges"
+                  />
+                </g>
+                <defs>
+                  <filter
+                    id="filter0_d_4978_17314"
+                    x="0.431641"
+                    y="0.75"
+                    width="13.1367"
+                    height="17.5"
+                    filterUnits="userSpaceOnUse"
+                    color-interpolation-filters="sRGB"
+                  >
+                    <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                    <feColorMatrix
+                      in="SourceAlpha"
+                      type="matrix"
+                      values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                      result="hardAlpha"
+                    />
+                    <feOffset dy="4" />
+                    <feGaussianBlur stdDeviation="2" />
+                    <feComposite in2="hardAlpha" operator="out" />
+                    <feColorMatrix
+                      type="matrix"
+                      values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"
+                    />
+                    <feBlend
+                      mode="normal"
+                      in2="BackgroundImageFix"
+                      result="effect1_dropShadow_4978_17314"
+                    />
+                    <feBlend
+                      mode="normal"
+                      in="SourceGraphic"
+                      in2="effect1_dropShadow_4978_17314"
+                      result="shape"
+                    />
+                  </filter>
+                </defs>
+              </svg>
+            </a>
+          </>
+        )}
       </div>
     </div>
     // <div className="absolute bottom-[10px] z-[999999] p-3 w-full">

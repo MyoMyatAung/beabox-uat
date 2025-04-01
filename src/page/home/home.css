@@ -2,7 +2,7 @@
   position: relative;
   background-color: black;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   height: calc(100dvh - 75px);
   /* height: 100%; */
 
@@ -14,11 +14,16 @@
   touch-action: pan-y !important; /* Disable horizontal dragging */
 }
 
+.alert-height {
+  height: 100%;
+  height: 100dvh;
+}
+
 .video1 {
   position: relative;
   background-color: black;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   height: calc(100dvh - 8px);
   /* height: 100%; */
 

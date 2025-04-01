@@ -83,7 +83,6 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
     }
   }, [files?.post_id]);
 
-
   const decryptionCache = useRef(new Map<string, string>());
 
   // Add this utility function inside your Home component
@@ -233,29 +232,35 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
           className="video1 mt-[10px] pb-[68px]"
           data-post-id={files.post_id}
         >
-          <VideoContainer
-            // refetchUser={refetchUser}
-            videoData={videoData}
-            indexRef={indexRef}
-            abortControllerRef={abortControllerRef}
-            container={videoContainerRef.current}
-            width={width}
-            height={height}
-            status={false}
-            countNumber={countNumber}
-            video={files}
-            setCountNumber={setCountNumber}
-            config={config}
-            countdown={countdown}
-            setWidth={setWidth}
-            setHeight={setHeight}
-            setHearts={setHearts}
-            setCountdown={setCountdown}
-            // setShowHeart={setShowHeart}
-            // coin={profile?.coins}
-          />
+          {files?.file_type !== "video" ? (
+            <div>
+              <img src={files?.files[0]?.resourceURL} alt="" />
+            </div>
+          ) : (
+            <VideoContainer
+              // refetchUser={refetchUser}
+              videoData={videoData}
+              indexRef={indexRef}
+              abortControllerRef={abortControllerRef}
+              container={videoContainerRef.current}
+              width={width}
+              height={height}
+              status={false}
+              countNumber={countNumber}
+              video={files}
+              setCountNumber={setCountNumber}
+              config={config}
+              countdown={countdown}
+              setWidth={setWidth}
+              setHeight={setHeight}
+              setHearts={setHearts}
+              setCountdown={setCountdown}
+              // setShowHeart={setShowHeart}
+              // coin={profile?.coins}
+            />
+          )}
 
-          {files?.type !== "ads" && (
+          {files?.type !== "ads" && files?.type !== "ads_virtual" && (
             <FeedFooter
               badge={files?.user?.badge}
               id={files?.user?.id}
@@ -266,7 +271,9 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
             />
           )}
 
-          {files?.type === "ads" && <Ads ads={files?.ads_info} />}
+          {(files?.type === "ads" || files?.type === "ads_virtual") && (
+            <Ads ads={files?.ads_info} type={files?.type} />
+          )}
 
           {hearts.map((id: any) => (
             <HeartCount id={id} key={id} remove={removeHeart} />

@@ -7,7 +7,7 @@ const PreventSwipeBack = () => {
 
         const handlePopState = () => {
             // Push the same state again to prevent navigation
-            history.pushState(null, '', location.href);
+            // history.pushState(null, '', location.href);
         };
 
         window.addEventListener('popstate', handlePopState);

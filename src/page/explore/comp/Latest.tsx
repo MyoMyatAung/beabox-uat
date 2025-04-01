@@ -20,6 +20,7 @@ interface LatestPorp {
   setSelectedMovieId: any;
   waterfall: any;
   setWaterFall: any;
+  exp_header:any;
 }
 
 const Latest: React.FC<LatestPorp> = ({
@@ -28,6 +29,7 @@ const Latest: React.FC<LatestPorp> = ({
   setSelectedMovieId,
   waterfall,
   setWaterFall,
+  exp_header
 }) => {
   // const [searchParams, setSearchParams] = useSearchParams();
   const dispatch = useDispatch();
@@ -45,6 +47,10 @@ const Latest: React.FC<LatestPorp> = ({
     }
   }, []);
 
+   useEffect(() => {
+    setWaterFall([]); // Reset list when switching tabs
+  }, [exp_header]);
+
   useEffect(() => {
     if (data?.data) {
       setWaterFall((prev) => [...prev, ...data.data]);
@@ -55,7 +61,7 @@ const Latest: React.FC<LatestPorp> = ({
     } else {
       setHasMore(false);
     }
-  }, [data]);
+  }, [data,exp_header]);
   // console.log(data?.data)
 
   const formatNumber = (num: number) => {
@@ -92,7 +98,7 @@ const Latest: React.FC<LatestPorp> = ({
     navigate(paths.getUserProfileId(userId));
   };
 
-  console.log(waterfall);
+  // console.log(waterfall);
   return (
     <>
       {isLoading ? (
