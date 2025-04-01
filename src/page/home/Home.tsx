@@ -446,9 +446,9 @@ const Home = () => {
                           data-post-id={video?.post_id} // Add post ID to the container
                         >
                           {video?.file_type !== "video" ? (
-                            <div>
+                            <a href={video?.ads_info?.jump_url} target="_blank">
                               <img src={video?.files[0]?.resourceURL} alt="" />
-                            </div>
+                            </a>
                           ) : (
                             <VideoContainer
                               // refetchUser={refetchUser}
@@ -595,9 +595,9 @@ const Home = () => {
                           data-post-id={video.post_id} // Add post ID to the container
                         >
                           {video?.file_type !== "video" ? (
-                            <div>
+                            <a href={video?.ads_info?.jump_url} target="_blank">
                               <img src={video?.files[0]?.resourceURL} alt="" />
-                            </div>
+                            </a>
                           ) : (
                             <VideoContainer
                               // refetchUser={refetchUser}
