@@ -173,20 +173,32 @@ const Profile = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+  console.log(decryptedCover);
 
   if (isLoading) return <Loader />;
 
   return (
     <div className="h-screen flex flex-col hide-sb max-w-[480px] mx-auto">
       {/* <Covers /> */}
+
+      {/* {
+              user?.token
+                ? 'bg-[url("./assets/cover.jpg")]' ||
+                  'bg-[url("./assets/cover.jpg")]'
+                : 'bg-[url("./assets/cover.jpg")]'
+            }  */}
       {showHeader ? (
         <>
           <div className="gradient-overlay2"></div>
-          <img
-            src={user?.token ? decryptedCover || defaultCover : defaultCover}
-            alt=""
-            className="fixed top-0 z-[1000] left-0 w-full h-[155px] object-cover object-center"
-          />
+          <div
+            className={`fixed top-0 w-full left-0 h-[155px] bg-[url("./assets/cover.jpg")]   z-[1000] bg-cover bg-top bg-no-repeat`}
+          >
+            {/* <img
+              src={user?.token ? decryptedCover || defaultCover : defaultCover}
+              alt=""
+              className="fixed top-0 z-[1000] left-0 w-full h-[155px] object-cover object-center"
+            /> */}
+          </div>
         </>
       ) : (
         <>

@@ -232,11 +232,14 @@ const OtherProfile = () => {
       {showHeader ? (
         <>
           <div className="gradient-overlay2"></div>
-          <img
+          <div
+            className={`fixed top-0 w-full left-0 h-[155px] bg-[url("./assets/cover.jpg")]   z-[1000] bg-cover bg-top bg-no-repeat`}
+          ></div>
+          {/* <img
             src={decryptedCover ? decryptedCover : defaultCover}
             alt=""
             className={`fixed top-0 z-[1500] left-0 w-full h-[155px] object-cover object-center`}
-          />
+          /> */}
         </>
       ) : (
         <>
