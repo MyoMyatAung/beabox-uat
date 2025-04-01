@@ -722,3 +722,19 @@ input:checked + .slider:before {
     rgba(255, 255, 255, 0.12) 100%
   );
 }
+
+.bgbg {
+  background: linear-gradient(0deg, #16131c, #16131c);
+}
+.bgbg2 {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  background: linear-gradient(
+    324.57deg,
+    rgba(205, 62, 255, 0.12) 43.64%,
+    rgba(255, 178, 224, 0.12) 100%
+  );
+  z-index: 10;
+}
