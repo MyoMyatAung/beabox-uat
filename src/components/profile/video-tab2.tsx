@@ -24,8 +24,12 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
   const sort = useSelector((state: any) => state.profile.sort);
 
   const dispatch = useDispatch();
+  const handleTabChange = (value: string) => {
+    // console.log("Current tab value:", value);
+    dispatch(setDefaultTab2(value));
+  };
   return (
-    <Tabs defaultValue={defaultTab2 ? defaultTab2 : "video"} className="my-5">
+    <Tabs defaultValue={defaultTab2 ? defaultTab2 : "video"} className="my-5"  onValueChange={handleTabChange}>
       <TabsList className="grid w-full grid-cols-3 z-[1600] bg-transparent sticky top-[100px] px-5">
         {defaultTab2 == "video" ? (
           <TabsTrigger
@@ -81,7 +85,7 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
           <TabsTrigger
             className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
             value="video"
-            onClick={() => dispatch(setDefaultTab2("video"))}
+            // onClick={() => dispatch(setDefaultTab2("video"))}
           >
             <span className="flex items-center gap-2 flex-col justify-center">
               <div className="w-[52px] h-[3px] bg-transparent"></div>
@@ -98,7 +102,7 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
         <TabsTrigger
           className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
           value="liked"
-          onClick={() => dispatch(setDefaultTab2("liked"))}
+          // onClick={() => dispatch(setDefaultTab2("liked"))}
         >
           <span className="flex items-center gap-2 flex-col justify-center">
             <div className={`w-[52px] h-[3px] bg-transparent`}></div>

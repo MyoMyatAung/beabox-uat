@@ -173,8 +173,6 @@ const Profile = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-  console.log(decryptedCover);
-
   if (isLoading) return <Loader />;
 
   return (

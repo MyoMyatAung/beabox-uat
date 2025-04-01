@@ -27,8 +27,17 @@ const VideoTabs = () => {
 
   const defaultTab = useSelector((state: any) => state?.persist?.defaultTab);
   const dispatch = useDispatch();
+
+  const handleTabChange = (value: string) => {
+    // console.log("Current tab value:", value);
+    dispatch(setDefaultTab(value));
+  };
   return (
-    <Tabs defaultValue={user?.token ? defaultTab : "liked"} className="py-5">
+    <Tabs
+      defaultValue={user?.token ? defaultTab : "liked"}
+      className="py-5"
+      onValueChange={handleTabChange}
+    >
       <TabsList className="grid w-full grid-cols-3 z-[1600] bg-transparent sticky top-[100px]">
         {user?.token ? (
           defaultTab == "upload" ? (
@@ -84,7 +93,7 @@ const VideoTabs = () => {
           ) : (
             <TabsTrigger
               className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
-              onClick={() => dispatch(setDefaultTab("upload"))}
+              // onClick={() => dispatch(setDefaultTab("upload"))}
               value="upload"
               asChild
             >
@@ -105,7 +114,7 @@ const VideoTabs = () => {
         <TabsTrigger
           className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
           value="liked"
-          onClick={() => dispatch(setDefaultTab("liked"))}
+          // onClick={() => dispatch(setDefaultTab("liked"))}
         >
           <span className="flex items-center gap-2 flex-col justify-center">
             <div className={`w-[52px] h-[3px] bg-transparent`}></div>
@@ -121,7 +130,7 @@ const VideoTabs = () => {
         <TabsTrigger
           className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
           value="history"
-          onClick={() => dispatch(setDefaultTab("history"))}
+          // onClick={() => dispatch(setDefaultTab("history"))}
         >
           <span className="flex items-center gap-2 flex-col justify-center">
             <div className={`w-[52px] h-[3px] bg-transparent`}></div>

@@ -23,7 +23,6 @@ const CreatedVideo2 = ({ id }: any) => {
   const [selectedMovieId, setSelectedMovieId] = useState(null);
   const [showVideoFeed, setShowVideoFeed] = useState(false);
   const sort = useSelector((state: any) => state.profile.sort);
-  console.log(sort);
 
   const { data, isLoading, refetch, isFetching } = useGetPostsQuery(
     { id: id, page: page, sort },
