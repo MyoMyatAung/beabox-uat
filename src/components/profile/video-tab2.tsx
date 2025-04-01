@@ -22,23 +22,19 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
   const defaultTab2 = useSelector((state: any) => state.persist.defaultTab2);
   const [isOpen, setIsOpen] = useState(false);
   const sort = useSelector((state: any) => state.profile.sort);
-  const dispatch = useDispatch();
-  
-  // Add local state to track the currently selected tab
-  const [currentTab, setCurrentTab] = useState(defaultTab2 || "video");
 
-  // Handle tab change
+  const dispatch = useDispatch();
   const handleTabChange = (value: string) => {
-    setCurrentTab(value);
+    // console.log("Current tab value:", value);
     dispatch(setDefaultTab2(value));
   };
-
   return (
-    <Tabs value={currentTab} onValueChange={handleTabChange} className="my-5">
+    <Tabs defaultValue={defaultTab2 ? defaultTab2 : "video"} className="my-5"  onValueChange={handleTabChange}>
       <TabsList className="grid w-full grid-cols-3 z-[1600] bg-transparent sticky top-[100px] px-5">
-        {currentTab === "video" ? (
+        {defaultTab2 == "video" ? (
           <TabsTrigger
             className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
+            // onClick={() => dispatch(setDefaultTab("upload"))}
             value="video"
             asChild
           >
@@ -50,13 +46,13 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
                   {isOpen ? (
                     <img src={upsort} alt="" />
                   ) : (
-                    <Horin active={currentTab === "video"} />
+                    <Horin active={defaultTab2 == "video" ? true : false} />
                   )}
                   {/*  */}
 
                   <div
                     className={`w-[52px] h-[3px] ${
-                      currentTab === "video" && "bg-white"
+                      defaultTab2 == "video" && "bg-white"
                     }`}
                   ></div>
                 </span>
@@ -69,7 +65,7 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
                       onClick={() => dispatch(setSort("created_at"))}
                     >
                       <p className="text-white text-[12px]">最新</p>
-                      {sort === "created_at" ? <Check /> : <></>}
+                      {sort == "created_at" ? <Check /> : <></>}
                     </div>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
@@ -78,7 +74,7 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
                       onClick={() => dispatch(setSort("score"))}
                     >
                       <p className="text-white text-[12px]">热门</p>
-                      {sort === "score" ? <Check /> : <></>}
+                      {sort == "score" ? <Check /> : <></>}
                     </div>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
@@ -89,13 +85,14 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
           <TabsTrigger
             className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
             value="video"
+            // onClick={() => dispatch(setDefaultTab2("video"))}
           >
             <span className="flex items-center gap-2 flex-col justify-center">
               <div className="w-[52px] h-[3px] bg-transparent"></div>
-              <Horin active={currentTab === "video"} />
+              <Horin active={defaultTab2 == "video" ? true : false} />
               <div
                 className={`w-[52px] h-[3px] ${
-                  currentTab === "video" && "bg-white"
+                  defaultTab2 == "video" && "bg-white"
                 }`}
               ></div>
             </span>
@@ -105,13 +102,14 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
         <TabsTrigger
           className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
           value="liked"
+          // onClick={() => dispatch(setDefaultTab2("liked"))}
         >
           <span className="flex items-center gap-2 flex-col justify-center">
             <div className={`w-[52px] h-[3px] bg-transparent`}></div>
             <FaHeart />
             <div
               className={`w-[52px] h-[3px] ${
-                currentTab === "liked" && "bg-white"
+                defaultTab2 == "liked" && "bg-white"
               }`}
             ></div>
             {/* 已点赞视频 */}

@@ -23,7 +23,6 @@ const CreatedVideo2 = ({ id }: any) => {
   const [selectedMovieId, setSelectedMovieId] = useState(null);
   const [showVideoFeed, setShowVideoFeed] = useState(false);
   const sort = useSelector((state: any) => state.profile.sort);
-  console.log(sort);
 
   const { data, isLoading, refetch, isFetching } = useGetPostsQuery(
     { id: id, page: page, sort },
@@ -69,7 +68,7 @@ const CreatedVideo2 = ({ id }: any) => {
     }
   }, [data]);
 
-  if ((isLoading && page === 1)) {
+  if ((isLoading && page === 1) || (isFetching && page === 1)) {
     return (
       <div className="flex justify-center w-full py-[200px]">
         <div>
