@@ -69,7 +69,7 @@ const CreatedVideo2 = ({ id }: any) => {
     }
   }, [data]);
 
-  if ((isLoading && page === 1) || isFetching) {
+  if ((isLoading && page === 1)) {
     return (
       <div className="flex justify-center w-full py-[200px]">
         <div>

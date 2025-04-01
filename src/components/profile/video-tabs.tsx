@@ -24,17 +24,25 @@ const VideoTabs = () => {
   const user = useSelector((state: any) => state?.persist?.user);
   const sort = useSelector((state: any) => state.profile.sort);
   const [isOpen, setIsOpen] = useState(false);
-
   const defaultTab = useSelector((state: any) => state?.persist?.defaultTab);
   const dispatch = useDispatch();
+  
+  // Add local state to track the currently selected tab
+  const [currentTab, setCurrentTab] = useState(user?.token ? defaultTab || "liked" : "liked");
+
+  // Handle tab change
+  const handleTabChange = (value: string) => {
+    setCurrentTab(value);
+    dispatch(setDefaultTab(value));
+  };
+
   return (
-    <Tabs defaultValue={user?.token ? defaultTab : "liked"} className="py-5">
+    <Tabs value={currentTab} onValueChange={handleTabChange} className="py-5">
       <TabsList className="grid w-full grid-cols-3 z-[1600] bg-transparent sticky top-[100px]">
         {user?.token ? (
-          defaultTab == "upload" ? (
+          currentTab === "upload" ? (
             <TabsTrigger
               className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
-              // onClick={() => dispatch(setDefaultTab("upload"))}
               value="upload"
               asChild
             >
@@ -46,13 +54,13 @@ const VideoTabs = () => {
                     {isOpen ? (
                       <img src={upsort} alt="" />
                     ) : (
-                      <Horin active={defaultTab == "upload" ? true : false} />
+                      <Horin active={currentTab === "upload"} />
                     )}
                     {/*  */}
 
                     <div
                       className={`w-[52px] h-[3px] ${
-                        defaultTab == "upload" && "bg-white"
+                        currentTab === "upload" && "bg-white"
                       }`}
                     ></div>
                   </span>
@@ -65,7 +73,7 @@ const VideoTabs = () => {
                         onClick={() => dispatch(setSort("created_at"))}
                       >
                         <p className="text-white text-[12px]">最新</p>
-                        {sort == "created_at" ? <Check /> : <></>}
+                        {sort === "created_at" ? <Check /> : <></>}
                       </div>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
@@ -74,7 +82,7 @@ const VideoTabs = () => {
                         onClick={() => dispatch(setSort("score"))}
                       >
                         <p className="text-white text-[12px]">热门</p>
-                        {sort == "score" ? <Check /> : <></>}
+                        {sort === "score" ? <Check /> : <></>}
                       </div>
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
@@ -84,16 +92,15 @@ const VideoTabs = () => {
           ) : (
             <TabsTrigger
               className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
-              onClick={() => dispatch(setDefaultTab("upload"))}
               value="upload"
               asChild
             >
               <span className="flex items-center gap-2 flex-col justify-center">
                 <div className="w-[52px] h-[3px] bg-transparent"></div>
-                <Horin active={defaultTab == "upload" ? true : false} />
+                <Horin active={currentTab === "upload"} />
                 <div
                   className={`w-[52px] h-[3px] ${
-                    defaultTab == "upload" && "bg-white"
+                    currentTab === "upload" && "bg-white"
                   }`}
                 ></div>
               </span>
@@ -105,14 +112,13 @@ const VideoTabs = () => {
         <TabsTrigger
           className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
           value="liked"
-          onClick={() => dispatch(setDefaultTab("liked"))}
         >
           <span className="flex items-center gap-2 flex-col justify-center">
             <div className={`w-[52px] h-[3px] bg-transparent`}></div>
             <FaHeart />
             <div
               className={`w-[52px] h-[3px] ${
-                defaultTab == "liked" && "bg-white"
+                currentTab === "liked" && "bg-white"
               }`}
             ></div>
             {/* 已点赞视频 */}
@@ -121,7 +127,6 @@ const VideoTabs = () => {
         <TabsTrigger
           className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
           value="history"
-          onClick={() => dispatch(setDefaultTab("history"))}
         >
           <span className="flex items-center gap-2 flex-col justify-center">
             <div className={`w-[52px] h-[3px] bg-transparent`}></div>
@@ -129,7 +134,7 @@ const VideoTabs = () => {
             {/* 观看历史 */}
             <div
               className={`w-[52px] h-[3px] ${
-                defaultTab == "history" && "bg-white"
+                currentTab === "history" && "bg-white"
               }`}
             ></div>
           </span>
