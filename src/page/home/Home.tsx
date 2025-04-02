@@ -3,6 +3,7 @@ import {
   useGetConfigQuery,
   useGetFollowedPostsQuery,
   useGetPostsQuery,
+  useGetUserShareQuery,
 } from "./services/homeApi";
 import Player from "./components/Player";
 import loader from "./vod_loader.gif";
@@ -48,6 +49,12 @@ const Home = () => {
   //   (state: any) => state.videoRenderSlice
   // );
   const { page } = useSelector((state: any) => state.pageSlice);
+
+  // const { data, isLoading } = useGetUserShareQuery({
+  //   type: "video",
+  //   id: post?.post_id,
+  //   qr_code: 1,
+  // });
 
   // const user1 = useSelector((state: any) => state?.persist?.user) || "";
   // const { data: profile, refetch: refetchUser } = useGetMyOwnProfileQuery("", {

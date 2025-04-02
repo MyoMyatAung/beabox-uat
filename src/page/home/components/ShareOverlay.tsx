@@ -33,7 +33,6 @@ const ShareOverlay: React.FC<any> = ({
 
   const { data, isLoading } = useGetUserShareQuery({
     type: "video",
-    id: post?.post_id,
     qr_code: 1,
   });
 
