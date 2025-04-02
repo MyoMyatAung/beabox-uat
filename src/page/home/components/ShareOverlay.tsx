@@ -31,7 +31,11 @@ const ShareOverlay: React.FC<any> = ({
   const { currentActivePost } = useSelector((state: any) => state.activeslice);
   const [isOpen, setIsOpen] = useState(false);
 
-  const { data, isLoading } = useGetUserShareQuery({});
+  const { data, isLoading } = useGetUserShareQuery({
+    type: "video",
+    id: post?.post_id,
+    qr_code: 1,
+  });
 
   // const dispatch = useDispatch();
   const handleClose = () => {
@@ -45,8 +49,8 @@ const ShareOverlay: React.FC<any> = ({
   if (!alertVisible && !isClosing) return null;
 
   const shareUrl = data?.data?.link;
+  const contentUrl = data?.data?.content;
   const qrUrl = data?.data?.qrcode?.data;
-  const appDownloadLink = config?.app_download_link;
 
   const isIOSApp = () => {
     return (
@@ -131,32 +135,50 @@ const ShareOverlay: React.FC<any> = ({
 
   const handleShare = () => {
     if (isIOSApp()) {
-      sendEventToNative("saveImage", shareUrl);
+      sendEventToNative("saveImage", shareUrl); // shareUrl should be base64
     } else {
-      const qrCanvas = document.querySelector("canvas"); // Select the canvas element
-
-      if (qrCanvas) {
-        const imageType = "image/png"; // Change to "image/jpeg" for JPG
-        const imageUrl = qrCanvas.toDataURL(imageType); // Convert canvas to data URL
-
-        // Create a temporary link to trigger the download
-        const link = document.createElement("a");
-        link.href = imageUrl;
-        link.download = "QRCode.png"; // Set file name and extension
-        document.body.appendChild(link); // Append link to the body
-        link.click(); // Trigger download
-        document.body.removeChild(link); // Remove link after download
-      } else {
-        console.error("QR code canvas not found.");
+      if (!qrUrl.startsWith("data:image")) {
+        console.error("Invalid base64 image format.");
+        return;
       }
+
+      const link = document.createElement("a");
+      link.href = qrUrl;
+      link.download = "QRCode.png"; // or .jpg if it's a jpeg base64
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
   };
 
+  // const handleShare = () => {
+  //   if (isIOSApp()) {
+  //     sendEventToNative("saveImage", shareUrl);
+  //   } else {
+  //     const qrCanvas = document.querySelector("canvas"); // Select the canvas element
+
+  //     if (qrCanvas) {
+  //       const imageType = "image/png"; // Change to "image/jpeg" for JPG
+  //       const imageUrl = qrCanvas.toDataURL(imageType); // Convert canvas to data URL
+
+  //       // Create a temporary link to trigger the download
+  //       const link = document.createElement("a");
+  //       link.href = imageUrl;
+  //       link.download = "QRCode.png"; // Set file name and extension
+  //       document.body.appendChild(link); // Append link to the body
+  //       link.click(); // Trigger download
+  //       document.body.removeChild(link); // Remove link after download
+  //     } else {
+  //       console.error("QR code canvas not found.");
+  //     }
+  //   }
+  // };
+
   const handleAppCopy = () => {
     if (isIOSApp()) {
-      sendEventToNative("copyAppdownloadUrl", appDownloadLink);
+      sendEventToNative("copyAppdownloadUrl", contentUrl);
     } else {
-      navigator.clipboard.writeText(appDownloadLink).then(() => {
+      navigator.clipboard.writeText(contentUrl).then(() => {
         dispatch(
           showToast({
             message: "复制成功",
@@ -169,9 +191,9 @@ const ShareOverlay: React.FC<any> = ({
 
   const handleLinkCopy = () => {
     if (isIOSApp()) {
-      sendEventToNative("copyAppdownloadUrl", shareUrl);
+      sendEventToNative("copyAppdownloadUrl", contentUrl);
     } else {
-      navigator.clipboard.writeText(shareUrl).then(() => {
+      navigator.clipboard.writeText(contentUrl).then(() => {
         dispatch(
           showToast({
             message: "复制成功",

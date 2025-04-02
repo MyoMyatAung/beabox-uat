@@ -87,7 +87,10 @@ export const homeApi = createApi({
       query: () => convertToSecureUrl(`posts/following`),
     }),
     getUserShare: builder.query({
-      query: () => convertToSecureUrl(`user/share/info`),
+      query: ({ type, id, qr_code }) =>
+        convertToSecureUrl(
+          `user/share/info?type=${type}&id=${id}&qr_code=${qr_code}`
+        ),
     }),
 
     likePost: builder.mutation<void, { post_id: any; count: any }>({
