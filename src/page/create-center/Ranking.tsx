@@ -14,6 +14,9 @@ import "swiper/css/autoplay";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules"; // Import Swiper's autoplay module
 import InfinitLoad from "@/components/shared/infinit-load";
+import { useShareInfoMutation } from "@/store/api/profileApi";
+import logo from "@/assets/logo.svg";
+
 
 const ranges = [
   { value: "today", title: "今日" },
@@ -24,6 +27,7 @@ const ranges = [
 
 const Ranking = () => {
   const user = useSelector((state: any) => state?.persist?.user);
+  const id = user?.id;
   const [ad, setAd] = useState([]);
   const [rankingList, setRankingList] = useState<any>([]);
   const [totalData, setTotalData] = useState<number>(0);
@@ -31,6 +35,78 @@ const Ranking = () => {
   const [showHeader, setShowHeader] = useState(false);
   const headerRef = useRef(null);
   const { applicationData } = useSelector((state: any) => state.explore);
+  const [isCopied2, setIsCopied2] = useState(false);
+  const [cachedDownloadLink, setCachedDownloadLink] = useState(null);
+  const [shareInfo, { data: shareData, isLoading: shareLoading }] =
+    useShareInfoMutation();
+  // console.log(shareData, "share data");
+  useEffect(() => {
+    const fetchShareInfo = async () => {
+      try {
+        const { data } = await shareInfo({ id });
+        const appDownloadLink = data?.data?.link;
+        setCachedDownloadLink(appDownloadLink);
+      } catch (error) {
+        console.error("Error fetching share info:", error);
+      }
+    };
+
+    fetchShareInfo();
+  }, [id]);
+
+  const isIOSApp = () => {
+    return (
+      (window as any).webkit &&
+      (window as any).webkit.messageHandlers &&
+      (window as any).webkit.messageHandlers.jsBridge
+    );
+  };
+
+  const sendEventToNative = (name: string, text: string) => {
+    if (
+      (window as any).webkit &&
+      (window as any).webkit.messageHandlers &&
+      (window as any).webkit.messageHandlers.jsBridge
+    ) {
+      (window as any).webkit.messageHandlers.jsBridge.postMessage({
+        eventName: name,
+        value: text,
+      });
+    }
+  };
+
+  const handleCopy2 = async () => {
+    // If we already have a cached link, use it
+    if (cachedDownloadLink) {
+      copyToClipboard(cachedDownloadLink);
+      return;
+    }
+
+    try {
+      const { data } = await shareInfo({ id });
+      const appDownloadLink = data?.data?.link;
+      setCachedDownloadLink(appDownloadLink);
+      copyToClipboard(appDownloadLink);
+    } catch (error) {
+      console.error("Error fetching share info:", error);
+    }
+  };
+
+  const copyToClipboard = (link) => {
+    if (isIOSApp()) {
+      sendEventToNative("copyAppdownloadUrl", link);
+    } else {
+      navigator.clipboard
+        .writeText(link)
+        .then(() => {
+          setIsCopied2(true);
+          setTimeout(() => setIsCopied2(false), 2000);
+        })
+        .catch((err) => {
+          console.error("Failed to copy text: ", err);
+        });
+    }
+  };
 
   const [page, setPage] = useState(1);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -124,12 +200,41 @@ const Ranking = () => {
   return (
     <div className="">
       <div className="ccbg fixed top-0 left-0 "></div>
+      {isCopied2 ? (
+        <div className="fixed w-full h-screen bg-[#000000CC]  z-[3000] top-0 left-0">
+          <div className="w-full z-[1300] absolute top-[80vh] flex justify-center">
+            <div className="text-[14px] bg-[#191721] px-2 py-1 rounded-lg w-[103px] flex items-center gap-2 text-center">
+              <img src={logo} className="w-5" alt="" />
+              <span>复制成功</span>
+            </div>
+          </div>
+          {/* 1 */}
+        </div>
+      ) : (
+        ""
+      )}
       <div className="relative z-50">
-        <div className="pt-5 z-50">
+        <div className="pt-5 z-50 flex justify-between items-center">
+          <h1 className="text-[18px] opacity-0 text-center">排行榜</h1>
           <h1 className="text-[18px] text-center">排行榜</h1>
+          <div onClick={() => handleCopy2()} className="new_share_button mr-3">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="21"
+              height="16"
+              viewBox="0 0 21 16"
+              fill="none"
+            >
+              <path
+                d="M18.3644 9.14101L18.3646 9.14104L12.3285 15.1769C12.2574 15.248 12.1507 15.2697 12.0564 15.2309C11.9634 15.1923 11.9024 15.101 11.9024 15.0004V12.0162V11.2402L11.1269 11.2666C5.31469 11.4646 2.42333 13.3101 1.58207 13.9633H1.5473L1.32893 14.1759C1.25101 14.2517 1.13063 14.2688 1.03267 14.215C0.934575 14.1602 0.885528 14.0493 0.908499 13.943L0.908565 13.9427L0.908616 13.9425C0.917513 13.9049 1.42645 11.7536 2.96879 9.54177C4.51457 7.32496 7.06877 5.08129 11.2063 4.78322L11.9024 4.73307V4.03516V0.999607C11.9024 0.898961 11.9634 0.80759 12.0565 0.768965L11.7693 0.0761493L12.0559 0.76923C12.1503 0.730194 12.2572 0.751864 12.3284 0.823053L19.3291 7.82345C19.3768 7.87123 19.4028 7.9349 19.4028 7.99999C19.4028 8.06511 19.3768 8.12876 19.3291 8.1765L18.3644 9.14101Z"
+                stroke="white"
+                stroke-width="1.5"
+              />
+            </svg>
+          </div>
         </div>
         <div className="test">
-          <div className=" relative pt-[10px]">
+          <div className=" relative pt-[10px] hidden">
             <Swiper
               className=""
               slidesPerView={1.5}
