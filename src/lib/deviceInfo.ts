@@ -1,5 +1,8 @@
 // Device information service for webview integration
 
+/**
+ * Device information interface
+ */
 interface DeviceInfo {
   deviceName: string;
   uuid: string;
@@ -7,48 +10,116 @@ interface DeviceInfo {
   appVersion: string;
 }
 
+// Application version - single source of truth
+const APP_VERSION = '1.1.0.6';
+
+/**
+ * Generate a UUID v4
+ * @returns a random UUID
+ */
+const generateUUID = (): string => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+};
+
+/**
+ * Get or create a persistent UUID for this device/browser
+ */
+const getPersistentUUID = (): string => {
+  const storageKey = 'app_device_uuid';
+  let uuid = localStorage.getItem(storageKey);
+  
+  if (!uuid) {
+    uuid = generateUUID();
+    try {
+      localStorage.setItem(storageKey, uuid);
+    } catch {
+      console.warn('Could not store UUID in localStorage');
+    }
+  }
+  
+  return uuid;
+};
+
+/**
+ * Detect device name from user agent
+ */
+const detectDeviceName = (): string => {
+  const ua = navigator.userAgent;
+  const platform = navigator.platform;
+  
+  // Check for mobile devices first
+  if (/iPhone|iPad|iPod/.test(ua)) {
+    return /iPad/.test(ua) ? 'iPad' : 'iPhone';
+  }
+  
+  if (/Android/.test(ua)) {
+    return 'Android Device';
+  }
+  
+  // Desktop detection
+  if (/Win/.test(platform)) {
+    return 'Windows Device';
+  }
+  
+  if (/Mac/.test(platform)) {
+    return 'Mac Device';
+  }
+  
+  if (/Linux/.test(platform)) {
+    return 'Linux Device';
+  }
+  
+  // Fallback
+  return 'Unknown Device';
+};
+
 // Default device info for web browsers
 const defaultDeviceInfo: DeviceInfo = {
-  deviceName: 'Web Browser',
-  uuid: 'web-browser-uuid',
+  deviceName: detectDeviceName(),
+  uuid: getPersistentUUID(),
   osVersion: navigator.userAgent,
-  appVersion: '1.0.0'
+  appVersion: APP_VERSION
 };
 
 let deviceInfo: DeviceInfo = { ...defaultDeviceInfo };
 
-// Define custom event type for device info
+/**
+ * Device info event from native applications
+ */
 interface DeviceInfoEvent extends CustomEvent {
-  detail: {
-    deviceName?: string;
-    uuid?: string;
-    osVersion?: string;
-    appVersion?: string;
-  };
+  detail: Partial<DeviceInfo>;
 }
 
-// Function to initialize device info listener
+/**
+ * Initialize device info listener for WebView communication
+ */
 export const initDeviceInfoListener = (): void => {
-  // Listen for the custom event from native app
   window.addEventListener('getDeviceInfo', ((event: DeviceInfoEvent) => {
     if (event.detail) {
       deviceInfo = {
-        deviceName: event.detail.deviceName || defaultDeviceInfo.deviceName,
-        uuid: event.detail.uuid || defaultDeviceInfo.uuid,
-        osVersion: event.detail.osVersion || defaultDeviceInfo.osVersion,
-        appVersion: "1.0.7.5"
+        ...defaultDeviceInfo,
+        ...event.detail,
       };
       console.log('Device info received:', deviceInfo);
     }
   }) as EventListener);
 };
 
-// Function to get current device info
+/**
+ * Get current device information
+ */
 export const getDeviceInfo = (): DeviceInfo => {
-  return deviceInfo;
+  return { ...deviceInfo };
 };
 
-// Function to manually set device info (for testing or direct setting)
+/**
+ * Set device information manually
+ * @param info Partial device information to update
+ */
 export const setDeviceInfo = (info: Partial<DeviceInfo>): void => {
   deviceInfo = {
     ...deviceInfo,
@@ -56,14 +127,28 @@ export const setDeviceInfo = (info: Partial<DeviceInfo>): void => {
   };
 };
 
-// Function to detect if running in iOS WebView
+/**
+ * Check if running in an iOS WebView
+ */
 export const isIOSWebView = (): boolean => {
   return Boolean(
     (window as unknown as { webkit?: { messageHandlers?: { jsBridge?: unknown } } }).webkit?.messageHandlers?.jsBridge
   );
 };
 
-// Function to detect if running in any mobile WebView
+/**
+ * Check if running in an Android WebView
+ */
+export const isAndroidWebView = (): boolean => {
+  return Boolean(
+    (window as unknown as { Android?: unknown }).Android ||
+    navigator.userAgent.includes('wv')
+  );
+};
+
+/**
+ * Check if running in any mobile WebView
+ */
 export const isMobileWebView = (): boolean => {
-  return isIOSWebView();
+  return isIOSWebView() || isAndroidWebView();
 }; 
