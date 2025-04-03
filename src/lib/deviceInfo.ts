@@ -14,139 +14,104 @@ interface DeviceInfo {
 const APP_VERSION = '1.1.0.7';
 
 /**
- * Simple but fast hash function to generate consistent device fingerprint 
+ * Generate a UUID v4
+ * @returns a random UUID
  */
-const simpleHash = (str: string): string => {
-  let hash = 0;
-  if (str.length === 0) return hash.toString(36);
-  
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32bit integer
-  }
-  
-  // Convert to alphanumeric format that looks like a UUID
-  const hashStr = (hash & 0x7FFFFFFF).toString(36);
-  // Format like a UUID to maintain compatibility
-  return `${hashStr.padStart(8, '0')}-${hashStr.slice(0, 4)}-4${hashStr.slice(4, 7)}-${hashStr.slice(7, 11)}-${hashStr.slice(11, 23).padEnd(12, '0')}`;
+const generateUUID = (): string => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
 };
 
 /**
- * Gets a canvas fingerprint that works across browsers including Safari
+ * Get or create a persistent UUID for this device/browser using IndexedDB
+ * Returns a promise that resolves to the UUID
  */
-const getCanvasFingerprint = (): string => {
-  try {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return '';
+const getPersistentUUIDFromIndexedDB = async (): Promise<string> => {
+  const storageKey = 'app_device_uuid';
+  
+  return new Promise<string>((resolve) => {
+    // Try to get UUID from IndexedDB
+    const request = indexedDB.open('AppDatabase', 1);
     
-    canvas.width = 200;
-    canvas.height = 50;
+    request.onupgradeneeded = () => {
+      const db = request.result;
+      if (!db.objectStoreNames.contains('deviceInfo')) {
+        db.createObjectStore('deviceInfo');
+      }
+    };
     
-    // Text with different styles
-    ctx.textBaseline = 'top';
-    ctx.font = '14px Arial';
-    ctx.fillStyle = 'rgba(100, 150, 200, 0.5)';
-    ctx.fillRect(10, 10, 100, 30);
-    ctx.fillStyle = 'rgba(200, 100, 150, 0.7)';
-    ctx.fillText('BeaBoxFP', 15, 15);
+    request.onsuccess = () => {
+      const db = request.result;
+      const transaction = db.transaction('deviceInfo', 'readwrite');
+      const store = transaction.objectStore('deviceInfo');
+      
+      const getRequest = store.get(storageKey);
+      
+      getRequest.onsuccess = () => {
+        let uuid: string | null = getRequest.result;
+        
+        if (!uuid) {
+          uuid = generateUUID();
+          store.put(uuid, storageKey);
+        }
+        
+        resolve(uuid);
+      };
+      
+      getRequest.onerror = () => {
+        console.warn('Could not retrieve UUID from IndexedDB');
+        const uuid = generateUUID();
+        resolve(uuid);
+      };
+    };
     
-    // Add some shapes with gradients
-    const gradient = ctx.createLinearGradient(0, 0, 170, 0);
-    gradient.addColorStop(0, "magenta");
-    gradient.addColorStop(0.5, "blue");
-    gradient.addColorStop(1.0, "red");
-    ctx.fillStyle = gradient;
-    ctx.fillRect(30, 30, 120, 10);
-    
-    return canvas.toDataURL().slice(0, 64);
-  } catch (e) {
-    console.warn('Canvas fingerprinting not available:', e);
-    return '';
-  }
+    request.onerror = () => {
+      console.warn('Could not open IndexedDB, falling back to localStorage');
+      // Fallback to localStorage
+      let uuid = localStorage.getItem(storageKey);
+      
+      if (!uuid) {
+        uuid = generateUUID();
+        try {
+          localStorage.setItem(storageKey, uuid);
+        } catch {
+          console.warn('Could not store UUID in localStorage');
+        }
+      }
+      
+      resolve(uuid);
+    };
+  });
 };
 
-// Define types for non-standard browser properties
-interface NavigatorExtras {
-  deviceMemory?: number;
-}
-
 /**
- * Get or create a persistent UUID for this device/browser using multiple techniques
- * for resilience across browsers and cache clearing
+ * Get or create a persistent UUID for this device/browser
+ * Maintains backward compatibility with synchronous API
  */
 const getPersistentUUID = (): string => {
   const storageKey = 'app_device_uuid';
-  
-  // Try to get from localStorage first
   let uuid = localStorage.getItem(storageKey);
   
-  // Try to get from sessionStorage if not in localStorage
   if (!uuid) {
-    uuid = sessionStorage.getItem(storageKey);
-  }
-  
-  // Try to get from cookies if not in storage
-  if (!uuid) {
-    const cookieMatch = document.cookie.match(new RegExp(`(^| )${storageKey}=([^;]+)`));
-    if (cookieMatch) {
-      uuid = cookieMatch[2];
-    }
-  }
-  
-  // If we still don't have a UUID, generate one from device fingerprint
-  if (!uuid) {
-    // Access non-standard properties safely
-    const navigatorExtras = navigator as Navigator & NavigatorExtras;
-    
-    // Collect various browser and device characteristics
-    const components = [
-      navigator.userAgent,
-      navigator.language,
-      navigator.languages?.join(',') || '',
-      screen.colorDepth,
-      screen.width + 'x' + screen.height,
-      new Date().getTimezoneOffset(),
-      navigator.hardwareConcurrency || 1,
-      navigatorExtras.deviceMemory || 1,
-      !!navigator.cookieEnabled,
-      navigator.platform,
-      getCanvasFingerprint()
-    ];
-    
-    uuid = simpleHash(components.join('||'));
-    
-    // Store in multiple locations for persistence
+    uuid = generateUUID();
     try {
       localStorage.setItem(storageKey, uuid);
-      sessionStorage.setItem(storageKey, uuid);
-      
-      // Set as cookie that expires in 1 year
-      const expiry = new Date();
-      expiry.setFullYear(expiry.getFullYear() + 1);
-      document.cookie = `${storageKey}=${uuid}; expires=${expiry.toUTCString()}; path=/`;
-      
-      // Try IndexedDB storage (often persists when localStorage doesn't)
-      if (window.indexedDB) {
-        const request = indexedDB.open('DeviceDatabase', 1);
-        request.onupgradeneeded = function(e) {
-          const db = (e.target as IDBOpenDBRequest).result;
-          if (db && !db.objectStoreNames.contains('deviceInfo')) {
-            db.createObjectStore('deviceInfo', { keyPath: 'id' });
-          }
-        };
-        request.onsuccess = function(e) {
-          const db = (e.target as IDBOpenDBRequest).result;
-          const transaction = db.transaction(['deviceInfo'], 'readwrite');
-          const store = transaction.objectStore('deviceInfo');
-          store.put({ id: 'fingerprint', value: uuid });
-        };
-      }
-    } catch (e) {
-      console.warn('Could not store device fingerprint:', e);
+    } catch {
+      console.warn('Could not store UUID in localStorage');
     }
   }
+  
+  // Initialize IndexedDB storage in the background
+  void getPersistentUUIDFromIndexedDB().then((persistentId: string) => {
+    if (persistentId !== uuid) {
+      setDeviceInfo({ uuid: persistentId });
+    }
+  }).catch((err: Error) => {
+    console.warn('IndexedDB error:', err);
+  });
   
   return uuid;
 };
