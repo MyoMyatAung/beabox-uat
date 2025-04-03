@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { convertToSecurePayload, convertToSecureUrl } from "@/lib/encrypt";
 import { decryptWithAes } from "@/lib/decrypt";
+import { getDeviceInfo } from "@/lib/deviceInfo";
 
 export const createCenterApi = createApi({
   reducerPath: "createCenterApi",
@@ -10,9 +11,13 @@ export const createCenterApi = createApi({
     prepareHeaders: (headers, { getState }) => {
       const state = getState() as any;
       const accessToken = state.persist?.user?.token;
+      const deviceInfo = getDeviceInfo();
+      
       headers.set("encrypt", "true");
       headers.set("Accept-Language", "cn");
       headers.set("X-Client-Version", "2001");
+      headers.set("Device-Id", deviceInfo.uuid);
+      headers.set("User-Agent", deviceInfo.osVersion);
       if (accessToken) {
         headers.set("Authorization", `Bearer ${accessToken}`);
       }

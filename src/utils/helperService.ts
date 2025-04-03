@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { decryptWithAes } from "@/lib/decrypt";
 import { convertToSecureUrl } from "@/lib/encrypt";
+import { getDeviceInfo } from "@/lib/deviceInfo";
 import axios from "axios";
 
 // Create an instance of Axios
@@ -13,11 +14,15 @@ const api = axios.create({
 });
 
 export const getAdsData = async () => {
+  const deviceInfo = getDeviceInfo();
+  
   try {
     const response: any = await api.get(convertToSecureUrl("/app/ads"), {
       headers: {
         "X-Client-Version": 2001,
         "Accept-Language": "cn",
+        "Device-Id": deviceInfo.uuid,
+        "User-Agent": deviceInfo.osVersion,
         encrypt: "true",
       },
     });
