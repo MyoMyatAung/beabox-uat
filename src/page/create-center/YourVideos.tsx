@@ -82,8 +82,6 @@ const YourVideos = () => {
   // }, [editPost]);
   // console.log(newData?.data?.creator_center_post_filter);
 
-  console.log(isFetching, "isFetching");
-
   if (editPost) {
     return (
       <UploadVideos

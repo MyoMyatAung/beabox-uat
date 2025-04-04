@@ -116,12 +116,15 @@ const Recycle = () => {
     if (posts) setDeleteItems([...posts?.map((item: any) => item?.post_id)]);
   };
 
-  const postDeleteHandler = () => {
-    deleteItems?.map(async (item: any) => {
-      await deletePost({ id: item });
-    });
+  const postDeleteHandler = async () => {
+    await restorePost({ id: deleteItems, type: "delete" });
     setDeleteItems([]);
     setShow(false);
+    // deleteItems?.map(async (item: any) => {
+    //   await deletePost({ id: item });
+    // });
+    // setDeleteItems([]);
+    // setShow(false);
   };
 
   // const postDeleteHandler = async () => {
@@ -154,6 +157,10 @@ const Recycle = () => {
       setPage((prev) => prev + 1);
     }
   };
+
+  useEffect(() => {
+    refetch();
+  }, []);
 
   if (isLoading && page == 1) return <Loader />;
   return (
