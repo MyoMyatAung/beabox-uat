@@ -91,7 +91,9 @@ body::-webkit-scrollbar {
 }
 
 .gradient-bg {
-  @apply bg-gradient-to-r to-[#CD3EFF] from-[#FFB2E0];
+  background: linear-gradient(324.57deg, #cd3eff 43.64%, #ffb2e0 100%);
+
+  /* @apply bg-gradient-to-r to-[#CD3EFF] from-[#FFB2E0]; */
 }
 
 .gradient-bg2 {

@@ -9,14 +9,13 @@ import {
 import { UsersRound } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import "swiper/css";
-import "swiper/css/autoplay";
+// import "swiper/css";
+// import "swiper/css/autoplay";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules"; // Import Swiper's autoplay module
 import InfinitLoad from "@/components/shared/infinit-load";
 import { useShareInfoMutation } from "@/store/api/profileApi";
 import logo from "@/assets/logo.svg";
-
 
 const ranges = [
   { value: "today", title: "今日" },
@@ -92,7 +91,7 @@ const Ranking = () => {
     }
   };
 
-  const copyToClipboard = (link) => {
+  const copyToClipboard = (link: any) => {
     if (isIOSApp()) {
       sendEventToNative("copyAppdownloadUrl", link);
     } else {
@@ -233,7 +232,7 @@ const Ranking = () => {
             </svg>
           </div>
         </div>
-        <div className="test">
+        {/* <div className="test">
           <div className=" relative pt-[10px] hidden">
             <Swiper
               className=""
@@ -268,9 +267,9 @@ const Ranking = () => {
               ))}
             </Swiper>
           </div>
-        </div>
+        </div> */}
         <div className="pb-5">
-          <Top3 rankingData={rankingList} />
+          <Top3 rankingData={rankingList} refetch={refetch} />
         </div>
         <div ref={headerRef} className="sticky w-full top-0"></div>
 
@@ -336,7 +335,7 @@ const Ranking = () => {
             rankingList?.slice(3)?.map((item: any, index: any) => (
               <div className="flex items-center gap-3" key={item?.id}>
                 <p className="text-[16px] font-semibold w-8">{item?.rank}</p>
-                <RankingCard data={item} />
+                <RankingCard data={item} refetch={refetch} />
               </div>
             ))
           ) : (

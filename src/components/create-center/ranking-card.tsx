@@ -16,7 +16,7 @@ const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
   return new TextDecoder().decode(data);
 };
 
-const RankingCard = ({ data }: { data: any }) => {
+const RankingCard = ({ data, refetch }: { data: any; refetch: any }) => {
   const user = useSelector((state: any) => state?.persist?.user);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
   const me = useSelector((state: any) => state?.persist?.user?.id);
@@ -56,6 +56,8 @@ const RankingCard = ({ data }: { data: any }) => {
 
     loadAndDecryptPhoto();
   }, [data?.photo]);
+
+  // console.log(data);
   return (
     <div className="w-full flex justify-between items-center py-1">
       <Link
@@ -81,7 +83,12 @@ const RankingCard = ({ data }: { data: any }) => {
       {data?.id == me ? (
         <></>
       ) : (
-        <FollowBtn id={data?.id} followBack={data?.follows_back} />
+        <FollowBtn
+          id={data?.id}
+          userData={DataTransferItemList}
+          followBack={data?.is_followed}
+          refetch={refetch}
+        />
       )}
     </div>
   );

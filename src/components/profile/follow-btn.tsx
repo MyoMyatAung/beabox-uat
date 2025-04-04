@@ -3,8 +3,9 @@ import { useChangeFollowStatusMutation } from "@/store/api/profileApi";
 import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import loader from "@/page/home/vod_loader.gif";
 
-const FollowBtn = ({ id, followBack }: any) => {
+const FollowBtn = ({ id, followBack, refetch }: any) => {
   const [follow, setFollow] = useState(followBack ? true : false);
   const user = useSelector((state: any) => state?.persist?.user);
   const dispatch = useDispatch();
@@ -15,10 +16,9 @@ const FollowBtn = ({ id, followBack }: any) => {
       follow_user_id: id,
       status: followBack ? "unfollow" : "follow",
     });
-    // await refetch();
+    await refetch();
     setFollow(!follow);
   };
-  // console.log(data);
   return (
     <button
       disabled={isLoading}
@@ -33,7 +33,14 @@ const FollowBtn = ({ id, followBack }: any) => {
           : "gradient-bg hover:gradient-bg"
       }`}
     >
-      {follow ? "已关注" : "关注"}
+      {isLoading ? (
+        <img src={loader} alt="" className="w-12" />
+      ) : follow ? (
+        "已关注"
+      ) : (
+        "关注"
+      )}
+      {/* {follow ? "已关注" : "关注"} */}
     </button>
   );
 };

@@ -112,9 +112,17 @@ import AvatarImage from "../avatar/avatar-image";
 import { Link } from "react-router-dom";
 import { paths } from "@/routes/paths";
 
-const TopRankCard = ({ data, rank }: { data: any; rank: any }) => {
+const TopRankCard = ({
+  data,
+  rank,
+  refetch,
+}: {
+  data: any;
+  rank: any;
+  refetch: any;
+}) => {
   const me = useSelector((state: any) => state?.persist?.user?.id);
-  console.log(data?.photo);
+  // console.log(data);
   return (
     <div
       className={`
@@ -160,29 +168,6 @@ const TopRankCard = ({ data, rank }: { data: any; rank: any }) => {
           />
         </div>
       )}
-      {/* <div className="bg-[#FFFFFF52] w-10 h-10 rounded-full flex justify-center items-center border relative">
-        {data?.photo ? (
-          <ImageWithPlaceholder
-            src={data?.photo}
-            width={""}
-            height={""}
-            className="w-10 h-10 rounded-full"
-            alt=""
-          />
-
-        ) : (
-          <>
-            <BsPersonFill size={24} />
-            <FaCrown
-              className={` ${
-                (rank == 1 && "text-[#F7E29B]") ||
-                (rank == 2 && "text-[#D7D7D8]") ||
-                (rank == 3 && "text-[#FF9C7B] ")
-              }  absolute -top-3 -rotate-45 -left-2`}
-            />
-          </>
-        )}
-      </div> */}
       <p className="text-[14px] pt-3 z-50">
         {data?.nickname ? data?.nickname : "未知"}
       </p>
@@ -191,10 +176,20 @@ const TopRankCard = ({ data, rank }: { data: any; rank: any }) => {
       </p>
       {data?.id == me ? (
         <div className="opacity-0">
-          <RankBtn id={data?.id} followBack={data?.follows_back} rank={rank} />
+          <RankBtn
+            id={data?.id}
+            followBack={data?.is_followed}
+            rank={rank}
+            refetch={refetch}
+          />
         </div>
       ) : (
-        <RankBtn id={data?.id} followBack={data?.follows_back} rank={rank} />
+        <RankBtn
+          id={data?.id}
+          followBack={data?.is_followed}
+          rank={rank}
+          refetch={refetch}
+        />
       )}
     </div>
   );
