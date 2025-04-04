@@ -32,6 +32,7 @@ const VideoTabs = () => {
     // console.log("Current tab value:", value);
     dispatch(setDefaultTab(value));
   };
+  console.log(user, "user data");
   return (
     <Tabs
       defaultValue={user?.token ? defaultTab : "liked"}
@@ -121,7 +122,7 @@ const VideoTabs = () => {
             <FaHeart />
             <div
               className={`w-[52px] h-[3px] ${
-                defaultTab == "liked" && "bg-white"
+                (!user?.token || defaultTab == "liked") && "bg-white"
               }`}
             ></div>
             {/* 已点赞视频 */}
