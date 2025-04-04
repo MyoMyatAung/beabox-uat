@@ -11,7 +11,7 @@ const RecyclePopup = ({
           <p className="text-[16px] w-[280px] text-[#BBBBBB] text-center">
             {action == "delete"
               ? `您确定要永久删除此视频吗？此操作无法恢复。`
-              : `Are you sure this video will be restored.`}
+              : `您确定这个视频会被恢复吗。`}
           </p>
         </div>
         <div className="bg-[#222222] h-[0.3px] mt-5 w-full"></div>

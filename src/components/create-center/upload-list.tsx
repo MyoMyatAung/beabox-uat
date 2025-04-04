@@ -37,20 +37,36 @@ const UploadList = ({
 
   return (
     <div className="p-5 flex flex-col gap-5">
-      {groupedData?.map((item: any) => (
-        <div key={item?.date}>
-          <p className="text-[10px] text-[#FFEAEA] py-5">
-            {item?.date === today ? "今天" : item?.date}
-          </p>
-          <div className="flex flex-col gap-4">
-            {item?.list?.map((item: any) => (
-              <div onClick={() => handleEdit(item)}>
-                <UploadCard item={item} config={config} imgdomain={imgdomain} />
+      {groupedData?.length ? (
+        <>
+          {groupedData?.map((item: any) => (
+            <div key={item?.date}>
+              <p className="text-[10px] text-[#FFEAEA] py-5">
+                {item?.date === today ? "今天" : item?.date}
+              </p>
+              <div className="flex flex-col gap-4">
+                {item?.list?.map((item: any) => (
+                  <div onClick={() => handleEdit(item)}>
+                    <UploadCard
+                      item={item}
+                      config={config}
+                      imgdomain={imgdomain}
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+          ))}
+        </>
+      ) : (
+        <div>
+          <div className="flex flex-col justify-center items-center w-full mt-[150px]">
+            <NoVideo />
+            <p className="text-[12px] text-[#888]">这里空空如也～</p>
           </div>
         </div>
-      ))}
+      )}
+
       <InfinitLoad data={list} fetchData={fetchMoreData} hasMore={hasMore} />
     </div>
   );

@@ -11,6 +11,7 @@ import {
 import { useEffect, useState } from "react";
 import UploadImg from "@/components/create-center/upload-img";
 import RecyclePopup from "@/components/create-center/recycle-popup";
+import { NoVideo } from "@/assets/profile";
 
 const SelectBtn = ({
   deleteItems,
@@ -116,12 +117,15 @@ const Recycle = () => {
     if (posts) setDeleteItems([...posts?.map((item: any) => item?.post_id)]);
   };
 
-  const postDeleteHandler = () => {
-    deleteItems?.map(async (item: any) => {
-      await deletePost({ id: item });
-    });
+  const postDeleteHandler = async () => {
+    await restorePost({ id: deleteItems, type: "delete" });
     setDeleteItems([]);
     setShow(false);
+    // deleteItems?.map(async (item: any) => {
+    //   await deletePost({ id: item });
+    // });
+    // setDeleteItems([]);
+    // setShow(false);
   };
 
   // const postDeleteHandler = async () => {
@@ -154,6 +158,10 @@ const Recycle = () => {
       setPage((prev) => prev + 1);
     }
   };
+
+  useEffect(() => {
+    refetch();
+  }, []);
 
   if (isLoading && page == 1) return <Loader />;
   return (
@@ -188,22 +196,32 @@ const Recycle = () => {
             }
           />
         </div>
-        <div className="space-y-3 pb-24">
-          {posts?.map((item: any, index: any) => (
-            <DeleteCard
-              key={index}
-              index={index}
-              setDeleteItems={setDeleteItems}
-              deleteItems={deleteItems}
-              item={item}
+        {posts?.length ? (
+          <div className="space-y-3 pb-24">
+            {posts?.map((item: any, index: any) => (
+              <DeleteCard
+                key={index}
+                index={index}
+                setDeleteItems={setDeleteItems}
+                deleteItems={deleteItems}
+                item={item}
+              />
+            ))}
+            <InfinitLoad
+              data={posts}
+              fetchData={fetchMoreData}
+              hasMore={hasMore}
             />
-          ))}
-          <InfinitLoad
-            data={posts}
-            fetchData={fetchMoreData}
-            hasMore={hasMore}
-          />
-        </div>
+          </div>
+        ) : (
+          <div>
+            <div className="flex flex-col justify-center items-center w-full mt-[150px]">
+              <NoVideo />
+              <p className="text-[12px] text-[#888]">这里空空如也～</p>
+            </div>
+          </div>
+        )}
+
         {deleteItems?.length ? (
           <div className="fixed bottom-0 py-5 w-full z-50 bg-[#16131C]">
             <div className="flex gap-4 mx-5 ">
