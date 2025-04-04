@@ -1,281 +1,226 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from "react";
-import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
-import { useSelector } from "react-redux";
-import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { Carousel } from "react-responsive-carousel";
-import ImageWithPlaceholder from "../explore/comp/imgPlaceHolder.tsx";
-import AsyncDecryptedImage from "@/utils/asyncDecryptedImage.tsx";
-import "swiper/css";
-import "swiper/css/autoplay"; // Import Swiper autoplay styles
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay } from "swiper/modules"; // Import Swiper's autoplay module
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Horin, Play } from "@/assets/profile";
+import { FaHeart } from "react-icons/fa";
+import { MdWatchLater } from "react-icons/md";
+import { useDispatch, useSelector } from "react-redux";
+import LikedVideos from "./video/liked-videos";
+import HistoryVideos from "./video/history-videos";
+import { LuTally3 } from "react-icons/lu";
+import { setDefaultTab } from "@/store/slices/persistSlice";
+import CreatedVideo2 from "./video/create-video2";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useState } from "react";
+import { setSort } from "@/store/slices/profileSlice";
+import { Check } from "lucide-react";
+import upsort from "@/assets/upsort.svg";
 
-const Application: React.FC<any> = () => {
-  const [ad, setAd] = useState([]);
-  const { applicationData, isLoading } = useSelector(
-    (state: any) => state.explore
-  );
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [autoPlay, setAutoPlay] = useState(false);
+const VideoTabs = () => {
+  const user = useSelector((state: any) => state?.persist?.user);
+  const sort = useSelector((state: any) => state.profile.sort);
+  const [isOpen, setIsOpen] = useState(false);
 
-  useEffect(() => {
-    setAutoPlay(true); // Activate autoPlay once on mount
-  }, []);
+  const defaultTab = useSelector((state: any) => state?.persist?.defaultTab);
+  const dispatch = useDispatch();
 
-  // const handleOnChange = (index: number) => {
-  //   setSelectedIndex(index);
-  // };
-
-  const handleOnChange = (swiper: any) => {
-    setSelectedIndex(swiper.realIndex);
+  const handleTabChange = (value: string) => {
+    // console.log("Current tab value:", value);
+    dispatch(setDefaultTab(value));
   };
-
-  // Update carousel only when applicationData changes
-  useEffect(() => {
-    if (applicationData) {
-      setAd(applicationData.carousel);
-    }
-  }, [applicationData]);
-
   return (
-    <SkeletonTheme
-      baseColor="rgba(255, 255, 255, 0.2)"
-      highlightColor="rgba(255, 255, 255, 0.2)"
+    <Tabs
+      defaultValue={user?.token ? defaultTab : "liked"}
+      className="py-5"
+      onValueChange={handleTabChange}
     >
-      <div className="px-[10px] py-[10px] max-w-[480px] mx-auto">
-        {isLoading && (
-          <>
-            {/* Skeleton for Carousel */}
-            <Skeleton
-              height={174}
-              className="rounded-md w-screen xl:w-[600px]"
-            />
-
-            {/* Skeleton for Header */}
-            <div className="mt-[20px] grid grid-rows-4 gap-[5px]">
-              {[...Array(4)].map((_, index) => (
-                <Skeleton key={index} height={44} className="rounded-[6px]" />
-              ))}
-            </div>
-
-            {/* Skeleton for Application Sections */}
-            <div className="mt-[5px]">
-              {[...Array(2)].map((_, sectionIndex) => (
-                <div key={sectionIndex}>
-                  <Skeleton height={20} width={150} className="mt-5" />
-                  <div className="grid grid-cols-5 gap-[20px] mt-[12px]">
-                    {[...Array(5)].map((_, appIndex) => (
-                      <div
-                        key={appIndex}
-                        className="flex flex-col items-center gap-[4px]"
-                      >
-                        <Skeleton
-                          height={53}
-                          width={56}
-                          className="rounded-[6px]"
-                        />
-                        <Skeleton height={10} width={40} />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Skeleton for Footer */}
-            <div className="mt-[20px] mb-[80px]">
-              {[...Array(2)].map((_, index) => (
-                <Skeleton key={index} height={80} className="rounded-[6px]" />
-              ))}
-            </div>
-          </>
-        )}
-
-        {!isLoading && applicationData && (
-          <>
-            {/* Carousel Section */}
-            {/* <Carousel
-              showThumbs={false}
-              showArrows={false}
-              showStatus={false}
-              showIndicators={false}
-              autoPlay={autoPlay}
-              infiniteLoop={true}
-              centerMode={true}
-              centerSlidePercentage={87}
-              selectedItem={selectedIndex}
-              onChange={handleOnChange}
-              interval={3000} // autoplay interval
+      <TabsList className="grid w-full grid-cols-3 z-[1600] bg-transparent sticky top-[100px]">
+        {user?.token ? (
+          defaultTab == "upload" ? (
+            <TabsTrigger
+              className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
+              // onClick={() => dispatch(setDefaultTab("upload"))}
+              value="upload"
+              asChild
             >
-              {ad.map((cc: any, index: number) => (
-                <a
-                  href={cc.url}
-                  target="_blank"
-                  key={index}
-                  className="justify-center h-[172px] items-center px-[8px] flex flex-col relative bg-[#16131C]"
-                >
-                  <AsyncDecryptedImage
-                    className={`rounded-[12px] transition-all duration-300 ${
-                      selectedIndex === index
-                        ? "w-[332px] h-[162px]" // Active slide size
-                        : "w-[290px] h-[148px]" // Non‑active slide size
-                    }`}
-                    imageUrl={cc.image}
-                    alt={`Slide ${index + 1}`}
-                  />
-                </a>
-              ))}
-            </Carousel> */}
-            {/* Custom Dots */}
-            {/* <ul className="flex justify-center items-center gap-[4px] w-full mt-2">
-              {ad.map((_, dotIndex) => (
-                <li
-                  key={dotIndex}
-                  className={`w-[6px] h-[6px] rounded-full ${
-                    selectedIndex === dotIndex ? "bg-white" : "bg-[#888]"
-                  }`}
-                  onClick={() => handleOnChange(dotIndex)}
-                  role="button"
-                  tabIndex={0}
-                ></li>
-              ))}
-            </ul> */}
-            <div className=" relative py-[20px]">
-              <Swiper
-                className=""
-                slidesPerView={1.5}
-                spaceBetween={110}
-                centeredSlides={true}
-                loop={true}
-                autoplay={{ delay: 3000, disableOnInteraction: false }}
-                modules={[Autoplay]}
-                onSlideChange={handleOnChange}
-              >
-                {ad.map((cc: any, index: number) => (
-                  <SwiperSlide className=" w-full rounded-[12px]" key={index}>
-                    <a
-                      href={cc.url}
-                      target="_blank"
-                      className={`flex rounded-[12px] justify-center w-full items-center px-[8px] flex-col relative transition-all duration-300 `}
-                    >
-                      <div className=" w-[332px] h-[162px] px-2 overflow-hidden rounded-[12px]">
-                        <img
-                          className={`object-cove w-full h-full transition-all rounded-[12px] duration-300 ${
-                            selectedIndex === index
-                              ? "p-0 m-0 opacity-100"
-                              : "p-2 opacity-70 "
-                          }`}
-                          src={cc.image}
-                          alt={`Slide ${index + 1}`}
-                        />
-                      </div>
-                    </a>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
+              <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+                <DropdownMenuTrigger asChild>
+                  <span className="flex items-center gap-2 flex-col justify-center">
+                    <div className="w-[52px] h-[3px] bg-transparent"></div>
 
-              <ul className="flex justify-center items-center gap-[10px] w-full  mt-2 absolute bottom-0 left-0">
-                {ad.map((_, dotIndex) => (
-                  <li
-                    key={dotIndex}
-                    className={`w-[6px] h-[6px] rounded-full ${
-                      selectedIndex === dotIndex ? "bg-white" : "bg-[#888]"
-                    }`}
-                    onClick={() => handleOnChange(dotIndex)}
-                    role="button"
-                    tabIndex={0}
-                  ></li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Header Section */}
-            <div className="mt-[20px]">
-              <div className="grid grid-rows-4 gap-[5px]">
-                {applicationData?.header?.length > 0 &&
-                  applicationData?.header.map((header: any) => (
-                    <a href={header.url} target="_blank" key={header.id}>
-                      <ImageWithPlaceholder
-                        className="rounded-md"
-                        alt="Header Image"
-                        width="100%"
-                        height={44}
-                        src={header.image}
-                      />
-                    </a>
-                  ))}
-              </div>
-            </div>
-
-            {/* Application Section */}
-            <div className="mt-[5px]">
-              {applicationData?.application?.length > 0 &&
-                applicationData?.application.map((appSection: any) => (
-                  <div key={appSection.id}>
-                    {appSection?.apps?.length > 0 && (
-                      <h1 className="text-white text-[14px] font-[500] leading-[20px] pb-[12px] pt-5">
-                        {appSection.title}
-                      </h1>
+                    {isOpen ? (
+                      <img src={upsort} alt="" />
+                    ) : (
+                      <Horin active={defaultTab == "upload" ? true : false} />
                     )}
-                    <div className="grid grid-cols-6 gap-[10px]">
-                      {appSection?.apps?.map((app: any) => (
-                        <a
-                          key={app.id}
-                          href={app.url}
-                          target="_blank"
-                          className="flex flex-col justify-center items-center gap-[4px]"
-                        >
-                          {/* <AsyncDecryptedImage
-                            className="w-[52px] h-[52px] rounded-[6px] border-[#222]"
-                            imageUrl={app.image}
-                            alt={app.title}
-                          /> */}
-                          <ImageWithPlaceholder
-                            className="w-[52px] h-[52px] rounded-[6px] border-[#222]"
-                            src={app.image}
-                            width={""}
-                            height={""}
-                            alt={app.title}
-                          />
-                          <h1 className="text-white text-[10px] font-[400]">
-                            {app.title}
-                          </h1>
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-            </div>
+                    {/*  */}
 
-            {/* Footer Section */}
-            <div className="mt-[20px] mb-[80px]">
-              {
-                applicationData?.footer?.length > 0 && (
-                  // applicationData?.footer.map((footer: any) => (
-                  <a
-                    href={applicationData?.footer[0].url}
-                    target="_blank"
-                    key={applicationData?.footer[0].id}
-                  >
-                    <ImageWithPlaceholder
-                      className="mt-[5px] rounded-md"
-                      alt="Footer Image"
-                      width={"100%"}
-                      height={"100%"}
-                      src={applicationData?.footer[0].image}
-                    />
-                  </a>
-                )
-                // ))
-              }
-            </div>
-          </>
+                    <div
+                      className={`w-[52px] h-[3px] ${
+                        defaultTab == "upload" && "bg-white"
+                      }`}
+                    ></div>
+                  </span>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-[97px] bg-[#252525EB] border-0">
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem>
+                      <div
+                        className="w-full flex items-center justify-between text-white"
+                        onClick={() => dispatch(setSort("created_at"))}
+                      >
+                        <p className="text-white text-[12px]">最新</p>
+                        {sort == "created_at" ? <Check /> : <></>}
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <div
+                        className="w-full flex items-center justify-between text-white"
+                        onClick={() => dispatch(setSort("score"))}
+                      >
+                        <p className="text-white text-[12px]">热门</p>
+                        {sort == "score" ? <Check /> : <></>}
+                      </div>
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </TabsTrigger>
+          ) : (
+            <TabsTrigger
+              className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
+              // onClick={() => dispatch(setDefaultTab("upload"))}
+              value="upload"
+              asChild
+            >
+              <span className="flex items-center gap-2 flex-col justify-center">
+                <div className="w-[52px] h-[3px] bg-transparent"></div>
+                <Horin active={defaultTab == "upload" ? true : false} />
+                <div
+                  className={`w-[52px] h-[3px] ${
+                    defaultTab == "upload" && "bg-white"
+                  }`}
+                ></div>
+              </span>
+            </TabsTrigger>
+          )
+        ) : (
+          <></>
         )}
-      </div>
-    </SkeletonTheme>
+        <TabsTrigger
+          className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
+          value="liked"
+          // onClick={() => dispatch(setDefaultTab("liked"))}
+        >
+          <span className="flex items-center gap-2 flex-col justify-center">
+            <div className={`w-[52px] h-[3px] bg-transparent`}></div>
+            <FaHeart />
+            <div
+              className={`w-[52px] h-[3px] ${
+                defaultTab == "liked" && "bg-white"
+              }`}
+            ></div>
+            {/* 已点赞视频 */}
+          </span>
+        </TabsTrigger>
+        <TabsTrigger
+          className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
+          value="history"
+          // onClick={() => dispatch(setDefaultTab("history"))}
+        >
+          <span className="flex items-center gap-2 flex-col justify-center">
+            <div className={`w-[52px] h-[3px] bg-transparent`}></div>
+            <MdWatchLater />
+            {/* 观看历史 */}
+            <div
+              className={`w-[52px] h-[3px] ${
+                defaultTab == "history" && "bg-white"
+              }`}
+            ></div>
+          </span>
+        </TabsTrigger>
+      </TabsList>
+      <TabsContent value="liked">
+        <LikedVideos id={user?.id} />
+      </TabsContent>
+      <TabsContent value="history">
+        <HistoryVideos />
+      </TabsContent>
+      <TabsContent value="upload">
+        <CreatedVideo2 id={user?.id} />
+      </TabsContent>
+    </Tabs>
   );
 };
 
-export default Application;
+export default VideoTabs;
+
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+// import { Play } from "@/assets/profile";
+// import { FaHeart } from "react-icons/fa";
+// import { MdWatchLater } from "react-icons/md";
+// import { useDispatch, useSelector } from "react-redux";
+// import LikedVideos from "./video/liked-videos";
+// import HistoryVideos from "./video/history-videos";
+// import CreatedVideo from "./video/created-video";
+// import { setDefaultTab } from "@/store/slices/persistSlice";
+// import CreatedVideo2 from "./video/create-video2";
+
+// const VideoTabs = () => {
+//   const user = useSelector((state: any) => state?.persist?.user);
+//   const defaultTab = useSelector((state: any) => state?.persist?.defaultTab);
+//   const dispatch = useDispatch();
+//   // console.log(defaultTab, "defaultab");
+//   return (
+//     <Tabs defaultValue={defaultTab ? defaultTab : "liked"} className="py-5">
+//       <TabsList className="grid w-full grid-cols-3 z-[1600] bg-transparent sticky top-[100px] px-5">
+//         {/* {user?.token ? (
+//           <TabsTrigger
+//             className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2"
+//             onClick={() => dispatch(setDefaultTab ? defaultTab : "liked"("upload"))}
+//             value="upload"
+//           >
+//             <span className="flex items-center gap-1">
+//               <Play /> 我的作品
+//             </span>
+//           </TabsTrigger>
+//         ) : (
+//           <></>
+//         )} */}
+//         <TabsTrigger
+//           className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2"
+//           value="liked"
+//           onClick={() => dispatch(setDefaultTab("liked"))}
+//         >
+//           <span className="flex items-center gap-1">
+//             <FaHeart /> 已点赞视频
+//           </span>
+//         </TabsTrigger>
+//         <TabsTrigger
+//           className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2"
+//           value="history"
+//           onClick={() => dispatch(setDefaultTab("history"))}
+//         >
+//           <span className="flex items-center gap-1">
+//             <MdWatchLater /> 观看历史
+//           </span>
+//         </TabsTrigger>
+//       </TabsList>
+//       <TabsContent value="liked">
+//         <LikedVideos id={user?.id} />
+//       </TabsContent>
+//       <TabsContent value="history">
+//         <HistoryVideos />
+//       </TabsContent>
+//       <TabsContent value="upload">
+//         <CreatedVideo2 id={user?.id} />
+//       </TabsContent>
+//     </Tabs>
+//   );
+// };
+
+// export default VideoTabs;

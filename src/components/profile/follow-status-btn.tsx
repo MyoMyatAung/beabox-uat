@@ -14,12 +14,12 @@ const FollowStatusBtn = ({ userData, id, refetch, userLoading }: any) => {
   const [changeFollowStatus, { data, isLoading }] =
     useChangeFollowStatusMutation();
   const handleChangeFollowStatus = async () => {
+    setFollow(!follow);
     await changeFollowStatus({
       follow_user_id: id,
       status: userData?.data?.is_following ? "unfollow" : "follow",
     });
     await refetch();
-    setFollow(!follow);
   };
 
   const drawerHandler = async () => {
@@ -39,18 +39,19 @@ const FollowStatusBtn = ({ userData, id, refetch, userLoading }: any) => {
       disabled={isLoading || userLoading}
       onClick={token ? handleChangeFollowStatus : drawerHandler}
       className={`w-full ${
-        userData?.data?.is_following
+        follow
           ? "bg-[#FFFFFF0F] hover:bg-[#FFFFFF0F]"
           : "gradient-bg hover:gradient-bg"
       } rounded-[12px] z-[1200] h-[51px] flex justify-center items-center`}
     >
-      {isLoading ? (
+      {follow ? "已关注" : "关注"}
+      {/* {isLoading ? (
         <img src={loader} alt="" className="w-12" />
       ) : follow ? (
         "已关注"
       ) : (
         "关注"
-      )}
+      )} */}
     </button>
   );
 };

@@ -134,7 +134,7 @@ const TopRankCard = ({
      flex flex-col items-center w-full justify-center  z-50 rounded-[8px] pt-7 relative`}
     >
       <div className="bg-gradient-to-b from-[#00000000] to-[#000000] absolute top-0 left-0   w-full h-full  rounded-[8px]"></div>
-      <p className="absolute top-2 left-2 text-[#080608] font-semibold text-[16px]">
+      <p className="absolute top-2 left-2 text-[#fff] font-semibold text-[16px]">
         {rank}
       </p>
       {data?.photo ? (

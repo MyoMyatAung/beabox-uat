@@ -15,7 +15,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { setSort } from "@/store/slices/profileSlice";
 import { Check } from "lucide-react";
 import upsort from "@/assets/upsort.svg";
@@ -32,6 +32,11 @@ const VideoTabs = () => {
     // console.log("Current tab value:", value);
     dispatch(setDefaultTab(value));
   };
+  console.log(user, "user data");
+
+  useEffect(() => {
+    if (!user?.token) dispatch(setDefaultTab("liked"));
+  }, []);
   return (
     <Tabs
       defaultValue={user?.token ? defaultTab : "liked"}
