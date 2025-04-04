@@ -8,7 +8,7 @@ const MyRankCard = ({ myrank }: any) => {
   const { data, isLoading, refetch } = useGetMyOwnProfileQuery("", {
     skip: !user,
   });
-  console.log(data?.data);
+  // console.log(data?.data);
   return (
     <div className="w-full h-[68px] bgbg py-3 fixed bottom-[75px] flex items-center justify-between px-5">
       <div className="w-full h-[68px] fixed bottom-[75px] left-0 overflow-hidden bgbg2"></div>
@@ -25,7 +25,7 @@ const MyRankCard = ({ myrank }: any) => {
           <div className="flex flex-col">
             <p className="text-[14px]">{data?.data?.nickname}</p>
             <p className="text-[12px] text-[#AAAAAA]">
-              {data?.data?.followers_count} follower
+              {data?.data?.followers_count} 粉丝
             </p>
           </div>
         </div>
