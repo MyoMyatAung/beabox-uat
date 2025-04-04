@@ -2,8 +2,12 @@ import { useChangeFollowStatusMutation } from "@/store/api/profileApi";
 import { Sparkle } from "lucide-react";
 import { useEffect, useState } from "react";
 import loader from "@/page/home/vod_loader.gif";
+import { useDispatch, useSelector } from "react-redux";
+import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 
 const RankBtn = ({ id, followBack, refetch }: any) => {
+  const user = useSelector((state: any) => state?.persist?.user);
+  const dispatch = useDispatch();
   const [follow, setFollow] = useState(followBack);
   const [changeFollowStatus, { data, isLoading }] =
     useChangeFollowStatusMutation();
@@ -22,7 +26,12 @@ const RankBtn = ({ id, followBack, refetch }: any) => {
   return (
     <button
       disabled={isLoading}
-      onClick={handleChangeFollowStatus}
+      onClick={
+        user?.token
+          ? () => handleChangeFollowStatus()
+          : () => dispatch(setIsDrawerOpen(true))
+      }
+      // onClick={handleChangeFollowStatus}
       className={`text-[14px] z-[1000] flex items-center justify-between rounded-[8px] px-1 py-1.5 ${
         follow
           ? "bg-[#2B2830] hover:bg-[#2B2830]"

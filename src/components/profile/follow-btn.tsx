@@ -19,6 +19,8 @@ const FollowBtn = ({ id, followBack, refetch }: any) => {
     await refetch();
     setFollow(!follow);
   };
+
+  
   return (
     <button
       disabled={isLoading}

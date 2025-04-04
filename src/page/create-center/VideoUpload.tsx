@@ -21,7 +21,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   const [thumbnail, setThumbnail] = useState(editPost?.preview_image || null);
   const [uploading, setUploading] = useState(false);
   const [uploadPercentage, setUploadPercentage] = useState(0);
-  const [agree, setAgree] = useState(false);
+  const [agree, setAgree] = useState(editPost ? true : false);
   console.log(editPost, "ed post");
   const [videoDuration, setVideoDuration] = useState(
     editPost?.files[0].duration || 0

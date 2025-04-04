@@ -71,13 +71,16 @@ const YourVideos = () => {
   // }, [isActive, refetch]);
   useEffect(() => {
     if (newData?.data?.creator_center_post_filter) {
-      setIsActive(newData?.data?.creator_center_post_filter[0]?.keyword);
+      setIsActive("all");
     }
   }, [newData]);
 
   // useEffect(() => {
   //   if (!editPost) refetch();
   // }, [editPost]);
+  // console.log(newData?.data?.creator_center_post_filter);
+
+  console.log(isFetching, "isFetching");
 
   if (editPost) {
     return (

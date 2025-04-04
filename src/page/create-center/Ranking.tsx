@@ -16,6 +16,8 @@ import { Autoplay } from "swiper/modules"; // Import Swiper's autoplay module
 import InfinitLoad from "@/components/shared/infinit-load";
 import { useShareInfoMutation } from "@/store/api/profileApi";
 import logo from "@/assets/logo.svg";
+import loader from "@/page/home/vod_loader.gif";
+import OtherRank from "@/components/ranking/other-rank";
 
 const ranges = [
   { value: "today", title: "今日" },
@@ -169,8 +171,6 @@ const Ranking = () => {
     }
   }, [totalData, rankingList]);
 
-  console.log(data, "rl");
-
   const fetchMoreData = () => {
     if (hasMore) {
       setPage((prev) => prev + 1);
@@ -193,6 +193,17 @@ const Ranking = () => {
       setTotalData(data?.pagination?.total);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (user?.token) refetch();
+  }, [user?.token]);
+
+  // useEffect(() => {
+  //   setSelectedRange({
+  //     value: "today",
+  //     title: "今日",
+  //   });
+  // }, [selectedType]);
 
   if (loading1 && isLoading && page === 1) return <Loader />;
 
@@ -294,7 +305,13 @@ const Ranking = () => {
                 >
                   <div className="w-[58px] h-[3px] rounded-[1px] bg-transparent"></div>
                   <button
-                    onClick={() => setSelectedType(tag)}
+                    onClick={() => {
+                      setSelectedType(tag);
+                      setSelectedRange({
+                        value: "today",
+                        title: "今日",
+                      });
+                    }}
                     className={`text-[14px] ${
                       selectedType?.keyword == tag?.keyword
                         ? "text-white"
@@ -331,13 +348,12 @@ const Ranking = () => {
           </div>
         </div>
         <div className="px-5 py-5 space-y-4 sticky">
-          {rankingList?.slice(3)?.length ? (
-            rankingList?.slice(3)?.map((item: any, index: any) => (
-              <div className="flex items-center gap-3" key={item?.id}>
-                <p className="text-[16px] font-semibold w-8">{item?.rank}</p>
-                <RankingCard data={item} refetch={refetch} />
-              </div>
-            ))
+          {isFetching && page == 1 ? (
+            <div className="flex w-full items-center justify-center pt-[100px]">
+              <img src={loader} alt="" className="w-12" />
+            </div>
+          ) : rankingList?.length ? (
+            <OtherRank data={rankingList} refetch={refetch} />
           ) : (
             <div className="w-full flex justify-center items-center mt-[100px]">
               <div className="flex flex-col justify-center items-center gap-3">

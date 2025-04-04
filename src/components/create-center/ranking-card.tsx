@@ -57,6 +57,10 @@ const RankingCard = ({ data, refetch }: { data: any; refetch: any }) => {
     loadAndDecryptPhoto();
   }, [data?.photo]);
 
+  // useEffect(() => {
+  //   if (user?.token) refetch();
+  // }, [user?.token]);
+
   // console.log(data);
   return (
     <div className="w-full flex justify-between items-center py-1">
