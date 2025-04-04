@@ -2,7 +2,6 @@ import TopNav from "@/components/create-center/top-nav";
 import loader from "@/page/home/vod_loader.gif";
 import InfinitLoad from "@/components/shared/infinit-load";
 import Loader from "@/components/shared/loader";
-import TranLoader from "@/components/shared/tran-loader";
 import {
   useDeletePostMutation,
   useGetConfigQuery,
@@ -10,7 +9,6 @@ import {
   useRestorePostMutation,
 } from "@/store/api/createCenterApi";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import UploadImg from "@/components/create-center/upload-img";
 import RecyclePopup from "@/components/create-center/recycle-popup";
 
@@ -46,8 +44,7 @@ const DeleteCard = ({ index, setDeleteItems, item, deleteItems }: any) => {
   const filter = newData?.data?.creator_center_post_filter?.find(
     (data: any) => data?.keyword === item?.status
   );
-  console.log(filter);
-  const imgdomain = newData?.data?.post_domain?.image;
+  const imgdomain = item?.files[0]?.image_url;
   const [selected, setSelected] = useState(false);
   const handleItemClick = (index: number) => {
     setDeleteItems((prevItems: any) =>
@@ -105,6 +102,7 @@ const Recycle = () => {
     useRestorePostMutation();
   const [deletePost, { data: deletedata, isLoading: deleteLoading }] =
     useDeletePostMutation();
+  console.log(deletedata, "delete data");
   const [posts, setPosts] = useState<any>([]);
   const [hasMore, setHasMore] = useState(true);
   const [totalData, setTotalData] = useState<number>(0);
@@ -125,6 +123,15 @@ const Recycle = () => {
     setDeleteItems([]);
     setShow(false);
   };
+
+  // const postDeleteHandler = async () => {
+  //   if (!deleteItems || deleteItems.length === 0) return;
+
+  //   await Promise.all(deleteItems.map((item: any) => deletePost({ id: item })));
+
+  //   setDeleteItems([]);
+  //   setShow(false);
+  // };
 
   useEffect(() => {
     if (data?.data?.length) {

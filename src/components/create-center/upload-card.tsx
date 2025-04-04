@@ -9,7 +9,8 @@ const UploadCard = ({ item, config, imgdomain }: any) => {
   const filterStatus = config?.find(
     (data: any) => data?.keyword == item?.status
   );
-  console.log(imgdomain, item, "filterStatus");
+  const imageurl = item?.files[0]?.image_url;
+  console.log(item?.files[0]?.image_url, "item card");
 
   return (
     <div className="grid grid-cols-2 items-center">
@@ -17,7 +18,7 @@ const UploadCard = ({ item, config, imgdomain }: any) => {
         <UploadImg imgsrc={item?.preview_image} />
       ) : (
         <img
-          src={`${imgdomain}/${item?.preview_image}`}
+          src={`${imageurl}/${item?.preview_image}`}
           className="w-[128px] border border-gray-800 h-[80px] object-cover object-center rounded-[8px]"
           alt=""
         />
