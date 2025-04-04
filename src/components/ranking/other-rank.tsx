@@ -1,17 +1,25 @@
+import { useEffect, useState } from "react";
 import RankingCard from "../create-center/ranking-card";
+import { useSelector } from "react-redux";
 
-const OtherRank = ({ rankingData }: any) => {
-  const otherrank = rankingData?.slice(3);
+const OtherRank = ({ data, refetch }: any) => {
+  // const [list, setList] = useState([]);
+  const user = useSelector((state: any) => state?.persist?.user);
+  const list = data?.slice(3);
+
+  // useEffect(() => {
+  //   if (data?.length) setList(data?.filter((_: any, index: any) => index >= 3));
+  // }, [data]);
 
   return (
-    <div className="px-5 py-5 space-y-4">
-      {otherrank?.map((item: any, index: any) => (
+    <>
+      {list?.map((item: any) => (
         <div className="flex items-center gap-3" key={item?.id}>
-          <p className="text-[16px] font-semibold w-8">{index + 4}</p>
-          <RankingCard data={item} />
+          <p className="text-[16px] font-semibold w-8">{item?.rank}</p>
+          <RankingCard data={item} refetch={refetch} />
         </div>
       ))}
-    </div>
+    </>
   );
 };
 
