@@ -234,7 +234,11 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
         >
           {files?.file_type !== "video" ? (
             <div>
-              <img src={files?.files[0]?.resourceURL} alt="" />
+              <img
+                src={files?.files[0]?.resourceURL}
+                alt=""
+                className="h-full w-full"
+              />
             </div>
           ) : (
             <VideoContainer

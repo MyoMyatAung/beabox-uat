@@ -255,6 +255,7 @@ html {
 
 .footer_head_text {
   color: var(--White, #fff);
+  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 
   font-size: 16px;
   font-style: normal;
@@ -266,7 +267,7 @@ html {
 .footer_title {
   /* display: flex; */
   color: #fff;
-
+  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -275,6 +276,7 @@ html {
 }
 
 .footer_tag {
+  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 16px;
   /* background: rgba(255, 255, 255, 0.08); */
   /* display: flex; */
