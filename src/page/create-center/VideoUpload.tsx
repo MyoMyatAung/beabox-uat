@@ -89,6 +89,18 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
       });
       return;
     }
+    
+    // Check file size - 100MB limit (100 * 1024 * 1024 bytes)
+    if (videoFile.size > 100 * 1024 * 1024) {
+      toast.error("视频大小不能超过100MB。", {
+        // Video size cannot exceed 100MB.
+        style: {
+          background: "#25212a",
+          color: "white",
+        },
+      });
+      return;
+    }
 
     try {
       // Generate thumbnail for the video
