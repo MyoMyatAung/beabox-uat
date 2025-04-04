@@ -122,7 +122,7 @@ const VideoTabs = () => {
             <FaHeart />
             <div
               className={`w-[52px] h-[3px] ${
-                (!user?.token || defaultTab == "liked") && "bg-white"
+                defaultTab == "liked" && "bg-white"
               }`}
             ></div>
             {/* 已点赞视频 */}
