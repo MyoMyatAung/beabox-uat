@@ -57,7 +57,7 @@ const FilterNav = ({
         className={`text-[16px] flex items-center gap-2 text-[${selectedColor?.text_color_code}]`}
       >
         {selectedTitle}
-        {isActive === config[0]?.keyword ? (
+        {isActive === "all" ? (
           <></>
         ) : (
           <button

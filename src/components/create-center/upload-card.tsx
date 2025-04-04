@@ -9,7 +9,7 @@ const UploadCard = ({ item, config, imgdomain }: any) => {
   const filterStatus = config?.find(
     (data: any) => data?.keyword == item?.status
   );
-  console.log(filterStatus, "filterStatus");
+  console.log(imgdomain, item, "filterStatus");
 
   return (
     <div className="grid grid-cols-2 items-center">
