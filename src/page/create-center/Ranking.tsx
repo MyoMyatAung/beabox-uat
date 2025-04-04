@@ -198,6 +198,13 @@ const Ranking = () => {
     if (user?.token) refetch();
   }, [user?.token]);
 
+  // useEffect(() => {
+  //   setSelectedRange({
+  //     value: "today",
+  //     title: "今日",
+  //   });
+  // }, [selectedType]);
+
   if (loading1 && isLoading && page === 1) return <Loader />;
 
   return (
@@ -298,7 +305,13 @@ const Ranking = () => {
                 >
                   <div className="w-[58px] h-[3px] rounded-[1px] bg-transparent"></div>
                   <button
-                    onClick={() => setSelectedType(tag)}
+                    onClick={() => {
+                      setSelectedType(tag);
+                      setSelectedRange({
+                        value: "today",
+                        title: "今日",
+                      });
+                    }}
                     className={`text-[14px] ${
                       selectedType?.keyword == tag?.keyword
                         ? "text-white"
