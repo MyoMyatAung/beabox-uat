@@ -1218,3 +1218,350 @@ const VideoContainer = ({
 };
 
 export default VideoContainer;
+
+// import { useEffect, useRef, useState } from "react";
+// import Player from "./Player";
+// import VideoSidebar from "./VideoSidebar";
+// import { useDispatch, useSelector } from "react-redux";
+// import {
+//   useLikePostMutation,
+//   useUnlikePostMutation,
+// } from "../services/homeApi";
+// import { setVideos } from "../services/videosSlice";
+// import { showToast } from "../services/errorSlice";
+// import LoginDrawer from "@/components/profile/auth/login-drawer";
+
+// const VideoContainer = ({
+//   video,
+//   setWidth,
+//   setHeight,
+//   setCountNumber,
+//   setCountdown,
+//   countNumber,
+//   config,
+//   countdown,
+//   setHearts,
+//   status,
+//   width,
+//   height,
+//   container,
+//   abortControllerRef,
+//   indexRef,
+//   videoData,
+//   onVideoChange,
+// }: {
+//   video: any;
+//   setWidth: any;
+//   setHeight: any;
+//   setCountNumber: any;
+//   setCountdown: any;
+//   countNumber: any;
+//   config: any;
+//   countdown: any;
+//   setHearts: any;
+//   status: any;
+//   width: any;
+//   height: any;
+//   container: any;
+//   abortControllerRef: any;
+//   indexRef: any;
+//   videoData: any;
+//   onVideoChange: (video: any, index: number) => void;
+// }) => {
+//   const [likeCount, setLikeCount] = useState(video?.like_count);
+//   const [isLiked, setIsLiked] = useState(video?.is_liked);
+//   const [commentCount, setcommentCount] = useState(video?.comment_count);
+//   const user = useSelector((state: any) => state.persist.user);
+//   const [likePost] = useLikePostMutation();
+//   const [unlikePost] = useUnlikePostMutation();
+//   const dispatch = useDispatch();
+//   const currentTab = useSelector((state: any) => state.home.currentTab);
+//   const { videos } = useSelector((state: any) => state.videoSlice);
+//   const post_id = video?.post_id;
+//   const [rotateVideoId, setRotateVideoId] = useState<string | null>(null);
+//   const [isOpen, setIsOpen] = useState(false);
+//   const [isActive, setIsActive] = useState(false);
+
+//   useEffect(() => {
+//     if (isActive) {
+//       onVideoChange(video, 0); // Notify parent when this video becomes active
+//     }
+//   }, [isActive, video, onVideoChange]);
+
+//   const handleLike = (() => {
+//     const likeTimeout = useRef<NodeJS.Timeout | null>(null);
+//     const [nextId, setNextId] = useState(0);
+
+//     const handleLikeClick = () => {
+//       if (user?.token) {
+//         const newId = nextId;
+//         setNextId((prev: any) => prev + 1);
+//         setHearts((prev: any) => [...prev, newId]);
+//         setLikeCount(+likeCount + 1);
+//         if (status) {
+//           dispatch(
+//             setVideos({
+//               ...videos,
+//               [currentTab === 2 ? "foryou" : "follow"]: videos[
+//                 currentTab === 2 ? "foryou" : "follow"
+//               ]?.map((v: any) =>
+//                 v.post_id === post_id
+//                   ? { ...v, is_liked: true, like_count: +v?.like_count + 1 }
+//                   : v
+//               ),
+//             })
+//           );
+//         }
+//         setIsLiked(true);
+//         if (likeTimeout.current) clearTimeout(likeTimeout.current);
+//         likeTimeout.current = setTimeout(async () => {
+//           try {
+//             await likePost({ post_id, count: 1 });
+//             setCountNumber(0);
+//           } catch (error) {
+//             setLikeCount(+likeCount - 1);
+//             if (status) {
+//               dispatch(
+//                 setVideos({
+//                   ...videos,
+//                   [currentTab === 2 ? "foryou" : "follow"]: videos[
+//                     currentTab === 2 ? "foryou" : "follow"
+//                   ]?.map((v: any) =>
+//                     v.post_id === post_id
+//                       ? {
+//                           ...v,
+//                           is_liked: false,
+//                           like_count: +v?.like_count - 1,
+//                         }
+//                       : v
+//                   ),
+//                 })
+//               );
+//             }
+//             setIsLiked(false);
+//             console.error("Error liking the post:", error);
+//           }
+//         }, 1000);
+//       } else {
+//         dispatch(showToast({ message: "登陆后可点赞", type: "success" }));
+//       }
+//     };
+
+//     useEffect(() => {
+//       return () => {
+//         if (likeTimeout.current) clearTimeout(likeTimeout.current);
+//       };
+//     }, []);
+
+//     return handleLikeClick;
+//   })();
+
+//   const unLike = (() => {
+//     const likeTimeout = useRef<NodeJS.Timeout | null>(null);
+
+//     const handleUnLikeClick = () => {
+//       if (user?.token) {
+//         setLikeCount(+likeCount - 1);
+//         if (status) {
+//           dispatch(
+//             setVideos({
+//               ...videos,
+//               [currentTab === 2 ? "foryou" : "follow"]: videos[
+//                 currentTab === 2 ? "foryou" : "follow"
+//               ]?.map((v: any) =>
+//                 v.post_id === post_id
+//                   ? { ...v, is_liked: false, like_count: +v?.like_count - 1 }
+//                   : v
+//               ),
+//             })
+//           );
+//         }
+//         setIsLiked(false);
+//         if (likeTimeout.current) clearTimeout(likeTimeout.current);
+//         likeTimeout.current = setTimeout(async () => {
+//           try {
+//             await unlikePost({ post_id });
+//             setCountNumber(0);
+//           } catch (error) {
+//             setLikeCount(+likeCount + 1);
+//             if (status) {
+//               dispatch(
+//                 setVideos({
+//                   ...videos,
+//                   [currentTab === 2 ? "foryou" : "follow"]: videos[
+//                     currentTab === 2 ? "foryou" : "follow"
+//                   ]?.map((v: any) =>
+//                     v.post_id === post_id
+//                       ? { ...v, is_liked: true, like_count: +v?.like_count + 1 }
+//                       : v
+//                   ),
+//                 })
+//               );
+//             }
+//             setIsLiked(true);
+//             console.error("Error liking the post:", error);
+//           }
+//         }, 1000);
+//       } else {
+//         setIsOpen(true);
+//       }
+//     };
+
+//     useEffect(() => {
+//       return () => {
+//         if (likeTimeout.current) clearTimeout(likeTimeout.current);
+//       };
+//     }, []);
+
+//     return handleUnLikeClick;
+//   })();
+
+//   useEffect(() => {
+//     const handleIosEvent = (event: CustomEvent) => {
+//       if (event.detail.post_id === post_id) {
+//         if (event.detail.isLiked === "true") handleLike();
+//         else if (event.detail.isLiked === "false") unLike();
+//       }
+//     };
+//     window.addEventListener("iosEvent", handleIosEvent as EventListener);
+//     return () =>
+//       window.removeEventListener("iosEvent", handleIosEvent as EventListener);
+//   }, []);
+
+//   useEffect(() => {
+//     const handlefullscreenDismiss = (event: CustomEvent) => {
+//       if (container) {
+//         const activeElement = container.querySelector(
+//           `[data-post-id="${event.detail.post_id}"]`
+//         );
+//         if (activeElement) activeElement.scrollIntoView({ block: "center" });
+//       }
+//     };
+//     window.addEventListener(
+//       "fullscreenDismiss",
+//       handlefullscreenDismiss as EventListener
+//     );
+//     return () =>
+//       window.removeEventListener(
+//         "fullscreenDismiss",
+//         handlefullscreenDismiss as EventListener
+//       );
+//   }, [container]);
+
+//   const sendEventToNative = (name: string, text: any) => {
+//     if ((window as any).webkit?.messageHandlers?.jsBridge) {
+//       (window as any).webkit.messageHandlers.jsBridge.postMessage({
+//         eventName: name,
+//         value: text,
+//       });
+//     }
+//   };
+
+//   const handleFullscreen = (video: any) => {
+//     if ((window as any).webkit?.messageHandlers?.jsBridge) {
+//       sendEventToNative("beabox_fullscreen", {
+//         post_id: video?.post_id,
+//         like_api_url: `${import.meta.env.VITE_API_URL}/post/like`,
+//         token: `Bearer ${user?.token}`,
+//         video_url: video?.files[0].resourceURL,
+//         share_link: config?.data?.share_link,
+//         title: video.title,
+//         like_count: +likeCount,
+//         is_like: isLiked,
+//       });
+//     } else {
+//       if (rotateVideoId === video?.post_id) {
+//         setRotateVideoId(null);
+//         if (container) {
+//           const activeElement = container.querySelector(
+//             `[data-post-id="${video?.post_id}"]`
+//           );
+//           if (activeElement) activeElement.scrollIntoView({ block: "center" });
+//         }
+//       } else {
+//         setRotateVideoId(video?.post_id);
+//       }
+//     }
+//   };
+
+//   useEffect(() => {
+//     const element = document.querySelector(`[data-post-id="${video.post_id}"]`);
+//     if (!element) return;
+
+//     const observer = new IntersectionObserver(
+//       (entries) =>
+//         entries.forEach((entry) => setIsActive(entry.isIntersecting)),
+//       { threshold: 0.5 }
+//     );
+
+//     observer.observe(element);
+//     return () => observer.disconnect();
+//   }, [video.post_id]);
+
+//   if (isOpen) return <LoginDrawer isOpen={isOpen} setIsOpen={setIsOpen} />;
+
+//   return (
+//     <>
+//       <Player
+//         videoData={videoData}
+//         indexRef={indexRef}
+//         abortControllerRef={abortControllerRef}
+//         width={video?.files[0].width}
+//         height={video?.files[0].height}
+//         type={video?.type == "ads"}
+//         rotate={rotateVideoId === video?.post_id}
+//         src={video?.files[0].resourceURL}
+//         thumbnail={video?.decryptedPreview || video?.preview_image}
+//         handleLike={handleLike}
+//         setWidth={setWidth}
+//         setHeight={setHeight}
+//         post_id={post_id}
+//         isActive={isActive}
+//       />
+
+//       <VideoSidebar
+//         status={status}
+//         unLike={unLike}
+//         handleLike={handleLike}
+//         setLikeCount={setLikeCount}
+//         likeCount={likeCount}
+//         isLiked={isLiked}
+//         setIsLiked={setIsLiked}
+//         setCommentCount={setcommentCount}
+//         messages={commentCount}
+//         post_id={video?.post_id}
+//         setCountNumber={setCountNumber}
+//         setCountdown={setCountdown}
+//         countNumber={countNumber}
+//         countdown={countdown}
+//         config={config?.data}
+//         image={video?.preview_image}
+//         post={video}
+//         setHearts={setHearts}
+//       />
+
+//       {video?.type !== "ads" &&
+//         video?.files[0].width > video?.files[0].height && (
+//           <button
+//             onClick={() => handleFullscreen(video)}
+//             className="absolute left-[37%] top-[70%] bottom-0 right-0 w-[120px] bg-[#101010] h-[35px] rounded-md flex justify-center items-center z-[99] text-center text-white"
+//           >
+//             <div className="flex items-center p-1 gap-2">
+//               <svg
+//                 xmlns="http://www.w3.org/2000/svg"
+//                 width="14"
+//                 height="13"
+//                 viewBox="0 0 14 13"
+//                 fill="none"
+//               >
+//                 {/* SVG paths */}
+//               </svg>
+//               <span>全屏</span>
+//             </div>
+//           </button>
+//         )}
+//     </>
+//   );
+// };
+
+// export default VideoContainer;

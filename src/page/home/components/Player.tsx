@@ -1463,7 +1463,7 @@ const Player = ({
               visibility: visible !important;
               cursor: pointer !important;
             }
-            
+
             .chrome-fix::-webkit-slider-thumb {
               -webkit-appearance: none !important;
               appearance: none !important;
@@ -1473,7 +1473,7 @@ const Player = ({
               border-radius: 50% !important;
               cursor: pointer !important;
             }
-            
+
             .custom-progress-container {
               display: block !important;
               visibility: visible !important;
@@ -1733,3 +1733,1214 @@ const Player = ({
 };
 
 export default Player;
+
+// import { useEffect, useRef, useState } from "react";
+// import Artplayer from "artplayer";
+// import Hls from "hls.js";
+// import indicator from "../indicator.png";
+// import vod_loader from "../vod_loader.gif";
+// import { useDispatch, useSelector } from "react-redux";
+// import { useWatchtPostMutation } from "../services/homeApi";
+// import { showToast } from "../services/errorSlice";
+// import { decryptImage } from "@/utils/imageDecrypt";
+// import { setMute } from "../services/muteSlice";
+// import { sethideBar } from "../services/hideBarSlice";
+// import forward from "../forward.gif";
+
+// const BUFFER_THRESHOLD = 10;
+// const MAX_BUFFER_SIZE = 50 * 1024 * 1024;
+// const POSITION_SAVE_INTERVAL = 5000;
+// const VIDEO_POSITIONS_KEY = "video_positions";
+// const LONG_PRESS_DELAY = 500;
+// const FAST_FORWARD_RATE = 2;
+// const FAST_FORWARD_INTERVAL = 50;
+// const SWIPE_THRESHOLD = 30;
+
+// interface RootState {
+//   muteSlice: {
+//     mute: boolean;
+//   };
+//   persist: {
+//     user: {
+//       token: string;
+//     };
+//   };
+// }
+
+// const Player = ({
+//   src,
+//   width,
+//   height,
+//   thumbnail,
+//   setWidth,
+//   setHeight,
+//   handleLike,
+//   rotate,
+//   type,
+//   post_id,
+//   isActive,
+//   abortControllerRef,
+//   indexRef,
+//   videoData,
+// }: {
+//   src: string;
+//   thumbnail: string;
+//   setWidth: (width: number) => void;
+//   setHeight: (height: number) => void;
+//   handleLike: () => void;
+//   post_id: string;
+//   rotate: boolean;
+//   type: string;
+//   width: number;
+//   height: number;
+//   isActive: boolean;
+//   abortControllerRef: any;
+//   indexRef: any;
+//   videoData: any;
+// }) => {
+//   const playerContainerRef = useRef<HTMLDivElement | null>(null);
+//   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
+//   const hlsRef = useRef<Hls | null>(null);
+//   const { mute } = useSelector((state: RootState) => state.muteSlice);
+//   const user = useSelector((state: RootState) => state.persist.user);
+//   const { playstart } = useSelector((state: any) => state.playSlice);
+//   const playIconRef = useRef<HTMLDivElement | null>(null);
+//   const progressBarRef = useRef<HTMLInputElement | null>(null);
+//   const isDraggingRef = useRef(false);
+//   const seekTimeRef = useRef(0);
+//   const timeDisplayRef = useRef<HTMLDivElement | null>(null);
+//   const muteRef = useRef(mute);
+//   const watchedTimeRef = useRef(0);
+//   const apiCalledRef = useRef(false);
+//   const positionSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
+//   const [watchtPost] = useWatchtPostMutation();
+//   const [p_img, setPImg] = useState(false);
+//   const [isFastForwarding, setIsFastForwarding] = useState(false);
+//   const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
+//   const fastForwardIntervalRef = useRef<NodeJS.Timeout | null>(null);
+//   const touchStartPosRef = useRef<{ x: number; y: number } | null>(null);
+//   const wasPlayingRef = useRef(false);
+//   const isLongPressActiveRef = useRef(false);
+//   const [newStart, setnewStart] = useState(false);
+//   const dispatch = useDispatch();
+
+//   const formatTime = (time: number) => {
+//     const hours = Math.floor(time / 3600);
+//     const minutes = Math.floor((time % 3600) / 60);
+//     const seconds = Math.floor(time % 60);
+//     return `${hours.toString().padStart(2, "0")}:${minutes
+//       .toString()
+//       .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+//   };
+
+//   const saveVideoPosition = (position: number) => {
+//     if (!user?.token || !post_id) return;
+//     try {
+//       const positionsJson = localStorage.getItem(VIDEO_POSITIONS_KEY) || "{}";
+//       const positions = JSON.parse(positionsJson);
+//       positions[post_id] = { position, timestamp: Date.now() };
+//       localStorage.setItem(VIDEO_POSITIONS_KEY, JSON.stringify(positions));
+//     } catch (error) {
+//       console.error("Failed to save video position:", error);
+//     }
+//   };
+
+//   const getSavedPosition = (): number | null => {
+//     if (!user?.token || !post_id) return null;
+//     try {
+//       const positionsJson = localStorage.getItem(VIDEO_POSITIONS_KEY) || "{}";
+//       const positions = JSON.parse(positionsJson);
+//       const savedData = positions[post_id];
+//       if (!savedData) return null;
+//       const maxAge = 7 * 24 * 60 * 60 * 1000;
+//       if (Date.now() - savedData.timestamp > maxAge) {
+//         delete positions[post_id];
+//         localStorage.setItem(VIDEO_POSITIONS_KEY, JSON.stringify(positions));
+//         return null;
+//       }
+//       return savedData.position;
+//     } catch (error) {
+//       console.error("Failed to get saved video position:", error);
+//       return null;
+//     }
+//   };
+
+//   const startPositionSaving = () => {
+//     if (positionSaveTimerRef.current)
+//       clearInterval(positionSaveTimerRef.current);
+//     positionSaveTimerRef.current = setInterval(() => {
+//       if (artPlayerInstanceRef.current?.playing) {
+//         const currentTime = artPlayerInstanceRef.current.currentTime;
+//         const duration = artPlayerInstanceRef.current.duration;
+//         if (currentTime > 1 && currentTime < duration - 1) {
+//           saveVideoPosition(currentTime);
+//         }
+//       }
+//     }, POSITION_SAVE_INTERVAL);
+//   };
+
+//   const stopPositionSaving = () => {
+//     if (positionSaveTimerRef.current) {
+//       clearInterval(positionSaveTimerRef.current);
+//       positionSaveTimerRef.current = null;
+//     }
+//   };
+
+//   const handleWatchHistory = () => {
+//     if (!apiCalledRef.current && user?.token) {
+//       apiCalledRef.current = true;
+//       if (artPlayerInstanceRef.current)
+//         saveVideoPosition(artPlayerInstanceRef.current.currentTime);
+//       watchtPost({ post_id }).unwrap().catch(console.error);
+//     }
+//   };
+
+//   const initializePlayer = () => {
+//     if (!playerContainerRef.current || artPlayerInstanceRef.current) return;
+
+//     if (progressBarRef?.current) progressBarRef.current.style.opacity = "1";
+
+//     Artplayer.DBCLICK_FULLSCREEN = false;
+//     Artplayer.MOBILE_DBCLICK_PLAY = false;
+//     Artplayer.MOBILE_CLICK_PLAY = true;
+
+//     const isM3u8 = src.toLowerCase().endsWith(".m3u8");
+
+//     const options: Artplayer["Option"] = {
+//       container: playerContainerRef.current,
+//       url: src,
+//       volume: 0.5,
+//       muted: muteRef.current,
+//       autoplay: isActive,
+//       fullscreenWeb: true,
+//       poster: thumbnail,
+//       loop: true,
+//       moreVideoAttr: { playsInline: true, preload: "auto" as const },
+//       aspectRatio: true,
+//       fullscreen: false,
+//       theme: "#d53ff0",
+//       icons: {
+//         loading: `<div class="video-loading-indicator" style="display: none;"><img width="100" height="100" src=${vod_loader}></div>`,
+//         state: `<div class="video-play-indicator" style="display: none;"><img src="${indicator}" width="50" height="50" alt="Play"></div>`,
+//       },
+//       type: isM3u8 ? "m3u8" : "mp4",
+//       customType: {
+//         mp4: function (video: HTMLVideoElement, url: string) {
+//           video.preload = "metadata";
+//           const abortController = new AbortController();
+//           abortControllerRef.current?.push(abortController);
+//           videoData?.current?.push(video);
+
+//           const loadVideo = async () => {
+//             try {
+//               const headers = new Headers();
+//               headers.append("Range", "bytes=0-1048576");
+//               const response = await fetch(url, {
+//                 headers,
+//                 method: "GET",
+//                 signal: abortController?.signal,
+//               });
+//               video.src = response.status === 206 ? url : url;
+//               if (isActive) video.preload = "auto";
+//             } catch (error) {
+//               console.error("Error loading video:", error);
+//               video.src = url;
+//               video.preload = "metadata";
+//             }
+//           };
+
+//           loadVideo().catch(console.error);
+
+//           video.addEventListener("canplaythrough", () => {
+//             if (isActive) video.preload = "auto";
+//           });
+
+//           video.addEventListener("waiting", () => {
+//             if (isActive) video.preload = "auto";
+//           });
+
+//           return () => {
+//             if (video) {
+//               video.pause();
+//               video.removeAttribute("src");
+//               video.load();
+//             }
+//           };
+//         },
+//         m3u8: function (videoElement: HTMLVideoElement, url: string) {
+//           if (Hls.isSupported()) {
+//             const hls = new Hls({
+//               enableWorker: true,
+//               lowLatencyMode: true,
+//               backBufferLength: 30,
+//               maxBufferLength: 30,
+//               maxMaxBufferLength: 60,
+//               maxBufferSize: 50 * 1000 * 1000,
+//               maxBufferHole: 0.5,
+//               maxFragLookUpTolerance: 0.25,
+//               startLevel: -1,
+//               abrEwmaDefaultEstimate: 500000,
+//               abrBandWidthFactor: 0.95,
+//               abrBandWidthUpFactor: 0.7,
+//               abrMaxWithRealBitrate: true,
+//               startFragPrefetch: false,
+//               fpsDroppedMonitoringThreshold: 0.2,
+//               fpsDroppedMonitoringPeriod: 1000,
+//               capLevelToPlayerSize: true,
+//               initialLiveManifestSize: 1,
+//               stretchShortVideoTrack: true,
+//               forceKeyFrameOnDiscontinuity: true,
+//               manifestLoadingTimeOut: 10000,
+//               manifestLoadingMaxRetry: 3,
+//               manifestLoadingRetryDelay: 500,
+//               manifestLoadingMaxRetryTimeout: 5000,
+//               levelLoadingTimeOut: 10000,
+//               levelLoadingMaxRetry: 3,
+//               levelLoadingRetryDelay: 500,
+//               levelLoadingMaxRetryTimeout: 5000,
+//               fragLoadingTimeOut: 20000,
+//               fragLoadingMaxRetry: 6,
+//               fragLoadingRetryDelay: 500,
+//               fragLoadingMaxRetryTimeout: 5000,
+//             });
+
+//             hls.on(Hls.Events.ERROR, function (event, data) {
+//               console.log("HLS error:", data.type, data.details);
+//               if (data.fatal) {
+//                 switch (data.type) {
+//                   case Hls.ErrorTypes.NETWORK_ERROR:
+//                     if (
+//                       [
+//                         Hls.ErrorDetails.MANIFEST_LOAD_ERROR,
+//                         Hls.ErrorDetails.MANIFEST_LOAD_TIMEOUT,
+//                         Hls.ErrorDetails.MANIFEST_PARSING_ERROR,
+//                         Hls.ErrorDetails.FRAG_LOAD_ERROR,
+//                         Hls.ErrorDetails.FRAG_LOAD_TIMEOUT,
+//                         Hls.ErrorDetails.KEY_LOAD_ERROR,
+//                         Hls.ErrorDetails.KEY_LOAD_TIMEOUT,
+//                       ].includes(data.details)
+//                     ) {
+//                       hls.startLoad();
+//                     }
+//                     break;
+//                   case Hls.ErrorTypes.MEDIA_ERROR:
+//                     hls.recoverMediaError();
+//                     break;
+//                   default:
+//                     hls.destroy();
+//                     break;
+//                 }
+//               }
+//             });
+
+//             hls.on(Hls.Events.MANIFEST_PARSED, function () {
+//               hls.startLoad(-1);
+//               if (
+//                 /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+//                   navigator.userAgent
+//                 )
+//               ) {
+//                 const levels = hls.levels;
+//                 if (levels && levels.length > 0) {
+//                   const startLevel = hls.currentLevel;
+//                   const frags = hls.levels[startLevel].details?.fragments;
+//                   if (frags && frags.length > 3) {
+//                     hls.nextLoadLevel = startLevel;
+//                     for (let i = 0; i < 3; i++) {
+//                       hls.loadFragment(frags[i], startLevel, null);
+//                     }
+//                   }
+//                 }
+//               }
+//             });
+
+//             hls.on(Hls.Events.FRAG_BUFFERED, function () {
+//               if (!isActive) return;
+//               const buffered = videoElement.buffered;
+//               if (buffered && buffered.length > 0) {
+//                 const bufferedEnd = buffered.end(buffered.length - 1);
+//                 const currentTime = videoElement.currentTime || 0;
+//                 if (
+//                   bufferedEnd - currentTime > 2 &&
+//                   playstart &&
+//                   videoElement.paused
+//                 ) {
+//                   videoElement.play().catch(console.log);
+//                 }
+//               }
+//             });
+
+//             hls.loadSource(url);
+//             hls.attachMedia(videoElement);
+//             hlsRef.current = hls;
+//             hls.startLoad(-1);
+//           } else {
+//             videoElement.src = url;
+//             videoElement.preload = "auto";
+//             if (
+//               /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+//                 navigator.userAgent
+//               )
+//             ) {
+//               videoElement.load();
+//             }
+//             videoElement.addEventListener("canplay", function () {
+//               if (isActive && playstart) {
+//                 videoElement.play().catch(console.warn);
+//               }
+//             });
+//           }
+//         },
+//       },
+//       layers: [
+//         {
+//           html: `
+//             <div class="custom-progress-container">
+//               <input type="range" min="0" max="100" step="0.1" class="custom-progress-bar chrome-fix" />
+//               <div class="custom-time-display"></div>
+//             </div>
+//           `,
+//           style: {
+//             position: "absolute",
+//             bottom: "0px",
+//             left: "5%",
+//             width: "90%",
+//             height: "25px",
+//             zIndex: "9999",
+//             pointerEvents: "auto",
+//             display: "block",
+//             visibility: "visible",
+//           },
+//           mounted: (element: HTMLElement) => {
+//             progressBarRef.current = element.querySelector(
+//               ".custom-progress-bar"
+//             ) as HTMLInputElement;
+//             timeDisplayRef.current = element.querySelector(
+//               ".custom-time-display"
+//             ) as HTMLDivElement;
+
+//             if (!progressBarRef.current) return;
+
+//             progressBarRef.current.value = "0";
+//             progressBarRef.current.style.opacity = "1";
+//             progressBarRef.current.style.display = "block";
+//             progressBarRef.current.style.visibility = "visible";
+
+//             const isChrome =
+//               /Chrome/.test(navigator.userAgent) &&
+//               /Google Inc/.test(navigator.vendor);
+//             if (isChrome) {
+//               progressBarRef.current.style.webkitAppearance = "none";
+//               progressBarRef.current.style.appearance = "none";
+//               progressBarRef.current.style.background =
+//                 "rgba(255, 255, 255, 0.2)";
+//               progressBarRef.current.style.height = "4px";
+//               progressBarRef.current.style.borderRadius = "2px";
+//               progressBarRef.current.style.outline = "none";
+//               progressBarRef.current.style.transition = "opacity 0.2s";
+//               progressBarRef.current.style.cursor = "pointer";
+//             }
+
+//             progressBarRef.current.addEventListener("input", (e) => {
+//               if (!artPlayerInstanceRef.current) return;
+//               if (!isDraggingRef.current) {
+//                 dispatch(sethideBar(true));
+//                 if (progressBarRef?.current?.style) {
+//                   progressBarRef.current.style.height = "10px";
+//                   progressBarRef.current.style.setProperty(
+//                     "--thumb-width",
+//                     "16px"
+//                   );
+//                   progressBarRef.current.style.setProperty(
+//                     "--thumb-height",
+//                     "20px"
+//                   );
+//                   progressBarRef.current.style.setProperty(
+//                     "--thumb-radius",
+//                     "5px"
+//                   );
+//                 }
+//                 isDraggingRef.current = true;
+//                 timeDisplayRef.current!.style.display = "block";
+//               }
+
+//               const value = parseFloat((e.target as HTMLInputElement).value);
+//               seekTimeRef.current =
+//                 (value / 100) * artPlayerInstanceRef.current.duration;
+//               progressBarRef.current?.style.setProperty(
+//                 "--progress",
+//                 `${value}%`
+//               );
+
+//               if (timeDisplayRef.current) {
+//                 const currentTime = formatTime(seekTimeRef.current);
+//                 const duration = formatTime(
+//                   artPlayerInstanceRef.current.duration
+//                 );
+//                 timeDisplayRef.current.textContent = `${currentTime} / ${duration}`;
+//               }
+//             });
+
+//             progressBarRef.current.addEventListener("change", () => {
+//               if (!artPlayerInstanceRef.current || !isDraggingRef.current)
+//                 return;
+//               isDraggingRef.current = false;
+//               dispatch(sethideBar(false));
+//               if (progressBarRef.current) {
+//                 progressBarRef.current.style.height = "4px";
+//                 progressBarRef.current.style.setProperty(
+//                   "--thumb-width",
+//                   "12px"
+//                 );
+//                 progressBarRef.current.style.setProperty(
+//                   "--thumb-height",
+//                   "12px"
+//                 );
+//                 progressBarRef.current.style.setProperty(
+//                   "--thumb-radius",
+//                   "50%"
+//                 );
+//               }
+//               timeDisplayRef.current!.style.display = "none";
+//               artPlayerInstanceRef.current.currentTime = seekTimeRef.current;
+//             });
+
+//             element.addEventListener("touchstart", (e) => {
+//               if (!artPlayerInstanceRef.current || !progressBarRef.current)
+//                 return;
+//               const touch = e.touches[0];
+//               const rect = element.getBoundingClientRect();
+//               const touchX = touch.clientX - rect.left;
+//               const percent = Math.min(
+//                 Math.max((touchX / rect.width) * 100, 0),
+//                 100
+//               );
+
+//               progressBarRef.current.value = percent.toString();
+//               progressBarRef.current.style.setProperty(
+//                 "--progress",
+//                 `${percent}%`
+//               );
+//               isDraggingRef.current = true;
+//               dispatch(sethideBar(true));
+//               progressBarRef.current.style.height = "10px";
+//               progressBarRef.current.style.setProperty("--thumb-width", "16px");
+//               progressBarRef.current.style.setProperty(
+//                 "--thumb-height",
+//                 "20px"
+//               );
+//               progressBarRef.current.style.setProperty("--thumb-radius", "5px");
+//               timeDisplayRef.current!.style.display = "block";
+
+//               const newTime =
+//                 (percent / 100) * artPlayerInstanceRef.current.duration;
+//               seekTimeRef.current = newTime;
+//               if (timeDisplayRef.current) {
+//                 const currentTime = formatTime(newTime);
+//                 const duration = formatTime(
+//                   artPlayerInstanceRef.current.duration
+//                 );
+//                 timeDisplayRef.current.textContent = `${currentTime} / ${duration}`;
+//               }
+//             });
+
+//             element.addEventListener("touchmove", (e) => {
+//               if (
+//                 !artPlayerInstanceRef.current ||
+//                 !progressBarRef.current ||
+//                 !isDraggingRef.current
+//               )
+//                 return;
+//               e.preventDefault();
+//               const touch = e.touches[0];
+//               const rect = element.getBoundingClientRect();
+//               const touchX = touch.clientX - rect.left;
+//               const percent = Math.min(
+//                 Math.max((touchX / rect.width) * 100, 0),
+//                 100
+//               );
+
+//               progressBarRef.current.value = percent.toString();
+//               progressBarRef.current.style.setProperty(
+//                 "--progress",
+//                 `${percent}%`
+//               );
+//               seekTimeRef.current =
+//                 (percent / 100) * artPlayerInstanceRef.current.duration;
+
+//               if (timeDisplayRef.current) {
+//                 const currentTime = formatTime(seekTimeRef.current);
+//                 const duration = formatTime(
+//                   artPlayerInstanceRef.current.duration
+//                 );
+//                 timeDisplayRef.current.textContent = `${currentTime} / ${duration}`;
+//               }
+//             });
+
+//             element.addEventListener("touchend", () => {
+//               if (
+//                 !artPlayerInstanceRef.current ||
+//                 !progressBarRef.current ||
+//                 !isDraggingRef.current
+//               )
+//                 return;
+//               isDraggingRef.current = false;
+//               dispatch(sethideBar(false));
+//               progressBarRef.current.style.height = "4px";
+//               progressBarRef.current.style.setProperty("--thumb-width", "12px");
+//               progressBarRef.current.style.setProperty(
+//                 "--thumb-height",
+//                 "12px"
+//               );
+//               progressBarRef.current.style.setProperty("--thumb-radius", "50%");
+//               timeDisplayRef.current!.style.display = "none";
+//               artPlayerInstanceRef.current.currentTime = seekTimeRef.current;
+//             });
+//           },
+//         },
+//         {
+//           html: `<div class="custom-play-icon"><img src="${indicator}" width="50" height="50" alt="Play"></div>`,
+//           style: {
+//             position: "absolute",
+//             top: "50%",
+//             left: "50%",
+//             transform: "translate(-50%, -50%)",
+//             zIndex: "999",
+//             display: "none",
+//           },
+//           mounted: (element: HTMLElement) => {
+//             playIconRef.current = element as HTMLDivElement;
+//             playIconRef?.current?.addEventListener("click", () => {
+//               if (artPlayerInstanceRef.current) {
+//                 artPlayerInstanceRef.current.play().catch((error) => {
+//                   console.error("Manual play failed:", error);
+//                   if (playIconRef.current)
+//                     playIconRef.current.style.display = "block";
+//                 });
+//               }
+//             });
+//           },
+//         },
+//         {
+//           html: `
+//             <div class="click-layer">
+//               <div class="fast-forward-indicator" style="display: none; opacity: 0;">
+//                 <span>快进播放 x2</span>
+//                 <img src="${forward}" alt="forward" style="width: 16px; height: 16px;" />
+//               </div>
+//             </div>
+//           `,
+//           style: {
+//             position: "absolute",
+//             top: "0",
+//             left: "0",
+//             width: "100%",
+//             height: "95%",
+//             zIndex: "10",
+//             background: "transparent",
+//             userSelect: "none",
+//             webkitUserSelect: "none",
+//             webkitTouchCallout: "none",
+//             touchAction: "pan-y",
+//           },
+//           mounted: (element: HTMLElement) => {
+//             let lastClick = 0;
+//             let singleClickTimeout: NodeJS.Timeout | null = null;
+//             let isLongPress = false;
+//             const ffIndicator = element.querySelector(
+//               ".fast-forward-indicator"
+//             ) as HTMLElement;
+
+//             if (ffIndicator) {
+//               Object.assign(ffIndicator.style, {
+//                 position: "absolute",
+//                 bottom: "0%",
+//                 left: "50%",
+//                 transform: "translate(-50%, -50%)",
+//                 backgroundColor: "#282630",
+//                 color: "white",
+//                 padding: "8px 16px",
+//                 borderRadius: "20px",
+//                 fontSize: "14px",
+//                 fontWeight: "500",
+//                 display: "none",
+//                 opacity: "0",
+//                 alignItems: "center",
+//                 gap: "8px",
+//                 minWidth: "120px",
+//                 justifyContent: "center",
+//                 letterSpacing: "0.5px",
+//                 transition: "opacity 0.3s ease-in-out",
+//                 zIndex: "9999",
+//               });
+//             }
+
+//             const handleLongPressStart = (e: TouchEvent | MouseEvent) => {
+//               if ("touches" in e) {
+//                 const touch = e.touches[0];
+//                 touchStartPosRef.current = {
+//                   x: touch.clientX,
+//                   y: touch.clientY,
+//                 };
+//               }
+
+//               if (longPressTimerRef.current)
+//                 clearTimeout(longPressTimerRef.current);
+
+//               longPressTimerRef.current = setTimeout(() => {
+//                 if (touchStartPosRef.current) {
+//                   isLongPress = true;
+//                   isLongPressActiveRef.current = true;
+//                   startFastForward();
+//                   if (ffIndicator) {
+//                     ffIndicator.style.display = "flex";
+//                     ffIndicator.style.transition = "opacity 0.2s ease-in-out";
+//                     ffIndicator.style.opacity = "1";
+//                   }
+//                 }
+//               }, LONG_PRESS_DELAY);
+//             };
+
+//             const handleLongPressEnd = () => {
+//               if (longPressTimerRef.current) {
+//                 clearTimeout(longPressTimerRef.current);
+//                 longPressTimerRef.current = null;
+//               }
+//               if (isLongPress) {
+//                 stopFastForward();
+//                 if (ffIndicator) {
+//                   ffIndicator.style.opacity = "0";
+//                   setTimeout(() => (ffIndicator.style.display = "none"), 200);
+//                 }
+//               }
+//               isLongPress = false;
+//               isLongPressActiveRef.current = false;
+//               touchStartPosRef.current = null;
+//             };
+
+//             const handleTouchMove = (e: TouchEvent) => {
+//               if (!touchStartPosRef.current) return;
+
+//               const touch = e.touches[0];
+//               const deltaX = Math.abs(
+//                 touch.clientX - touchStartPosRef.current.x
+//               );
+//               const deltaY = Math.abs(
+//                 touch.clientY - touchStartPosRef.current.y
+//               );
+
+//               if (
+//                 (deltaX > SWIPE_THRESHOLD || deltaY > SWIPE_THRESHOLD) &&
+//                 !isLongPressActiveRef.current
+//               ) {
+//                 handleLongPressEnd();
+//                 return;
+//               }
+
+//               if (isLongPressActiveRef.current) {
+//                 if (
+//                   deltaX > SWIPE_THRESHOLD * 3 ||
+//                   deltaY > SWIPE_THRESHOLD * 3
+//                 ) {
+//                   handleLongPressEnd();
+//                   return;
+//                 }
+//                 e.preventDefault();
+//               }
+//             };
+
+//             element.addEventListener("touchstart", (e) => {
+//               const now = Date.now();
+//               if (now - lastClick <= 300) {
+//                 if (singleClickTimeout) clearTimeout(singleClickTimeout);
+//                 if (user?.token) handleLike();
+//                 else
+//                   dispatch(
+//                     showToast({ message: "登陆后可点赞", type: "success" })
+//                   );
+//               } else {
+//                 singleClickTimeout = setTimeout(() => {
+//                   if (!isLongPress && artPlayerInstanceRef.current) {
+//                     if (artPlayerInstanceRef.current.playing) {
+//                       artPlayerInstanceRef.current.pause();
+//                       showPlayButton();
+//                     } else {
+//                       artPlayerInstanceRef.current.play();
+//                       hidePlayButton();
+//                     }
+//                   }
+//                 }, 300);
+//               }
+//               lastClick = now;
+//               handleLongPressStart(e);
+//             });
+
+//             element.addEventListener("touchmove", handleTouchMove);
+//             element.addEventListener("touchend", handleLongPressEnd);
+//             element.addEventListener("touchcancel", handleLongPressEnd);
+//             element.addEventListener("contextmenu", (e) => e.preventDefault());
+//           },
+//         },
+//       ],
+//     };
+
+//     if (artPlayerInstanceRef.current) {
+//       artPlayerInstanceRef.current.destroy();
+//       artPlayerInstanceRef.current = null;
+//     }
+
+//     artPlayerInstanceRef.current = new Artplayer(options);
+
+//     artPlayerInstanceRef.current.on("ready", () => {
+//       const savedPosition = getSavedPosition();
+//       if (savedPosition && artPlayerInstanceRef.current) {
+//         artPlayerInstanceRef.current.currentTime = savedPosition;
+//       }
+//       startPositionSaving();
+//     });
+
+//     artPlayerInstanceRef.current.on("video:timeupdate", () => {
+//       if (
+//         progressBarRef.current &&
+//         artPlayerInstanceRef.current &&
+//         !isDraggingRef.current
+//       ) {
+//         const currentTime = artPlayerInstanceRef.current.currentTime || 0;
+//         const duration = artPlayerInstanceRef.current.duration || 1;
+//         const newProgress = (currentTime / duration) * 100;
+//         progressBarRef.current.value = newProgress.toString();
+//         progressBarRef.current.style.setProperty(
+//           "--progress",
+//           `${newProgress}%`
+//         );
+//         if (progressBarRef.current.style.opacity !== "1") {
+//           progressBarRef.current.style.opacity = "1";
+//         }
+//       }
+//     });
+
+//     artPlayerInstanceRef.current.on("ready", () => {
+//       setPImg(width > height);
+//     });
+
+//     artPlayerInstanceRef.current.on("video:waiting", () => {
+//       setPImg(width > height);
+//       if (progressBarRef?.current) progressBarRef.current.style.opacity = "1";
+//       const loadingIndicator =
+//         artPlayerInstanceRef.current?.template?.$loading?.querySelector(
+//           ".video-loading-indicator"
+//         ) as HTMLDivElement;
+//       const playIndicator =
+//         artPlayerInstanceRef.current?.template?.$state?.querySelector(
+//           ".video-play-indicator"
+//         ) as HTMLDivElement;
+//       if (artPlayerInstanceRef.current && thumbnail) {
+//         artPlayerInstanceRef.current.poster = thumbnail;
+//         if (
+//           !artPlayerInstanceRef.current.playing &&
+//           artPlayerInstanceRef.current.currentTime === 0
+//         ) {
+//           artPlayerInstanceRef.current.template.$poster.style.display = "block";
+//         }
+//       }
+//       if (loadingIndicator) loadingIndicator.style.display = "block";
+//       if (playIndicator) playIndicator.style.display = "none";
+//       if (playIconRef.current) playIconRef.current.style.display = "none";
+//     });
+
+//     artPlayerInstanceRef.current.on("error", (error) => {
+//       console.error("Video loading error:", error);
+//       if (progressBarRef?.current) progressBarRef.current.style.opacity = "1";
+//       showPlayButton();
+//       const loadingIndicator =
+//         artPlayerInstanceRef.current?.template?.$loading?.querySelector(
+//           ".video-loading-indicator"
+//         ) as HTMLDivElement;
+//       if (loadingIndicator) loadingIndicator.style.display = "none";
+//     });
+
+//     artPlayerInstanceRef.current.on("play", () => {
+//       if (artPlayerInstanceRef.current)
+//         artPlayerInstanceRef.current.template.$poster.style.display = "none";
+//       if (!isFastForwarding) hidePlayButton();
+//     });
+
+//     artPlayerInstanceRef.current.on("pause", () => {
+//       if (!isFastForwarding) showPlayButton();
+//     });
+
+//     artPlayerInstanceRef.current.on("video:playing", () => {
+//       if (artPlayerInstanceRef.current)
+//         artPlayerInstanceRef.current.template.$poster.style.display = "none";
+//       if (!isFastForwarding) hidePlayButton();
+//     });
+
+//     artPlayerInstanceRef.current.on("video:pause", () => {
+//       if (!isFastForwarding) showPlayButton();
+//     });
+
+//     artPlayerInstanceRef.current.on("seeked", () => {
+//       if (!isFastForwarding && !artPlayerInstanceRef.current?.playing)
+//         showPlayButton();
+//     });
+
+//     artPlayerInstanceRef.current.on("video:loadstart", () => {
+//       setPImg(width > height);
+//       const loadingIndicator =
+//         artPlayerInstanceRef.current?.template?.$loading?.querySelector(
+//           ".video-loading-indicator"
+//         ) as HTMLDivElement;
+//       const playIndicator =
+//         artPlayerInstanceRef.current?.template?.$state?.querySelector(
+//           ".video-play-indicator"
+//         ) as HTMLDivElement;
+//       if (loadingIndicator) loadingIndicator.style.display = "block";
+//       if (playIndicator) playIndicator.style.display = "none";
+//       if (artPlayerInstanceRef.current && thumbnail) {
+//         artPlayerInstanceRef.current.poster = thumbnail;
+//         if (!artPlayerInstanceRef.current.playing) {
+//           artPlayerInstanceRef.current.template.$poster.style.display = "block";
+//         }
+//       }
+//       if (playIconRef.current) playIconRef.current.style.display = "none";
+//     });
+
+//     artPlayerInstanceRef.current.on("video:canplay", () => {
+//       const loadingIndicator =
+//         artPlayerInstanceRef.current?.template?.$loading?.querySelector(
+//           ".video-loading-indicator"
+//         ) as HTMLDivElement;
+//       if (loadingIndicator) loadingIndicator.style.display = "none";
+//       if (
+//         artPlayerInstanceRef.current &&
+//         !artPlayerInstanceRef.current.playing &&
+//         !isFastForwarding
+//       ) {
+//         showPlayButton();
+//       } else {
+//         hidePlayButton();
+//       }
+//     });
+
+//     artPlayerInstanceRef.current.on("video:ended", () => {
+//       if (user?.token && post_id) {
+//         try {
+//           const positionsJson =
+//             localStorage.getItem(VIDEO_POSITIONS_KEY) || "{}";
+//           const positions = JSON.parse(positionsJson);
+//           if (positions[post_id]) {
+//             delete positions[post_id];
+//             localStorage.setItem(
+//               VIDEO_POSITIONS_KEY,
+//               JSON.stringify(positions)
+//             );
+//           }
+//         } catch (error) {
+//           console.error("Failed to clear video position:", error);
+//         }
+//       }
+//       stopPositionSaving();
+//       if (watchTimer) {
+//         clearInterval(watchTimer);
+//         watchTimer = null;
+//       }
+//       watchedTimeRef.current = 0;
+//       console.log("Video ended, looping will begin automatically");
+//       watchTimer = setInterval(() => {
+//         watchedTimeRef.current += 1;
+//         if (watchedTimeRef.current >= 5 && !apiCalledRef.current && !type) {
+//           handleWatchHistory();
+//         }
+//       }, 1000);
+//     });
+//   };
+
+//   let watchTimer: NodeJS.Timeout | null = null;
+
+//   artPlayerInstanceRef.current?.on("play", () => {
+//     watchTimer = setInterval(() => {
+//       watchedTimeRef.current += 1;
+//       if (watchedTimeRef.current >= 5 && !apiCalledRef.current && !type) {
+//         handleWatchHistory();
+//       }
+//     }, 1000);
+//   });
+
+//   artPlayerInstanceRef.current?.on("pause", () => {
+//     if (watchTimer) {
+//       clearInterval(watchTimer);
+//       watchTimer = null;
+//     }
+//   });
+
+//   const attemptPlay = () => {
+//     if (!artPlayerInstanceRef.current) return;
+//     if (playstart) {
+//       artPlayerInstanceRef.current
+//         .play()
+//         .then(() => hidePlayButton())
+//         .catch((error) => {
+//           console.error("Video play failed:", error);
+//           showPlayButton();
+//           if (
+//             error.name === "NotAllowedError" &&
+//             artPlayerInstanceRef.current
+//           ) {
+//             artPlayerInstanceRef.current.pause();
+//             artPlayerInstanceRef.current.controls.show = true;
+//           }
+//         });
+//     }
+//   };
+
+//   useEffect(() => {
+//     if (!playerContainerRef.current) return;
+//     if (isActive) {
+//       indexRef.current++;
+//       if (indexRef.current > 1 && abortControllerRef.current.length > 0) {
+//         abortControllerRef.current[0].abort();
+//         abortControllerRef.current.splice(0, 1);
+//         if (videoData?.current.length > 0) {
+//           videoData?.current[0].pause();
+//           videoData?.current[0].removeAttribute("src");
+//           videoData?.current[0].load();
+//           videoData?.current.splice(0, 1);
+//           indexRef.current--;
+//         }
+//       }
+//       attemptPlay();
+//       if (hlsRef.current) hlsRef.current.currentLevel = -1;
+//     } else {
+//       if (artPlayerInstanceRef.current) {
+//         artPlayerInstanceRef.current.destroy();
+//         artPlayerInstanceRef.current = null;
+//       }
+//       if (hlsRef.current) {
+//         hlsRef.current.destroy();
+//         hlsRef.current = null;
+//       }
+//     }
+//   }, [isActive]);
+
+//   useEffect(() => {
+//     if (isActive && playstart && !newStart) {
+//       attemptPlay();
+//       setnewStart(true);
+//     }
+//   }, [isActive, playstart]);
+
+//   useEffect(() => {
+//     const handleUserInteraction = () => {
+//       localStorage.setItem("userInteracted", "true");
+//       document.removeEventListener("scroll", handleUserInteraction);
+//       document.removeEventListener("touchstart", handleUserInteraction);
+//     };
+//     document.addEventListener("scroll", handleUserInteraction, { once: true });
+//     document.addEventListener("touchstart", handleUserInteraction, {
+//       once: true,
+//     });
+//     return () => {
+//       document.removeEventListener("scroll", handleUserInteraction);
+//       document.removeEventListener("touchstart", handleUserInteraction);
+//     };
+//   }, []);
+
+//   useEffect(() => {
+//     const container = playerContainerRef.current;
+//     if (!container) return;
+
+//     const progressBarVisibilityTimer = setTimeout(() => {
+//       if (progressBarRef.current) {
+//         progressBarRef.current.style.opacity = "1";
+//         progressBarRef.current.style.display = "block";
+//         const isChrome =
+//           /Chrome/.test(navigator.userAgent) &&
+//           /Google Inc/.test(navigator.vendor);
+//         if (isChrome) {
+//           const styleEl = document.createElement("style");
+//           styleEl.textContent = `
+//             .chrome-fix {
+//               -webkit-appearance: none !important;
+//               appearance: none !important;
+//               background: rgba(255, 255, 255, 0.2) !important;
+//               height: 4px !important;
+//               border-radius: 2px !important;
+//               outline: none !important;
+//               opacity: 1 !important;
+//               display: block !important;
+//               visibility: visible !important;
+//               cursor: pointer !important;
+//             }
+//             .chrome-fix::-webkit-slider-thumb {
+//               -webkit-appearance: none !important;
+//               appearance: none !important;
+//               width: 12px !important;
+//               height: 12px !important;
+//               background: #d53ff0 !important;
+//               border-radius: 50% !important;
+//               cursor: pointer !important;
+//             }
+//             .custom-progress-container {
+//               display: block !important;
+//               visibility: visible !important;
+//               opacity: 1 !important;
+//             }
+//           `;
+//           document.head.appendChild(styleEl);
+//           if (playerContainerRef.current) {
+//             const observer = new MutationObserver((mutations) => {
+//               if (progressBarRef.current) {
+//                 progressBarRef.current.style.opacity = "1";
+//                 progressBarRef.current.style.display = "block";
+//                 progressBarRef.current.style.visibility = "visible";
+//               }
+//             });
+//             observer.observe(playerContainerRef.current, {
+//               childList: true,
+//               subtree: true,
+//               attributes: true,
+//               attributeFilter: ["style", "class"],
+//             });
+//             return () => observer.disconnect();
+//           }
+//         }
+//       }
+//     }, 500);
+
+//     const initObserver = new IntersectionObserver(
+//       (entries) => {
+//         entries.forEach((entry) => {
+//           if (entry.isIntersecting && !artPlayerInstanceRef.current) {
+//             setPImg(width > height);
+//             initializePlayer();
+//           }
+//         });
+//       },
+//       { rootMargin: "200px 0px", threshold: 0.5 }
+//     );
+
+//     initObserver.observe(container);
+//     return () => {
+//       initObserver.disconnect();
+//       clearTimeout(progressBarVisibilityTimer);
+//       if (artPlayerInstanceRef.current)
+//         saveVideoPosition(artPlayerInstanceRef.current.currentTime);
+//       stopPositionSaving();
+//       if (artPlayerInstanceRef.current) {
+//         artPlayerInstanceRef.current.destroy();
+//         artPlayerInstanceRef.current = null;
+//       }
+//       if (hlsRef.current) {
+//         hlsRef.current.destroy();
+//         hlsRef.current = null;
+//       }
+//     };
+//   }, [src, post_id, user]);
+
+//   useEffect(() => {
+//     muteRef.current = mute;
+//     if (artPlayerInstanceRef.current) artPlayerInstanceRef.current.muted = mute;
+//   }, [mute]);
+
+//   useEffect(() => {
+//     if (artPlayerInstanceRef.current)
+//       artPlayerInstanceRef.current.fullscreen = rotate;
+//   }, [rotate]);
+
+//   const hidePlayButton = () => {
+//     if (playIconRef.current) playIconRef.current.style.display = "none";
+//     const playIndicator =
+//       artPlayerInstanceRef.current?.template?.$state?.querySelector(
+//         ".video-play-indicator"
+//       ) as HTMLDivElement;
+//     if (playIndicator) playIndicator.style.display = "none";
+//   };
+
+//   const showPlayButton = () => {
+//     if (!artPlayerInstanceRef.current?.playing && !isFastForwarding) {
+//       const loadingIndicator =
+//         artPlayerInstanceRef.current?.template?.$loading?.querySelector(
+//           ".video-loading-indicator"
+//         ) as HTMLDivElement;
+//       if (loadingIndicator) loadingIndicator.style.display = "none";
+//       if (playIconRef.current) playIconRef.current.style.display = "block";
+//       const playIndicator =
+//         artPlayerInstanceRef.current?.template?.$state?.querySelector(
+//           ".video-play-indicator"
+//         ) as HTMLDivElement;
+//       if (playIndicator) playIndicator.style.display = "block";
+//     }
+//   };
+
+//   const startFastForward = () => {
+//     if (!artPlayerInstanceRef.current) return;
+//     wasPlayingRef.current = artPlayerInstanceRef.current.playing;
+//     setIsFastForwarding(true);
+//     isLongPressActiveRef.current = true;
+//     hidePlayButton();
+//     dispatch(sethideBar(true));
+//     const player = artPlayerInstanceRef.current;
+//     player.play();
+//     player.playbackRate = FAST_FORWARD_RATE;
+//     if (progressBarRef.current) {
+//       progressBarRef.current.style.opacity = "1";
+//       progressBarRef.current.style.display = "block";
+//     }
+//     fastForwardIntervalRef.current = setInterval(() => {
+//       if (player.currentTime >= player.duration - 1) stopFastForward();
+//       if (progressBarRef.current) {
+//         const currentTime = player.currentTime || 0;
+//         const duration = player.duration || 1;
+//         const newProgress = (currentTime / duration) * 100;
+//         progressBarRef.current.value = newProgress.toString();
+//         progressBarRef.current.style.setProperty(
+//           "--progress",
+//           `${newProgress}%`
+//         );
+//       }
+//     }, FAST_FORWARD_INTERVAL);
+//   };
+
+//   const stopFastForward = () => {
+//     if (!artPlayerInstanceRef.current) return;
+//     if (fastForwardIntervalRef.current) {
+//       clearInterval(fastForwardIntervalRef.current);
+//       fastForwardIntervalRef.current = null;
+//     }
+//     const player = artPlayerInstanceRef.current;
+//     player.playbackRate = 1;
+//     setIsFastForwarding(false);
+//     isLongPressActiveRef.current = false;
+//     dispatch(sethideBar(false));
+//     player.play();
+//     hidePlayButton();
+//   };
+
+//   const cleanupPlayer = () => {
+//     if (artPlayerInstanceRef.current) {
+//       saveVideoPosition(artPlayerInstanceRef.current.currentTime);
+//       const video = artPlayerInstanceRef.current.video;
+//       if (video) {
+//         video.pause();
+//         video.removeAttribute("src");
+//         video.load();
+//       }
+//       artPlayerInstanceRef.current.destroy();
+//       artPlayerInstanceRef.current = null;
+//     }
+//     if (hlsRef.current) hlsRef.current.destroy();
+//     if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current);
+//     if (fastForwardIntervalRef.current)
+//       clearInterval(fastForwardIntervalRef.current);
+//   };
+
+//   return (
+//     <div
+//       ref={playerContainerRef}
+//       className={`video_player w-full ${p_img ? "poster_change" : ""}`}
+//       style={{ minHeight: "200px" }}
+//     />
+//   );
+// };
+
+// export default Player;

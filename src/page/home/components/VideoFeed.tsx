@@ -365,7 +365,11 @@ const VideoFeed = ({
             >
               {video?.file_type !== "video" ? (
                 <a href={video?.ads_info?.jump_url} target="_blank">
-                  <img src={video?.files[0]?.resourceURL} alt="" />
+                  <img
+                    src={video?.files[0]?.resourceURL}
+                    alt=""
+                    className="h-full w-full"
+                  />
                 </a>
               ) : (
                 <VideoContainer1
