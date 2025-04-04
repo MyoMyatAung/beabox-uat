@@ -286,7 +286,7 @@ const Ranking = () => {
 
         <div
           className={`w-full sticky top-0 ${
-            showHeader ? "ccbg2 z-50 pb-5" : ""
+            showHeader ? "ccbg2 z-50 pb-1" : ""
           }`}
         >
           {showHeader ? (
