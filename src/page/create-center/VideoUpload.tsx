@@ -14,8 +14,9 @@ import UploadProgress from "@/components/create-center/upload-progress";
 import DeleteDetail from "@/components/create-center/delete-detail";
 
 const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
-  const { data: configData } = useGetConfigQuery({});
-  const domain = configData?.data?.post_domain?.image;
+  // console.log(editPost?.files[0]?.image_url, "editpost");
+  // const { data: configData } = useGetConfigQuery({});
+  const domain = editPost?.files[0]?.image_url;
   const { data } = useGetS3Query({});
   const [files, setFiles] = useState(editPost?.files || []);
   const [thumbnail, setThumbnail] = useState(editPost?.preview_image || null);

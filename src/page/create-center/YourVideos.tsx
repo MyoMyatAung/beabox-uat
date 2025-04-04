@@ -33,6 +33,8 @@ const YourVideos = () => {
     status: isActive,
   });
 
+  console.log(data);
+
   const [posts, setPosts] = useState<any>([]);
   const [hasMore, setHasMore] = useState(true);
   const [totalData, setTotalData] = useState<number>(0);

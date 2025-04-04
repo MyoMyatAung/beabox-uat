@@ -4,14 +4,13 @@ const RecyclePopup = ({
   postDeleteHandler,
   postRestoreHandler,
 }: any) => {
-  console.log(action);
   return (
     <div className="z-50 h-screen w-full fixed top-0 left-0 bg-[#000000CC] flex justify-center items-center transition-all duration-75 ease-in-out">
       <div className="bg-[#16131C] mx-8 pt-5 rounded-[16px] flex flex-col justify-center items-center">
         <div className="pt-5 px-5">
           <p className="text-[16px] w-[280px] text-[#BBBBBB] text-center">
             {action == "delete"
-              ? `Are you sure this video will delete permanently and this will not be restored.`
+              ? `您确定要永久删除此视频吗？此操作无法恢复。`
               : `Are you sure this video will be restored.`}
           </p>
         </div>
