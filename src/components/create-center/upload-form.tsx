@@ -130,6 +130,7 @@ const UploadFrom = ({
                 hashtags.map((tag: any, index: any) => (
                   <div
                     key={index}
+                    onClick={() => removeTag(index)}
                     className="text-[12px] bg-[#FFFFFF14] px-2 py-0.5 rounded-full"
                   >
                     # {tag}
