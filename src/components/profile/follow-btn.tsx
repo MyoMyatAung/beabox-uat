@@ -12,15 +12,14 @@ const FollowBtn = ({ id, followBack, refetch }: any) => {
   const [changeFollowStatus, { data, isLoading }] =
     useChangeFollowStatusMutation();
   const handleChangeFollowStatus = async () => {
+    setFollow(!follow);
     await changeFollowStatus({
       follow_user_id: id,
       status: followBack ? "unfollow" : "follow",
     });
-    await refetch();
-    setFollow(!follow);
+    // await refetch();
   };
 
-  
   return (
     <button
       disabled={isLoading}
@@ -35,13 +34,14 @@ const FollowBtn = ({ id, followBack, refetch }: any) => {
           : "gradient-bg hover:gradient-bg"
       }`}
     >
-      {isLoading ? (
+      {follow ? "已关注" : "关注"}
+      {/* {isLoading ? (
         <img src={loader} alt="" className="w-12" />
       ) : follow ? (
         "已关注"
       ) : (
         "关注"
-      )}
+      )} */}
       {/* {follow ? "已关注" : "关注"} */}
     </button>
   );

@@ -12,12 +12,12 @@ const RankBtn = ({ id, followBack, refetch }: any) => {
   const [changeFollowStatus, { data, isLoading }] =
     useChangeFollowStatusMutation();
   const handleChangeFollowStatus = async () => {
+    setFollow(!follow);
     await changeFollowStatus({
       follow_user_id: id,
       status: followBack ? "unfollow" : "follow",
     });
-    await refetch();
-    setFollow(!follow);
+    // await refetch();
   };
   useEffect(() => {
     setFollow(followBack);
@@ -40,13 +40,14 @@ const RankBtn = ({ id, followBack, refetch }: any) => {
     >
       <Sparkle size={12} />
       <span className="text-[14px] ">
-        {isLoading ? (
+        {follow ? "已关注" : "关注"}
+        {/* {isLoading ? (
           <img src={loader} alt="" className="w-5" />
         ) : follow ? (
           "已关注"
         ) : (
           "关注"
-        )}
+        )} */}
       </span>
       <Sparkle size={12} />
     </button>
