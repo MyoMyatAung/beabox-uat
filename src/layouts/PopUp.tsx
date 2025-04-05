@@ -110,16 +110,16 @@ const PopUp: React.FC<PopUpProps> = ({
                   height="100%"
                   className="w-[260px] h-[390px] object-cover"
                 /> */}
-                {/* <img
+                <img
                   className="w-[260px] h-[390px] object-cover"
                   src={currentImage.image}
                   alt=""
-                /> */}
-                <ImageWithLoader
+                />
+                {/* <ImageWithLoader
                   src={currentImage?.image}
                   alt="Ad"
                   className="h-full max-w-[480px] w-full object-cover"
-                />
+                /> */}
               </a>
               <div
                 onClick={handleClose}
