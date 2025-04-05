@@ -8,6 +8,7 @@ import { useGetAdsPopUpQuery } from "@/utils/helperService";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 import { useDispatch } from "react-redux";
 import { setPlay } from "@/page/home/services/playSlice";
+import ImageWithLoader from "./ImageWithLoader";
 
 interface PopUpProps {
   setShowAd: any;
@@ -109,10 +110,15 @@ const PopUp: React.FC<PopUpProps> = ({
                   height="100%"
                   className="w-[260px] h-[390px] object-cover"
                 /> */}
-                <img
+                {/* <img
                   className="w-[260px] h-[390px] object-cover"
                   src={currentImage.image}
                   alt=""
+                /> */}
+                <ImageWithLoader
+                  src={currentImage?.image}
+                  alt="Ad"
+                  className="h-full max-w-[480px] w-full object-cover"
                 />
               </a>
               <div
