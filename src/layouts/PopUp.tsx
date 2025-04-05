@@ -177,18 +177,18 @@ const PopUp: React.FC<PopUpProps> = ({
                       imageUrl={app.image}
                       alt=""
                     /> */}
-                      {/* <ImageWithPlaceholder
+                      <ImageWithPlaceholder
                         src={app.image}
                         width={""}
                         height={""}
                         alt="start"
                         className="w-[52px] h-[50px] rounded-[6px] border-[#222]"
-                      /> */}
-                      <img
+                      />
+                      {/* <img
                         className="w-[52px] h-[50px] rounded-[6px] border-[#222]"
                         src={app.image}
                         alt=""
-                      />
+                      /> */}
                       <h1 className="text-white text-[10px] font-[400]">
                         {app.title}
                       </h1>

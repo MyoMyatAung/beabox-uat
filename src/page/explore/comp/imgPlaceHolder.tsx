@@ -56,7 +56,7 @@ const ImageWithPlaceholder = ({
   return (
     <div
       ref={containerRef}
-      className="image-container_exp bg-black relative"
+      className={`image-container_exp bg-black relative ${className}`}
       style={{ width, height }}
     >
       <img
