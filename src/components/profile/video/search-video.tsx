@@ -110,7 +110,6 @@ const SearchVideo = ({ id }: { id: string }) => {
     setVh(isWebView() ? "100vh" : "95vh");
   }, []);
 
-  console.log(getUA);
 
   return (
     <div className={`${showVideoFeed ? "z-[9900] relative h-screen" : ""}`}>
