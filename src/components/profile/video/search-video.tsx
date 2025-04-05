@@ -14,17 +14,30 @@ import InfinitLoad from "@/components/shared/infinit-load";
 import loader from "@/page/home/vod_loader.gif";
 import { useSearchParams } from "react-router-dom";
 import VideoFeed from "@/page/home/components/VideoFeed";
+// import {
+//   isMobile,
+//   isAndroid,
+//   isIOS,
+//   isBrowser,
+//   isChrome,
+//   isIOS13,
+//   getUA,
+// } from "react-device-detect";
 
-function isInWebView() {
-  const ua = navigator.userAgent || navigator.vendor || window.opera;
-  return (
-    /\bwv\b/.test(ua) ||
-    /\bWebView\b/.test(ua) ||
-    (ua.includes("Android") &&
-      ua.includes("Version/") &&
-      !ua.includes("Chrome")) ||
-    ua.includes("MyAppWebView")
-  );
+export function isWebView() {
+  const ua = navigator.userAgent || "";
+  const standalone = window.navigator.standalone;
+
+  const isIOS = /iPhone|iPad|iPod/.test(ua);
+  const isAndroid = /Android/.test(ua);
+
+  const isIOSWebView =
+    isIOS && (!ua.includes("Safari") || standalone === false);
+  const isAndroidWebView = isAndroid && ua.includes("wv");
+
+  const isCustomFlag = window.IS_APP === true; // if injected from native
+
+  return isIOSWebView || isAndroidWebView || isCustomFlag;
 }
 
 const SearchVideo = ({ id }: { id: string }) => {
@@ -83,15 +96,20 @@ const SearchVideo = ({ id }: { id: string }) => {
   // }, []);
 
   // console.log(page);
+  // useEffect(() => {
+  //   if (!isInWebView()) {
+  //     // console.log("application");
+  //     setVh("95vh");
+  //   } else {
+  //     // console.log("website");
+  //     setVh("100vh");
+  //   }
+  // }, []);
   useEffect(() => {
-    if (!isInWebView()) {
-      // console.log("application");
-      setVh("95vh");
-    } else {
-      // console.log("website");
-      setVh("100vh");
-    }
+    // setVh(isMobile ? "95vh" : "100vh");
+    setVh(isWebView() ? "100vh" : "95vh");
   }, []);
+
 
   return (
     <div className={`${showVideoFeed ? "z-[9900] relative h-screen" : ""}`}>
