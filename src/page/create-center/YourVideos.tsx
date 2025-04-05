@@ -77,10 +77,15 @@ const YourVideos = () => {
     }
   }, [newData]);
 
-  // useEffect(() => {
-  //   if (!editPost) refetch();
-  // }, [editPost]);
-  // console.log(newData?.data?.creator_center_post_filter);
+  useEffect(() => {
+    if (!editPost) {
+      // Reset state when returning from edit/delete
+      setPage(1);
+      setPosts([]);
+      setHasMore(true);
+      refetch();
+    }
+  }, [editPost, refetch]);
 
   if (editPost) {
     return (

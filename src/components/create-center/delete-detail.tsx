@@ -14,7 +14,7 @@ const DeleteDetailPopUp = ({ setShow, id, refetch, seteditPost }: any) => {
   const handleDelete = async () => {
     await moveToRecycle({ id });
     setShow(false);
-    await refetch();
+    // await refetch();
     seteditPost(null);
     // navigate(paths.your_videos);
   };

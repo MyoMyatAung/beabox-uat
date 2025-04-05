@@ -108,24 +108,47 @@ const Recycle = () => {
   const [hasMore, setHasMore] = useState(true);
   const [totalData, setTotalData] = useState<number>(0);
   const postRestoreHandler = async (type: any) => {
-    await restorePost({ id: deleteItems, type: type });
-    setDeleteItems([]);
-    setShow(false);
+    try {
+      await restorePost({ id: deleteItems, type: type }).unwrap();
+      // setPosts(prevPosts => prevPosts.filter(post => !deleteItems.includes(post.post_id));
+      setPosts((prevPosts: any) =>
+        prevPosts.filter((post: any) => !deleteItems.includes(post.post_id))
+      );
+      setDeleteItems([]);
+      setShow(false);
+      // Optionally reset pagination
+      setPage(1);
+      setPosts([]);
+      refetch();
+    } catch (error) {
+      console.error("Error restoring posts:", error);
+    }
   };
 
   const multiRestoreHandler = () => {
     if (posts) setDeleteItems([...posts?.map((item: any) => item?.post_id)]);
   };
 
+  // const postDeleteHandler = async () => {
+  //   await restorePost({ id: deleteItems, type: "delete" });
+  //   setDeleteItems([]);
+  //   setShow(false);
+  // };
   const postDeleteHandler = async () => {
-    await restorePost({ id: deleteItems, type: "delete" });
-    setDeleteItems([]);
-    setShow(false);
-    // deleteItems?.map(async (item: any) => {
-    //   await deletePost({ id: item });
-    // });
-    // setDeleteItems([]);
-    // setShow(false);
+    try {
+      await restorePost({ id: deleteItems, type: "delete" }).unwrap();
+      setPosts((prevPosts: any) =>
+        prevPosts.filter((post: any) => !deleteItems.includes(post.post_id))
+      );
+      setDeleteItems([]);
+      setShow(false);
+      // Optionally reset pagination
+      setPage(1);
+      setPosts([]);
+      refetch();
+    } catch (error) {
+      console.error("Error deleting posts:", error);
+    }
   };
 
   // const postDeleteHandler = async () => {
@@ -158,10 +181,6 @@ const Recycle = () => {
       setPage((prev) => prev + 1);
     }
   };
-
-  useEffect(() => {
-    refetch();
-  }, []);
 
   if (isLoading && page == 1) return <Loader />;
   return (
