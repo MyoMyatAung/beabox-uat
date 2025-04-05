@@ -110,7 +110,7 @@ const SearchVideo = ({ id }: { id: string }) => {
   // }, []);
   useEffect(() => {
     // setVh(isMobile ? "95vh" : "100vh");
-    setVh(isWebView() ? "100vh" : "92vh");
+    setVh(isWebView() ? "100vh" : "100dvh");
   }, []);
 
   return (
