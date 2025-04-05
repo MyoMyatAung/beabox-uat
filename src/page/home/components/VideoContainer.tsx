@@ -840,6 +840,12 @@ const VideoContainer = ({
   const [rotateVideoId, setRotateVideoId] = useState<string | null>(null); // For controlling fullscreen per video
   const [isOpen, setIsOpen] = useState(false);
 
+  useEffect(() => {
+    setLikeCount(video?.like_count);
+    setIsLiked(video?.is_liked);
+    setcommentCount(video?.comment_count);
+  }, [video]);
+
   // Add state to track if this video is active
   const [isActive, setIsActive] = useState(false);
 

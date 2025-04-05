@@ -2676,7 +2676,7 @@ const Player = ({
 
       hls.on(Hls.Events.FRAG_BUFFERED, () => {
         console.log("HLS fragment buffered, checking for playback...");
-        if (isActive && playstart && videoElement.paused) {
+        if (playstart && videoElement.paused) {
           videoElement.play().catch((error) => {
             console.warn("Auto-play prevented:", error);
             showPlayButton();
@@ -2690,7 +2690,7 @@ const Player = ({
     } else {
       videoElement.src = newSrc;
       videoElement.load();
-      if (isActive && playstart) {
+      if (playstart) {
         videoElement.play().catch((error) => {
           console.warn("Auto-play prevented:", error);
           showPlayButton();
@@ -2774,30 +2774,30 @@ const Player = ({
     }
   }, [src, thumbnail]);
 
-  useEffect(() => {
-    if (isActive) {
-      indexRef.current++;
-      if (indexRef.current > 1 && abortControllerRef.current.length > 0) {
-        abortControllerRef.current[0].abort();
-        abortControllerRef.current.splice(0, 1);
-        if (videoData?.current.length > 0) {
-          videoData?.current[0].pause();
-          videoData?.current[0].removeAttribute("src");
-          videoData?.current[0].load();
-          videoData?.current.splice(0, 1);
-          indexRef.current--;
-        }
-      }
-      attemptPlay();
-    }
-  }, [isActive]);
+  // useEffect(() => {
+  //   if (isActive) {
+  //     indexRef.current++;
+  //     if (indexRef.current > 1 && abortControllerRef.current.length > 0) {
+  //       abortControllerRef.current[0].abort();
+  //       abortControllerRef.current.splice(0, 1);
+  //       if (videoData?.current.length > 0) {
+  //         videoData?.current[0].pause();
+  //         videoData?.current[0].removeAttribute("src");
+  //         videoData?.current[0].load();
+  //         videoData?.current.splice(0, 1);
+  //         indexRef.current--;
+  //       }
+  //     }
+  //     attemptPlay();
+  //   }
+  // }, [isActive]);
 
   useEffect(() => {
-    if (isActive && playstart && !newStart) {
+    if (playstart && !newStart) {
       attemptPlay();
       setnewStart(true);
     }
-  }, [isActive, playstart]);
+  }, [playstart]);
 
   useEffect(() => {
     muteRef.current = mute;
