@@ -84,9 +84,9 @@ const SearchVideo = ({ id }: { id: string }) => {
 
   // console.log(page);
   useEffect(() => {
-    if (isInWebView()) {
+    if (!isInWebView()) {
       // console.log("application");
-      setVh("90vh");
+      setVh("95vh");
     } else {
       // console.log("website");
       setVh("100vh");
