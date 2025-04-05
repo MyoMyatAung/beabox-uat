@@ -23,7 +23,7 @@ const Avatars = ({
   return (
     <div className="bg-[#000000CC] w-full flex justify-center items-center h-screen absolute top-0 left-0 z-50">
       {loading2 ? <TranLoader /> : <></>}
-      <div className="bg-[#16131C] rounded-[22px] w-[90%] h-[90%] flex flex-col justify-between">
+      <div className="bg-[#16131C] rounded-[22px] w-[90%] h-[75%] flex flex-col justify-between">
         <div className="">
           <TopBar setShowAvatar={setShowAvatar} />
         </div>

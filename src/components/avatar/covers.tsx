@@ -25,7 +25,7 @@ const Covers = ({ setShowCovers }: any) => {
     <div className="bg-[#000000CC] w-full flex justify-center items-center h-screen fixed top-0 left-0 z-[9999]">
       {isLoading ? <TranLoader /> : <></>}
 
-      <div className="bg-[#16131C] rounded-[22px] w-[90%] h-[90%] flex flex-col justify-between">
+      <div className="bg-[#16131C] rounded-[22px] w-[90%] h-[75%] flex flex-col justify-between">
         <div className="">
           <TopBar setShowCovers={setShowCovers} />
         </div>
