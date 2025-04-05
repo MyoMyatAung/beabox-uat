@@ -1750,7 +1750,7 @@ import { useWatchtPostMutation } from "../services/homeApi";
 import { showToast } from "../services/errorSlice";
 import { setMute } from "../services/muteSlice";
 import { sethideBar } from "../services/hideBarSlice";
-import forward from "../forward.gif";
+import forward from "../Fastforward.gif";
 
 const BUFFER_THRESHOLD = 10;
 const MAX_BUFFER_SIZE = 50 * 1024 * 1024;
