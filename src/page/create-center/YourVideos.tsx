@@ -13,11 +13,6 @@ import { Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import UploadVideos from "./VideoUpload";
-const Loader2 = () => (
-  <div className="flex justify-center items-center w-full mt-[200px]">
-    <img src={loader} alt="" className="w-20" />
-  </div>
-);
 
 const YourVideos = () => {
   const navigate = useNavigate();
@@ -28,12 +23,15 @@ const YourVideos = () => {
   const config = newData?.data?.creator_center_post_filter;
   const imgdomain = newData?.data?.post_domain?.image;
   // const { data, isLoading, refetch } = useGetPostListQuery("");
-  const { data, isLoading, isFetching, refetch } = useGetPostsQuery({
-    page,
-    status: isActive,
-  });
-
-  console.log(data);
+  const { data, isLoading, isFetching, refetch } = useGetPostsQuery(
+    {
+      page,
+      status: isActive,
+    }
+    // {
+    //   refetchOnMountOrArgChange: true,
+    // }
+  );
 
   const [posts, setPosts] = useState<any>([]);
   const [hasMore, setHasMore] = useState(true);
@@ -65,22 +63,32 @@ const YourVideos = () => {
     }
   };
 
-  // useEffect(() => {
-  //   setPage(1);
-  //   setPosts([]);
-  //   setHasMore(true);
-  //   refetch();
-  // }, [isActive, refetch]);
   useEffect(() => {
     if (newData?.data?.creator_center_post_filter) {
       setIsActive("all");
     }
   }, [newData]);
 
-  // useEffect(() => {
-  //   if (!editPost) refetch();
-  // }, [editPost]);
-  // console.log(newData?.data?.creator_center_post_filter);
+  useEffect(() => {
+    if (!editPost) {
+      // Reset state when returning from edit/delete
+      setPage(1);
+      setPosts([]);
+      setHasMore(true);
+      refetch();
+    }
+  }, [editPost, refetch]);
+
+  useEffect(() => {
+    console.log("Component mounted or navigated to");
+    if (data) {
+      setPosts((prev: any) => [...prev, ...data?.data]);
+      setTotalData(data?.pagination?.total);
+    }
+    return () => console.log("Component unmounted");
+  }, []);
+
+  // console.log(posts);
 
   if (editPost) {
     return (
@@ -116,7 +124,9 @@ const YourVideos = () => {
           </div>
           <div className="">
             {isFetching && page === 1 ? (
-              <Loader2 />
+              <div className="flex justify-center items-center w-full mt-[200px]">
+                <img src={loader} alt="" className="w-20" />
+              </div>
             ) : (
               <UploadList
                 imgdomain={imgdomain}

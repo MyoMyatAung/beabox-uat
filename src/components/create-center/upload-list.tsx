@@ -13,14 +13,14 @@ const UploadList = ({
   imgdomain,
   isFetching,
 }: any) => {
-  const uniqueDates = [...new Set(list.map((item: any) => item.created_at))];
-  console.log(uniqueDates);
+  const uniqueDates = [...new Set(list?.map((item: any) => item?.created_at))];
+  // console.log(uniqueDates);
 
   const groupedData = uniqueDates.map((date) => ({
     date,
     list: list
-      .filter((item: any) => item.created_at === date)
-      .map((item: any) => item),
+      ?.filter((item: any) => item?.created_at === date)
+      ?.map((item: any) => item),
   }));
   const getTodayDate = () => {
     const today = new Date();
