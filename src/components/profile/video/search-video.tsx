@@ -110,7 +110,6 @@ const SearchVideo = ({ id }: { id: string }) => {
     setVh(isWebView() ? "100vh" : "95vh");
   }, []);
 
-
   return (
     <div className={`${showVideoFeed ? "z-[9900] relative h-screen" : ""}`}>
       <Drawer>
@@ -131,7 +130,10 @@ const SearchVideo = ({ id }: { id: string }) => {
             />
           </div>
         ) : (
-          <DrawerContent className={`z-[8900] h-[${vh}] border-0 `}>
+          <DrawerContent
+            className={`z-[8900] border-0 `}
+            style={{ height: vh }}
+          >
             <>
               <div className="c-height w-full overflow-y-scroll hide-sb">
                 <div className=" px-5 z-[8000]  bg-[#16131C] sticky top-0 py-5 flex items-center gap-3">
