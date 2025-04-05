@@ -1,4 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
+import logo from "@/assets/logo.svg";
+
 import { useDropzone } from "react-dropzone";
 import AWS from "aws-sdk"; // Use AWS SDK v2
 import UploadForm from "@/components/create-center/upload-form";
@@ -12,10 +14,14 @@ import {
 import TopNav from "@/components/create-center/top-nav";
 import UploadProgress from "@/components/create-center/upload-progress";
 import DeleteDetail from "@/components/create-center/delete-detail";
+import { setAlertText } from "@/store/slices/profileSlice";
+import { useDispatch } from "react-redux";
 
 const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   // console.log(editPost?.files[0]?.image_url, "editpost");
   // const { data: configData } = useGetConfigQuery({});
+  const [showAlert, setShowAlert] = useState(false);
+  const dispatch = useDispatch();
   const domain = editPost?.files[0]?.image_url;
   const { data } = useGetS3Query({});
   const [files, setFiles] = useState(editPost?.files || []);
@@ -76,6 +82,23 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
           color: "white",
         },
       });
+      return;
+    }
+
+    // Add size validation here (100MB limit)
+    const maxSize = 100 * 1024 * 1024; // 100MB in bytes
+    if (videoFile.size > maxSize) {
+      setShowAlert(true);
+      setTimeout(() => setShowAlert(false), 3000);
+      // dispatch(setAlertText("视频文件大小不能超过100MB。"));
+      // console.log();
+      // toast.error("视频文件大小不能超过100MB。", {
+      //   // Video file size must not exceed 100MB
+      //   style: {
+      //     background: "#25212a",
+      //     color: "white",
+      //   },
+      // });
       return;
     }
 
@@ -569,6 +592,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
       });
     } finally {
       setUploading(false);
+      setUploadedSize(0); // Add this line
     }
   };
 
@@ -587,6 +611,16 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   };
   return (
     <div className="relative w-full h-screen">
+      {showAlert ? (
+        <div className="absolute bottom-[20%] w-full flex justify-center items-center">
+          <div className="bg-[#191721] flex gap-1 rounded-lg px-4 py-2">
+            <img src={logo} className="w-5" alt="" />
+            <p className="text-[14px]">视频文件大小不能超过100MB。</p>
+          </div>
+        </div>
+      ) : (
+        <></>
+      )}
       {uploading || successEnd ? (
         <div className="fixed top-0 left-0 w-full h-full z-50">
           <UploadProgress

@@ -5,7 +5,6 @@ import {
 import { useState } from "react";
 import Loader from "../shared/loader";
 import { useNavigate } from "react-router-dom";
-import { paths } from "@/routes/paths";
 
 const DeleteDetailPopUp = ({ setShow, id, refetch, seteditPost }: any) => {
   const [moveToRecycle, { data, isLoading }] = useMoveToRecycleMutation();
