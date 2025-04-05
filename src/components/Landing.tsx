@@ -137,12 +137,12 @@ const Landing: React.FC = () => {
         <div className="max-w-[480px] mx-auto">
           <a target="_blank" rel="noopener noreferrer" href={images?.jump_url}>
             <div className="relative h-screen w-screen max-w-[480px]">
-              {/* <AsyncDecryptedImage
+              <AsyncDecryptedImage
                 className="h-full max-w-[480px] w-full object-cover"
                 imageUrl={images?.image}
                 alt="Advertisement"
-              /> */}
-              <img
+              />
+              {/* <img
                 className="h-full max-w-[480px] w-full object-cover"
                 src={loaded ? images?.image : splashScreen}
                 alt="Advertisement"
@@ -150,7 +150,7 @@ const Landing: React.FC = () => {
                   console.log("Image loaded");
                   setLoaded(true);
                 }}
-              />
+              /> */}
             </div>
           </a>
           <div
