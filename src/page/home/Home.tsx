@@ -1052,19 +1052,29 @@ const Home = () => {
                               : "none",
                           }}
                         >
-                          {currentVideo?.file_type !== "video" ? (
-                            <a
-                              href={currentVideo?.ads_info?.jump_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <img
-                                src={currentVideo?.files[0]?.resourceURL}
-                                alt=""
-                                className="h-full w-full object-cover"
-                              />
-                            </a>
-                          ) : (
+                          <a
+                            className={
+                              currentVideo?.file_type !== "video"
+                                ? ""
+                                : "hidden"
+                            }
+                            href={currentVideo?.ads_info?.jump_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <img
+                              src={currentVideo?.files[0]?.resourceURL}
+                              alt=""
+                              className="h-full w-full object-cover"
+                            />
+                          </a>
+                          <div
+                            className={`${
+                              currentVideo?.file_type !== "video"
+                                ? "hidden"
+                                : ""
+                            } w-full h-full object-fill`}
+                          >
                             <VideoContainer
                               videoData={videoData}
                               indexRef={indexRef}
@@ -1083,7 +1093,7 @@ const Home = () => {
                               width={width}
                               height={height}
                             />
-                          )}
+                          </div>
 
                           {currentVideo?.type !== "ads" &&
                             currentVideo?.type !== "ads_virtual" && (
@@ -1199,19 +1209,29 @@ const Home = () => {
                               : "none",
                           }}
                         >
-                          {currentVideo?.file_type !== "video" ? (
-                            <a
-                              href={currentVideo?.ads_info?.jump_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <img
-                                src={currentVideo?.files[0]?.resourceURL}
-                                alt=""
-                                className="h-full w-full object-cover"
-                              />
-                            </a>
-                          ) : (
+                          <a
+                            className={
+                              currentVideo?.file_type !== "video"
+                                ? ""
+                                : "hidden"
+                            }
+                            href={currentVideo?.ads_info?.jump_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <img
+                              src={currentVideo?.files[0]?.resourceURL}
+                              alt=""
+                              className="h-full w-full object-cover"
+                            />
+                          </a>
+                          <div
+                            className={`${
+                              currentVideo?.file_type !== "video"
+                                ? "hidden"
+                                : ""
+                            } w-full h-full object-fill`}
+                          >
                             <VideoContainer
                               videoData={videoData}
                               indexRef={indexRef}
@@ -1230,7 +1250,7 @@ const Home = () => {
                               width={width}
                               height={height}
                             />
-                          )}
+                          </div>
 
                           {currentVideo?.type !== "ads" &&
                             currentVideo?.type !== "ads_virtual" && (
