@@ -18,7 +18,7 @@ import LoginDrawer from "@/components/profile/auth/login-drawer";
 import { decryptImage } from "@/utils/imageDecrypt";
 import { setVideosToRender } from "../services/videoRenderSlice";
 
-function VideoSidebar1({
+function VideoSidebarFeed({
   setVideosData,
   messages,
   setCommentCount,
@@ -526,4 +526,4 @@ function VideoSidebar1({
   );
 }
 
-export default VideoSidebar1;
+export default VideoSidebarFeed;
