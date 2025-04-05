@@ -15,7 +15,20 @@ import loader from "@/page/home/vod_loader.gif";
 import { useSearchParams } from "react-router-dom";
 import VideoFeed from "@/page/home/components/VideoFeed";
 
+function isInWebView() {
+  const ua = navigator.userAgent || navigator.vendor || window.opera;
+  return (
+    /\bwv\b/.test(ua) ||
+    /\bWebView\b/.test(ua) ||
+    (ua.includes("Android") &&
+      ua.includes("Version/") &&
+      !ua.includes("Chrome")) ||
+    ua.includes("MyAppWebView")
+  );
+}
+
 const SearchVideo = ({ id }: { id: string }) => {
+  const [vh, setVh] = useState("100vh");
   const [postsSearch, { isLoading }] = usePostsSearchMutation();
   const [search, setSearch] = useState<string>("");
   const [videos, setVideos] = useState<any[]>([]);
@@ -70,6 +83,15 @@ const SearchVideo = ({ id }: { id: string }) => {
   // }, []);
 
   // console.log(page);
+  useEffect(() => {
+    if (isInWebView()) {
+      // console.log("application");
+      setVh("90vh");
+    } else {
+      // console.log("website");
+      setVh("100vh");
+    }
+  }, []);
 
   return (
     <div className={`${showVideoFeed ? "z-[9900] relative h-screen" : ""}`}>
@@ -91,7 +113,7 @@ const SearchVideo = ({ id }: { id: string }) => {
             />
           </div>
         ) : (
-          <DrawerContent className="z-[8900] h-[95vh] border-0 ">
+          <DrawerContent className={`z-[8900] h-[${vh}] border-0 `}>
             <>
               <div className="c-height w-full overflow-y-scroll hide-sb">
                 <div className=" px-5 z-[8000]  bg-[#16131C] sticky top-0 py-5 flex items-center gap-3">
