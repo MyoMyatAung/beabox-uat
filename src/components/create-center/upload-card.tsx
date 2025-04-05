@@ -5,12 +5,12 @@ const UploadCard = ({ item, config, imgdomain }: any) => {
   let color = config?.find((el: any) => el?.keyword == item?.status);
   let bgcolor = color?.bg_color_code;
   let textcolor = color?.text_color_code;
-  console.log(config);
+  // console.log(config);
   const filterStatus = config?.find(
     (data: any) => data?.keyword == item?.status
   );
   const imageurl = item?.files[0]?.image_url;
-  console.log(item?.files[0]?.image_url, "item card");
+  // console.log(item?.files[0]?.image_url, "item card");
 
   return (
     <div className="grid grid-cols-2 items-center">

@@ -98,7 +98,8 @@ const Recycle = () => {
   const [action, setAction] = useState("");
 
   const [page, setPage] = useState(1);
-  const { data, isLoading, refetch } = useGetRecyclePostsQuery(page);
+  const { data, isLoading, refetch, isFetching } =
+    useGetRecyclePostsQuery(page);
   const [restorePost, { data: restoredata, isLoading: restoreLoading }] =
     useRestorePostMutation();
   const [deletePost, { data: deletedata, isLoading: deleteLoading }] =
@@ -181,8 +182,8 @@ const Recycle = () => {
       setPage((prev) => prev + 1);
     }
   };
-
-  if (isLoading && page == 1) return <Loader />;
+  console.log(isFetching);
+  if ((isLoading && page == 1) || isFetching) return <Loader />;
   return (
     <div className="relative">
       {show ? (
