@@ -608,14 +608,27 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
     }
   };
 
+  // const handleCancelUpload = () => {
+  //   if (abortController.current) {
+  //     abortController.current.abort();
+  //   }
+  //   setUploading(false);
+  //   setsuccessEnd(false);
+  //   setUploadPercentage(0);
+  //   setUploadedSize(0);
+  // };
+
   const handleCancelUpload = () => {
     if (abortController.current) {
       abortController.current.abort();
+      // Clean up the abort controller immediately
+      abortController.current = null;
     }
     setUploading(false);
     setsuccessEnd(false);
     setUploadPercentage(0);
     setUploadedSize(0);
+    setIsModalVisible(false); // Add this to close the modal immediately
   };
 
   const showModal = () => {
