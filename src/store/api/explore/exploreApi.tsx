@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { decryptWithAes } from "@/lib/decrypt";
 import { convertToSecureUrl } from "@/lib/encrypt";
+import { getDeviceInfo } from "@/lib/deviceInfo";
 import { RootState } from "@/store/store";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
@@ -11,11 +12,15 @@ export const exploreApi = createApi({
     baseUrl: import.meta.env.VITE_API_URL,
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).persist?.user?.token; // Adjust 'auth.token' to match your Redux slice structure
+      const deviceInfo = getDeviceInfo();
+      
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
       }
       headers.set("Accept-Language", "cn");
       headers.set("X-Client-Version", "2001");
+      headers.set("Device-Id", deviceInfo.uuid);
+      headers.set("User-Agent", deviceInfo.osVersion);
       headers.set("encrypt", "true");
 
       return headers;

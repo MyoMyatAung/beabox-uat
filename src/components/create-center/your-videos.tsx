@@ -7,10 +7,10 @@ import { useGetMyPostStatusCountQuery } from "@/store/api/createCenterApi";
 
 const YourVideos = () => {
   const { data } = useGetMyPostStatusCountQuery("");
-  let published = data?.data?.published || 0;
-  let review = data?.data?.published || 0;
-  let declined = data?.data?.declined || 0;
-  console.log(data, "post status");
+
+  const published = data?.data?.published || 0;
+  const review = data?.data?.review || 0;
+  const declined = data?.data?.declined || 0;
   return (
     <section className="bg-[#24222C] p-5 rounded-[20px] mx-5">
       <div className="flex items-center gap-2 ">

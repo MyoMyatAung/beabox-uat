@@ -25,12 +25,24 @@ import VideoFeed from "@/page/home/components/VideoFeed";
 // } from "react-device-detect";
 
 export function isWebView() {
-  return (
-    !!(window as any).webkit &&
-    !!(window as any).webkit.messageHandlers &&
-    !!(window as any).webkit.messageHandlers.jsBridge
-  );
+  return (window as any).webkit &&
+  (window as any).webkit.messageHandlers &&
+  (window as any).webkit.messageHandlers.jsBridge;
+  // const ua = navigator.userAgent || "";
+  // const standalone = window.navigator.standalone;
+
+  // const isIOS = /iPhone|iPad|iPod/.test(ua);
+  // const isAndroid = /Android/.test(ua);
+
+  // const isIOSWebView =
+  //   isIOS && (!ua.includes("Safari") || standalone === false);
+  // const isAndroidWebView = isAndroid && ua.includes("wv");
+
+  // const isCustomFlag = window.IS_APP === true; // if injected from native
+
+  // return isIOSWebView || isAndroidWebView || isCustomFlag;
 }
+
 const SearchVideo = ({ id }: { id: string }) => {
   const [vh, setVh] = useState("100vh");
   const [postsSearch, { isLoading }] = usePostsSearchMutation();
@@ -98,7 +110,6 @@ const SearchVideo = ({ id }: { id: string }) => {
   // }, []);
   useEffect(() => {
     // setVh(isMobile ? "95vh" : "100vh");
-    // setVh(isWebView() ? "100vh" : "95vh");
     setVh(isWebView() ? "100vh" : "100dvh");
   }, []);
 

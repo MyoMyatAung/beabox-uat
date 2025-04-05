@@ -2,6 +2,7 @@
 
 import { decryptWithAes } from "@/lib/decrypt";
 import { convertToSecureUrl } from "@/lib/encrypt";
+import { getDeviceInfo } from "@/lib/deviceInfo";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const searchApi = createApi({
@@ -9,9 +10,15 @@ export const searchApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_API_URL,
     prepareHeaders: (headers) => {
+      const deviceInfo = getDeviceInfo();
+      
       headers.set("Accept-Language", "cn");
       headers.set("encrypt", "true");
       headers.set("X-Client-Version", "2001");
+      headers.set("Device-Id", deviceInfo.uuid);
+      headers.set("User-Agent", deviceInfo.osVersion);
+      
+      return headers;
     },
     responseHandler: async (response) => {
       const encryptedData = await response.json(); // Get the encrypted response as a string

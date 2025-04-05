@@ -13,7 +13,6 @@ const Avatars = ({
   setSrcImg,
 }: any) => {
   const { data } = useGetAvatarListQuery("");
-  console.log(data);
   const [avatarUpload, { data: avatarUploadData, isLoading: loading2 }] =
     useAvatarUploadMutation();
 
@@ -21,7 +20,6 @@ const Avatars = ({
     await avatarUpload({ id: avatarId });
     setShowAvatar(false);
   };
-  console.log(avatarUploadData, "avatars");
   return (
     <div className="bg-[#000000CC] w-full flex justify-center items-center h-screen absolute top-0 left-0 z-50">
       {loading2 ? <TranLoader /> : <></>}

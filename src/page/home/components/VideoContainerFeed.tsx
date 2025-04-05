@@ -658,9 +658,10 @@ import { setVideos } from "../services/videosSlice";
 import { useNavigate } from "react-router-dom";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
 import { showToast } from "../services/errorSlice";
-import VideoSidebar1 from "./VideoSidebar1";
 
-const VideoContainer1 = ({
+import VideoSidebarFeed from "./VideoSidebarFeed";
+
+const VideoContainerFeed = ({
   video,
   setWidth,
   setHeight,
@@ -716,6 +717,12 @@ const VideoContainer1 = ({
 
   // Add state to track if this video is active
   const [isActive, setIsActive] = useState(false);
+
+  useEffect(() => {
+    setLikeCount(video?.like_count);
+    setIsLiked(video?.is_liked);
+    setcommentCount(video?.comment_count);
+  }, [video]);
 
   const handleLike = (() => {
     const likeTimeout = useRef<NodeJS.Timeout | null>(null); // Track the debounce timeout
@@ -1026,7 +1033,7 @@ const VideoContainer1 = ({
         isActive={isActive}
       />
 
-      <VideoSidebar1
+      <VideoSidebarFeed
         setVideosData={setVideosData}
         status={status}
         unLike={unLike}
@@ -1093,4 +1100,4 @@ const VideoContainer1 = ({
   );
 };
 
-export default VideoContainer1;
+export default VideoContainerFeed;

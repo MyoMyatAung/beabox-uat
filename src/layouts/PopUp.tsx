@@ -8,6 +8,8 @@ import { useGetAdsPopUpQuery } from "@/utils/helperService";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 import { useDispatch } from "react-redux";
 import { setPlay } from "@/page/home/services/playSlice";
+import ImageWithLoader from "./ImageWithLoader";
+import ImageWithSkeleton from "./ImageWithLoader";
 
 interface PopUpProps {
   setShowAd: any;
@@ -52,7 +54,7 @@ const PopUp: React.FC<PopUpProps> = ({
     if (notice?.data) {
       setNotList(notice?.data);
     }
-  }, [data, notice]);
+  }, [notice]);
   // console.log(multiStart);
 
   const handleStartClose = () => {
@@ -102,13 +104,23 @@ const PopUp: React.FC<PopUpProps> = ({
                 target="_blank"
                 href={currentImage.jump_url}
               >
-                <ImageWithPlaceholder
+                {/* <ImageWithPlaceholder
                   src={currentImage?.image}
                   alt="start"
                   width="100%"
                   height="100%"
                   className="w-[260px] h-[390px] object-cover"
+                /> */}
+                <img
+                  className="w-[260px] h-[390px] object-cover"
+                  src={currentImage.image}
+                  alt=""
                 />
+                {/* <ImageWithLoader
+                  src={currentImage?.image}
+                  alt="Ad"
+                  className="h-full max-w-[480px] w-full object-cover"
+                /> */}
               </a>
               <div
                 onClick={handleClose}
@@ -172,13 +184,23 @@ const PopUp: React.FC<PopUpProps> = ({
                       imageUrl={app.image}
                       alt=""
                     /> */}
-                      <ImageWithPlaceholder
+                      {/* <ImageWithPlaceholder
                         src={app.image}
                         width={""}
                         height={""}
                         alt="start"
                         className="w-[52px] h-[50px] rounded-[6px] border-[#222]"
+                      /> */}
+                      <ImageWithSkeleton
+                        src={app?.image}
+                        alt="Ad"
+                        className="w-[52px] h-[50px] rounded-[6px] border-[#222]"
                       />
+                      {/* <img
+                        className="w-[52px] h-[50px] rounded-[6px] border-[#222]"
+                        src={app.image}
+                        alt=""
+                      /> */}
                       <h1 className="text-white text-[10px] font-[400]">
                         {app.title}
                       </h1>

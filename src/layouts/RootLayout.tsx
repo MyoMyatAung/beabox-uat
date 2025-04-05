@@ -69,7 +69,7 @@ const RootLayout = ({ children }: any) => {
   const isOpen = useSelector((state: any) => state.profile.isDrawerOpen);
 
   return (
-    <div className="h-screen">
+    <div style={{ height: "calc(100dvh - 95px);" }}>
       {children}
       {/* <RightSideActions /> */}
       {showAd && (

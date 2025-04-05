@@ -15,14 +15,12 @@ const Covers = ({ setShowCovers }: any) => {
     useCoverUploadMutation();
   const uploadHandler = async () => {
     const { data } = await coverUpload({ id: activeId });
-    console.log(data, "test data");
     if (data?.status) setShowCovers(false);
   };
   useEffect(() => {
     if (data) setSelectedCovers(data?.data[0]);
   }, [data]);
 
-  console.log(selectedCovers);
   return (
     <div className="bg-[#000000CC] w-full flex justify-center items-center h-screen fixed top-0 left-0 z-[9999]">
       {isLoading ? <TranLoader /> : <></>}
