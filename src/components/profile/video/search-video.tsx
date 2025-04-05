@@ -91,7 +91,7 @@ const SearchVideo = ({ id }: { id: string }) => {
             />
           </div>
         ) : (
-          <DrawerContent className="z-[8900] border-0 ">
+          <DrawerContent className="z-[8900] h-[95vh] border-0 ">
             <>
               <div className="c-height w-full overflow-y-scroll hide-sb">
                 <div className=" px-5 z-[8000]  bg-[#16131C] sticky top-0 py-5 flex items-center gap-3">
