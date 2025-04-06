@@ -8,7 +8,8 @@ const FollowBtn = ({ id, followBack, refetch }: any) => {
   const dispatch = useDispatch();
   const [isProcessing, setIsProcessing] = useState(false);
   const user = useSelector((state: any) => state?.persist?.user);
-  const followStatus = useSelector((state: any) => state?.follow?.status);
+  const followStatus =
+    useSelector((state: any) => state?.follow?.status) ?? followBack;
   const [changeFollowStatus] = useChangeFollowStatusMutation();
 
   // Use Redux state if available, otherwise use prop

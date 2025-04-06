@@ -18,7 +18,9 @@ const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
 
 const RankingCard = ({ data, refetch }: { data: any; refetch: any }) => {
   const user = useSelector((state: any) => state?.persist?.user);
-  const followStatus = useSelector((state: any) => state.follow.status);
+  // console.log(data?.is_followed);
+  const followStatus =
+    useSelector((state: any) => state.follow.status) ?? data?.is_followed;
 
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
   const me = useSelector((state: any) => state?.persist?.user?.id);

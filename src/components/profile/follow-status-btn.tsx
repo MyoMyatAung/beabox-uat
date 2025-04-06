@@ -9,7 +9,10 @@ import { setFollowStatus, setPendingStatus } from "@/store/slices/followSlice";
 const FollowStatusBtn = ({ userData, id, refetch, userLoading }: any) => {
   const dispatch = useDispatch();
   const token = useSelector((state: any) => state?.persist?.user?.token);
-  const followState = useSelector((state: any) => state.follow.status[id]);
+  // console.log(userData, "userData?.is_following");
+  const followState =
+    useSelector((state: any) => state.follow.status[id]) ??
+    userData?.data?.is_following;
   const isPending = useSelector((state: any) => state.follow.pending[id]);
   const [changeFollowStatus] = useChangeFollowStatusMutation();
 
