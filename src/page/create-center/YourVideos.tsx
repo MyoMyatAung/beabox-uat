@@ -71,22 +71,45 @@ const YourVideos = () => {
 
   useEffect(() => {
     if (!editPost) {
-      // Reset state when returning from edit/delete
       setPage(1);
       setPosts([]);
       setHasMore(true);
-      refetch();
+      refetch()
+        .then((response) => {
+          if (response.data) {
+            setPosts(response.data.data || []);
+            setTotalData(response.data.pagination?.total || 0);
+          }
+        })
+        .catch((error) => {
+          console.error("Failed to refetch data:", error);
+        });
     }
   }, [editPost, refetch]);
+  // useEffect(() => {
+  //   if (!editPost) {
+  //     // Reset state when returning from edit/delete
+  //     setPage(1);
+  //     setPosts([]);
+  //     setHasMore(true);
+  //     // refetch();
+  //     refetch().then((response) => {
+  //       if (response.data) {
+  //         setPosts(response.data.data || []);
+  //         setTotalData(response.data.pagination?.total || 0);
+  //       }
+  //     });
+  //   }
+  // }, [editPost, refetch]);
 
-  useEffect(() => {
-    console.log("Component mounted or navigated to");
-    if (data) {
-      setPosts((prev: any) => [...prev, ...data?.data]);
-      setTotalData(data?.pagination?.total);
-    }
-    return () => console.log("Component unmounted");
-  }, []);
+  // useEffect(() => {
+  //   console.log("Component mounted or navigated to");
+  //   if (data) {
+  //     setPosts((prev: any) => [...prev, ...data?.data]);
+  //     setTotalData(data?.pagination?.total);
+  //   }
+  //   return () => console.log("Component unmounted");
+  // }, []);
 
   // console.log(posts);
 
