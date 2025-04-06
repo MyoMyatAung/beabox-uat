@@ -2,11 +2,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface FollowState {
-  followStatus: Record<string, boolean>; // userId -> isFollowing
+  status: Record<string, boolean>; // userId -> isFollowing
+  pending: Record<string, boolean>; // userId -> isUpdating
 }
 
 const initialState: FollowState = {
-  followStatus: {},
+  status: {},
+  pending: {},
 };
 
 const followSlice = createSlice({
@@ -18,13 +20,22 @@ const followSlice = createSlice({
       action: PayloadAction<{ userId: string; isFollowing: boolean }>
     ) => {
       const { userId, isFollowing } = action.payload;
-      state.followStatus[userId] = isFollowing;
+      state.status[userId] = isFollowing;
+    },
+    setPendingStatus: (
+      state,
+      action: PayloadAction<{ userId: string; isPending: boolean }>
+    ) => {
+      const { userId, isPending } = action.payload;
+      state.pending[userId] = isPending;
     },
     clearFollowStatus: (state) => {
-      state.followStatus = {};
+      state.status = {};
+      state.pending = {};
     },
   },
 });
 
-export const { setFollowStatus, clearFollowStatus } = followSlice.actions;
+export const { setFollowStatus, setPendingStatus, clearFollowStatus } =
+  followSlice.actions;
 export default followSlice.reducer;

@@ -9,7 +9,8 @@ import { setFollowStatus } from "@/store/slices/followSlice";
 const RankBtn = ({ id, followBack, refetch }: any) => {
   const dispatch = useDispatch();
   const user = useSelector((state: any) => state?.persist?.user);
-  const followStatus = useSelector((state: any) => state.follow.followStatus);
+  const followStatus = useSelector((state: any) => state?.follow?.status);
+
   const [changeFollowStatus, { isLoading }] = useChangeFollowStatusMutation();
 
   // Use Redux state if available, otherwise use prop
