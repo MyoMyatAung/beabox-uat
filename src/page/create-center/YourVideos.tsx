@@ -43,11 +43,14 @@ const YourVideos = () => {
 
   useEffect(() => {
     if (data?.data?.length) {
-      // Append new data to the existing videos
-      setPosts((prev: any) => [...prev, ...data.data]);
+      if (page === 1) {
+        setPosts(data.data);
+      } else {
+        setPosts((prev: any) => [...prev, ...data.data]);
+      }
       setTotalData(data.pagination.total);
     }
-  }, [data]);
+  }, [data, page]);
 
   useEffect(() => {
     if (totalData <= posts.length) {
@@ -56,6 +59,12 @@ const YourVideos = () => {
       setHasMore(true);
     }
   }, [totalData, posts]);
+
+  useEffect(() => {
+    setPage(1);
+    setPosts([]);
+    setHasMore(true);
+  }, [isActive]);
 
   const fetchMoreData = () => {
     if (hasMore) {
@@ -86,32 +95,6 @@ const YourVideos = () => {
         });
     }
   }, [editPost, refetch]);
-  // useEffect(() => {
-  //   if (!editPost) {
-  //     // Reset state when returning from edit/delete
-  //     setPage(1);
-  //     setPosts([]);
-  //     setHasMore(true);
-  //     // refetch();
-  //     refetch().then((response) => {
-  //       if (response.data) {
-  //         setPosts(response.data.data || []);
-  //         setTotalData(response.data.pagination?.total || 0);
-  //       }
-  //     });
-  //   }
-  // }, [editPost, refetch]);
-
-  // useEffect(() => {
-  //   console.log("Component mounted or navigated to");
-  //   if (data) {
-  //     setPosts((prev: any) => [...prev, ...data?.data]);
-  //     setTotalData(data?.pagination?.total);
-  //   }
-  //   return () => console.log("Component unmounted");
-  // }, []);
-
-  // console.log(posts);
 
   if (editPost) {
     return (
