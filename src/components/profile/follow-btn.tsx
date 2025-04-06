@@ -9,7 +9,7 @@ const FollowBtn = ({ id, followBack, refetch }: any) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const user = useSelector((state: any) => state?.persist?.user);
   const followStatus = useSelector(
-    (state: RootState) => state.follow.followStatus
+    (state: any) => state.follow.followStatus
   );
   const [changeFollowStatus] = useChangeFollowStatusMutation();
 
