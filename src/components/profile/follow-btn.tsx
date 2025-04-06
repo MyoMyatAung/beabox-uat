@@ -1,48 +1,54 @@
-import { Button } from "@/components/ui/button";
 import { useChangeFollowStatusMutation } from "@/store/api/profileApi";
+import { setFollowStatus } from "@/store/slices/followSlice";
 import { setIsDrawerOpen } from "@/store/slices/profileSlice";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import loader from "@/page/home/vod_loader.gif";
 
 const FollowBtn = ({ id, followBack, refetch }: any) => {
-  const [follow, setFollow] = useState(followBack ? true : false);
-  const user = useSelector((state: any) => state?.persist?.user);
   const dispatch = useDispatch();
-  const [changeFollowStatus, { data, isLoading }] =
-    useChangeFollowStatusMutation();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const user = useSelector((state: any) => state?.persist?.user);
+  const followStatus =
+    useSelector((state: any) => state?.follow?.status) ?? followBack;
+  const [changeFollowStatus] = useChangeFollowStatusMutation();
+
+  // Use Redux state if available, otherwise use prop
+  const currentFollowState = followStatus[id] ?? followBack;
+
   const handleChangeFollowStatus = async () => {
-    setFollow(!follow);
-    await changeFollowStatus({
-      follow_user_id: id,
-      status: followBack ? "unfollow" : "follow",
-    });
-    // await refetch();
+    if (!user?.token) {
+      dispatch(setIsDrawerOpen(true));
+      return;
+    }
+
+    const newStatus = !currentFollowState;
+    dispatch(setFollowStatus({ userId: id, isFollowing: newStatus })); // Update Redux immediately
+    setIsProcessing(true);
+
+    try {
+      await changeFollowStatus({
+        follow_user_id: id,
+        status: newStatus ? "follow" : "unfollow",
+      });
+    } catch (error) {
+      console.error("Error changing follow status:", error);
+      dispatch(setFollowStatus({ userId: id, isFollowing: !newStatus })); // Revert on error
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
     <button
-      disabled={isLoading}
-      onClick={
-        user?.token
-          ? () => handleChangeFollowStatus()
-          : () => dispatch(setIsDrawerOpen(true))
-      }
+      disabled={isProcessing}
+      onClick={handleChangeFollowStatus}
       className={`w-[88px] h-[33px] rounded-[8px] flex justify-center items-center text-[14px] ${
-        follow
+        currentFollowState
           ? "bg-[#FFFFFF0F] hover:bg-[#FFFFFF0F]"
           : "gradient-bg hover:gradient-bg"
       }`}
     >
-      {follow ? "已关注" : "关注"}
-      {/* {isLoading ? (
-        <img src={loader} alt="" className="w-12" />
-      ) : follow ? (
-        "已关注"
-      ) : (
-        "关注"
-      )} */}
-      {/* {follow ? "已关注" : "关注"} */}
+      {currentFollowState ? "已关注" : "关注"}
     </button>
   );
 };

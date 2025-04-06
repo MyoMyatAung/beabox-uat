@@ -111,6 +111,7 @@ const Ranking = () => {
     page,
     type: selectedRange?.value,
     tag: selectedType?.keyword,
+    token: user?.token,
   });
   useEffect(() => {
     if (
@@ -152,7 +153,8 @@ const Ranking = () => {
   }, [totalData, rankingList]);
 
   const fetchMoreData = () => {
-    if (hasMore) {
+    if (hasMore && !isFetching) {
+      // Prevent duplicate requests
       setPage((prev) => prev + 1);
     }
   };
@@ -166,17 +168,35 @@ const Ranking = () => {
   useEffect(() => {
     if (data?.data?.list) {
       if (page === 1) {
-        setRankingList(data.data.list); // Replace ranking list when filter changes
+        setRankingList(data.data.list);
       } else {
-        setRankingList((prev: any) => [...prev, ...data.data.list]); // Append new results for infinite scroll
+        // Filter out duplicates before adding new data
+        const newItems = data.data.list.filter(
+          (newItem: any) =>
+            !rankingList.some((item: any) => item.id === newItem.id)
+        );
+        setRankingList((prev: any) => [...prev, ...newItems]);
       }
       setTotalData(data?.pagination?.total);
     }
   }, [data]);
 
   useEffect(() => {
-    if (user?.token) refetch();
-  }, [user?.token]);
+    return () => {
+      // Reset state when component unmounts
+      setRankingList([]);
+      setPage(1);
+    };
+  }, []);
+
+  useEffect(() => {
+    // Reset page and refetch when token changes
+    if (user?.token) {
+      setPage(1);
+      setRankingList([]);
+      refetch();
+    }
+  }, [user?.token, refetch]);
 
   // useEffect(() => {
   //   setSelectedRange({
@@ -184,6 +204,7 @@ const Ranking = () => {
   //     title: "今日",
   //   });
   // }, [selectedType]);
+  console.log(data);
 
   if (loading1 && isLoading && page === 1) return <Loader />;
 

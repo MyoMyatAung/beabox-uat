@@ -123,6 +123,10 @@ const TopRankCard = ({
 }) => {
   const me = useSelector((state: any) => state?.persist?.user?.id);
   // console.log(data);
+  const followStatus =
+    useSelector((state: any) => state.follow.status) ?? data?.is_followed;
+  const isFollowed = followStatus[data?.id] ?? data?.is_followed;
+
   return (
     <div
       className={`
@@ -176,20 +180,10 @@ const TopRankCard = ({
       </p>
       {data?.id == me ? (
         <div className="opacity-0">
-          <RankBtn
-            id={data?.id}
-            followBack={data?.is_followed}
-            rank={rank}
-            refetch={refetch}
-          />
+          <RankBtn id={data?.id} followBack={isFollowed} refetch={refetch} />
         </div>
       ) : (
-        <RankBtn
-          id={data?.id}
-          followBack={data?.is_followed}
-          rank={rank}
-          refetch={refetch}
-        />
+        <RankBtn id={data?.id} followBack={isFollowed} refetch={refetch} />
       )}
     </div>
   );

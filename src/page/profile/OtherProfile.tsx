@@ -225,6 +225,11 @@ const OtherProfile = () => {
   //     refetch();
   //   }
   // }, [id, userData]);
+  useEffect(() => {
+    if (user?.token) refetch();
+  }, [user?.token]);
+
+  console.log(userData, "user data");
 
   if (userLoading) return <Loader />;
   return (
