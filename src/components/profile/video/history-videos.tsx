@@ -10,6 +10,7 @@ import InfinitLoad from "@/components/shared/infinit-load";
 import VideoCard from "../video-card";
 import { useSearchParams } from "react-router-dom";
 import VideoFeed from "@/page/home/components/VideoFeed";
+import NoVideoCard from "@/components/shared/no-video-card";
 
 const HistoryVideos = () => {
   const user = useSelector((state: any) => state?.persist?.user);
@@ -75,14 +76,9 @@ const HistoryVideos = () => {
       ) : (
         <></>
       )}
-      <div className="pb-5 pt-3">
+      <div className="pb-5">
         {!user?.token || videos.length <= 0 ? (
-          <div>
-            <div className="flex flex-col justify-center items-center w-full mt-[150px]">
-              <NoVideo />
-              <p className="text-[12px] text-[#888]">这里空空如也～</p>
-            </div>
-          </div>
+          <NoVideoCard />
         ) : (
           <>
             <div>

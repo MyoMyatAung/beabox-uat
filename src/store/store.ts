@@ -31,6 +31,7 @@ import createCenterSlice from "./slices/createCenterSlice";
 import { createCenterApi } from "./api/createCenterApi";
 import playSlice from "@/page/home/services/playSlice";
 import scrollSlice from "@/page/home/services/scrollSlice";
+import followSlice from "./slices/followSlice";
 
 const sessionStorageWrapper: Storage = {
   getItem: (key: string) => {
@@ -75,6 +76,7 @@ const rootReducer = combineReducers({
   history: HistorySlice,
   startSlice: startSlice,
   hideBarSlice: hideBarSlice,
+  follow: followSlice,
   home: persistReducer(persistHomeSliceConfig, homeSlice), // Apply sessionStorage for homeSlice
   model: ModelSlice,
   previousSlice: previousSlice,

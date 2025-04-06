@@ -7,13 +7,26 @@ import {
 import { FaAngleLeft } from "react-icons/fa";
 import FollowTabs2 from "./follow/follow-tab2";
 import { useEffect, useState } from "react";
+function isWebView() {
+  return (
+    (window as any).webkit &&
+    (window as any).webkit.messageHandlers &&
+    (window as any).webkit.messageHandlers.jsBridge
+  );
+}
 const OtherStats = ({ followers, followings, likes, nickname, id }: any) => {
   const [defaultFollowTab, setDefaultFollowTab] = useState("follower");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [vh, setVh] = useState("100vh");
+
 
   useEffect(() => {
     setIsDrawerOpen(false);
   }, [id]);
+  useEffect(() => {
+    // setVh(isMobile ? "95vh" : "100vh");
+    setVh(isWebView() ? "100vh" : "100dvh");
+  }, []);
   return (
     <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
       <div className="z-[1900] px-5 flex justify-between w-full max-w-xs my-4 items-center mx-auto">
@@ -49,8 +62,8 @@ const OtherStats = ({ followers, followings, likes, nickname, id }: any) => {
           <div className="z-[1900] text-gray-400 text-[14px]">点赞</div>
         </div>
       </div>
-      <DrawerContent className="z-[2300] border-0">
-        <div className="c-height z-[1200] overflow-y-scroll hide-sb overflow-x-hidden bg-[#16131C]">
+      <DrawerContent className="z-[2300] border-0" style={{ height: vh }}>
+        <div className="z-[1200] overflow-y-scroll hide-sb overflow-x-hidden bg-[#16131C]">
           <div className="px-5">
             <div className="z-[1200] sticky -top-1 bg-[#16131C] w-full flex justify-between items-center h-[50px]">
               <DrawerClose asChild>

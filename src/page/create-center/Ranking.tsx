@@ -1,5 +1,4 @@
 import MyRankCard from "@/components/create-center/my-rank-card";
-import RankingCard from "@/components/create-center/ranking-card";
 import Top3 from "@/components/ranking/top3";
 import Loader from "@/components/shared/loader";
 import {
@@ -9,10 +8,6 @@ import {
 import { UsersRound } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-// import "swiper/css";
-// import "swiper/css/autoplay";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay } from "swiper/modules"; // Import Swiper's autoplay module
 import InfinitLoad from "@/components/shared/infinit-load";
 import { useShareInfoMutation } from "@/store/api/profileApi";
 import logo from "@/assets/logo.svg";
@@ -29,18 +24,14 @@ const ranges = [
 const Ranking = () => {
   const user = useSelector((state: any) => state?.persist?.user);
   const id = user?.id;
-  const [ad, setAd] = useState([]);
   const [rankingList, setRankingList] = useState<any>([]);
   const [totalData, setTotalData] = useState<number>(0);
   const [hasMore, setHasMore] = useState(true);
   const [showHeader, setShowHeader] = useState(false);
-  const headerRef = useRef(null);
-  const { applicationData } = useSelector((state: any) => state.explore);
+  const headerRef = useRef<any>(null);
   const [isCopied2, setIsCopied2] = useState(false);
   const [cachedDownloadLink, setCachedDownloadLink] = useState(null);
-  const [shareInfo, { data: shareData, isLoading: shareLoading }] =
-    useShareInfoMutation();
-  // console.log(shareData, "share data");
+  const [shareInfo] = useShareInfoMutation();
   useEffect(() => {
     const fetchShareInfo = async () => {
       try {
@@ -110,8 +101,6 @@ const Ranking = () => {
   };
 
   const [page, setPage] = useState(1);
-  const [selectedIndex, setSelectedIndex] = useState(0);
-
   const [selectedRange, setSelectedRange] = useState({
     value: "today",
     title: "今日",
@@ -145,15 +134,6 @@ const Ranking = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-  console.log(showHeader);
-  const handleOnChange = (swiper: any) => {
-    setSelectedIndex(swiper.realIndex);
-  };
-  useEffect(() => {
-    if (applicationData) {
-      setAd(applicationData.carousel);
-    }
-  }, [applicationData]);
 
   useEffect(() => {
     if (data?.data?.list?.length) {

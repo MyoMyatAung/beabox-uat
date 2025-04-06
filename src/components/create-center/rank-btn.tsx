@@ -1,5 +1,5 @@
 import { useChangeFollowStatusMutation } from "@/store/api/profileApi";
-import { Sparkle } from "lucide-react";
+import { Check, Sparkle } from "lucide-react";
 import { useEffect, useState } from "react";
 import loader from "@/page/home/vod_loader.gif";
 import { useDispatch, useSelector } from "react-redux";
@@ -38,8 +38,9 @@ const RankBtn = ({ id, followBack, refetch }: any) => {
           : "gradient-bg hover:gradient-bg"
       }  w-full`}
     >
-      <Sparkle size={12} />
-      <span className="text-[14px] ">
+      {/* <Sparkle size={12} /> */}
+      <div></div>
+      <span className={`text-[14px] flex items-center gap-2  ${follow ? "ml-2" : "ml-0"}`}>
         {follow ? "已关注" : "关注"}
         {/* {isLoading ? (
           <img src={loader} alt="" className="w-5" />
@@ -49,7 +50,7 @@ const RankBtn = ({ id, followBack, refetch }: any) => {
           "关注"
         )} */}
       </span>
-      <Sparkle size={12} />
+      {follow ? <Check size={14} /> : <div></div>}
     </button>
   );
 };
