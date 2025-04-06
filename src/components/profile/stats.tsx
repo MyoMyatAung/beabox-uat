@@ -33,7 +33,7 @@ const Stats = ({ followers, followings, likes, nickname }: any) => {
 
   return (
     <Drawer>
-      <div className="z-[1900] px-5 flex justify-between w-full max-w-xs my-4 items-center mx-auto">
+      <div className="z-[1900] px-5 flex justify-between w-full max-w-xs items-center mx-auto">
         <div className="z-[1900] text-center">
           {user?.token ? (
             <DrawerTrigger

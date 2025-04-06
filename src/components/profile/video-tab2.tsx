@@ -29,7 +29,11 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
     dispatch(setDefaultTab2(value));
   };
   return (
-    <Tabs defaultValue={defaultTab2 ? defaultTab2 : "video"} className="my-5"  onValueChange={handleTabChange}>
+    <Tabs
+      defaultValue={defaultTab2 ? defaultTab2 : "video"}
+      className="my-5"
+      onValueChange={handleTabChange}
+    >
       <TabsList className="grid w-full grid-cols-3 z-[1600] bg-transparent sticky top-[100px] px-5">
         {defaultTab2 == "video" ? (
           <TabsTrigger
@@ -119,6 +123,7 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
           </span> */}
         </TabsTrigger>
       </TabsList>
+      <div className="h-[1px] bg-[#FFFFFF14] w-full mt-3.5"></div>
       <TabsContent value="video">
         <CreatedVideo id={id} />
       </TabsContent>

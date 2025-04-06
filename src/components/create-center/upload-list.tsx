@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import UploadCard from "./upload-card";
 import InfinitLoad from "../shared/infinit-load";
 import { NoVideo } from "@/assets/profile";
+import NoVideoCard from "../shared/no-video-card";
 
 const UploadList = ({
   list,
@@ -59,12 +60,7 @@ const UploadList = ({
           ))}
         </>
       ) : (
-        <div>
-          <div className="flex flex-col justify-center items-center w-full mt-[150px]">
-            <NoVideo />
-            <p className="text-[12px] text-[#888]">这里空空如也～</p>
-          </div>
-        </div>
+      <NoVideoCard />
       )}
 
       <InfinitLoad data={list} fetchData={fetchMoreData} hasMore={hasMore} />

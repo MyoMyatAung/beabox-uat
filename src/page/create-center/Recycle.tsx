@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import UploadImg from "@/components/create-center/upload-img";
 import RecyclePopup from "@/components/create-center/recycle-popup";
 import { NoVideo } from "@/assets/profile";
+import NoVideoCard from "@/components/shared/no-video-card";
 
 const SelectBtn = ({
   deleteItems,
@@ -234,12 +235,7 @@ const Recycle = () => {
             />
           </div>
         ) : (
-          <div>
-            <div className="flex flex-col justify-center items-center w-full mt-[150px]">
-              <NoVideo />
-              <p className="text-[12px] text-[#888]">这里空空如也～</p>
-            </div>
-          </div>
+          <NoVideoCard />
         )}
 
         {deleteItems?.length ? (

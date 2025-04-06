@@ -353,7 +353,7 @@ const Profile = () => {
             </div>
           )}
         </div>
-        <h1 className="text-[12px]  text-[#888] mb-5 z-[1900] relative">
+        <h1 className="text-[12px]  text-[#888] z-[1900] relative">
           {user?.token ? (
             <>
               {data?.data?.hide_bio?.length ? (
