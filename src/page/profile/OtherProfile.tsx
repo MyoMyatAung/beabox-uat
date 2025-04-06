@@ -233,11 +233,12 @@ const OtherProfile = () => {
         <>
           <div className="gradient-overlay2"></div>
           <div
-            className={`fixed top-0 w-full left-0 h-[155px] ${
-              decryptedCover
-                ? `bg-[url('${decryptedCover}')]`
-                : 'bg-[url("./assets/cover.jpg")]'
-            }    z-[1000] bg-cover bg-top bg-no-repeat`}
+            style={{
+              backgroundImage: `url('${
+                decryptedCover ? decryptedCover : "./assets/cover.jpg"
+              }')`,
+            }}
+            className={`fixed top-0 w-full left-0 h-[155px] z-[1000] bg-cover bg-top bg-no-repeat`}
           ></div>
           {/* <img
             src={decryptedCover ? decryptedCover : defaultCover}

@@ -191,11 +191,14 @@ const Profile = () => {
         <>
           <div className="gradient-overlay2"></div>
           <div
-            className={`fixed top-0 w-full left-0 h-[155px] ${
-              user?.token && decryptedCover
-                ? `bg-[url('${decryptedCover}')]`
-                : 'bg-[url("./assets/cover.jpg")]'
-            }    z-[1000] bg-cover bg-top bg-no-repeat`}
+            className={`fixed top-0 w-full left-0 h-[155px] z-[1000] bg-cover bg-top bg-no-repeat`}
+            style={{
+              backgroundImage: `url('${
+                user?.token && decryptedCover
+                  ? decryptedCover
+                  : "./assets/cover.jpg"
+              }')`,
+            }}
           >
             {/* <img
               src={user?.token ? decryptedCover || defaultCover : defaultCover}
