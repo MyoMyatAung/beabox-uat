@@ -123,6 +123,8 @@ const TopRankCard = ({
 }) => {
   const me = useSelector((state: any) => state?.persist?.user?.id);
   // console.log(data);
+  const followStatus = useSelector((state: any) => state.follow.status);
+
   return (
     <div
       className={`
@@ -179,7 +181,6 @@ const TopRankCard = ({
           <RankBtn
             id={data?.id}
             followBack={data?.is_followed}
-            rank={rank}
             refetch={refetch}
           />
         </div>
@@ -187,7 +188,6 @@ const TopRankCard = ({
         <RankBtn
           id={data?.id}
           followBack={data?.is_followed}
-          rank={rank}
           refetch={refetch}
         />
       )}
