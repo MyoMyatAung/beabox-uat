@@ -1,15 +1,15 @@
-// features/follow/followSlice.ts
+// store/slices/followSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface FollowState {
-  status: Record<string, boolean>; // { userId: isFollowing }
+  followStatus: Record<string, boolean>; // userId -> isFollowing
 }
 
 const initialState: FollowState = {
-  status: {},
+  followStatus: {},
 };
 
-export const followSlice = createSlice({
+const followSlice = createSlice({
   name: "follow",
   initialState,
   reducers: {
@@ -17,23 +17,14 @@ export const followSlice = createSlice({
       state,
       action: PayloadAction<{ userId: string; isFollowing: boolean }>
     ) => {
-      state.status[action.payload.userId] = action.payload.isFollowing;
+      const { userId, isFollowing } = action.payload;
+      state.followStatus[userId] = isFollowing;
     },
-    initializeFollowStatuses: (
-      state,
-      action: PayloadAction<Array<{ id: string; is_followed: boolean }>>
-    ) => {
-      action.payload.forEach((user) => {
-        state.status[user.id] = user.is_followed;
-      });
+    clearFollowStatus: (state) => {
+      state.followStatus = {};
     },
-    clearFollowStatuses: () => initialState,
   },
 });
 
-export const {
-  setFollowStatus,
-  initializeFollowStatuses,
-  clearFollowStatuses,
-} = followSlice.actions;
+export const { setFollowStatus, clearFollowStatus } = followSlice.actions;
 export default followSlice.reducer;
