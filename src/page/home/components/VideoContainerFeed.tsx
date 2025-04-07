@@ -718,12 +718,6 @@ const VideoContainerFeed = ({
   // Add state to track if this video is active
   const [isActive, setIsActive] = useState(false);
 
-  useEffect(() => {
-    setLikeCount(video?.like_count);
-    setIsLiked(video?.is_liked);
-    setcommentCount(video?.comment_count);
-  }, [video]);
-
   const handleLike = (() => {
     const likeTimeout = useRef<NodeJS.Timeout | null>(null); // Track the debounce timeout
     const [nextId, setNextId] = useState(0); // Generate unique IDs for hearts
@@ -1021,6 +1015,7 @@ const VideoContainerFeed = ({
         abortControllerRef={abortControllerRef}
         width={video?.files[0].width}
         height={video?.files[0].height}
+        p_img={video?.files[0].width > video?.files[0].height ? true : false}
         type={video?.type == "ads" ? true : false}
         rotate={rotateVideoId === video?.post_id}
         src={video?.files[0].resourceURL}

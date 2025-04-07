@@ -3,7 +3,7 @@
   background-color: black;
   width: 100%;
   height: 100%;
-  height: calc(100dvh - 76px);
+  height: calc(100dvh - 75px);
   /* height: 100%; */
 
   overflow-x: hidden; /* Prevent horizontal scroll */
@@ -24,7 +24,7 @@
   background-color: black;
   width: 100%;
   height: 100%;
-  height: calc(100dvh - 76px);
+  height: calc(100dvh - 8px);
   /* height: 100%; */
 
   overflow-x: hidden; /* Prevent horizontal scroll */
@@ -130,19 +130,15 @@ html {
 }
 
 .app {
-  height: calc(100dvh - 76px);
+  height: 100vh;
   background-color: black;
   display: grid;
   place-items: center;
 }
 
-.art-video {
-  position: relative !important;
-}
-
 .app__videos {
   position: relative;
-  height: calc(100dvh - 76px);
+  height: 100vh;
   border-radius: 20px;
 
   /* margin-top: -20px !important; */
@@ -195,7 +191,7 @@ html {
 
   position: absolute;
   color: white;
-  bottom: 40px;
+  bottom: 100px;
   margin-left: 10px;
   display: flex;
 }
@@ -223,7 +219,7 @@ html {
 
 .videoSidebar_exp {
   position: absolute;
-  bottom: 40px;
+  bottom: 115px;
   right: 10px;
   color: white;
 }
@@ -259,6 +255,7 @@ html {
 
 .footer_head_text {
   color: var(--White, #fff);
+  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 
   font-size: 16px;
   font-style: normal;
@@ -270,7 +267,7 @@ html {
 .footer_title {
   /* display: flex; */
   color: #fff;
-  text-shadow: 0 1px 1px #000000 !important;
+  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -279,7 +276,7 @@ html {
 }
 
 .footer_tag {
-  text-shadow: 0 1px 1px #000000;
+  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 16px;
   /* background: rgba(255, 255, 255, 0.08); */
   /* display: flex; */
@@ -415,7 +412,7 @@ html {
   .app__videos {
     max-width: 100% !important;
     width: 100% !important;
-    height: calc(100dvh - 76px) !important;
+    height: 100vh !important;
     border-radius: 0px !important;
   }
   .main_content {
@@ -439,7 +436,7 @@ html {
   .app__videos {
     max-width: 480px !important;
     width: 480px !important;
-    height: calc(100dvh - 76px) !important;
+    height: 100vh !important;
     border-radius: 0px !important;
   }
   .foot {
@@ -874,7 +871,6 @@ html {
   border-radius: 2px;
   transition: width 0.3s linear;
 }
-
 .custom-progress-thumb {
   position: absolute;
   top: 50%;
