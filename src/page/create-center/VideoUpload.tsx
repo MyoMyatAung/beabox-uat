@@ -41,9 +41,13 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   const videoUrlRef = useRef(editPost?.files[0].resourceURL || null);
   console.log(videoUrlRef, "ref");
   const [uploadedSize, setUploadedSize] = useState(0); // Added
+  const roundToOneDecimal = (size: number): number => {
+    return Math.round(size * 10) / 10;
+  };
+
   const [totalSize, setTotalSize] = useState(
-    (editPost?.files[0].size / (1024 * 1024)).toFixed(2) || 0
-  ); // Added
+    editPost?.files[0]?.size ? roundToOneDecimal(editPost.files[0].size / (1000 * 1000)) : 0
+  ); // Round to match OS display
   const abortController = useRef<any>(null); // Added
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [successEnd, setsuccessEnd] = useState(false);
@@ -185,7 +189,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
           type: "video",
         },
       ]);
-      setTotalSize((videoFile.size / (1024 * 1024)).toFixed(2)); // Convert to MB
+      setTotalSize(roundToOneDecimal(videoFile.size / (1000 * 1000))); // Round to match OS display
 
       if (videoUrlRef.current) {
         URL.revokeObjectURL(videoUrlRef.current);
@@ -465,9 +469,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
           const upload = s3.upload(uploadParams);
 
           upload.on("httpUploadProgress", (progress) => {
-            const uploadedMB: any = (progress.loaded / (1024 * 1024)).toFixed(
-              2
-            );
+            const uploadedMB = roundToOneDecimal(progress.loaded / (1000 * 1000));
             setUploadPercentage(
               Math.round((progress.loaded / progress.total) * 100)
             );
