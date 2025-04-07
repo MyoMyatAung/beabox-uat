@@ -83,7 +83,7 @@ const LikedVideos2 = ({ id }: any) => {
       )}
       <div className="pb-5">
         {videos.length <= 0 ? (
-          <NoVideoCard  from='liked'/>
+          <NoVideoCard/>
         ) : (
           <>
             <div>
