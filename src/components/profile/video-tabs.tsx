@@ -41,9 +41,7 @@ const VideoTabs = () => {
       onValueChange={handleTabChange}
     >
       <TabsList
-        className={`grid w-full ${
-          user?.token ? "grid-cols-3 " : "grid-cols-1"
-        }  z-[1600] bg-transparent sticky top-[100px]`}
+        className={`grid w-full grid-cols-3  z-[1600] bg-transparent sticky top-[100px]`}
       >
         {user?.token ? (
           defaultTab == "upload" ? (
@@ -132,40 +130,35 @@ const VideoTabs = () => {
             </span>
           </TabsTrigger>
         )}
-        {user?.token ? (
-          <>
-            <TabsTrigger
-              className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
-              value="liked"
-            >
-              <span className="flex items-center gap-2 flex-col justify-center">
-                <div className={`w-[52px] h-[3px] bg-transparent`}></div>
-                <FaHeart />
-                <div
-                  className={`w-[52px] h-[3px] ${
-                    defaultTab == "liked" && "bg-white"
-                  }`}
-                ></div>
-              </span>
-            </TabsTrigger>
-            <TabsTrigger
-              className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
-              value="history"
-            >
-              <span className="flex items-center gap-2 flex-col justify-center">
-                <div className={`w-[52px] h-[3px] bg-transparent`}></div>
-                <MdWatchLater />
-                <div
-                  className={`w-[52px] h-[3px] ${
-                    defaultTab == "history" && "bg-white"
-                  }`}
-                ></div>
-              </span>
-            </TabsTrigger>
-          </>
-        ) : (
-          <></>
-        )}
+
+        <TabsTrigger
+          className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
+          value="liked"
+        >
+          <span className="flex items-center gap-2 flex-col justify-center">
+            <div className={`w-[52px] h-[3px] bg-transparent`}></div>
+            <FaHeart />
+            <div
+              className={`w-[52px] h-[3px] ${
+                defaultTab == "liked" && "bg-white"
+              }`}
+            ></div>
+          </span>
+        </TabsTrigger>
+        <TabsTrigger
+          className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
+          value="history"
+        >
+          <span className="flex items-center gap-2 flex-col justify-center">
+            <div className={`w-[52px] h-[3px] bg-transparent`}></div>
+            <MdWatchLater />
+            <div
+              className={`w-[52px] h-[3px] ${
+                defaultTab == "history" && "bg-white"
+              }`}
+            ></div>
+          </span>
+        </TabsTrigger>
       </TabsList>
       <div className="h-[1px] bg-[#FFFFFF14] w-full mt-3.5"></div>
       <TabsContent value="liked">
