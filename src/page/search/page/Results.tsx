@@ -650,15 +650,18 @@ const Results: React.FC<ResultsProps> = ({}) => {
                 </div>
               )}
 
-              {isLoading && (
-                <div className="flex justify-center items-center py-4">
-                  <img
-                    src={loader}
-                    className="w-[50px] h-[50px]"
-                    alt="Loading more"
-                  />
-                </div>
-              )}
+              <div
+                className="fex justify-center items-center py-4"
+                style={{
+                  display: isLoading ? "flex" : "hidden",
+                }}
+              >
+                <img
+                  src={loader}
+                  className="w-[50px] h-[50px]"
+                  alt="Loading more"
+                />
+              </div>
               {data?.data?.list.length === 0 &&
                 (currentPage === 1 ? (
                   <div
