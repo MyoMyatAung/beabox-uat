@@ -78,7 +78,7 @@ const HistoryVideos = () => {
       )}
       <div className="pb-5">
         {!user?.token || videos.length <= 0 ? (
-          <NoVideoCard />
+          <NoVideoCard  from='history'/>
         ) : (
           <>
             <div>

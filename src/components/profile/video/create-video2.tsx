@@ -95,7 +95,7 @@ const CreatedVideo2 = ({ id }: any) => {
       )}
       <div className="pb-5">
         {!user?.token || videos.length <= 0 ? (
-          <NoVideoCard />
+          <NoVideoCard  from='upload'/>
         ) : (
           <>
             <div>

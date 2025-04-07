@@ -75,7 +75,7 @@ const LikedVideos = ({ id }: any) => {
       )}
       <div className="pb-5">
         {!user?.token || videos.length <= 0 ? (
-          <NoVideoCard />
+          <NoVideoCard from='liked'/>
         ) : (
           <>
             <div>
