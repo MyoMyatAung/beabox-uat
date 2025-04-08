@@ -159,19 +159,28 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
 
   // In useEffect, add this for edit mode
   useEffect(() => {
-    // For edited videos, capture the first frame as poster
+    // For edited videos, always capture the first frame as poster for better cross-browser compatibility
     if (editPost?.files[0]?.resourceURL) {
       const videoUrl = `${domain}/${editPost.files[0].resourceURL}`;
       
-      // Only generate poster for Safari browsers
-      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-      if (isSafari) {
+      // More reliable browser detection
+      const userAgent = navigator.userAgent;
+      const vendor = navigator.vendor || "";
+      const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+      const isSafari = /Safari/.test(userAgent) && /Apple Computer/.test(vendor);
+      const isChrome = /Chrome/.test(userAgent) && /Google Inc/.test(vendor);
+      
+      console.log({isMac, isSafari, isChrome, userAgent, vendor}, "Browser detection");
+      
+      // Only Safari needs special handling
+      if (isSafari && !isChrome) {
         captureFirstFrameFromUrl(videoUrl)
           .then(posterUrl => {
             // Update files state with poster
-            setFiles(prev => [{
-              ...prev[0],
-              poster: posterUrl // Store poster URL directly (not a File object in this case)
+            setFiles((prevFiles: any) => [{
+              ...prevFiles[0],
+              poster: posterUrl, // Store poster URL directly (not a File object in this case)
+              isSafariPoster: true
             }]);
           })
           .catch(error => {
@@ -179,9 +188,10 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
             // Fall back to default thumbnail
             createDefaultThumbnail()
               .then(file => {
-                setFiles(prev => [{
-                  ...prev[0],
-                  poster: URL.createObjectURL(file)
+                setFiles((prevFiles: any) => [{
+                  ...prevFiles[0],
+                  poster: URL.createObjectURL(file),
+                  isSafariPoster: true
                 }]);
               });
           });
@@ -899,11 +909,11 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
                       ? `${domain}/${videoUrlRef.current}`
                       : videoUrlRef.current
                   }
-                  poster={typeof files[0]?.poster === 'string' ? files[0].poster : (files[0]?.poster ? URL.createObjectURL(files[0].poster) : "")}
+                  poster={files[0]?.isSafariPoster ? files[0].poster : (files[0]?.poster ? URL.createObjectURL(files[0].poster) : "")}
                   className="preview-video"
                   playsInline
                   muted
-                  preload="auto"
+                  preload="metadata"
                   crossOrigin="anonymous"
                   controls={false}
                   style={{ 
@@ -917,16 +927,19 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
                   }}
                   onError={(e) => {
                     console.error("Error loading video preview");
-                    // If video fails to load on iOS, we'll rely on the poster image
+                    // If video fails to load, we'll rely on the poster image
                     const target = e.target as HTMLVideoElement;
                     target.onerror = null; // Prevent infinite error loop
-                    // Make sure poster is visible even when video fails
                     target.style.backgroundColor = "#000";
                     target.controls = false;
                     
-                    // Use only the video's poster, not the cover photo
+                    // Use appropriate poster based on browser
                     if (files[0]?.poster) {
-                      target.poster = URL.createObjectURL(files[0].poster);
+                      if (files[0]?.isSafariPoster) {
+                        target.poster = files[0].poster;
+                      } else {
+                        target.poster = URL.createObjectURL(files[0].poster);
+                      }
                     } else {
                       createDefaultThumbnail()
                         .then(file => {
