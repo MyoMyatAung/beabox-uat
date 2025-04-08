@@ -147,8 +147,10 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
     }
 
     try {
-      // Generate thumbnail for the video
+      // Generate thumbnails for the video - one for video poster and one for cover
       const generatedThumbnail = await generateThumbnail(videoFile);
+      
+      // Set both the video poster and the separate cover thumbnail
       setThumbnail(generatedThumbnail);
 
       // Create a video element to extract metadata
@@ -225,12 +227,13 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
       video.src = "";
       video.load();
 
-      // Add video to files state
+      // Add video to files state with its own poster for independence from thumbnail
       setFiles([
         {
           video: videoFile,
           size: videoFile.size,
           type: "video",
+          poster: generatedThumbnail, // Store poster with video so it remains even if thumbnail is removed
         },
       ]);
       setTotalSize(roundToOneDecimal(videoFile.size / (1000 * 1000))); // Round to match OS display
@@ -774,7 +777,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
                       ? `${domain}/${videoUrlRef.current}`
                       : videoUrlRef.current
                   }
-                  poster={typeof thumbnail === "string" ? thumbnail : thumbnail ? URL.createObjectURL(thumbnail) : ""}
+                  poster={files[0]?.poster ? URL.createObjectURL(files[0].poster) : ""}
                   className="preview-video"
                   playsInline
                   muted
@@ -793,13 +796,15 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
                     console.error("Error loading video preview");
                     // If video fails to load on iOS, we'll rely on the poster image
                     const target = e.target as HTMLVideoElement;
+                    target.onerror = null; // Prevent infinite error loop
                     // Make sure poster is visible even when video fails
                     target.style.backgroundColor = "#000";
                     target.controls = false;
-                    target.poster = typeof thumbnail === "string" ? thumbnail : thumbnail ? URL.createObjectURL(thumbnail) : "";
                     
-                    // If we don't have a poster set already, create one
-                    if (!target.poster && thumbnail === null) {
+                    // Use only the video's poster, not the cover photo
+                    if (files[0]?.poster) {
+                      target.poster = URL.createObjectURL(files[0].poster);
+                    } else {
                       createDefaultThumbnail()
                         .then(file => {
                           target.poster = URL.createObjectURL(file);
@@ -815,7 +820,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
                   <button
                     onClick={() => setFiles([])}
                     className="upload-progress1"
-                    style={{ position: "absolute", top: "8px", right: "8px", zIndex: 2 }}
+                    style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", zIndex: 2 }}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -903,9 +908,12 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
                   }}
                 />
                 <button
-                  onClick={() => setThumbnail(null)}
+                  onClick={() => {
+                    // Just remove the thumbnail without affecting video poster
+                    setThumbnail(null);
+                  }}
                   className="upload-progress1"
-                  style={{ position: "absolute", top: "8px", right: "8px", zIndex: 2 }}
+                  style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", zIndex: 2 }}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
