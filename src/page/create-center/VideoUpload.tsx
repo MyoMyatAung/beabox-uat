@@ -65,12 +65,37 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
           setThumbnail(editPost.preview_image); // Fallback to the original URL
         }
       } else {
-        if (editPost) setThumbnail(`${domain}/${editPost?.preview_image}`);
+        if (editPost) {
+          // Create an Image element to test if the URL is valid
+          const img = new Image();
+          img.onload = () => {
+            // Image loaded successfully, use the URL
+            setThumbnail(`${domain}/${editPost?.preview_image}`);
+          };
+          img.onerror = () => {
+            // Error loading image, create a default thumbnail
+            console.error("Error loading preview image, creating default");
+            createDefaultThumbnail()
+              .then(file => {
+                setThumbnail(URL.createObjectURL(file));
+              })
+              .catch(err => {
+                console.error("Failed to create default thumbnail:", err);
+              });
+          };
+          img.src = `${domain}/${editPost?.preview_image}`;
+          // Add a timeout in case the image load events don't fire
+          setTimeout(() => {
+            if (!thumbnail) {
+              setThumbnail(`${domain}/${editPost?.preview_image}`);
+            }
+          }, 2000);
+        }
       }
     };
 
     decryptThumbnail();
-  }, [editPost]);
+  }, [editPost, domain]);
 
   // Handle video file drop
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
@@ -94,15 +119,6 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
     if (videoFile.size > maxSize) {
       setShowAlert(true);
       setTimeout(() => setShowAlert(false), 3000);
-      // dispatch(setAlertText("视频文件大小不能超过100MB。"));
-      // console.log();
-      // toast.error("视频文件大小不能超过100MB。", {
-      //   // Video file size must not exceed 100MB
-      //   style: {
-      //     background: "#25212a",
-      //     color: "white",
-      //   },
-      // });
       return;
     }
 
@@ -136,30 +152,42 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
 
       // Create a video element to extract metadata
       const video = document.createElement("video");
-      video.src = URL.createObjectURL(videoFile);
-
-      // Add muted attribute to allow autoplay on iOS
+      
+      // iOS Safari compatibility attributes
+      video.playsInline = true;
+      video.preload = "metadata";
       video.muted = true;
+      video.crossOrigin = "anonymous";
+      video.controls = false;
+      
+      // Set poster to ensure something is visible on iOS
+      if (generatedThumbnail) {
+        const posterUrl = URL.createObjectURL(generatedThumbnail);
+        video.poster = posterUrl;
+      }
+      
+      video.src = URL.createObjectURL(videoFile);
 
       // Add a promise to handle iOS autoplay restrictions
       const metadataPromise = new Promise<void>((resolve) => {
-        video.onloadedmetadata = async () => {
+        let metadataLoaded = false;
+        
+        video.onloadedmetadata = () => {
+          metadataLoaded = true;
+          
+          // For iOS Safari, setting currentTime helps ensure metadata is properly loaded
+          video.currentTime = 0.1;
+        };
+        
+        video.onloadeddata = async () => {
           try {
-            // Try to play the video briefly to ensure metadata is loaded on iOS
-            await video.play().catch(() => {
-              console.log("Play prevented, but metadata should be loaded");
-            });
-
-            // Pause immediately after starting playback
-            video.pause();
-
-            setVideoDuration(video.duration || 0); // Set duration
-            setVideoWidth(video.videoWidth || 0); // Set width
-            setVideoHeight(video.videoHeight || 0); // Set height
+            // For iOS, we don't need to play, just check if we can access the metadata
+            setVideoDuration(video.duration || 0);
+            setVideoWidth(video.videoWidth || 0);
+            setVideoHeight(video.videoHeight || 0);
             resolve();
-          } catch (error: unknown) {
+          } catch (error) {
             console.error("Error loading video metadata:", error);
-            // Set default values if metadata extraction fails
             setVideoDuration(0);
             setVideoWidth(0);
             setVideoHeight(0);
@@ -170,16 +198,31 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
         // Handle errors
         video.onerror = () => {
           console.error("Error loading video:", video.error);
-          // Set default values if metadata extraction fails
           setVideoDuration(0);
           setVideoWidth(0);
           setVideoHeight(0);
           resolve();
         };
+        
+        // Add a timeout for iOS Safari, which may not trigger events properly
+        setTimeout(() => {
+          if (!metadataLoaded) {
+            console.warn("Metadata loading timeout - using default values");
+            setVideoDuration(0);
+            setVideoWidth(0);
+            setVideoHeight(0);
+            resolve();
+          }
+        }, 3000);
       });
 
       // Wait for metadata to be loaded
       await metadataPromise;
+
+      // Clean up resources
+      URL.revokeObjectURL(video.src);
+      video.src = "";
+      video.load();
 
       // Add video to files state
       setFiles([
@@ -195,7 +238,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
         URL.revokeObjectURL(videoUrlRef.current);
       }
       videoUrlRef.current = URL.createObjectURL(videoFile);
-    } catch (error: unknown) {
+    } catch (error) {
       console.error("Error processing video:", error);
       toast.error("处理视频时出错。请重试。", {
         // Error processing video. Please try again.
@@ -242,67 +285,78 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
     return new Promise((resolve, reject) => {
       const video = document.createElement("video");
 
-      // Add attributes to help with iOS playback
+      // Enhanced iOS Safari compatibility
       video.muted = true;
       video.playsInline = true;
+      video.autoplay = false;
+      video.preload = "metadata";
       video.crossOrigin = "anonymous";
+      video.controls = false;
 
       // Create object URL
       const objectUrl = URL.createObjectURL(videoFile);
       video.src = objectUrl;
 
       // Set up event handlers
+      video.onloadedmetadata = () => {
+        // For iOS Safari, set currentTime after metadata is loaded
+        video.currentTime = 0.1; // Use 0.1 instead of 0 for better iOS compatibility
+      };
+
       video.onloadeddata = async () => {
         try {
-          // Try to play the video briefly to ensure it's loaded on iOS
-          await video.play().catch(() => {
-            console.log("Play prevented, but video should be loaded");
-          });
-
-          // Seek to the first frame
-          video.currentTime = 0;
-
-          // Pause immediately after starting playback
-          video.pause();
-        } catch (error: unknown) {
-          console.error("Error playing video for thumbnail:", error);
+          // iOS Safari needs user interaction for play, so we just set currentTime
+          // without trying to play, which is more reliable
+        } catch (error) {
+          console.error("Error loading video for thumbnail:", error);
         }
       };
 
       video.onseeked = () => {
         try {
           const canvas = document.createElement("canvas");
-          canvas.width = video.videoWidth || 320; // Fallback width if videoWidth is 0
-          canvas.height = video.videoHeight || 240; // Fallback height if videoHeight is 0
+          // Ensure dimensions are valid - iOS Safari is strict about this
+          canvas.width = video.videoWidth || 320; // Fallback width
+          canvas.height = video.videoHeight || 240; // Fallback height
 
-          const ctx = canvas.getContext("2d");
+          // Draw video frame to canvas - this operation can fail in iOS Safari
+          // if the video hasn't properly loaded
+          const ctx = canvas.getContext("2d", { alpha: false });
           if (!ctx) {
             throw new Error("Could not get canvas context");
           }
 
+          // First clear canvas with a solid color to avoid transparency issues
+          ctx.fillStyle = "#000000";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          
+          // Then draw the video frame
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
+          // For iOS Safari, we need to explicitly use toBlob with proper MIME type
           canvas.toBlob(
             (blob) => {
               if (blob) {
-                const fileName = `${Date.now()}.jpg`; // Generate a unique file name
+                const fileName = `${Date.now()}.jpg`;
                 const file = new File([blob], fileName, {
                   type: "image/jpeg",
                 });
 
                 // Clean up resources
                 URL.revokeObjectURL(objectUrl);
+                video.src = "";
+                video.load();
 
-                resolve(file); // Resolve with the File object
+                resolve(file);
               } else {
                 // If blob creation fails, create a default thumbnail
                 createDefaultThumbnail().then(resolve).catch(reject);
               }
             },
             "image/jpeg",
-            0.9 // Quality factor for JPEG compression
+            0.92 // Higher quality for better iOS compatibility
           );
-        } catch (error: unknown) {
+        } catch (error) {
           console.error("Error generating thumbnail:", error);
           // If thumbnail generation fails, create a default thumbnail
           createDefaultThumbnail().then(resolve).catch(reject);
@@ -333,9 +387,13 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
     canvas.width = 320;
     canvas.height = 240;
 
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { alpha: false });
     if (ctx) {
-      // Fill with a gradient background
+      // Fill with a solid background first (works better on iOS)
+      ctx.fillStyle = "#2980b9";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Then add a gradient background
       const gradient = ctx.createLinearGradient(
         0,
         0,
@@ -371,7 +429,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
           }
         },
         "image/jpeg",
-        0.9
+        0.95 // Higher quality for better iOS compatibility
       );
     });
   };
@@ -711,20 +769,55 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
         <div className="flex flex-col justify-center items-center">
           <div className="preview-container">
             {files?.length > 0 ? (
-              <div className="preview-item">
+              <div className="preview-item" style={{ position: "relative", overflow: "hidden", borderRadius: "8px", backgroundColor: "#000" }}>
                 <video
                   src={
                     editPost
                       ? `${domain}/${videoUrlRef.current}`
                       : videoUrlRef.current
                   }
+                  poster={typeof thumbnail === "string" ? thumbnail : thumbnail ? URL.createObjectURL(thumbnail) : ""}
                   className="preview-video"
+                  playsInline
+                  muted
+                  preload="metadata"
+                  controls={false}
+                  style={{ 
+                    objectFit: "cover", 
+                    backgroundColor: "#000", 
+                    width: "100%", 
+                    height: "100%", 
+                    display: "block",
+                    position: "relative",
+                    zIndex: 1
+                  }}
+                  onError={(e) => {
+                    console.error("Error loading video preview");
+                    // If video fails to load on iOS, we'll rely on the poster image
+                    const target = e.target as HTMLVideoElement;
+                    // Make sure poster is visible even when video fails
+                    target.style.backgroundColor = "#000";
+                    target.controls = false;
+                    target.poster = typeof thumbnail === "string" ? thumbnail : thumbnail ? URL.createObjectURL(thumbnail) : "";
+                    
+                    // If we don't have a poster set already, create one
+                    if (!target.poster && thumbnail === null) {
+                      createDefaultThumbnail()
+                        .then(file => {
+                          target.poster = URL.createObjectURL(file);
+                        })
+                        .catch(err => {
+                          console.error("Failed to create default poster:", err);
+                        });
+                    }
+                  }}
                 />
 
                 {!uploading && (
                   <button
                     onClick={() => setFiles([])}
                     className="upload-progress1"
+                    style={{ position: "absolute", top: "8px", right: "8px", zIndex: 2 }}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -736,7 +829,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
                       <path
                         d="M6 4.66688L10.0003 0.666562C10.3684 0.29843 10.9653 0.29843 11.3334 0.666562C11.7016 1.03469 11.7016 1.63155 11.3334 1.99969L7.33312 6L11.3334 10.0003C11.7016 10.3684 11.7016 10.9653 11.3334 11.3334C10.9653 11.7016 10.3684 11.7016 10.0003 11.3334L6 7.33312L1.99969 11.3334C1.63155 11.7016 1.03469 11.7016 0.666562 11.3334C0.29843 10.9653 0.29843 10.3684 0.666562 10.0003L4.66688 6L0.666562 1.99969C0.29843 1.63155 0.29843 1.03469 0.666562 0.666562C1.03469 0.29843 1.63155 0.29843 1.99969 0.666562L6 4.66688Z"
                         fill="white"
-                        fill-opacity="0.8"
+                        fillOpacity="0.8"
                       />
                     </svg>
                   </button>
@@ -779,7 +872,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
         <div className="flex flex-col justify-center items-center">
           <div className="preview-container">
             {thumbnail ? (
-              <div className="thumbnail-preview">
+              <div className="thumbnail-preview" style={{ position: "relative", overflow: "hidden", borderRadius: "8px", backgroundColor: "#000" }}>
                 <img
                   src={
                     typeof thumbnail === "string"
@@ -788,10 +881,33 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
                   }
                   alt="thumbnail preview"
                   className="preview-image"
+                  style={{ 
+                    objectFit: "cover", 
+                    width: "100%", 
+                    height: "100%", 
+                    display: "block" 
+                  }}
+                  onError={(e) => {
+                    console.error("Error loading thumbnail image");
+                    // If thumbnail fails to load, replace with a data URL
+                    const target = e.target as HTMLImageElement;
+                    target.onerror = null; // Prevent infinite error loop
+                    // Create a simple colored rectangle as fallback
+                    const canvas = document.createElement("canvas");
+                    canvas.width = 320;
+                    canvas.height = 240;
+                    const ctx = canvas.getContext("2d");
+                    if (ctx) {
+                      ctx.fillStyle = "#2980b9";
+                      ctx.fillRect(0, 0, canvas.width, canvas.height);
+                      target.src = canvas.toDataURL("image/jpeg");
+                    }
+                  }}
                 />
                 <button
                   onClick={() => setThumbnail(null)}
                   className="upload-progress1"
+                  style={{ position: "absolute", top: "8px", right: "8px", zIndex: 2 }}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -803,7 +919,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
                     <path
                       d="M6 4.66688L10.0003 0.666562C10.3684 0.29843 10.9653 0.29843 11.3334 0.666562C11.7016 1.03469 11.7016 1.63155 11.3334 1.99969L7.33312 6L11.3334 10.0003C11.7016 10.3684 11.7016 10.9653 11.3334 11.3334C10.9653 11.7016 10.3684 11.7016 10.0003 11.3334L6 7.33312L1.99969 11.3334C1.63155 11.7016 1.03469 11.7016 0.666562 11.3334C0.29843 10.9653 0.29843 10.3684 0.666562 10.0003L4.66688 6L0.666562 1.99969C0.29843 1.63155 0.29843 1.03469 0.666562 0.666562C1.03469 0.29843 1.63155 0.29843 1.99969 0.666562L6 4.66688Z"
                       fill="white"
-                      fill-opacity="0.8"
+                      fillOpacity="0.8"
                     />
                   </svg>
                 </button>
