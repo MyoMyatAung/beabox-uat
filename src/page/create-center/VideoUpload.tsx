@@ -98,6 +98,97 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
     decryptThumbnail();
   }, [editPost, domain]);
 
+  // Add this function to capture first frame from video URL
+  const captureFirstFrameFromUrl = (videoUrl: string): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const video = document.createElement('video');
+      video.crossOrigin = "anonymous";
+      video.muted = true;
+      video.playsInline = true;
+      video.preload = "metadata";
+      
+      // Handle loading
+      video.onloadedmetadata = () => {
+        video.currentTime = 0.1; // Go slightly past first frame for better results
+      };
+      
+      video.onloadeddata = () => {
+        try {
+          // Create canvas and draw video frame
+          const canvas = document.createElement('canvas');
+          canvas.width = video.videoWidth || 320;
+          canvas.height = video.videoHeight || 240;
+          
+          const ctx = canvas.getContext('2d', { alpha: false });
+          if (ctx) {
+            ctx.fillStyle = "#000";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Get data URL from canvas
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+            resolve(dataUrl);
+          } else {
+            reject(new Error("Could not get canvas context"));
+          }
+        } catch (error) {
+          reject(error);
+        } finally {
+          // Clean up
+          video.src = "";
+          video.load();
+        }
+      };
+      
+      // Handle errors
+      video.onerror = () => {
+        reject(new Error("Error loading video"));
+      };
+      
+      // Set source and start loading
+      video.src = videoUrl;
+      
+      // Set timeout in case video never loads
+      setTimeout(() => {
+        if (!video.videoWidth) {
+          reject(new Error("Video loading timeout"));
+        }
+      }, 5000);
+    });
+  };
+
+  // In useEffect, add this for edit mode
+  useEffect(() => {
+    // For edited videos, capture the first frame as poster
+    if (editPost?.files[0]?.resourceURL) {
+      const videoUrl = `${domain}/${editPost.files[0].resourceURL}`;
+      
+      // Only generate poster for Safari browsers
+      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+      if (isSafari) {
+        captureFirstFrameFromUrl(videoUrl)
+          .then(posterUrl => {
+            // Update files state with poster
+            setFiles(prev => [{
+              ...prev[0],
+              poster: posterUrl // Store poster URL directly (not a File object in this case)
+            }]);
+          })
+          .catch(error => {
+            console.error("Failed to generate poster:", error);
+            // Fall back to default thumbnail
+            createDefaultThumbnail()
+              .then(file => {
+                setFiles(prev => [{
+                  ...prev[0],
+                  poster: URL.createObjectURL(file)
+                }]);
+              });
+          });
+      }
+    }
+  }, [editPost, domain]);
+
   // Handle video file drop
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const videoFile = acceptedFiles.find((file) =>
@@ -808,11 +899,12 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
                       ? `${domain}/${videoUrlRef.current}`
                       : videoUrlRef.current
                   }
-                  poster={files[0]?.poster ? URL.createObjectURL(files[0].poster) : ""}
+                  poster={typeof files[0]?.poster === 'string' ? files[0].poster : (files[0]?.poster ? URL.createObjectURL(files[0].poster) : "")}
                   className="preview-video"
                   playsInline
                   muted
-                  preload="metadata"
+                  preload="auto"
+                  crossOrigin="anonymous"
                   controls={false}
                   style={{ 
                     objectFit: "cover", 
@@ -1024,3 +1116,4 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
 };
 
 export default UploadVideos;
+
