@@ -28,6 +28,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   const [thumbnail, setThumbnail] = useState(editPost?.preview_image || null);
   const [uploading, setUploading] = useState(false);
   const [uploadPercentage, setUploadPercentage] = useState(0);
+  const [uploadComplete, setUploadComplete] = useState(false);
   const [agree, setAgree] = useState(editPost ? true : false);
   console.log(editPost, "ed post");
   const [videoDuration, setVideoDuration] = useState(
@@ -493,13 +494,17 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
 
     if (files[0]?.resourceURL && typeof thumbnail === "string") {
       setUploading(false);
+      seteditPost(null);
+      refetch();
     } else {
-      setUploading(true);
+      setUploadComplete(true);
+      setsuccessEnd(true);
+      setUploadPercentage(100);
+      setUploadedSize(totalSize);
     }
 
     setUploadPercentage(0);
     setUploadedSize(0);
-    setsuccessEnd(false);
 
     abortController.current = new AbortController(); // Create abort controller
 
@@ -527,11 +532,20 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
           const upload = s3.upload(uploadParams);
 
           upload.on("httpUploadProgress", (progress) => {
-            const uploadedMB = roundToOneDecimal(progress.loaded / (1000 * 1000));
-            setUploadPercentage(
-              Math.round((progress.loaded / progress.total) * 100)
-            );
-            setUploadedSize(uploadedMB);
+            // Only update progress if upload is not yet complete
+            if (!uploadComplete) {
+              const uploadedMB = roundToOneDecimal(progress.loaded / (1000 * 1000));
+              
+              // If we're at 100%, mark as complete and set final values
+              if (progress.loaded >= progress.total) {
+                setUploadComplete(true);
+                setUploadPercentage(100);
+                setUploadedSize(totalSize);
+              } else {
+                setUploadPercentage(Math.round((progress.loaded / progress.total) * 100));
+                setUploadedSize(uploadedMB);
+              }
+            }
           });
 
           upload.send((err, data) => {
@@ -624,13 +638,6 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
             color: "white",
           },
         });
-        if (files[0]?.resourceURL && typeof thumbnail === "string") {
-          setUploading(false);
-          seteditPost(null);
-          refetch();
-        } else {
-          setsuccessEnd(true);
-        }
         setFiles([]);
         formData.setContentTitle("");
         formData.setHashtags([]);
@@ -668,16 +675,6 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
     }
   };
 
-  // const handleCancelUpload = () => {
-  //   if (abortController.current) {
-  //     abortController.current.abort();
-  //   }
-  //   setUploading(false);
-  //   setsuccessEnd(false);
-  //   setUploadPercentage(0);
-  //   setUploadedSize(0);
-  // };
-
   const handleCancelUpload = () => {
     if (abortController.current) {
       abortController.current.abort();
@@ -688,7 +685,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
     setsuccessEnd(false);
     setUploadPercentage(0);
     setUploadedSize(0);
-    setIsModalVisible(false); // Add this to close the modal immediately
+    setUploadComplete(false);
+    setIsModalVisible(false);
   };
 
   const showModal = () => {
