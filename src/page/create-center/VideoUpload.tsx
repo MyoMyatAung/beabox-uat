@@ -562,33 +562,64 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
           });
         });
       };
-      let thumbnailUrl;
-      let videoUrl;
-      let thumbnailKey;
-      let videoKey;
+      
+      let thumbnailUrl: string;
+      let videoUrl: string;
+      let thumbnailKey: string;
+      let videoKey: string;
       const videoFile = files[0].video;
 
       if (!files[0].resourceURL) {
-        // Upload video file
-
+        // Upload video file first
         videoKey = `video_${Date.now()}_${Math.random()
           .toString(36)
           .substr(2, 9)}.${videoFile.name.split(".").pop()}`;
         await uploadFileToS3(videoFile, videoKey, videoFile.type);
         videoUrl = `${directory}/${videoKey}`;
+        
+        // Now that video is complete, move on to thumbnail without showing progress
+        if (typeof thumbnail !== "string") {
+          // Upload thumbnail file silently (no progress update)
+          thumbnailKey = `thumbnail_${Date.now()}_${Math.random()
+            .toString(36)
+            .substr(2, 9)}.${thumbnail.name.split(".").pop()}`;
+            
+          // Use a simpler upload method for thumbnail without progress tracking
+          const uploadThumbnail = () => {
+            const uploadParams = {
+              Bucket: bucket,
+              Key: `${directory}/${thumbnailKey}`,
+              Body: thumbnail,
+              ContentType: thumbnail.type,
+              ContentDisposition: "inline",
+            };
+            
+            return new Promise((resolve, reject) => {
+              s3.upload(uploadParams).send((err, data) => {
+                if (err) reject(err);
+                else resolve(data);
+              });
+            });
+          };
+          
+          await uploadThumbnail();
+          thumbnailUrl = `${directory}/${thumbnailKey}`;
+        } else {
+          thumbnailUrl = thumbnail;
+        }
       } else {
         videoUrl = files[0].resourceURL;
-      }
-
-      if (typeof thumbnail !== "string") {
-        // Upload thumbnail file
-        thumbnailKey = `thumbnail_${Date.now()}_${Math.random()
-          .toString(36)
-          .substr(2, 9)}.${thumbnail.name.split(".").pop()}`;
-        await uploadFileToS3(thumbnail, thumbnailKey, thumbnail.type);
-        thumbnailUrl = `${directory}/${thumbnailKey}`;
-      } else {
-        thumbnailUrl = thumbnail;
+        
+        if (typeof thumbnail !== "string") {
+          // Upload thumbnail file
+          thumbnailKey = `thumbnail_${Date.now()}_${Math.random()
+            .toString(36)
+            .substr(2, 9)}.${thumbnail.name.split(".").pop()}`;
+          await uploadFileToS3(thumbnail, thumbnailKey, thumbnail.type);
+          thumbnailUrl = `${directory}/${thumbnailKey}`;
+        } else {
+          thumbnailUrl = thumbnail;
+        }
       }
 
       // Construct the public URLs for the uploaded files
