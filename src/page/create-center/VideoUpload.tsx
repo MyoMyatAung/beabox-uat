@@ -639,6 +639,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
       } catch (error) {
         setUploading(false);
         setsuccessEnd(false);
+        setUploadedSize(0);
 
         console.error("Upload failed:", error);
         toast.error("视频上传失败。请重试。", {
@@ -648,12 +649,14 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
             color: "white",
           },
         });
+      } finally {
+        setUploading(false);
       }
-
-      // Call the createPosts mutation
     } catch (error) {
       setUploading(false);
       setsuccessEnd(false);
+      setUploadedSize(0);
+
       console.error("Upload failed:", error);
       toast.error("视频上传失败。请重试。", {
         // Failed to upload video. Please try again.
@@ -662,9 +665,6 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
           color: "white",
         },
       });
-    } finally {
-      setUploading(false);
-      setUploadedSize(0); // Add this line
     }
   };
 
