@@ -162,6 +162,7 @@ const OtherProfile = () => {
         console.error("Failed to copy text: ", err);
       });
   };
+  
   const isIOSApp = () => {
     const customWindow = window as unknown as CustomWindow;
     return (
@@ -170,6 +171,7 @@ const OtherProfile = () => {
       customWindow.webkit.messageHandlers.jsBridge
     );
   };
+  
   const sendEventToNative = (name: string, text: string) => {
     const customWindow = window as unknown as CustomWindow;
     if (
@@ -183,6 +185,7 @@ const OtherProfile = () => {
       });
     }
   };
+  
   const handleCopy2 = async () => {
     // If we already have a cached link, use it
     if (cachedDownloadLink) {
@@ -250,7 +253,24 @@ const OtherProfile = () => {
 
   console.log(userData, "user data");
 
+  // Handle loading state
   if (userLoading) return <Loader />;
+
+  // Handle case where userData is undefined after loading
+  if (!userData?.data) {
+    return (
+      <div className="h-screen flex flex-col items-center justify-center">
+        <p>User not found or content is unavailable.</p>
+        <button 
+          className="mt-4 bg-[#FFFFFF1F] px-4 py-2 rounded-lg"
+          onClick={() => navigate(-1)}
+        >
+          Go Back
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="h-screen flex flex-col hide-sb max-w-[480px] mx-auto">
       {showHeader ? (
@@ -391,7 +411,7 @@ const OtherProfile = () => {
             id={userData?.data?.id}
           />
         </div>
-        {user?.id == id ? (
+        {user && user.id === id ? (
           <></>
         ) : (
           <div

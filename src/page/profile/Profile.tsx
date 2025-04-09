@@ -219,10 +219,10 @@ const Profile = () => {
       )}
       {isCopied && (
         <div className="w-full z-[1300] absolute top-[80vh] flex justify-center">
-          <p className="text-[14px] bg-[#FFFFFF14] px-2 py-1 rounded-lg w-[83px] text-center">
-            已复制 ID
-          </p>
-        </div>
+        <p className="text-[14px] bg-[#191721] px-2 py-1 rounded-lg w-[83px] text-center">
+          已复制 ID
+        </p>
+      </div>
       )}
       {show && (
         <div className="fixed top-0 z-[2300] left-0 w-full h-full mx-auto flex flex-col justify-center items-center bg-black/80">
