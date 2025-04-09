@@ -21,7 +21,19 @@ import SearchVideo from "@/components/profile/video/search-video";
 import OtherAds from "@/components/profile/other-ads";
 import logo from "@/assets/logo.svg";
 
-const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
+// Define types for improved type safety
+type ArrayBuffer = globalThis.ArrayBuffer;
+type WindowWithWebkit = Window & {
+  webkit?: {
+    messageHandlers?: {
+      jsBridge?: {
+        postMessage: (message: { eventName: string; value: string }) => void;
+      };
+    };
+  };
+};
+
+const decryptImage = (arrayBuffer: ArrayBuffer, key = 0x12, decryptSize = 4096) => {
   const data = new Uint8Array(arrayBuffer);
   const maxSize = Math.min(decryptSize, data.length);
   for (let i = 0; i < maxSize; i++) {
@@ -33,40 +45,56 @@ const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
 
 const OtherProfile = () => {
   const { id } = useParams();
-  const user = useSelector((state: any) => state?.persist?.user) || "";
+  interface User {
+    id: string;
+  }
+  const user = useSelector((state: { persist?: { user: User } }) => state?.persist?.user);
 
   const [isCopied, setIsCopied] = useState(false);
   const [isCopied2, setIsCopied2] = useState(false);
-  const headerRef = useRef<any>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
   const [showHeader, setShowHeader] = useState(false);
   const navigate = useNavigate();
   const {
     data: userData,
     isLoading: userLoading,
     refetch,
-    isFetching,
-  } = useGetUserProfileQuery(id || "");
-  const [shareInfo, { data: shareData, isLoading: shareLoading }] =
-    useShareInfoMutation();
-  console.log(shareData, "share data");
+    isError
+  } = useGetUserProfileQuery(id || "", {
+    skip: !id // Skip the query if id is not available
+  });
+  
+  const [shareInfo] = useShareInfoMutation();
+    
   const [decryptedCover, setDecryptedCover] = useState(defaultCover);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
-  const [cachedDownloadLink, setCachedDownloadLink] = useState(null);
+  const [cachedDownloadLink, setCachedDownloadLink] = useState<string | null>(null);
+
+  // Enable this useEffect to refetch data when id changes or on component mount
+  useEffect(() => {
+    if (id) {
+      refetch();
+    }
+  }, [id, refetch]);
 
   useEffect(() => {
     const fetchShareInfo = async () => {
       try {
-        const { data } = await shareInfo({ id });
-        const appDownloadLink = data?.data?.link;
-        setCachedDownloadLink(appDownloadLink);
+        if (id) {
+          const { data } = await shareInfo({ id });
+          const appDownloadLink = data?.data?.link;
+          if (appDownloadLink) {
+            setCachedDownloadLink(appDownloadLink);
+          }
+        }
       } catch (error) {
         console.error("Error fetching share info:", error);
       }
     };
 
     fetchShareInfo();
-  }, [id]);
-  // console.log(userData, "user data");
+  }, [id, shareInfo]);
+
   useEffect(() => {
     const loadAndDecryptCover = async () => {
       if (!userData?.data?.cover_photo) {
@@ -135,7 +163,7 @@ const OtherProfile = () => {
     loadAndDecryptPhoto();
   }, [userData?.data?.profile_photo]);
 
-  const handleCopy = async (text: any) => {
+  const handleCopy = async (text: string) => {
     // await shareInfo({ id });
     navigator?.clipboard
       .writeText(text)
@@ -147,25 +175,31 @@ const OtherProfile = () => {
         console.error("Failed to copy text: ", err);
       });
   };
+  
   const isIOSApp = () => {
     return (
-      (window as any).webkit &&
-      (window as any).webkit.messageHandlers &&
-      (window as any).webkit.messageHandlers.jsBridge
+      (window as WindowWithWebkit).webkit &&
+      (window as WindowWithWebkit).webkit?.messageHandlers &&
+      (window as WindowWithWebkit).webkit?.messageHandlers?.jsBridge
     );
   };
+  
   const sendEventToNative = (name: string, text: string) => {
     if (
-      (window as any).webkit &&
-      (window as any).webkit.messageHandlers &&
-      (window as any).webkit.messageHandlers.jsBridge
+      (window as WindowWithWebkit).webkit &&
+      (window as WindowWithWebkit).webkit?.messageHandlers &&
+      (window as WindowWithWebkit).webkit?.messageHandlers?.jsBridge
     ) {
-      (window as any).webkit.messageHandlers.jsBridge.postMessage({
-        eventName: name,
-        value: text,
-      });
+      const jsBridge = (window as WindowWithWebkit).webkit?.messageHandlers?.jsBridge;
+      if (jsBridge) {
+        jsBridge.postMessage({
+          eventName: name,
+          value: text,
+        });
+      }
     }
   };
+  
   const handleCopy2 = async () => {
     // If we already have a cached link, use it
     if (cachedDownloadLink) {
@@ -174,16 +208,20 @@ const OtherProfile = () => {
     }
 
     try {
-      const { data } = await shareInfo({ id });
-      const appDownloadLink = data?.data?.link;
-      setCachedDownloadLink(appDownloadLink);
-      copyToClipboard(appDownloadLink);
+      if (id) {
+        const { data } = await shareInfo({ id });
+        const appDownloadLink = data?.data?.link;
+        if (appDownloadLink) {
+          setCachedDownloadLink(appDownloadLink);
+          copyToClipboard(appDownloadLink);
+        }
+      }
     } catch (error) {
       console.error("Error fetching share info:", error);
     }
   };
 
-  const copyToClipboard = (link) => {
+  const copyToClipboard = (link: string) => {
     if (isIOSApp()) {
       sendEventToNative("copyAppdownloadUrl", link);
     } else {
@@ -220,13 +258,39 @@ const OtherProfile = () => {
     };
   }, []);
 
-  // useEffect(() => {
-  //   if (id || userData) {
-  //     refetch();
-  //   }
-  // }, [id, userData]);
+  // Handle error state
+  if (isError) {
+    return (
+      <div className="h-screen flex flex-col items-center justify-center">
+        <p>Failed to load profile. Please try again.</p>
+        <button 
+          className="mt-4 bg-[#FFFFFF1F] px-4 py-2 rounded-lg"
+          onClick={() => refetch()}
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
 
+  // Handle loading state
   if (userLoading) return <Loader />;
+
+  // Handle case where userData is undefined after loading
+  if (!userData?.data) {
+    return (
+      <div className="h-screen flex flex-col items-center justify-center">
+        <p>User not found or content is unavailable.</p>
+        <button 
+          className="mt-4 bg-[#FFFFFF1F] px-4 py-2 rounded-lg"
+          onClick={() => navigate(-1)}
+        >
+          Go Back
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="h-screen flex flex-col hide-sb max-w-[480px] mx-auto">
       {showHeader ? (
@@ -359,7 +423,7 @@ const OtherProfile = () => {
             id={userData?.data?.id}
           />
         </div>
-        {user?.id == id ? (
+        {user && user.id === id ? (
           <></>
         ) : (
           <div
