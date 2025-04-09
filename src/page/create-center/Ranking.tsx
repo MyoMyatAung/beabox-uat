@@ -137,14 +137,6 @@ const Ranking = () => {
   }, []);
 
   useEffect(() => {
-    if (data?.data?.list?.length) {
-      // Append new data to the existing videos
-      setRankingList((pev: any) => [...pev, ...data?.data?.list]);
-      setTotalData(data?.pagination?.total);
-    }
-  }, [data]);
-
-  useEffect(() => {
     if (totalData <= rankingList.length) {
       setHasMore(false);
     } else {
@@ -168,6 +160,7 @@ const Ranking = () => {
   useEffect(() => {
     if (data?.data?.list) {
       if (page === 1) {
+        // Replace the list when page is 1 (new filter or initial load)
         setRankingList(data.data.list);
       } else {
         // Filter out duplicates before adding new data
@@ -244,46 +237,13 @@ const Ranking = () => {
             </svg>
           </div>
         </div>
-        {/* <div className="test">
-          <div className=" relative pt-[10px] hidden">
-            <Swiper
-              className=""
-              slidesPerView={1.5}
-              spaceBetween={50}
-              centeredSlides={true}
-              loop={true}
-              autoplay={{ delay: 3000, disableOnInteraction: false }}
-              modules={[Autoplay]}
-              onSlideChange={handleOnChange}
-            >
-              {ad.map((cc: any, index: number) => (
-                <SwiperSlide className=" w-full rounded-[12px]" key={index}>
-                  <a
-                    href={cc.url}
-                    target="_blank"
-                    className={`flex rounded-[12px] justify-center w-full items-center px-[8px] flex-col relative transition-all duration-300 `}
-                  >
-                    <div className=" w-[332px] h-[90px] px-2 overflow-hidden rounded-[12px]">
-                      <img
-                        className={`object-cover object-center w-full h-full transition-all rounded-[12px] duration-300 ${
-                          selectedIndex === index
-                            ? "p-0 m-0 opacity-100"
-                            : "p-2 opacity-70 "
-                        }`}
-                        src={cc.image}
-                        alt={`Slide ${index + 1}`}
-                      />
-                    </div>
-                  </a>
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </div>
-        </div> */}
-        <div className="pb-5">
+        <div className={`pb-5}`}>
           <Top3 rankingData={rankingList} refetch={refetch} />
         </div>
-        <div ref={headerRef} className="sticky w-full top-0"></div>
+        <div
+          ref={headerRef}
+          className="sticky w-full top-0 "
+        ></div>
 
         <div
           className={`w-full sticky top-0 ${
@@ -371,7 +331,7 @@ const Ranking = () => {
         />
         {user?.token ? <MyRankCard myrank={data?.data?.my_rank} /> : <></>}
       </div>
-      <div className="py-20"></div>
+      <div className="py-32"></div>
     </div>
   );
 };
