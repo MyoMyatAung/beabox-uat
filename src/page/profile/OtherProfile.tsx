@@ -1,9 +1,9 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   useGetUserProfileQuery,
-  useShareInfoMutation,
 } from "@/store/api/profileApi";
-import { ChevronLeft, Copy, Flag, Search } from "lucide-react";
+import { useGetUserShareQuery } from "@/page/home/services/homeApi";
+import { ChevronLeft, Copy, Flag } from "lucide-react";
 import ProfileAvatar from "@/components/profile/profile-avatar";
 import Loader from "@/components/shared/loader";
 import OtherStats from "@/components/profile/other-stats";
@@ -15,13 +15,14 @@ import defaultCover from "@/assets/cover.jpg";
 import { useEffect, useRef, useState } from "react";
 import OscrollHeader from "@/components/profile/oscroll-header";
 import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 import share from "@/assets/profile/share.svg";
 import BadgeImg from "@/components/shared/badge-img";
 import SearchVideo from "@/components/profile/video/search-video";
 import OtherAds from "@/components/profile/other-ads";
 import logo from "@/assets/logo.svg";
 
-const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
+const decryptImage = (arrayBuffer: ArrayBuffer, key = 0x12, decryptSize = 4096) => {
   const data = new Uint8Array(arrayBuffer);
   const maxSize = Math.min(decryptSize, data.length);
   for (let i = 0; i < maxSize; i++) {
@@ -31,42 +32,56 @@ const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
   return new TextDecoder().decode(data);
 };
 
+// Define a type for the window.webkit object
+interface WebKitBridge {
+  postMessage: (data: { eventName: string; value: string }) => void;
+}
+
+interface WebKitMessageHandlers {
+  jsBridge?: WebKitBridge;
+}
+
+interface WebKit {
+  messageHandlers?: WebKitMessageHandlers;
+}
+
+interface CustomWindow extends Window {
+  webkit?: WebKit;
+}
+
 const OtherProfile = () => {
   const { id } = useParams();
-  const user = useSelector((state: any) => state?.persist?.user) || "";
+  const user = useSelector((state: RootState) => state?.persist?.user) || "";
 
   const [isCopied, setIsCopied] = useState(false);
   const [isCopied2, setIsCopied2] = useState(false);
-  const headerRef = useRef<any>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
   const [showHeader, setShowHeader] = useState(false);
   const navigate = useNavigate();
   const {
     data: userData,
     isLoading: userLoading,
     refetch,
-    isFetching,
   } = useGetUserProfileQuery(id || "");
-  const [shareInfo, { data: shareData, isLoading: shareLoading }] =
-    useShareInfoMutation();
+  const { data: shareData } = useGetUserShareQuery(
+    {
+      type: "profile",
+      id: id,
+      qr_code: 0,
+    },
+    { skip: !id }
+  );
   console.log(shareData, "share data");
   const [decryptedCover, setDecryptedCover] = useState(defaultCover);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
-  const [cachedDownloadLink, setCachedDownloadLink] = useState(null);
+  const [cachedDownloadLink, setCachedDownloadLink] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchShareInfo = async () => {
-      try {
-        const { data } = await shareInfo({ id });
-        const appDownloadLink = data?.data?.link;
-        setCachedDownloadLink(appDownloadLink);
-      } catch (error) {
-        console.error("Error fetching share info:", error);
-      }
-    };
+    if (shareData?.data?.link) {
+      setCachedDownloadLink(shareData.data.link);
+    }
+  }, [shareData]);
 
-    fetchShareInfo();
-  }, [id]);
-  // console.log(userData, "user data");
   useEffect(() => {
     const loadAndDecryptCover = async () => {
       if (!userData?.data?.cover_photo) {
@@ -135,7 +150,7 @@ const OtherProfile = () => {
     loadAndDecryptPhoto();
   }, [userData?.data?.profile_photo]);
 
-  const handleCopy = async (text: any) => {
+  const handleCopy = async (text: string) => {
     // await shareInfo({ id });
     navigator?.clipboard
       .writeText(text)
@@ -148,19 +163,21 @@ const OtherProfile = () => {
       });
   };
   const isIOSApp = () => {
+    const customWindow = window as unknown as CustomWindow;
     return (
-      (window as any).webkit &&
-      (window as any).webkit.messageHandlers &&
-      (window as any).webkit.messageHandlers.jsBridge
+      customWindow.webkit &&
+      customWindow.webkit.messageHandlers &&
+      customWindow.webkit.messageHandlers.jsBridge
     );
   };
   const sendEventToNative = (name: string, text: string) => {
+    const customWindow = window as unknown as CustomWindow;
     if (
-      (window as any).webkit &&
-      (window as any).webkit.messageHandlers &&
-      (window as any).webkit.messageHandlers.jsBridge
+      customWindow.webkit &&
+      customWindow.webkit.messageHandlers &&
+      customWindow.webkit.messageHandlers.jsBridge
     ) {
-      (window as any).webkit.messageHandlers.jsBridge.postMessage({
+      customWindow.webkit.messageHandlers.jsBridge.postMessage({
         eventName: name,
         value: text,
       });
@@ -173,17 +190,19 @@ const OtherProfile = () => {
       return;
     }
 
-    try {
-      const { data } = await shareInfo({ id });
-      const appDownloadLink = data?.data?.link;
-      setCachedDownloadLink(appDownloadLink);
-      copyToClipboard(appDownloadLink);
-    } catch (error) {
-      console.error("Error fetching share info:", error);
+    // If we have share data but no cached link yet
+    if (shareData?.data?.link) {
+      setCachedDownloadLink(shareData.data.link);
+      copyToClipboard(shareData.data.link);
+      return;
     }
+
+    // Fallback to a default link if no share data is available
+    const defaultLink = window.location.href;
+    copyToClipboard(defaultLink);
   };
 
-  const copyToClipboard = (link) => {
+  const copyToClipboard = (link: string) => {
     if (isIOSApp()) {
       sendEventToNative("copyAppdownloadUrl", link);
     } else {
