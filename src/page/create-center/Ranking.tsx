@@ -137,14 +137,6 @@ const Ranking = () => {
   }, []);
 
   useEffect(() => {
-    if (data?.data?.list?.length) {
-      // Append new data to the existing videos
-      setRankingList((pev: any) => [...pev, ...data?.data?.list]);
-      setTotalData(data?.pagination?.total);
-    }
-  }, [data]);
-
-  useEffect(() => {
     if (totalData <= rankingList.length) {
       setHasMore(false);
     } else {
@@ -168,6 +160,7 @@ const Ranking = () => {
   useEffect(() => {
     if (data?.data?.list) {
       if (page === 1) {
+        // Replace the list when page is 1 (new filter or initial load)
         setRankingList(data.data.list);
       } else {
         // Filter out duplicates before adding new data
