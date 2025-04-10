@@ -5,8 +5,6 @@ import { useEffect, useState } from "react";
 import { useGetApplicationAdsQuery } from "@/store/api/explore/exploreApi";
 import { useDispatch, useSelector } from "react-redux";
 import { setApplicationData, setisLoading } from "@/store/slices/exploreSlice";
-import RegisterForm from "@/components/profile/auth/register-form";
-import LoginForm from "@/components/profile/auth/login-form";
 import AuthDrawer from "@/components/profile/auth/auth-drawer";
 import AlertToast from "@/components/shared/alert-toast";
 import { setPlay } from "@/page/home/services/playSlice";
@@ -17,8 +15,12 @@ const RootLayout = ({ children }: any) => {
   const [showAd, setShowAd] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [isBrowser, setIsBrowser] = useState(false);
-  const { data: conig } = useGetConfigQuery({});
+  const [deviceType, setDeviceType] = useState<"IOS" | "Android" | "">("");
+  const [jumpUrl, setJumpUrl] = useState("");
+  
+  const { data: config } = useGetConfigQuery({});
   const dispatch = useDispatch();
+  
   useEffect(() => {
     const hasSeenAdPopUp = sessionStorage.getItem("hasSeenAdPopUp");
     if (hasSeenAdPopUp) {
@@ -32,24 +34,21 @@ const RootLayout = ({ children }: any) => {
 
   const { data, isLoading } = useGetApplicationAdsQuery("");
 
-  const app_download_link = conig?.data?.app_download_link;
-
   useEffect(() => {
     if (data?.data) {
-      const cur = data?.data?.carousel;
       dispatch(setApplicationData(data?.data));
       dispatch(setisLoading(isLoading));
-      // setApplicationData(data?.data);
-      // setad(cur);
     }
   }, [data, dispatch]);
 
-  // Detect if it's a browser (not an iOS app)
+  // Detect device type and browser
   useEffect(() => {
     const userAgent = navigator.userAgent.toLowerCase();
 
-    // Check if the device is an iPhone or iPad in a WebView or a regular browser
-    if (userAgent.includes("iphone") || userAgent.includes("ipad")) {
+    // Check if it's iOS
+    if (userAgent.includes("iphone") || userAgent.includes("ipad") || userAgent.includes("ipod")) {
+      setDeviceType("IOS");
+      
       // Check if it's a WebView (AppleWebKit but no Safari or Version)
       if (
         userAgent.includes("applewebkit") &&
@@ -60,11 +59,30 @@ const RootLayout = ({ children }: any) => {
       } else {
         setIsBrowser(true); // It's Safari (regular browser)
       }
-    } else {
-      // For non-iOS devices, just assume it's a regular browser if it's mobile or desktop
+    } 
+    // Check if it's Android
+    else if (userAgent.includes("android")) {
+      setDeviceType("Android");
+      setIsBrowser(true); // Assume browser for Android
+    } 
+    // For any other device
+    else {
       setIsBrowser(true);
     }
   }, []);
+
+  // Set the jumpUrl based on deviceType when config is loaded
+  useEffect(() => {
+    if (config?.data?.dialog_config && deviceType) {
+      const dialogConfigItem = config.data.dialog_config.find(
+        (item: any) => item.device === deviceType
+      );
+      
+      if (dialogConfigItem && dialogConfigItem.jump_url) {
+        setJumpUrl(dialogConfigItem.jump_url);
+      }
+    }
+  }, [config, deviceType]);
 
   const isOpen = useSelector((state: any) => state.profile.isDrawerOpen);
 
@@ -79,10 +97,10 @@ const RootLayout = ({ children }: any) => {
           isBrowser={isBrowser}
         />
       )}
-      {!showAd && showAlert && isBrowser && app_download_link && (
+      {!showAd && showAlert && isBrowser && jumpUrl && (
         <AlertRedirect
           setShowAlert={setShowAlert}
-          app_download_link={app_download_link}
+          app_download_link={jumpUrl}
         />
       )}
       {isOpen ? <AuthDrawer /> : <></>}
