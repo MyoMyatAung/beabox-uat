@@ -7,16 +7,6 @@ import { VitePWA } from "vite-plugin-pwa";
 export default defineConfig(({ mode }) => {
   const isProd = mode === 'production';
   
-  // Create empty console functions for production
-  const prodConsole = {
-    log: '(() => {})',
-    warn: '(() => {})',
-    error: '(() => {})',
-    info: '(() => {})',
-    debug: '(() => {})',
-    trace: '(() => {})',
-  };
-  
   return {
     plugins: [
       VitePWA({
@@ -32,7 +22,18 @@ export default defineConfig(({ mode }) => {
         },
       }),
       react(),
-    ],
+      isProd && {
+        name: 'strip-console',
+        transform(code: string, id: string) {
+          if (id.includes('node_modules')) return null;
+          
+          return {
+            code: code.replace(/console\.(log|debug|info|warn|error|trace)\(([^)]*)\);?/g, ''),
+            map: null
+          };
+        }
+      }
+    ].filter(Boolean),
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
@@ -41,15 +42,6 @@ export default defineConfig(({ mode }) => {
     base: '/',
     define: {
       global: {},
-      // Replace console methods in production
-      ...(isProd && {
-        'console.log': prodConsole.log,
-        'console.warn': prodConsole.warn,
-        'console.error': prodConsole.error,
-        'console.info': prodConsole.info,
-        'console.debug': prodConsole.debug,
-        'console.trace': prodConsole.trace,
-      }),
     },
   };
 });

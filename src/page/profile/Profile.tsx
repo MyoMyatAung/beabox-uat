@@ -212,7 +212,6 @@ const Profile = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  console.log(decryptedCover);
   if (isLoading) return <Loader />;
 
   // Add a general cleanup function for blob URLs when component unmounts
