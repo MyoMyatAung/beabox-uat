@@ -25,7 +25,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  base: 'https://if26.rrgsih.cn/',
+  base: '/',
   define: {
     global: {},
   },
