@@ -142,16 +142,32 @@ const ShareOverlay: React.FC<any> = ({
       sendEventToNative("saveImage", shareUrl); // shareUrl should be base64
     } else {
       if (!qrUrl.startsWith("data:image")) {
-        console.error("Invalid base64 image format.");
+        console.error("Invalid image format.");
         return;
       }
 
-      const link = document.createElement("a");
-      link.href = qrUrl;
-      link.download = "QRCode.png"; // or .jpg if it's a jpeg base64
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      try {
+        // Convert data URL to blob
+        const response = fetch(qrUrl)
+          .then(res => res.blob())
+          .then(blob => {
+            // Create a blob URL and initiate download
+            const blobUrl = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = blobUrl;
+            link.download = "QRCode.png";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Clean up the blob URL after download
+            setTimeout(() => {
+              URL.revokeObjectURL(blobUrl);
+            }, 100);
+          });
+      } catch (error) {
+        console.error("Error downloading QR code:", error);
+      }
     }
   };
 

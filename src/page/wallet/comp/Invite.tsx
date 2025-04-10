@@ -65,16 +65,33 @@ const Invite: React.FC<InviteProps> = ({}) => {
       const qrCanvas = document.querySelector("canvas"); // Select the canvas element
 
       if (qrCanvas) {
-        const imageType = "image/png"; // Change to "image/jpeg" for JPG
-        const imageUrl = qrCanvas.toDataURL(imageType); // Convert canvas to data URL
-
-        // Create a temporary link to trigger the download
-        const link = document.createElement("a");
-        link.href = imageUrl;
-        link.download = "QRCode.png"; // Set file name and extension
-        document.body.appendChild(link); // Append link to the body
-        link.click(); // Trigger download
-        document.body.removeChild(link); // Remove link after download
+        try {
+          // Convert canvas to blob instead of data URL
+          qrCanvas.toBlob((blob) => {
+            if (!blob) {
+              console.error("Failed to create blob from canvas");
+              return;
+            }
+            
+            // Create blob URL
+            const blobUrl = URL.createObjectURL(blob);
+            
+            // Create a temporary link to trigger the download
+            const link = document.createElement("a");
+            link.href = blobUrl;
+            link.download = "QRCode.png"; // Set file name and extension
+            document.body.appendChild(link); // Append link to the body
+            link.click(); // Trigger download
+            document.body.removeChild(link); // Remove link after download
+            
+            // Clean up the blob URL after download
+            setTimeout(() => {
+              URL.revokeObjectURL(blobUrl);
+            }, 100);
+          }, "image/png");
+        } catch (error) {
+          console.error("Error creating QR code download:", error);
+        }
       } else {
         console.error("QR code canvas not found.");
       }

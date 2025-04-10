@@ -18,6 +18,7 @@ const EditCover = ({ decryptedCover, refetch, coverimg }: any) => {
   const cover = useSelector((state: any) => state.persist.cover);
   const [isOpen, setIsOpen] = useState(false);
   const [image, setImage] = useState<string | null>(null);
+  const [blobUrl, setBlobUrl] = useState<string | null>(null);
   const [settingUpload, { data: settingUploadData, isLoading: load1 }] =
     useSettingUploadMutation();
   const [changeCover, { data: changeCoverData, isLoading: load2 }] =
@@ -35,19 +36,39 @@ const EditCover = ({ decryptedCover, refetch, coverimg }: any) => {
     }
   };
 
-  const handleFile = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      if (e.target && typeof e.target.result === "string") {
-        setImage(e.target.result);
-        // console.log("1");
-        await settingUpload({
-          filedata: e.target.result,
-          filePath: "cover_photo",
-        });
-      }
-    };
-    reader.readAsDataURL(file);
+  const handleFile = async (file: File) => {
+    try {
+      // Create a blob URL for preview
+      const url = URL.createObjectURL(file);
+      setBlobUrl(url);
+      
+      // Convert to base64 only for API submission
+      const base64 = await fileToBase64(file);
+      setImage(url); // Use the blob URL for display
+      
+      await settingUpload({
+        filedata: base64,
+        filePath: "cover_photo",
+      });
+    } catch (error) {
+      console.error("Error handling file:", error);
+    }
+  };
+  
+  // Helper function to convert File to base64 (only for API)
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target && typeof e.target.result === "string") {
+          resolve(e.target.result);
+        } else {
+          reject(new Error("Failed to convert file to base64"));
+        }
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   };
 
   useEffect(() => {
@@ -59,6 +80,15 @@ const EditCover = ({ decryptedCover, refetch, coverimg }: any) => {
     setIsOpen(false);
     // console.log(settingUploadData?.data?.url, "storage uploaded");
   }, [settingUploadData]);
+
+  // Cleanup blob URLs when component unmounts
+  useEffect(() => {
+    return () => {
+      if (blobUrl) {
+        URL.revokeObjectURL(blobUrl);
+      }
+    };
+  }, []);
 
   return (
     <>

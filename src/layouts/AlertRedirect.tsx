@@ -4,18 +4,22 @@ import logo from "../assets/alertlogo.jpeg";
 import { useDispatch } from "react-redux";
 import { setPlay } from "@/page/home/services/playSlice";
 
-const imageToBase64 = (url: string, callback: (base64: string) => void) => {
+const imageToBlob = (url: string, callback: (blobUrl: string) => void) => {
   fetch(url)
     .then((response) => response.blob())
     .then((blob) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(blob);
-      reader.onload = () => callback(reader.result as string);
-      reader.onerror = (error) => console.error("Error: ", error);
-    });
+      const blobUrl = URL.createObjectURL(blob);
+      callback(blobUrl);
+    })
+    .catch((error) => console.error("Error: ", error));
 };
 
-const AlertRedirect: React.FC<any> = ({ setShowAlert, app_download_link }) => {
+interface AlertRedirectProps {
+  setShowAlert: (show: boolean) => void;
+  app_download_link: string;
+}
+
+const AlertRedirect: React.FC<AlertRedirectProps> = ({ setShowAlert, app_download_link }) => {
   // State to track the platform and show/hide the alert section for Android
   // const [isAndroid, setIsAndroid] = useState(false);
   // const [isVisible, setIsVisible] = useState(false); // Track visibility
@@ -25,10 +29,17 @@ const AlertRedirect: React.FC<any> = ({ setShowAlert, app_download_link }) => {
   // Ref for alert container
   const alertRef = useRef(null);
 
-  const [logoBase64, setLogoBase64] = useState<string | null>(null);
+  const [logoBlobUrl, setLogoBlobUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    imageToBase64(logo, (base64) => setLogoBase64(base64));
+    imageToBlob(logo, (blobUrl) => setLogoBlobUrl(blobUrl));
+    
+    // Cleanup function to revoke blob URL when component unmounts
+    return () => {
+      if (logoBlobUrl) {
+        URL.revokeObjectURL(logoBlobUrl);
+      }
+    };
   }, []);
 
   // Check if the user is on Android or iOS
@@ -78,7 +89,7 @@ const AlertRedirect: React.FC<any> = ({ setShowAlert, app_download_link }) => {
         <div className="flex flex-col mt-8 gap-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <img src={logoBase64 || logo} alt="" className="w-[50px] h-[50px]" />
+              <img src={logoBlobUrl || logo} alt="" className="w-[50px] h-[50px]" />
               <div>
                 <h1 className="alert-body-title">笔盒APP</h1>
                 <p className="alert-body-text">更多原创精品内容尽在笔盒</p>

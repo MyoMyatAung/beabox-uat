@@ -23,14 +23,45 @@ import Covers from "@/components/avatar/covers";
 
 // A helper function that mimdata?.data?.profile_photoics your Kotlin logic.
 // It XORs only the first 4096 bytes (or the data size if smaller) and decodes the result as text.
-const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
+const decryptImage = async (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
   const data = new Uint8Array(arrayBuffer);
   const maxSize = Math.min(decryptSize, data.length);
   for (let i = 0; i < maxSize; i++) {
     data[i] ^= key;
   }
   // Decode the entire data as text.
-  return new TextDecoder().decode(data);
+  const decryptedStr = new TextDecoder().decode(data);
+  
+  // Convert the data URL to a Blob and create a blob URL
+  if (decryptedStr.startsWith('data:')) {
+    try {
+      // Extract mime type and base64 data
+      const matches = decryptedStr.match(/^data:([^;]+);base64,(.+)$/);
+      if (!matches || matches.length !== 3) {
+        throw new Error('Invalid data URL format');
+      }
+      
+      const mimeType = matches[1];
+      const base64Data = matches[2];
+      
+      // Convert base64 to binary
+      const binaryString = atob(base64Data);
+      const bytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      
+      // Create Blob and blob URL
+      const blob = new Blob([bytes], { type: mimeType });
+      return URL.createObjectURL(blob);
+    } catch (err) {
+      console.error('Error converting data URL to blob:', err);
+      // Fall back to data URL if conversion fails
+      return decryptedStr;
+    }
+  }
+  
+  return decryptedStr;
 };
 
 const Profile = () => {
@@ -73,7 +104,7 @@ const Profile = () => {
         const arrayBuffer = await response.arrayBuffer();
 
         // Decrypt the first 4096 bytes and decode the entire file as text.
-        const decryptedStr = decryptImage(arrayBuffer);
+        const decryptedStr = await decryptImage(arrayBuffer);
         // console.log("Decrypted cover string is =>", decryptedStr);
 
         // Set the decrypted cover image source
@@ -85,7 +116,14 @@ const Profile = () => {
     };
 
     loadAndDecryptCover();
-  }, [data?.data?.cover_photo, user?.token]);
+    
+    // Clean up blob URLs when component unmounts or data changes
+    return () => {
+      if (decryptedCover && typeof decryptedCover === 'string' && decryptedCover !== defaultCover && decryptedCover.startsWith('blob:')) {
+        URL.revokeObjectURL(decryptedCover);
+      }
+    };
+  }, [data?.data?.cover_photo, user?.token, decryptedCover, defaultCover]);
 
   useEffect(() => {
     if (show) {
@@ -121,7 +159,7 @@ const Profile = () => {
         const arrayBuffer = await response.arrayBuffer();
 
         // Decrypt the first 4096 bytes and decode as text.
-        const decryptedStr = decryptImage(arrayBuffer);
+        const decryptedStr = await decryptImage(arrayBuffer);
 
         // Set the decrypted profile photo source
         setDecryptedPhoto(decryptedStr);
@@ -176,6 +214,22 @@ const Profile = () => {
 
   console.log(decryptedCover);
   if (isLoading) return <Loader />;
+
+  // Add a general cleanup function for blob URLs when component unmounts
+  useEffect(() => {
+    return () => {
+      // Clean up profile photo blob URL
+      if (decryptedPhoto && decryptedPhoto.startsWith('blob:')) {
+        URL.revokeObjectURL(decryptedPhoto);
+      }
+      
+      // Clean up cover photo blob URL if it's not the default cover
+      if (decryptedCover && typeof decryptedCover === 'string' && 
+          decryptedCover !== defaultCover && decryptedCover.startsWith('blob:')) {
+        URL.revokeObjectURL(decryptedCover);
+      }
+    };
+  }, [decryptedPhoto, decryptedCover, defaultCover]);
 
   return (
     <div className="h-screen flex flex-col hide-sb max-w-[480px] mx-auto">

@@ -1,5 +1,6 @@
 import { Person } from "@/assets/profile";
 import { useEffect, useState } from "react";
+
 const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
   const data = new Uint8Array(arrayBuffer);
   const maxSize = Math.min(decryptSize, data.length);
@@ -9,6 +10,7 @@ const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
   // Decode the entire data as text.
   return new TextDecoder().decode(data);
 };
+
 const ProfileAvatar = ({ progressData, levelImage, photo }: any) => {
   const progress = progressData || 0;
   const circleRadius = 30; // Adjusted radius to fit within 60px
@@ -18,8 +20,6 @@ const ProfileAvatar = ({ progressData, levelImage, photo }: any) => {
   const strokeDashoffset = circumference - (progress / 100) * circumference;
 
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
-
-  
 
   useEffect(() => {
     const loadAndDecryptPhoto = async () => {
@@ -43,9 +43,38 @@ const ProfileAvatar = ({ progressData, levelImage, photo }: any) => {
 
         // Decrypt the first 4096 bytes and decode as text.
         const decryptedStr = decryptImage(arrayBuffer);
-
-        // Set the decrypted profile photo source
-        setDecryptedPhoto(decryptedStr);
+        
+        // Convert the data URL to a Blob and create a blob URL
+        if (decryptedStr.startsWith('data:')) {
+          try {
+            // Extract mime type and base64 data
+            const matches = decryptedStr.match(/^data:([^;]+);base64,(.+)$/);
+            if (!matches || matches.length !== 3) {
+              throw new Error('Invalid data URL format');
+            }
+            
+            const mimeType = matches[1];
+            const base64Data = matches[2];
+            
+            // Convert base64 to binary
+            const binaryString = atob(base64Data);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+              bytes[i] = binaryString.charCodeAt(i);
+            }
+            
+            // Create Blob and blob URL
+            const blob = new Blob([bytes], { type: mimeType });
+            const blobUrl = URL.createObjectURL(blob);
+            setDecryptedPhoto(blobUrl);
+          } catch (err) {
+            console.error('Error converting data URL to blob:', err);
+            // Fall back to data URL if conversion fails
+            setDecryptedPhoto(decryptedStr);
+          }
+        } else {
+          setDecryptedPhoto(decryptedStr);
+        }
       } catch (error) {
         console.error("Error loading profile photo:", error);
         setDecryptedPhoto("");
@@ -53,6 +82,13 @@ const ProfileAvatar = ({ progressData, levelImage, photo }: any) => {
     };
 
     loadAndDecryptPhoto();
+    
+    // Clean up blob URLs when component unmounts or when levelImage changes
+    return () => {
+      if (decryptedPhoto && decryptedPhoto.startsWith('blob:')) {
+        URL.revokeObjectURL(decryptedPhoto);
+      }
+    };
   }, [levelImage]);
 
   return (
