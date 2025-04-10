@@ -106,6 +106,23 @@ const Banner: React.FC = () => {
   const { data, isLoading } = useGetExploreHeaderQuery("");
   const [selectedIndex, setSelectedIndex] = useState(0);
 
+  const [spaceBetween, setSpaceBetween] = useState(150);
+
+  useEffect(() => {
+    const updateSpace = () => {
+      const width = window.innerWidth;
+      if (width >= 390) {
+        setSpaceBetween(100);
+      } else {
+        setSpaceBetween(120);
+      }
+    };
+
+    updateSpace();
+    window.addEventListener("resize", updateSpace);
+    return () => window.removeEventListener("resize", updateSpace);
+  }, []);
+
   const handleOnChange = (swiper: any) => {
     setSelectedIndex(swiper.realIndex);
   };
@@ -129,7 +146,7 @@ const Banner: React.FC = () => {
           <Swiper
             className=""
             slidesPerView={1.5}
-            spaceBetween={100}
+            spaceBetween={spaceBetween}
             centeredSlides={true}
             loop={true}
             autoplay={{ delay: 3000, disableOnInteraction: false }}
@@ -161,7 +178,7 @@ const Banner: React.FC = () => {
         )
       )}
       {/* Custom Dots */}
-      <ul className="flex justify-center items-center gap-[10px] w-full  mt-2 absolute bottom-0 left-0">
+      <ul className="flex justify-center items-center gap-[4px] w-full  mt-2 absolute bottom-0 left-0">
         {ad.map((_, dotIndex) => (
           <li
             key={dotIndex}
