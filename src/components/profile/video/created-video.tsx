@@ -41,13 +41,13 @@ const CreatedVideo = ({ id }: any) => {
     setHasMore(true);
   }, [sort]);
 
-  useEffect(() => {
-    if (data?.data?.length) {
-      // Append new data to the existing videos
-      setVideos((prevVideos) => [...prevVideos, ...data.data]);
-      setTotalData(data.pagination.total);
-    }
-  }, [data]);
+  // useEffect(() => {
+  //   if (data?.data?.length) {
+  //     // Append new data to the existing videos
+  //     setVideos((prevVideos) => [...prevVideos, ...data.data]);
+  //     setTotalData(data.pagination.total);
+  //   }
+  // }, [data]);
 
   useEffect(() => {
     if (totalData <= videos.length) {

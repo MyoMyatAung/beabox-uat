@@ -29,11 +29,21 @@ const HistoryVideos = () => {
     { skip: !user }
   );
 
+  // useEffect(() => {
+  //   if (data?.data?.length) {
+  //     // Append new data to the existing videos
+  //     setVideos((prevVideos) => [...prevVideos, ...data.data]);
+  //     setTotalData(data.pagination.total);
+  //   }
+  // }, [data]);
   useEffect(() => {
-    if (data?.data?.length) {
-      // Append new data to the existing videos
-      setVideos((prevVideos) => [...prevVideos, ...data.data]);
-      setTotalData(data.pagination.total);
+    if (data?.data) {
+      if (page === 1) {
+        setVideos(data.data); // Replace ranking list when filter changes
+      } else {
+        setVideos((prev: any) => [...prev, ...data.data]); // Append new results for infinite scroll
+      }
+      setTotalData(data?.pagination?.total);
     }
   }, [data]);
 
@@ -78,7 +88,7 @@ const HistoryVideos = () => {
       )}
       <div className="pb-5">
         {!user?.token || videos.length <= 0 ? (
-          <NoVideoCard  from='history'/>
+          <NoVideoCard from="history" />
         ) : (
           <>
             <div>
