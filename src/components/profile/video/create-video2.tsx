@@ -31,12 +31,23 @@ const CreatedVideo2 = ({ id }: any) => {
   );
 
   useEffect(() => {
-    if (data?.data?.length) {
-      // Append new data to the existing videos
-      setVideos((prevVideos) => [...prevVideos, ...data.data]);
-      setTotalData(data.pagination.total);
+    if (data?.data) {
+      if (page === 1) {
+        setVideos(data.data); // Replace ranking list when filter changes
+      } else {
+        setVideos((prev: any) => [...prev, ...data.data]); // Append new results for infinite scroll
+      }
+      setTotalData(data?.pagination?.total);
     }
   }, [data]);
+
+  // useEffect(() => {
+  //   if (data?.data?.length) {
+  //     // Append new data to the existing videos
+  //     setVideos((prevVideos) => [...prevVideos, ...data.data]);
+  //     setTotalData(data.pagination.total);
+  //   }
+  // }, [data]);
 
   useEffect(() => {
     setPage(1);
@@ -57,17 +68,6 @@ const CreatedVideo2 = ({ id }: any) => {
       setPage((prev) => prev + 1);
     }
   };
-
-  useEffect(() => {
-    if (data?.data) {
-      if (page === 1) {
-        setVideos(data.data); // Replace ranking list when filter changes
-      } else {
-        setVideos((prev: any) => [...prev, ...data.data]); // Append new results for infinite scroll
-      }
-      setTotalData(data?.pagination?.total);
-    }
-  }, [data]);
 
   if ((isLoading && page === 1) || (isFetching && page === 1)) {
     return (
@@ -95,7 +95,7 @@ const CreatedVideo2 = ({ id }: any) => {
       )}
       <div className="pb-5">
         {!user?.token || videos.length <= 0 ? (
-          <NoVideoCard/>
+          <NoVideoCard />
         ) : (
           <>
             <div>

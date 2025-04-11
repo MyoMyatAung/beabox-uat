@@ -27,12 +27,22 @@ const LikedVideos = ({ id }: any) => {
   );
 
   useEffect(() => {
-    if (data?.data?.length) {
-      // Append new data to the existing videos
-      setVideos((prevVideos) => [...prevVideos, ...data.data]);
-      setTotalData(data.pagination.total);
+    if (data?.data) {
+      if (page === 1) {
+        setVideos(data.data); // Replace ranking list when filter changes
+      } else {
+        setVideos((prev: any) => [...prev, ...data.data]); // Append new results for infinite scroll
+      }
+      setTotalData(data?.pagination?.total);
     }
   }, [data]);
+  // useEffect(() => {
+  //   if (data?.data?.length) {
+  //     // Append new data to the existing videos
+  //     setVideos((prevVideos) => [...prevVideos, ...data.data]);
+  //     setTotalData(data.pagination.total);
+  //   }
+  // }, [data]);
 
   useEffect(() => {
     if (totalData <= videos.length) {
@@ -75,7 +85,7 @@ const LikedVideos = ({ id }: any) => {
       )}
       <div className="pb-5">
         {!user?.token || videos.length <= 0 ? (
-          <NoVideoCard from='liked'/>
+          <NoVideoCard from="liked" />
         ) : (
           <>
             <div>
