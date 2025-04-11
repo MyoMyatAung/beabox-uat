@@ -87,7 +87,7 @@ const RootLayout = ({ children }: any) => {
         }
         
         // Set showDialog based on dialogConfigItem.show_dialog
-        const shouldShowDialog = dialogConfigItem.show_dialog === 1 || dialogConfigItem.show_dialog === true;
+        const shouldShowDialog = dialogConfigItem.show_dialog === 1 || dialogConfigItem.show_dialog === true || dialogConfigItem.show_dialog === "1" || dialogConfigItem.show_dialog === "true";
         setShowDialog(shouldShowDialog);
       }
     }
