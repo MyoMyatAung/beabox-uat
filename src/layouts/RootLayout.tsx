@@ -17,6 +17,7 @@ const RootLayout = ({ children }: any) => {
   const [isBrowser, setIsBrowser] = useState(false);
   const [deviceType, setDeviceType] = useState<"IOS" | "Android" | "">("");
   const [jumpUrl, setJumpUrl] = useState("");
+  const [showDialog, setShowDialog] = useState(false);
   
   const { data: config } = useGetConfigQuery({});
   const dispatch = useDispatch();
@@ -36,6 +37,7 @@ const RootLayout = ({ children }: any) => {
 
   useEffect(() => {
     if (data?.data) {
+      console.log('data is=>', data)
       dispatch(setApplicationData(data?.data));
       dispatch(setisLoading(isLoading));
     }
@@ -73,13 +75,20 @@ const RootLayout = ({ children }: any) => {
 
   // Set the jumpUrl based on deviceType when config is loaded
   useEffect(() => {
+    console.log('config is=>', config)
     if (config?.data?.dialog_config && deviceType) {
       const dialogConfigItem = config.data.dialog_config.find(
         (item: any) => item.device === deviceType
       );
       
-      if (dialogConfigItem && dialogConfigItem.jump_url) {
-        setJumpUrl(dialogConfigItem.jump_url);
+      if (dialogConfigItem) {
+        if (dialogConfigItem.jump_url) {
+          setJumpUrl(dialogConfigItem.jump_url);
+        }
+        
+        // Set showDialog based on dialogConfigItem.show_dialog
+        const shouldShowDialog = dialogConfigItem.show_dialog === 1 || dialogConfigItem.show_dialog === true;
+        setShowDialog(shouldShowDialog);
       }
     }
   }, [config, deviceType]);
@@ -97,7 +106,7 @@ const RootLayout = ({ children }: any) => {
           isBrowser={isBrowser}
         />
       )}
-      {!showAd && showAlert && isBrowser && jumpUrl && (
+      {!showAd && showAlert && isBrowser && jumpUrl && showDialog && (
         <AlertRedirect
           setShowAlert={setShowAlert}
           app_download_link={jumpUrl}
