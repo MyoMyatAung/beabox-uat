@@ -28,7 +28,7 @@ const Profile = () => {
   const { data, isLoading, refetch } = useGetMyOwnProfileQuery("", {
     skip: !user,
   });
-  console.log(data, "profiledata");
+  // console.log(data, "profiledata");
   const progressData = data?.data?.level_progress;
   // console.log(data, "data");
   const [show, setShow] = useState(false);
@@ -106,7 +106,7 @@ const Profile = () => {
             className={`fixed top-0 w-full left-0 h-[155px] z-[1000] bg-cover bg-top bg-no-repeat`}
           >
             <AsyncDecryptedImage
-              imageUrl={user?.token ? data?.data?.cover_photo || "" : ""}
+              imageUrl={user?.token ? (data?.data?.cover_photo || "") : ""}
               defaultCover={defaultCover}
               className="fixed top-0 z-[1000] left-0 w-full h-[155px] object-cover object-center"
               alt="Cover"
@@ -117,7 +117,7 @@ const Profile = () => {
         <>
           <div className="gradient-overlay"></div>
           <AsyncDecryptedImage
-            imageUrl={user?.token ? data?.data?.cover_photo || "" : ""}
+            imageUrl={user?.token ? (data?.data?.cover_photo || "") : ""}
             defaultCover={defaultCover}
             className="fixed top-0 left-0 w-full h-[23vh] object-cover object-center"
             alt="Cover"

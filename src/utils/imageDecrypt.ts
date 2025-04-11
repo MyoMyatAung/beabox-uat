@@ -1,4 +1,10 @@
 export async function decryptImage(imageUrl: string, defaultCover = ""): Promise<string> {
+  // Return defaultCover directly for empty URLs
+  if (!imageUrl || imageUrl.trim() === "") {
+    return defaultCover || "";
+  }
+  
+  // Return original URL for non-text files
   if (!imageUrl.endsWith(".txt")) {
     return imageUrl;
   }
@@ -6,6 +12,11 @@ export async function decryptImage(imageUrl: string, defaultCover = ""): Promise
   try {
     // Fetch encrypted data
     const response = await fetch(imageUrl);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch image: ${response.status}`);
+    }
+    
     const encryptedData = await response.arrayBuffer();
 
     // XOR decryption (first 4096 bytes)
