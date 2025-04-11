@@ -19,50 +19,7 @@ import EditCover from "@/components/profile/edit-cover";
 import ScrollHeader from "@/components/profile/scroll-header";
 import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 import BadgeImg from "@/components/shared/badge-img";
-import Covers from "@/components/avatar/covers";
-
-// A helper function that mimdata?.data?.profile_photoics your Kotlin logic.
-// It XORs only the first 4096 bytes (or the data size if smaller) and decodes the result as text.
-const decryptImage = async (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
-  const data = new Uint8Array(arrayBuffer);
-  const maxSize = Math.min(decryptSize, data.length);
-  for (let i = 0; i < maxSize; i++) {
-    data[i] ^= key;
-  }
-  // Decode the entire data as text.
-  const decryptedStr = new TextDecoder().decode(data);
-  
-  // Convert the data URL to a Blob and create a blob URL
-  if (decryptedStr.startsWith('data:')) {
-    try {
-      // Extract mime type and base64 data
-      const matches = decryptedStr.match(/^data:([^;]+);base64,(.+)$/);
-      if (!matches || matches.length !== 3) {
-        throw new Error('Invalid data URL format');
-      }
-      
-      const mimeType = matches[1];
-      const base64Data = matches[2];
-      
-      // Convert base64 to binary
-      const binaryString = atob(base64Data);
-      const bytes = new Uint8Array(binaryString.length);
-      for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-      }
-      
-      // Create Blob and blob URL
-      const blob = new Blob([bytes], { type: mimeType });
-      return URL.createObjectURL(blob);
-    } catch (err) {
-      console.error('Error converting data URL to blob:', err);
-      // Fall back to data URL if conversion fails
-      return decryptedStr;
-    }
-  }
-  
-  return decryptedStr;
-};
+import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 
 const Profile = () => {
   const headerRef = useRef(null);
@@ -77,53 +34,6 @@ const Profile = () => {
   const [show, setShow] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const dispatch = useDispatch();
-  // decryptedCover and decryptedPhoto will now hold a string (for example, a data URL)
-  const [decryptedCover, setDecryptedCover] = useState(defaultCover);
-  const [decryptedPhoto, setDecryptedPhoto] = useState("");
-
-  // Effect to load and decrypt cover photo
-  useEffect(() => {
-    const loadAndDecryptCover = async () => {
-      if (!user?.token || !data?.data?.cover_photo) {
-        setDecryptedCover(defaultCover);
-        return;
-      }
-
-      try {
-        const coverUrl = data.data.cover_photo;
-
-        // If it's not a .txt file, assume it's already a valid URL
-        if (!coverUrl.endsWith(".txt")) {
-          setDecryptedCover(coverUrl);
-          return;
-        }
-        // console.log("coverUrl is =>", coverUrl);
-
-        // Fetch the encrypted image data
-        const response = await fetch(coverUrl);
-        const arrayBuffer = await response.arrayBuffer();
-
-        // Decrypt the first 4096 bytes and decode the entire file as text.
-        const decryptedStr = await decryptImage(arrayBuffer);
-        // console.log("Decrypted cover string is =>", decryptedStr);
-
-        // Set the decrypted cover image source
-        setDecryptedCover(decryptedStr);
-      } catch (error) {
-        console.error("Error loading cover photo:", error);
-        setDecryptedCover(defaultCover);
-      }
-    };
-
-    loadAndDecryptCover();
-    
-    // Clean up blob URLs when component unmounts or data changes
-    return () => {
-      if (decryptedCover && typeof decryptedCover === 'string' && decryptedCover !== defaultCover && decryptedCover.startsWith('blob:')) {
-        URL.revokeObjectURL(decryptedCover);
-      }
-    };
-  }, [data?.data?.cover_photo, user?.token, decryptedCover, defaultCover]);
 
   useEffect(() => {
     if (show) {
@@ -136,41 +46,6 @@ const Profile = () => {
       document.body.style.overflow = ""; // Cleanup when component unmounts
     };
   }, [show]);
-
-  // Effect to load and decrypt profile photo
-  useEffect(() => {
-    const loadAndDecryptPhoto = async () => {
-      if (!user?.token || !data?.data?.profile_photo) {
-        setDecryptedPhoto("");
-        return;
-      }
-
-      try {
-        const photoUrl = data.data.profile_photo;
-
-        // If it's not a .txt file, assume it's already a valid URL
-        if (!photoUrl.endsWith(".txt")) {
-          setDecryptedPhoto(photoUrl);
-          return;
-        }
-
-        // Fetch encrypted image data
-        const response = await fetch(photoUrl);
-        const arrayBuffer = await response.arrayBuffer();
-
-        // Decrypt the first 4096 bytes and decode as text.
-        const decryptedStr = await decryptImage(arrayBuffer);
-
-        // Set the decrypted profile photo source
-        setDecryptedPhoto(decryptedStr);
-      } catch (error) {
-        console.error("Error loading profile photo:", error);
-        setDecryptedPhoto("");
-      }
-    };
-
-    loadAndDecryptPhoto();
-  }, [data?.data?.profile_photo, user?.token]);
 
   // Scroll handler for header appearance
   useEffect(() => {
@@ -214,22 +89,6 @@ const Profile = () => {
 
   if (isLoading) return <Loader />;
 
-  // Add a general cleanup function for blob URLs when component unmounts
-  useEffect(() => {
-    return () => {
-      // Clean up profile photo blob URL
-      if (decryptedPhoto && decryptedPhoto.startsWith('blob:')) {
-        URL.revokeObjectURL(decryptedPhoto);
-      }
-      
-      // Clean up cover photo blob URL if it's not the default cover
-      if (decryptedCover && typeof decryptedCover === 'string' && 
-          decryptedCover !== defaultCover && decryptedCover.startsWith('blob:')) {
-        URL.revokeObjectURL(decryptedCover);
-      }
-    };
-  }, [decryptedPhoto, decryptedCover, defaultCover]);
-
   return (
     <div className="h-screen flex flex-col hide-sb max-w-[480px] mx-auto">
       {/* <Covers /> */}
@@ -245,28 +104,23 @@ const Profile = () => {
           <div className="gradient-overlay2"></div>
           <div
             className={`fixed top-0 w-full left-0 h-[155px] z-[1000] bg-cover bg-top bg-no-repeat`}
-            style={{
-              backgroundImage: `url('${
-                user?.token && decryptedCover
-                  ? decryptedCover
-                  : "./assets/cover.jpg"
-              }')`,
-            }}
           >
-            {/* <img
-              src={user?.token ? decryptedCover || defaultCover : defaultCover}
-              alt=""
+            <AsyncDecryptedImage
+              imageUrl={user?.token ? data?.data?.cover_photo || "" : ""}
+              defaultCover={defaultCover}
               className="fixed top-0 z-[1000] left-0 w-full h-[155px] object-cover object-center"
-            /> */}
+              alt="Cover"
+            />
           </div>
         </>
       ) : (
         <>
           <div className="gradient-overlay"></div>
-          <img
-            src={decryptedCover || defaultCover}
-            alt=""
+          <AsyncDecryptedImage
+            imageUrl={user?.token ? data?.data?.cover_photo || "" : ""}
+            defaultCover={defaultCover}
             className="fixed top-0 left-0 w-full h-[23vh] object-cover object-center"
+            alt="Cover"
           />
         </>
       )}
@@ -322,7 +176,7 @@ const Profile = () => {
           } fixed top-0 w-full z-[1600] py-5`}
         >
           <ScrollHeader
-            photo={decryptedPhoto}
+            photo={data?.data?.profile_photo || ""}
             name={data?.data?.nickname}
             login={user?.token}
             dphoto={data?.data?.cover_photo}
@@ -333,7 +187,6 @@ const Profile = () => {
           {user?.token ? (
             <EditCover
               coverimg={data?.data?.cover_photo}
-              decryptedCover={decryptedCover}
               refetch={refetch}
             />
           ) : (
@@ -353,7 +206,7 @@ const Profile = () => {
           <ProfileAvatar
             progressData={data?.data?.level_progress}
             levelImage={data?.data?.level}
-            photo={decryptedPhoto}
+            photo={data?.data?.profile_photo}
           />
           {!user?.token ? (
             <div

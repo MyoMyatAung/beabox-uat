@@ -251,7 +251,7 @@ const OtherProfile = () => {
     if (user?.token) refetch();
   }, [user?.token]);
 
-  console.log(userData, "user data");
+  // console.log(userData, "user data");
 
   // Handle loading state
   if (userLoading) return <Loader />;

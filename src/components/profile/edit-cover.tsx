@@ -12,7 +12,12 @@ import Loader from "@/components/shared/loader";
 import Covers from "../avatar/covers";
 import pensvg from "@/assets/pensvg.svg";
 
-const EditCover = ({ decryptedCover, refetch, coverimg }: any) => {
+interface EditCoverProps {
+  coverimg?: string;
+  refetch: () => void;
+}
+
+const EditCover = ({ refetch, coverimg }: EditCoverProps) => {
   const [showCovers, setShowCovers] = useState(false);
   const dispatch = useDispatch();
   const cover = useSelector((state: any) => state.persist.cover);
@@ -136,12 +141,12 @@ const EditCover = ({ decryptedCover, refetch, coverimg }: any) => {
                   <p className="text-[14px]">上传封面</p>
                 </label>
               </div>
-              {decryptedCover && coverimg ? (
+              {coverimg ? (
                 <div className="w-full h-[1px] bg-[#FFFFFF0A]"></div>
               ) : (
                 <></>
               )}
-              {decryptedCover && coverimg ? (
+              {coverimg ? (
                 <div
                   className="flex items-center gap-3"
                   onClick={removeHandler}

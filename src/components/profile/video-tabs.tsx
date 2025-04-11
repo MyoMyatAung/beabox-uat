@@ -32,7 +32,7 @@ const VideoTabs = () => {
     // console.log("Current tab value:", value);
     dispatch(setDefaultTab(value));
   };
-  console.log(user, "user data");
+  // console.log(user, "user data");
 
   return (
     <Tabs
