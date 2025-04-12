@@ -93,13 +93,12 @@ const RegisterForm = ({ setIsOpen }: any) => {
       setShow验证码(false);
     } else {
       if (authErr) setError(authErr);
-      if(registerError && (registerError as any).originalStatus === 422) {
+      if (registerError && (registerError as any).originalStatus === 422) {
         setCaptcha("");
         await getCaptcha("");
       } else {
         setShow验证码(false);
       }
-      
     }
   };
   // console.log(isError, "isError");
@@ -137,7 +136,7 @@ const RegisterForm = ({ setIsOpen }: any) => {
                 <FormControl>
                   <>
                     <label htmlFor="" className="text-[14px] text-[#888]">
-                    用户名
+                      用户名
                     </label>
                     <div className="relative">
                       <input
@@ -180,6 +179,7 @@ const RegisterForm = ({ setIsOpen }: any) => {
                         className="block w-full  py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none "
                         placeholder="密码必须是8-25个字符"
                         {...field}
+                        maxLength={25}
                       />
                       <button
                         className=" absolute right-0 bottom-2"
@@ -222,7 +222,8 @@ const RegisterForm = ({ setIsOpen }: any) => {
                 isLoading ||
                 !emailOrPhoneValue ||
                 !passwordValue ||
-                passwordValue?.length < 8
+                passwordValue?.length < 8 ||
+                passwordValue?.length > 25
               }
               onClick={async () => {
                 await getCaptcha("");
