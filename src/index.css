@@ -761,3 +761,13 @@ input:checked + .slider:before {
   border-radius: 100px;
   background: rgba(255, 255, 255, 0.12);
 }
+
+/* In your global CSS file */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
