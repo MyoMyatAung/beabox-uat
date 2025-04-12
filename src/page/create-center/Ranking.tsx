@@ -121,17 +121,28 @@ const Ranking = () => {
       setSelectedType(configData?.data?.creator_center_ranking_filter[0]);
   }, [configData]);
   useEffect(() => {
+    // const handleScroll = () => {
+    //   if (headerRef.current) {
+    //     const rect = headerRef.current.getBoundingClientRect();
+    //     if (rect.top <= 100) {
+    //       setShowHeader(true);
+    //     } else {
+    //       setShowHeader(false);
+    //     }
+    //   }
+    // };
+
     const handleScroll = () => {
       if (headerRef.current) {
         const rect = headerRef.current.getBoundingClientRect();
-        if (rect.top <= 100) {
+        // Trigger when the element's top is out of the viewport
+        if (rect.top <= 0) {
           setShowHeader(true);
         } else {
           setShowHeader(false);
         }
       }
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -197,7 +208,11 @@ const Ranking = () => {
   //     title: "今日",
   //   });
   // }, [selectedType]);
-  console.log(data);
+  // console.log(data);
+
+  useEffect(() => {
+    if (rankingList?.length >= 100) setHasMore(false);
+  }, [rankingList]);
 
   if (loading1 && isLoading && page === 1) return <Loader />;
 
@@ -240,10 +255,7 @@ const Ranking = () => {
         <div className={`pb-5}`}>
           <Top3 rankingData={rankingList} refetch={refetch} />
         </div>
-        <div
-          ref={headerRef}
-          className="sticky w-full top-0 "
-        ></div>
+        <div ref={headerRef} className="w-full"></div>
 
         <div
           className={`w-full sticky top-0 ${
@@ -251,7 +263,7 @@ const Ranking = () => {
           }`}
         >
           {showHeader ? (
-            <div className="pt-5 z-50">
+            <div className="pt-5 z-50 animate-fade-in">
               <h1 className="text-[18px] text-center">排行榜</h1>
             </div>
           ) : (
