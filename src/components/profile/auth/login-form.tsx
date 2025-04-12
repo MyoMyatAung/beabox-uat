@@ -116,7 +116,7 @@ const LoginForm = ({ setIsOpen }: any) => {
                 <FormControl>
                   <>
                     <label htmlFor="" className="text-[14px] text-[#888]">
-                    用户名
+                      用户名
                     </label>
                     <div className="relative">
                       <input
@@ -159,6 +159,7 @@ const LoginForm = ({ setIsOpen }: any) => {
                         className="block w-full py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none "
                         placeholder="输入您的密码"
                         {...field}
+                        maxLength={25}
                       />
                       <button
                         className=" absolute right-0 bottom-2"
@@ -199,7 +200,8 @@ const LoginForm = ({ setIsOpen }: any) => {
                 captchaLoading ||
                 !emailOrPhoneValue ||
                 !passwordValue ||
-                passwordValue?.length < 8
+                passwordValue?.length < 8 ||
+                passwordValue?.length > 25
               }
               // type="submit"
               onClick={async () => {

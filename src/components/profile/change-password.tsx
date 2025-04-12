@@ -67,7 +67,7 @@ const ChangePassword = () => {
             </label>
             <div className="relative">
               <input
-                className="w-full bg-transparent border-0 border-b py-3 outline-0 border-[#888]"
+                className="w-full bg-transparent border-0 border-b py-3 outline-0 border-[#888] outline-none"
                 placeholder="输入您当前的密码"
                 onChange={(e: any) => setCurrentPassword(e.target.value)}
                 value={current_password}
@@ -87,7 +87,7 @@ const ChangePassword = () => {
                 新密码
               </label>
               <input
-                className="w-full bg-transparent border-0 border-b py-3 outline-0 border-[#888]"
+                className="w-full bg-transparent border-0 border-b py-3 outline-0 border-[#888] outline-none"
                 placeholder="输入您的新密码"
                 onChange={(e: any) => setNewPassword(e.target.value)}
                 value={new_password}

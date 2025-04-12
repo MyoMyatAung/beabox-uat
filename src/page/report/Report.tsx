@@ -31,14 +31,14 @@ const Report = () => {
       if (response?.data) {
         dispatch(
           showToast({
-            message: response?.data?.message,
+            message: "您已举报过此内容",
             type: "success",
           })
         );
       } else {
         dispatch(
           showToast({
-            message: response?.error?.data?.message,
+            message: "您已举报过此内容",
             type: "error",
           })
         );
