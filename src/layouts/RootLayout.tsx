@@ -12,6 +12,15 @@ import LoadingScreen from "@/components/LoadingScreen";
 import Landing from "@/components/Landing";
 import { setPlay } from "@/page/home/services/playSlice";
 
+// Function to check if the app is running in a WebView
+function isWebView() {
+  return (
+    (window as any).webkit &&
+    (window as any).webkit.messageHandlers &&
+    (window as any).webkit.messageHandlers.jsBridge
+  );
+}
+
 const RootLayout = ({ children }: any) => {
   const [showAd, setShowAd] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
@@ -46,11 +55,7 @@ const RootLayout = ({ children }: any) => {
 
   // Native event sending function
   const sendNativeEvent = (message: string) => {
-    if (
-      (window as any).webkit &&
-      (window as any).webkit.messageHandlers &&
-      (window as any).webkit.messageHandlers.jsBridge
-    ) {
+    if (isWebView()) {
       (window as any).webkit.messageHandlers.jsBridge.postMessage(message);
     }
   };
@@ -58,30 +63,15 @@ const RootLayout = ({ children }: any) => {
   // Detect device type and browser
   useEffect(() => {
     const userAgent = navigator.userAgent.toLowerCase();
+    
+    // Set isBrowser based on WebView detection
+    setIsBrowser(!isWebView());
 
-    // Check if it's iOS
+    // Determine device type
     if (userAgent.includes("iphone") || userAgent.includes("ipad") || userAgent.includes("ipod")) {
       setDeviceType("IOS");
-      
-      // Check if it's a WebView (AppleWebKit but no Safari or Version)
-      if (
-        userAgent.includes("applewebkit") &&
-        !userAgent.includes("safari") &&
-        !userAgent.includes("version")
-      ) {
-        setIsBrowser(false); // It's a WebView
-      } else {
-        setIsBrowser(true); // It's Safari (regular browser)
-      }
-    } 
-    // Check if it's Android
-    else if (userAgent.includes("android")) {
+    } else if (userAgent.includes("android")) {
       setDeviceType("Android");
-      setIsBrowser(true); // Assume browser for Android
-    } 
-    // For any other device
-    else {
-      setIsBrowser(true);
     }
   }, []);
 
