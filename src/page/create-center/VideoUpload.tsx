@@ -126,17 +126,19 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             
             // Convert canvas to blob and create blob URL
-            canvas.toBlob((blob) => {
-              if (!blob) {
-                reject(new Error("Failed to create blob from canvas"));
-                return;
-              }
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+            resolve(dataUrl);
+            // canvas.toBlob((blob) => {
+            //   if (!blob) {
+            //     reject(new Error("Failed to create blob from canvas"));
+            //     return;
+            //   }
               
-              // Create blob URL instead of data URL
-              const blobUrl = URL.createObjectURL(blob);
-              resolve(blobUrl);
+            //   // Create blob URL instead of data URL
+            //   const blobUrl = URL.createObjectURL(blob);
+            //   resolve(blobUrl);
               
-            }, 'image/jpeg', 0.95);
+            // }, 'image/jpeg', 0.95);
           } else {
             reject(new Error("Could not get canvas context"));
           }
