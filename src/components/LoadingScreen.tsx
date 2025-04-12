@@ -40,7 +40,6 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
   const [allDataLoaded, setAllDataLoaded] = useState(false);
   const [minTimeElapsed, setMinTimeElapsed] = useState(false);
   const [currentQuote, setCurrentQuote] = useState("");
-  const [quoteVisible, setQuoteVisible] = useState(true);
 
   // Quotes collection
   const quotes = [
@@ -82,27 +81,11 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
   const { data: applicationAdsData, isLoading: applicationAdsLoading } = useGetApplicationAdsQuery("");
   const { data: configData, isLoading: configLoading } = useGetConfigQuery({});
 
-  // Choose a random quote and update it every 5 seconds with fade effect
+  // Choose a single random quote when component mounts
   useEffect(() => {
-    const getRandomQuote = () => {
-      const randomIndex = Math.floor(Math.random() * quotes.length);
-      return quotes[randomIndex];
-    };
-    
-    setCurrentQuote(getRandomQuote());
-    
-    const quoteInterval = setInterval(() => {
-      // Start fade out
-      setQuoteVisible(false);
-      
-      // After fade out completes, change the quote and fade in
-      setTimeout(() => {
-        setCurrentQuote(getRandomQuote());
-        setQuoteVisible(true);
-      }, 300); // This timing should match the CSS transition duration
-    }, 3000); // Change quote every 3 seconds
-    
-    return () => clearInterval(quoteInterval);
+    const randomIndex = Math.floor(Math.random() * quotes.length);
+    setCurrentQuote(quotes[randomIndex]);
+    // No interval for quote rotation anymore
   }, []);
 
   // Set a minimum display time of 3 seconds
@@ -262,7 +245,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
           />
           
           {/* Quote Container */}
-          <div className="text-center px-6 mb-6 transition-opacity duration-300" style={{ opacity: quoteVisible ? 1 : 0 }}>
+          <div className="text-center px-6 mb-6">
             <p className="my-1.5 text-lg leading-normal text-white text-opacity-95">
               真正的享受，来自于克制后的自由，
             </p>
