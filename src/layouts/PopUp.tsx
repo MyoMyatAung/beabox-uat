@@ -82,6 +82,7 @@ const PopUp: React.FC<PopUpProps> = ({
       dispatch(setPlay(true));
     } else {
       setShowAlert(true);
+      dispatch(setPlay(true));
     }
     setShowAppContent(false);
     setShowAd(false);
@@ -93,6 +94,7 @@ const PopUp: React.FC<PopUpProps> = ({
   };
 
   const handleNoticeClose = () => {
+    dispatch(setPlay(true));
     setShowNotice(false);
     setShowAd(false);
     

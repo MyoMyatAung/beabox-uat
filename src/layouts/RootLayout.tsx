@@ -121,6 +121,8 @@ const RootLayout = ({ children }: any) => {
   // Handle when all ads are completed
   const handleAdComplete = () => {
     setShowAd(false);
+    // Ensure video plays after ads are completed
+    dispatch(setPlay(true));
     sendNativeEvent("beabox_home_started");
   };
 
