@@ -156,7 +156,7 @@ const UploadFrom = ({
         </div>
       </div>
 
-      <div className="text-[14px] text-[#FFFFFF99] flex items-start mx-5">
+      {/* <div className="text-[14px] text-[#FFFFFF99] flex items-start mx-5">
         <p className="flex min-w-16">
           <span>备注</span> <span className="mx-2">:</span>
         </p>
@@ -170,7 +170,7 @@ const UploadFrom = ({
             {link ? link : "https://taupe-vacherin-31f51c.netlify.app/"}
           </a>
         </p>
-      </div>
+      </div> */}
       {editPost ? (
         <Info status={editPost?.status} reason={editPost?.reason} />
       ) : (

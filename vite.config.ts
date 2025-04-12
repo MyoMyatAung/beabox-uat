@@ -14,9 +14,21 @@ export default defineConfig({
         start_url: "/",
       },
       workbox: {
-        navigateFallback: "/index.html", // Ensures deep links work
-        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024, // 4 MB
+        navigateFallback: "/index.html",
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB
       },
+      devOptions: {
+        enabled: true
+      },
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+      manifestFilename: 'manifest.webmanifest',
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.js',
+      base: '/',
+      injectManifest: {
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB
+      }
     }),
     react(),
   ],
@@ -25,7 +37,10 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  base: '/',
+  // produciton
+  base: 'https://if26.rrgsih.cn/',
+  // development
+  // base: '/',
   define: {
     global: {},
   },
