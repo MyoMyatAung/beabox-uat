@@ -197,7 +197,11 @@ const Ranking = () => {
   //     title: "今日",
   //   });
   // }, [selectedType]);
-  console.log(data);
+  // console.log(data);
+
+  useEffect(() => {
+    if (rankingList?.length >= 100) setHasMore(false);
+  }, [rankingList]);
 
   if (loading1 && isLoading && page === 1) return <Loader />;
 
@@ -240,10 +244,7 @@ const Ranking = () => {
         <div className={`pb-5}`}>
           <Top3 rankingData={rankingList} refetch={refetch} />
         </div>
-        <div
-          ref={headerRef}
-          className="sticky w-full top-0 "
-        ></div>
+        <div ref={headerRef} className="sticky w-full top-0"></div>
 
         <div
           className={`w-full sticky top-0 ${
