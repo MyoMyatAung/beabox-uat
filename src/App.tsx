@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
-import Landing from "./components/Landing";
 import Routing from "./routes/Routing";
 import { useDispatch, useSelector } from "react-redux";
 import { setPanding } from "./store/slices/ModelSlice";
@@ -16,6 +15,7 @@ const App = () => {
   const { data } = useGetApplicationAdsQuery("");
 
   const [isMobileBrowser, setIsMobileBrowser] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     // Function to check if the user is on a mobile browser
@@ -28,28 +28,23 @@ const App = () => {
 
     // Function to adjust the height of the video element
     const adjustVideoHeight = () => {
-      const videoElement = document.querySelector(".video");
-      const videoElement1 = document.querySelector(".video1");
-
-      const videoFooter = document.querySelector(".videoFooter");
-      if (videoElement) {
-        if (isMobileBrowser) {
-          // Adjusted height for mobile browsers
-          videoElement.style.height = "calc(100dvh - 64px)";
-        }
+      const videoElement = document.querySelector(".video") as HTMLElement | null;
+      const videoElement1 = document.querySelector(".video1") as HTMLElement | null;
+      const videoFooter = document.querySelector(".videoFooter") as HTMLElement | null;
+      
+      if (videoElement && isMobileBrowser) {
+        // Adjusted height for mobile browsers
+        videoElement.style.height = "calc(100dvh - 64px)";
       }
-      if (videoFooter) {
-        if (isMobileBrowser) {
-          // Adjusted height for mobile browsers
-          videoFooter.style.bottom = "40px";
-        }
+      
+      if (videoFooter && isMobileBrowser) {
+        // Adjusted height for mobile browsers
+        videoFooter.style.bottom = "40px";
       }
 
-      if (videoElement1) {
-        if (isMobileBrowser) {
-          // Adjusted height for mobile browsers
-          videoElement1.style.height = "calc(100dvh - 0px)";
-        }
+      if (videoElement1 && isMobileBrowser) {
+        // Adjusted height for mobile browsers
+        videoElement1.style.height = "calc(100dvh - 0px)";
       }
     };
 
@@ -79,12 +74,10 @@ const App = () => {
     }
   }, []);
 
-  const dispatch = useDispatch();
-
+  // Now we check if landing has been seen this session or not
   useEffect(() => {
     const hasSeenLanding = sessionStorage.getItem("hasSeenLanding");
     if (!hasSeenLanding) {
-      sessionStorage.setItem("hasSeenLanding", "true");
       dispatch(setPanding(true));
     }
   }, [dispatch]);
@@ -114,15 +107,9 @@ const App = () => {
 
   return (
     <>
-      {panding ? (
-        <Landing />
-      ) : (
-        <>
-          <Routing />
-          <Toaster />
-          <ErrorToast />
-        </>
-      )}
+      <Routing />
+      <Toaster />
+      <ErrorToast />
     </>
   );
 };

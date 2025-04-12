@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -762,6 +764,30 @@ input:checked + .slider:before {
   background: rgba(255, 255, 255, 0.12);
 }
 
+@keyframes slideDown {
+  from {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 /* In your global CSS file */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-10px); }
@@ -769,5 +795,5 @@ input:checked + .slider:before {
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.3s ease-out;
+  animation: fadeIn 0.1s ease-out;
 }

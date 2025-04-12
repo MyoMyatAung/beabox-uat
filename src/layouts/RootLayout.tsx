@@ -3,13 +3,14 @@ import { BottomNav } from "@/components/shared/bottom-nav";
 import PopUp from "./PopUp";
 import { useEffect, useState } from "react";
 import { useGetApplicationAdsQuery } from "@/store/api/explore/exploreApi";
-import { useDispatch, useSelector } from "react-redux";
-import { setApplicationData, setisLoading } from "@/store/slices/exploreSlice";
+import { useSelector, useDispatch } from "react-redux";
 import AuthDrawer from "@/components/profile/auth/auth-drawer";
 import AlertToast from "@/components/shared/alert-toast";
-import { setPlay } from "@/page/home/services/playSlice";
 import AlertRedirect from "./AlertRedirect";
 import { useGetConfigQuery } from "@/page/home/services/homeApi";
+import LoadingScreen from "@/components/LoadingScreen";
+import Landing from "@/components/Landing";
+import { setPlay } from "@/page/home/services/playSlice";
 
 const RootLayout = ({ children }: any) => {
   const [showAd, setShowAd] = useState(false);
@@ -18,30 +19,41 @@ const RootLayout = ({ children }: any) => {
   const [deviceType, setDeviceType] = useState<"IOS" | "Android" | "">("");
   const [jumpUrl, setJumpUrl] = useState("");
   const [showDialog, setShowDialog] = useState(false);
-  
-  const { data: config } = useGetConfigQuery({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [showLanding, setShowLanding] = useState(false);
   const dispatch = useDispatch();
   
+  const { data: config } = useGetConfigQuery({});
+  
+  // Skip the API query since LoadingScreen handles it
+  useGetApplicationAdsQuery("", { skip: true });
+
+  // Check if ads have already been seen in this session
   useEffect(() => {
     const hasSeenAdPopUp = sessionStorage.getItem("hasSeenAdPopUp");
-    if (hasSeenAdPopUp) {
+    const hasSeenLanding = sessionStorage.getItem("hasSeenLanding");
+    
+    if (hasSeenAdPopUp && hasSeenLanding) {
+      // User has already seen ads in this session, skip loading and ads
       dispatch(setPlay(true));
+      sendNativeEvent("beabox_home_started");
+    } else {
+      // User hasn't seen ads in this session, show loading screen
+      setIsLoading(true);
+      sendNativeEvent("beabox_ads_started");
     }
-    if (!hasSeenAdPopUp) {
-      setShowAd(true);
-      sessionStorage.setItem("hasSeenAdPopUp", "true");
-    }
-  }, []);
+  }, [dispatch]);
 
-  const { data, isLoading } = useGetApplicationAdsQuery("");
-
-  useEffect(() => {
-    if (data?.data) {
-      console.log('data is=>', data)
-      dispatch(setApplicationData(data?.data));
-      dispatch(setisLoading(isLoading));
+  // Native event sending function
+  const sendNativeEvent = (message: string) => {
+    if (
+      (window as any).webkit &&
+      (window as any).webkit.messageHandlers &&
+      (window as any).webkit.messageHandlers.jsBridge
+    ) {
+      (window as any).webkit.messageHandlers.jsBridge.postMessage(message);
     }
-  }, [data, dispatch]);
+  };
 
   // Detect device type and browser
   useEffect(() => {
@@ -75,7 +87,6 @@ const RootLayout = ({ children }: any) => {
 
   // Set the jumpUrl based on deviceType when config is loaded
   useEffect(() => {
-    console.log('config is=>', config)
     if (config?.data?.dialog_config && deviceType) {
       const dialogConfigItem = config.data.dialog_config.find(
         (item: any) => item.device === deviceType
@@ -93,17 +104,49 @@ const RootLayout = ({ children }: any) => {
     }
   }, [config, deviceType]);
 
+  // Handle when loading screen completes
+  const handleLoadComplete = () => {
+    setIsLoading(false);
+    setShowLanding(true); // Show Landing screen after loading
+    // Mark that landing screen has been shown in this session
+    sessionStorage.setItem("hasSeenLanding", "true");
+  };
+
+  // Handle when Landing screen completes
+  const handleLandingComplete = () => {
+    setShowLanding(false);
+    setShowAd(true); // Show PopUp after Landing
+  };
+
+  // Handle when all ads are completed
+  const handleAdComplete = () => {
+    setShowAd(false);
+    // Ensure video plays after ads are completed
+    dispatch(setPlay(true));
+    sendNativeEvent("beabox_home_started");
+  };
+
   const isOpen = useSelector((state: any) => state.profile.isDrawerOpen);
+
+  // If loading, show loading screen
+  if (isLoading) {
+    return <LoadingScreen onLoadComplete={handleLoadComplete} />;
+  }
+
+  // After loading, show Landing
+  if (showLanding) {
+    return <Landing onComplete={handleLandingComplete} />;
+  }
 
   return (
     <div style={{ height: "calc(100dvh - 95px);" }}>
       {children}
-      {/* <RightSideActions /> */}
       {showAd && (
         <PopUp
           setShowAd={setShowAd}
           setShowAlert={setShowAlert}
           isBrowser={isBrowser}
+          onComplete={handleAdComplete}
         />
       )}
       {!showAd && showAlert && isBrowser && jumpUrl && showDialog && (
