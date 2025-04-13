@@ -271,10 +271,10 @@ const Search: React.FC<SearchProps> = ({}) => {
 
   useEffect(() => {
     if (page !== 1 && query.trim()) {
-      // const timer = setTimeout(() => {
+      const timer = setTimeout(() => {
         triggerAutocomplete({ query, page }); // Call API with the updated page
-      // }, 300); // Debounce for API calls
-      // return () => clearTimeout(timer);
+      }, 300); // Debounce for API calls
+      return () => clearTimeout(timer);
     }
   }, [page, query, triggerAutocomplete]);
 
@@ -364,7 +364,6 @@ const Search: React.FC<SearchProps> = ({}) => {
 
   // Handle Load More button click
   const handleLoadMore = () => {
-    setIsLoadingMore(true);
     setPage((prevPage) => prevPage + 1); // Increment page number to fetch more results
   };
 

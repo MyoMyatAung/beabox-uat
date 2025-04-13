@@ -650,18 +650,15 @@ const Results: React.FC<ResultsProps> = ({}) => {
                 </div>
               )}
 
-              <div
+              {isLoading && data?.data?.list?.length !== 1 && <div
                 className="fex justify-center items-center py-4"
-                style={{
-                  display: isLoading ? "flex" : "hidden",
-                }}
               >
                 <img
                   src={loader}
-                  className="w-[50px] h-[50px]"
+                  className="w-[50px] h-[50px] m-auto"
                   alt="Loading more"
                 />
-              </div>
+              </div>}
               {data?.data?.list.length === 0 &&
                 (currentPage === 1 ? (
                   <div
