@@ -212,6 +212,7 @@ import { setHistoryData } from "./slice/HistorySlice";
 import { useLazyGetSuggestionsQuery } from "@/store/api/search/searchApi";
 import he from "he";
 import backButton from "../../assets/backButton.svg";
+import SmallLoader from "@/components/shared/small-loader";
 
 interface SearchProps {}
 
@@ -220,7 +221,7 @@ const Search: React.FC<SearchProps> = ({}) => {
   const [page, setPage] = useState(1); // Track the current page for suggestions
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [isFocused, setIsFocused] = useState(false);
-  const [triggerAutocomplete, { data: autocompleteData }] =
+  const [triggerAutocomplete, { data: autocompleteData, isFetching }] =
     useLazyGetSuggestionsQuery();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -270,10 +271,10 @@ const Search: React.FC<SearchProps> = ({}) => {
 
   useEffect(() => {
     if (page !== 1 && query.trim()) {
-      const timer = setTimeout(() => {
+      // const timer = setTimeout(() => {
         triggerAutocomplete({ query, page }); // Call API with the updated page
-      }, 300); // Debounce for API calls
-      return () => clearTimeout(timer);
+      // }, 300); // Debounce for API calls
+      // return () => clearTimeout(timer);
     }
   }, [page, query, triggerAutocomplete]);
 
@@ -363,6 +364,7 @@ const Search: React.FC<SearchProps> = ({}) => {
 
   // Handle Load More button click
   const handleLoadMore = () => {
+    setIsLoadingMore(true);
     setPage((prevPage) => prevPage + 1); // Increment page number to fetch more results
   };
 
@@ -446,13 +448,19 @@ const Search: React.FC<SearchProps> = ({}) => {
           {autocompleteData?.pagination?.current_page <
             autocompleteData?.pagination?.last_page && (
             <li className="flex justify-center mt-4">
-              <button
-                ref={handleMoreRef}
-                onClick={handleLoadMore}
-                className="text-[#888] text-[14px] py-2 px-6 rounded"
-              >
-                加载更多
-              </button>
+              {isFetching ? (
+                <div className="flex justify-center items-center py-3">
+                  <SmallLoader />
+                </div>
+              ) : (
+                <button
+                  ref={handleMoreRef}
+                  onClick={handleLoadMore}
+                  className="text-[#888] text-[14px] py-2 px-6 rounded"
+                >
+                  加载更多
+                </button>
+              )}
             </li>
           )}
         </ul>
