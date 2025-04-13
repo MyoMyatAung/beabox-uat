@@ -107,7 +107,11 @@ const SettingBtn = ({ setShow }: any) => {
                         }
                       } else if (title === "联系客服") {
                         if (tgLink) {
-                          window.open(tgLink, "_blank", "noopener,noreferrer");
+                          const a = document.createElement('a');
+                          a.href = tgLink;
+                          a.target = '_blank';
+                          a.rel = 'noopener noreferrer';
+                          a.click();
                         } else {
                           console.warn("Telegram link not available");
                         }

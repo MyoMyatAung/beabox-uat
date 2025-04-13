@@ -14,7 +14,11 @@ const Slider = ({ ads }: any) => {
   };
   const handleBannerClick = (clickLink: string) => {
     if (clickLink && clickLink.startsWith("http")) {
-      window.open(clickLink, "_blank");
+      const a = document.createElement('a');
+      a.href = clickLink;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.click();
     } else {
       navigate(`/player/${clickLink}`);
     }

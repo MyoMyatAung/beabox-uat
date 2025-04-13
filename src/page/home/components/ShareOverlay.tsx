@@ -97,7 +97,11 @@ const ShareOverlay: React.FC<any> = ({
         document.body.removeChild(link);
 
         setTimeout(() => {
-          window.open(post.files[0].downloadURL, "_blank"); // Open in new tab
+          const a = document.createElement('a');
+          a.href = post.files[0].downloadURL;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          a.click();
         }, 1000); // 1-second delay to ensure the download starts
 
         handleClose();
