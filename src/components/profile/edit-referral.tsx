@@ -18,16 +18,17 @@ const EditReferral = ({ referral_code }: any) => {
     setIsOpen(false);
   };
 
+  // console.log(data, "referral code data");
   return (
     <Drawer open={isOpen} onOpenChange={() => setIsOpen(true)}>
       <div className="text-[14px] flex items-center justify-between">
         <h1>邀请码</h1>
-        {/* <DrawerTrigger asChild> */}
-        <p className="flex items-center gap-1 text-[#888]">
-          {referral_code}
-          {/* <FaAngleRight /> */}
-        </p>
-        {/* </DrawerTrigger> */}
+        <DrawerTrigger asChild>
+          <p className="flex items-center gap-1 text-[#888]">
+            {referral_code}
+            <FaAngleRight />
+          </p>
+        </DrawerTrigger>
       </div>
       <DrawerContent className="border-0">
         <div className="w-full h-screen px-5">
@@ -44,10 +45,13 @@ const EditReferral = ({ referral_code }: any) => {
                 className="w-full bg-transparent border-0 border-b py-3 outline-0 border-[#888]"
                 placeholder="Referral Code"
                 onChange={(e: any) => setValue(e.target.value)}
-                // value={value}
-                defaultValue={referral_code}
+                value={value}
+                // defaultValue={referral_code}
               />
-              <div className="bg-[#FFFFFF1F] w-5 h-5 flex justify-center items-center rounded-full absolute right-0 bottom-5">
+              <div
+                onClick={() => setValue("")}
+                className="bg-[#FFFFFF1F] w-5 h-5 flex justify-center items-center rounded-full absolute right-0 bottom-5"
+              >
                 <X className="w-2" />
               </div>
             </div>

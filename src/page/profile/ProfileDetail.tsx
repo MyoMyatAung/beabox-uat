@@ -47,7 +47,7 @@ const ProfileDetail = () => {
     await refetch();
   };
 
-  // console.log(data, "pddata");
+  console.log(data, "pddata");
   useEffect(() => {
     if (data?.status) dispatch(setProfileData(data?.data));
   }, []);
