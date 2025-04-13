@@ -90,8 +90,6 @@ const ProfileDetail = () => {
     refetch();
   }, [private_profile]);
 
-  console.log(avatarId);
-
   return (
     <>
       {/* <TranLoader /> */}
@@ -153,7 +151,7 @@ const ProfileDetail = () => {
         <div className="w-full h-[0.08px] bg-[#FFFFFF0A]"></div>
         <div className="flex flex-col gap-7 my-7">
           <h1 className="text-[12px] text-[#888]">邀请函</h1>
-          <EditReferral referral_code={data?.data?.referral_code} />
+          <EditReferral referral_code={data?.data?.referral_by} />
         </div>
         <div className="w-full h-[0.08px] bg-[#FFFFFF0A]"></div>
         {/* <div className="flex flex-col gap-7 my-7">
