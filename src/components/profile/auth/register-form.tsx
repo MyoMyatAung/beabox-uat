@@ -59,11 +59,11 @@ const RegisterForm = ({ setIsOpen }: any) => {
     },
   });
 
-  useEffect(() => {
-    if (data) {
-      console.log(data, "data");
-    }
-  }, [data]);
+  // useEffect(() => {
+  //   if (data) {
+  //     console.log(data, "data");
+  //   }
+  // }, [data]);
   const { watch } = form;
   const emailOrPhoneValue = watch("emailOrPhone");
   const passwordValue = watch("password");
@@ -82,7 +82,9 @@ const RegisterForm = ({ setIsOpen }: any) => {
       password,
       captcha,
       captcha_key: data?.data?.captcha_key,
+      referral_code: code,
     });
+    // console.log(registerData, "registerData");
     if (registerData?.status) {
       dispatch(setUser(registerData?.data));
       dispatch(setIsDrawerOpen(false));

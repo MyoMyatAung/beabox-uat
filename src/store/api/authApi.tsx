@@ -13,7 +13,7 @@ export const authApi = createApi({
       const state = getState() as any;
       const accessToken = state.persist?.user?.token;
       const deviceInfo = getDeviceInfo();
-      
+
       headers.set("encrypt", "true");
       headers.set("Accept-Language", "cn");
       headers.set("X-Client-Version", "2001");
@@ -43,7 +43,13 @@ export const authApi = createApi({
       query: (arg: any) => convertToSecureUrl(`/captcha`),
     }),
     register: builder.mutation<any, string>({
-      query: ({ username, password, captcha, captcha_key }: any) => ({
+      query: ({
+        username,
+        password,
+        captcha,
+        captcha_key,
+        referral_code,
+      }: any) => ({
         url: "/register",
         method: "POST",
         body: convertToSecurePayload({
@@ -51,6 +57,7 @@ export const authApi = createApi({
           password,
           captcha,
           captcha_key,
+          referral_code,
         }),
       }),
     }),
