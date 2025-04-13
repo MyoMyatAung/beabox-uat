@@ -7,6 +7,7 @@ import {
 import { FaAngleLeft } from "react-icons/fa";
 import FollowTabs2 from "./follow/follow-tab2";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 function isWebView() {
   return (
     (window as any).webkit &&
@@ -18,11 +19,11 @@ const OtherStats = ({ followers, followings, likes, nickname, id }: any) => {
   const [defaultFollowTab, setDefaultFollowTab] = useState("follower");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [vh, setVh] = useState("100vh");
-
+  const isOpen = useSelector((state: any) => state.profile.isDrawerOpen);
 
   useEffect(() => {
     setIsDrawerOpen(false);
-  }, [id]);
+  }, [id, isOpen]);
   useEffect(() => {
     // setVh(isMobile ? "95vh" : "100vh");
     setVh(isWebView() ? "100vh" : "100dvh");
