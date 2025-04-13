@@ -53,7 +53,7 @@ const Tags = ({
   const [selectedTags, setSelectedTags] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const { data: newData } = useGetConfigQuery({});
-  const populars = newData?.data?.post_tags?.split(", ");
+  const populars = newData?.data?.post_tags?.split(",");
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>
@@ -94,7 +94,7 @@ const Tags = ({
                   key={index}
                   className="stagbg px-3 py-1 rounded-full flex gap-1 items-center"
                 >
-                  <p> {tag}</p>
+                  <p> {tag?.trim()}</p>
                   <div
                     onClick={() => removeTag(index)}
                     className="bg-[#FFFFFF33] w-[18px] h-[18px] flex justify-center items-center rounded-full"
