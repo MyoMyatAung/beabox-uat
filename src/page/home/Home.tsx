@@ -444,7 +444,7 @@ const Home = () => {
                   <>
                     <div
                       ref={videoContainerRef}
-                      className={`app__videos pb-[74px] `}
+                      className={`app__videos pb-[80px] `}
                     >
                       {videos["follow"]?.map((video: any, index: any) => (
                         <div
@@ -597,7 +597,7 @@ const Home = () => {
                   <>
                     <div
                       ref={videoContainerRef}
-                      className={`app__videos pb-[74px]`}
+                      className={`app__videos pb-[80px]`}
                     >
                       {videos["foryou"]?.map((video: any, index: any) => (
                         <div
@@ -1025,7 +1025,7 @@ export default memo(Home);
 //                   currentVideo && (
 //                     <div
 //                       {...handlers}
-//                       className="app__videos pb-[74px] h-screen overflow-hidden relative"
+//                       className="app__videos pb-[80px] h-screen overflow-hidden relative"
 //                     >
 //                       <div
 //                         className={`video-container ${
@@ -1182,7 +1182,7 @@ export default memo(Home);
 //                   currentVideo && (
 //                     <div
 //                       {...handlers}
-//                       className="app__videos pb-[74px] h-screen overflow-hidden relative"
+//                       className="app__videos pb-[80px] h-screen overflow-hidden relative"
 //                     >
 //                       <div
 //                         className={`video-container ${
@@ -1861,7 +1861,7 @@ export default memo(Home);
 //                   <>
 //                     <div
 //                       ref={videoContainerRef}
-//                       className={`app__videos pb-[74px] `}
+//                       className={`app__videos pb-[80px] `}
 //                     >
 //                       {videos["follow"]?.map((video: any, index: any) => (
 //                         <div
@@ -2004,7 +2004,7 @@ export default memo(Home);
 //                   <>
 //                     <div
 //                       ref={videoContainerRef}
-//                       className={`app__videos pb-[74px]`}
+//                       className={`app__videos pb-[80px]`}
 //                     >
 //                       {videosToRender?.map((video: any, index: any) => (
 //                         <div

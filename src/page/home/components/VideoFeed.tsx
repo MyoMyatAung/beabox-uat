@@ -718,7 +718,7 @@ export default VideoFeed;
 //             {currentVideo && (
 //               <div
 //                 {...handlers}
-//                 className="app__videos pb-[74px] h-screen overflow-hidden relative"
+//                 className="app__videos pb-[80px] h-screen overflow-hidden relative"
 //               >
 //                 <div
 //                   className={`video-container  ${

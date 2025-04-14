@@ -12,6 +12,7 @@ import App1SVG from "@/assets/icons/App1.svg";
 import ranksvg from "@/assets/icons/rank.svg";
 import selectedrank from "@/assets/icons/selecteRank.svg";
 import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 
 const navItems = [
   { name: "首页", selectedIcon: Home1SVG, icon: HomeSVG, href: "/" },
@@ -42,15 +43,30 @@ const navItems = [
   },
 ];
 
+// Helper function to detect iOS WebView/WebClip
+const isIOSWebViewOrWebClip = () => {
+  const ua = window.navigator.userAgent.toLowerCase();
+  const isIOS = /iphone|ipad|ipod/.test(ua);
+  const isStandalone = window.navigator.standalone === true;
+  const isWebView = ua.includes('wkwebview') || ua.includes('safari') === false;
+  
+  return isIOS && (isWebView || isStandalone);
+};
+
 export function BottomNav() {
   const { pathname } = useLocation();
   const { bottomLoader } = useSelector((state: any) => state.loaderSlice);
+  const [needsBottomPadding, setNeedsBottomPadding] = useState(false);
+
+  useEffect(() => {
+    setNeedsBottomPadding(isIOSWebViewOrWebClip());
+  }, []);
 
   return (
     <nav
-      className={`h-[76px] flex items-center justify-around p-4 bg-[#191721] backdrop-blur-sm border-t border-white/10  ${
+      className={`flex items-center justify-around p-4 bg-[#191721] backdrop-blur-sm border-t border-white/10 ${
         bottomLoader && "loading-border"
-      }`}
+      } ${needsBottomPadding ? "h-[80px] pb-10" : "h-[76px]"}`}
     >
       {" "}
       {navItems.map((item) => (
