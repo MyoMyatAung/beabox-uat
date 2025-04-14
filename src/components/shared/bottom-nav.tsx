@@ -48,9 +48,9 @@ const isIOSWebViewOrWebClip = () => {
   const ua = window.navigator.userAgent.toLowerCase();
   const isIOS = /iphone|ipad|ipod/.test(ua);
   const isStandalone = window.navigator.standalone === true;
-  const isWebView = ua.includes('wkwebview') || ua.includes('safari') === false;
+  // const isWebView = ua.includes('wkwebview') || ua.includes('safari') === false;
   
-  return isIOS && (isWebView || isStandalone);
+  return isIOS && isStandalone;
 };
 
 export function BottomNav() {
