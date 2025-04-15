@@ -9,31 +9,33 @@ import Loader from "../shared/loader";
 import TranLoader from "../shared/tran-loader";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 
-interface ImageUploadProps {
-  imgurl: string;
-  reviewStatus: any;
-  setIsOpen: (isOpen: boolean) => void;
-  refetchHandler: () => void;
-}
+// interface ImageUploadProps {
+//   imgurl: string;
+//   reviewStatus: any;
+//   setIsOpen: (isOpen: boolean) => void;
+//   refetchHandler: () => void;
+// }
 
 const ImageUpload = ({
   imgurl,
   reviewStatus,
   setIsOpen,
   refetchHandler,
-}: ImageUploadProps) => {
+  settingUpload,
+  settingUploadData,
+  profileUpload,
+}: any) => {
   const [image, setImage] = useState<string | null>(null);
   const [blobUrl, setBlobUrl] = useState<string | null>(null);
-  const [settingUpload, { data: settingUploadData, isLoading: loading1 }] =
-    useSettingUploadMutation();
+  // const [settingUpload, { data: settingUploadData, isLoading: loading1 }] =
+  //   useSettingUploadMutation();
 
-  const [profileUpload, { data: profileUploadData, isLoading: loading2 }] =
-    useProfileUploadMutation();
+  // const [profileUpload, { data: profileUploadData, isLoading: loading2 }] =
+  //   useProfileUploadMutation();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      handleFile(e.target.files[0]);
-    }
+    setIsOpen(false);
+    if (e.target.files && e.target.files[0]) handleFile(e.target.files[0]);
   };
 
   const handleFile = async (file: File) => {
@@ -69,11 +71,10 @@ const ImageUpload = ({
   };
 
   useEffect(() => {
-    if (settingUploadData?.status) {
+    // setIsOpen(false);
+    if (settingUploadData?.status)
       profileUpload({ file_url: settingUploadData?.data?.url });
-      setIsOpen(false);
-      refetchHandler();
-    }
+    // refetchHandler();
   }, [settingUploadData]);
 
   // Cleanup blob URLs when component unmounts
@@ -85,12 +86,9 @@ const ImageUpload = ({
     };
   }, []);
 
-  console.log(loading1, loading2, "loading");
-
   return (
     <>
       <div className="relative">
-        {loading1 || loading2 ? <TranLoader /> : <></>}
         <div>
           <label htmlFor="image-upload" className="">
             <div className="flex justify-between items-center">

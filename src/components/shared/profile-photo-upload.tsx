@@ -7,7 +7,11 @@ import Divider from "./divider";
 import { useState } from "react";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 import { Camera } from "lucide-react";
-import { useRemoveAvatarMutation } from "@/store/api/profileApi";
+import {
+  useProfileUploadMutation,
+  useRemoveAvatarMutation,
+  useSettingUploadMutation,
+} from "@/store/api/profileApi";
 import TranLoader from "../shared/tran-loader";
 import ImageUpload from "../profile/image-upload";
 
@@ -20,7 +24,11 @@ const ProfilePhotoUpload = ({
 }: any) => {
   const [isOpen, setIsOpen] = useState(false);
   const [removeAvatar, { isLoading, data }] = useRemoveAvatarMutation();
-  console.log(data);
+  const [settingUpload, { data: settingUploadData, isLoading: loading1 }] =
+    useSettingUploadMutation();
+
+  const [profileUpload, { data: profileUploadData, isLoading: loading2 }] =
+    useProfileUploadMutation();
 
   const removeHandler = async () => {
     setIsOpen(false);
@@ -30,7 +38,7 @@ const ProfilePhotoUpload = ({
 
   return (
     <>
-      {isLoading ? <TranLoader /> : <></>}
+      {isLoading || loading1 || loading2 ? <TranLoader /> : <></>}
       <Drawer open={isOpen} onOpenChange={setIsOpen}>
         <DrawerTrigger asChild>
           <div>
@@ -65,6 +73,9 @@ const ProfilePhotoUpload = ({
                 reviewStatus={reviewStatus}
                 setIsOpen={setIsOpen}
                 refetchHandler={refetchHandler}
+                settingUpload={settingUpload}
+                settingUploadData={settingUploadData}
+                profileUpload={profileUpload}
               />
               <Divider show={true} />
               <div
