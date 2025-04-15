@@ -9,6 +9,7 @@ import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 import { Camera } from "lucide-react";
 import { useRemoveAvatarMutation } from "@/store/api/profileApi";
 import TranLoader from "../shared/tran-loader";
+import ImageUpload from "../profile/image-upload";
 
 const ProfilePhotoUpload = ({
   imgurl,
@@ -22,8 +23,8 @@ const ProfilePhotoUpload = ({
   console.log(data);
 
   const removeHandler = async () => {
-    await removeAvatar("");
     setIsOpen(false);
+    await removeAvatar("");
     refetchHandler();
   };
 
@@ -59,27 +60,11 @@ const ProfilePhotoUpload = ({
           <div className="p-5">
             <h1 className="text-[16px] text-white text-center">头像</h1>
             <div className="space-y-5 mt-5">
-              <div className="flex justify-between items-center">
-                <div className="">
-                  <h1
-                    className={`text-[16px] ${
-                      reviewStatus === "pending" ? "text-[#888]" : "text-white"
-                    } `}
-                  >
-                    上传图片
-                  </h1>
-                  <p className="text-[12px] text-[#888888]">
-                    上传 PNG/JPG，限1MB
-                  </p>
-                </div>
-                {reviewStatus === "pending" ? (
-                  <button className="text-[#E79AFE] bg-[#E79AFE14] text-[14px] px-2 py-1 rounded-[4px]">
-                    正在审核中...
-                  </button>
-                ) : (
-                  <></>
-                )}
-              </div>
+              <ImageUpload
+                imgurl=""
+                reviewStatus={reviewStatus}
+                setIsOpen={setIsOpen}
+              />
               <Divider show={true} />
               <div
                 className=""

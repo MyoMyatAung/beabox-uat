@@ -141,7 +141,6 @@ const ProfileDetail = () => {
           setShowAvatar={setShowAvatar}
           reviewStatus={data?.data?.user_profile_review_status}
           refetchHandler={refetchHandler}
-
         />
         {/* <ImageUpload imgurl={decryptedPhoto} /> */}
 
