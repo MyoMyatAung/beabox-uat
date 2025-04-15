@@ -49,7 +49,7 @@ const ProfileDetail = () => {
     await refetch();
   };
 
-  console.log(data, "pddata");
+  // console.log(data?.data?.user_profile_review_status, "pddata");
   useEffect(() => {
     if (data?.status) dispatch(setProfileData(data?.data));
   }, []);
@@ -139,7 +139,12 @@ const ProfileDetail = () => {
           imgurl={decryptedPhoto}
           srcImg={srcImg}
           setShowAvatar={setShowAvatar}
+          reviewStatus={data?.data?.user_profile_review_status}
+          refetchHandler={refetchHandler}
+
         />
+        {/* <ImageUpload imgurl={decryptedPhoto} /> */}
+
         <div className="flex flex-col gap-7 my-7">
           <h1 className="text-[12px] text-[#888]">关于你</h1>
           <EditUsername
