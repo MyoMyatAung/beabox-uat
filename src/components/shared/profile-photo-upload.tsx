@@ -4,7 +4,7 @@ import {
   DrawerTrigger,
 } from "@/components/create-center/drawer";
 import Divider from "./divider";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 import { Camera } from "lucide-react";
 import {
@@ -35,6 +35,10 @@ const ProfilePhotoUpload = ({
     await removeAvatar("");
     refetchHandler();
   };
+
+  useEffect(() => {
+    refetchHandler();
+  }, [isOpen]);
 
   return (
     <>
