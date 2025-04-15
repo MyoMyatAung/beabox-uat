@@ -13,9 +13,15 @@ interface ImageUploadProps {
   imgurl: string;
   reviewStatus: any;
   setIsOpen: (isOpen: boolean) => void;
+  refetchHandler: () => void;
 }
 
-const ImageUpload = ({ imgurl, reviewStatus, setIsOpen }: ImageUploadProps) => {
+const ImageUpload = ({
+  imgurl,
+  reviewStatus,
+  setIsOpen,
+  refetchHandler,
+}: ImageUploadProps) => {
   const [image, setImage] = useState<string | null>(null);
   const [blobUrl, setBlobUrl] = useState<string | null>(null);
   const [settingUpload, { data: settingUploadData, isLoading: loading1 }] =
@@ -39,7 +45,7 @@ const ImageUpload = ({ imgurl, reviewStatus, setIsOpen }: ImageUploadProps) => {
       // Convert to base64 only for API submission
       const base64 = await fileToBase64(file);
       setImage(url); // Use the blob URL for display
-      setIsOpen(false);
+      // setIsOpen(false);
       await settingUpload({ filedata: base64, filePath: "profile" });
     } catch (error) {
       console.error("Error handling file:", error);
@@ -63,8 +69,11 @@ const ImageUpload = ({ imgurl, reviewStatus, setIsOpen }: ImageUploadProps) => {
   };
 
   useEffect(() => {
-    if (settingUploadData?.status)
+    if (settingUploadData?.status) {
       profileUpload({ file_url: settingUploadData?.data?.url });
+      setIsOpen(false);
+      refetchHandler();
+    }
   }, [settingUploadData]);
 
   // Cleanup blob URLs when component unmounts

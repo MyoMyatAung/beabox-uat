@@ -64,6 +64,7 @@ const ProfilePhotoUpload = ({
                 imgurl=""
                 reviewStatus={reviewStatus}
                 setIsOpen={setIsOpen}
+                refetchHandler={refetchHandler}
               />
               <Divider show={true} />
               <div
