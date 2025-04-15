@@ -54,9 +54,7 @@ const Avatars = ({
                     >
                       <AvatarImage
                         className={`w-[60px] h-[60px] ${
-                          avatarId == item?.id
-                            ? "border-2 border-[#CD3EFF]"
-                            : ""
+                          avatarId == item?.id ? "" : "brightness-75"
                         } rounded-full ${
                           !list?.is_available ? "brightness-50" : ""
                         }`}

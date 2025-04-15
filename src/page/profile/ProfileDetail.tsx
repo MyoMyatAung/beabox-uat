@@ -20,6 +20,8 @@ import logo from "@/assets/logo.svg";
 import backButton from "../../assets/backButton.svg";
 import Avatars from "@/components/avatar/avatars";
 import AvatarUpload from "@/components/avatar/avatar-upload";
+import ProfilePhotoUpload from "@/components/shared/profile-photo-upload";
+import ImageUpload from "@/components/profile/image-upload";
 
 const ProfileDetail = () => {
   const [showAvatar, setShowAvatar] = useState(false);
@@ -133,15 +135,11 @@ const ProfileDetail = () => {
           <p className="text-[16px] mr-5">资料</p>
           <div></div>
         </div>
-        <AvatarUpload
+        <ProfilePhotoUpload
           imgurl={decryptedPhoto}
-          setShowAvatar={setShowAvatar}
-          avatarId={avatarId}
-          setAvatarId={setAvatarId}
           srcImg={srcImg}
-          setSrcImg={setSrcImg}
+          setShowAvatar={setShowAvatar}
         />
-        {/* <ImageUpload imgurl={decryptedPhoto} /> */}
         <div className="flex flex-col gap-7 my-7">
           <h1 className="text-[12px] text-[#888]">关于你</h1>
           <EditUsername
