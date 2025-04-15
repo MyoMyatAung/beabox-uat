@@ -16,14 +16,14 @@ import { useEffect, useState } from "react";
 import { setProfileData } from "@/store/slices/persistSlice";
 import EditNickName from "@/components/profile/edit-nickname";
 import EditRegion from "@/components/profile/edit-region";
-import ImageUpload from "@/components/profile/image-upload";
-import TranLoader from "@/components/shared/tran-loader";
+import logo from "@/assets/logo.svg";
 import backButton from "../../assets/backButton.svg";
 import Avatars from "@/components/avatar/avatars";
 import AvatarUpload from "@/components/avatar/avatar-upload";
 
 const ProfileDetail = () => {
   const [showAvatar, setShowAvatar] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
   const [srcImg, setSrcImg] = useState("");
   const [avatarId, setAvatarId] = useState("");
   const user = useSelector((state: any) => state?.persist?.user);
@@ -47,7 +47,7 @@ const ProfileDetail = () => {
     await refetch();
   };
 
-  // console.log(data, "pddata");
+  console.log(data, "pddata");
   useEffect(() => {
     if (data?.status) dispatch(setProfileData(data?.data));
   }, []);
@@ -90,10 +90,30 @@ const ProfileDetail = () => {
     refetch();
   }, [private_profile]);
 
+  const showAlertHandler = () => {
+    setShowAlert(true);
+    setTimeout(() => {
+      setShowAlert(false);
+    }, 2000);
+  };
+
   return (
     <>
       {/* <TranLoader /> */}
       <div className="w-full h-screen px-5 bg-[#16131C]">
+        {showAlert ? (
+          <div className="fixed w-full h-screen bg-[#000000CC]  z-[3000] top-0 left-0">
+            <div className="w-full z-[1300] absolute top-[80vh] flex justify-center">
+              <div className="text-[14px] bg-[#191721] px-2 py-1 rounded-lg  flex items-center gap-2 text-center">
+                <img src={logo} className="w-5" alt="" />
+                <span>您已经填写过邀请码</span>
+              </div>
+            </div>
+            {/* 1 */}
+          </div>
+        ) : (
+          ""
+        )}
         {showAvatar ? (
           <Avatars
             setShowAvatar={setShowAvatar}
@@ -151,7 +171,11 @@ const ProfileDetail = () => {
         <div className="w-full h-[0.08px] bg-[#FFFFFF0A]"></div>
         <div className="flex flex-col gap-7 my-7">
           <h1 className="text-[12px] text-[#888]">邀请函</h1>
-          <EditReferral referral_code={data?.data?.referral_by} />
+          <EditReferral
+            referral_code={data?.data?.referral_by}
+            showAlertHandler={showAlertHandler}
+            refetchHandler={refetchHandler}
+          />
         </div>
         <div className="w-full h-[0.08px] bg-[#FFFFFF0A]"></div>
         {/* <div className="flex flex-col gap-7 my-7">

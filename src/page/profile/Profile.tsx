@@ -310,7 +310,7 @@ const Profile = () => {
           />
         </div>
         <div
-          className={`px-5 z-[1900] relative ${
+          className={`px-5 pt-3 z-[1900] relative ${
             showHeader ? "opacity-0" : "opacity-1"
           }`}
         >
