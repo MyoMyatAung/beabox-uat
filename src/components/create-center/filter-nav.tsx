@@ -6,7 +6,7 @@ import {
 } from "@/components/create-center/drawer";
 import selected from "@/assets/createcenter/selected.png";
 import unselected from "@/assets/createcenter/unselected.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Selected = () => (
   <img className="w-[18px] h-[18px]" src={selected} alt="" />
@@ -14,6 +14,28 @@ const Selected = () => (
 const Unselected = () => (
   <img className="w-[18px] h-[18px]" src={unselected} alt="" />
 );
+
+interface Post {
+  id: string;
+  title: string;
+  content: string;
+  status: string;
+  // Add other post properties as needed
+}
+
+interface FilterNavProps {
+  config: Array<{
+    title: string;
+    keyword: string;
+    text_color_code?: string;
+  }>;
+  setIsActive: (value: string) => void;
+  isActive: string;
+  setPage: (value: number) => void;
+  setPosts: (value: Post[] | ((prev: Post[]) => Post[])) => void;
+  setHasMore: (value: boolean) => void;
+  refetch: () => Promise<unknown>;
+}
 
 const FilterNav = ({
   config,
@@ -23,14 +45,25 @@ const FilterNav = ({
   setPosts,
   setHasMore,
   refetch,
-}: any) => {
+}: FilterNavProps) => {
   const [selectedTitle, setSelectedTitle] = useState("所有帖子");
   const [isOpen, setIsOpen] = useState(false);
+  
+  // Update selectedTitle when config or isActive changes
+  useEffect(() => {
+    if (config && isActive) {
+      const currentFilter = config.find(item => item.keyword === isActive);
+      if (currentFilter) {
+        setSelectedTitle(currentFilter.title);
+      }
+    }
+  }, [config, isActive]);
+  
   const selectedColor = config?.find(
-    (item: any) => item?.title == selectedTitle && item?.text_color_code
+    (item) => item?.title === selectedTitle && item?.text_color_code
   );
-  console.log(selectedColor, "sc");
-  const selectedHandler = (title: any) => {
+  
+  const selectedHandler = (title: string) => {
     setIsActive(title);
     setPage(1);
     setPosts([]);
@@ -40,16 +73,18 @@ const FilterNav = ({
   };
 
   const xHandler = () => {
-    if (config) {
-      setIsActive(config[0]?.keyword);
-      setSelectedTitle(config[0]?.title);
-      setPage(1);
-      setPosts([]);
-      setHasMore(true);
-      refetch();
-      setIsOpen(false);
-    }
+    // Reset to "all" filter
+    setIsActive("all");
+    setPage(1);
+    setPosts([]);
+    setHasMore(true);
+    refetch();
+    setIsOpen(false);
   };
+
+  if (!config || config.length === 0) {
+    return null;
+  }
 
   return (
     <div className="flex justify-between items-center px-5">
@@ -75,19 +110,18 @@ const FilterNav = ({
         <DrawerContent className="border-0">
           <div className="p-5">
             <div className="flex flex-col">
-              {config?.map((item: any, index: any) => (
+              {config?.map((item, index) => (
                 <div key={item?.title} className="">
                   <div
                     onClick={() => {
-                      setSelectedTitle(item?.title);
                       selectedHandler(item?.keyword);
                     }}
                     className="flex justify-between items-center "
                   >
                     <p className={`text-[16px]`}>{item?.title}</p>
-                    {isActive == item?.keyword ? <Selected /> : <Unselected />}
+                    {isActive === item?.keyword ? <Selected /> : <Unselected />}
                   </div>
-                  {index == config?.length - 1 ? (
+                  {index === config?.length - 1 ? (
                     <></>
                   ) : (
                     <div className="bg-[#222222] h-[0.3px] my-5"></div>

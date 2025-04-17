@@ -241,7 +241,7 @@ input:checked + .slider:before {
 }
 
 .c-height {
-  height: 100vh;
+  height: 100dvh;
 }
 
 .index_start_popup_img {
@@ -796,4 +796,14 @@ input:checked + .slider:before {
 
 .animate-fade-in {
   animation: fadeIn 0.1s ease-out;
+}
+
+input {
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+input:focus {
+  outline: none;
+  box-shadow: none !important;
 }

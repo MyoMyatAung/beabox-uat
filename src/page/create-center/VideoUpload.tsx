@@ -262,8 +262,10 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
       // Generate thumbnails for the video - one for video poster and one for cover
       const generatedThumbnail = await generateThumbnail(videoFile);
       
-      // Set both the video poster and the separate cover thumbnail
-      setThumbnail(generatedThumbnail);
+      // Only set the thumbnail if one doesn't exist yet
+      if (!thumbnail) {
+        setThumbnail(generatedThumbnail);
+      }
 
       // Create a video element to extract metadata
       const video = document.createElement("video");
@@ -364,7 +366,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
         },
       });
     }
-  }, []);
+  }, [thumbnail]);
 
   // Handle thumbnail drop
   const onThumbnailDrop = useCallback((acceptedFiles: any) => {

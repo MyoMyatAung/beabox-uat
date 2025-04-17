@@ -1071,8 +1071,11 @@ const Player = ({
                       artPlayerInstanceRef.current.pause();
                       showPlayButton();
                     } else {
-                      artPlayerInstanceRef.current.play();
                       hidePlayButton();
+                      safeFadePosterOut(true);
+                      setTimeout(() => {
+                        artPlayerInstanceRef.current?.play();
+                      }, 500);
                     }
                   }
                 }, 300);
