@@ -100,7 +100,7 @@ const CreatedVideo = ({ id }: any) => {
       )}
       <div className="pb-5">
         {videos?.length <= 0 ? (
-          <NoVideoCard from='upload'/>
+          <NoVideoCard/>
         ) : (
           <>
             <div>
