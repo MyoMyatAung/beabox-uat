@@ -14,6 +14,14 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import UploadVideos from "./VideoUpload";
 
+interface Post {
+  id: string;
+  title: string;
+  content: string;
+  status: string;
+  // Add other post properties as needed
+}
+
 const YourVideos = () => {
   const navigate = useNavigate();
 
@@ -22,33 +30,43 @@ const YourVideos = () => {
   const { data: newData, isLoading: cfloading } = useGetConfigQuery({});
   const config = newData?.data?.creator_center_post_filter;
   const imgdomain = newData?.data?.post_domain?.image;
-  // const { data, isLoading, refetch } = useGetPostListQuery("");
+  
   const { data, isLoading, isFetching, refetch } = useGetPostsQuery(
     {
       page,
       status: isActive,
+    },
+    {
+      refetchOnMountOrArgChange: true,
     }
-    // {
-    //   refetchOnMountOrArgChange: true,
-    // }
   );
 
-  const [posts, setPosts] = useState<any>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [totalData, setTotalData] = useState<number>(0);
-  const [editPost, seteditPost] = useState(null);
-  const handleEdit = (record: any) => {
+  const [editPost, seteditPost] = useState<Post | null>(null);
+  
+  const handleEdit = (record: Post) => {
     seteditPost(record);
   };
+
+  // Add effect to manually trigger refetch when isActive changes
+  useEffect(() => {
+    refetch();
+  }, [isActive, refetch]);
 
   useEffect(() => {
     if (data?.data?.length) {
       if (page === 1) {
         setPosts(data.data);
       } else {
-        setPosts((prev: any) => [...prev, ...data.data]);
+        setPosts((prev: Post[]) => [...prev, ...data.data]);
       }
       setTotalData(data.pagination.total);
+    } else if (data?.data && data.data.length === 0 && page === 1) {
+      // Explicitly handle empty data case
+      setPosts([]);
+      setTotalData(0);
     }
   }, [data, page]);
 
@@ -59,12 +77,6 @@ const YourVideos = () => {
       setHasMore(true);
     }
   }, [totalData, posts]);
-
-  useEffect(() => {
-    setPage(1);
-    setPosts([]);
-    setHasMore(true);
-  }, [isActive]);
 
   const fetchMoreData = () => {
     if (hasMore) {

@@ -4,6 +4,8 @@ import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { ChevronLeft, X } from "lucide-react";
 import { useGetConfigQuery } from "@/store/api/createCenterApi";
 
+const MAX_TAGS = 5;
+
 const TagBtn = ({
   tag,
   setSelectedTags,
@@ -22,6 +24,7 @@ const TagBtn = ({
   console.log(isInclued, "tags");
 
   const addTag = (tag: any) => {
+    if (hashtags?.length >= MAX_TAGS) return;
     setSelected(true);
     isInclued(tag);
     setHashtags([...hashtags, tag.trim()]);
@@ -35,7 +38,8 @@ const TagBtn = ({
       onClick={!hashtags?.includes(tag) ? () => addTag(tag) : () => remove(tag)}
       className={`${
         hashtags?.includes(tag) ? "stagbg" : "bg-[#3A3A3A33]"
-      } px-3 py-1 rounded-full`}
+      } px-3 py-1 rounded-full ${hashtags?.length >= MAX_TAGS && !hashtags?.includes(tag) ? "opacity-50 cursor-not-allowed" : ""}`}
+      disabled={hashtags?.length >= MAX_TAGS && !hashtags?.includes(tag)}
     >
       {tag}
     </button>
@@ -54,6 +58,13 @@ const Tags = ({
   const [isOpen, setIsOpen] = useState(false);
   const { data: newData } = useGetConfigQuery({});
   const populars = newData?.data?.post_tags?.split(",");
+
+  // Wrap addHashtag to include the limit check
+  const handleAddHashtag = () => {
+    if (hashtags?.length >= MAX_TAGS) return;
+    addHashtag();
+  };
+
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>
@@ -77,10 +88,12 @@ const Tags = ({
                 type="text"
                 className="w-full bg-[#FFFFFF14] px-3 py-2 rounded-full"
                 placeholder="请输入你的标签名称"
+                disabled={hashtags?.length >= MAX_TAGS}
               />
               <button
-                onClick={addHashtag}
-                className="text-[#CD3EFF] w-[40px] text-[16px]"
+                onClick={handleAddHashtag}
+                className={`text-[#CD3EFF] w-[40px] text-[16px] ${hashtags?.length >= MAX_TAGS ? "opacity-50 cursor-not-allowed" : ""}`}
+                disabled={hashtags?.length >= MAX_TAGS}
               >
                 添加
               </button>
@@ -103,20 +116,6 @@ const Tags = ({
                   </div>
                 </div>
               ))}
-            {/* {hashtags.map((tag: any, index: any) => (
-              <div
-                key={index}
-                className="stagbg px-3 py-1 rounded-full flex gap-1 items-center"
-              >
-                <p> {tag}</p>
-                <div
-                  onClick={() => removeTag(index)}
-                  className="bg-[#FFFFFF33] w-[18px] h-[18px] flex justify-center items-center rounded-full"
-                >
-                  <X size={12} />
-                </div>
-              </div>
-            ))} */}
           </div>
           <div className="px-5 py-5">
             <p className="text-[16px] pb-2">热门标签</p>
