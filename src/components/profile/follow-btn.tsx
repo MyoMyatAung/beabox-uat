@@ -12,8 +12,6 @@ const FollowBtn = ({ id, followBack, refetch }: any) => {
     useSelector((state: any) => state?.follow?.status) ?? followBack;
   const [changeFollowStatus, { data }] = useChangeFollowStatusMutation();
 
-  console.log(data, "follow data");
-
   // Use Redux state if available, otherwise use prop
   const currentFollowState = followStatus[id] ?? followBack;
 
