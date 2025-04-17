@@ -6,7 +6,7 @@ import LikedVideos from "./video/liked-videos";
 import { useDispatch, useSelector } from "react-redux";
 import { setDefaultTab2 } from "@/store/slices/persistSlice";
 import LikedVideos2 from "./video/like-videos2";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,6 +28,37 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
     // console.log("Current tab value:", value);
     dispatch(setDefaultTab2(value));
   };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (isOpen) setIsOpen(false);
+    };
+
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (!isOpen) return;
+
+      // Check if click is outside dropdown content and trigger
+      const content = document.querySelector(".dropdown-content");
+      const trigger = document.querySelector(".dropdown-trigger");
+
+      const isInsideContent = content?.contains(event.target as Node) || false;
+      const isInsideTrigger = trigger?.contains(event.target as Node) || false;
+
+      if (!isInsideContent && !isInsideTrigger) {
+        setIsOpen(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("mousedown", handleClickOutside);
+    window.addEventListener("touchstart", handleClickOutside);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, [isOpen]);
   return (
     <Tabs
       defaultValue={defaultTab2 ? defaultTab2 : "video"}
@@ -44,7 +75,7 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
           >
             <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
               <DropdownMenuTrigger asChild>
-                <span className="flex items-center gap-2 flex-col justify-center">
+                <span className="flex items-center gap-2 flex-col justify-center dropdown-trigger">
                   <div className="w-[52px] h-[3px] bg-transparent"></div>
 
                   {isOpen ? (
@@ -61,7 +92,7 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
                   ></div>
                 </span>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-[97px] bg-[#252525EB] border-0">
+              <DropdownMenuContent className="dropdown-content w-[97px] bg-[#252525EB] border-0">
                 <DropdownMenuGroup>
                   <DropdownMenuItem>
                     <div
