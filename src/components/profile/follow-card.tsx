@@ -13,43 +13,43 @@ const decryptImage = async (arrayBuffer, key = 0x12, decryptSize = 4096) => {
   }
   // Decode the entire data as text.
   const decryptedStr = new TextDecoder().decode(data);
-  
+
   // Convert the data URL to a Blob and create a blob URL
-  if (decryptedStr.startsWith('data:')) {
+  if (decryptedStr.startsWith("data:")) {
     try {
       // Extract mime type and base64 data
       const matches = decryptedStr.match(/^data:([^;]+);base64,(.+)$/);
       if (!matches || matches.length !== 3) {
-        throw new Error('Invalid data URL format');
+        throw new Error("Invalid data URL format");
       }
-      
+
       const mimeType = matches[1];
       const base64Data = matches[2];
-      
+
       // Convert base64 to binary
       const binaryString = atob(base64Data);
       const bytes = new Uint8Array(binaryString.length);
       for (let i = 0; i < binaryString.length; i++) {
         bytes[i] = binaryString.charCodeAt(i);
       }
-      
+
       // Create Blob and blob URL
       const blob = new Blob([bytes], { type: mimeType });
       return URL.createObjectURL(blob);
     } catch (err) {
-      console.error('Error converting data URL to blob:', err);
+      console.error("Error converting data URL to blob:", err);
       // Fall back to data URL if conversion fails
       return decryptedStr;
     }
   }
-  
+
   return decryptedStr;
 };
 
-const FollowCard = ({ data }: { data: any }) => {
+const FollowCard = ({ data, refetch }: any) => {
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
   const me = useSelector((state: any) => state?.persist?.user?.id);
-  
+
   useEffect(() => {
     const loadAndDecryptPhoto = async () => {
       if (!data?.photo) {
@@ -80,10 +80,10 @@ const FollowCard = ({ data }: { data: any }) => {
     };
 
     loadAndDecryptPhoto();
-    
+
     // Clean up blob URLs when component unmounts or data changes
     return () => {
-      if (decryptedPhoto && decryptedPhoto.startsWith('blob:')) {
+      if (decryptedPhoto && decryptedPhoto.startsWith("blob:")) {
         URL.revokeObjectURL(decryptedPhoto);
       }
     };
@@ -107,7 +107,11 @@ const FollowCard = ({ data }: { data: any }) => {
       {data?.id == me ? (
         <></>
       ) : (
-        <FollowBtn id={data?.id} followBack={data?.follows_back} />
+        <FollowBtn
+          id={data?.id}
+          followBack={data?.follows_back}
+          refetch={refetch}
+        />
       )}
     </div>
   );

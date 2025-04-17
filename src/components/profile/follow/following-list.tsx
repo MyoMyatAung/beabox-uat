@@ -19,7 +19,7 @@ const FollowingList = ({ searchTerm, id }: any) => {
   const [totalData, setTotalData] = useState<number>(0);
   const user_code = useSelector((state: any) => state.persist?.user?.id);
 
-  const { data, isLoading, isFetching } = useGetFollowingListQuery({
+  const { data, isLoading, isFetching, refetch } = useGetFollowingListQuery({
     user_id: id,
     // search: searchTerm,
     page: page,
@@ -81,7 +81,11 @@ const FollowingList = ({ searchTerm, id }: any) => {
         <>
           {filterdata?.data?.length ? (
             filterdata?.data?.map((follower: any) => (
-              <FollowCard key={follower.user_code} data={follower} />
+              <FollowCard
+                key={follower.user_code}
+                data={follower}
+                refetch={refetch}
+              />
             ))
           ) : (
             <div className="flex justify-center mt-[40%]">
@@ -99,7 +103,11 @@ const FollowingList = ({ searchTerm, id }: any) => {
           {following?.length ? (
             <div className="flex flex-col gap-3">
               {following?.map((follower: any) => (
-                <FollowCard key={follower.user_code} data={follower} />
+                <FollowCard
+                  key={follower.user_code}
+                  data={follower}
+                  refetch={refetch}
+                />
               ))}
               <InfinitLoad
                 data={following}
