@@ -31,7 +31,7 @@ const ProfileDetail = () => {
   const user = useSelector((state: any) => state?.persist?.user);
   const profileData = useSelector((state: any) => state?.persist?.profileData);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
-  
+
   const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
     const data = new Uint8Array(arrayBuffer);
     const maxSize = Math.min(decryptSize, data.length);
@@ -100,6 +100,8 @@ const ProfileDetail = () => {
     }, 2000);
   };
 
+  console.log(data?.data);
+
   return (
     <>
       {/* <TranLoader /> */}
@@ -124,6 +126,7 @@ const ProfileDetail = () => {
             setAvatarId={setAvatarId}
             srcImg={srcImg}
             setSrcImg={setSrcImg}
+            refetch={refetch}
           />
         ) : (
           <></>
@@ -142,6 +145,8 @@ const ProfileDetail = () => {
           setShowAvatar={setShowAvatar}
           reviewStatus={data?.data?.user_profile_review_status}
           refetchHandler={refetchHandler}
+          exist={data?.data?.user_profile_exist}
+          refetch={refetch}
         />
         {/* <ImageUpload imgurl={decryptedPhoto} /> */}
 

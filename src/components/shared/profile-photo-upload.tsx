@@ -21,6 +21,8 @@ const ProfilePhotoUpload = ({
   setShowAvatar,
   reviewStatus,
   refetchHandler,
+  exist,
+  refetch
 }: any) => {
   const [isOpen, setIsOpen] = useState(false);
   const [removeAvatar, { isLoading, data }] = useRemoveAvatarMutation();
@@ -40,13 +42,15 @@ const ProfilePhotoUpload = ({
     refetchHandler();
   }, [isOpen]);
 
+  console.log(srcImg, "srcImg");
+
   return (
     <>
       {isLoading || loading1 || loading2 ? <TranLoader /> : <></>}
       <Drawer open={isOpen} onOpenChange={setIsOpen}>
         <DrawerTrigger asChild>
           <div>
-            {imgurl ? (
+            {imgurl && exist ? (
               <div className="flex justify-center items-center relative">
                 <AsyncDecryptedImage
                   // imageUrl={imgurl || "/placeholder.svg"}
@@ -80,6 +84,7 @@ const ProfilePhotoUpload = ({
                 settingUpload={settingUpload}
                 settingUploadData={settingUploadData}
                 profileUpload={profileUpload}
+                refetch={refetch}
               />
               <Divider show={true} />
               <div

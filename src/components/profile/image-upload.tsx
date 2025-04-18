@@ -24,6 +24,7 @@ const ImageUpload = ({
   settingUpload,
   settingUploadData,
   profileUpload,
+  refetch,
 }: any) => {
   const [image, setImage] = useState<string | null>(null);
   const [blobUrl, setBlobUrl] = useState<string | null>(null);

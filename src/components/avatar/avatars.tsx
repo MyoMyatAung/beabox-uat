@@ -11,6 +11,7 @@ const Avatars = ({
   setAvatarId,
   srcImg,
   setSrcImg,
+  refetch,
 }: any) => {
   const { data } = useGetAvatarListQuery("");
   const [avatarUpload, { data: avatarUploadData, isLoading: loading2 }] =
@@ -19,6 +20,7 @@ const Avatars = ({
   const handleUpload = async () => {
     await avatarUpload({ id: avatarId });
     setShowAvatar(false);
+    refetch();
   };
   return (
     <div className="bg-[#000000CC] w-full flex justify-center items-center h-screen absolute top-0 left-0 z-50">
