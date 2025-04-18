@@ -72,6 +72,7 @@ const ChangePassword = () => {
                 onChange={(e: any) => setCurrentPassword(e.target.value)}
                 value={current_password}
                 type={show ? "text" : "password"}
+                maxLength={25}
               />
               <div className="absolute right-0 bottom-3">
                 {show ? (
@@ -92,6 +93,7 @@ const ChangePassword = () => {
                 onChange={(e: any) => setNewPassword(e.target.value)}
                 value={new_password}
                 type={show2 ? "text" : "password"}
+                maxLength={25}
               />
               <div className="absolute right-0 bottom-3">
                 {show2 ? (
