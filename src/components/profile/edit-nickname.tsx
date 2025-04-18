@@ -53,7 +53,7 @@ const EditNickName = ({
     console.log("eror");
     dispatch(
       showToast({
-        message: "维护升级...",
+        message: "这个功能目前不可用",
         type: "error",
       })
     );
