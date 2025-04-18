@@ -12,8 +12,8 @@ import { setGender } from "@/store/slices/persistSlice";
 import { useChangeGenderMutation } from "@/store/api/profileApi";
 import Loader from "../shared/loader";
 
-const EditGender = () => {
-  const gender = useSelector((state: any) => state.persist.gender);
+const EditGender = ({ gender }: any) => {
+  // const gender = useSelector((state: any) => state.persist.gender);
 
   const dispatch = useDispatch();
   // const [gender, setGender] = useState("Other");

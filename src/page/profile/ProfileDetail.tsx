@@ -160,7 +160,7 @@ const ProfileDetail = () => {
             nickname={data?.data?.nickname}
             refetchHandler={refetchHandler}
           />
-          <EditGender />
+          <EditGender gender={data?.data?.gender} />
           <EditRegion province={data?.data?.province} city={data?.data?.city} />
           {/* <div className="text-[14px] flex items-center justify-between">
           <h1>Region</h1>
