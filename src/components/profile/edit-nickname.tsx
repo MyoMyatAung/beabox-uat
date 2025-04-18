@@ -8,11 +8,12 @@ import {
 import { Button } from "../ui/button";
 import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useChangeNicknameMutation } from "@/store/api/profileApi";
 import { useNavigate } from "react-router-dom";
 import SubmitButton from "../shared/submit-button";
 import Loader from "../shared/loader";
+import { showToast } from "@/page/home/services/errorSlice";
 
 const EditNickName = ({
   nickname,
@@ -27,6 +28,7 @@ const EditNickName = ({
   const [changeNickname, { data, isLoading }] = useChangeNicknameMutation();
   const navigate = useNavigate();
   const closeRef = useRef<HTMLButtonElement>(null);
+  const dispatch = useDispatch();
 
   const onSubmitHandler = async (e: any) => {
     e.preventDefault();
@@ -47,16 +49,37 @@ const EditNickName = ({
     setValue(nickname);
   }, [isOpen]);
 
+  const showErrorToast = () => {
+    console.log("eror");
+    dispatch(
+      showToast({
+        message: "这个功能目前不可用",
+        type: "error",
+      })
+    );
+  };
+
   return (
     <Drawer open={isOpen} onOpenChange={handleOpenChange}>
-      <DrawerTrigger>
+      {/* <DrawerTrigger>
         <div className="text-[14px] flex items-center justify-between">
           <h1>昵称</h1>
           <p className="flex items-center gap-1 text-[#888]">
             {nickname} <FaAngleRight />
           </p>
         </div>
-      </DrawerTrigger>
+      </DrawerTrigger> */}
+      <div>
+        <div
+          onClick={() => showErrorToast()}
+          className="text-[14px] flex items-center justify-between"
+        >
+          <h1>昵称</h1>
+          <p className="flex items-center gap-1 text-[#888]">
+            {nickname} <FaAngleRight />
+          </p>
+        </div>
+      </div>
       <DrawerContent className="border-0">
         {isLoading ? <Loader /> : <></>}
         <div className="w-full c-height px-5 bg-[#16131C]">
