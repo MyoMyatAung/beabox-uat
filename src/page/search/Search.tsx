@@ -393,7 +393,7 @@ const Search: React.FC<SearchProps> = ({}) => {
         </button>
       </form>
 
-      {query.length > 0 && isFocused && suggestions.length > 0 && (
+      {query.length > 0 && isFocused && suggestions.length > 0 ? (
         <ul className="fixed top-[60px] px-[16px] left-0 pt-[20px] pb-[80px] h-[100dvh] w-full bg-[#16131C] text-white z-[99999] overflow-y-auto">
           {suggestions.map((suggestion: any, index) => (
             <li
@@ -463,14 +463,16 @@ const Search: React.FC<SearchProps> = ({}) => {
             </li>
           )}
         </ul>
-      )}
-
-      {/* initial */}
+      )
+      :
       <div className="overflow-y-scroll h-screen">
         <History />
         <Hot />
         <May />
       </div>
+      }
+      {/* initial */}
+      
     </div>
   );
 };
