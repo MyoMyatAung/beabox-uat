@@ -1,18 +1,18 @@
-import { lazy, Suspense } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { lazy, ReactNode } from "react";
+import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import { paths } from "./paths";
 import RootLayout from "@/layouts/RootLayout";
 import More from "@/page/explore/comp/More";
 import Wallet from "@/page/wallet/Wallet";
 import Invite from "@/page/wallet/comp/Invite";
 import TranHist from "@/page/wallet/comp/TranHist";
-import Loader from "@/components/shared/loader";
 import Recharge from "@/page/wallet/page/Recharge";
 import Withdraw from "@/page/wallet/page/Withdraw";
 import Search from "@/page/search/Search";
 import Results from "@/page/search/page/Results";
 import VodDetails from "@/page/explore/comp/VodDetails";
 import Report from "@/page/report/Report";
+import SafeLazyLoad from "@/components/SafeLazyLoad";
 
 const Home = lazy(() => import("../page/home/Home"));
 const Explore = lazy(() => import("../page/explore/Explore"));
@@ -53,397 +53,206 @@ const ForgotPassword = lazy(
 const ResetPassword = lazy(
   () => import("../components/profile/auth/reset-password")
 );
+
 const Routing = () => {
-  const router = createBrowserRouter([
+  // Create a wrapper component that includes SafeLazyLoad for error handling
+  const withErrorHandling = (Component: ReactNode) => {
+    return {
+      element: (
+        <SafeLazyLoad>
+          {Component}
+        </SafeLazyLoad>
+      ),
+      // On route error, navigate to home page
+      errorElement: <Navigate to="/" replace />
+    };
+  };
+
+  const routes = [
     {
       path: paths.login,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <Login />
-        </Suspense>
-      ),
+      ...withErrorHandling(<Login />)
     },
     {
       path: paths.regiter,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <Register />
-        </Suspense>
-      ),
+      ...withErrorHandling(<Register />)
     },
     {
       path: paths.forgot_password,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <ForgotPassword />
-        </Suspense>
-      ),
+      ...withErrorHandling(<ForgotPassword />)
     },
     {
       path: paths.reset_password,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <ResetPassword />
-        </Suspense>
-      ),
+      ...withErrorHandling(<ResetPassword />)
     },
     {
       path: paths.upload,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <RootLayout>
-            <UploadComponent />
-          </RootLayout>
-        </Suspense>
-      ),
+      ...withErrorHandling(<RootLayout><UploadComponent /></RootLayout>)
     },
     {
       path: paths.upload_process,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <UploadProcess />
-        </Suspense>
-      ),
+      ...withErrorHandling(<UploadProcess />)
     },
     {
       path: paths.otp,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <OTP />
-        </Suspense>
-      ),
+      ...withErrorHandling(<OTP />)
     },
     {
       path: paths.security_questions,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <SecurityQuestion />
-        </Suspense>
-      ),
+      ...withErrorHandling(<SecurityQuestion />)
     },
     {
       path: paths.check_answer,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <Question />
-        </Suspense>
-      ),
+      ...withErrorHandling(<Question />)
     },
     {
       path: paths.check_answer2,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <CheckAnswer />
-        </Suspense>
-      ),
+      ...withErrorHandling(<CheckAnswer />)
     },
     {
       path: paths.answer,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <Answer />
-        </Suspense>
-      ),
+      ...withErrorHandling(<Answer />)
     },
     {
       path: paths.manage,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <Manage />
-        </Suspense>
-      ),
+      ...withErrorHandling(<Manage />)
     },
     {
       path: paths.home,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <RootLayout>
-            <Home />
-          </RootLayout>
-        </Suspense>
-      ),
+      ...withErrorHandling(<RootLayout><Home /></RootLayout>)
     },
     {
       path: paths.add_bio,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <RootLayout>
-            <AddBio />
-          </RootLayout>
-        </Suspense>
-      ),
+      ...withErrorHandling(<RootLayout><AddBio /></RootLayout>)
     },
     {
       path: paths.explore,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <RootLayout>
-            <Explore />
-          </RootLayout>
-        </Suspense>
-      ),
+      ...withErrorHandling(<RootLayout><Explore /></RootLayout>)
     },
     {
       path: paths.application,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <RootLayout>
-            <Application />
-          </RootLayout>
-        </Suspense>
-      ),
+      ...withErrorHandling(<RootLayout><Application /></RootLayout>)
     },
     {
       path: paths.profile,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <RootLayout>
-            <Profile />
-          </RootLayout>
-        </Suspense>
-      ),
+      ...withErrorHandling(<RootLayout><Profile /></RootLayout>)
     },
     {
       path: paths.user_profile,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <RootLayout>
-            <OtherProfile />
-          </RootLayout>
-        </Suspense>
-      ),
+      ...withErrorHandling(<RootLayout><OtherProfile /></RootLayout>)
     },
     {
       path: paths.profileDetail,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <ProfileDetail />
-        </Suspense>
-      ),
+      ...withErrorHandling(<ProfileDetail />)
     },
     {
       path: paths.settings,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <Settings />
-        </Suspense>
-      ),
+      ...withErrorHandling(<Settings />)
     },
     {
       path: paths.privacy_settings,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <PrivacySettings />
-        </Suspense>
-      ),
+      ...withErrorHandling(<PrivacySettings />)
     },
     {
       path: paths.noti,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <Noti />
-        </Suspense>
-      ),
+      ...withErrorHandling(<Noti />)
     },
     {
       path: paths.noti_detail,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <NotiDetail />
-        </Suspense>
-      ),
+      ...withErrorHandling(<NotiDetail />)
     },
     {
       path: paths.system_noti,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <SystemNoti />
-        </Suspense>
-      ),
+      ...withErrorHandling(<SystemNoti />)
     },
     {
       path: paths.balance_noti,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <BalanceNoti />
-        </Suspense>
-      ),
+      ...withErrorHandling(<BalanceNoti />)
     },
     {
       path: paths.recommand_more,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <More />
-        </Suspense>
-      ),
+      ...withErrorHandling(<More />)
     },
-    // {
-    //   path: paths.settings,
-    //   element: (
-    //     <Suspense fallback={<Loader />}>
-    //       <Settings />
-    //       path: paths.recommand_more, element: (
-    //       <Suspense fallback={<p>Panding..</p>}>
-    //         <More />
-    //       </Suspense>
-    //     </Suspense>
-    //   ),
-    // },
     {
       path: "*",
-      element: (
-        <Suspense>
-          <h1>Page Not Found!</h1>
-        </Suspense>
-      ),
+      element: <h1>Page Not Found!</h1>,
+      errorElement: <Navigate to="/" replace />
     },
     {
       path: paths.wallet,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <Wallet />
-        </Suspense>
-      ),
+      ...withErrorHandling(<Wallet />)
     },
     {
       path: paths.wallet_invite,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <Invite />
-        </Suspense>
-      ),
+      ...withErrorHandling(<Invite />)
     },
     {
       path: paths.wallet_history,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <TranHist />
-        </Suspense>
-      ),
+      ...withErrorHandling(<TranHist />)
     },
     {
       path: paths.wallet_income,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <TranHist />
-        </Suspense>
-      ),
+      ...withErrorHandling(<TranHist />)
     },
     {
       path: paths.wallet_recharge,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <Recharge />
-        </Suspense>
-      ),
+      ...withErrorHandling(<Recharge />)
     },
     {
       path: paths.wallet_withdraw,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <Withdraw />
-        </Suspense>
-      ),
+      ...withErrorHandling(<Withdraw />)
     },
     {
       path: paths.search,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <Search />
-        </Suspense>
-      ),
+      ...withErrorHandling(<Search />)
     },
     {
       path: paths.search_result,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <Results />
-        </Suspense>
-      ),
+      ...withErrorHandling(<Results />)
     },
     {
       path: paths.vod_details,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <VodDetails />
-        </Suspense>
-      ),
+      ...withErrorHandling(<VodDetails />)
     },
     {
       path: paths.reports,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <Report />
-        </Suspense>
-      ),
+      ...withErrorHandling(<Report />)
     },
     {
       path: paths.create_center,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <CreateCenter />
-        </Suspense>
-      ),
+      ...withErrorHandling(<CreateCenter />)
     },
     {
       path: paths.your_videos,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <YourVideos />
-        </Suspense>
-      ),
+      ...withErrorHandling(<YourVideos />)
     },
     {
       path: paths.video_detail,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <VideoDetails />
-        </Suspense>
-      ),
+      ...withErrorHandling(<VideoDetails />)
     },
     {
       path: paths.recycle,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <Recycle />
-        </Suspense>
-      ),
+      ...withErrorHandling(<Recycle />)
     },
     {
       path: paths.ranking,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <RootLayout>
-            <Ranking />
-          </RootLayout>
-        </Suspense>
-      ),
+      ...withErrorHandling(<RootLayout><Ranking /></RootLayout>)
     },
     {
       path: paths.creator_upload,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <CreatorUpload />
-        </Suspense>
-      ),
+      ...withErrorHandling(<CreatorUpload />)
     },
     {
       path: paths.creator_upload_video,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <VideoUpload />
-        </Suspense>
-      ),
+      ...withErrorHandling(<VideoUpload />)
     },
     {
       path: paths.tags,
-      element: (
-        <Suspense fallback={<Loader />}>
-          <Tags />
-        </Suspense>
-      ),
+      ...withErrorHandling(<Tags />)
     },
-  ]);
+  ];
+
+  const router = createBrowserRouter(routes);
   return <RouterProvider router={router} />;
 };
 
