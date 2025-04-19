@@ -65,10 +65,12 @@ const OtherProfile = () => {
     refetch,
   } = useGetUserProfileQuery(id || "");
   // console.log(userData)
+  const code = userData?.data?.user_code ? userData?.data?.user_code : ""
+  console.log(code)
   const { data: shareData } = useGetUserShareQuery(
     {
       type: "profile",
-      id: userData?.user_code,
+      id: code,
       qr_code: 0,
     },
     { skip: !id }
@@ -82,7 +84,7 @@ const OtherProfile = () => {
     if (shareData?.data?.link) {
       setCachedDownloadLink(shareData?.data?.content);
     }
-  }, [shareData]);
+  }, [shareData,code]);
 
   useEffect(() => {
     const loadAndDecryptCover = async () => {
