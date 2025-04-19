@@ -12,7 +12,7 @@ import Balance from "@/assets/profile/balance1.png";
 
 const Noti = () => {
   const { data, isLoading } = useGetNotiQuery("");
-  console.log(data, "notis");
+  // console.log(data, "notis");
   if (isLoading) return <Loader />;
   return (
     <div className="w-full h-screen bg-[#16131C] px-5 flex flex-col items-center justify-between no-scrollbar">
