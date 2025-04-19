@@ -9,10 +9,14 @@ import { UsersRound } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import InfinitLoad from "@/components/shared/infinit-load";
-import { useShareInfoMutation } from "@/store/api/profileApi";
+import {
+  useGetUserProfileQuery,
+  useShareInfoMutation,
+} from "@/store/api/profileApi";
 import logo from "@/assets/logo.svg";
 import loader from "@/page/home/vod_loader.gif";
 import OtherRank from "@/components/ranking/other-rank";
+import { useGetUserShareQuery } from "../home/services/homeApi";
 
 const ranges = [
   { value: "today", title: "今日" },
@@ -32,19 +36,39 @@ const Ranking = () => {
   const [isCopied2, setIsCopied2] = useState(false);
   const [cachedDownloadLink, setCachedDownloadLink] = useState(null);
   const [shareInfo] = useShareInfoMutation();
-  useEffect(() => {
-    const fetchShareInfo = async () => {
-      try {
-        const { data } = await shareInfo({ id });
-        const appDownloadLink = data?.data?.link;
-        setCachedDownloadLink(appDownloadLink);
-      } catch (error) {
-        console.error("Error fetching share info:", error);
-      }
-    };
 
-    fetchShareInfo();
-  }, [id]);
+  const { data: userData, isLoading: userLoading } = useGetUserProfileQuery(
+    id,
+    {
+      skip: !id,
+    }
+  );
+
+  const { data: shareData } = useGetUserShareQuery({
+    type: "ranking",
+    id: userData?.user_code,
+    qr_code: 0,
+  });
+  console.log(shareData);
+  // useEffect(() => {
+  //   const fetchShareInfo = async () => {
+  //     try {
+  //       const { data } = await shareInfo({ id });
+  //       const appDownloadLink = data?.data?.link;
+  //       setCachedDownloadLink(appDownloadLink);
+  //     } catch (error) {
+  //       console.error("Error fetching share info:", error);
+  //     }
+  //   };
+
+  //   fetchShareInfo();
+  // }, [id]);
+
+  useEffect(() => {
+    if (shareData?.data?.link) {
+      setCachedDownloadLink(shareData?.data?.content);
+    }
+  }, [shareData]);
 
   const isIOSApp = () => {
     return (
@@ -67,6 +91,23 @@ const Ranking = () => {
     }
   };
 
+  // const handleCopy2 = async () => {
+  //   // If we already have a cached link, use it
+  //   if (cachedDownloadLink) {
+  //     copyToClipboard(cachedDownloadLink);
+  //     return;
+  //   }
+
+  //   try {
+  //     const { data } = await shareInfo({ id });
+  //     const appDownloadLink = data?.data?.content;
+  //     setCachedDownloadLink(appDownloadLink);
+  //     copyToClipboard(appDownloadLink);
+  //   } catch (error) {
+  //     console.error("Error fetching share info:", error);
+  //   }
+  // };
+
   const handleCopy2 = async () => {
     // If we already have a cached link, use it
     if (cachedDownloadLink) {
@@ -74,14 +115,16 @@ const Ranking = () => {
       return;
     }
 
-    try {
-      const { data } = await shareInfo({ id });
-      const appDownloadLink = data?.data?.link;
-      setCachedDownloadLink(appDownloadLink);
-      copyToClipboard(appDownloadLink);
-    } catch (error) {
-      console.error("Error fetching share info:", error);
+    // If we have share data but no cached link yet
+    if (shareData?.data?.link) {
+      setCachedDownloadLink(shareData.data.content);
+      copyToClipboard(shareData.data.content);
+      return;
     }
+
+    // Fallback to a default link if no share data is available
+    const defaultLink = window.location.href;
+    copyToClipboard(defaultLink);
   };
 
   const copyToClipboard = (link: any) => {

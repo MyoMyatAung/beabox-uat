@@ -73,7 +73,7 @@ const OtherProfile = () => {
     },
     { skip: !id }
   );
-  console.log(shareData, "share data");
+  // console.log(shareData, "share data");
   const [decryptedCover, setDecryptedCover] = useState(defaultCover);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
   const [cachedDownloadLink, setCachedDownloadLink] = useState<string | null>(null);
@@ -198,7 +198,7 @@ const OtherProfile = () => {
     // If we have share data but no cached link yet
     if (shareData?.data?.link) {
       setCachedDownloadLink(shareData.data.content);
-      copyToClipboard(shareData.data.link);
+      copyToClipboard(shareData.data.content);
       return;
     }
 
