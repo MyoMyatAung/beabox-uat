@@ -57,16 +57,18 @@ const OtherProfile = () => {
   const [isCopied2, setIsCopied2] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
   const [showHeader, setShowHeader] = useState(false);
+  // console.log(user)
   const navigate = useNavigate();
   const {
     data: userData,
     isLoading: userLoading,
     refetch,
   } = useGetUserProfileQuery(id || "");
+  // console.log(userData)
   const { data: shareData } = useGetUserShareQuery(
     {
       type: "profile",
-      id: id,
+      id: userData?.user_code,
       qr_code: 0,
     },
     { skip: !id }
@@ -78,7 +80,7 @@ const OtherProfile = () => {
 
   useEffect(() => {
     if (shareData?.data?.link) {
-      setCachedDownloadLink(shareData.data.link);
+      setCachedDownloadLink(shareData?.data?.content);
     }
   }, [shareData]);
 
@@ -195,7 +197,7 @@ const OtherProfile = () => {
 
     // If we have share data but no cached link yet
     if (shareData?.data?.link) {
-      setCachedDownloadLink(shareData.data.link);
+      setCachedDownloadLink(shareData.data.content);
       copyToClipboard(shareData.data.link);
       return;
     }
