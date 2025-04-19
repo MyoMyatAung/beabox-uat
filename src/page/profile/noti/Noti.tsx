@@ -2,8 +2,6 @@ import { paths } from "@/routes/paths";
 // import { FaAngleLeft } from "react-icons/fa";
 import backButton from "../../../assets/backButton.svg";
 import { Link } from "react-router-dom";
-import SystemNotiLink from "@/components/profile/noti/system-noti-link";
-import BalanceNotiLink from "@/components/profile/noti/balance-noti-link";
 import OtherNoti from "@/components/profile/noti/other-noti";
 import { useGetNotiQuery } from "@/store/api/profileApi";
 import { dateForamtter } from "@/lib/utils";
@@ -14,8 +12,8 @@ import Balance from "@/assets/profile/balance1.png";
 
 const Noti = () => {
   const { data, isLoading } = useGetNotiQuery("");
-  if (isLoading) return <Loader />;
   // console.log(data, "notis");
+  if (isLoading) return <Loader />;
   return (
     <div className="w-full h-screen bg-[#16131C] px-5 flex flex-col items-center justify-between no-scrollbar">
       <div className="w-full">

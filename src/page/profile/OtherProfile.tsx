@@ -65,15 +65,17 @@ const OtherProfile = () => {
     refetch,
   } = useGetUserProfileQuery(id || "");
   // console.log(userData)
+  const code = userData?.data?.user_code ? userData?.data?.user_code : ""
+  console.log(code)
   const { data: shareData } = useGetUserShareQuery(
     {
       type: "profile",
-      id: userData?.user_code,
+      id: code,
       qr_code: 0,
     },
     { skip: !id }
   );
-  console.log(shareData, "share data");
+  // console.log(shareData, "share data");
   const [decryptedCover, setDecryptedCover] = useState(defaultCover);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
   const [cachedDownloadLink, setCachedDownloadLink] = useState<string | null>(null);
@@ -82,7 +84,7 @@ const OtherProfile = () => {
     if (shareData?.data?.link) {
       setCachedDownloadLink(shareData?.data?.content);
     }
-  }, [shareData]);
+  }, [shareData,code]);
 
   useEffect(() => {
     const loadAndDecryptCover = async () => {
@@ -198,7 +200,7 @@ const OtherProfile = () => {
     // If we have share data but no cached link yet
     if (shareData?.data?.link) {
       setCachedDownloadLink(shareData.data.content);
-      copyToClipboard(shareData.data.link);
+      copyToClipboard(shareData.data.content);
       return;
     }
 
