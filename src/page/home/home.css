@@ -493,6 +493,18 @@ html {
   flex-shrink: 0; */
 }
 
+.feed_add_comment input {
+  color: #777;
+  font-variant-numeric: lining-nums proportional-nums;
+  font-feature-settings: "dlig" on;
+  font-family: cnFont, sans-serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px; /* 125% */
+  letter-spacing: 0.16px;
+}
+
 .comment_arrow {
   border-radius: 100px;
   background: rgba(255, 255, 255, 0.04);
