@@ -6,7 +6,7 @@ import FollowerList from "./follow/follower-list";
 import FollowingList from "./follow/following-list";
 import { act, useState } from "react";
 
-const FollowTabs = () => {
+const FollowTabs = ({ isOpen }: any) => {
   const user_code = useSelector((state: any) => state.persist?.user?.id);
 
   const defaultFollowTab = useSelector(
@@ -66,7 +66,11 @@ const FollowTabs = () => {
           <FollowerList searchTerm={searchTerm} id={user_code} />
         </TabsContent>
         <TabsContent value="following">
-          <FollowingList searchTerm={searchTerm} id={user_code} />
+          <FollowingList
+            searchTerm={searchTerm}
+            id={user_code}
+            isOpen={isOpen}
+          />
         </TabsContent>
       </div>
     </Tabs>

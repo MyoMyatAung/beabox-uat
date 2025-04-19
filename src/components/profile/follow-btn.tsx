@@ -10,7 +10,7 @@ const FollowBtn = ({ id, followBack, refetch }: any) => {
   const user = useSelector((state: any) => state?.persist?.user);
   const followStatus =
     useSelector((state: any) => state?.follow?.status) ?? followBack;
-  const [changeFollowStatus] = useChangeFollowStatusMutation();
+  const [changeFollowStatus, { data }] = useChangeFollowStatusMutation();
 
   // Use Redux state if available, otherwise use prop
   const currentFollowState = followStatus[id] ?? followBack;
@@ -30,6 +30,7 @@ const FollowBtn = ({ id, followBack, refetch }: any) => {
         follow_user_id: id,
         status: newStatus ? "follow" : "unfollow",
       });
+      if (data?.status) refetch();
     } catch (error) {
       console.error("Error changing follow status:", error);
       dispatch(setFollowStatus({ userId: id, isFollowing: !newStatus })); // Revert on error

@@ -20,6 +20,8 @@ import logo from "@/assets/logo.svg";
 import backButton from "../../assets/backButton.svg";
 import Avatars from "@/components/avatar/avatars";
 import AvatarUpload from "@/components/avatar/avatar-upload";
+import ProfilePhotoUpload from "@/components/shared/profile-photo-upload";
+import ImageUpload from "@/components/profile/image-upload";
 
 const ProfileDetail = () => {
   const [showAvatar, setShowAvatar] = useState(false);
@@ -29,6 +31,7 @@ const ProfileDetail = () => {
   const user = useSelector((state: any) => state?.persist?.user);
   const profileData = useSelector((state: any) => state?.persist?.profileData);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
+
   const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
     const data = new Uint8Array(arrayBuffer);
     const maxSize = Math.min(decryptSize, data.length);
@@ -47,7 +50,7 @@ const ProfileDetail = () => {
     await refetch();
   };
 
-  console.log(data, "pddata");
+  // console.log(data?.data?.user_profile_review_status, "pddata");
   useEffect(() => {
     if (data?.status) dispatch(setProfileData(data?.data));
   }, []);
@@ -97,6 +100,8 @@ const ProfileDetail = () => {
     }, 2000);
   };
 
+  console.log(data?.data);
+
   return (
     <>
       {/* <TranLoader /> */}
@@ -121,6 +126,7 @@ const ProfileDetail = () => {
             setAvatarId={setAvatarId}
             srcImg={srcImg}
             setSrcImg={setSrcImg}
+            refetch={refetch}
           />
         ) : (
           <></>
@@ -133,15 +139,17 @@ const ProfileDetail = () => {
           <p className="text-[16px] mr-5">资料</p>
           <div></div>
         </div>
-        <AvatarUpload
+        <ProfilePhotoUpload
           imgurl={decryptedPhoto}
-          setShowAvatar={setShowAvatar}
-          avatarId={avatarId}
-          setAvatarId={setAvatarId}
           srcImg={srcImg}
-          setSrcImg={setSrcImg}
+          setShowAvatar={setShowAvatar}
+          reviewStatus={data?.data?.user_profile_review_status}
+          refetchHandler={refetchHandler}
+          exist={data?.data?.user_profile_exist}
+          refetch={refetch}
         />
         {/* <ImageUpload imgurl={decryptedPhoto} /> */}
+
         <div className="flex flex-col gap-7 my-7">
           <h1 className="text-[12px] text-[#888]">关于你</h1>
           <EditUsername
@@ -152,7 +160,7 @@ const ProfileDetail = () => {
             nickname={data?.data?.nickname}
             refetchHandler={refetchHandler}
           />
-          <EditGender />
+          <EditGender gender={data?.data?.gender} />
           <EditRegion province={data?.data?.province} city={data?.data?.city} />
           {/* <div className="text-[14px] flex items-center justify-between">
           <h1>Region</h1>

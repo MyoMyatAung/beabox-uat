@@ -14,6 +14,7 @@ import {
   setIsDrawerOpen,
 } from "@/store/slices/profileSlice";
 import { useEffect, useState } from "react";
+import { useGetFollowingListQuery } from "@/store/api/profileApi";
 function isWebView() {
   return (
     (window as any).webkit &&
@@ -23,16 +24,29 @@ function isWebView() {
 }
 const Stats = ({ followers, followings, likes, nickname }: any) => {
   const [vh, setVh] = useState("100vh");
+  const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
   const user = useSelector((state: any) => state?.persist?.user);
+
+  const user_code = useSelector((state: any) => state.persist?.user?.id);
+
+  const { data, isLoading, isFetching, refetch } = useGetFollowingListQuery({
+    user_id: user_code,
+    // search: searchTerm,
+    page: 1,
+  });
 
   useEffect(() => {
     // setVh(isMobile ? "95vh" : "100vh");
     setVh(isWebView() ? "100vh" : "100dvh");
   }, []);
 
+  useEffect(() => {
+    refetch();
+  }, [isOpen, refetch]);
+
   return (
-    <Drawer>
+    <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <div className="z-[1900] px-5 flex justify-between w-full max-w-xs items-center mx-auto">
         <div className="z-[1900] text-center">
           {user?.token ? (

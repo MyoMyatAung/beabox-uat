@@ -12,7 +12,7 @@ export const profileApi = createApi({
       const state = getState() as any;
       const accessToken = state.persist?.user?.token;
       const deviceInfo = getDeviceInfo();
-      
+
       headers.set("encrypt", "true");
       headers.set("Accept-Language", "cn");
       headers.set("X-Client-Version", "2001");
@@ -176,7 +176,9 @@ export const profileApi = createApi({
     }),
     getPosts: builder.query<any, any>({
       query: ({ id, page, sort }) => ({
-        url: convertToSecureUrl(`/user/post?user_id=${id}&page=${page}&sort=${sort}`),
+        url: convertToSecureUrl(
+          `/user/post?user_id=${id}&page=${page}&sort=${sort}`
+        ),
         method: "GET",
       }),
     }),
@@ -398,10 +400,17 @@ export const profileApi = createApi({
         }),
       }),
     }),
+    removeAvatar: builder.mutation({
+      query: () => ({
+        url: convertToSecureUrl(`/profile/remove-avatar`),
+        method: "POST",
+      }),
+    }),
   }),
 });
 
 export const {
+  useRemoveAvatarMutation,
   useCoverUploadMutation,
   useAvatarUploadMutation,
   useUserShareInfoQuery,
