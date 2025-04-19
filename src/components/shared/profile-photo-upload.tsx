@@ -76,7 +76,7 @@ const ProfilePhotoUpload = ({
           <div className="p-5">
             <h1 className="text-[16px] text-white text-center">头像</h1>
             <div className="space-y-5 mt-5">
-              <ImageUpload
+            {/* <ImageUpload
                 imgurl=""
                 reviewStatus={reviewStatus}
                 setIsOpen={setIsOpen}
@@ -86,7 +86,7 @@ const ProfilePhotoUpload = ({
                 profileUpload={profileUpload}
                 refetch={refetch}
               />
-              <Divider show={true} />
+              <Divider show={true} /> */}
               <div
                 className=""
                 onClick={() => {
