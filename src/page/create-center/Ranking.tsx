@@ -49,7 +49,6 @@ const Ranking = () => {
     id: userData?.user_code,
     qr_code: 0,
   });
-  console.log(shareData);
   // useEffect(() => {
   //   const fetchShareInfo = async () => {
   //     try {
