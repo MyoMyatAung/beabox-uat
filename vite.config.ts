@@ -38,7 +38,7 @@ export default defineConfig({
     },
   },
   // produciton
-  base: 'https://fygv3j.rrgsih.cn/',
+  base: 'https://if26.rrgsih.cn/',
   // development
   // base: '/',
   define: {
