@@ -52,7 +52,6 @@ const Ranking = () => {
     id: code,
     qr_code: 0,
   });
-  console.log(code)
   // useEffect(() => {
   //   const fetchShareInfo = async () => {
   //     try {
