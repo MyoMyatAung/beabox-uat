@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import "../page/explore/explore.css";
 import logo from "../assets/alertlogo.jpeg";
+import closeIcon from "../assets/close.png";
 import { useDispatch } from "react-redux";
 import { setPlay } from "@/page/home/services/playSlice";
 
@@ -65,6 +66,12 @@ const AlertRedirect: React.FC<AlertRedirectProps> = ({ setShowAlert, app_downloa
     setShowAlert(false);
     dispatch(setPlay(true));
   };
+
+  const onCloseClick = () => {
+    setShowAlert(false);
+    dispatch(setPlay(true));
+  };
+
   // useEffect(() => {
   //   // Wait until the alert is visible before adding the event listener
   //   if (isVisible) {
@@ -90,7 +97,19 @@ const AlertRedirect: React.FC<AlertRedirectProps> = ({ setShowAlert, app_downloa
   return (
     <div className=" bg-black/80 w-screen flex flex-col gap-[20px] justify-center items-center fixed top-0 z-[9999] alert-height">
       <div className="absolute bottom-0 w-full bg-alert p-5" ref={alertRef}>
-        <h1 className="alert-head-title">强烈推荐下载APP观看</h1>
+        {isWebClip() ? (
+          <div className="flex justify-between items-center">
+            <h1 className="alert-head-title">苹果商店版已上线，建议立刻安装</h1>
+            <button 
+              onClick={onCloseClick} 
+              className="text-white"
+            >
+              <img src={closeIcon} alt="Close" width="16" height="16" />
+            </button>
+          </div>
+        ) : (
+          <h1 className="alert-head-title">强烈推荐下载APP观看</h1>
+        )}
         <div className="flex flex-col mt-8 gap-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -106,7 +125,7 @@ const AlertRedirect: React.FC<AlertRedirectProps> = ({ setShowAlert, app_downloa
                 target="_blank"
                 className="alert-body-btn"
               >
-                打开
+                {isWebClip() ? "前往安装" : "打开"}
               </a>
             </div>
           </div>
