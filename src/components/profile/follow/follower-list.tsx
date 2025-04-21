@@ -16,11 +16,16 @@ const FollowerList = ({ searchTerm, id }: any) => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [totalData, setTotalData] = useState<number>(0);
-  const user_code = useSelector((state: any) => state.persist?.user?.id);
-  const { data, isLoading, isFetching, refetch } = useGetFollowerListQuery({
-    user_id: id,
-    page,
-  });
+  const user = useSelector((state: any) => state?.persist?.user) || "";
+  const { data, isLoading, isFetching, refetch } = useGetFollowerListQuery(
+    {
+      user_id: id,
+      page,
+    },
+    {
+      skip: !user,
+    }
+  );
 
   const { data: filterdata, isLoading: filterLoading } = useFilterFollowerQuery(
     {
@@ -98,7 +103,11 @@ const FollowerList = ({ searchTerm, id }: any) => {
         <>
           {filterdata?.data?.length ? (
             filterdata?.data?.map((follower: any) => (
-              <FollowCard key={follower.user_code} data={follower} refetch={refetch} />
+              <FollowCard
+                key={follower.user_code}
+                data={follower}
+                refetch={refetch}
+              />
             ))
           ) : (
             <div className="flex justify-center mt-[40%]">
@@ -116,10 +125,23 @@ const FollowerList = ({ searchTerm, id }: any) => {
           {followers?.length ? (
             <div className="flex flex-col gap-3">
               {followers?.map((follower: any) => (
-                <FollowCard key={follower.user_code} data={follower} refetch={refetch} />
+                <FollowCard
+                  key={follower.user_code}
+                  data={follower}
+                  refetch={refetch}
+                />
               ))}
-              <div ref={loadMoreRef} className="loading-indicator flex justify-center py-4">
-                {isFetching && <img src={Loader} className="w-[70px] h-[70px]" alt="Loading" />}
+              <div
+                ref={loadMoreRef}
+                className="loading-indicator flex justify-center py-4"
+              >
+                {isFetching && (
+                  <img
+                    src={Loader}
+                    className="w-[70px] h-[70px]"
+                    alt="Loading"
+                  />
+                )}
               </div>
             </div>
           ) : (
