@@ -63,8 +63,8 @@ const UserFeed: React.FC<UserFeedProps> = ({ config,setUserPers }) => {
 
   const handlStoreTags = () => {
     dispatch(setuserFeedTags(selectedTags));
-    // localStorage.setItem("isFirstTimeUser", "false");
-    // setUserPers(false)
+    localStorage.setItem("isFirstTimeUser", "false");
+    setUserPers(false)
   };
 
   const handleStoreText = () => {
