@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+SC&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -643,10 +643,8 @@ input:checked + .slider:before {
 }
 
 .home-normal-text-shadow {
-
   text-shadow: 0px 1px 1px #000000;
 }
-
 
 .home-normal-text {
   text-shadow: 0 1px 1px #000000;
@@ -790,8 +788,14 @@ input:checked + .slider:before {
 
 /* In your global CSS file */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-fade-in {
@@ -806,4 +810,29 @@ input {
 input:focus {
   outline: none;
   box-shadow: none !important;
+}
+
+.user_feed_ques {
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.user_feed_ques_btn {
+  border-radius: 16px;
+  background: linear-gradient(
+      90deg,
+      rgba(255, 178, 224, 0.32) 0%,
+      rgba(205, 62, 255, 0.32) 100%
+    ),
+    rgba(205, 62, 255, 0.32);
+}
+
+.user_feed_ques_tags {
+  border-radius: 12px;
+  background: rgba(179, 179, 179, 0.32);
+}
+
+user_feed_ques_tags_btn {
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.12);
 }
