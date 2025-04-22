@@ -50,9 +50,10 @@ const UserFeedSet: React.FC<UserFeedProps> = ({}) => {
     "i love mia khalifa",
   ]);
   const [showProgress, setShoowProgress] = useState(false);
-  // useEffect(() => {
-  //   setHotText(config?.data?.personalize_hot_text);
-  // }, [config,hotText]);
+  useEffect(() => {
+    setHotText(config?.data?.personalize_hot_text);
+    settags(config?.data?.personalize_hot_tag)
+  }, [config,hotText]);
   const [inputValue, setInputValue] = useState("");
 
   const handleSuggestionClick = (text: string) => {
