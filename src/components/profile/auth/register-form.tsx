@@ -146,7 +146,7 @@ const RegisterForm = ({ setIsOpen }: any) => {
   }, [rerror]);
   return (
     <>
-      {isLoading ? (
+      {isLoading && !show验证码 ? (
         <div className="h-screen bg-[#00000099] fixed top-0 left-0 w-full z-[9999] flex justify-center items-center">
           <div className="bg-[#000000E5] p-1 rounded">
             <img src={loader} alt="" className="w-14" />
