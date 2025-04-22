@@ -147,8 +147,10 @@ const RegisterForm = ({ setIsOpen }: any) => {
   return (
     <>
       {isLoading ? (
-        <div className="h-screen bg-[#000000E5] fixed top-0 left-0 w-full z-[9999] flex justify-center items-center">
-          <img src={loader} alt="" className="w-12" />
+        <div className="h-screen bg-[#00000099] fixed top-0 left-0 w-full z-[9999] flex justify-center items-center">
+          <div className="bg-[#000000E5] p-1 rounded">
+            <img src={loader} alt="" className="w-14" />
+          </div>
         </div>
       ) : (
         <></>
