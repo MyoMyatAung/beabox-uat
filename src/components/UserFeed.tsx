@@ -9,9 +9,9 @@ interface UserFeedProps {
   setUserPers: any;
 }
 
-const UserFeed: React.FC<UserFeedProps> = ({ config,setUserPers }) => {
+const UserFeed: React.FC<UserFeedProps> = ({ config, setUserPers }) => {
   const dispatch = useDispatch();
-  console.log(config)
+  console.log(config);
   const { userFeedText, userFeedTags } = useSelector(
     (state: any) => state.explore
   );
@@ -64,7 +64,7 @@ const UserFeed: React.FC<UserFeedProps> = ({ config,setUserPers }) => {
   const handlStoreTags = () => {
     dispatch(setuserFeedTags(selectedTags));
     localStorage.setItem("isFirstTimeUser", "false");
-    setUserPers(false)
+    setUserPers(false);
   };
 
   const handleStoreText = () => {
@@ -92,6 +92,11 @@ const UserFeed: React.FC<UserFeedProps> = ({ config,setUserPers }) => {
     }, 1500); // simulate delay
   };
   console.log(config);
+
+  const skipFeed = () => {
+    localStorage.setItem("isFirstTimeUser", "false");
+    setUserPers(false);
+  };
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center z-[9999] font-['Noto_Sans_SC',sans-serif]">
       <div className="w-full h-full relative overflow-hidden">
@@ -105,6 +110,11 @@ const UserFeed: React.FC<UserFeedProps> = ({ config,setUserPers }) => {
         >
           <source src={splashVideo} type="video/mp4" />
         </video>
+
+        {/* skip */}
+        <div onClick={() => skipFeed()} className=" absolute z-[99994] right-4 top-6">
+          <h1 className=" text-white">跳过</h1>
+        </div>
 
         {/* Blur Overlay */}
         <div className="absolute inset-0 backdrop-blur-md"></div>
