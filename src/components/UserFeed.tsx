@@ -11,6 +11,7 @@ interface UserFeedProps {
 
 const UserFeed: React.FC<UserFeedProps> = ({ config,setUserPers }) => {
   const dispatch = useDispatch();
+  console.log(config)
   const { userFeedText, userFeedTags } = useSelector(
     (state: any) => state.explore
   );
@@ -62,8 +63,8 @@ const UserFeed: React.FC<UserFeedProps> = ({ config,setUserPers }) => {
 
   const handlStoreTags = () => {
     dispatch(setuserFeedTags(selectedTags));
-    localStorage.setItem("isFirstTimeUser", "false");
-    setUserPers(false)
+    // localStorage.setItem("isFirstTimeUser", "false");
+    // setUserPers(false)
   };
 
   const handleStoreText = () => {
