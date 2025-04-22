@@ -650,15 +650,20 @@ const Results: React.FC<ResultsProps> = ({}) => {
                 </div>
               )}
 
-              {isLoading && data?.data?.list?.length !== 1 && <div
-                className="fex justify-center items-center py-4"
-              >
+              <div className="flex justify-center items-center py-4">
                 <img
+                  style={{
+                    visibility:
+                      isLoading && data?.data?.list.length !== 0
+                        ? "visible"
+                        : "hidden",
+                  }}
                   src={loader}
                   className="w-[50px] h-[50px] m-auto"
                   alt="Loading more"
                 />
-              </div>}
+              </div>
+
               {data?.data?.list.length === 0 &&
                 (currentPage === 1 ? (
                   <div
@@ -672,7 +677,9 @@ const Results: React.FC<ResultsProps> = ({}) => {
                     </div>
                   </div>
                 ) : (
-                  <div className={`flex justify-center items-center py-[20px]`}>
+                  <div
+                    className={`flex justify-center items-center -mt-[70px] py-[20px]`}
+                  >
                     <div>
                       <h1 className="text-white/60">搜索结果为空</h1>
                     </div>
