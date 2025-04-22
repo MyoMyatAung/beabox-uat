@@ -133,6 +133,12 @@ const LoginForm = ({ setIsOpen }: any) => {
   //   }
   // };
 
+  const openAgain = () =>
+    setTimeout(async () => {
+      await getCaptcha("");
+      setShow验证码(true);
+    }, 1000);
+
   const errorHandler = async () => {
     // switch (lerror?.originalStatus) {
     //   case 401:
@@ -159,7 +165,9 @@ const LoginForm = ({ setIsOpen }: any) => {
       setShow验证码(false);
       setError("验证码错误");
       setCaptcha("");
+      // openAgain();
       await getCaptcha("");
+      console.log(data, "data");
       setShow验证码(true);
     }
   };
