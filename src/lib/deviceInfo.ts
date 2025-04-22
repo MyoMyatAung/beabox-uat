@@ -11,7 +11,7 @@ interface DeviceInfo {
 }
 
 // Application version - single source of truth
-const APP_VERSION = '1.1.4.6';
+const APP_VERSION = '1.1.4.8';
 
 /**
  * Generate a UUID v4
