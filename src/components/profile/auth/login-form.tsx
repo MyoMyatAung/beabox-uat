@@ -45,6 +45,7 @@ const LoginForm = ({ setIsOpen }: any) => {
   const [show验证码, setShow验证码] = useState(false);
   const [captcha, setCaptcha] = useState("");
   const [error, setError] = useState("");
+  const [isLoad, setIsLoad] = useState(false);
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -62,6 +63,7 @@ const LoginForm = ({ setIsOpen }: any) => {
   }
 
   const handleVerify = async (e: any) => {
+    setIsLoad(true);
     setShow验证码(false);
     e.stopPropagation();
     e.preventDefault();
@@ -72,6 +74,7 @@ const LoginForm = ({ setIsOpen }: any) => {
       captcha,
       captcha_key: data?.data?.captcha_key,
     });
+    setIsLoad(false);
     if (loginData?.status) {
       dispatch(setUser(loginData?.data));
       dispatch(setIsDrawerOpen(false));
@@ -80,6 +83,7 @@ const LoginForm = ({ setIsOpen }: any) => {
       setShow验证码(false);
       dispatch(setIsDrawerOpen(false));
       setIsOpen(false);
+      setIsLoad(false);
     }
   };
 
@@ -92,9 +96,11 @@ const LoginForm = ({ setIsOpen }: any) => {
     if (lerror?.originalStatus == 422) {
       setShow验证码(false);
       setError("验证码错误");
+      setIsLoad(true);
       setCaptcha("");
       await getCaptcha("");
       setShow验证码(true);
+      setIsLoad(false);
     }
   };
 
@@ -104,8 +110,8 @@ const LoginForm = ({ setIsOpen }: any) => {
 
   return (
     <>
-      {(captchaLoading && !show验证码) || captchaLoading ? (
-        <div className="h-screen bg-[#00000099] fixed bottom-0 left-0 w-full z-[9999] flex justify-center items-center">
+      {isLoad ? (
+        <div className="h-screen bg-[#00000099] fixed top-0 left-0 w-full z-[9999] flex justify-center items-center">
           <div className="bg-[#000000E5] p-1 rounded">
             <img src={loader} alt="" className="w-14" />
           </div>
@@ -113,7 +119,6 @@ const LoginForm = ({ setIsOpen }: any) => {
       ) : (
         <></>
       )}
-
       <div className="px-5">
         {isError ? <AuthError message={error} /> : <></>}
         <div className="flex justify-between items-center">
@@ -225,8 +230,10 @@ const LoginForm = ({ setIsOpen }: any) => {
                 }
                 // type="submit"
                 onClick={async () => {
+                  setIsLoad(true);
                   await getCaptcha("");
                   setShow验证码(true);
+                  setIsLoad(false);
                 }}
                 className="w-full gradient-bg rounded-lg hover:gradient-bg"
               >
