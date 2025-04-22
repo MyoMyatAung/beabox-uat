@@ -1,7 +1,7 @@
-// wrong user name or passwor
-// 用户名或密码错误
+// // wrong user name or passwor
+// // 用户名或密码错误
 
-// v code error 验证码错误
+// // v code error 验证码错误
 
 import { paths } from "@/routes/paths";
 import { Eye, EyeOff, X } from "lucide-react";
@@ -39,15 +39,17 @@ import logo from "@/assets/logo.svg";
 import AuthError from "@/components/shared/auth-error";
 import TranLoader from "@/components/shared/tran-loader";
 import { log } from "console";
+import Portal from "./Portal";
 const LoginForm = ({ setIsOpen }: any) => {
   const [showPassword, setShowPassword] = useState(false);
   const [login, { data: ldata, isLoading, error: lerror }] = useLoginMutation();
   const dispatch = useDispatch();
   const authErr = localStorage.getItem("auth-error") || "请输入验证码";
-  console.log(lerror, "lerror ");
+
   const [getCaptcha, { data, isLoading: captchaLoading }] =
     useGetCaptchaMutation();
   const [show验证码, setShow验证码] = useState(false);
+  const [flashLoading, setflashLoading] = useState(false);
   const [captcha, setCaptcha] = useState("");
   const [error, setError] = useState("");
 
@@ -67,10 +69,12 @@ const LoginForm = ({ setIsOpen }: any) => {
   }
 
   const handleVerify = async (e: any) => {
+    setflashLoading(true);
     setShow验证码(false);
     e.stopPropagation();
     e.preventDefault();
     const { emailOrPhone, password } = form.getValues();
+
     const { data: loginData } = await login({
       username: emailOrPhone,
       password,
@@ -83,8 +87,10 @@ const LoginForm = ({ setIsOpen }: any) => {
       dispatch(setShowAlert(true));
       dispatch(setAlertText(loginData?.message));
       setShow验证码(false);
+      setflashLoading(false);
       setIsOpen(false);
     }
+
     // if (!lerror) {
     //   dispatch(setUser(loginData?.data));
     //   dispatch(setIsDrawerOpen(false));
@@ -157,17 +163,23 @@ const LoginForm = ({ setIsOpen }: any) => {
     //     break;
     // }
     if (lerror?.originalStatus == 401) {
+      setflashLoading(false);
       setShow验证码(false);
       setError("用户名或密码错误");
       setCaptcha("");
     }
     if (lerror?.originalStatus == 422) {
+      setError(""); // Clear previous error first
+
+      setflashLoading(true);
       setShow验证码(false);
-      setError("验证码错误");
+
       setCaptcha("");
       // openAgain();
       await getCaptcha("");
-      console.log(data, "data");
+      setflashLoading(false);
+      setError("验证码错误");
+
       setShow验证码(true);
     }
   };
@@ -180,15 +192,15 @@ const LoginForm = ({ setIsOpen }: any) => {
     // #00000099
     // 000000E5
     <>
-      {(isLoading && !show验证码) || captchaLoading ? (
-        <div className="h-screen bg-[#00000099] fixed top-0 left-0 w-full z-[9999] flex justify-center items-center">
-          <div className="bg-[#000000E5] p-1 rounded">
-            <img src={loader} alt="" className="w-14" />
+      {(isLoading && !show验证码) || captchaLoading || flashLoading ? (
+        <Portal>
+          <div className="fixed inset-0 z-[9999] bg-[#00000099] flex justify-center items-center">
+            <div className="bg-[#000000E5] p-1 rounded">
+              <img src={loader} alt="Loading" className="w-14" />
+            </div>
           </div>
-        </div>
-      ) : (
-        <></>
-      )}
+        </Portal>
+      ) : null}
 
       <div className="px-5">
         {error ? <AuthError message={error} /> : <></>}
@@ -339,7 +351,10 @@ const LoginForm = ({ setIsOpen }: any) => {
                   <div className="flex justify-center items-center gap-1 h-[36px]">
                     <input
                       value={captcha}
-                      onChange={(e) => setCaptcha(e.target.value)}
+                      onChange={(e) => {
+                        setCaptcha(e.target.value);
+                        setError(""); // Clear error when typing
+                      }}
                       placeholder="输入验证码"
                       className="bg-[#524D5C] w-[70%] px-[10px] h-full outline-none"
                     />
