@@ -108,16 +108,16 @@ const VideoFeed = ({
   useEffect(() => {
     if (videos.length > 0) {
       // Find the index of the video with currentActiveId
-      const activeVideoIndex = videos.findIndex(
-        (video: any) => video.post_id === currentActiveId
-      );
+      // const activeVideoIndex = videos.findIndex(
+      //   (video: any) => video.post_id === currentActiveId
+      // );
 
       // If the video with currentActiveId exists, move it to the beginning
       let initialVideos = [...videos];
-      if (activeVideoIndex !== -1) {
-        const activeVideo = initialVideos.splice(activeVideoIndex, 1)[0];
-        initialVideos.unshift(activeVideo);
-      }
+      // if (activeVideoIndex !== -1) {
+      //   const activeVideo = initialVideos.splice(activeVideoIndex, 1)[0];
+      //   initialVideos.unshift(activeVideo);
+      // }
 
       // Slice the first `videosPerLoad` videos for initial render
 
@@ -151,6 +151,8 @@ const VideoFeed = ({
   //   }
   // }, [videos]); // Runs only once on mount
 
+  console.log(currentActiveId);
+
   useEffect(() => {
     const handlePopState = () => {
       setShowVideoFeed(false);
@@ -163,18 +165,47 @@ const VideoFeed = ({
     };
   }, []);
 
-  // Scroll to the first current post when the component is mounted
   useEffect(() => {
-    const container = videoContainerRef.current;
-    if (container && currentActiveId) {
-      const activeElement = container.querySelector(
-        `[data-post-id="${currentActiveId}"]`
-      );
-      if (activeElement) {
-        activeElement.scrollIntoView({ block: "center" });
+    if (!currentActiveId) return;
+
+    const observer = new MutationObserver((mutations, obs) => {
+      const container = videoContainerRef.current;
+      if (container) {
+        const activeElement = container.querySelector(
+          `[data-post-id="${currentActiveId}"]`
+        );
+
+        if (activeElement) {
+          activeElement.scrollIntoView({ block: "center" });
+          obs.disconnect(); // Stop observing once we've found and scrolled to the element
+        }
       }
-    }
-  }, [currentActiveId]);
+    });
+
+    // Start observing the document with the configured parameters
+    observer.observe(document, {
+      childList: true,
+      subtree: true,
+    });
+
+    return () => observer.disconnect();
+  }, [currentActiveId, videosToRender]); // Add videosToRender as dependency
+
+  // Scroll to the first current post when the component is mounted
+  // useEffect(() => {
+  //   const container = videoContainerRef.current;
+  //   console.log(container);
+  //   if (container && currentActiveId) {
+  //     const activeElement = container.querySelector(
+  //       `[data-post-id="${currentActiveId}"]`
+  //     );
+
+  //     console.log(activeElement);
+  //     if (activeElement) {
+  //       activeElement.scrollIntoView({ block: "center" });
+  //     }
+  //   }
+  // }, [currentActiveId]);
 
   useEffect(() => {
     const container = videoContainerRef.current;
