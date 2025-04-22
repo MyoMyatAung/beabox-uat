@@ -151,7 +151,6 @@ const VideoFeed = ({
   //   }
   // }, [videos]); // Runs only once on mount
 
-  console.log(currentActiveId);
 
   useEffect(() => {
     const handlePopState = () => {
