@@ -146,7 +146,7 @@ const RegisterForm = ({ setIsOpen }: any) => {
   }, [rerror]);
   return (
     <>
-      {isLoading && !show验证码 ? (
+      {(isLoading && !show验证码) || isLoading ? (
         <div className="h-screen bg-[#00000099] fixed top-0 left-0 w-full z-[9999] flex justify-center items-center">
           <div className="bg-[#000000E5] p-1 rounded">
             <img src={loader} alt="" className="w-14" />
@@ -283,7 +283,8 @@ const RegisterForm = ({ setIsOpen }: any) => {
                 }}
                 className="w-full gradient-bg rounded-lg hover:gradient-bg"
               >
-                {isLoading ? <SmallLoader /> : "确认"}
+                {/* {isLoading ? <SmallLoader /> : "确认"} */}
+                确认
                 {/* Continue */}
               </Button>
             </div>
@@ -332,7 +333,8 @@ const RegisterForm = ({ setIsOpen }: any) => {
                     type="submit"
                     className="w-full gradient-bg hover:gradient-bg text-white rounded-lg"
                   >
-                    {registerLoading ? <SmallLoader /> : "确认"}
+                    {/* {registerLoading ? <SmallLoader /> : "确认"} */}
+                    确认
                     {/* Verify */}
                   </Button>
                 </div>
