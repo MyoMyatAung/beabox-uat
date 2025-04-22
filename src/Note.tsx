@@ -1,226 +1,322 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Horin, Play } from "@/assets/profile";
-import { FaHeart } from "react-icons/fa";
-import { MdWatchLater } from "react-icons/md";
-import { useDispatch, useSelector } from "react-redux";
-import LikedVideos from "./video/liked-videos";
-import HistoryVideos from "./video/history-videos";
-import { LuTally3 } from "react-icons/lu";
-import { setDefaultTab } from "@/store/slices/persistSlice";
-import CreatedVideo2 from "./video/create-video2";
+// wrong user name or passwor
+// 用户名或密码错误
+
+// v code error 验证码错误
+
+import { paths } from "@/routes/paths";
+import { Eye, EyeOff, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
+import { LoginFormData, loginSchema } from "@/page/auth/schema";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useState } from "react";
-import { setSort } from "@/store/slices/profileSlice";
-import { Check } from "lucide-react";
-import upsort from "@/assets/upsort.svg";
-
-const VideoTabs = () => {
-  const user = useSelector((state: any) => state?.persist?.user);
-  const sort = useSelector((state: any) => state.profile.sort);
-  const [isOpen, setIsOpen] = useState(false);
-
-  const defaultTab = useSelector((state: any) => state?.persist?.defaultTab);
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { useGetCaptchaMutation, useLoginMutation } from "@/store/api/authApi";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/store/slices/persistSlice";
+import loader from "@/page/home/vod_loader.gif";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  setAlertText,
+  setAuthToggle,
+  setIsDrawerOpen,
+  setShowAlert,
+} from "@/store/slices/profileSlice";
+import AuthError from "@/components/shared/auth-error";
+const LoginForm = ({ setIsOpen }: any) => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [login, { data: ldata, isLoading, error: lerror, isError }] =
+    useLoginMutation();
   const dispatch = useDispatch();
+  const [getCaptcha, { data, isLoading: captchaLoading }] =
+    useGetCaptchaMutation();
+  const [show验证码, setShow验证码] = useState(false);
+  const [captcha, setCaptcha] = useState("");
+  const [error, setError] = useState("");
 
-  const handleTabChange = (value: string) => {
-    // console.log("Current tab value:", value);
-    dispatch(setDefaultTab(value));
+  const form = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      emailOrPhone: "",
+      password: "",
+    },
+  });
+  const { watch } = form;
+  const emailOrPhoneValue = watch("emailOrPhone");
+  const passwordValue = watch("password");
+
+  async function onSubmit() {
+    // if (data?.status) setShow验证码(true);
+  }
+
+  const handleVerify = async (e: any) => {
+    setShow验证码(false);
+    e.stopPropagation();
+    e.preventDefault();
+    const { emailOrPhone, password } = form.getValues();
+    const { data: loginData } = await login({
+      username: emailOrPhone,
+      password,
+      captcha,
+      captcha_key: data?.data?.captcha_key,
+    });
+    if (loginData?.status) {
+      dispatch(setUser(loginData?.data));
+      dispatch(setIsDrawerOpen(false));
+      dispatch(setShowAlert(true));
+      dispatch(setAlertText(loginData?.message));
+      setShow验证码(false);
+      dispatch(setIsDrawerOpen(false));
+      setIsOpen(false);
+    }
   };
+
+  const errorHandler = async () => {
+    if (lerror?.originalStatus == 401) {
+      setShow验证码(false);
+      setError("用户名或密码错误");
+      setCaptcha("");
+    }
+    if (lerror?.originalStatus == 422) {
+      setShow验证码(false);
+      setError("验证码错误");
+      setCaptcha("");
+      await getCaptcha("");
+      setShow验证码(true);
+    }
+  };
+
+  useEffect(() => {
+    errorHandler();
+  }, [lerror]);
+
   return (
-    <Tabs
-      defaultValue={user?.token ? defaultTab : "liked"}
-      className="py-5"
-      onValueChange={handleTabChange}
-    >
-      <TabsList className="grid w-full grid-cols-3 z-[1600] bg-transparent sticky top-[100px]">
-        {user?.token ? (
-          defaultTab == "upload" ? (
-            <TabsTrigger
-              className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
-              // onClick={() => dispatch(setDefaultTab("upload"))}
-              value="upload"
-              asChild
-            >
-              <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-                <DropdownMenuTrigger asChild>
-                  <span className="flex items-center gap-2 flex-col justify-center">
-                    <div className="w-[52px] h-[3px] bg-transparent"></div>
+    <>
+      {(isLoading && !show验证码) || captchaLoading ? (
+        <div className="h-screen bg-[#00000099] fixed bottom-0 left-0 w-full z-[9999] flex justify-center items-center">
+          <div className="bg-[#000000E5] p-1 rounded">
+            <img src={loader} alt="" className="w-14" />
+          </div>
+        </div>
+      ) : (
+        <></>
+      )}
 
-                    {isOpen ? (
-                      <img src={upsort} alt="" />
+      <div className="px-5">
+        {isError ? <AuthError message={error} /> : <></>}
+        <div className="flex justify-between items-center">
+          <div className="px-3"></div>
+          <p className="text-[18px]">
+            登录
+            {/* Login */}
+          </p>
+          <div
+            onClick={() => {
+              dispatch(setIsDrawerOpen(false));
+              if (setIsOpen) setIsOpen(false);
+            }}
+            className="bg-[#FFFFFF0A] p-2 rounded-full cursor-pointer"
+          >
+            <X size={18} />
+          </div>
+        </div>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-8 pb-10 pt-5"
+          >
+            <FormField
+              control={form.control}
+              name="emailOrPhone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <>
+                      <label htmlFor="" className="text-[14px] text-[#888]">
+                        用户名
+                      </label>
+                      <div className="relative">
+                        <input
+                          className="block w-full py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none "
+                          placeholder="输入用户名"
+                          {...field}
+                        />
+                        {field.value && (
+                          <div
+                            className="w-6 h-6 rounded-full flex justify-center items-center bg-[#FFFFFF1F] absolute right-0 bottom-2"
+                            onClick={() => {
+                              field.onChange("");
+                            }}
+                          >
+                            <X size={9} />
+                          </div>
+                        )}
+                        <div className="w-full h-[1px] bg-[#FFFFFF0A]"></div>
+                      </div>
+                    </>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem className="relative">
+                  <FormControl>
+                    <>
+                      <label htmlFor="" className="text-[14px] text-[#777]">
+                        密码
+                      </label>
+                      <div className="relative">
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          className="block w-full py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none "
+                          placeholder="输入您的密码"
+                          {...field}
+                          maxLength={25}
+                        />
+                        <button
+                          className=" absolute right-0 bottom-2"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            setShowPassword(!showPassword);
+                          }}
+                        >
+                          {showPassword ? (
+                            <Eye className="w-[18px]" />
+                          ) : (
+                            <EyeOff className="w-[18px]" />
+                          )}
+                        </button>
+
+                        <div className="w-full h-[1px] bg-[#FFFFFF0A]"></div>
+                      </div>
+                    </>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="">
+              <Button
+                disabled={
+                  isLoading ||
+                  captchaLoading ||
+                  !emailOrPhoneValue ||
+                  !passwordValue ||
+                  passwordValue?.length < 8 ||
+                  passwordValue?.length > 25
+                }
+                // type="submit"
+                onClick={async () => {
+                  await getCaptcha("");
+                  setShow验证码(true);
+                }}
+                className="w-full gradient-bg rounded-lg hover:gradient-bg"
+              >
+                {/* {captchaLoading ? <SmallLoader /> : "登录"} */}
+                登录
+              </Button>
+              <div className="flex justify-center">
+                <Link
+                  to={paths.forgot_password}
+                  className="text-center text-[14px] mt-5"
+                >
+                  忘记密码？
+                </Link>
+              </div>
+            </div>
+            <Dialog open={show验证码} onOpenChange={setShow验证码}>
+              <DialogContent className="bg-[#393641] z-[3000] border-0 shadow-lg rounded-lg max-w-[300px]">
+                <DialogHeader>
+                  <DialogTitle className="text-white text-[16px]">
+                    {/* 验证码 */}
+                    验证码
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-6 w-full">
+                  <div className="flex justify-center items-center gap-1 h-[36px]">
+                    <input
+                      value={captcha}
+                      onChange={(e) => setCaptcha(e.target.value)}
+                      placeholder="输入验证码"
+                      className="bg-[#524D5C] w-[70%] px-[10px] h-full outline-none"
+                    />
+
+                    <img
+                      src={data?.data?.img}
+                      className="w-[30%]  h-full  object-center outline-none border-gray-400"
+                      alt=""
+                    />
+                  </div>
+                  {/* <div
+                  onClick={async (e) => {
+                    e.stopPropagation();
+                    await getCaptcha("");
+                    setShow验证码(true);
+                    // console.log("get new");
+                  }}
+                  className={`flex items-center gap-2`}
+                >
+                  <RotateCcw
+                    className={`${captchaLoading ? "animate-spin" : ""}`}
+                    size={14}
+                  />
+                  <p className="text-[12px] text-[#bbb]">刷新</p>
+                </div> */}
+                  <Button
+                    onClick={handleVerify}
+                    disabled={isLoading || captchaLoading || !captcha?.length}
+                    type="submit"
+                    className="w-full gradient-bg hover:gradient-bg text-white rounded-lg"
+                  >
+                    {/* {registerLoading ? "loading..." : "Verify"} */}
+                    {/* {isLoading ? (
+                      <img src={loader} alt="" className="w-12" />
                     ) : (
-                      <Horin active={defaultTab == "upload" ? true : false} />
-                    )}
-                    {/*  */}
-
-                    <div
-                      className={`w-[52px] h-[3px] ${
-                        defaultTab == "upload" && "bg-white"
-                      }`}
-                    ></div>
-                  </span>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-[97px] bg-[#252525EB] border-0">
-                  <DropdownMenuGroup>
-                    <DropdownMenuItem>
-                      <div
-                        className="w-full flex items-center justify-between text-white"
-                        onClick={() => dispatch(setSort("created_at"))}
-                      >
-                        <p className="text-white text-[12px]">最新</p>
-                        {sort == "created_at" ? <Check /> : <></>}
-                      </div>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <div
-                        className="w-full flex items-center justify-between text-white"
-                        onClick={() => dispatch(setSort("score"))}
-                      >
-                        <p className="text-white text-[12px]">热门</p>
-                        {sort == "score" ? <Check /> : <></>}
-                      </div>
-                    </DropdownMenuItem>
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </TabsTrigger>
-          ) : (
-            <TabsTrigger
-              className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
-              // onClick={() => dispatch(setDefaultTab("upload"))}
-              value="upload"
-              asChild
-            >
-              <span className="flex items-center gap-2 flex-col justify-center">
-                <div className="w-[52px] h-[3px] bg-transparent"></div>
-                <Horin active={defaultTab == "upload" ? true : false} />
-                <div
-                  className={`w-[52px] h-[3px] ${
-                    defaultTab == "upload" && "bg-white"
-                  }`}
-                ></div>
-              </span>
-            </TabsTrigger>
-          )
-        ) : (
-          <></>
-        )}
-        <TabsTrigger
-          className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
-          value="liked"
-          // onClick={() => dispatch(setDefaultTab("liked"))}
-        >
-          <span className="flex items-center gap-2 flex-col justify-center">
-            <div className={`w-[52px] h-[3px] bg-transparent`}></div>
-            <FaHeart />
-            <div
-              className={`w-[52px] h-[3px] ${
-                defaultTab == "liked" && "bg-white"
-              }`}
-            ></div>
-            {/* 已点赞视频 */}
-          </span>
-        </TabsTrigger>
-        <TabsTrigger
-          className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
-          value="history"
-          // onClick={() => dispatch(setDefaultTab("history"))}
-        >
-          <span className="flex items-center gap-2 flex-col justify-center">
-            <div className={`w-[52px] h-[3px] bg-transparent`}></div>
-            <MdWatchLater />
-            {/* 观看历史 */}
-            <div
-              className={`w-[52px] h-[3px] ${
-                defaultTab == "history" && "bg-white"
-              }`}
-            ></div>
-          </span>
-        </TabsTrigger>
-      </TabsList>
-      <TabsContent value="liked">
-        <LikedVideos id={user?.id} />
-      </TabsContent>
-      <TabsContent value="history">
-        <HistoryVideos />
-      </TabsContent>
-      <TabsContent value="upload">
-        <CreatedVideo2 id={user?.id} />
-      </TabsContent>
-    </Tabs>
+                      "确认"
+                    )} */}
+                    确认
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+            <div className="w-full flex flex-col items-center">
+              <p className="text-[14px] text-[#888] text-center mb-5">或者</p>
+              <>
+                <Button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    dispatch(setAuthToggle(false));
+                  }}
+                  className="w-[60vw] bg-transparent border-[#555555]"
+                  variant={"outline"}
+                >
+                  创建新帐户
+                </Button>
+              </>
+            </div>
+          </form>
+        </Form>
+      </div>
+    </>
   );
 };
 
-export default VideoTabs;
-
-// import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-// import { Play } from "@/assets/profile";
-// import { FaHeart } from "react-icons/fa";
-// import { MdWatchLater } from "react-icons/md";
-// import { useDispatch, useSelector } from "react-redux";
-// import LikedVideos from "./video/liked-videos";
-// import HistoryVideos from "./video/history-videos";
-// import CreatedVideo from "./video/created-video";
-// import { setDefaultTab } from "@/store/slices/persistSlice";
-// import CreatedVideo2 from "./video/create-video2";
-
-// const VideoTabs = () => {
-//   const user = useSelector((state: any) => state?.persist?.user);
-//   const defaultTab = useSelector((state: any) => state?.persist?.defaultTab);
-//   const dispatch = useDispatch();
-//   // console.log(defaultTab, "defaultab");
-//   return (
-//     <Tabs defaultValue={defaultTab ? defaultTab : "liked"} className="py-5">
-//       <TabsList className="grid w-full grid-cols-3 z-[1600] bg-transparent sticky top-[100px] px-5">
-//         {/* {user?.token ? (
-//           <TabsTrigger
-//             className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2"
-//             onClick={() => dispatch(setDefaultTab ? defaultTab : "liked"("upload"))}
-//             value="upload"
-//           >
-//             <span className="flex items-center gap-1">
-//               <Play /> 我的作品
-//             </span>
-//           </TabsTrigger>
-//         ) : (
-//           <></>
-//         )} */}
-//         <TabsTrigger
-//           className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2"
-//           value="liked"
-//           onClick={() => dispatch(setDefaultTab("liked"))}
-//         >
-//           <span className="flex items-center gap-1">
-//             <FaHeart /> 已点赞视频
-//           </span>
-//         </TabsTrigger>
-//         <TabsTrigger
-//           className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2"
-//           value="history"
-//           onClick={() => dispatch(setDefaultTab("history"))}
-//         >
-//           <span className="flex items-center gap-1">
-//             <MdWatchLater /> 观看历史
-//           </span>
-//         </TabsTrigger>
-//       </TabsList>
-//       <TabsContent value="liked">
-//         <LikedVideos id={user?.id} />
-//       </TabsContent>
-//       <TabsContent value="history">
-//         <HistoryVideos />
-//       </TabsContent>
-//       <TabsContent value="upload">
-//         <CreatedVideo2 id={user?.id} />
-//       </TabsContent>
-//     </Tabs>
-//   );
-// };
-
-// export default VideoTabs;
+export default LoginForm;
