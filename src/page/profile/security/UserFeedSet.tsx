@@ -5,15 +5,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { setuserFeedTags, setuserFeedText } from "@/store/slices/exploreSlice";
 import { useGetConfigQuery } from "@/page/home/services/homeApi";
 import { useNavigate } from "react-router-dom";
-
+import { usePostPersonalizationMutation } from "@/store/api/profileApi";
 
 interface UserFeedProps {}
 
 const UserFeedSet: React.FC<UserFeedProps> = ({}) => {
-    const navigate = useNavigate()
+  const [postPersonalization, { data, isLoading }] =
+    usePostPersonalizationMutation();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {data:config} = useGetConfigQuery("")
-  console.log(config)
+  const { data: config } = useGetConfigQuery("");
+  console.log(config);
   const { userFeedText, userFeedTags } = useSelector(
     (state: any) => state.explore
   );
@@ -52,8 +54,8 @@ const UserFeedSet: React.FC<UserFeedProps> = ({}) => {
   const [showProgress, setShoowProgress] = useState(false);
   useEffect(() => {
     setHotText(config?.data?.personalize_hot_text);
-    settags(config?.data?.personalize_hot_tag)
-  }, [config,hotText]);
+    settags(config?.data?.personalize_hot_tag);
+  }, [config, hotText]);
   const [inputValue, setInputValue] = useState("");
 
   const handleSuggestionClick = (text: string) => {
@@ -66,9 +68,15 @@ const UserFeedSet: React.FC<UserFeedProps> = ({}) => {
 
   const handlStoreTags = () => {
     dispatch(setuserFeedTags(selectedTags));
+    const data = postPersonalization({
+      tags: selectedTags,
+      interest: inputValue,
+    });
+    console.log(data);
+
     localStorage.setItem("isFirstTimeUser", "false");
     // setUserPers(false);
-    navigate(-1)
+    // navigate(-1)
   };
 
   const handleStoreText = () => {
@@ -95,12 +103,12 @@ const UserFeedSet: React.FC<UserFeedProps> = ({}) => {
       }, 200); // every 200ms
     }, 1500); // simulate delay
   };
-  console.log(config);
 
   const skipFeed = () => {
     localStorage.setItem("isFirstTimeUser", "false");
     // setUserPers(false);
-    navigate(-1)
+
+    navigate(-1);
   };
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center z-[9999] font-['Noto_Sans_SC',sans-serif]">
