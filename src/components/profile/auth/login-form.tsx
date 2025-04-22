@@ -169,10 +169,14 @@ const LoginForm = ({ setIsOpen }: any) => {
   }, [lerror]);
 
   return (
+    // #00000099
+    // 000000E5
     <>
-      {isLoading ? (
-        <div className="h-screen bg-[#000000E5] fixed top-0 left-0 w-full z-[9999] flex justify-center items-center">
-          <img src={loader} alt="" className="w-12" />
+      {(isLoading && !show验证码) || captchaLoading ? (
+        <div className="h-screen bg-[#00000099] fixed top-0 left-0 w-full z-[9999] flex justify-center items-center">
+          <div className="bg-[#000000E5] p-1 rounded">
+            <img src={loader} alt="" className="w-14" />
+          </div>
         </div>
       ) : (
         <></>
@@ -303,8 +307,8 @@ const LoginForm = ({ setIsOpen }: any) => {
                 }}
                 className="w-full gradient-bg rounded-lg hover:gradient-bg"
               >
-                {captchaLoading ? <SmallLoader /> : "登录"}
-                {/* 登录 */}
+                {/* {captchaLoading ? <SmallLoader /> : "登录"} */}
+                登录
               </Button>
               <div className="flex justify-center">
                 <Link
@@ -360,11 +364,12 @@ const LoginForm = ({ setIsOpen }: any) => {
                     className="w-full gradient-bg hover:gradient-bg text-white rounded-lg"
                   >
                     {/* {registerLoading ? "loading..." : "Verify"} */}
-                    {isLoading ? (
+                    {/* {isLoading ? (
                       <img src={loader} alt="" className="w-12" />
                     ) : (
                       "确认"
-                    )}
+                    )} */}
+                    确认
                   </Button>
                 </div>
               </DialogContent>
