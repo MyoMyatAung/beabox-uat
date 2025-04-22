@@ -6,7 +6,8 @@ import {
 } from "@/components/create-center/drawer";
 import { useState } from "react";
 import { Button } from "../ui/button";
-
+import selected from "@/assets/createcenter/selected.png";
+const Selected = () => <img className="w-3 h-3" src={selected} alt="" />;
 const Privacy = ({ privacy, setPrivacy }: any) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -56,11 +57,11 @@ const Privacy = ({ privacy, setPrivacy }: any) => {
                     您的作品可以被所有用户观看
                   </p>
                 </div>
-                <div
-                  className={`w-3 h-3 ${
-                    privacy == "public" ? "bg-[#CD3EFF]" : "bg-[#FFFFFF52]"
-                  } rounded-full`}
-                ></div>
+                {privacy === "public" ? (
+                  <Selected />
+                ) : (
+                  <div className={`w-3 h-3 bg-[#FFFFFF52] rounded-full`}></div>
+                )}
               </div>
               {/* private  */}
               <div
@@ -81,11 +82,11 @@ const Privacy = ({ privacy, setPrivacy }: any) => {
                     除了您，没人可以看到您的作品
                   </p>
                 </div>
-                <div
-                  className={`w-3 h-3 ${
-                    privacy == "onlyme" ? "bg-[#CD3EFF]" : "bg-[#FFFFFF52]"
-                  } rounded-full`}
-                ></div>
+                {privacy === "onlyme" ? (
+                  <Selected />
+                ) : (
+                  <div className={`w-3 h-3 bg-[#FFFFFF52] rounded-full`}></div>
+                )}
               </div>
             </div>
 
