@@ -34,17 +34,12 @@ import {
   setIsDrawerOpen,
   setShowAlert,
 } from "@/store/slices/profileSlice";
-import SmallLoader from "@/components/shared/small-loader";
-import logo from "@/assets/logo.svg";
 import AuthError from "@/components/shared/auth-error";
-import TranLoader from "@/components/shared/tran-loader";
-import { log } from "console";
 const LoginForm = ({ setIsOpen }: any) => {
   const [showPassword, setShowPassword] = useState(false);
-  const [login, { data: ldata, isLoading, error: lerror }] = useLoginMutation();
+  const [login, { data: ldata, isLoading, error: lerror, isError }] =
+    useLoginMutation();
   const dispatch = useDispatch();
-  const authErr = localStorage.getItem("auth-error") || "请输入验证码";
-  console.log(lerror, "lerror ");
   const [getCaptcha, { data, isLoading: captchaLoading }] =
     useGetCaptchaMutation();
   const [show验证码, setShow验证码] = useState(false);
@@ -63,7 +58,7 @@ const LoginForm = ({ setIsOpen }: any) => {
   const passwordValue = watch("password");
 
   async function onSubmit() {
-    if (data?.status) setShow验证码(true);
+    // if (data?.status) setShow验证码(true);
   }
 
   const handleVerify = async (e: any) => {
@@ -83,79 +78,12 @@ const LoginForm = ({ setIsOpen }: any) => {
       dispatch(setShowAlert(true));
       dispatch(setAlertText(loginData?.message));
       setShow验证码(false);
+      dispatch(setIsDrawerOpen(false));
       setIsOpen(false);
     }
-    // if (!lerror) {
-    //   dispatch(setUser(loginData?.data));
-    //   dispatch(setIsDrawerOpen(false));
-    //   dispatch(setShowAlert(true));
-    //   dispatch(setAlertText(loginData?.message));
-    //   setShow验证码(false);
-    //   setIsOpen(false);
-    //   return;
-    // }
-
-    // if (lerror) errorHandler();
   };
 
-  // const handleVerify = async (e: any) => {
-  //   // Add 验证码 logic here
-  //   e.stopPropagation();
-  //   e.preventDefault();
-  //   const { emailOrPhone, password } = form.getValues();
-  //   const { data: loginData } = await login({
-  //     username: emailOrPhone,
-  //     password,
-  //     captcha,
-  //     captcha_key: data?.data?.captcha_key,
-  //   });
-  //   if (loginData?.status) {
-  //     dispatch(setUser(loginData?.data));
-  //     dispatch(setIsDrawerOpen(false));
-  //     dispatch(setShowAlert(true));
-  //     dispatch(setAlertText(loginData?.message));
-  //     setShow验证码(false);
-  //     setIsOpen(false);
-  //   } else {
-  //     if (lerror?.originalStatus == 401) {
-  //       setError("用户名或密码错误");
-  //       setShow验证码(false);
-  //     } else {
-  //       setShow验证码(false);
-  //       // setCaptcha("");
-  //       // await getCaptcha("");
-  //       setShow验证码(true);
-  //     }
-  //     // if (lerror?.originalStatus == 401) setError("用户名或密码错误");
-  //     // setCaptcha("");
-  //     // await getCaptcha("");
-  //     // setShow验证码(false);
-  //   }
-  // };
-
-  const openAgain = () =>
-    setTimeout(async () => {
-      await getCaptcha("");
-      setShow验证码(true);
-    }, 1000);
-
   const errorHandler = async () => {
-    // switch (lerror?.originalStatus) {
-    //   case 401:
-    //     setShow验证码(false);
-    //     setCaptcha("");
-    //     setError("用户名或密码错误");
-    //     break;
-    //   case 422:
-    //     setShow验证码(false);
-    //     setError("验证码错误");
-    //     setCaptcha("");
-    //     await getCaptcha("");
-    //     setShow验证码(true);
-    //     break;
-    //   default:
-    //     break;
-    // }
     if (lerror?.originalStatus == 401) {
       setShow验证码(false);
       setError("用户名或密码错误");
@@ -165,9 +93,7 @@ const LoginForm = ({ setIsOpen }: any) => {
       setShow验证码(false);
       setError("验证码错误");
       setCaptcha("");
-      // openAgain();
       await getCaptcha("");
-      console.log(data, "data");
       setShow验证码(true);
     }
   };
@@ -177,11 +103,9 @@ const LoginForm = ({ setIsOpen }: any) => {
   }, [lerror]);
 
   return (
-    // #00000099
-    // 000000E5
     <>
-      {(isLoading && !show验证码) || captchaLoading ? (
-        <div className="h-screen bg-[#00000099] fixed top-0 left-0 w-full z-[9999] flex justify-center items-center">
+      {(captchaLoading && !show验证码) || captchaLoading ? (
+        <div className="h-screen bg-[#00000099] fixed bottom-0 left-0 w-full z-[9999] flex justify-center items-center">
           <div className="bg-[#000000E5] p-1 rounded">
             <img src={loader} alt="" className="w-14" />
           </div>
@@ -191,7 +115,7 @@ const LoginForm = ({ setIsOpen }: any) => {
       )}
 
       <div className="px-5">
-        {error ? <AuthError message={error} /> : <></>}
+        {isError ? <AuthError message={error} /> : <></>}
         <div className="flex justify-between items-center">
           <div className="px-3"></div>
           <p className="text-[18px]">
@@ -286,19 +210,10 @@ const LoginForm = ({ setIsOpen }: any) => {
                     </>
                   </FormControl>
                   <FormMessage />
-                  {/* <FormMessage>{error}</FormMessage> */}
                 </FormItem>
               )}
             />
-
-            {/* <h1 className="mt-4 text-red-500 text-sm">{error}</h1> */}
-
             <div className="">
-              {/* <SubmitButton
-          isLoading={isLoading}
-          condition={true}
-          text={"Login"}
-        /> */}
               <Button
                 disabled={
                   isLoading ||

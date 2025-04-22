@@ -76,7 +76,6 @@ const RegisterForm = ({ setIsOpen }: any) => {
     // setShow验证码(true);
   }
 
-  console.log(rerror);
   const handleVerify = async (e: any) => {
     // Add 验证码 logic here
     e.stopPropagation();
@@ -99,34 +98,8 @@ const RegisterForm = ({ setIsOpen }: any) => {
       dispatch(setIsDrawerOpen(false));
       setShow验证码(false);
     }
-    //  else {
-    //   if (authErr) setError(authErr);
-    //   if (registerError && (registerError as any).originalStatus === 422) {
-    //     setCaptcha("");
-    //     await getCaptcha("");
-    //   } else {
-    //     setShow验证码(false);
-    //   }
-    // }
   };
-  // console.log(isError, "isError");
   const errorHandler = async () => {
-    // switch (lerror?.originalStatus) {
-    //   case 401:
-    //     setShow验证码(false);
-    //     setCaptcha("");
-    //     setError("用户名或密码错误");
-    //     break;
-    //   case 422:
-    //     setShow验证码(false);
-    //     setError("验证码错误");
-    //     setCaptcha("");
-    //     await getCaptcha("");
-    //     setShow验证码(true);
-    //     break;
-    //   default:
-    //     break;
-    // }
     if (rerror?.originalStatus == 400) {
       setShow验证码(false);
       setError("该用户名已存在");
