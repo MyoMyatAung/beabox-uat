@@ -95,6 +95,7 @@ const Player = ({
   const wasPlayingRef = useRef(false); // Track if video was playing before fast forward
   const isLongPressActiveRef = useRef(false); // Track if long press is active to prevent early cancellation
   const [newStart, setnewStart] = useState(false);
+  const watchTimerRef = useRef<NodeJS.Timeout | null>(null); // Reference to store the watch timer
 
   const dispatch = useDispatch();
 
@@ -1375,26 +1376,6 @@ const Player = ({
 
       // Stop position saving
       stopPositionSaving();
-
-      // Reset watched time for analytics
-      if (watchTimer) {
-        clearInterval(watchTimer);
-        watchTimer = null;
-      }
-      watchedTimeRef.current = 0;
-
-      // The video will automatically loop due to the loop option
-      console.log("Video ended, looping will begin automatically");
-
-      // Start a new timer for the looped playback if needed
-      watchTimer = setInterval(() => {
-        watchedTimeRef.current += 1; // Increment watched time every second
-
-        // Trigger API call after 5 seconds of playback on loop
-        if (watchedTimeRef.current >= 5 && !apiCalledRef.current && !type) {
-          handleWatchHistory();
-        }
-      }, 1000);
     });
 
     // Add error handler to keep poster visible on error
@@ -1422,25 +1403,39 @@ const Player = ({
     });
   };
 
-  // Track watched time for 5 seconds
-  let watchTimer: NodeJS.Timeout | null = null;
-
-  artPlayerInstanceRef.current?.on("play", () => {
-    watchTimer = setInterval(() => {
+  // Setup watch timer function
+  const setupWatchTimer = () => {
+    // Clear any existing timer first
+    cleanupWatchTimer();
+    
+    // Set up a new timer
+    watchTimerRef.current = setInterval(() => {
       watchedTimeRef.current += 1; // Increment watched time every second
 
       // Trigger API call after 5 seconds of playback
       if (watchedTimeRef.current >= 5 && !apiCalledRef.current && !type) {
         handleWatchHistory();
+        // Stop the timer after we've reached 5 seconds and made the API call
+        cleanupWatchTimer();
       }
     }, 1000); // Update every second
+  };
+
+  // Cleanup watch timer function
+  const cleanupWatchTimer = () => {
+    if (watchTimerRef.current) {
+      clearInterval(watchTimerRef.current);
+      watchTimerRef.current = null;
+    }
+  };
+
+  // Update the event handlers to use the new functions
+  artPlayerInstanceRef.current?.on("play", () => {
+    setupWatchTimer();
   });
 
   artPlayerInstanceRef.current?.on("pause", () => {
-    if (watchTimer) {
-      clearInterval(watchTimer);
-      watchTimer = null;
-    }
+    cleanupWatchTimer();
   });
 
   // Add a function to safely fade out the poster only when video is confirmed playing
@@ -1539,6 +1534,12 @@ const Player = ({
         hlsRef.current.currentLevel = -1;
       }
     } else {
+      // Clear watch timer and reset counters when component becomes inactive
+      cleanupWatchTimer();
+      // Reset watch time tracking when switching videos
+      watchedTimeRef.current = 0;
+      apiCalledRef.current = false;
+      
       // Cleanup when inactive
       if (artPlayerInstanceRef.current) {
         artPlayerInstanceRef.current.destroy();
@@ -1689,6 +1690,12 @@ const Player = ({
       initObserver.disconnect();
 
       clearTimeout(progressBarVisibilityTimer);
+      // Clear the watch timer when component unmounts
+      cleanupWatchTimer();
+      // Reset API called flag to ensure proper tracking for next mount
+      apiCalledRef.current = false;
+      watchedTimeRef.current = 0;
+      
       // Save position before unmounting
       if (artPlayerInstanceRef.current) {
         saveVideoPosition(artPlayerInstanceRef.current.currentTime);
