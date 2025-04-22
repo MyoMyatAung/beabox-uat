@@ -76,7 +76,6 @@ const RegisterForm = ({ setIsOpen }: any) => {
     // setShow验证码(true);
   }
 
-  console.log(rerror);
   const handleVerify = async (e: any) => {
     // Add 验证码 logic here
     e.stopPropagation();
@@ -99,34 +98,8 @@ const RegisterForm = ({ setIsOpen }: any) => {
       dispatch(setIsDrawerOpen(false));
       setShow验证码(false);
     }
-    //  else {
-    //   if (authErr) setError(authErr);
-    //   if (registerError && (registerError as any).originalStatus === 422) {
-    //     setCaptcha("");
-    //     await getCaptcha("");
-    //   } else {
-    //     setShow验证码(false);
-    //   }
-    // }
   };
-  // console.log(isError, "isError");
   const errorHandler = async () => {
-    // switch (lerror?.originalStatus) {
-    //   case 401:
-    //     setShow验证码(false);
-    //     setCaptcha("");
-    //     setError("用户名或密码错误");
-    //     break;
-    //   case 422:
-    //     setShow验证码(false);
-    //     setError("验证码错误");
-    //     setCaptcha("");
-    //     await getCaptcha("");
-    //     setShow验证码(true);
-    //     break;
-    //   default:
-    //     break;
-    // }
     if (rerror?.originalStatus == 400) {
       setShow验证码(false);
       setError("该用户名已存在");
@@ -146,9 +119,11 @@ const RegisterForm = ({ setIsOpen }: any) => {
   }, [rerror]);
   return (
     <>
-      {isLoading ? (
-        <div className="h-screen bg-[#000000E5] fixed top-0 left-0 w-full z-[9999] flex justify-center items-center">
-          <img src={loader} alt="" className="w-12" />
+      {(isLoading && !show验证码) || isLoading ? (
+        <div className="h-screen bg-[#00000099] fixed top-0 left-0 w-full z-[9999] flex justify-center items-center">
+          <div className="bg-[#000000E5] p-1 rounded">
+            <img src={loader} alt="" className="w-14" />
+          </div>
         </div>
       ) : (
         <></>
@@ -281,7 +256,8 @@ const RegisterForm = ({ setIsOpen }: any) => {
                 }}
                 className="w-full gradient-bg rounded-lg hover:gradient-bg"
               >
-                {isLoading ? <SmallLoader /> : "确认"}
+                {/* {isLoading ? <SmallLoader /> : "确认"} */}
+                确认
                 {/* Continue */}
               </Button>
             </div>
@@ -330,7 +306,8 @@ const RegisterForm = ({ setIsOpen }: any) => {
                     type="submit"
                     className="w-full gradient-bg hover:gradient-bg text-white rounded-lg"
                   >
-                    {registerLoading ? <SmallLoader /> : "确认"}
+                    {/* {registerLoading ? <SmallLoader /> : "确认"} */}
+                    确认
                     {/* Verify */}
                   </Button>
                 </div>

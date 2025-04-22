@@ -34,22 +34,18 @@ import {
   setIsDrawerOpen,
   setShowAlert,
 } from "@/store/slices/profileSlice";
-import SmallLoader from "@/components/shared/small-loader";
-import logo from "@/assets/logo.svg";
 import AuthError from "@/components/shared/auth-error";
-import TranLoader from "@/components/shared/tran-loader";
-import { log } from "console";
 const LoginForm = ({ setIsOpen }: any) => {
   const [showPassword, setShowPassword] = useState(false);
-  const [login, { data: ldata, isLoading, error: lerror }] = useLoginMutation();
+  const [login, { data: ldata, isLoading, error: lerror, isError }] =
+    useLoginMutation();
   const dispatch = useDispatch();
-  const authErr = localStorage.getItem("auth-error") || "请输入验证码";
-  console.log(lerror, "lerror ");
   const [getCaptcha, { data, isLoading: captchaLoading }] =
     useGetCaptchaMutation();
   const [show验证码, setShow验证码] = useState(false);
   const [captcha, setCaptcha] = useState("");
   const [error, setError] = useState("");
+  const [isLoad, setIsLoad] = useState(false);
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -63,10 +59,11 @@ const LoginForm = ({ setIsOpen }: any) => {
   const passwordValue = watch("password");
 
   async function onSubmit() {
-    if (data?.status) setShow验证码(true);
+    // if (data?.status) setShow验证码(true);
   }
 
   const handleVerify = async (e: any) => {
+    setIsLoad(true);
     setShow验证码(false);
     e.stopPropagation();
     e.preventDefault();
@@ -77,79 +74,20 @@ const LoginForm = ({ setIsOpen }: any) => {
       captcha,
       captcha_key: data?.data?.captcha_key,
     });
+    setIsLoad(false);
     if (loginData?.status) {
       dispatch(setUser(loginData?.data));
       dispatch(setIsDrawerOpen(false));
       dispatch(setShowAlert(true));
       dispatch(setAlertText(loginData?.message));
       setShow验证码(false);
+      dispatch(setIsDrawerOpen(false));
       setIsOpen(false);
+      setIsLoad(false);
     }
-    // if (!lerror) {
-    //   dispatch(setUser(loginData?.data));
-    //   dispatch(setIsDrawerOpen(false));
-    //   dispatch(setShowAlert(true));
-    //   dispatch(setAlertText(loginData?.message));
-    //   setShow验证码(false);
-    //   setIsOpen(false);
-    //   return;
-    // }
-
-    // if (lerror) errorHandler();
   };
 
-  // const handleVerify = async (e: any) => {
-  //   // Add 验证码 logic here
-  //   e.stopPropagation();
-  //   e.preventDefault();
-  //   const { emailOrPhone, password } = form.getValues();
-  //   const { data: loginData } = await login({
-  //     username: emailOrPhone,
-  //     password,
-  //     captcha,
-  //     captcha_key: data?.data?.captcha_key,
-  //   });
-  //   if (loginData?.status) {
-  //     dispatch(setUser(loginData?.data));
-  //     dispatch(setIsDrawerOpen(false));
-  //     dispatch(setShowAlert(true));
-  //     dispatch(setAlertText(loginData?.message));
-  //     setShow验证码(false);
-  //     setIsOpen(false);
-  //   } else {
-  //     if (lerror?.originalStatus == 401) {
-  //       setError("用户名或密码错误");
-  //       setShow验证码(false);
-  //     } else {
-  //       setShow验证码(false);
-  //       // setCaptcha("");
-  //       // await getCaptcha("");
-  //       setShow验证码(true);
-  //     }
-  //     // if (lerror?.originalStatus == 401) setError("用户名或密码错误");
-  //     // setCaptcha("");
-  //     // await getCaptcha("");
-  //     // setShow验证码(false);
-  //   }
-  // };
-
   const errorHandler = async () => {
-    // switch (lerror?.originalStatus) {
-    //   case 401:
-    //     setShow验证码(false);
-    //     setCaptcha("");
-    //     setError("用户名或密码错误");
-    //     break;
-    //   case 422:
-    //     setShow验证码(false);
-    //     setError("验证码错误");
-    //     setCaptcha("");
-    //     await getCaptcha("");
-    //     setShow验证码(true);
-    //     break;
-    //   default:
-    //     break;
-    // }
     if (lerror?.originalStatus == 401) {
       setShow验证码(false);
       setError("用户名或密码错误");
@@ -158,9 +96,11 @@ const LoginForm = ({ setIsOpen }: any) => {
     if (lerror?.originalStatus == 422) {
       setShow验证码(false);
       setError("验证码错误");
+      setIsLoad(true);
       setCaptcha("");
       await getCaptcha("");
       setShow验证码(true);
+      setIsLoad(false);
     }
   };
 
@@ -170,16 +110,17 @@ const LoginForm = ({ setIsOpen }: any) => {
 
   return (
     <>
-      {isLoading ? (
-        <div className="h-screen bg-[#000000E5] fixed top-0 left-0 w-full z-[9999] flex justify-center items-center">
-          <img src={loader} alt="" className="w-12" />
+      {isLoad ? (
+        <div className="h-screen bg-[#00000099] fixed top-0 left-0 w-full z-[9999] flex justify-center items-center">
+          <div className="bg-[#000000E5] p-1 rounded">
+            <img src={loader} alt="" className="w-14" />
+          </div>
         </div>
       ) : (
         <></>
       )}
-
       <div className="px-5">
-        {error ? <AuthError message={error} /> : <></>}
+        {isError ? <AuthError message={error} /> : <></>}
         <div className="flex justify-between items-center">
           <div className="px-3"></div>
           <p className="text-[18px]">
@@ -274,19 +215,10 @@ const LoginForm = ({ setIsOpen }: any) => {
                     </>
                   </FormControl>
                   <FormMessage />
-                  {/* <FormMessage>{error}</FormMessage> */}
                 </FormItem>
               )}
             />
-
-            {/* <h1 className="mt-4 text-red-500 text-sm">{error}</h1> */}
-
             <div className="">
-              {/* <SubmitButton
-          isLoading={isLoading}
-          condition={true}
-          text={"Login"}
-        /> */}
               <Button
                 disabled={
                   isLoading ||
@@ -298,13 +230,15 @@ const LoginForm = ({ setIsOpen }: any) => {
                 }
                 // type="submit"
                 onClick={async () => {
+                  setIsLoad(true);
                   await getCaptcha("");
                   setShow验证码(true);
+                  setIsLoad(false);
                 }}
                 className="w-full gradient-bg rounded-lg hover:gradient-bg"
               >
-                {captchaLoading ? <SmallLoader /> : "登录"}
-                {/* 登录 */}
+                {/* {captchaLoading ? <SmallLoader /> : "登录"} */}
+                登录
               </Button>
               <div className="flex justify-center">
                 <Link
@@ -360,11 +294,12 @@ const LoginForm = ({ setIsOpen }: any) => {
                     className="w-full gradient-bg hover:gradient-bg text-white rounded-lg"
                   >
                     {/* {registerLoading ? "loading..." : "Verify"} */}
-                    {isLoading ? (
+                    {/* {isLoading ? (
                       <img src={loader} alt="" className="w-12" />
                     ) : (
                       "确认"
-                    )}
+                    )} */}
+                    确认
                   </Button>
                 </div>
               </DialogContent>

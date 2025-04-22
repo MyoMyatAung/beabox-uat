@@ -43,7 +43,7 @@ export const authApi = createApi({
     getCaptcha: builder.mutation<any, string>({
       query: (arg: any) => convertToSecureUrl(`/captcha`),
     }),
-    register: builder.mutation<any, string>({
+    register: builder.mutation<any, any>({
       query: ({
         username,
         password,
