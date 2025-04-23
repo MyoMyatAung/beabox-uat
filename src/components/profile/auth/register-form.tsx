@@ -105,12 +105,14 @@ const RegisterForm = ({ setIsOpen }: any) => {
   };
   const errorHandler = async () => {
     if (rerror?.originalStatus == 400) {
+      setError("");
       setflashLoading(false);
       setShow验证码(false);
       setError("该用户名已存在");
       setCaptcha("");
     }
     if (rerror?.originalStatus == 422) {
+      setError("");
       setShow验证码(false);
       setflashLoading(true);
       setError("验证码错误");
