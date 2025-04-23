@@ -44,5 +44,6 @@ export const paths = {
   creator_upload: "/creator/upload",
   creator_upload_video: "/creator/upload/video",
   tags: "/creator/tags",
+  user_feed: "/settings/feed",
   getUserProfileId: (id: any) => `/user/${id}`,
 };
