@@ -10,7 +10,7 @@ import { UsersRound } from "lucide-react";
 import { FaSearch } from "react-icons/fa";
 import { Input } from "@/components/ui/input";
 
-const FollowerList = ({ searchTerm, id }: any) => {
+const FollowerList = ({ searchTerm, id, allowToFetch }: any) => {
   // const [searchTerm, setSearchTerm] = useState("");
   const [followers, setFollowers] = useState<any>([]);
   const [page, setPage] = useState(1);
@@ -23,7 +23,7 @@ const FollowerList = ({ searchTerm, id }: any) => {
       page,
     },
     {
-      skip: !user,
+      skip: allowToFetch,
     }
   );
 

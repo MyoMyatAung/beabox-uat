@@ -67,10 +67,10 @@ const FollowTabs2 = ({ id, defaultFollowTab, closeTab }: any) => {
       </div>
       <div className="py-3 px-2 flex-1">
         <TabsContent value="follower">
-          <FollowerList searchTerm={searchTerm} id={id} />
+          <FollowerList searchTerm={searchTerm} id={id} allowToFetch={false} />
         </TabsContent>
         <TabsContent value="following">
-          <FollowingList searchTerm={searchTerm} id={id} />
+          <FollowingList searchTerm={searchTerm} id={id} allowToFetch={false} />
         </TabsContent>
       </div>
     </Tabs>

@@ -63,13 +63,18 @@ const FollowTabs = ({ isOpen }: any) => {
       </div>
       <div className="py-3 px-2 flex-1">
         <TabsContent value="follower">
-          <FollowerList searchTerm={searchTerm} id={user_code} />
+          <FollowerList
+            searchTerm={searchTerm}
+            id={user_code}
+            allowToFetch={user_code ? false : true}
+          />allowToFetch={user_code ? false : true}
         </TabsContent>
         <TabsContent value="following">
           <FollowingList
             searchTerm={searchTerm}
             id={user_code}
             isOpen={isOpen}
+            allowToFetch={user_code ? false : true}
           />
         </TabsContent>
       </div>
