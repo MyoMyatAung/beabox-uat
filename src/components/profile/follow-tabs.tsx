@@ -67,7 +67,7 @@ const FollowTabs = ({ isOpen }: any) => {
             searchTerm={searchTerm}
             id={user_code}
             allowToFetch={user_code ? false : true}
-          />allowToFetch={user_code ? false : true}
+          />
         </TabsContent>
         <TabsContent value="following">
           <FollowingList
