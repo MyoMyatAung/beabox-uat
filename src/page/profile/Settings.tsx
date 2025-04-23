@@ -85,20 +85,14 @@ const Settings = ({
       <div className="top flex flex-col gap-5 w-full">
         <div className="flex justify-between items-center py-5">
           <Link to={paths.profile}>
-            {/* <FaAngleLeft size={22} /> */}
             <img src={backButton} alt="" />
           </Link>
-          <p className="text-[16px]">
-            {/* {user?.token ? "Setting & Privacy" : "Setting"} */}
-            设置和隐私
-          </p>
+          <p className="text-[16px]">设置和隐私</p>
           <div></div>
         </div>
 
         {user?.token ? (
           <>
-            {/* <EditLanguage />
-            <div className="border-b border-white/10"></div> */}
             <div className="flex flex-col gap-4">
               <h1 className="text-[12px] text-[#888]">账户安全</h1>
               <ChangePassword />
@@ -160,8 +154,8 @@ const Settings = ({
         <div className="flex justify-between items-center">
           <p className="flex items-center gap-1 text-[14px]">当前版本</p>
           <p className="flex items-center gap-1 text-[14px]">
-            V 1.1.4.8{" "}
-            <ChevronRight size={15} className="text-[#777777]" />
+            V 1.1.4.8 <ChevronRight size={15} className="text-[#777777]" />
+          </p>
         </div>
 
         <div className="border-b border-white/10 my-2"></div>
