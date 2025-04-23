@@ -21,6 +21,8 @@ interface LatestPorp {
   waterfall: any;
   setWaterFall: any;
   exp_header:any;
+  page : any;
+  setPage : any;
 }
 
 const Latest: React.FC<LatestPorp> = ({
@@ -29,13 +31,13 @@ const Latest: React.FC<LatestPorp> = ({
   setSelectedMovieId,
   waterfall,
   setWaterFall,
-  exp_header
+  exp_header,
+  page,setPage
 }) => {
   // const [searchParams, setSearchParams] = useSearchParams();
   const dispatch = useDispatch();
   // const [waterfall, setWaterFall] = useState<any[]>([]);
   const [hasMore, setHasMore] = useState(true);
-  const [page, setPage] = useState(1);
   const { data, isLoading } = useGetExploreListQuery({ id: list_id, page });
   const navigate = useNavigate();
   const scrollPositionRef = useRef<number>(0);

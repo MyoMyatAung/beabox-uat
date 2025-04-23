@@ -18,6 +18,7 @@ import VideoFeed from "../home/components/VideoFeed";
 
 const Explore = () => {
   const [activeTab, setActiveTab] = useState("Recommend");
+  const [page, setPage] = useState(1);
 
   const [list, setList] = useState<any[]>([]);
   const [selectedMovieId, setSelectedMovieId] = useState(null);
@@ -97,6 +98,8 @@ const Explore = () => {
       {showVideoFeed && selectedMovieId && (
         <div className="z-[999999] h-screen fixed top-0 overflow-y-scroll left-0 w-full">
           <VideoFeed
+            search={false}
+            setPage={setPage}
             setVideos={setList}
             videos={list}
             currentActiveId={selectedMovieId}
@@ -109,6 +112,8 @@ const Explore = () => {
       {showVideoFeedTopic && selectedMovieId && (
         <div className="z-[999999] h-screen fixed top-0 overflow-y-scroll left-0 w-full">
           <VideoFeed
+            search={false}
+            setPage={setPage}
             setVideos={setSelectedList}
             videos={selectedList}
             currentActiveId={selectedMovieId}
@@ -163,6 +168,8 @@ const Explore = () => {
                           />
                         ) : (
                           <Latest
+                            page={page}
+                            setPage={setPage}
                             exp_header={exp_header}
                             setSelectedMovieId={setSelectedMovieId}
                             setShowVideoFeed={setShowVideoFeed}
