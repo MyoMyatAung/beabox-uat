@@ -1,193 +1,324 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {
+  setAlertText,
+  setAuthToggle,
+  setIsDrawerOpen,
+  setShowAlert,
+} from "@/store/slices/profileSlice";
 import { paths } from "@/routes/paths";
-// import { FaAngleLeft } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import EditLanguage from "@/components/profile/edit-language";
-import { logOutUser } from "@/store/slices/persistSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { useGetConfigQuery, useLogoutMutation } from "@/store/api/profileApi";
-import withProfileData from "@/hocs/withProfileData";
-import ChangePassword from "@/components/profile/change-password";
-import EditSecurity from "@/components/profile/edit-security";
-import PrivateProfile from "@/components/profile/private-profile";
-import ContentVisibility from "@/components/profile/content-visibility";
+import { ChevronLeft, Eye, EyeOff, RotateCcw, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import backButton from "../../assets/backButton.svg";
-import Loader from "@/components/shared/loader";
+import { useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+import { LoginFormData, loginSchema } from "@/page/auth/schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import loader from "@/page/home/vod_loader.gif";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  useGetCaptchaMutation,
+  useRegisterMutation,
+} from "@/store/api/authApi";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/store/slices/persistSlice";
+import Shield from "@/assets/profile/shield.png";
+import AuthError from "@/components/shared/auth-error";
 
-const Settings = ({
-  liked_video_visibility,
-  changeVisibilityHandler,
-  visibilityLoading,
-  content_visibility,
-  changeCVisHandler,
-  cvLoading,
-}: any) => {
-  const dispatch = useDispatch();
+const RegisterForm = ({ setIsOpen }: any) => {
+  const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [code, setCode] = useState("");
+  const [show验证码, setShow验证码] = useState(false);
+  const [showSecurity, setShowSecurity] = useState(false);
+  const [captcha, setCaptcha] = useState("");
+  const [getCaptcha, { data, isLoading }] = useGetCaptchaMutation();
+  const [
+    register,
+    { isLoading: registerLoading, data: rdata, error: rerror, isError },
+  ] = useRegisterMutation();
   const navigate = useNavigate();
-  const [logout, { data: lgdata, isLoading }] = useLogoutMutation();
-  const user = useSelector((state: any) => state?.persist?.user);
-  const [device, setDevice] = useState("android");
-  const [cacheSize, setCacheSize] = useState(null);
+  const dispatch = useDispatch();
+  const authErr = localStorage.getItem("auth-error") || "验证码错误";
 
-  useEffect(() => {
-    const calculateCacheSize = async () => {
-      if ("caches" in window) {
-        try {
-          const cacheNames = await caches.keys();
-          let totalSize = 0;
+  const form = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      emailOrPhone: "",
+      password: "",
+    },
+  });
 
-          for (const cacheName of cacheNames) {
-            const cache = await caches.open(cacheName);
-            const cachedRequests = await cache.keys();
+  const { watch } = form;
+  const emailOrPhoneValue = watch("emailOrPhone");
+  const passwordValue = watch("password");
+  async function onSubmit(data: LoginFormData) {
+    // Handle form submission
+    // await getCaptcha();
+    // setShow验证码(true);
+  }
 
-            for (const request of cachedRequests) {
-              const response = await cache.match(request);
-              if (response) {
-                const blob = await response.blob();
-                totalSize += blob.size;
-              }
-            }
-          }
-
-          // Convert total size from bytes to megabytes (MB) and round to nearest integer
-          const sizeInMB = Math.round(totalSize / (1024 * 1024));
-          setCacheSize(sizeInMB);
-        } catch (error) {
-          console.error("Error calculating cache size:", error);
-          setCacheSize("Error");
-        }
-      } else {
-        setCacheSize("Caches API not supported");
-      }
-    };
-
-    calculateCacheSize();
-  }, []);
-
-  const { data } = useGetConfigQuery(device);
-
-  useEffect(() => {
-    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-
-    if (/android/i.test(userAgent)) {
-      setDevice("android");
-    } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-      setDevice("ios");
-    } else {
-      setDevice("other");
+  const handleVerify = async (e: any) => {
+    e.stopPropagation();
+    e.preventDefault();
+    const { emailOrPhone, password } = form.getValues();
+    const { data: registerData, error: registerError } = await register({
+      username: emailOrPhone,
+      password,
+      captcha,
+      captcha_key: data?.data?.captcha_key,
+      referral_code: code,
+    });
+    if (registerData?.status) {
+      dispatch(setUser(registerData?.data));
+      dispatch(setIsDrawerOpen(false));
+      dispatch(setShowAlert(true));
+      dispatch(setAlertText(registerData?.message));
+      setIsOpen(false);
+      dispatch(setIsDrawerOpen(false));
+      setShow验证码(false);
     }
-  }, []);
-  if (isLoading) return <Loader />;
+  };
+  const errorHandler = async () => {
+    if (rerror?.originalStatus == 400) {
+      setShow验证码(false);
+      setError("该用户名已存在");
+      setCaptcha("");
+    }
+    if (rerror?.originalStatus == 422) {
+      setShow验证码(false);
+      setError("验证码错误");
+      setCaptcha("");
+      await getCaptcha("");
+      setShow验证码(true);
+    }
+  };
+
+  useEffect(() => {
+    errorHandler();
+  }, [rerror]);
   return (
-    <div className="w-full h-screen no-scrollbar px-5 flex flex-col items-center relative bg-[#16131C]">
-      <div className="top flex flex-col gap-5 w-full">
-        <div className="flex justify-between items-center py-5">
-          <Link to={paths.profile}>
-            <img src={backButton} alt="" />
-          </Link>
-          <p className="text-[16px]">设置和隐私</p>
-          <div></div>
+    <>
+      {(isLoading && !show验证码) || isLoading ? (
+        <div className="h-screen bg-[#00000099] fixed top-0 left-0 w-full z-[9999] flex justify-center items-center">
+          <div className="bg-[#000000E5] p-1 rounded">
+            <img src={loader} alt="" className="w-14" />
+          </div>
         </div>
-
-        {user?.token ? (
-          <>
-            <div className="flex flex-col gap-4">
-              <h1 className="text-[12px] text-[#888]">账户安全</h1>
-              <ChangePassword />
-              <div className="mt-5">
-                <EditSecurity />
-              </div>
-            </div>
-          </>
-        ) : (
-          <></>
-        )}
-
-        {user?.token ? (
-          <>
-            <div className="flex flex-col gap-4 mt-5">
-              <h1 className="text-[12px] text-[#888]">
-                {/* Account Privacy */}
-                账号隐私设置
-              </h1>
-            </div>
-            <ContentVisibility
-              content_visibility={content_visibility}
-              changeVisibilityHandler={changeCVisHandler}
-              visibilityLoading={cvLoading}
-            />
-            <div className="border-b border-white/10 my-2"></div>
-            {/* change feed */}
-            <Link to={paths.user_feed} className=" flex flex-col gap-2">
-              <div className=" flex w-full justify-between items-center">
-                <h1 className=" text-white text-[14px] font-[400] leading-[24px]">
-                  个性化您的推荐内容
-                </h1>
-                <ChevronRight size={15} className="text-[#777777]" />
-              </div>
-              <span className=" text-[#888] text-[10px] font-[400] pr-[60px]">
-                您的偏好设置将帮助我们个性化推荐内容，根据您的兴趣展示最相关和最吸引您的选项。
-              </span>
-            </Link>
-
-            <div className="border-b border-white/10 my-2"></div>
-
-            <Link
-              to={paths.privacy_settings}
-              className="flex justify-between items-center mb-5"
-            >
-              <p className="flex items-center gap-1 text-[14px]">
-                {/* Privacy Settings */}
-                隐私设置
-              </p>
-              <div className="flex items-center gap-1 text-[14px]">
-                <ChevronRight size={15} className="text-[#777777]" />
-              </div>
-            </Link>
-          </>
-        ) : (
-          <></>
-        )}
+      ) : (
+        <></>
+      )}
+      <div className="px-5">
+        {isError ? <AuthError message={error} /> : <></>}
 
         <div className="flex justify-between items-center">
-          <p className="flex items-center gap-1 text-[14px]">当前版本</p>
-          <p className="flex items-center gap-1 text-[14px]">
-            V 1.1.4.8 <ChevronRight size={15} className="text-[#777777]" />
+          <div className="px-3"></div>
+          <p className="text-[18px]">
+            创建账户
+            {/* Register */}
           </p>
-        </div>
-
-        <div className="border-b border-white/10 my-2"></div>
-
-        {/* <div className="flex justify-between items-center">
-          <p className="flex items-center gap-1 text-[14px]">清除缓存</p>
-          <p className="flex items-center gap-1 text-[14px]">
-            {Math.round(cacheSize)} MB{" "}
-            <ChevronRight size={15} className="text-[#777777]" />
-          </p>
-        </div> */}
-      </div>
-      <div className="w-full fixed bottom-0 px-5">
-        {user?.token ? (
-          <div className="bot w-full py-5">
-            <Button
-              onClick={async () => {
-                dispatch(logOutUser());
-                await logout("");
-                navigate(paths.profile);
-              }}
-              className="w-full rounded-xl bg-[#1C1A22] hover:bg-[#1C1A22]"
-            >
-              退出
-            </Button>
+          <div
+            onClick={() => {
+              // setIsOpen(false);
+              dispatch(setIsDrawerOpen(false));
+              dispatch(setAuthToggle(true));
+            }}
+            className="bg-[#FFFFFF0A] p-2 rounded-full"
+          >
+            <X size={18} />
           </div>
-        ) : (
-          <></>
-        )}
+        </div>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-8 pt-5 pb-10"
+          >
+            <FormField
+              control={form.control}
+              name="emailOrPhone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <>
+                      <label htmlFor="" className="text-[14px] text-[#888]">
+                        用户名
+                      </label>
+                      <div className="relative">
+                        <input
+                          className="block w-full  py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none "
+                          placeholder="输入用户名"
+                          {...field}
+                        />
+                        {field.value && (
+                          <div
+                            className="w-6 h-6 rounded-full flex justify-center items-center bg-[#FFFFFF1F] absolute right-0 bottom-2"
+                            onClick={() => {
+                              field.onChange("");
+                            }}
+                          >
+                            <X size={9} />
+                          </div>
+                        )}
+                        <div className="w-full h-[1px] bg-[#FFFFFF0A]"></div>
+                      </div>
+                    </>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem className="relative">
+                  <FormControl>
+                    <>
+                      <label htmlFor="" className="text-[14px] text-[#888]">
+                        密码
+                      </label>
+                      <div className="relative">
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          className="block w-full  py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none "
+                          placeholder="密码必须是8-25个字符"
+                          {...field}
+                          maxLength={25}
+                        />
+                        <button
+                          className=" absolute right-0 bottom-2"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setShowPassword(!showPassword);
+                          }}
+                        >
+                          {showPassword ? (
+                            <Eye className="w-[18px]" />
+                          ) : (
+                            <EyeOff className="w-[18px]" />
+                          )}
+                        </button>
+                        <div className="w-full h-[1px] bg-[#FFFFFF0A]"></div>
+                      </div>
+                    </>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+
+            <input
+              type="text"
+              placeholder="用户名输入邀请码（可选）"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              className="bg-[#37363A] border-0 rounded-lg text-white placeholder:text-gray-600 px-4 py-4 text-center placeholder:text-center w-full outline-none"
+            />
+
+            <div className="">
+              <Button
+                disabled={
+                  isLoading ||
+                  !emailOrPhoneValue ||
+                  !passwordValue ||
+                  passwordValue?.length < 8 ||
+                  passwordValue?.length > 25
+                }
+                onClick={async () => {
+                  await getCaptcha("");
+                  setShow验证码(true);
+                }}
+                className="w-full gradient-bg rounded-lg hover:gradient-bg"
+              >
+                确认
+              </Button>
+            </div>
+            <Dialog open={show验证码} onOpenChange={setShow验证码}>
+              <DialogContent className="bg-[#393641] z-[3000] border-0 shadow-lg rounded-lg max-w-[300px]">
+                <DialogHeader>
+                  <DialogTitle className="text-white text-[16px]">
+                    验证码
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-6">
+                  <div className="flex justify-center items-center gap-1 h-[36px]">
+                    <input
+                      value={captcha}
+                      onChange={(e) => setCaptcha(e.target.value)}
+                      placeholder="输入验证码"
+                      className="bg-[#2D2738] w-[70%] px-[10px] h-full outline-none"
+                    />
+
+                    <img
+                      src={data?.data?.img}
+                      className="w-[30%]  h-full  object-center outline-none border-gray-400"
+                      alt=""
+                    />
+                  </div>
+                  <Button
+                    onClick={handleVerify}
+                    disabled={
+                      registerLoading ? true : false || !captcha?.length
+                    }
+                    type="submit"
+                    className="w-full gradient-bg hover:gradient-bg text-white rounded-lg"
+                  >
+                    {/* {registerLoading ? <SmallLoader /> : "确认"} */}
+                    确认
+                    {/* Verify */}
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+            <Dialog open={showSecurity} onOpenChange={setShowSecurity}>
+              <DialogContent className="bg-[#242424] max-w-[340px] border-0 rounded-[16px]">
+                <DialogHeader>
+                  <DialogTitle className="text-white text-[16px]">
+                    Security Question
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-6">
+                  <img src={Shield} className="w-[77px] mx-auto" alt="" />
+                  <p className="text-[14px]">
+                    Set up security question to protect your account from lost
+                    or forgotten passwords and theft. You can also choose to do
+                    this later.
+                  </p>
+                  <div className="space-y-2">
+                    <Button
+                      onClick={() => navigate(paths.security_questions)}
+                      className="w-full gradient-bg rounded-[16px] hover:gradient-bg"
+                    >
+                      Continue
+                    </Button>
+                    <Button
+                      onClick={() => navigate(paths.login)}
+                      className="w-full bg-[#444444] rounded-[16px] hover:bg-[#444444]"
+                    >
+                      Later
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </form>
+        </Form>
       </div>
-    </div>
+    </>
   );
 };
 
-export default withProfileData(Settings);
+export default RegisterForm;
