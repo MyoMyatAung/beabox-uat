@@ -115,6 +115,8 @@ const PopUp: React.FC<PopUpProps> = ({
   const currentImage = multiStart[currentIndex];
 
   return (
+    <>
+    {(currentImage || showAppContent) &&
     <div className="h-screen bg-black/80 w-screen flex flex-col gap-[20px] justify-center items-center fixed top-0 z-[9999]">
       {/* Start Image */}
       {showStart && currentImage && (
@@ -221,6 +223,8 @@ const PopUp: React.FC<PopUpProps> = ({
         <Notice handleNoticeClose={handleNoticeClose} notice={NotList} />
       )}
     </div>
+    }
+    </>
   );
 };
 

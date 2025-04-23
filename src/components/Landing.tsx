@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPanding } from "../store/slices/ModelSlice";
 import "../page/search/search.css";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
-
+import Splash from '../assets/splashScreen.png';
 interface AdImage {
   image: string;
   jump_url?: string;
@@ -74,7 +74,7 @@ const Landing: React.FC<LandingProps> = ({ onComplete }) => {
         <div className="relative h-screen w-screen max-w-[480px]">
           <AsyncDecryptedImage
             className="h-full max-w-[480px] w-full object-cover"
-            imageUrl={images?.image || ''}
+            imageUrl={images?.image || Splash}
             alt="Advertisement"
           />
         </div>
