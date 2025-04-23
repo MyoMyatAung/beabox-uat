@@ -117,9 +117,9 @@ const RootLayout = ({ children }: any) => {
   // Handle when Landing screen completes
   const handleLandingComplete = () => {
     setShowLanding(false);
-    if (!isFirstTime) {
-      setUserPers(true);
-    }
+    // if (!isFirstTime) {
+    //   setUserPers(true);
+    // }
 
     setShowAd(true); // Show PopUp after Landing
   };
@@ -145,11 +145,11 @@ const RootLayout = ({ children }: any) => {
     return <Landing onComplete={handleLandingComplete} />;
   }
 
-  if (userPers) {
-    return (
-      <UserFeed setUserPers={setUserPers} config={config} />
-    );
-  }
+  // if (userPers) {
+  //   return (
+  //     <UserFeed setUserPers={setUserPers} config={config} />
+  //   );
+  // }
 
 
   return (

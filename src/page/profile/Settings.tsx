@@ -120,7 +120,7 @@ const Settings = ({
             />
             <div className="border-b border-white/10 my-2"></div>
             {/* change feed */}
-            <Link to={paths.user_feed} className=" flex flex-col gap-2">
+            <Link to={paths.user_feed} className=" fle hidden flex-col gap-2">
               <div className=" flex w-full justify-between items-center">
                 <h1 className=" text-white text-[14px] font-[400] leading-[24px]">
                   个性化您的推荐内容
@@ -132,7 +132,7 @@ const Settings = ({
               </span>
             </Link>
 
-            <div className="border-b border-white/10 my-2"></div>
+            <div className="border-b hidden border-white/10 my-2"></div>
 
             <Link
               to={paths.privacy_settings}
