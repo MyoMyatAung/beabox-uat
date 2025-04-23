@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useGetConfigQuery, usePostCommentMutation } from "../services/homeApi";
 // import Player from "./Player";
 // import VideoSidebar from "./VideoSidebar";
@@ -29,12 +29,14 @@ const VideoFeed = ({
   setShowVideoFeed,
   query,
   setVideos,
+  setPage,
   search = false,
 }: {
   videos: any;
   currentActiveId: any;
   setShowVideoFeed: any;
   query: any;
+  setPage: any;
   setVideos: any;
   search: any;
 }) => {
@@ -107,19 +109,7 @@ const VideoFeed = ({
 
   useEffect(() => {
     if (videos.length > 0) {
-      // Find the index of the video with currentActiveId
-      // const activeVideoIndex = videos.findIndex(
-      //   (video: any) => video.post_id === currentActiveId
-      // );
-
-      // If the video with currentActiveId exists, move it to the beginning
       let initialVideos = [...videos];
-      // if (activeVideoIndex !== -1) {
-      //   const activeVideo = initialVideos.splice(activeVideoIndex, 1)[0];
-      //   initialVideos.unshift(activeVideo);
-      // }
-
-      // Slice the first `videosPerLoad` videos for initial render
 
       try {
         const run = async () => {
@@ -150,7 +140,6 @@ const VideoFeed = ({
   //     }
   //   }
   // }, [videos]); // Runs only once on mount
-
 
   useEffect(() => {
     const handlePopState = () => {
@@ -188,7 +177,7 @@ const VideoFeed = ({
     });
 
     return () => observer.disconnect();
-  }, [currentActiveId, videosToRender]); // Add videosToRender as dependency
+  }, [currentActiveId]); // Add videosToRender as dependency
 
   // Scroll to the first current post when the component is mounted
   // useEffect(() => {
@@ -205,6 +194,39 @@ const VideoFeed = ({
   //     }
   //   }
   // }, [currentActiveId]);
+
+  useLayoutEffect(() => {
+    const container = videoContainerRef.current;
+
+    if (!container) return; // Ensure the container is available before proceeding.
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setPage((prev: any) => prev + 1); // Load more videos
+          }
+        });
+      },
+      {
+        rootMargin: "100px", // Trigger the observer when 100px from the bottom
+        threshold: 0.5, // 50% visibility of the last video
+      }
+    );
+
+    // Ensure videos are available
+    if (videos.length > 1) {
+      const secondLastVideo = container.children[container.children.length - 5];
+      if (secondLastVideo) {
+        observer.observe(secondLastVideo);
+      }
+    }
+
+    // Cleanup observer on component unmount or when dependencies change
+    return () => {
+      observer.disconnect();
+    };
+  }, [currentActivePost]); // Dependencies (excluding videoContainerRef.current as it's stable)
 
   useEffect(() => {
     const container = videoContainerRef.current;
@@ -232,7 +254,7 @@ const VideoFeed = ({
     });
 
     return () => observer.disconnect();
-  }, [videos]);
+  }, [videosToRender]);
 
   useEffect(() => {
     if (currentActivePost) {
@@ -401,7 +423,7 @@ const VideoFeed = ({
             {videosToRender.map((video: any, index: any) => (
               <div
                 key={index}
-                className="video1 mt-[20px] pb-[68px]"
+                className="video1 pb-[70px]"
                 data-post-id={video.post_id} // Add post ID to the container
               >
                 {video?.file_type !== "video" ? (
@@ -504,11 +526,7 @@ const VideoFeed = ({
           </div>
         )}
 
-        {!videos?.length && (
-          <p style={{ textAlign: "center" }}>
-            <b>You have seen all videos</b>
-          </p>
-        )}
+        {!videos?.length && <></>}
       </div>
     </>
   );

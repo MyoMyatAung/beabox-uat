@@ -74,7 +74,6 @@ const Explore = () => {
   // useEffect(() => {
   //   setList([]); // Reset list when switching tabs
   // }, [exp_header,tabs]);
-  
 
   useEffect(() => {
     if (swiperRef.current) {
@@ -164,7 +163,7 @@ const Explore = () => {
                           />
                         ) : (
                           <Latest
-                          exp_header={exp_header}
+                            exp_header={exp_header}
                             setSelectedMovieId={setSelectedMovieId}
                             setShowVideoFeed={setShowVideoFeed}
                             list_id={gg.id}

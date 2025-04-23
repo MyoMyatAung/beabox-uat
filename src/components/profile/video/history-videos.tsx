@@ -76,6 +76,7 @@ const HistoryVideos = () => {
       {showVideoFeed && selectedMovieId ? (
         <div className="z-[9900] h-screen fixed top-0 overflow-y-scroll left-0 w-full">
           <VideoFeed
+            setPage={setPage}
             setVideos={setVideos}
             videos={videos}
             currentActiveId={selectedMovieId}

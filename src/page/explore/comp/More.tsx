@@ -149,6 +149,7 @@ const More: React.FC<MoreProps> = () => {
       {showVideoFeed && selectedMovieId ? (
         <div className="z-[9900] h-screen fixed top-0 overflow-y-scroll left-0 w-full">
           <VideoFeed
+            setPage={setPage}
             setVideos={setList}
             videos={list}
             currentActiveId={selectedMovieId}
@@ -266,9 +267,11 @@ const More: React.FC<MoreProps> = () => {
                             alt=""
                           />
                         )}
-                        <h1 
+                        <h1
                           className=" text-[#888] text-[12px] font-[500] cursor-pointer hover:text-white"
-                          onClick={(e) => navigateToUserProfile(item.user.id, e)}
+                          onClick={(e) =>
+                            navigateToUserProfile(item.user.id, e)
+                          }
                         >
                           {item.user.name}
                         </h1>

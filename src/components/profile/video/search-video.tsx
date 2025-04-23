@@ -25,9 +25,11 @@ import VideoFeed from "@/page/home/components/VideoFeed";
 // } from "react-device-detect";
 
 export function isWebView() {
-  return (window as any).webkit &&
-  (window as any).webkit.messageHandlers &&
-  (window as any).webkit.messageHandlers.jsBridge;
+  return (
+    (window as any).webkit &&
+    (window as any).webkit.messageHandlers &&
+    (window as any).webkit.messageHandlers.jsBridge
+  );
   // const ua = navigator.userAgent || "";
   // const standalone = window.navigator.standalone;
 
@@ -125,6 +127,7 @@ const SearchVideo = ({ id }: { id: string }) => {
         {showVideoFeed && selectedMovieId ? (
           <div className="z-[9999] h-screen fixed top-0 overflow-y-scroll left-0 w-full">
             <VideoFeed
+              // setPage={setPage2}
               setVideos={setVideos}
               videos={videos}
               currentActiveId={selectedMovieId}

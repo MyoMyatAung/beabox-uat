@@ -1009,6 +1009,7 @@ const VideoContainerFeed = ({
 
   return (
     <>
+      {" "}
       <Player
         videoData={videoData}
         indexRef={indexRef}
@@ -1027,7 +1028,6 @@ const VideoContainerFeed = ({
         post_id={post_id}
         isActive={isActive}
       />
-
       <VideoSidebarFeed
         setVideosData={setVideosData}
         status={status}
@@ -1052,7 +1052,6 @@ const VideoContainerFeed = ({
         post={video}
         setHearts={setHearts}
       />
-
       {/* Rotate button - only show for non-ads landscape videos */}
       {video?.type !== "ads" &&
         video?.files[0].width > video?.files[0].height && (
