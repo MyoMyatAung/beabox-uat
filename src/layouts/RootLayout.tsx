@@ -11,6 +11,7 @@ import { useGetConfigQuery } from "@/page/home/services/homeApi";
 import LoadingScreen from "@/components/LoadingScreen";
 import Landing from "@/components/Landing";
 import { setPlay } from "@/page/home/services/playSlice";
+import UserFeed from "@/components/UserFeed";
 
 // Function to check if the app is running in a WebView
 function isWebView() {
@@ -31,9 +32,12 @@ const RootLayout = ({ children }: any) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showLanding, setShowLanding] = useState(false);
   const dispatch = useDispatch();
-  
+  const isFirstTime = localStorage.getItem("isFirstTimeUser");
+
+  const [userPers, setUserPers] = useState(false);
+
   const { data: config } = useGetConfigQuery({});
-  
+
   // Skip the API query since LoadingScreen handles it
   useGetApplicationAdsQuery("", { skip: true });
 
@@ -41,7 +45,7 @@ const RootLayout = ({ children }: any) => {
   useEffect(() => {
     const hasSeenAdPopUp = sessionStorage.getItem("hasSeenAdPopUp");
     const hasSeenLanding = sessionStorage.getItem("hasSeenLanding");
-    
+
     if (hasSeenAdPopUp && hasSeenLanding) {
       // User has already seen ads in this session, skip loading and ads
       dispatch(setPlay(true));
@@ -63,12 +67,16 @@ const RootLayout = ({ children }: any) => {
   // Detect device type and browser
   useEffect(() => {
     const userAgent = navigator.userAgent.toLowerCase();
-    
+
     // Set isBrowser based on WebView detection
     setIsBrowser(!isWebView());
 
     // Determine device type
-    if (userAgent.includes("iphone") || userAgent.includes("ipad") || userAgent.includes("ipod")) {
+    if (
+      userAgent.includes("iphone") ||
+      userAgent.includes("ipad") ||
+      userAgent.includes("ipod")
+    ) {
       setDeviceType("IOS");
     } else if (userAgent.includes("android")) {
       setDeviceType("Android");
@@ -81,14 +89,18 @@ const RootLayout = ({ children }: any) => {
       const dialogConfigItem = config.data.dialog_config.find(
         (item: any) => item.device === deviceType
       );
-      
+
       if (dialogConfigItem) {
         if (dialogConfigItem.jump_url) {
           setJumpUrl(dialogConfigItem.jump_url);
         }
-        
+
         // Set showDialog based on dialogConfigItem.show_dialog
-        const shouldShowDialog = dialogConfigItem.show_dialog === 1 || dialogConfigItem.show_dialog === true || dialogConfigItem.show_dialog === "1" || dialogConfigItem.show_dialog === "true";
+        const shouldShowDialog =
+          dialogConfigItem.show_dialog === 1 ||
+          dialogConfigItem.show_dialog === true ||
+          dialogConfigItem.show_dialog === "1" ||
+          dialogConfigItem.show_dialog === "true";
         setShowDialog(shouldShowDialog);
       }
     }
@@ -105,6 +117,10 @@ const RootLayout = ({ children }: any) => {
   // Handle when Landing screen completes
   const handleLandingComplete = () => {
     setShowLanding(false);
+    // if (!isFirstTime) {
+    //   setUserPers(true);
+    // }
+
     setShowAd(true); // Show PopUp after Landing
   };
 
@@ -112,6 +128,7 @@ const RootLayout = ({ children }: any) => {
   const handleAdComplete = () => {
     setShowAd(false);
     // Ensure video plays after ads are completed
+
     dispatch(setPlay(true));
     sendNativeEvent("beabox_home_started");
   };
@@ -128,9 +145,17 @@ const RootLayout = ({ children }: any) => {
     return <Landing onComplete={handleLandingComplete} />;
   }
 
+  // if (userPers) {
+  //   return (
+  //     <UserFeed setUserPers={setUserPers} config={config} />
+  //   );
+  // }
+
+
   return (
     <div style={{ height: "calc(100dvh - 95px);" }}>
       {children}
+
       {showAd && (
         <PopUp
           setShowAd={setShowAd}

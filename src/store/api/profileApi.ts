@@ -406,6 +406,16 @@ export const profileApi = createApi({
         method: "POST",
       }),
     }),
+    postPersonalization: builder.mutation({
+      query: ({ tags, interest }) => ({
+        url: convertToSecureUrl(`user/personalize/update`),
+        method: "POST",
+        body: convertToSecurePayload({
+          tags : tags,
+          interest: interest,
+        }),
+      }),
+    }),
   }),
 });
 
@@ -457,4 +467,5 @@ export const {
   useRemoveCoverMutation,
   useGetWatchHistoryQuery,
   useGetMyOwnProfileQuery,
+  usePostPersonalizationMutation
 } = profileApi;

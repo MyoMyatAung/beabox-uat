@@ -34,11 +34,12 @@ import {
 import { useDispatch } from "react-redux";
 import { setRegisterUser, setUser } from "@/store/slices/persistSlice";
 import Shield from "@/assets/profile/shield.png";
-import Loader from "@/components/shared/loader";
-import SmallLoader from "@/components/shared/small-loader";
+import Portal from "./Portal";
 import AuthError from "@/components/shared/auth-error";
 
 const RegisterForm = ({ setIsOpen }: any) => {
+  const [flashLoading, setflashLoading] = useState(false);
+
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [code, setCode] = useState("");
@@ -78,6 +79,8 @@ const RegisterForm = ({ setIsOpen }: any) => {
 
   const handleVerify = async (e: any) => {
     // Add 验证码 logic here
+    setflashLoading(true);
+
     e.stopPropagation();
     e.preventDefault();
     const { emailOrPhone, password } = form.getValues();
@@ -94,22 +97,29 @@ const RegisterForm = ({ setIsOpen }: any) => {
       dispatch(setIsDrawerOpen(false));
       dispatch(setShowAlert(true));
       dispatch(setAlertText(registerData?.message));
-      setIsOpen(false);
       dispatch(setIsDrawerOpen(false));
       setShow验证码(false);
+      setflashLoading(false);
+      setIsOpen(false);
     }
   };
   const errorHandler = async () => {
     if (rerror?.originalStatus == 400) {
+      setError("");
+      setflashLoading(false);
       setShow验证码(false);
       setError("该用户名已存在");
       setCaptcha("");
     }
     if (rerror?.originalStatus == 422) {
+      setError("");
       setShow验证码(false);
+      setflashLoading(true);
       setError("验证码错误");
       setCaptcha("");
       await getCaptcha("");
+      setflashLoading(false);
+
       setShow验证码(true);
     }
   };
@@ -119,7 +129,16 @@ const RegisterForm = ({ setIsOpen }: any) => {
   }, [rerror]);
   return (
     <>
-      {(isLoading && !show验证码) || isLoading ? (
+      {(registerLoading && !show验证码) || isLoading || flashLoading ? (
+        <Portal>
+          <div className="fixed inset-0 z-[9999] bg-[#00000099] flex justify-center items-center">
+            <div className="bg-[#000000E5] p-1 rounded">
+              <img src={loader} alt="Loading" className="w-14" />
+            </div>
+          </div>
+        </Portal>
+      ) : null}
+      {/* {(isLoading && !show验证码) || isLoading ? (
         <div className="h-screen bg-[#00000099] fixed top-0 left-0 w-full z-[9999] flex justify-center items-center">
           <div className="bg-[#000000E5] p-1 rounded">
             <img src={loader} alt="" className="w-14" />
@@ -127,7 +146,7 @@ const RegisterForm = ({ setIsOpen }: any) => {
         </div>
       ) : (
         <></>
-      )}
+      )} */}
       <div className="px-5">
         {isError ? <AuthError message={error} /> : <></>}
 

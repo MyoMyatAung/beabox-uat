@@ -85,20 +85,14 @@ const Settings = ({
       <div className="top flex flex-col gap-5 w-full">
         <div className="flex justify-between items-center py-5">
           <Link to={paths.profile}>
-            {/* <FaAngleLeft size={22} /> */}
             <img src={backButton} alt="" />
           </Link>
-          <p className="text-[16px]">
-            {/* {user?.token ? "Setting & Privacy" : "Setting"} */}
-            设置和隐私
-          </p>
+          <p className="text-[16px]">设置和隐私</p>
           <div></div>
         </div>
 
         {user?.token ? (
           <>
-            {/* <EditLanguage />
-            <div className="border-b border-white/10"></div> */}
             <div className="flex flex-col gap-4">
               <h1 className="text-[12px] text-[#888]">账户安全</h1>
               <ChangePassword />
@@ -125,6 +119,21 @@ const Settings = ({
               visibilityLoading={cvLoading}
             />
             <div className="border-b border-white/10 my-2"></div>
+            {/* change feed */}
+            <Link to={paths.user_feed} className=" fle hidden flex-col gap-2">
+              <div className=" flex w-full justify-between items-center">
+                <h1 className=" text-white text-[14px] font-[400] leading-[24px]">
+                  个性化您的推荐内容
+                </h1>
+                <ChevronRight size={15} className="text-[#777777]" />
+              </div>
+              <span className=" text-[#888] text-[10px] font-[400] pr-[60px]">
+                您的偏好设置将帮助我们个性化推荐内容，根据您的兴趣展示最相关和最吸引您的选项。
+              </span>
+            </Link>
+
+            <div className="border-b hidden border-white/10 my-2"></div>
+
             <Link
               to={paths.privacy_settings}
               className="flex justify-between items-center mb-5"
@@ -145,8 +154,7 @@ const Settings = ({
         <div className="flex justify-between items-center">
           <p className="flex items-center gap-1 text-[14px]">当前版本</p>
           <p className="flex items-center gap-1 text-[14px]">
-            V 1.1.4.6{" "}
-            <ChevronRight size={15} className="text-[#777777]" />
+            V 1.1.4.8 <ChevronRight size={15} className="text-[#777777]" />
           </p>
         </div>
 

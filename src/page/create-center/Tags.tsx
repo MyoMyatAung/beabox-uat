@@ -38,7 +38,11 @@ const TagBtn = ({
       onClick={!hashtags?.includes(tag) ? () => addTag(tag) : () => remove(tag)}
       className={`${
         hashtags?.includes(tag) ? "stagbg" : "bg-[#3A3A3A33]"
-      } px-3 py-1 rounded-full ${hashtags?.length >= MAX_TAGS && !hashtags?.includes(tag) ? "opacity-50 cursor-not-allowed" : ""}`}
+      } px-3 py-1 rounded-full ${
+        hashtags?.length >= MAX_TAGS && !hashtags?.includes(tag)
+          ? "opacity-50 cursor-not-allowed"
+          : ""
+      }`}
       disabled={hashtags?.length >= MAX_TAGS && !hashtags?.includes(tag)}
     >
       {tag}
@@ -69,11 +73,11 @@ const Tags = ({
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>
         <button className="px-2 bg-[#F0C3FF66] border-[1px] border-[#F0C3FF] py-1 rounded-full text-[12px] text-[#F0C3FF]">
-        选择标签
+          选择标签
         </button>
       </DrawerTrigger>
-      <DrawerContent className="border-0 h-screen">
-        <>
+      <DrawerContent className="border-0">
+        <div className="h-screen overflow-y-scroll">
           <nav className="flex justify-between items-center p-5">
             <ChevronLeft onClick={() => setIsOpen(false)} />
             <p className="text-[16px]">选择标签</p>
@@ -92,7 +96,11 @@ const Tags = ({
               />
               <button
                 onClick={handleAddHashtag}
-                className={`text-[#CD3EFF] w-[40px] text-[16px] ${hashtags?.length >= MAX_TAGS ? "opacity-50 cursor-not-allowed" : ""}`}
+                className={`text-[#CD3EFF] w-[40px] text-[16px] ${
+                  hashtags?.length >= MAX_TAGS
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
+                }`}
                 disabled={hashtags?.length >= MAX_TAGS}
               >
                 添加
@@ -134,6 +142,7 @@ const Tags = ({
               ))}
             </div>
           </div>
+          <div className="pb-32"></div>
           <div className="w-full fixed bottom-5 px-5">
             <button
               onClick={() => setIsOpen(false)}
@@ -142,7 +151,7 @@ const Tags = ({
               继续
             </button>
           </div>
-        </>
+        </div>
       </DrawerContent>
     </Drawer>
   );

@@ -16,7 +16,7 @@ const EditGender = ({ gender }: any) => {
   // const gender = useSelector((state: any) => state.persist.gender);
 
   const dispatch = useDispatch();
-  // const [gender, setGender] = useState("Other");
+  const [cgender, setcGender] = useState(gender);
   const [isOpen, setIsOpen] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
 
@@ -30,9 +30,9 @@ const EditGender = ({ gender }: any) => {
         <div className="text-[14px] flex items-center justify-between">
           <h1>性别</h1>
           <p className="flex items-center gap-1 text-[#888]">
-            {(gender === "Other" && "不方便透露") ||
-              (gender == "Male" && "男性") ||
-              (gender == "Female" && "女性")}{" "}
+            {(cgender === "Other" && "不方便透露") ||
+              (cgender == "Male" && "男性") ||
+              (cgender == "Female" && "女性")}
             <FaAngleRight />
           </p>
         </div>
@@ -44,57 +44,60 @@ const EditGender = ({ gender }: any) => {
             <div className="flex items-center gap-2">
               <h1
                 onClick={async () => {
+                  setcGender("Other");
                   dispatch(setGender("Other"));
-                  await changeGender({ gender: "Other" });
                   closeRef.current?.click();
+                  await changeGender({ gender: "Other" });
                 }}
                 className={`${
-                  gender == "Other" ? "text-white" : "text-[#999]"
+                  cgender == "Other" ? "text-white" : "text-[#999]"
                 } text-[16px]`}
               >
                 不方便透露
               </h1>
               <span
                 className={`w-[6px] h-[6px] rounded-full gradient-bg ${
-                  gender == "Other" ? "block" : "hidden"
+                  cgender == "Other" ? "block" : "hidden"
                 }`}
               ></span>
             </div>
             <div className="flex items-center gap-2">
               <h1
                 onClick={async () => {
+                  setcGender("Male");
                   dispatch(setGender("Male"));
-                  await changeGender({ gender: "Male" });
                   closeRef.current?.click();
+                  await changeGender({ gender: "Male" });
                 }}
                 className={`${
-                  gender == "Male" ? "text-white" : "text-[#999]"
+                  cgender == "Male" ? "text-white" : "text-[#999]"
                 } text-[16px]`}
               >
                 男性
               </h1>
               <span
                 className={`w-[6px] h-[6px] rounded-full gradient-bg ${
-                  gender == "Male" ? "block" : "hidden"
+                  cgender == "Male" ? "block" : "hidden"
                 }`}
               ></span>
             </div>
             <div className="flex items-center gap-2">
               <h1
                 onClick={async () => {
+                  setcGender("Female");
                   dispatch(setGender("Female"));
-                  await changeGender({ gender: "Female" });
                   closeRef.current?.click();
+                  await changeGender({ gender: "Female" });
                 }}
                 className={`${
-                  gender == "Female" ? "text-white" : "text-[#999]"
+                  cgender == "Female" ? "text-white" : "text-[#999]"
                 } text-[16px]`}
               >
                 女性
               </h1>
               <span
                 className={`w-[6px] h-[6px] rounded-full gradient-bg ${
-                  gender == "Female" ? "block" : "hidden"
+                  cgender == "Female" ? "block" : "hidden"
                 }`}
               ></span>
             </div>

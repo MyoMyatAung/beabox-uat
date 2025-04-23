@@ -41,6 +41,7 @@ const OTP = lazy(() => import("../page/auth/OTP"));
 const UploadComponent = lazy(() => import("../page/upload/Upload"));
 const UploadProcess = lazy(() => import("../page/upload/UploadProcess"));
 const Question = lazy(() => import("../page/profile/security/Question"));
+const UserFeedSet = lazy(() => import("../page/profile/security/UserFeedSet"));
 const CheckAnswer = lazy(
   () => import("../components/profile/auth/check-answer")
 );
@@ -249,6 +250,10 @@ const Routing = () => {
     {
       path: paths.tags,
       ...withErrorHandling(<Tags />)
+    },
+    {
+      path: paths.user_feed,
+      ...withErrorHandling(<UserFeedSet />)
     },
   ];
 

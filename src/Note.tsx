@@ -1,15 +1,18 @@
-// wrong user name or passwor
-// 用户名或密码错误
-
-// v code error 验证码错误
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {
+  setAlertText,
+  setAuthToggle,
+  setIsDrawerOpen,
+  setShowAlert,
+} from "@/store/slices/profileSlice";
 import { paths } from "@/routes/paths";
-import { Eye, EyeOff, X } from "lucide-react";
+import { ChevronLeft, Eye, EyeOff, RotateCcw, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LoginFormData, loginSchema } from "@/page/auth/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import loader from "@/page/home/vod_loader.gif";
 import {
   Form,
   FormControl,
@@ -18,10 +21,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { useGetCaptchaMutation, useLoginMutation } from "@/store/api/authApi";
-import { useDispatch } from "react-redux";
-import { setUser } from "@/store/slices/persistSlice";
-import loader from "@/page/home/vod_loader.gif";
 import {
   Dialog,
   DialogContent,
@@ -29,22 +28,29 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  setAlertText,
-  setAuthToggle,
-  setIsDrawerOpen,
-  setShowAlert,
-} from "@/store/slices/profileSlice";
+  useGetCaptchaMutation,
+  useRegisterMutation,
+} from "@/store/api/authApi";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/store/slices/persistSlice";
+import Shield from "@/assets/profile/shield.png";
 import AuthError from "@/components/shared/auth-error";
-const LoginForm = ({ setIsOpen }: any) => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [login, { data: ldata, isLoading, error: lerror, isError }] =
-    useLoginMutation();
-  const dispatch = useDispatch();
-  const [getCaptcha, { data, isLoading: captchaLoading }] =
-    useGetCaptchaMutation();
-  const [show验证码, setShow验证码] = useState(false);
-  const [captcha, setCaptcha] = useState("");
+
+const RegisterForm = ({ setIsOpen }: any) => {
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [code, setCode] = useState("");
+  const [show验证码, setShow验证码] = useState(false);
+  const [showSecurity, setShowSecurity] = useState(false);
+  const [captcha, setCaptcha] = useState("");
+  const [getCaptcha, { data, isLoading }] = useGetCaptchaMutation();
+  const [
+    register,
+    { isLoading: registerLoading, data: rdata, error: rerror, isError },
+  ] = useRegisterMutation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const authErr = localStorage.getItem("auth-error") || "验证码错误";
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -53,43 +59,44 @@ const LoginForm = ({ setIsOpen }: any) => {
       password: "",
     },
   });
+
   const { watch } = form;
   const emailOrPhoneValue = watch("emailOrPhone");
   const passwordValue = watch("password");
-
-  async function onSubmit() {
-    // if (data?.status) setShow验证码(true);
+  async function onSubmit(data: LoginFormData) {
+    // Handle form submission
+    // await getCaptcha();
+    // setShow验证码(true);
   }
 
   const handleVerify = async (e: any) => {
-    setShow验证码(false);
     e.stopPropagation();
     e.preventDefault();
     const { emailOrPhone, password } = form.getValues();
-    const { data: loginData } = await login({
+    const { data: registerData, error: registerError } = await register({
       username: emailOrPhone,
       password,
       captcha,
       captcha_key: data?.data?.captcha_key,
+      referral_code: code,
     });
-    if (loginData?.status) {
-      dispatch(setUser(loginData?.data));
+    if (registerData?.status) {
+      dispatch(setUser(registerData?.data));
       dispatch(setIsDrawerOpen(false));
       dispatch(setShowAlert(true));
-      dispatch(setAlertText(loginData?.message));
-      setShow验证码(false);
-      dispatch(setIsDrawerOpen(false));
+      dispatch(setAlertText(registerData?.message));
       setIsOpen(false);
+      dispatch(setIsDrawerOpen(false));
+      setShow验证码(false);
     }
   };
-
   const errorHandler = async () => {
-    if (lerror?.originalStatus == 401) {
+    if (rerror?.originalStatus == 400) {
       setShow验证码(false);
-      setError("用户名或密码错误");
+      setError("该用户名已存在");
       setCaptcha("");
     }
-    if (lerror?.originalStatus == 422) {
+    if (rerror?.originalStatus == 422) {
       setShow验证码(false);
       setError("验证码错误");
       setCaptcha("");
@@ -100,12 +107,11 @@ const LoginForm = ({ setIsOpen }: any) => {
 
   useEffect(() => {
     errorHandler();
-  }, [lerror]);
-
+  }, [rerror]);
   return (
     <>
-      {(isLoading && !show验证码) || captchaLoading ? (
-        <div className="h-screen bg-[#00000099] fixed bottom-0 left-0 w-full z-[9999] flex justify-center items-center">
+      {(isLoading && !show验证码) || isLoading ? (
+        <div className="h-screen bg-[#00000099] fixed top-0 left-0 w-full z-[9999] flex justify-center items-center">
           <div className="bg-[#000000E5] p-1 rounded">
             <img src={loader} alt="" className="w-14" />
           </div>
@@ -113,21 +119,22 @@ const LoginForm = ({ setIsOpen }: any) => {
       ) : (
         <></>
       )}
-
       <div className="px-5">
         {isError ? <AuthError message={error} /> : <></>}
+
         <div className="flex justify-between items-center">
           <div className="px-3"></div>
           <p className="text-[18px]">
-            登录
-            {/* Login */}
+            创建账户
+            {/* Register */}
           </p>
           <div
             onClick={() => {
+              // setIsOpen(false);
               dispatch(setIsDrawerOpen(false));
-              if (setIsOpen) setIsOpen(false);
+              dispatch(setAuthToggle(true));
             }}
-            className="bg-[#FFFFFF0A] p-2 rounded-full cursor-pointer"
+            className="bg-[#FFFFFF0A] p-2 rounded-full"
           >
             <X size={18} />
           </div>
@@ -135,7 +142,7 @@ const LoginForm = ({ setIsOpen }: any) => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-8 pb-10 pt-5"
+            className="space-y-8 pt-5 pb-10"
           >
             <FormField
               control={form.control}
@@ -149,7 +156,7 @@ const LoginForm = ({ setIsOpen }: any) => {
                       </label>
                       <div className="relative">
                         <input
-                          className="block w-full py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none "
+                          className="block w-full  py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none "
                           placeholder="输入用户名"
                           {...field}
                         />
@@ -179,21 +186,20 @@ const LoginForm = ({ setIsOpen }: any) => {
                 <FormItem className="relative">
                   <FormControl>
                     <>
-                      <label htmlFor="" className="text-[14px] text-[#777]">
+                      <label htmlFor="" className="text-[14px] text-[#888]">
                         密码
                       </label>
                       <div className="relative">
                         <input
                           type={showPassword ? "text" : "password"}
-                          className="block w-full py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none "
-                          placeholder="输入您的密码"
+                          className="block w-full  py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none "
+                          placeholder="密码必须是8-25个字符"
                           {...field}
                           maxLength={25}
                         />
                         <button
                           className=" absolute right-0 bottom-2"
                           onClick={(e) => {
-                            e.stopPropagation();
                             e.preventDefault();
                             setShowPassword(!showPassword);
                           }}
@@ -204,7 +210,6 @@ const LoginForm = ({ setIsOpen }: any) => {
                             <EyeOff className="w-[18px]" />
                           )}
                         </button>
-
                         <div className="w-full h-[1px] bg-[#FFFFFF0A]"></div>
                       </div>
                     </>
@@ -213,50 +218,48 @@ const LoginForm = ({ setIsOpen }: any) => {
                 </FormItem>
               )}
             />
+
+
+            <input
+              type="text"
+              placeholder="用户名输入邀请码（可选）"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              className="bg-[#37363A] border-0 rounded-lg text-white placeholder:text-gray-600 px-4 py-4 text-center placeholder:text-center w-full outline-none"
+            />
+
             <div className="">
               <Button
                 disabled={
                   isLoading ||
-                  captchaLoading ||
                   !emailOrPhoneValue ||
                   !passwordValue ||
                   passwordValue?.length < 8 ||
                   passwordValue?.length > 25
                 }
-                // type="submit"
                 onClick={async () => {
                   await getCaptcha("");
                   setShow验证码(true);
                 }}
                 className="w-full gradient-bg rounded-lg hover:gradient-bg"
               >
-                {/* {captchaLoading ? <SmallLoader /> : "登录"} */}
-                登录
+                确认
               </Button>
-              <div className="flex justify-center">
-                <Link
-                  to={paths.forgot_password}
-                  className="text-center text-[14px] mt-5"
-                >
-                  忘记密码？
-                </Link>
-              </div>
             </div>
             <Dialog open={show验证码} onOpenChange={setShow验证码}>
               <DialogContent className="bg-[#393641] z-[3000] border-0 shadow-lg rounded-lg max-w-[300px]">
                 <DialogHeader>
                   <DialogTitle className="text-white text-[16px]">
-                    {/* 验证码 */}
                     验证码
                   </DialogTitle>
                 </DialogHeader>
-                <div className="space-y-6 w-full">
+                <div className="space-y-6">
                   <div className="flex justify-center items-center gap-1 h-[36px]">
                     <input
                       value={captcha}
                       onChange={(e) => setCaptcha(e.target.value)}
                       placeholder="输入验证码"
-                      className="bg-[#524D5C] w-[70%] px-[10px] h-full outline-none"
+                      className="bg-[#2D2738] w-[70%] px-[10px] h-full outline-none"
                     />
 
                     <img
@@ -265,53 +268,52 @@ const LoginForm = ({ setIsOpen }: any) => {
                       alt=""
                     />
                   </div>
-                  {/* <div
-                  onClick={async (e) => {
-                    e.stopPropagation();
-                    await getCaptcha("");
-                    setShow验证码(true);
-                    // console.log("get new");
-                  }}
-                  className={`flex items-center gap-2`}
-                >
-                  <RotateCcw
-                    className={`${captchaLoading ? "animate-spin" : ""}`}
-                    size={14}
-                  />
-                  <p className="text-[12px] text-[#bbb]">刷新</p>
-                </div> */}
                   <Button
                     onClick={handleVerify}
-                    disabled={isLoading || captchaLoading || !captcha?.length}
+                    disabled={
+                      registerLoading ? true : false || !captcha?.length
+                    }
                     type="submit"
                     className="w-full gradient-bg hover:gradient-bg text-white rounded-lg"
                   >
-                    {/* {registerLoading ? "loading..." : "Verify"} */}
-                    {/* {isLoading ? (
-                      <img src={loader} alt="" className="w-12" />
-                    ) : (
-                      "确认"
-                    )} */}
+                    {/* {registerLoading ? <SmallLoader /> : "确认"} */}
                     确认
+                    {/* Verify */}
                   </Button>
                 </div>
               </DialogContent>
             </Dialog>
-            <div className="w-full flex flex-col items-center">
-              <p className="text-[14px] text-[#888] text-center mb-5">或者</p>
-              <>
-                <Button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    dispatch(setAuthToggle(false));
-                  }}
-                  className="w-[60vw] bg-transparent border-[#555555]"
-                  variant={"outline"}
-                >
-                  创建新帐户
-                </Button>
-              </>
-            </div>
+            <Dialog open={showSecurity} onOpenChange={setShowSecurity}>
+              <DialogContent className="bg-[#242424] max-w-[340px] border-0 rounded-[16px]">
+                <DialogHeader>
+                  <DialogTitle className="text-white text-[16px]">
+                    Security Question
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-6">
+                  <img src={Shield} className="w-[77px] mx-auto" alt="" />
+                  <p className="text-[14px]">
+                    Set up security question to protect your account from lost
+                    or forgotten passwords and theft. You can also choose to do
+                    this later.
+                  </p>
+                  <div className="space-y-2">
+                    <Button
+                      onClick={() => navigate(paths.security_questions)}
+                      className="w-full gradient-bg rounded-[16px] hover:gradient-bg"
+                    >
+                      Continue
+                    </Button>
+                    <Button
+                      onClick={() => navigate(paths.login)}
+                      className="w-full bg-[#444444] rounded-[16px] hover:bg-[#444444]"
+                    >
+                      Later
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
           </form>
         </Form>
       </div>
@@ -319,4 +321,4 @@ const LoginForm = ({ setIsOpen }: any) => {
   );
 };
 
-export default LoginForm;
+export default RegisterForm;

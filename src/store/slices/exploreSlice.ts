@@ -7,7 +7,9 @@ const initialState: any = {
   exp_header: "",
   applicationData: null,
   isLoading: false,
-  tags : ""
+  tags: "",
+  userFeedText: "",
+  userFeedTags: [],
 };
 
 export const exploreSlice = createSlice({
@@ -35,6 +37,12 @@ export const exploreSlice = createSlice({
     setTag: (state, { payload }) => {
       state.tags = payload;
     },
+    setuserFeedText: (state, { payload }) => {
+      state.userFeedText = payload;
+    },
+    setuserFeedTags: (state, { payload }) => {
+      state.userFeedTags = payload;
+    },
   },
 });
 
@@ -45,7 +53,9 @@ export const {
   setExpHeader,
   setApplicationData,
   setisLoading,
-  setTag
+  setTag,
+  setuserFeedText,
+  setuserFeedTags,
 } = exploreSlice.actions;
 
 export default exploreSlice.reducer;
