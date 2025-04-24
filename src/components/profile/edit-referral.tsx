@@ -1,7 +1,12 @@
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import { Button } from "../ui/button";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 import { useSelector } from "react-redux";
 import { useChangeReferralCodeMutation } from "@/store/api/profileApi";
@@ -14,15 +19,25 @@ const EditReferral = ({
   const [isOpen, setIsOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [value, setValue] = useState("");
+  const closeRef = useRef<HTMLButtonElement>(null);
   const user = useSelector((state: any) => state?.persist?.user);
-  const [changeRerralCode, { data, isLoading }] =
+  const [changeRerralCode, { data, isLoading, error }] =
     useChangeReferralCodeMutation();
-
+  // console.log(error, "referral code error");
   const onSubmitHandler = async (e: any) => {
     e.preventDefault();
-    await changeRerralCode({ referral_code: value });
+    const { data } = await changeRerralCode({ referral_code: value });
+    // console.log(data, "referral code data");
     await refetchHandler();
-    setIsOpen(false);
+    // setIsOpen(false);
+    closeRef.current?.click();
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (!open) {
+      setValue(referral_code);
+    }
   };
 
   useEffect(() => {
@@ -30,7 +45,7 @@ const EditReferral = ({
   }, [isOpen]);
   // console.log(referral_code, "referral code data");
   return (
-    <Drawer open={isOpen} onOpenChange={() => setIsOpen(true)}>
+    <Drawer open={isOpen} onOpenChange={handleOpenChange}>
       {referral_code ? (
         <div
           onClick={showAlertHandler}
@@ -58,9 +73,11 @@ const EditReferral = ({
 
         <div className="w-full h-screen px-5">
           <div className="flex justify-between items-center py-5">
-            <button onClick={() => setIsOpen(false)}>
-              <FaAngleLeft size={22} />
-            </button>
+            <DrawerClose>
+              <button>
+                <FaAngleLeft size={22} />
+              </button>
+            </DrawerClose>
             <p className="text-[16px]">我的推广达人</p>
             <div></div>
           </div>
@@ -95,6 +112,7 @@ const EditReferral = ({
               {/* {isLoading ? "loading..." : "Save"} */}
             </Button>
           </form>
+          <DrawerClose ref={closeRef} className="hidden" />
         </div>
       </DrawerContent>
     </Drawer>
