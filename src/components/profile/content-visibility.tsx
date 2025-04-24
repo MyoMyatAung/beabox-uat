@@ -4,6 +4,10 @@ import { useState } from "react";
 import { Button } from "../ui/button";
 import SmallLoader from "../shared/small-loader";
 import { useSelector } from "react-redux";
+import selected from "@/assets/createcenter/selected.png";
+const Selected = () => (
+  <img className="w-3 h-3" src={selected} alt="" />
+);
 
 const ContentVisibility = ({
   changeVisibilityHandler,
@@ -62,19 +66,17 @@ const ContentVisibility = ({
                       status == "public" ? "text-white" : "text-[#888]"
                     }`}
                   >
-                    {/* Public */}
                     公开
                   </p>
                   <p className="text-[10px] text-[#888]">
-                    {/* Your work is visible to everyone on the platform. */}
                     您的作品可以被所有用户观看
                   </p>
                 </div>
-                <div
-                  className={`w-3 h-3 ${
-                    status == "public" ? "bg-[#CD3EFF]" : "bg-[#FFFFFF52]"
-                  } rounded-full`}
-                ></div>
+                {status == "public" ? (
+                  <Selected />
+                ) : (
+                  <div className={`w-3 h-3 bg-[#FFFFFF52] rounded-full`}></div>
+                )}
               </div>
               {/* private  */}
               <div
@@ -95,35 +97,12 @@ const ContentVisibility = ({
                     除了您，没人可以看到您的作品
                   </p>
                 </div>
-                <div
-                  className={`w-3 h-3 ${
-                    status == "private" ? "bg-[#CD3EFF]" : "bg-[#FFFFFF52]"
-                  } rounded-full`}
-                ></div>
+                {status == "private" ? (
+                  <Selected />
+                ) : (
+                  <div className={`w-3 h-3 bg-[#FFFFFF52] rounded-full`}></div>
+                )}
               </div>
-              {/* follower  */}
-              {/* <div
-                onClick={() => setStatus("follower")}
-                className="flex items-start justify-between bg-[#FFFFFF0A] p-3 rounded-xl"
-              >
-                <div className="">
-                  <p
-                    className={`text-[14px] ${
-                      status == "follower" ? "text-white" : "text-[#888]"
-                    }`}
-                  >
-                    Follower
-                  </p>
-                  <p className="text-[10px] text-[#888]">
-                    Only people followed you on the platform can see your work.
-                  </p>
-                </div>
-                <div
-                  className={`w-3 h-3 ${
-                    status == "follower" ? "bg-[#CD3EFF]" : "bg-[#FFFFFF52]"
-                  } rounded-full`}
-                ></div>
-              </div> */}
             </div>
 
             <Button
