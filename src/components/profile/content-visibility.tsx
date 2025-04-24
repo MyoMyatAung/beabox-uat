@@ -5,9 +5,7 @@ import { Button } from "../ui/button";
 import SmallLoader from "../shared/small-loader";
 import { useSelector } from "react-redux";
 import selected from "@/assets/createcenter/selected.png";
-const Selected = () => (
-  <img className="w-3 h-3" src={selected} alt="" />
-);
+const Selected = () => <img className="w-3 h-3" src={selected} alt="" />;
 
 const ContentVisibility = ({
   changeVisibilityHandler,
@@ -58,7 +56,7 @@ const ContentVisibility = ({
               {/* public  */}
               <div
                 onClick={() => setStatus("public")}
-                className="flex items-start justify-between bg-[#FFFFFF0A] p-3 rounded-xl"
+                className="flex items-center justify-between bg-[#FFFFFF0A] p-3 rounded-xl"
               >
                 <div className="">
                   <p
@@ -81,7 +79,7 @@ const ContentVisibility = ({
               {/* private  */}
               <div
                 onClick={() => setStatus("private")}
-                className="flex items-start justify-between bg-[#FFFFFF0A] p-3 rounded-xl"
+                className="flex items-center justify-between bg-[#FFFFFF0A] p-3 rounded-xl"
               >
                 <div className="">
                   <p
