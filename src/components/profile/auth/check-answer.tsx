@@ -26,7 +26,7 @@ const CheckAnswer = () => {
     const { data } = await checkSAnswer({
       answer: ans,
     });
-    if (!data?.status) setError("出了点问题");
+    if (!data?.status) setError("答案错误");
     if (data?.status) {
       navigate(paths.manage);
       dispatch(setSAnswer(ans));
