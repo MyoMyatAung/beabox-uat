@@ -1,0 +1,37 @@
+.event_box {
+  border-radius: 20px;
+  border: 3px solid #ffffc3;
+  background: linear-gradient(
+    156deg,
+    #f33e5c 5.39%,
+    #f11f5d 42.79%,
+    #ea126f 72.45%,
+    #f522ab 99.98%
+  );
+}
+
+.user_invite_text {
+  color: #d9d9d9;
+  text-align: center;
+  font-family: "SF Pro Display";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 20px; /* 142.857% */
+  letter-spacing: 1px;
+}
+
+.event_btn {
+  border-radius: 12px;
+  background: linear-gradient(339deg, #fccba3 41.82%, #fff 107.54%);
+  box-shadow: 0px -8px 4px 0px rgba(255, 255, 255, 0.25) inset;
+  color: #4e4e4e;
+  text-align: center;
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 22px; /* 157.143% */
+  width: 230px;
+  height: 40px;
+}

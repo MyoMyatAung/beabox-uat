@@ -12,6 +12,9 @@ import LoadingScreen from "@/components/LoadingScreen";
 import Landing from "@/components/Landing";
 import { setPlay } from "@/page/home/services/playSlice";
 import UserFeed from "@/components/UserFeed";
+import { useSearchParams } from "react-router-dom";
+import { useGetUserByReferalQuery } from "@/page/event/eventApi";
+import EventBox from "@/page/event/EventBox";
 
 // Function to check if the app is running in a WebView
 function isWebView() {
@@ -33,9 +36,24 @@ const RootLayout = ({ children }: any) => {
   const [showLanding, setShowLanding] = useState(false);
   const dispatch = useDispatch();
   const isFirstTime = localStorage.getItem("isFirstTimeUser");
+  const [event, setEvent] = useState(false);
 
   const [userPers, setUserPers] = useState(false);
+  const [searchParams] = useSearchParams();
+  const referCode = searchParams.get("refer");
 
+
+  const { data: eventData } = useGetUserByReferalQuery(
+    { referral_code: referCode }, // or safely cast if you're confident it's a string
+    { skip: !referCode }
+  );
+
+  useEffect(() => {
+    if (eventData?.data?.event?.status) {
+      setEvent(eventData?.data?.event?.status);
+    }
+  }, [eventData, event]);
+  // console.log(" here ", event, eventData);
   const { data: config } = useGetConfigQuery({});
 
   // Skip the API query since LoadingScreen handles it
@@ -151,10 +169,13 @@ const RootLayout = ({ children }: any) => {
   //   );
   // }
 
-
   return (
     <div style={{ height: "calc(100dvh - 95px);" }}>
       {children}
+
+      {event && (
+        <EventBox eventData={eventData} />
+      )}
 
       {showAd && (
         <PopUp
