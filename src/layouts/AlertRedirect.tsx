@@ -25,11 +25,13 @@ const isWebClip = (): boolean => {
 interface AlertRedirectProps {
   setShowAlert: (show: boolean) => void;
   app_download_link: string;
+  event: any;
 }
 
 const AlertRedirect: React.FC<AlertRedirectProps> = ({
   setShowAlert,
   app_download_link,
+  event,
 }) => {
   // State to track the platform and show/hide the alert section for Android
   // const [isAndroid, setIsAndroid] = useState(false);
@@ -69,12 +71,12 @@ const AlertRedirect: React.FC<AlertRedirectProps> = ({
 
   const onBrowserClick = () => {
     setShowAlert(false);
-    dispatch(setPlay(true));
+    if (!event) dispatch(setPlay(true));
   };
 
   const onCloseClick = () => {
     setShowAlert(false);
-    dispatch(setPlay(true));
+    if (!event) dispatch(setPlay(true));
   };
 
   // useEffect(() => {

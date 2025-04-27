@@ -58,35 +58,36 @@ const EventResultBox: React.FC<EventBoxProps> = ({
       {!isOpen && (
         <>
           {!close ? (
-            <div className="flex flex-col justify-center items-center">
-              <div className="absolute z-[-2] top-[150px]">
+            <div className="flex flex-col gap-0 justify-center items-center">
+              <div className="absolute z-[-2] top-[100px] light_star">
                 <Animation animate={light} />
               </div>
-              <div className=" w-[300px] h-[450px] flex flex-col justify-between items-center event_bo">
+              <div className="flex flex-col justify-between items-center event_bo">
                 {/* <img className=" absolute z-[-1]" src={bg} alt="" /> */}
                 <div className=" absolute z-[-1]">
                   <Animation animate={card} />
                 </div>
-                <div className=" w-full h-full pt-[90px] pb-[30px] flex flex-col justify-between items-center">
-                  <div className="flex flex-col gap-4">
-                    <h1 className="event-money">
+                <div className=" w-[320px] h-full pt-[100px] pb-[30px] flex flex-col justify-between items-center">
+                  <div className="flex flex-col justify-center items-center gap-3">
+                    <h1 className="event-money font-sfProB">
                       +{newData?.register_bonus} ¥
                     </h1>
-                    <p className="event-money-p">注册后奖励 +2¥</p>
+                    <div className=" h-[1px] event-line w-[100px]"></div>
+                    <p className="event-money-p font-sfPro">注册后奖励 +2¥</p>
                   </div>
                   {/* <img className=" w-[210px] h-[70pxx]" src={logo} alt="" /> */}
-                  <div className=" flex flex-col justify-center items-center px-[30px]">
+                  <div className=" flex flex-col justify-center items-center mt-20">
                     <AsyncDecryptedImage
                       imageUrl={eventData.data.avatar}
                       className="w-[58px] h-[58px] rounded-full object-cover object-center"
                       alt="Profile"
                     />
-                    <h1 className="user_invite_text mt-2">
+                    <h1 className="user_invite_text mt-2 font-sfPro px-[30px]">
                       '{eventData.data.name}'{" "}
                       邀请您一起使用笔盒，邀请好友瓜分百万现金红包！
                     </h1>
                   </div>
-                  <div className="">
+                  <div className="mt-10">
                     <button onClick={openDrawer}>
                       <Animation animate={btn1} />
                     </button>

@@ -17,6 +17,24 @@
   font-weight: normal;
   font-style: normal;
 }
+@font-face {
+  font-family: "sfProB";
+  src: url("./assets/sfprodisplayB.OTF") format("opentype");
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: "sfProS";
+  src: url("./assets/sfprodisplayS.OTF") format("opentype");
+
+  font-style: normal;
+}
+@font-face {
+  font-family: "sfProM";
+  src: url("./assets/sfprodisplayM.OTF") format("opentype");
+  font-weight: bold;
+  font-style: normal;
+}
 
 body {
   scrollbar-width: none !important;

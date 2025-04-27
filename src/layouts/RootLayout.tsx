@@ -192,7 +192,7 @@ const RootLayout = ({ children }: any) => {
     <div style={{ height: "calc(100dvh - 95px);" }}>
       {children}
 
-      {event && !box && !isOpenNew && (
+      {event && !box && !isOpenNew && !showAd && (
         <EventBox
           setshownextBox={setshownextBox}
           shownextBox={shownextBox}
@@ -233,6 +233,7 @@ const RootLayout = ({ children }: any) => {
       )}
       {!showAd && showAlert && isBrowser && jumpUrl && showDialog && (
         <AlertRedirect
+          event={event}
           setShowAlert={setShowAlert}
           app_download_link={jumpUrl}
         />

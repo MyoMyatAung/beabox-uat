@@ -13,7 +13,6 @@
 .user_invite_text {
   color: #d9d9d9;
   text-align: center;
-  font-family: "SF Pro Display";
   font-size: 14px;
   font-style: normal;
   font-weight: 700;
@@ -39,7 +38,7 @@
 .event-money {
   color: #fff;
   text-align: center;
-  font-family: "SF Pro Display";
+
   font-size: 32px;
   font-style: italic;
   font-weight: 900;
@@ -48,11 +47,20 @@
 }
 .event-money-p {
   color: #fff;
-  font-family: Inter;
+
   font-size: 16px;
-  font-style: italic;
+  /* font-style: italic; */
   font-weight: 600;
   line-height: 22px; /* 137.5% */
+}
+
+.dheight {
+  height: 100%;
+  height: calc(100dvh - 75px);
+}
+
+.event-line {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .event_box_close {
@@ -100,4 +108,10 @@
   font-style: normal;
   font-weight: 500;
   line-height: normal;
+}
+
+@media screen and (min-width: 1200px) {
+  .light_star {
+    top: -50px;
+  }
 }

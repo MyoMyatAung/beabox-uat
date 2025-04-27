@@ -72,7 +72,7 @@ const EventBox: React.FC<EventBoxProps> = ({
 
   const initializeCaptcha = () => {
     if (window.initGeetest4 && captchaRef.current) {
-      const captchaId = "3bf5c88f68ff49b654a40ac5528cdc73"; // Replace with your actual CAPTCHA ID
+      const captchaId = import.meta.env.VITE_CAPTCHA_ID; // Replace with your actual CAPTCHA ID
       const product = "bind"; // Set the product to "bind" to skip the "Click to verify" button
 
       window.initGeetest4(
@@ -86,6 +86,9 @@ const EventBox: React.FC<EventBoxProps> = ({
 
           // Directly show the CAPTCHA box without the "Click to verify" button
           gtInstance.showBox();
+          gtInstance.onClose(() => {
+            setShowCaptcha(false); // This will be called when CAPTCHA is closed
+          });
 
           gtInstance.onSuccess(() => {
             const result = gtInstance.getValidate();
@@ -107,6 +110,7 @@ const EventBox: React.FC<EventBoxProps> = ({
                 setshownextBox(true);
                 setnewData(result1);
                 setCode(result1?.geetest);
+                setShowCaptcha(false); // This will be called when CAPTCHA is closed
               };
               fetchData();
             } catch (error) {
@@ -118,42 +122,47 @@ const EventBox: React.FC<EventBoxProps> = ({
     }
   };
 
+  // Prevent closing when clicking inside CAPTCHA
+  const handleCaptchaClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
   const handleEvent = () => {
     setShowCaptcha(true); // Trigger CAPTCHA to show when the event button is clicked
   };
 
   return (
-    <div className="h-screen bg-black/80 w-screen flex flex-col gap-[20px] justify-center items-center fixed top-0 z-[9999]">
+    <div className="dheight bg-black/80 w-screen flex justify-center items-center fixed top-0 z-[9999]">
       {!shownextBox && !showCaptcha && (
-        <>
-          <div className="absolute z-[-2] top-[150px]">
+        <div className="flex flex-col  gap-[0px] justify-center items-center">
+          <div className="absolute z-[-2] top-[100px]">
             <Animation animate={light} />
           </div>
-          <div className="w-[300px] h-[450px] flex flex-col justify-between items-center event_bo">
+          <div className="flex flex-col justify-between items-center  event_bo">
             <div className="absolute z-[-1]">
               <Animation animate={card} />
             </div>
-            <div className="w-full h-full pt-[70px] pb-[30px] flex flex-col justify-between items-center">
-              <img className="w-[210px] h-[70pxx]" src={logo} alt="" />
-              <div className="flex flex-col justify-center items-center px-[30px]">
+            <div className="w-full h-full pt-[80px] pb-[30px] flex flex-col justify-between  items-center">
+              <img className="w-[210px] h-[70px]" src={logo} alt="" />
+              <div className="flex flex-col justify-center items-center px-[30px] mt-20">
                 <AsyncDecryptedImage
                   imageUrl={eventData.data.avatar}
                   className="w-[58px] h-[58px] rounded-full object-cover object-center"
                   alt="Profile"
                 />
-                <h1 className="user_invite_text mt-2">
+                <h1 className="user_invite_text font-sfPro mt-3 px-10">
                   '{eventData.data.name}'
                   邀请您一起使用笔盒，邀请好友瓜分百万现金红包！
                 </h1>
               </div>
-              <div className="">
+              <div className="mt-10">
                 <button onClick={handleEvent}>
                   <Animation animate={btn2} />
                 </button>
               </div>
             </div>
           </div>
-        </>
+        </div>
       )}
       {shownextBox && (
         <>
@@ -173,8 +182,9 @@ const EventBox: React.FC<EventBoxProps> = ({
         <div
           id="captcha"
           ref={captchaRef}
+          onClick={handleCaptchaClick} // Add click handler to prevent closing
           style={{
-            position: "absolute",
+            position: "fixed",
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
