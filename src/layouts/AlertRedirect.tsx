@@ -17,7 +17,9 @@ const imageToBlob = (url: string, callback: (blobUrl: string) => void) => {
 
 // Function to detect if the app is being used as a web clip
 const isWebClip = (): boolean => {
-  return 'standalone' in window.navigator && window.navigator.standalone === true;
+  return (
+    "standalone" in window.navigator && window.navigator.standalone === true
+  );
 };
 
 interface AlertRedirectProps {
@@ -25,7 +27,10 @@ interface AlertRedirectProps {
   app_download_link: string;
 }
 
-const AlertRedirect: React.FC<AlertRedirectProps> = ({ setShowAlert, app_download_link }) => {
+const AlertRedirect: React.FC<AlertRedirectProps> = ({
+  setShowAlert,
+  app_download_link,
+}) => {
   // State to track the platform and show/hide the alert section for Android
   // const [isAndroid, setIsAndroid] = useState(false);
   // const [isVisible, setIsVisible] = useState(false); // Track visibility
@@ -39,7 +44,7 @@ const AlertRedirect: React.FC<AlertRedirectProps> = ({ setShowAlert, app_downloa
 
   useEffect(() => {
     imageToBlob(logo, (blobUrl) => setLogoBlobUrl(blobUrl));
-    
+
     // Cleanup function to revoke blob URL when component unmounts
     return () => {
       if (logoBlobUrl) {
@@ -100,10 +105,7 @@ const AlertRedirect: React.FC<AlertRedirectProps> = ({ setShowAlert, app_downloa
         {isWebClip() ? (
           <div className="flex justify-between items-center">
             <h1 className="alert-head-title">苹果商店版已上线，建议立刻安装</h1>
-            <button 
-              onClick={onCloseClick} 
-              className="text-white"
-            >
+            <button onClick={onCloseClick} className="text-white">
               <img src={closeIcon} alt="Close" width="16" height="16" />
             </button>
           </div>
@@ -113,7 +115,11 @@ const AlertRedirect: React.FC<AlertRedirectProps> = ({ setShowAlert, app_downloa
         <div className="flex flex-col mt-8 gap-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <img src={logoBlobUrl || logo} alt="" className="w-[50px] h-[50px]" />
+              <img
+                src={logoBlobUrl || logo}
+                alt=""
+                className="w-[50px] h-[50px]"
+              />
               <div>
                 <h1 className="alert-body-title">笔盒APP</h1>
                 <p className="alert-body-text">更多原创精品内容尽在笔盒</p>

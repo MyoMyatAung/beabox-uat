@@ -4,7 +4,7 @@ import { decryptWithAes } from "@/lib/decrypt";
 import { getDeviceInfo } from "@/lib/deviceInfo";
 
 export const eventApi = createApi({
-  reducerPath: "profileApi",
+  reducerPath: "eventApi",
   // baseQuery: fetchBaseQuery({ baseUrl: "https://77eewm.qdhgtch.com/api/v1" }),
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_API_URL,
@@ -25,10 +25,13 @@ export const eventApi = createApi({
     },
     responseHandler: async (response) => {
       const encryptedData = await response.json();
+      console.log(encryptedData);
       if (encryptedData?.status === false)
         localStorage.setItem("profile-error", encryptedData?.message);
       try {
         const decryptedData = decryptWithAes(encryptedData?.data);
+        console.log(decryptedData);
+
         return JSON.parse(decryptedData);
       } catch (err) {
         console.error("Error decrypting response:", err);
@@ -45,7 +48,16 @@ export const eventApi = createApi({
         method: "GET",
       }),
     }),
+    verifyCaptcha: builder.mutation<void, any>({
+      query: (captchaResult) => ({
+        url: "/geetest/captcha/verify", // Endpoint for captcha verification
+        method: "POST",
+        body: convertToSecurePayload(captchaResult), // Encrypt the result data
+      }),
+      // Remove cache-related tags or invalidation if not needed
+      // We can also add `invalidatesTags` here if needed for cache management
+    }),
   }),
 });
 
-export const { useGetUserByReferalQuery } = eventApi;
+export const { useGetUserByReferalQuery, useVerifyCaptchaMutation } = eventApi;

@@ -32,7 +32,7 @@ import { createCenterApi } from "./api/createCenterApi";
 import playSlice from "@/page/home/services/playSlice";
 import scrollSlice from "@/page/home/services/scrollSlice";
 import followSlice from "./slices/followSlice";
-import { eventApi } from "@/page/event/eventApi";
+import { eventApi } from "../page/event/eventApi";
 
 const sessionStorageWrapper: Storage = {
   getItem: (key: string) => {
@@ -96,7 +96,7 @@ const rootReducer = combineReducers({
   [exploreApi.reducerPath]: exploreApi.reducer,
   [searchApi.reducerPath]: searchApi.reducer,
   [createCenterApi.reducerPath]: createCenterApi.reducer,
-  [eventApi.reducerPath] : eventApi.reducer
+  [eventApi.reducerPath]: eventApi.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
