@@ -193,7 +193,7 @@ const Luckydraw = () => {
         <div className="mx-5 ">
           <InviteCard />
           <button onClick={handleCopyClick}
-            className="flex items-center text-black justify-center mt-6 w-full py-3 rounded-[8px] font-700"
+            className="flex items-center text-black justify-center mt-6 w-full py-3 rounded-[8px] font-[700]"
             style={{
               background:
                 "linear-gradient(180deg, #FFFFFF 0%, #FFC989 152.27%)",
@@ -216,7 +216,7 @@ const Luckydraw = () => {
         >
           <div className="bg-[#f14884] rounded-[12px] py-4 px-3 mt-8">
             <div
-              className="rounded-[12px] w-full max-w-md p-4 text-black leading-[22px] font-sf mx-auto bg-transparent"
+              className="rounded-[12px] w-full font-[700] max-w-md p-4 text-[#4E4E4E] leading-[22px] font-sf mx-auto bg-transparent"
               style={{
                 background:
                   "linear-gradient(180deg, #FFFFFF 0%, #FFC989 152.27%)",
@@ -227,30 +227,30 @@ const Luckydraw = () => {
               >
                 <div style={{ borderRight: '2px solid rgba(0, 0, 0, 0.12)' }}>
                   <p>今日收益</p>
-                  <p className="font-bold">{stats.today_earnings}</p>
+                  <p className="mt-2">{stats.today_earnings}</p>
                 </div>
                 <div style={{ borderRight: '2px solid rgba(0, 0, 0, 0.12)' }}>
                   <p>邀请人数</p>
-                  <p className="font-bold">{stats.invited_people}</p>
+                  <p className="mt-2">{stats.invited_people}</p>
                 </div>
                 <div>
                   <p>已注册用户</p>
-                  <p className="font-bold">{stats.registered_users}</p>
+                  <p className="mt-2">{stats.registered_users}</p>
                 </div>
               </div>
 
               <div className="mt-4 grid grid-cols-3 gap-4 text-center text-sm">
                 <div style={{ borderRight: '2px solid rgba(0, 0, 0, 0.12)' }}>
                   <p>累计收益</p>
-                  <p className="font-bold">{stats.cumulative_earnings}</p>
+                  <p className="mt-2">{stats.cumulative_earnings}</p>
                 </div>
                 <div style={{ borderRight: '2px solid rgba(0, 0, 0, 0.12)' }}>
                   <p>本月收益</p>
-                  <p className="font-bold">{stats.this_month_earnings}</p>
+                  <p className="mt-2">{stats.this_month_earnings}</p>
                 </div>
                 <div>
                   <p>上月收益</p>
-                  <p className="font-bold">{stats.last_month_earnings}</p>
+                  <p className="mt-2">{stats.last_month_earnings}</p>
                 </div>
               </div>
 
