@@ -54,6 +54,7 @@ const ForgotPassword = lazy(
 const ResetPassword = lazy(
   () => import("../components/profile/auth/reset-password")
 );
+const LuckyDraw = lazy(() => import("../page/events/Luckydraw") )
 
 const Routing = () => {
   // Create a wrapper component that includes SafeLazyLoad for error handling
@@ -255,6 +256,10 @@ const Routing = () => {
       path: paths.user_feed,
       ...withErrorHandling(<UserFeedSet />)
     },
+    {
+      path: paths.lucky_draw,
+      ...withErrorHandling(<LuckyDraw />)
+    }
   ];
 
   const router = createBrowserRouter(routes);
