@@ -46,11 +46,16 @@ export const eventApi = createApi({
     getEventDetails: builder.query<any, any>({
         query: (id) =>
           convertToSecureUrl(`/events/detail?event_id=${id}`),
-      }),
+    }),
+    getUserShareInfo: builder.query<any, any>({
+      query: () =>
+        convertToSecureUrl(`/user/share/info`),
+  }),
   })
 });
 
 export const {
   useGetCurrentEventQuery,
-  useGetEventDetailsQuery
+  useGetEventDetailsQuery,
+  useLazyGetUserShareInfoQuery
 } = eventApi;

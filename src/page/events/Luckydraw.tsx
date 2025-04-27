@@ -18,9 +18,10 @@ import DrawTime from "@/assets/draw_time.png";
 import { timeFormatter } from "@/lib/utils";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "@/components/shared/loader";
-import { useGetEventDetailsQuery } from "@/store/api/events/eventApi";
+import { useGetEventDetailsQuery, useLazyGetUserShareInfoQuery } from "@/store/api/events/eventApi";
 import { useParams } from "react-router-dom";
 import { setEventDetail } from "@/store/slices/eventSlice";
+import toast from "react-hot-toast";
 
 const Luckydraw = () => {
   const navigate = useNavigate();
@@ -37,6 +38,9 @@ const Luckydraw = () => {
   } = useGetEventDetailsQuery(id || "", {
     skip: false,
   });
+
+  const [triggerGetUserShareInfo] = useLazyGetUserShareInfoQuery();
+
 
   useEffect(() => {
     if (eventDetailsData) {
@@ -78,6 +82,24 @@ const Luckydraw = () => {
   const remainPrizeDigits = stats?.remaining_amount?.padStart(5, "0").split("");
   const time = timeFormatter.format(new Date(Number(stats?.duration) || 0));
   const remainingTime = time.startsWith("00:") ? time.slice(3) : time;
+
+  const handleCopyClick = async () => {
+    try {
+      const result = await triggerGetUserShareInfo('').unwrap();
+      if (result?.data.link) {
+        await navigator.clipboard.writeText(result.data.link);
+        toast.success("复制成功", {
+          style: {
+            background: "#25212a",
+            color: "white",
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Failed to fetch user share info:", error);
+    }
+  };
+
 
   return (
     <div className="relative max-w-[480px] min-h-screen bg-no-repeat items-center mx-auto">
@@ -168,9 +190,9 @@ const Luckydraw = () => {
             </div>
           </div>
         </div>
-        <div className="mx-5 pt-3">
+        <div className="mx-5 ">
           <InviteCard />
-          <button
+          <button onClick={handleCopyClick}
             className="flex items-center text-black justify-center mt-6 w-full py-3 rounded-[8px] font-700"
             style={{
               background:
@@ -183,18 +205,18 @@ const Luckydraw = () => {
         </div>
 
         <div
-          className="mx-6 py-5 mt-7"
+          className="mx-6 py-5 mt-8"
           style={{
             backgroundImage: `url(${Paper})`,
             backgroundSize: "auto 100%",
             backgroundPosition: "center center",
             backgroundRepeat: "no-repeat",
-            maxHeight: '280px'
+            maxHeight: '285px'
           }}
         >
-          <div className="bg-[#f14884] rounded-sm py-5 mt-8">
+          <div className="bg-[#f14884] rounded-[12px] py-4 px-3 mt-8">
             <div
-              className="rounded-lg w-full max-w-md p-4 text-black leading-[22px] font-sf mx-auto bg-transparent"
+              className="rounded-[12px] w-full max-w-md p-4 text-black leading-[22px] font-sf mx-auto bg-transparent"
               style={{
                 background:
                   "linear-gradient(180deg, #FFFFFF 0%, #FFC989 152.27%)",
