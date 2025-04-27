@@ -10,6 +10,7 @@ import InviteCard from "./InviteCard";
 import Rule from "./Rule";
 import eventPage from "@/assets/eventpage.png";
 import eventTitle from "@/assets/eventTitle.png";
+import groupImg from "@/assets/Group.png";
 import Pricebg from "@/assets/prizeBg.png";
 import Paper from "@/assets/Paper.png";
 import { EventDetail } from "@/@types/lucky_draw";
@@ -23,24 +24,25 @@ import { setEventDetail } from "@/store/slices/eventSlice";
 
 const Luckydraw = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const { id } = useParams<{ id: string }>();
   const eventDetailsData = useSelector((state: any) => state.event.eventDetail);
-  
+
   const [stats, setStats] = useState<EventDetail | null>(eventDetailsData);
 
-  const { data: newEventDetails, refetch, isUninitialized } = useGetEventDetailsQuery(
-    id || '' , {
-      skip: false
-    }
-  );
+  const {
+    data: newEventDetails,
+    refetch,
+    isUninitialized,
+  } = useGetEventDetailsQuery(id || "", {
+    skip: false,
+  });
 
-  
-useEffect(() => {
-  if(eventDetailsData) {
-    setStats(eventDetailsData)
-  }
-}, [eventDetailsData])
+  useEffect(() => {
+    if (eventDetailsData) {
+      setStats(eventDetailsData);
+    }
+  }, [eventDetailsData]);
   useEffect(() => {
     const interval = setInterval(() => {
       setStats((prev) => {
@@ -59,7 +61,7 @@ useEffect(() => {
   }, []);
 
   useEffect(() => {
-    if (Number(stats?.duration) === 595000 && !isUninitialized) {
+    if (Number(stats?.duration) === 0 && !isUninitialized) {
       refetch().then((res) => {
         if (res?.data) {
           dispatch(setEventDetail(res.data.data));
@@ -81,10 +83,10 @@ useEffect(() => {
     <div className="relative max-w-[480px] min-h-screen bg-no-repeat items-center mx-auto">
       <div
         style={{
-          backgroundImage: `url(${eventPage2})`,
-          backgroundSize: "cover",
-          backgroundPosition: "top center",
-          backgroundRepeat: "repeat",
+          backgroundImage: `url(${eventPage2}), url(${eventPage})`,
+          backgroundSize: "contain, auto 100%",
+          // backgroundPosition: "top center, bottom center",
+          backgroundRepeat: "no-repeat",
         }}
       >
         <div className="flex items-center justify-between py-5 px-3 mx-4 ">
@@ -104,9 +106,32 @@ useEffect(() => {
         </div>
 
         <div className="w-full max-w-md p-4 text-center mx-auto">
-          <img src={eventTitle} alt="event title" className="mx-auto" />
+          <div className="relative mx-auto pb-3">
+            <img
+              src={eventTitle}
+              alt="event title"
+              className="mx-auto"
+              style={{
+                position: "relative",
+                zIndex: 2,
+              }}
+            />
+            <img
+              src={groupImg}
+              alt="group image"
+              className="mx-auto"
+              style={{
+                position: "absolute",
+                left: "50%",
+                transform: "translateX(-50%) translateY(-60%)",
+                opacity: 0.4,
+                zIndex: 1,
+              }}
+            />
+          </div>
+
           <div
-            className="rounded-lg p-9 text-white flex flex-col gap-y-2"
+            className="rounded-lg p-9 text-white mt-9 flex flex-col gap-y-2"
             style={{
               backgroundImage: `url(${Pricebg})`,
               backgroundSize: "cover",
@@ -124,7 +149,7 @@ useEffect(() => {
               <img src={DrawTime} className="w-20" />
             </div>
             <div className="text-sm mb-9 mx-auto">
-              <div className="flex justify-center text-sm mb-4 mx-auto gap-1 mt-2">
+              <div className="flex justify-center text-sm mb-2 mx-auto gap-1">
                 <p className="flex gap-1">
                   {remainingTime.split("").map((char, index) => (
                     <span
@@ -146,16 +171,6 @@ useEffect(() => {
             </div>
           </div>
         </div>
-      </div>
-
-      <div
-        className="mx-auto flex flex-col gap-4"
-        style={{
-          backgroundImage: `url(${eventPage})`,
-          backgroundSize: "auto 100%",
-          backgroundPosition: "top center",
-        }}
-      >
         <div className="mx-5 pt-3">
           <InviteCard />
           <button
