@@ -11,7 +11,7 @@ import Rule from "./Rule";
 import eventPage from "@/assets/eventpage.png";
 import eventTitle from "@/assets/eventTitle.png";
 import groupImg from "@/assets/Group.png";
-import Pricebg from "@/assets/prizeBg.png";
+import Pricebg from "@/assets/icons/PrizeBg.svg";
 import Paper from "@/assets/Paper.png";
 import { EventDetail } from "@/@types/lucky_draw";
 import DrawTime from "@/assets/draw_time.png";
@@ -94,7 +94,7 @@ const Luckydraw = () => {
             src={backButton}
             alt=""
             onClick={() => navigate("/")}
-            className="mt-2"
+            className="mt-2 w-5 h-5"
           />
           <div className="absolute left-1/2 transform -translate-x-1/2 mt-5">
             <img
@@ -131,12 +131,9 @@ const Luckydraw = () => {
           </div>
 
           <div
-            className="rounded-lg p-9 text-white mt-9 flex flex-col gap-y-2"
+            className="rounded-lg p-9 text-white mt-9  bg-cover bg-center bg-no-repeat flex flex-col gap-y-2"
             style={{
               backgroundImage: `url(${Pricebg})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
             }}
           >
             <div className="flex justify-center mt-3 space-x-1">
@@ -186,15 +183,16 @@ const Luckydraw = () => {
         </div>
 
         <div
-          className="mx-3"
+          className="mx-6 py-5 mt-7"
           style={{
             backgroundImage: `url(${Paper})`,
             backgroundSize: "auto 100%",
-            backgroundPosition: "center",
+            backgroundPosition: "center center",
             backgroundRepeat: "no-repeat",
+            maxHeight: '280px'
           }}
         >
-          <div className="bg-[#f14884] rounded-sm p-3 mt-12">
+          <div className="bg-[#f14884] rounded-sm py-5 mt-8">
             <div
               className="rounded-lg w-full max-w-md p-4 text-black leading-[22px] font-sf mx-auto bg-transparent"
               style={{
@@ -202,12 +200,14 @@ const Luckydraw = () => {
                   "linear-gradient(180deg, #FFFFFF 0%, #FFC989 152.27%)",
               }}
             >
-              <div className="grid grid-cols-3 gap-4 text-center text-sm">
-                <div>
+              <div className="grid grid-cols-3 gap-4 text-center text-sm pb-3"
+                style={{ borderBottom: '2px solid rgba(0, 0, 0, 0.12)' }}
+              >
+                <div style={{ borderRight: '2px solid rgba(0, 0, 0, 0.12)' }}>
                   <p>今日收益</p>
                   <p className="font-bold">{stats.today_earnings}</p>
                 </div>
-                <div>
+                <div style={{ borderRight: '2px solid rgba(0, 0, 0, 0.12)' }}>
                   <p>邀请人数</p>
                   <p className="font-bold">{stats.invited_people}</p>
                 </div>
@@ -218,11 +218,11 @@ const Luckydraw = () => {
               </div>
 
               <div className="mt-4 grid grid-cols-3 gap-4 text-center text-sm">
-                <div>
+                <div style={{ borderRight: '2px solid rgba(0, 0, 0, 0.12)' }}>
                   <p>累计收益</p>
                   <p className="font-bold">{stats.cumulative_earnings}</p>
                 </div>
-                <div>
+                <div style={{ borderRight: '2px solid rgba(0, 0, 0, 0.12)' }}>
                   <p>本月收益</p>
                   <p className="font-bold">{stats.this_month_earnings}</p>
                 </div>
