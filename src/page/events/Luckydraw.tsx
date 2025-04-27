@@ -205,7 +205,7 @@ const Luckydraw = () => {
         </div>
 
         <div
-          className="mx-6 py-5 mt-8"
+          className="mx-5 py-5 mt-8"
           style={{
             backgroundImage: `url(${Paper})`,
             backgroundSize: "auto 100%",
