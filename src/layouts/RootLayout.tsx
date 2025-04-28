@@ -26,8 +26,6 @@ import { setEventDetail, setAnimation } from "@/store/slices/eventSlice";
 import { useSearchParams } from "react-router-dom";
 import { useGetUserByReferalQuery } from "@/page/event/eventApi";
 import EventBox from "@/page/event/EventBox";
-import EventResultBox from "@/page/event/EventResultBox";
-import EventCaptcha from "@/page/event/EventCaptcha";
 import RegisterDrawer from "@/components/profile/auth/register-drawer";
 import { useLocation } from "react-router-dom";
 
