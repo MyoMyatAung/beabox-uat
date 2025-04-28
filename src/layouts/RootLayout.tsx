@@ -21,7 +21,7 @@ import { useNavigate } from "react-router-dom";
 import {
   setIsDrawerOpen
 } from "@/store/slices/profileSlice";
-import { setEventDetail } from "@/store/slices/eventSlice";
+import { setEventDetail, setAnimation } from "@/store/slices/eventSlice";
 import { useLocation } from "react-router-dom";
 
 
@@ -63,17 +63,17 @@ const RootLayout = ({ children }: any) => {
   const user = useSelector((state: RootState) => state.persist.user);
 
   // const [eventId, setEventId] = useState<string | undefined>(undefined);
-  const [showAnimation, setShowAnimation] = useState(false);
-
+  // const [showAnimation, setShowAnimation] = useState(false);
+  const showAnimation = useSelector((state: RootState) => state.event.isShowAnimation);
   useEffect(() => {
     if (currentEventData?.data) {
       if (currentEventData?.status === true) {
-        setShowAnimation(true);
+        dispatch(setAnimation(true))
       } else {
-        setShowAnimation(false);
+        dispatch(setAnimation(false))
       }
     }
-  }, [currentEventData]);
+  }, [currentEventData, dispatch]);
 
   // Check if ads have already been seen in this session
   useEffect(() => {
@@ -192,7 +192,7 @@ const RootLayout = ({ children }: any) => {
         navigate(`/events/lucky-draw/${eventId}`);
       }
     } else {
-      setShowAnimation(false); 
+      // 
       dispatch(setIsDrawerOpen(true));
     }
   };
@@ -221,23 +221,13 @@ const RootLayout = ({ children }: any) => {
       <div className="fixed bottom-0 left-0 w-full z-[1600]">
         <BottomNav />
       </div>
-
-      {/* {showAnimation && (
-        <div className="fixed bottom-5 right-5 z-[9999] rounded-full p-2">
-          <AnimationLoader
-            animationData={loadingAnimation}
-            width={100}
-            height={100}
-            className="pointer-events-none"
-          />
-        </div>
-      )} */}
-      {!showAd && !showAlert && location.pathname === "/" && showAnimation && (
+      
+      {!showAd && !showAlert && !isOpen && location.pathname === "/" && showAnimation && (
         <div className="fixed bottom-[8rem] right-9 z-[9999] rounded-full p-2">
           <div className="relative">
             <button
               className="absolute top-4 right-7 bg-white rounded-full w-5 h-5 flex items-center justify-center text-black z-[10000]"
-              onClick={() => setShowAnimation(false)}
+              onClick={() => dispatch(setAnimation(false))}
             >
               <img src={CloseSvg} />
             </button>
