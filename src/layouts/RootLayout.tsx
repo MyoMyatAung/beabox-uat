@@ -22,7 +22,6 @@ import {
   setIsDrawerOpen
 } from "@/store/slices/profileSlice";
 import { setEventDetail, setAnimation } from "@/store/slices/eventSlice";
-import { setEventDetail } from "@/store/slices/eventSlice";
 import { useSearchParams } from "react-router-dom";
 import { useGetUserByReferalQuery } from "@/page/event/eventApi";
 import EventBox from "@/page/event/EventBox";
