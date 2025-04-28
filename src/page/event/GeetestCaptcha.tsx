@@ -109,7 +109,7 @@ const GeetestCaptcha = () => {
 
   useEffect(() => {
     const script = document.createElement("script");
-    script.src = "http://static.geetest.com/v4/gt4.js";
+    script.src = "https://static.geetest.com/v4/gt4.js";
     script.async = true;
     script.onload = initializeCaptcha;
     document.body.appendChild(script);
