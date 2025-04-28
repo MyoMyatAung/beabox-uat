@@ -5,16 +5,8 @@
 }
 
 .balance_box {
-  border-radius: 20px;
-  /* background-image: url("../../assets/wallet/balc.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat; */
-  background: linear-gradient(
-    99deg,
-    rgba(255, 255, 255, 0.08) 22.91%,
-    rgba(255, 255, 255, 0.04) 92.45%
-  );
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .tabs_icon {
@@ -223,5 +215,9 @@ option selected {
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.08);
   padding: 8px 12px;
+}
 
+.red_box_wal {
+  border-radius: 8px;
+  background: rgba(255, 39, 93, 0.12);
 }
