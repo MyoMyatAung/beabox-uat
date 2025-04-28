@@ -1,21 +1,39 @@
 import React, { useEffect, useState } from "react";
 
-const FlipNumber = ({ number }: { number: number }) => {
+const FlipNumber = ({
+  number,
+  firstLoad: propFirstLoad,
+}: {
+  number: number;
+  firstLoad: boolean;
+}) => {
   const [prevNumber, setPrevNumber] = useState(number);
   const [animating, setAnimating] = useState(false);
   const [direction, setDirection] = useState<"up" | "down">("up");
+  const [firstLoad, setFirstLoad] = useState(propFirstLoad);
 
   useEffect(() => {
-    if (prevNumber !== number) {
+    if (firstLoad) {
+      setAnimating(true);
+      const timeout = setTimeout(() => {
+        setAnimating(false);
+        setFirstLoad(false);
+      }, 1000);
+      return () => clearTimeout(timeout);
+    }
+  }, [firstLoad]);
+
+  useEffect(() => {
+    if (!firstLoad && prevNumber !== number) {
       setDirection(number > prevNumber ? "up" : "down");
       setAnimating(true);
       const timeout = setTimeout(() => {
         setAnimating(false);
         setPrevNumber(number);
-      }, 300);
+      }, 1000);
       return () => clearTimeout(timeout);
     }
-  }, [number, prevNumber]);
+  }, [number, prevNumber, firstLoad]);
 
   const gradientStyle = {
     background: "linear-gradient(96.97deg, #FFBE92 3.5%, #FF4C1C 24.69%, rgba(239, 25, 137, 0.8) 71.84%, #FFB081 97.21%)",
@@ -55,7 +73,7 @@ const FlipNumber = ({ number }: { number: number }) => {
             style={{
               ...textBaseStyle,
               ...gradientStyle,
-              WebkitTextStroke: "1px rgba(255, 76, 28, 1)", // stroke color
+              WebkitTextStroke: "1px rgba(255, 76, 28, 1)",
               position: "absolute",
               zIndex: 1,
             }}

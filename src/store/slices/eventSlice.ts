@@ -3,12 +3,14 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface CurrentState {
   isShowAnimation: boolean,
-  eventDetail: EventDetail | null
+  eventDetail: EventDetail | null,
+  duration: number; 
 }
 
 const initialState: CurrentState = {
   isShowAnimation: false,
-  eventDetail: null
+  eventDetail: null,
+  duration: 0
 };
 
 const currentSlice = createSlice({
@@ -21,8 +23,16 @@ const currentSlice = createSlice({
     setEventDetail(state, action: PayloadAction<EventDetail>) {
         state.eventDetail = action.payload;
     },
+    setDuration(state, action: PayloadAction<number>) {
+      state.duration = action.payload; // <-- ADD this
+    },
+    decrementDuration: (state) => {
+      if (state.duration > 0) {
+        state.duration -= 1000;
+      }
+    }    
   },
 });
 
-export const { setAnimation ,setEventDetail } = currentSlice.actions;
+export const { setAnimation ,setEventDetail, setDuration, decrementDuration } = currentSlice.actions;
 export default currentSlice.reducer;

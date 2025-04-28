@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import FlipNumber from "./Flipnumber";
 import backButton from "../../assets/backButton.svg";
 import { useNavigate } from "react-router-dom";
@@ -18,28 +18,32 @@ import DrawTime from "@/assets/draw_time.png";
 import { timeFormatter } from "@/lib/utils";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "@/components/shared/loader";
-import { useGetEventDetailsQuery, useLazyGetUserShareInfoQuery } from "@/store/api/events/eventApi";
+import { useLazyGetEventDetailsQuery, useLazyGetUserShareInfoQuery } from "@/store/api/events/eventApi";
 import { useParams } from "react-router-dom";
-import { setEventDetail } from "@/store/slices/eventSlice";
+import { decrementDuration, setDuration, setEventDetail } from "@/store/slices/eventSlice";
 import { showToast } from "../home/services/errorSlice";
-
+import { RootState } from "@/store/store";
+import { startTimer, stopTimer } from "./timer"; 
 const Luckydraw = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { id } = useParams<{ id: string }>();
   const eventDetailsData = useSelector((state: any) => state.event.eventDetail);
-
+  const currentDuration = useSelector((state: RootState) => state.event.duration);
+  const durationRef = useRef(currentDuration);
   const [stats, setStats] = useState<EventDetail | null>(eventDetailsData);
+  const [firstLoad, setFirstLoad] = useState(true);
 
-  const {
-    data: newEventDetails,
-    refetch,
-    isUninitialized,
-  } = useGetEventDetailsQuery(id || "", {
-    skip: false,
-  });
+  // const {
+  //   data: newEventDetails,
+  //   refetch,
+  //   isUninitialized,
+  // } = useLazyGetEventDetailsQuery(id || "", {
+  //   skip: false,
+  // });
 
   const [triggerGetUserShareInfo] = useLazyGetUserShareInfoQuery();
+  const [triggerGetEventDetails] = useLazyGetEventDetailsQuery();
 
 
   useEffect(() => {
@@ -47,40 +51,49 @@ const Luckydraw = () => {
       setStats(eventDetailsData);
     }
   }, [eventDetailsData]);
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setStats((prev) => {
-        if (prev) {
-          const newDuration = prev.duration <= 1000 ? 0 : prev.duration - 1000;
-          return {
-            ...prev,
-            duration: newDuration,
-          };
-        }
-        return prev;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
-    if (Number(stats?.duration) === 0 && !isUninitialized) {
-      refetch().then((res) => {
-        if (res?.data) {
-          dispatch(setEventDetail(res.data.data));
-          setStats(res.data.data);
-        }
-      });
+    durationRef.current = currentDuration;
+  }, [currentDuration]);
+  
+  useEffect(() => {
+    startTimer(() => {
+      if (durationRef.current > 0) {
+        dispatch(decrementDuration());
+      } else {
+        stopTimer(); // Only stop when reaching 0
+      }
+    });
+  
+    return () => {
+      console.log('Unmount, but NOT stop timer');
+    };
+  }, [dispatch]);
+  
+  useEffect(()=> {
+    if (currentDuration === 0) {
+        getDetails()
     }
-  }, [stats?.duration, newEventDetails, dispatch]);
+  }, [currentDuration, dispatch])
 
   if (!stats) {
     return <Loader />;
   }
 
+  const getDetails = async () => {
+    setFirstLoad(true)
+    try {
+      const eventDetails = await triggerGetEventDetails(id).unwrap();
+      dispatch(setEventDetail(eventDetails?.data));
+      if (eventDetails?.data?.duration) {
+        dispatch(setDuration(eventDetails?.data.duration));
+      }
+    } catch (error) {
+      console.error('Failed to fetch event details:', error);
+    }
+  }
   const remainPrizeDigits = stats?.remaining_amount?.padStart(5, "0").split("");
-  const time = timeFormatter.format(new Date(Number(stats?.duration) || 0));
+  const time = timeFormatter.format(new Date(Number(currentDuration) || 0));
   const remainingTime = time.startsWith("00:") ? time.slice(3) : time;
 
   const handleCopyClick = async () => {
@@ -128,57 +141,38 @@ const Luckydraw = () => {
         </div>
 
         <div className="w-full max-w-md p-4 text-center mx-auto">
-          <div className="relative mx-auto pb-3">
             <img
               src={eventTitle}
               alt="event title"
               className="mx-auto"
-              style={{
-                position: "relative",
-                zIndex: 2,
-              }}
             />
-            <img
-              src={groupImg}
-              alt="group image"
-              className="mx-auto"
-              style={{
-                position: "absolute",
-                left: "50%",
-                transform: "translateX(-50%) translateY(-60%)",
-                opacity: 0.4,
-                zIndex: 1,
-              }}
-            />
-          </div>
-
           <div
-            className="rounded-lg p-9 text-white mt-9  bg-cover bg-center bg-no-repeat flex flex-col gap-y-2"
+            className="rounded-lg p-9 text-white mt-6  bg-cover bg-center bg-no-repeat flex flex-col gap-y-2"
             style={{
               backgroundImage: `url(${Pricebg})`,
             }}
           >
-            <div className="flex justify-center mt-3 space-x-1">
+            <div className="flex justify-center mt-5 space-x-1">
               {remainPrizeDigits?.map((digit, index) => (
-                <FlipNumber key={index} number={parseInt(digit)} />
+                <FlipNumber key={index} number={parseInt(digit)} firstLoad={firstLoad} />
               ))}
             </div>
 
             <div className="flex justify-center">
               <img src={DrawTime} className="w-20" />
             </div>
-            <div className="text-sm mb-9 mx-auto">
+            <div className="text-sm mb-5 mx-auto">
               <div className="flex justify-center text-sm mb-2 mx-auto gap-1">
                 <p className="flex gap-1">
                   {remainingTime.split("").map((char, index) => (
-                    <span
+                    <span className="font-[700]"
                       key={index}
                       style={{
                         background:
                           char !== ":"
                             ? "rgba(255, 255, 255, 0.2)"
                             : "transparent",
-                        padding: "4px 6px",
+                        padding: char !== ":"? "4px 8px" : "4px 1px",
                         borderRadius: "4px",
                       }}
                     >
@@ -199,7 +193,7 @@ const Luckydraw = () => {
                 "linear-gradient(180deg, #FFFFFF 0%, #FFC989 152.27%)",
             }}
           >
-            复制邀请链接
+            <span className="text-[14px]">复制邀请链接</span>
             <img src={CopySvg} alt="Copy" className="ml-2" />
           </button>
         </div>
@@ -211,46 +205,46 @@ const Luckydraw = () => {
             backgroundSize: "auto 100%",
             backgroundPosition: "center center",
             backgroundRepeat: "no-repeat",
-            maxHeight: '285px'
+            maxHeight: '295px'
           }}
         >
           <div className="bg-[#f14884] rounded-[12px] py-4 px-3 mt-8">
             <div
-              className="rounded-[12px] w-full font-[700] max-w-md p-4 text-[#4E4E4E] leading-[22px] font-sf mx-auto bg-transparent"
+              className="rounded-[12px] w-full font-[700] max-w-md p-3 text-[#4E4E4E] leading-[22px] font-sf mx-auto bg-transparent"
               style={{
                 background:
                   "linear-gradient(180deg, #FFFFFF 0%, #FFC989 152.27%)",
               }}
             >
-              <div className="grid grid-cols-3 gap-4 text-center text-sm pb-3"
+              <div className="grid grid-cols-3 gap-4 pb-3 text-center"
                 style={{ borderBottom: '2px solid rgba(0, 0, 0, 0.12)' }}
               >
                 <div style={{ borderRight: '2px solid rgba(0, 0, 0, 0.12)' }}>
-                  <p>今日收益</p>
-                  <p className="mt-2">{stats.today_earnings}</p>
+                  <p className="text-[14px]">今日收益</p>
+                  <p className="mt-2 text-[20px]">{stats.today_earnings}</p>
                 </div>
                 <div style={{ borderRight: '2px solid rgba(0, 0, 0, 0.12)' }}>
-                  <p>邀请人数</p>
-                  <p className="mt-2">{stats.invited_people}</p>
+                  <p className="text-[14px]">邀请人数</p>
+                  <p className="mt-2 text-[20px]">{stats.invited_people}</p>
                 </div>
                 <div>
-                  <p>已注册用户</p>
-                  <p className="mt-2">{stats.registered_users}</p>
+                  <p className="text-[14px]">已注册用户</p>
+                  <p className="mt-2 text-[20px]">{stats.registered_users}</p>
                 </div>
               </div>
 
-              <div className="mt-4 grid grid-cols-3 gap-4 text-center text-sm">
+              <div className="mt-4 grid grid-cols-3 gap-4 text-center text-sm pb-1">
                 <div style={{ borderRight: '2px solid rgba(0, 0, 0, 0.12)' }}>
-                  <p>累计收益</p>
-                  <p className="mt-2">{stats.cumulative_earnings}</p>
+                  <p className="text-[14px]">累计收益</p>
+                  <p className="mt-2 text-[20px]">{stats.cumulative_earnings}</p>
                 </div>
                 <div style={{ borderRight: '2px solid rgba(0, 0, 0, 0.12)' }}>
-                  <p>本月收益</p>
-                  <p className="mt-2">{stats.this_month_earnings}</p>
+                  <p className="text-[14px]">本月收益</p>
+                  <p className="mt-2 text-[20px]">{stats.this_month_earnings}</p>
                 </div>
                 <div>
-                  <p>上月收益</p>
-                  <p className="mt-2">{stats.last_month_earnings}</p>
+                  <p className="text-[14px]">上月收益</p>
+                  <p className="mt-2 text-[20px]">{stats.last_month_earnings}</p>
                 </div>
               </div>
 
