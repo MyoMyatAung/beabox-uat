@@ -1816,8 +1816,6 @@ const Player = ({
     }
   };
 
-  console.log("playstart", playstart);
-
   const startFastForward = () => {
     if (!artPlayerInstanceRef.current) return;
 

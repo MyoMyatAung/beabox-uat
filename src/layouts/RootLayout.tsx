@@ -14,13 +14,14 @@ import { setPlay } from "@/page/home/services/playSlice";
 import UserFeed from "@/components/UserFeed";
 import AnimationLoader from "@/components/shared/animation-loader";
 import loadingAnimation from "@/lotties/Animation.json";
-import { useGetCurrentEventQuery, useGetEventDetailsQuery } from "@/store/api/events/eventApi";
+import {
+  useGetCurrentEventQuery,
+  useGetEventDetailsQuery,
+} from "@/store/api/events/eventApi";
 import CloseSvg from "@/assets/icons/Close.svg";
 import { RootState } from "@/store/store";
 import { useNavigate } from "react-router-dom";
-import {
-  setIsDrawerOpen
-} from "@/store/slices/profileSlice";
+import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 import { setEventDetail, setAnimation } from "@/store/slices/eventSlice";
 import { useSearchParams } from "react-router-dom";
 import { useGetUserByReferalQuery } from "@/page/event/eventApi";
@@ -29,7 +30,6 @@ import EventResultBox from "@/page/event/EventResultBox";
 import EventCaptcha from "@/page/event/EventCaptcha";
 import RegisterDrawer from "@/components/profile/auth/register-drawer";
 import { useLocation } from "react-router-dom";
-
 
 // Function to check if the app is running in a WebView
 function isWebView() {
@@ -64,6 +64,7 @@ const RootLayout = ({ children }: any) => {
   const [isOpenNew, setIsOpenNew] = useState(false);
   const [code, setCode] = useState("");
   const [newData, setnewData] = useState(null);
+  const user = useSelector((state: any) => state.persist.user);
 
   const { data: eventData } = useGetUserByReferalQuery(
     { referral_code: referCode }, // or safely cast if you're confident it's a string
@@ -71,7 +72,7 @@ const RootLayout = ({ children }: any) => {
   );
 
   useEffect(() => {
-    if (eventData?.data?.event?.status && !box) {
+    if (eventData?.data?.event?.status && !box && !user) {
       setEvent(eventData?.data?.event?.status);
     }
   }, [eventData, event]);
@@ -83,20 +84,24 @@ const RootLayout = ({ children }: any) => {
   useGetApplicationAdsQuery("", { skip: true });
 
   const { data: currentEventData } = useGetCurrentEventQuery("");
-  const { data: eventDetailsData } = useGetEventDetailsQuery(currentEventData?.data?.id || '', {
-      skip: !currentEventData?.data?.id
-    });
-  const user = useSelector((state: RootState) => state.persist.user);
+  const { data: eventDetailsData } = useGetEventDetailsQuery(
+    currentEventData?.data?.id || "",
+    {
+      skip: !currentEventData?.data?.id,
+    }
+  );
 
   // const [eventId, setEventId] = useState<string | undefined>(undefined);
   // const [showAnimation, setShowAnimation] = useState(false);
-  const showAnimation = useSelector((state: RootState) => state.event.isShowAnimation);
+  const showAnimation = useSelector(
+    (state: RootState) => state.event.isShowAnimation
+  );
   useEffect(() => {
     if (currentEventData?.data) {
       if (currentEventData?.status === true) {
-        dispatch(setAnimation(true))
+        dispatch(setAnimation(true));
       } else {
-        dispatch(setAnimation(false))
+        dispatch(setAnimation(false));
       }
     }
   }, [currentEventData, dispatch]);
@@ -229,7 +234,7 @@ const RootLayout = ({ children }: any) => {
         navigate(`/events/lucky-draw/${eventId}`);
       }
     } else {
-      // 
+      //
       dispatch(setIsDrawerOpen(true));
     }
   };
@@ -238,7 +243,7 @@ const RootLayout = ({ children }: any) => {
     <div style={{ height: "calc(100dvh - 95px);" }}>
       {children}
 
-      {event && !box && !isOpenNew && !showAd && (
+      {event && !box && !isOpenNew && !showAd && !user && (
         <EventBox
           setshownextBox={setshownextBox}
           shownextBox={shownextBox}
@@ -290,25 +295,30 @@ const RootLayout = ({ children }: any) => {
       <div className="fixed bottom-0 left-0 w-full z-[1600]">
         <BottomNav />
       </div>
-      
-      {!showAd && !showAlert && !isOpen && location.pathname === "/" && showAnimation && (
-        <div className="fixed bottom-[8rem] right-9 z-[9999] rounded-full p-2">
-          <div className="relative">
-            <button
-              className="absolute top-4 right-7 bg-white rounded-full w-5 h-5 flex items-center justify-center text-black z-[10000]"
-              onClick={() => dispatch(setAnimation(false))}
-            >
-              <img src={CloseSvg} />
-            </button>
-            <AnimationLoader
-              animationData={loadingAnimation}
-              width={120}
-              height={120}
-              onClick={handleAnimationClick}
-            />
+
+      {!showAd &&
+        !showAlert &&
+        !isOpen &&
+        location.pathname === "/" &&
+        !event &&
+        showAnimation && (
+          <div className="fixed bottom-[8rem] right-9 z-[9999] rounded-full p-2">
+            <div className="relative">
+              <button
+                className="absolute top-4 right-7 bg-white rounded-full w-5 h-5 flex items-center justify-center text-black z-[10000]"
+                onClick={() => dispatch(setAnimation(false))}
+              >
+                <img src={CloseSvg} />
+              </button>
+              <AnimationLoader
+                animationData={loadingAnimation}
+                width={120}
+                height={120}
+                onClick={handleAnimationClick}
+              />
+            </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 };
