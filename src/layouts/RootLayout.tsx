@@ -22,6 +22,13 @@ import {
   setIsDrawerOpen
 } from "@/store/slices/profileSlice";
 import { setEventDetail, setAnimation } from "@/store/slices/eventSlice";
+import { setEventDetail } from "@/store/slices/eventSlice";
+import { useSearchParams } from "react-router-dom";
+import { useGetUserByReferalQuery } from "@/page/event/eventApi";
+import EventBox from "@/page/event/EventBox";
+import EventResultBox from "@/page/event/EventResultBox";
+import EventCaptcha from "@/page/event/EventCaptcha";
+import RegisterDrawer from "@/components/profile/auth/register-drawer";
 import { useLocation } from "react-router-dom";
 
 
@@ -48,9 +55,29 @@ const RootLayout = ({ children }: any) => {
   const location = useLocation();
 
   const isFirstTime = localStorage.getItem("isFirstTimeUser");
+  const [event, setEvent] = useState(false);
+  const [shownextBox, setshownextBox] = useState(false);
 
   const [userPers, setUserPers] = useState(false);
+  const [searchParams] = useSearchParams();
+  const referCode = searchParams.get("refer");
+  const [box, setBox] = useState(false);
+  const [isOpenNew, setIsOpenNew] = useState(false);
+  const [code, setCode] = useState("");
+  const [newData, setnewData] = useState(null);
 
+  const { data: eventData } = useGetUserByReferalQuery(
+    { referral_code: referCode }, // or safely cast if you're confident it's a string
+    { skip: !referCode }
+  );
+
+  useEffect(() => {
+    if (eventData?.data?.event?.status && !box) {
+      setEvent(eventData?.data?.event?.status);
+    }
+  }, [eventData, event]);
+
+  // console.log(" here ", event, eventData);
   const { data: config } = useGetConfigQuery({});
 
   // Skip the API query since LoadingScreen handles it
@@ -163,9 +190,20 @@ const RootLayout = ({ children }: any) => {
     setShowAd(false);
     // Ensure video plays after ads are completed
 
-    dispatch(setPlay(true));
+    if ((jumpUrl && showDialog) || event) {
+      dispatch(setPlay(false));
+    } else {
+      dispatch(setPlay(true));
+    }
+
     sendNativeEvent("beabox_home_started");
   };
+
+  useEffect(() => {
+    if (event) {
+      dispatch(setPlay(false));
+    }
+  }, [event]);
 
   const isOpen = useSelector((state: any) => state.profile.isDrawerOpen);
 
@@ -201,6 +239,37 @@ const RootLayout = ({ children }: any) => {
     <div style={{ height: "calc(100dvh - 95px);" }}>
       {children}
 
+      {event && !box && !isOpenNew && !showAd && (
+        <EventBox
+          setshownextBox={setshownextBox}
+          shownextBox={shownextBox}
+          eventData={eventData}
+          setBox={setBox}
+          referCode={referCode}
+          isOpen={isOpenNew}
+          setIsOpen={setIsOpenNew}
+          setCode={setCode}
+          newData={newData}
+          setnewData={setnewData}
+          setEvent={setEvent}
+        />
+      )}
+      {isOpenNew && (
+        <RegisterDrawer
+          isOpen={isOpenNew}
+          setIsOpen={setIsOpenNew}
+          code={referCode}
+        />
+      )}
+      {/* {box && (
+        <EventCaptcha />
+        // <EventResultBox
+        //   eventData={eventData}
+        //   setBox={setBox}
+        //   setEvent={setEvent}
+        // />
+      )} */}
+
       {showAd && (
         <PopUp
           setShowAd={setShowAd}
@@ -211,6 +280,7 @@ const RootLayout = ({ children }: any) => {
       )}
       {!showAd && showAlert && isBrowser && jumpUrl && showDialog && (
         <AlertRedirect
+          event={event}
           setShowAlert={setShowAlert}
           app_download_link={jumpUrl}
         />
