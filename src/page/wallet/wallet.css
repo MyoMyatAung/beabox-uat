@@ -295,3 +295,13 @@ option selected {
     rgba(255, 178, 224, 0.12) 100%
   );
 }
+
+.wallet_upload_box {
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.upload_plus_btn {
+  border-radius: 76.364px;
+  background: rgba(255, 255, 255, 0.04);
+}

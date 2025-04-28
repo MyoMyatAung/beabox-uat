@@ -23,6 +23,7 @@ const Withdraw: React.FC<WithdrawProps> = ({}) => {
   const { data, refetch } = useGetMyOwnProfileQuery("", {
     skip: !user,
   });
+  console.log(paymentMeth)
   const { data: config } = useGetInviteQuery("");
   const navigate = useNavigate();
   return (
@@ -70,11 +71,11 @@ const Withdraw: React.FC<WithdrawProps> = ({}) => {
             <BalNew
               balance={data?.data?.income_coins}
               title="可提取金额"
-              amountText={"钱包充值"}
+              amountText={"总余额"}
               btnText={"钱包提款"}
               amount={data?.data?.coins}
               to={paths.wallet_recharge}
-              amountType={"硬币"}
+              amountType={"¥"}
             />
             {isLoading ? (
               <div className=" flex justify-center items-center py-[100px]">

@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { toast } from "@/hooks/use-toast";
 // import { Button } from "@/components/ui/button";
 import loader from "../../home/vod_loader.gif";
+import Upload from "../comp/Upload";
 
 interface WithDetailsProps {
   payment: any;
@@ -117,22 +118,23 @@ const WithDetails: React.FC<WithDetailsProps> = ({
         <div>
           <label className="text-white text-[16px] font-[400] leading-[20px]">
             {/* Withdraw amount */}
-            提现金额
+            提现金额 <span className=" text-[#FF3B65]">*</span>
           </label>
           <input
             required
             value={amount}
             // onChange={(e) => setAmount(e.target.value)}
             onChange={handleAmountChange}
-            placeholder={`请输入金额（ ${
-              dollar_withdraw_rate?.min_coins
-                ? dollar_withdraw_rate.min_coins
-                : "100"
-            } 的倍数 )`}
-            className="withdraw_input bg-transparent focus:outline-none pt-[20px] pb-[10px] w-full text-white text-[16px] font-[400] leading-[20px]"
+            // placeholder={`请输入金额（ ${
+            //   dollar_withdraw_rate?.min_coins
+            //     ? dollar_withdraw_rate.min_coins
+            //     : "100"
+            // } 的倍数 )`}
+            placeholder="最低提现金额为50元"
+            className="withdraw_input bg-transparent focus:outline-none pt-[10px] pb-[10px] w-full text-white text-[16px] font-[400] leading-[20px]"
             type="number"
           />
-          <p className="py-[5px] text-[#777] font-[300] text-[14px]">
+          <p className="py-[5px] hidden text-[#777] font-[300] text-[14px]">
             {dollar_withdraw_rate?.coins ? dollar_withdraw_rate?.coins : "100"}{" "}
             硬币 ={" "}
             {dollar_withdraw_rate?.dollars
@@ -180,6 +182,14 @@ const WithDetails: React.FC<WithDetailsProps> = ({
               />
             </div>
           ))}
+        </div>
+
+        {/* upload */}
+        <div className="">
+          <label className="text-white text-[16px] font-[400] leading-[20px]">
+            Upload a Proof Screenshot (1/10) *
+          </label>
+          <Upload />
         </div>
         {/* rules */}
         <div>
