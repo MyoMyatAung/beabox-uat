@@ -268,3 +268,21 @@ option selected {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+.new_tran_box {
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.new_tran_box_title {
+  color: #fff;
+  font-variant-numeric: lining-nums proportional-nums;
+  font-feature-settings: "dlig" on;
+  font-family: "Helvetica Neue";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px; /* 125% */
+  letter-spacing: 0.16px;
+  text-transform: capitalize;
+}
