@@ -286,3 +286,12 @@ option selected {
   letter-spacing: 0.16px;
   text-transform: capitalize;
 }
+
+.new_tran_filter_selected {
+  border-radius: 8px;
+  background: linear-gradient(
+    325deg,
+    rgba(205, 62, 255, 0.12) 43.64%,
+    rgba(255, 178, 224, 0.12) 100%
+  );
+}

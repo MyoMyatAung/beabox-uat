@@ -67,7 +67,7 @@ const Transit: React.FC<TransitProps> = ({}) => {
   };
   console.log(tran);
   return (
-    <div className=" py-[20px]">
+    <div className=" py-[20p">
       {/* header */}
       <div className="transit_header px-[20px] py-[10px] flex items-center justify-between">
         <h1 className=" text-white text-[16px] font-[500] leading-normal">
