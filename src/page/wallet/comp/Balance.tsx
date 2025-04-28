@@ -14,10 +14,12 @@ import { useNavigate } from "react-router-dom";
 import { paths } from "@/routes/paths";
 import { useSelector } from "react-redux";
 import balc from "../../../assets/wallet/balc.png";
+import RedBox from "./RedBox";
 
 interface BalanceProps {}
 
 const Balance: React.FC<BalanceProps> = () => {
+  const [showBox, setShowBox] = useState(false);
   const [balance, setBalance] = useState("");
   const [isHidden, setIsHidden] = useState(false); // State to toggle visibility
   const user = useSelector((state: any) => state?.persist?.user) || "";
@@ -38,6 +40,7 @@ const Balance: React.FC<BalanceProps> = () => {
 
   return (
     <div className="p-[20px]">
+      {showBox && <RedBox setShowBox={setShowBox} />}
       <div className="balance_box p-[22px] flex flex-col gap-[12px]">
         {/* head */}
         {/* <img src={balc} alt="" /> */}
@@ -86,7 +89,7 @@ const Balance: React.FC<BalanceProps> = () => {
         {/* <p className=" w-full h-[1px] bg-white/20"></p> */}
         <div className=" flex justify-between items-center">
           <div
-            // onClick={() => navigate(paths.wallet_income)}
+            onClick={() => setShowBox(true)}
             className=" w-1/2 flex justify-between items-center px-[12px] h-[46px] red_box_wal"
           >
             <div className=" flex justify-center items-center gap-[6px]">

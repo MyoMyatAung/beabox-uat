@@ -221,3 +221,50 @@ option selected {
   border-radius: 8px;
   background: rgba(255, 39, 93, 0.12);
 }
+
+.red_popup_box {
+  border-radius: 20px;
+  background: #16131c;
+  backdrop-filter: blur(10px);
+}
+
+.red_popup_box_head {
+  color: var(--Neutral-Colors-Neutral_5, #fff);
+  font-family: "Helvetica Neue";
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  text-transform: capitalize;
+}
+
+.red_popup_box_list {
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.recommand_span {
+  color: #230b34;
+  font-family: "SF Pro Display";
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 14px; /* 140% */
+  border-radius: 4px;
+  background: var(
+    --Purple-Linear,
+    linear-gradient(322deg, #985fb9 18.49%, #fec9ff 55.79%, #fed6ff 84.69%)
+  );
+}
+
+.coming_soon {
+  font-family: "Helvetica Neue";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 18px; /* 150% */
+  background: linear-gradient(180deg, #e59aff -25%, #ebb1ff 102.78%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
