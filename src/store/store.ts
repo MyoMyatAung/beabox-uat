@@ -34,6 +34,7 @@ import scrollSlice from "@/page/home/services/scrollSlice";
 import followSlice from "./slices/followSlice";
 import eventSlice from "./slices/eventSlice"
 import { eventApi } from "./api/events/eventApi";
+import { eventInvitationApi } from "../page/event/eventApi";
 
 const sessionStorageWrapper: Storage = {
   getItem: (key: string) => {
@@ -98,8 +99,8 @@ const rootReducer = combineReducers({
   [searchApi.reducerPath]: searchApi.reducer,
   [createCenterApi.reducerPath]: createCenterApi.reducer,
   event: eventSlice,
-  [eventApi.reducerPath] : eventApi.reducer
-
+  [eventApi.reducerPath] : eventApi.reducer,
+  [eventInvitationApi.reducerPath]: eventInvitationApi.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -116,6 +117,7 @@ export const store: any = configureStore({
       .concat(searchApi.middleware)
       .concat(createCenterApi.middleware)
       .concat(eventApi.middleware)
+      .concat(eventInvitationApi.middleware),
 });
 
 export const persistor = persistStore(store);

@@ -221,7 +221,7 @@ const Luckydraw = () => {
               >
                 <div style={{ borderRight: '2px solid rgba(0, 0, 0, 0.12)' }}>
                   <p className="text-[14px]">今日收益</p>
-                  <p className="mt-2 text-[20px]">{stats.today_earnings}</p>
+                  <p className="mt-2 text-[20px]">{stats.today_earnings !== '0' ? `${stats.today_earnings} ¥` : ""}</p>
                 </div>
                 <div style={{ borderRight: '2px solid rgba(0, 0, 0, 0.12)' }}>
                   <p className="text-[14px]">邀请人数</p>
@@ -236,15 +236,15 @@ const Luckydraw = () => {
               <div className="mt-4 grid grid-cols-3 gap-4 text-center text-sm pb-1">
                 <div style={{ borderRight: '2px solid rgba(0, 0, 0, 0.12)' }}>
                   <p className="text-[14px]">累计收益</p>
-                  <p className="mt-2 text-[20px]">{stats.cumulative_earnings}</p>
+                  <p className="mt-2 text-[20px]">{stats.cumulative_earnings !== '0' ? `${stats.cumulative_earnings} ¥` : ""}</p>
                 </div>
                 <div style={{ borderRight: '2px solid rgba(0, 0, 0, 0.12)' }}>
                   <p className="text-[14px]">本月收益</p>
-                  <p className="mt-2 text-[20px]">{stats.this_month_earnings}</p>
+                  <p className="mt-2 text-[20px]">{stats.this_month_earnings !== '0' ? `${stats.this_month_earnings} ¥` : ""}</p>
                 </div>
                 <div>
                   <p className="text-[14px]">上月收益</p>
-                  <p className="mt-2 text-[20px]">{stats.last_month_earnings}</p>
+                  <p className="mt-2 text-[20px]"> {stats.last_month_earnings !== '0' ? `${stats.last_month_earnings} ¥` : ""}</p>
                 </div>
               </div>
 

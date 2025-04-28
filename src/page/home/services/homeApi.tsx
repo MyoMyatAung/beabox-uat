@@ -14,7 +14,7 @@ export const homeApi = createApi({
       const state = getState() as any;
       const accessToken = state.persist?.user?.token;
       const deviceInfo = getDeviceInfo();
-      
+
       headers.set("encrypt", "true");
       headers.set("Accept-Language", "cn");
       headers.set("X-Client-Version", "2001");

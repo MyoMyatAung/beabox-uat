@@ -12,6 +12,9 @@ const FlipNumber = ({
   const [direction, setDirection] = useState<"up" | "down">("up");
   const [firstLoad, setFirstLoad] = useState(propFirstLoad);
 
+  const lastTwoDigits = number % 100;
+  const prevLastTwoDigits = prevNumber % 100;
+
   useEffect(() => {
     if (firstLoad) {
       setAnimating(true);
@@ -44,8 +47,8 @@ const FlipNumber = ({
   const textBaseStyle = {
     fontFamily: "Ultra",
     fontWeight: 400,
-    fontSize: "39.2px",
-    lineHeight: "26.95px",
+    fontSize: "39px",
+    lineHeight: "27px",
     letterSpacing: "0%",
     textAlign: "center" as const,
   };
@@ -102,7 +105,7 @@ const FlipNumber = ({
               zIndex: 1,
             }}
           >
-            {number}
+            {prevLastTwoDigits}
           </span>
           <span
             style={{
@@ -112,7 +115,7 @@ const FlipNumber = ({
               zIndex: 2,
             }}
           >
-            {number}
+            {lastTwoDigits}
           </span>
         </div>
       </div>

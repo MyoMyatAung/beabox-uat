@@ -7,6 +7,9 @@ export default {
       fontFamily: {
         headerFont: ["HeaderFont", "sans-serif"], // Add your custom font
         cnFont: ["cnFont", "sans-serif"], // Add your custom font
+        sfProM: ["sfProM", "sans-serif"], // Add your custom font
+        sfProB: ["sfProB", "sans-serif"], // Add your custom font
+        sfProS: ["sfProS", "sans-serif"], // Add your custom font
       },
       borderRadius: {
         lg: "var(--radius)",
