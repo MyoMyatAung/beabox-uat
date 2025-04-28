@@ -3,8 +3,8 @@ import { convertToSecurePayload, convertToSecureUrl } from "@/lib/encrypt";
 import { decryptWithAes } from "@/lib/decrypt";
 import { getDeviceInfo } from "@/lib/deviceInfo";
 
-export const eventApi = createApi({
-  reducerPath: "eventApi",
+export const eventInvitationApi = createApi({
+  reducerPath: "eventInvitationApi",
   // baseQuery: fetchBaseQuery({ baseUrl: "https://77eewm.qdhgtch.com/api/v1" }),
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_API_URL,
@@ -60,4 +60,4 @@ export const eventApi = createApi({
   }),
 });
 
-export const { useGetUserByReferalQuery, useVerifyCaptchaMutation } = eventApi;
+export const { useGetUserByReferalQuery, useVerifyCaptchaMutation } = eventInvitationApi;
