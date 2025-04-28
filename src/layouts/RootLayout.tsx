@@ -28,6 +28,8 @@ import EventBox from "@/page/event/EventBox";
 import EventResultBox from "@/page/event/EventResultBox";
 import EventCaptcha from "@/page/event/EventCaptcha";
 import RegisterDrawer from "@/components/profile/auth/register-drawer";
+import { useLocation } from "react-router-dom";
+
 
 // Function to check if the app is running in a WebView
 function isWebView() {
@@ -49,6 +51,7 @@ const RootLayout = ({ children }: any) => {
   const [showLanding, setShowLanding] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const isFirstTime = localStorage.getItem("isFirstTimeUser");
   const [event, setEvent] = useState(false);
@@ -298,7 +301,7 @@ const RootLayout = ({ children }: any) => {
           />
         </div>
       )} */}
-      {showAnimation && !showAd && !event && (
+      {!showAd && !showAlert && location.pathname === "/" && showAnimation && (
         <div className="fixed bottom-[8rem] right-9 z-[9999] rounded-full p-2">
           <div className="relative">
             <button

@@ -21,7 +21,7 @@ import Loader from "@/components/shared/loader";
 import { useGetEventDetailsQuery, useLazyGetUserShareInfoQuery } from "@/store/api/events/eventApi";
 import { useParams } from "react-router-dom";
 import { setEventDetail } from "@/store/slices/eventSlice";
-import toast from "react-hot-toast";
+import { showToast } from "../home/services/errorSlice";
 
 const Luckydraw = () => {
   const navigate = useNavigate();
@@ -88,12 +88,12 @@ const Luckydraw = () => {
       const result = await triggerGetUserShareInfo('').unwrap();
       if (result?.data.link) {
         await navigator.clipboard.writeText(result.data.link);
-        toast.success("复制成功", {
-          style: {
-            background: "#25212a",
-            color: "white",
-          },
-        });
+        dispatch(
+          showToast({
+            message: "复制成功",
+            type: "success",
+          })
+        );
       }
     } catch (error) {
       console.error("Failed to fetch user share info:", error);
