@@ -205,7 +205,7 @@ const Luckydraw = () => {
             backgroundSize: "auto 100%",
             backgroundPosition: "center center",
             backgroundRepeat: "no-repeat",
-            maxHeight: '295px'
+            maxHeight: '280px'
           }}
         >
           <div className="bg-[#f14884] rounded-[12px] py-4 px-3 mt-8">
