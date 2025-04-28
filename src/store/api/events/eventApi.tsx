@@ -56,6 +56,6 @@ export const eventApi = createApi({
 
 export const {
   useGetCurrentEventQuery,
-  useGetEventDetailsQuery,
+  useLazyGetEventDetailsQuery,
   useLazyGetUserShareInfoQuery
 } = eventApi;
