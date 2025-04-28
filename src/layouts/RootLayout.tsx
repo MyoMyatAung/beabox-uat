@@ -93,29 +93,16 @@ const RootLayout = ({ children }: any) => {
 
   useEffect(() => {
     if (currentEventData?.data) {
-      if (currentEventData?.status === true) {
-        dispatch(setAnimation(true));
+      if (currentEventData?.status === true && !showAd && !showAlert && !isOpen) {
+        const timeout = setTimeout(() => {
+          dispatch(setAnimation(true));
+        }, 5000);
+        return () => clearTimeout(timeout);
       } else {
         dispatch(setAnimation(false));
       }
     }
   }, [currentEventData, dispatch]);
-
-  // useEffect(() => {
-  //   let animationInterval: NodeJS.Timeout | null = null;
-
-  //   if (showAnimation) {
-  //     animationInterval = setInterval(() => {
-  //       dispatch(setAnimation((prevState: boolean) => !prevState));
-  //     }, 5000);
-  //   }
-
-  //   return () => {
-  //     if (animationInterval) {
-  //       clearInterval(animationInterval);
-  //     }
-  //   };
-  // }, [showAnimation, dispatch]);
 
   // Check if ads have already been seen in this session
   useEffect(() => {

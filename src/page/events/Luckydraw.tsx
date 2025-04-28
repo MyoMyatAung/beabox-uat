@@ -10,7 +10,6 @@ import InviteCard from "./InviteCard";
 import Rule from "./Rule";
 import eventPage from "@/assets/eventpage.png";
 import eventTitle from "@/assets/eventTitle.png";
-import groupImg from "@/assets/Group.png";
 import Pricebg from "@/assets/icons/PrizeBg.svg";
 import Paper from "@/assets/Paper.png";
 import { EventDetail } from "@/@types/lucky_draw";
@@ -24,6 +23,9 @@ import { decrementDuration, setDuration, setEventDetail } from "@/store/slices/e
 import { showToast } from "../home/services/errorSlice";
 import { RootState } from "@/store/store";
 import { startTimer, stopTimer } from "./timer"; 
+import { Link } from "react-router-dom";
+import { paths } from "@/routes/paths";
+
 const Luckydraw = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -221,7 +223,7 @@ const Luckydraw = () => {
               >
                 <div style={{ borderRight: '2px solid rgba(0, 0, 0, 0.12)' }}>
                   <p className="text-[14px]">今日收益</p>
-                  <p className="mt-2 text-[20px]">{stats.today_earnings !== '0' ? `${stats.today_earnings} ¥` : ""}</p>
+                  <p className="mt-2 text-[20px]">{stats.today_earnings } {stats.today_earnings !== '0' ? `¥` : ""}</p>
                 </div>
                 <div style={{ borderRight: '2px solid rgba(0, 0, 0, 0.12)' }}>
                   <p className="text-[14px]">邀请人数</p>
@@ -236,28 +238,30 @@ const Luckydraw = () => {
               <div className="mt-4 grid grid-cols-3 gap-4 text-center text-sm pb-1">
                 <div style={{ borderRight: '2px solid rgba(0, 0, 0, 0.12)' }}>
                   <p className="text-[14px]">累计收益</p>
-                  <p className="mt-2 text-[20px]">{stats.cumulative_earnings !== '0' ? `${stats.cumulative_earnings} ¥` : ""}</p>
+                  <p className="mt-2 text-[20px]">{stats.cumulative_earnings } {stats.cumulative_earnings !== '0' ? `¥` : ""}</p>
                 </div>
                 <div style={{ borderRight: '2px solid rgba(0, 0, 0, 0.12)' }}>
                   <p className="text-[14px]">本月收益</p>
-                  <p className="mt-2 text-[20px]">{stats.this_month_earnings !== '0' ? `${stats.this_month_earnings} ¥` : ""}</p>
+                  <p className="mt-2 text-[20px]">{stats.this_month_earnings } {stats.this_month_earnings !== '0' ? `¥` : ""}</p>
                 </div>
                 <div>
                   <p className="text-[14px]">上月收益</p>
-                  <p className="mt-2 text-[20px]"> {stats.last_month_earnings !== '0' ? `${stats.last_month_earnings} ¥` : ""}</p>
+                  <p className="mt-2 text-[20px]"> {stats.last_month_earnings } {stats.last_month_earnings !== '0' ? `¥` : ""}</p>
                 </div>
               </div>
 
-              <button
-                className="bg-red-500 text-white mt-4 w-full py-3 rounded-[8px] font-bold flex items-center justify-center"
-                style={{
-                  background:
-                    "linear-gradient(166.1deg, #FF637D 45.09%, #F11F5D 65.22%, #FF1278 86.11%, #FF38B9 104.96%)",
-                }}
-              >
-                立即提现
-                <img src={DownloadSvg} className="ml-3" />
-              </button>
+              <Link to={paths.wallet_withdraw}>
+                <button
+                  className="bg-red-500 text-white mt-4 w-full py-3 rounded-[8px] font-bold flex items-center justify-center"
+                  style={{
+                    background:
+                      "linear-gradient(166.1deg, #FF637D 45.09%, #F11F5D 65.22%, #FF1278 86.11%, #FF38B9 104.96%)",
+                  }}
+                >
+                  立即提现
+                  <img src={DownloadSvg} className="ml-3" />
+                </button>
+              </Link>
             </div>
           </div>
         </div>
