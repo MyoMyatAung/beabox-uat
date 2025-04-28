@@ -3,8 +3,9 @@ import React, { useState, useEffect, useRef } from "react";
 import "./event.css";
 import logo from "./img/logoBox.png";
 import light from "./img/light.json";
-import card from "./img/card.json";
+
 import btn2 from "./img/btn2.json";
+import card from "./img/bg.png";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 import Animation from "./Animation";
 import { useVerifyCaptchaMutation } from "./eventApi";
@@ -49,6 +50,37 @@ const EventBox: React.FC<EventBoxProps> = ({
   const captchaRef = useRef<HTMLDivElement>(null);
   const [showCaptcha, setShowCaptcha] = useState(false);
   const [gt, setGt] = useState<any>(null);
+
+  const data = [
+    {
+      name: "五一劳动节",
+      start_date: "2025-05-01",
+      end_date: "2025-05-05",
+      text: "🎉 劳动最光荣，赢好礼！🎉",
+      image: "laborday.png",
+    },
+    {
+      name: "端午节",
+      start_date: "2025-05-31",
+      end_date: "2025-06-02",
+      text: "🎏 端午安康，粽享红包 🎏",
+      image: "dragonboat.png",
+    },
+    {
+      name: "中秋节",
+      start_date: "2025-10-06",
+      end_date: "2025-10-08",
+      text: "🌕 中秋团圆，红包满月 🌕",
+      image: "midautumn.png",
+    },
+    {
+      name: "国庆节",
+      start_date: "2025-10-01",
+      end_date: "2025-10-07",
+      text: "🇨🇳 国庆狂欢，亿万红包等你 🇨🇳",
+      image: "nationalday.png",
+    },
+  ];
 
   // Use the mutation hook from RTK Query
   const [verifyCaptcha] = useVerifyCaptchaMutation();
@@ -135,14 +167,14 @@ const EventBox: React.FC<EventBoxProps> = ({
     <div className="dheight bg-black/80 w-screen flex justify-center items-center fixed top-0 z-[9999]">
       {!shownextBox && !showCaptcha && (
         <div className="flex flex-col  gap-[0px] justify-center items-center">
-          <div className="absolute z-[-2] top-[100px]">
+          {/* <div className="absolute z-[-2] top-[100px]">
             <Animation animate={light} />
-          </div>
+          </div> */}
           <div className="flex flex-col justify-between items-center  event_bo">
             <div className="absolute z-[-1]">
-              <Animation animate={card} />
+              <img src={card} alt="" />
             </div>
-            <div className="w-[400px] h-full pt-[80px] pb-[30px] flex flex-col justify-between  items-center media-w1">
+            <div className="w-[400px] h-full pt-[50px]  flex flex-col justify-between  items-center media-w1">
               <img className="w-[210px] h-[70px]" src={logo} alt="" />
               <div className="flex flex-col justify-center items-center px-[30px] mt-20">
                 <AsyncDecryptedImage
@@ -156,8 +188,9 @@ const EventBox: React.FC<EventBoxProps> = ({
                 </h1>
               </div>
               <div className="mt-10">
-                <button onClick={handleEvent}>
-                  <Animation animate={btn2} />
+                <button onClick={handleEvent} className="event_btn">
+                  打开红包
+                  {/* <Animation animate={btn2} /> */}
                 </button>
               </div>
             </div>

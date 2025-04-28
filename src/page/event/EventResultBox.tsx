@@ -58,16 +58,13 @@ const EventResultBox: React.FC<EventBoxProps> = ({
       {!isOpen && (
         <>
           {!close ? (
-            <div className="flex flex-col gap-0 justify-center items-center">
-              <div className="absolute z-[-2] top-[100px] light_star">
-                <Animation animate={light} />
-              </div>
+            <div className="flex flex-col gap-[10px] justify-center items-center">
               <div className="flex flex-col justify-between items-center event_bo">
                 {/* <img className=" absolute z-[-1]" src={bg} alt="" /> */}
                 <div className=" absolute z-[-1]">
-                  <Animation animate={card} />
+                  <img src={bg} alt="" />
                 </div>
-                <div className=" w-[400px] h-full pt-[100px] pb-[30px] flex flex-col justify-between items-center media-w">
+                <div className=" w-[400px] h-full pt-[50px] pb-[30px] flex flex-col justify-between items-center media-w">
                   <div className="flex flex-col justify-center items-center gap-3">
                     <h1 className="event-money font-sfProB">
                       +{newData?.register_bonus} ¥
@@ -88,8 +85,9 @@ const EventResultBox: React.FC<EventBoxProps> = ({
                     </h1>
                   </div>
                   <div className="mt-10">
-                    <button onClick={openDrawer}>
-                      <Animation animate={btn1} />
+                    <button onClick={openDrawer} className="event_btn">
+                      注册账号
+                      {/* <Animation animate={btn1} /> */}
                     </button>
                   </div>
                 </div>
