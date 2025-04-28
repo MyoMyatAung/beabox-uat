@@ -115,3 +115,21 @@
     top: -50px;
   }
 }
+
+@media screen and (max-width: 374px) {
+  .media-w {
+    padding-top: 70px;
+  }
+}
+
+@media screen and (max-width: 374px) {
+  .media-w1 {
+    padding-top: 60px;
+  }
+}
+
+@media screen and (max-width: 374px) {
+  .media-w2 {
+    width: 230px;
+  }
+}

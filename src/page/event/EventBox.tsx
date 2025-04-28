@@ -142,7 +142,7 @@ const EventBox: React.FC<EventBoxProps> = ({
             <div className="absolute z-[-1]">
               <Animation animate={card} />
             </div>
-            <div className="w-full h-full pt-[80px] pb-[30px] flex flex-col justify-between  items-center">
+            <div className="w-[400px] h-full pt-[80px] pb-[30px] flex flex-col justify-between  items-center media-w1">
               <img className="w-[210px] h-[70px]" src={logo} alt="" />
               <div className="flex flex-col justify-center items-center px-[30px] mt-20">
                 <AsyncDecryptedImage
@@ -150,7 +150,7 @@ const EventBox: React.FC<EventBoxProps> = ({
                   className="w-[58px] h-[58px] rounded-full object-cover object-center"
                   alt="Profile"
                 />
-                <h1 className="user_invite_text font-sfPro mt-3 px-10">
+                <h1 className="user_invite_text font-sfPro mt-3 px-10 w-[320px]">
                   '{eventData.data.name}'
                   邀请您一起使用笔盒，邀请好友瓜分百万现金红包！
                 </h1>
