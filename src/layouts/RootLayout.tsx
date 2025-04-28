@@ -298,7 +298,7 @@ const RootLayout = ({ children }: any) => {
           />
         </div>
       )} */}
-      {showAnimation && (
+      {showAnimation && !showAd && !event && (
         <div className="fixed bottom-[8rem] right-9 z-[9999] rounded-full p-2">
           <div className="relative">
             <button
