@@ -70,6 +70,37 @@
   line-height: 22px; /* 137.5% */
 }
 
+.event-money1,
+.event-money-p1,
+.event-line {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-in-out; /* Transition for opacity */
+}
+
+.show-bonus {
+  visibility: visible;
+  opacity: 1; /* Visible after transition */
+  transition: opacity 0.3s ease-in-out; /* Transition for opacity */
+}
+
+.show-bonus .event-money-p1 {
+  visibility: visible;
+  opacity: 1; /* Visible after transition */
+  transition: opacity 0.3s ease-in-out; /* Transition for opacity */
+}
+
+.show-bonus .event-money1 {
+  visibility: visible;
+  opacity: 1; /* Visible after transition */
+  transition: opacity 0.3s ease-in-out; /* Transition for opacity */
+}
+.show-bonus .event-line {
+  visibility: visible;
+  opacity: 1; /* Visible after transition */
+  transition: opacity 0.3s ease-in-out; /* Transition for opacity */
+}
+
 .dheight {
   height: 100%;
   height: calc(100dvh - 75px);

@@ -92,10 +92,9 @@ const EventResultBox: React.FC<EventBoxProps> = ({
                 </div>
                 <div className=" w-[400px] h-full pt-[150px] pb-[30px] flex flex-col justify-between items-center media-w">
                   <div
-                    className="flex flex-col justify-center items-center gap-3"
-                    style={{
-                      visibility: showBonus ? "visible" : "hidden",
-                    }}
+                    className={`flex flex-col justify-center items-center gap-3
+                      ${showBonus ? "show-bonus" : ""} 
+                      `}
                   >
                     <h1 className="event-money1 font-sfProB text-[#f2cb81]">
                       +{newData?.register_bonus} ¥
