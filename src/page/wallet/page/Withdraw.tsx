@@ -20,11 +20,10 @@ const Withdraw: React.FC<WithdrawProps> = ({}) => {
   const [activeTab, setActiveTab] = useState(1);
   const { data: paymentMeth, isLoading } = useGetPaymentMethodQuery("");
   const user = useSelector((state: any) => state?.persist?.user) || "";
-  console.log(user)
   const { data, refetch } = useGetMyOwnProfileQuery("", {
     skip: !user,
   });
-  console.log(paymentMeth)
+  // console.log(data)
   const { data: config } = useGetInviteQuery("");
   const navigate = useNavigate();
   return (
@@ -70,7 +69,7 @@ const Withdraw: React.FC<WithdrawProps> = ({}) => {
         {activeTab === 1 ? (
           <div className="">
             <BalNew
-              balance={data?.data?.income_coins}
+              balance={data?.data?.other_income}
               title="可提取金额"
               amountText={"总余额"}
               btnText={"钱包提款"}

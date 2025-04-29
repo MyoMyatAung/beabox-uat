@@ -50,10 +50,10 @@ const RechRecord: React.FC<RechRecordProps> = ({}) => {
   }, []);
   const { data, isLoading } = useGetTransitionHistoryQuery({
     period: `${plus}-${curYr}`,
-    type: "",
+    type: type,
     page: page,
   });
-
+  console.log(data)
   useEffect(() => {
     if (data?.data) {
       // setTran(data?.data);

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../wallet.css";
 import PayPick from "./PayPick";
 import {
@@ -58,7 +58,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
     }));
   };
   const dispatch = useDispatch();
-  console.log(images);
+  // console.log(images);
 
   const handlePaymentChange = (paymentID: any) => {
     setSelectedPaymentID(paymentID);
@@ -160,7 +160,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
         uploadedUrls.push(data);
       }
 
-      console.log(uploadedUrls);
+      // console.log(uploadedUrls);
 
       // 2. Add image URLs to form data
       const formData = {
@@ -188,9 +188,15 @@ const WithDetails: React.FC<WithDetailsProps> = ({
       }
 
       if (data) {
-        console.log(data);
+        // console.log(data);
+        dispatch(
+          showToast({
+            message: data.message || "Something went wrong",
+            type: "error",
+          })
+        );
         refetch();
-        setActiveTab(2);
+        // setActiveTab(2);
       }
     } catch (error) {
       // console.error("Upload or submission failed:", error);
@@ -203,13 +209,25 @@ const WithDetails: React.FC<WithDetailsProps> = ({
     }
   };
 
+  useEffect(() => {
+    if (isLoading || uploadLoading) {
+      document.body.style.overflow = "hidden"; // Disable scroll
+    } else {
+      document.body.style.overflow = ""; // Re-enable scroll
+    }
+
+    return () => {
+      document.body.style.overflow = ""; // Cleanup
+    };
+  }, [isLoading, uploadLoading]);
+
   return (
     <div>
       <Toaster />
 
       {isLoading || uploadLoading ? (
-        <div className=" w-screen h-screen fixed bg-black/60 top-0 left-0 flex justify-center items-center">
-          <img src={loader} alt="" className="w-[70px] h-[70px]" />
+        <div className="fixed inset-0 z-50 bg-black/60 flex justify-center items-center pointer-events-auto">
+          <img src={loader} alt="Loading..." className="w-[70px] h-[70px]" />
         </div>
       ) : (
         ""
@@ -316,7 +334,6 @@ const WithDetails: React.FC<WithDetailsProps> = ({
           }`}
           //   disabled={!isFormValid}
         >
-          
           确认提现
         </button>
       </form>
