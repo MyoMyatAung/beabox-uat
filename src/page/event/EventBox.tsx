@@ -5,11 +5,12 @@ import logo from "./img/logoBox.png";
 import light from "./img/light.json";
 
 import btn2 from "./img/btn2.json";
-import card from "./img/bg.png";
+import card from "./img/red.png";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 import Animation from "./Animation";
 import { useVerifyCaptchaMutation } from "./eventApi";
 import EventResultBox from "./EventResultBox";
+import AnimationCard from "./AnimationCard";
 
 declare global {
   interface Window {
@@ -167,15 +168,14 @@ const EventBox: React.FC<EventBoxProps> = ({
     <div className="dheight bg-black/80 w-screen flex justify-center items-center fixed top-0 z-[9999]">
       {!shownextBox && !showCaptcha && (
         <div className="flex flex-col  gap-[0px] justify-center items-center">
-          {/* <div className="absolute z-[-2] top-[100px]">
+          <div className="absolute z-[-2] top-[150px]">
             <Animation animate={light} />
-          </div> */}
+          </div>
           <div className="flex flex-col justify-between items-center  event_bo">
             <div className="absolute z-[-1]">
-              <img src={card} alt="" />
+              <img src={card} alt="" className="w-[300px] h-[400px]" />
             </div>
-            <div className="w-[400px] h-full pt-[50px]  flex flex-col justify-between  items-center media-w1">
-              <img className="w-[210px] h-[70px]" src={logo} alt="" />
+            <div className="w-[400px] h-full pt-[85px]  flex flex-col justify-between  items-center media-w1">
               <div className="flex flex-col justify-center items-center px-[30px] mt-20">
                 <AsyncDecryptedImage
                   imageUrl={eventData.data.avatar}

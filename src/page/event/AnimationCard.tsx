@@ -5,10 +5,10 @@ interface AnimationProps {
   animate: any;
 }
 
-const Animation: React.FC<AnimationProps> = ({ animate }) => {
+const AnimationCard: React.FC<AnimationProps> = ({ animate }) => {
   const options = {
     animationData: animate,
-    loop: true,
+    loop: false,
   };
 
   const { View } = useLottie(options);
@@ -16,4 +16,4 @@ const Animation: React.FC<AnimationProps> = ({ animate }) => {
   return <>{View}</>;
 };
 
-export default Animation;
+export default AnimationCard;

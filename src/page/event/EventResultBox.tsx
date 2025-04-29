@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./event.css";
 import logo from "./img/logoBox.png";
 import light from "./img/light.json";
-import card from "./img/card.json";
-import bg from "./img/bg.png";
+import card from "./img/red2.json";
+import suprise from "./img/suprise.json";
+//import bg from "./img/bg.png";
+
 import btn1 from "./img/btn1.json";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 import Animation from "./Animation";
@@ -13,6 +15,8 @@ import { useDispatch } from "react-redux";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
 import RegisterDrawer from "@/components/profile/auth/register-drawer";
 import { setPlay } from "../home/services/playSlice";
+import AnimationCard from "./AnimationCard";
+// import AnimationCard from "./AnimationCard";
 
 interface EventBoxProps {
   eventData: any;
@@ -32,7 +36,19 @@ const EventResultBox: React.FC<EventBoxProps> = ({
   setEvent,
 }) => {
   const [close, setClose] = useState(false);
+  const [showBonus, setShowBonus] = useState(false); // State for showing bonus after 1 second
+
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    setShowBonus(false);
+    const timer = setTimeout(() => {
+      setShowBonus(true); // Set the state to show the bonus after 1 second
+    }, 800); // 1 second delay
+
+    // Cleanup the timer when the component unmounts or when it's not needed
+    return () => clearTimeout(timer);
+  }, [close]); // Empty dependency array to run only once when the component mounts
 
   const handleClose = () => {
     setClose(true);
@@ -60,20 +76,43 @@ const EventResultBox: React.FC<EventBoxProps> = ({
           {!close ? (
             <div className="flex flex-col gap-[10px] justify-center items-center">
               <div className="flex flex-col justify-between items-center event_bo">
+                <div className="absolute z-[-2] top-[150px]">
+                  <Animation animate={light} />
+                </div>
                 {/* <img className=" absolute z-[-1]" src={bg} alt="" /> */}
                 <div className=" absolute z-[-1]">
-                  <img src={bg} alt="" />
+                  <AnimationCard animate={card} />
+
+                  {/* <img src={bg} alt="" /> */}
                 </div>
-                <div className=" w-[400px] h-full pt-[50px] pb-[30px] flex flex-col justify-between items-center media-w">
-                  <div className="flex flex-col justify-center items-center gap-3">
-                    <h1 className="event-money font-sfProB">
+                <div className=" absolute z-[-1]">
+                  <AnimationCard animate={suprise} />
+
+                  {/* <img src={bg} alt="" /> */}
+                </div>
+                <div className=" w-[400px] h-full pt-[150px] pb-[30px] flex flex-col justify-between items-center media-w">
+                  <div
+                    className="flex flex-col justify-center items-center gap-3"
+                    style={{
+                      visibility: showBonus ? "visible" : "hidden",
+                    }}
+                  >
+                    <h1 className="event-money1 font-sfProB text-[#f2cb81]">
                       +{newData?.register_bonus} ¥
                     </h1>
                     <div className=" h-[1px] event-line w-[100px]"></div>
-                    <p className="event-money-p font-sfPro">注册后奖励 +2¥</p>
+                    <p className="event-money-p1 font-sfPro text-[#f2cb81]">
+                      注册后奖励 +2¥
+                    </p>
+
+                    {/* <h1 className="event-money font-sfProB">
+                      +{newData?.register_bonus} ¥
+                    </h1>
+                    <div className=" h-[1px] event-line w-[100px]"></div>
+                    <p className="event-money-p font-sfPro">注册后奖励 +2¥</p> */}
                   </div>
                   {/* <img className=" w-[210px] h-[70pxx]" src={logo} alt="" /> */}
-                  <div className=" flex flex-col justify-center items-center mt-20">
+                  <div className=" flex flex-col justify-center items-center mt-16">
                     <AsyncDecryptedImage
                       imageUrl={eventData.data.avatar}
                       className="w-[58px] h-[58px] rounded-full object-cover object-center"
@@ -84,7 +123,7 @@ const EventResultBox: React.FC<EventBoxProps> = ({
                       邀请您一起使用笔盒，邀请好友瓜分百万现金红包！
                     </h1>
                   </div>
-                  <div className="mt-10">
+                  <div className="mt-14">
                     <button onClick={openDrawer} className="event_btn">
                       注册账号
                       {/* <Animation animate={btn1} /> */}
@@ -94,7 +133,7 @@ const EventResultBox: React.FC<EventBoxProps> = ({
               </div>
               <div
                 onClick={handleClose}
-                className="event_box_close p-[9px] mt-10"
+                className="event_box_close p-[9px] mt-5"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
