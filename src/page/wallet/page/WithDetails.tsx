@@ -8,6 +8,8 @@ import { toast } from "@/hooks/use-toast";
 // import { Button } from "@/components/ui/button";
 import loader from "../../home/vod_loader.gif";
 import Upload from "../comp/Upload";
+import { useDispatch } from "react-redux";
+import { showToast } from "@/page/home/services/errorSlice";
 
 interface WithDetailsProps {
   payment: any;
@@ -40,6 +42,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
       [fieldKey]: value,
     }));
   };
+  const dispatch = useDispatch();
 
   const handlePaymentChange = (paymentID: any) => {
     setSelectedPaymentID(paymentID);
@@ -66,7 +69,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
   };
 
   const isFormValid =
-    balance >= amount && // Ensure balance is greater than or equal to amount
+    // Ensure balance is greater than or equal to amount
     amount !== "" && // Ensure amount is not empty
     selectedPayment !== "" &&
     selectedPaymentID?.fields?.every(
@@ -76,10 +79,10 @@ const WithDetails: React.FC<WithDetailsProps> = ({
 
   const submitHandler = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    if (balance < amount) {
-      console.log(balance, amount);
-      return;
-    }
+    // if (balance < amount) {
+    //   console.log(balance, amount);
+    //   return;
+    // }
 
     if (!isFormValid) {
       return;
@@ -91,11 +94,22 @@ const WithDetails: React.FC<WithDetailsProps> = ({
         payment_info: bankInfo,
       };
       try {
-        const { data } = await postWalletWithdrawl({ formData });
+        const { data, error } = await postWalletWithdrawl({ formData });
+        if (error) {
+          const parsed =
+            typeof error?.data === "string"
+              ? JSON.parse(error?.data)
+              : error?.data;
+          dispatch(
+            showToast({
+              message: parsed?.message,
+              type: "error",
+            })
+          );
+        }
+
         // console.log(data);
-        if (!data) {
-          throw new Error();
-        } else {
+        if (data) {
           refetch();
           setActiveTab(2);
         }
