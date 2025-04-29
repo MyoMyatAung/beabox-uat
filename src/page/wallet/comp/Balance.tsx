@@ -29,7 +29,7 @@ const Balance: React.FC<BalanceProps> = () => {
   // console.log(data);
   const navigate = useNavigate();
   useEffect(() => {
-    setBalance(data?.data.coins || "0");
+    setBalance(data?.data.other_income || "0");
   }, [data]);
 
   const toggleVisibility = () => {

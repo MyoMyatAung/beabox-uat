@@ -147,30 +147,29 @@ const WithDetails: React.FC<WithDetailsProps> = ({
     if (!isFormValid) return;
 
     try {
-      // 1. Upload image files and get array of URLs
-      const uploadedUrls: string[] = [];
+      // 1. Convert all files to base64 in parallel
+      const base64Files = await Promise.all(
+        images.map((file) => toBase64(file))
+      );
 
-      for (const file of images) {
-        const base64 = await toBase64(file);
-        const { data } = await uploadImage({
-          filePath: "withdrawl",
-          file: base64,
-        }).unwrap();
-        // console.log(data)
-        uploadedUrls.push(data);
-      }
+      // 2. Upload all base64 files in parallel
+      const uploadResults = await Promise.all(
+        base64Files.map((base64) =>
+          uploadImage({ filePath: "withdrawl", file: base64 }).unwrap()
+        )
+      );
 
-      // console.log(uploadedUrls);
+      // 3. Extract URLs from upload responses
+      const uploadedUrls = uploadResults.map((res) => res.data);
 
-      // 2. Add image URLs to form data
+      // 4. Submit form with uploaded URLs
       const formData = {
         amount: amount,
         payment_method_id: selectedPaymentID.id,
         payment_info: bankInfo,
         files: uploadedUrls,
       };
-      console.log(formData);
-      // 3. Submit form
+
       const { data, error } = await postWalletWithdrawl({ formData });
 
       if (error) {
@@ -188,18 +187,16 @@ const WithDetails: React.FC<WithDetailsProps> = ({
       }
 
       if (data) {
-        // console.log(data);
         dispatch(
           showToast({
-            message: data.message || "Something went wrong",
-            type: "error",
+            message: data.message || "Withdrawal submitted successfully",
+            type: "success",
           })
         );
         refetch();
-        // setActiveTab(2);
+        setActiveTab(2);
       }
     } catch (error) {
-      // console.error("Upload or submission failed:", error);
       dispatch(
         showToast({
           message: "Internal server error occurred. Please try again later.",
