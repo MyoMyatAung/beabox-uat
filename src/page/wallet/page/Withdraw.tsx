@@ -20,6 +20,7 @@ const Withdraw: React.FC<WithdrawProps> = ({}) => {
   const [activeTab, setActiveTab] = useState(1);
   const { data: paymentMeth, isLoading } = useGetPaymentMethodQuery("");
   const user = useSelector((state: any) => state?.persist?.user) || "";
+  console.log(user)
   const { data, refetch } = useGetMyOwnProfileQuery("", {
     skip: !user,
   });

@@ -179,11 +179,14 @@ import { useDropzone } from "react-dropzone";
 import toast from "react-hot-toast";
 import "../wallet.css";
 
-interface UploadProps {}
+interface UploadProps {
+  images: any;
+  setImages: any;
+}
 
-const Upload: React.FC<UploadProps> = () => {
-  const [images, setImages] = useState<File[]>([]);
-  console.log(images)
+const Upload: React.FC<UploadProps> = ({ images, setImages }) => {
+  // const [images, setImages] = useState<File[]>([]);
+  // console.log(images)
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {

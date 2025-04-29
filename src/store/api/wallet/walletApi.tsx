@@ -76,6 +76,16 @@ export const walletApi = createApi({
         body: convertToSecurePayload(formData),
       }),
     }),
+    WallUploadImage: builder.mutation<
+      { url: string },
+      { filePath: string; file: string }
+    >({
+      query: (body) => ({
+        url: convertToSecureUrl("/storage/upload"),
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
@@ -86,4 +96,5 @@ export const {
   useGetPaymentMethodQuery,
   usePostWalletWithdrawlMutation,
   usePostWalletRechargeMutation,
+  useWallUploadImageMutation
 } = walletApi;

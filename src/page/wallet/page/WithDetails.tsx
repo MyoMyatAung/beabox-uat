@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import "../wallet.css";
 import PayPick from "./PayPick";
-import { usePostWalletWithdrawlMutation } from "@/store/api/wallet/walletApi";
+import {
+  usePostWalletWithdrawlMutation,
+  useWallUploadImageMutation,
+} from "@/store/api/wallet/walletApi";
 // import { useGetMyProfileQuery } from "@/store/api/profileApi";
 import { Toaster } from "@/components/ui/toaster";
 import { toast } from "@/hooks/use-toast";
@@ -29,6 +32,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
   balance,
 }) => {
   const [amount, setAmount] = useState<string>("");
+  const [images, setImages] = useState<File[]>([]);
   const [bankAccountNumber, setBankAccountNumber] = useState<string>("");
   const [bankAccountName, setBankAccountName] = useState<string>("");
   const [selectedPayment, setSelectedPayment] = useState<string>("");
@@ -36,6 +40,17 @@ const WithDetails: React.FC<WithDetailsProps> = ({
   const [postWalletWithdrawl, { isLoading }] = usePostWalletWithdrawlMutation();
   const [expectedAmount, setExpectedAmount] = useState<number>(0);
   const [bankInfo, setBankInfo] = useState<{ [key: string]: string }>({});
+  const [uploadImage, { isLoading: uploadLoading }] =
+    useWallUploadImageMutation();
+
+  const toBase64 = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+      reader.readAsDataURL(file);
+    });
+
   const handleBankInfoChange = (fieldKey: string, value: string) => {
     setBankInfo((prev) => ({
       ...prev,
@@ -43,6 +58,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
     }));
   };
   const dispatch = useDispatch();
+  console.log(images);
 
   const handlePaymentChange = (paymentID: any) => {
     setSelectedPaymentID(paymentID);
@@ -70,6 +86,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
 
   const isFormValid =
     // Ensure balance is greater than or equal to amount
+    images.length !== 0 &&
     amount !== "" && // Ensure amount is not empty
     selectedPayment !== "" &&
     selectedPaymentID?.fields?.every(
@@ -77,55 +94,126 @@ const WithDetails: React.FC<WithDetailsProps> = ({
         !ff.required || (bankInfo[ff.key] && bankInfo[ff.key].trim() !== "")
     );
 
+  // const submitHandler = async (e: { preventDefault: () => void }) => {
+  //   e.preventDefault();
+  //   // if (balance < amount) {
+  //   //   console.log(balance, amount);
+  //   //   return;
+  //   // }
+
+  //   if (!isFormValid) {
+  //     return;
+  //   } else {
+  //     const formData = {
+  //       amount: amount,
+  //       payment_method_id: selectedPaymentID.id,
+  //       // reference_id: data?.data.id,
+  //       payment_info: bankInfo,
+  //     };
+  //     try {
+  //       const { data, error } = await postWalletWithdrawl({ formData });
+  //       if (error) {
+  //         const parsed =
+  //           typeof error?.data === "string"
+  //             ? JSON.parse(error?.data)
+  //             : error?.data;
+  //         dispatch(
+  //           showToast({
+  //             message: parsed?.message,
+  //             type: "error",
+  //           })
+  //         );
+  //       }
+
+  //       // console.log(data);
+  //       if (data) {
+  //         console.log(data)
+  //         refetch();
+  //         setActiveTab(2);
+  //       }
+  //     } catch (error) {
+  //       console.log(error);
+  //       // toast({
+  //       //   description: "nternal server error occurred. Please try again later.",
+  //       // });
+  //     }
+  //   }
+  // };
+  // console.log(selectedPaymentID?.fields);
+
   const submitHandler = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    // if (balance < amount) {
-    //   console.log(balance, amount);
-    //   return;
-    // }
 
-    if (!isFormValid) {
-      return;
-    } else {
+    if (!isFormValid) return;
+
+    try {
+      // 1. Upload image files and get array of URLs
+      const uploadedUrls: string[] = [];
+
+      for (const file of images) {
+        const base64 = await toBase64(file);
+        const { data } = await uploadImage({
+          filePath: "notification",
+          file: base64,
+        }).unwrap();
+        // console.log(data)
+        uploadedUrls.push(data);
+      }
+
+      console.log(uploadedUrls);
+
+      // 2. Add image URLs to form data
       const formData = {
         amount: amount,
         payment_method_id: selectedPaymentID.id,
-        // reference_id: data?.data.id,
         payment_info: bankInfo,
+        files: uploadedUrls,
       };
-      try {
-        const { data, error } = await postWalletWithdrawl({ formData });
-        if (error) {
-          const parsed =
-            typeof error?.data === "string"
-              ? JSON.parse(error?.data)
-              : error?.data;
-          dispatch(
-            showToast({
-              message: parsed?.message,
-              type: "error",
-            })
-          );
-        }
+      console.log(formData);
+      // 3. Submit form
+      const { data, error } = await postWalletWithdrawl({ formData });
 
-        // console.log(data);
-        if (data) {
-          refetch();
-          setActiveTab(2);
-        }
-      } catch (error) {
-        console.log(error);
-        // toast({
-        //   description: "nternal server error occurred. Please try again later.",
-        // });
+      if (error) {
+        const parsed =
+          typeof error?.data === "string"
+            ? JSON.parse(error?.data)
+            : error?.data;
+
+        dispatch(
+          showToast({
+            message: parsed?.message || "Something went wrong",
+            type: "error",
+          })
+        );
       }
+
+      if (data) {
+        console.log(data);
+        refetch();
+        setActiveTab(2);
+      }
+    } catch (error) {
+      // console.error("Upload or submission failed:", error);
+      dispatch(
+        showToast({
+          message: "Internal server error occurred. Please try again later.",
+          type: "error",
+        })
+      );
     }
   };
-  // console.log(selectedPaymentID?.fields);
 
   return (
     <div>
       <Toaster />
+
+      {isLoading || uploadLoading ? (
+        <div className=" w-screen h-screen fixed bg-black/60 top-0 left-0 flex justify-center items-center">
+          <img src={loader} alt="" className="w-[70px] h-[70px]" />
+        </div>
+      ) : (
+        ""
+      )}
 
       <form onSubmit={submitHandler} className="flex flex-col gap-[32px]">
         {/* amount */}
@@ -203,7 +291,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
           <label className="text-white text-[16px] font-[400] leading-[20px]">
             Upload a Proof Screenshot (1/10) *
           </label>
-          <Upload />
+          <Upload images={images} setImages={setImages} />
         </div>
         {/* rules */}
         <div>
@@ -228,11 +316,8 @@ const WithDetails: React.FC<WithDetailsProps> = ({
           }`}
           //   disabled={!isFormValid}
         >
-          {isLoading ? (
-            <img src={loader} alt="" className="w-12" />
-          ) : (
-            "确认提现"
-          )}
+          
+          确认提现
         </button>
       </form>
     </div>
