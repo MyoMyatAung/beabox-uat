@@ -65,7 +65,6 @@ const Transit: React.FC<TransitProps> = ({}) => {
       color: statusObj?.text_color_code || "#FFF", // Default white if not found
     };
   };
-  console.log(tran);
   return (
     <div className=" py-[20p">
       {/* header */}
