@@ -161,14 +161,14 @@ const AlertRedirect: React.FC<AlertRedirectProps> = ({
             </div>
           </div>
           {showInAppBrowserAlert && (
-            <div className="fixed w-full h-screen bg-[#000000CC] z-[3000] top-0 left-0">
+            <div className="fixed w-full h-screen bg-black z-[3000] top-0 left-0">
             <div className="w-full z-[1300] absolute h-full flex justify-center items-center">
-              <div className="text-[14px] bg-[#191721] rounded-lg text-center relative max-w-md w-full">
+              <div className="text-[14px] bg-black rounded-lg text-center relative max-w-md w-full">
                 <div className="relative w-full">
                   <img
                     src={guide}
                     alt=""
-                    className="w-full h-dvh object-fill"
+                    className="w-full h-dvh object-contain"
                   />
                   <button
                     onClick={() => setShowInAppBrowserAlert(false)}
