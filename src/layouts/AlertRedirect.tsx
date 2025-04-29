@@ -4,6 +4,7 @@ import logo from "../assets/alertlogo.jpeg";
 import closeIcon from "../assets/close.png";
 import { useDispatch } from "react-redux";
 import { setPlay } from "@/page/home/services/playSlice";
+import guide from '../assets/guide.png';
 const imageToBlob = (url: string, callback: (blobUrl: string) => void) => {
   fetch(url)
     .then((response) => response.blob())
@@ -85,7 +86,6 @@ const AlertRedirect: React.FC<AlertRedirectProps> = ({
     if (browserInfo.inWeChat || browserInfo.inAlipay || browserInfo.inWeibo || browserInfo.inQQ) {
       e.preventDefault();
       setShowInAppBrowserAlert(true);
-      window.setTimeout(() => setShowInAppBrowserAlert(false), 3000);
     } else {
       window.open(app_download_link, '_blank');
     }
@@ -161,15 +161,33 @@ const AlertRedirect: React.FC<AlertRedirectProps> = ({
             </div>
           </div>
           {showInAppBrowserAlert && (
-            <div className="fixed w-full h-screen bg-[#000000CC]  z-[3000] top-0 left-0">
-            <div className="w-full z-[1300] absolute top-[70vh] flex justify-center">
-              <div className="text-[14px] bg-[#191721] px-2 py-1 rounded-lg flex items-center gap-2 text-center">
-                <img src={logo} className="w-5" alt="" />
-                <span>请点击右上角，在浏览器中打开，完成下载！</span>
+            <div className="fixed w-full h-screen bg-[#000000CC] z-[3000] top-0 left-0">
+            <div className="w-full z-[1300] absolute h-full flex justify-center items-center">
+              <div className="text-[14px] bg-[#191721] rounded-lg text-center relative max-w-md w-full">
+                <div className="relative w-full">
+                  <img
+                    src={guide}
+                    alt=""
+                    className="w-full h-dvh object-fill"
+                  />
+                  <button
+                    onClick={() => setShowInAppBrowserAlert(false)}
+                    className="absolute bottom-12 left-1/2 transform -translate-x-1/2"
+                    style={{
+                      background: 'rgba(68, 68, 68, 1)',
+                      width: '200px',
+                      height: '50px',
+                      borderRadius: '12px',
+                    }}
+                  >
+                    好的
+                  </button>
+                </div>
               </div>
             </div>
-            {/* 1 */}
           </div>
+          
+          
           )}
           {/* Only show browser option if not used as a web clip */}
           {!isWebClip() && (
