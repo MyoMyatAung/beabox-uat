@@ -17,6 +17,24 @@
   font-weight: normal;
   font-style: normal;
 }
+@font-face {
+  font-family: "sfProB";
+  src: url("./assets/sfprodisplayB.OTF") format("opentype");
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: "sfProS";
+  src: url("./assets/sfprodisplayS.OTF") format("opentype");
+
+  font-style: normal;
+}
+@font-face {
+  font-family: "sfProM";
+  src: url("./assets/sfprodisplayM.OTF") format("opentype");
+  font-weight: bold;
+  font-style: normal;
+}
 
 body {
   scrollbar-width: none !important;
@@ -835,4 +853,8 @@ input:focus {
 user_feed_ques_tags_btn {
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.12);
+}
+
+.geetest_captcha.geetest_dark .geetest_box_wrap .geetest_box {
+  background-color: #2c2d31 !important;
 }

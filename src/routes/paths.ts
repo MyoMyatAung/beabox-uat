@@ -45,5 +45,6 @@ export const paths = {
   creator_upload_video: "/creator/upload/video",
   tags: "/creator/tags",
   user_feed: "/settings/feed",
+  lucky_draw: "/events/lucky-draw/:id",
   getUserProfileId: (id: any) => `/user/${id}`,
 };

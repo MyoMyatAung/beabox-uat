@@ -12,6 +12,21 @@ import LoadingScreen from "@/components/LoadingScreen";
 import Landing from "@/components/Landing";
 import { setPlay } from "@/page/home/services/playSlice";
 import UserFeed from "@/components/UserFeed";
+import AnimationLoader from "@/components/shared/animation-loader";
+import loadingAnimation from "@/lotties/Animation.json";
+import { useGetCurrentEventQuery, useLazyGetEventDetailsQuery } from "@/store/api/events/eventApi";
+import CloseSvg from "@/assets/icons/Close.svg";
+import { RootState } from "@/store/store";
+import { useNavigate } from "react-router-dom";
+import {
+  setIsDrawerOpen
+} from "@/store/slices/profileSlice";
+import { setEventDetail, setAnimation, setDuration } from "@/store/slices/eventSlice";
+import { useSearchParams } from "react-router-dom";
+import { useGetUserByReferalQuery } from "@/page/event/eventApi";
+import EventBox from "@/page/event/EventBox";
+import RegisterDrawer from "@/components/profile/auth/register-drawer";
+import { useLocation } from "react-router-dom";
 
 // Function to check if the app is running in a WebView
 function isWebView() {
@@ -32,14 +47,62 @@ const RootLayout = ({ children }: any) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showLanding, setShowLanding] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const isFirstTime = localStorage.getItem("isFirstTimeUser");
+  const [event, setEvent] = useState(false);
+  const [shownextBox, setshownextBox] = useState(false);
 
   const [userPers, setUserPers] = useState(false);
+  const [searchParams] = useSearchParams();
+  const referCode = searchParams.get("refer");
+  const [box, setBox] = useState(false);
+  const [isOpenNew, setIsOpenNew] = useState(false);
+  const [code, setCode] = useState("");
+  const [newData, setnewData] = useState(null);
+  const user = useSelector((state: any) => state.persist.user);
 
+  const { data: eventData } = useGetUserByReferalQuery(
+    { referral_code: referCode }, // or safely cast if you're confident it's a string
+    { skip: !referCode }
+  );
+
+  useEffect(() => {
+    if (eventData?.data?.event?.status && !box && !user) {
+      setEvent(eventData?.data?.event?.status);
+    }
+  }, [eventData, event]);
+
+  // console.log(" here ", event, eventData);
   const { data: config } = useGetConfigQuery({});
 
   // Skip the API query since LoadingScreen handles it
   useGetApplicationAdsQuery("", { skip: true });
+
+  const { data: currentEventData } = useGetCurrentEventQuery("");
+  // const { data: eventDetailsData } = useGetEventDetailsQuery(currentEventData?.data?.id || '', {
+  //     skip: !currentEventData?.data?.id
+  //   });
+  const [triggerGetEventDetails, { data: eventDetailsData }] = useLazyGetEventDetailsQuery();
+
+  // const [eventId, setEventId] = useState<string | undefined>(undefined);
+  // const [showAnimation, setShowAnimation] = useState(false);
+  const showAnimation = useSelector((state: RootState) => state.event.isShowAnimation);
+  const currentDuration = useSelector((state: RootState) => state.event.duration);
+
+  useEffect(() => {
+    if (currentEventData?.data) {
+      if (currentEventData?.status === true && !showAd && !showAlert && !isOpen) {
+        const timeout = setTimeout(() => {
+          dispatch(setAnimation(true));
+        }, 5000);
+        return () => clearTimeout(timeout);
+      } else {
+        dispatch(setAnimation(false));
+      }
+    }
+  }, [currentEventData, dispatch]);
 
   // Check if ads have already been seen in this session
   useEffect(() => {
@@ -129,9 +192,20 @@ const RootLayout = ({ children }: any) => {
     setShowAd(false);
     // Ensure video plays after ads are completed
 
-    dispatch(setPlay(true));
+    if ((jumpUrl && showDialog) || event) {
+      dispatch(setPlay(false));
+    } else {
+      dispatch(setPlay(true));
+    }
+
     sendNativeEvent("beabox_home_started");
   };
+
+  useEffect(() => {
+    if (event) {
+      dispatch(setPlay(false));
+    }
+  }, [event]);
 
   const isOpen = useSelector((state: any) => state.profile.isDrawerOpen);
 
@@ -144,17 +218,65 @@ const RootLayout = ({ children }: any) => {
   if (showLanding) {
     return <Landing onComplete={handleLandingComplete} />;
   }
+  const handleAnimationClick = async () => {
+    if (!user?.token) {
+      dispatch(setIsDrawerOpen(true));
+      return;
+    }
 
-  // if (userPers) {
-  //   return (
-  //     <UserFeed setUserPers={setUserPers} config={config} />
-  //   );
-  // }
+    const eventId = currentEventData?.data?.id;
+    if (!eventId) return;
 
+    // Only fetch event details if duration is 0
+    if (currentDuration <= 0) {
+      try {
+        const eventDetails = await triggerGetEventDetails(eventId).unwrap();
+        dispatch(setEventDetail(eventDetails.data));
+        if (eventDetails.data?.duration) {
+          dispatch(setDuration(eventDetails.data.duration));
+        }
+      } catch (error) {
+        console.error('Failed to fetch event details:', error);
+      }
+    }
+
+    navigate(`/events/lucky-draw/${eventId}`);
+  };
 
   return (
     <div style={{ height: "calc(100dvh - 95px);" }}>
       {children}
+
+      {event && !box && !isOpenNew && !showAd && !user && (
+        <EventBox
+          setshownextBox={setshownextBox}
+          shownextBox={shownextBox}
+          eventData={eventData}
+          setBox={setBox}
+          referCode={referCode}
+          isOpen={isOpenNew}
+          setIsOpen={setIsOpenNew}
+          setCode={setCode}
+          newData={newData}
+          setnewData={setnewData}
+          setEvent={setEvent}
+        />
+      )}
+      {isOpenNew && (
+        <RegisterDrawer
+          isOpen={isOpenNew}
+          setIsOpen={setIsOpenNew}
+          code={referCode}
+        />
+      )}
+      {/* {box && (
+        <EventCaptcha />
+        // <EventResultBox
+        //   eventData={eventData}
+        //   setBox={setBox}
+        //   setEvent={setEvent}
+        // />
+      )} */}
 
       {showAd && (
         <PopUp
@@ -166,6 +288,7 @@ const RootLayout = ({ children }: any) => {
       )}
       {!showAd && showAlert && isBrowser && jumpUrl && showDialog && (
         <AlertRedirect
+          event={event}
           setShowAlert={setShowAlert}
           app_download_link={jumpUrl}
         />
@@ -176,6 +299,30 @@ const RootLayout = ({ children }: any) => {
       <div className="fixed bottom-0 left-0 w-full z-[1600]">
         <BottomNav />
       </div>
+
+      {!showAd &&
+        !showAlert &&
+        !isOpen &&
+        location.pathname === "/" &&
+        !event &&
+        showAnimation && (
+          <div className="fixed bottom-[8rem] right-9 z-[9999] rounded-full p-2">
+            <div className="relative">
+              <button
+                className="absolute top-4 right-7 bg-white rounded-full w-5 h-5 flex items-center justify-center text-black z-[10000]"
+                onClick={() => dispatch(setAnimation(false))}
+              >
+                <img src={CloseSvg} />
+              </button>
+              <AnimationLoader
+                animationData={loadingAnimation}
+                width={120}
+                height={120}
+                onClick={handleAnimationClick}
+              />
+            </div>
+          </div>
+        )}
     </div>
   );
 };

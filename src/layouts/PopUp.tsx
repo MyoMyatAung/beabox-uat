@@ -79,14 +79,12 @@ const PopUp: React.FC<PopUpProps> = ({
   const handleAppClose = () => {
     if (!isBrowser) {
       setShowAlert(false);
-      dispatch(setPlay(true));
     } else {
       setShowAlert(true);
-      dispatch(setPlay(true));
     }
     setShowAppContent(false);
     setShowAd(false);
-    
+
     // Call the onComplete callback if provided
     if (onComplete) {
       onComplete();
@@ -94,10 +92,9 @@ const PopUp: React.FC<PopUpProps> = ({
   };
 
   const handleNoticeClose = () => {
-    dispatch(setPlay(true));
     setShowNotice(false);
     setShowAd(false);
-    
+
     // Call the onComplete callback if provided
     if (onComplete) {
       onComplete();

@@ -7,7 +7,7 @@ import AppSVG from "@/assets/icons/App.svg";
 import PlusSVG from "@/assets/icons/Plus.svg";
 import ProfileSVG from "@/assets/icons/Profile.svg";
 import Profile1SVG from "@/assets/icons/Profile1.svg";
-import Explore1SVG from "@/assets/icons/Explore1.svg";
+import addImg from "@/assets/icons/add.svg";
 import App1SVG from "@/assets/icons/App1.svg";
 import ranksvg from "@/assets/icons/rank.svg";
 import selectedrank from "@/assets/icons/selecteRank.svg";
@@ -16,18 +16,17 @@ import { useEffect, useState } from "react";
 
 const navItems = [
   { name: "首页", selectedIcon: Home1SVG, icon: HomeSVG, href: "/" },
-  // {
-  //   name: "Explore",
-  //   selectedIcon: Explore1SVG,
-  //   icon: ExploreSVG,
-  //   href: "/explore",
-  // },
-  // { name: "", selectedIcon: PlusSVG, icon: PlusSVG, href: "/upload" },
   {
     name: "应用推荐",
     selectedIcon: App1SVG,
     icon: AppSVG,
     href: "/application",
+  },
+  {
+    name: "创作",
+    selectedIcon: addImg,
+    icon: addImg,
+    href: "/creator/upload/video",
   },
   {
     name: "名人堂",
@@ -49,7 +48,7 @@ const isIOSWebViewOrWebClip = () => {
   const isIOS = /iphone|ipad|ipod/.test(ua);
   const isStandalone = window.navigator.standalone === true;
   // const isWebView = ua.includes('wkwebview') || ua.includes('safari') === false;
-  
+
   return isIOS && isStandalone;
 };
 

@@ -726,12 +726,18 @@ const Player = ({
               dispatch(sethideBar(false));
               if (progressBarRef.current) {
                 progressBarRef.current.style.height = "4px";
-                progressBarRef.current.style.setProperty("--thumb-width", "12px");
+                progressBarRef.current.style.setProperty(
+                  "--thumb-width",
+                  "12px"
+                );
                 progressBarRef.current.style.setProperty(
                   "--thumb-height",
                   "12px"
                 );
-                progressBarRef.current.style.setProperty("--thumb-radius", "50%");
+                progressBarRef.current.style.setProperty(
+                  "--thumb-radius",
+                  "50%"
+                );
               }
               timeDisplayRef.current!.style.display = "none";
               artPlayerInstanceRef.current.currentTime = seekTimeRef.current;
@@ -854,44 +860,57 @@ const Player = ({
                     ".video-loading-indicator"
                   ) as HTMLDivElement;
                 if (loadingIndicator) loadingIndicator.style.display = "block";
-                
+
                 // Hide play button during play attempt
                 // hidePlayButton();
-                
+
                 // Don't fade out poster immediately - wait until play succeeds
-                artPlayerInstanceRef.current.play()
+                artPlayerInstanceRef.current
+                  .play()
                   .then(() => {
                     // Play succeeded - hide loading indicator and play button
-                    if (loadingIndicator) loadingIndicator.style.display = "none";
+                    if (loadingIndicator)
+                      loadingIndicator.style.display = "none";
                     hidePlayButton();
-                    
+
                     // Only fade out poster when we have actual frames
-                    if (artPlayerInstanceRef.current?.video && 
-                        artPlayerInstanceRef.current.video.readyState >= 3) {
+                    if (
+                      artPlayerInstanceRef.current?.video &&
+                      artPlayerInstanceRef.current.video.readyState >= 3
+                    ) {
                       setTimeout(() => safeFadePosterOut(true), 100);
                     } else if (artPlayerInstanceRef.current?.video) {
                       // If video isn't ready yet, wait for it
                       const checkReadyState = () => {
-                        if (artPlayerInstanceRef.current?.video && 
-                            artPlayerInstanceRef.current.video.readyState >= 3) {
+                        if (
+                          artPlayerInstanceRef.current?.video &&
+                          artPlayerInstanceRef.current.video.readyState >= 3
+                        ) {
                           safeFadePosterOut(true);
-                          artPlayerInstanceRef.current.video.removeEventListener('canplay', checkReadyState);
+                          artPlayerInstanceRef.current.video.removeEventListener(
+                            "canplay",
+                            checkReadyState
+                          );
                         }
                       };
                       if (artPlayerInstanceRef.current) {
-                        artPlayerInstanceRef.current.video.addEventListener('canplay', checkReadyState);
+                        artPlayerInstanceRef.current.video.addEventListener(
+                          "canplay",
+                          checkReadyState
+                        );
                       }
                     }
                   })
                   .catch((error) => {
                     console.error("Manual play failed:", error);
-                    
+
                     // Play failed - hide loading indicator and show play button again
-                    if (loadingIndicator) loadingIndicator.style.display = "none";
+                    if (loadingIndicator)
+                      loadingIndicator.style.display = "none";
                     if (playIconRef.current) {
                       playIconRef.current.style.display = "block";
                     }
-                    
+
                     // Keep poster visible on error
                     showPoster();
                   });
@@ -1109,7 +1128,7 @@ const Player = ({
     // Add CSS transitions to the poster element for smooth fade effect
     if (artPlayerInstanceRef.current?.template?.$poster) {
       const posterElement = artPlayerInstanceRef.current.template.$poster;
-      
+
       // Apply strong CSS transitions with longer duration
       posterElement.style.cssText += `
         transition: opacity 1s ease-out !important;
@@ -1118,18 +1137,20 @@ const Player = ({
         visibility: visible !important;
         display: block !important;
       `;
-      
+
       // Add a custom class for easier targeting
-      posterElement.classList.add('art-poster-with-transition');
-      
+      posterElement.classList.add("art-poster-with-transition");
+
       // Add transitionend listener to properly handle the end of transition
-      posterElement.addEventListener('transitionend', (e) => {
-        if (e.propertyName === 'opacity' && 
-            getComputedStyle(posterElement).opacity === '0') {
-          posterElement.style.display = 'none';
+      posterElement.addEventListener("transitionend", (e) => {
+        if (
+          e.propertyName === "opacity" &&
+          getComputedStyle(posterElement).opacity === "0"
+        ) {
+          posterElement.style.display = "none";
         }
       });
-      
+
       // Force a reflow to ensure styles are applied
       void posterElement.offsetWidth;
     }
@@ -1167,7 +1188,7 @@ const Player = ({
         if (progressBarRef.current.style.opacity !== "1") {
           progressBarRef.current.style.opacity = "1";
         }
-        
+
         // Fade out poster only if video has actually progressed beyond initial frame
         // and is definitely playing (at least 0.5 seconds in)
         if (currentTime > 0.5 && artPlayerInstanceRef.current.playing) {
@@ -1201,17 +1222,18 @@ const Player = ({
         ) as HTMLDivElement;
 
       if (loadingIndicator) loadingIndicator.style.display = "block";
-      
+
       // During initial loading, keep the poster visible and don't show play button
-      if (artPlayerInstanceRef.current && 
-          artPlayerInstanceRef.current.currentTime < 0.5) {
-        
+      if (
+        artPlayerInstanceRef.current &&
+        artPlayerInstanceRef.current.currentTime < 0.5
+      ) {
         // Ensure poster is visible during initial loading
         if (thumbnail && artPlayerInstanceRef.current.template.$poster) {
           artPlayerInstanceRef.current.poster = thumbnail;
           showPoster();
         }
-        
+
         // Hide play button during initial loading when we expect autoplay
         if (isActive && playstart) {
           hidePlayButton();
@@ -1226,11 +1248,11 @@ const Player = ({
       if (progressBarRef?.current) {
         progressBarRef.current.style.opacity = "1";
       }
-      
+
       // On error, we show both poster and play button
       showPoster();
       showPlayButton();
-      
+
       const loadingIndicator =
         artPlayerInstanceRef.current?.template?.$loading?.querySelector(
           ".video-loading-indicator"
@@ -1254,30 +1276,48 @@ const Player = ({
       if (!isFastForwarding) {
         hidePlayButton();
       }
-      
+
       // Only fade out the poster if we have enough data to show frames
-      if (artPlayerInstanceRef.current?.video && artPlayerInstanceRef.current.video.readyState >= 3) {
+      if (
+        artPlayerInstanceRef.current?.video &&
+        artPlayerInstanceRef.current.video.readyState >= 3
+      ) {
         // Wait a short time to ensure frames are visible before fading out poster
         setTimeout(() => safeFadePosterOut(true), 100);
       } else if (artPlayerInstanceRef.current?.video) {
         // If not enough data yet, set up a readyState check
         const checkReadyState = () => {
-          if (artPlayerInstanceRef.current?.video && artPlayerInstanceRef.current.video.readyState >= 3) {
+          if (
+            artPlayerInstanceRef.current?.video &&
+            artPlayerInstanceRef.current.video.readyState >= 3
+          ) {
             safeFadePosterOut(true);
-            artPlayerInstanceRef.current.video.removeEventListener('canplay', checkReadyState);
+            artPlayerInstanceRef.current.video.removeEventListener(
+              "canplay",
+              checkReadyState
+            );
           }
         };
-        artPlayerInstanceRef.current.video.addEventListener('canplay', checkReadyState);
+        artPlayerInstanceRef.current.video.addEventListener(
+          "canplay",
+          checkReadyState
+        );
       }
     });
 
     // Handle pause events
     artPlayerInstanceRef.current.on("pause", () => {
       // Only show play button if not fast forwarding and not during initial loading
-      if (!isFastForwarding && 
-          !(isActive && playstart && artPlayerInstanceRef.current && 
-            typeof artPlayerInstanceRef.current.currentTime === 'number' && 
-            artPlayerInstanceRef.current.currentTime < 0.5)) {
+      if (
+        !isFastForwarding &&
+        !(
+          isActive &&
+          playstart &&
+          artPlayerInstanceRef.current &&
+          typeof artPlayerInstanceRef.current.currentTime === "number" &&
+          artPlayerInstanceRef.current.currentTime < 0.5
+        )
+      ) {
         showPlayButton();
       }
     });
@@ -1285,10 +1325,16 @@ const Player = ({
     // Handle video pause events
     artPlayerInstanceRef.current.on("video:pause", () => {
       // Only show play button if not during initial loading
-      if (!isFastForwarding && 
-          !(isActive && playstart && artPlayerInstanceRef.current && 
-            typeof artPlayerInstanceRef.current.currentTime === 'number' && 
-            artPlayerInstanceRef.current.currentTime < 0.5)) {
+      if (
+        !isFastForwarding &&
+        !(
+          isActive &&
+          playstart &&
+          artPlayerInstanceRef.current &&
+          typeof artPlayerInstanceRef.current.currentTime === "number" &&
+          artPlayerInstanceRef.current.currentTime < 0.5
+        )
+      ) {
         showPlayButton();
       }
     });
@@ -1302,7 +1348,7 @@ const Player = ({
         ) as HTMLDivElement;
 
       if (loadingIndicator) loadingIndicator.style.display = "block";
-      
+
       // Hide play button during initial loading when autoplay is expected
       if (isActive && playstart) {
         hidePlayButton();
@@ -1311,11 +1357,11 @@ const Player = ({
       // Ensure the poster is properly set and visible during initial loading
       if (artPlayerInstanceRef.current && thumbnail) {
         artPlayerInstanceRef.current.poster = thumbnail;
-        
+
         // Always ensure poster is visible during initial loading - use single animation frame
         requestAnimationFrame(() => {
           const posterElement = artPlayerInstanceRef.current.template.$poster;
-          
+
           // Apply all styles in a single operation to prevent flickering
           posterElement.style.cssText += `
             display: block !important;
@@ -1324,8 +1370,8 @@ const Player = ({
             -webkit-transition: opacity 1s ease-out !important;
             opacity: 1 !important;
           `;
-          
-          posterElement.classList.add('art-poster-with-transition');
+
+          posterElement.classList.add("art-poster-with-transition");
         });
       }
     });
@@ -1343,10 +1389,16 @@ const Player = ({
       // 1. Video is not playing AND
       // 2. Not fast forwarding AND
       // 3. Not attempting autoplay during initial loading
-      if (artPlayerInstanceRef.current &&
-          !artPlayerInstanceRef.current.playing &&
-          !isFastForwarding && 
-          !(isActive && playstart && artPlayerInstanceRef.current.currentTime < 0.5)) {
+      if (
+        artPlayerInstanceRef.current &&
+        !artPlayerInstanceRef.current.playing &&
+        !isFastForwarding &&
+        !(
+          isActive &&
+          playstart &&
+          artPlayerInstanceRef.current.currentTime < 0.5
+        )
+      ) {
         // showPlayButton();
       } else {
         hidePlayButton();
@@ -1393,11 +1445,13 @@ const Player = ({
     });
 
     // Keep poster visible if video waiting for data
-    artPlayerInstanceRef.current.on("video:waiting", function() {
+    artPlayerInstanceRef.current.on("video:waiting", function () {
       // Only show poster if at the beginning of the video (not mid-playback buffering)
-      if (artPlayerInstanceRef.current && 
-          artPlayerInstanceRef.current.currentTime < 0.5 && 
-          !artPlayerInstanceRef.current.playing) {
+      if (
+        artPlayerInstanceRef.current &&
+        artPlayerInstanceRef.current.currentTime < 0.5 &&
+        !artPlayerInstanceRef.current.playing
+      ) {
         showPoster();
       }
     });
@@ -1407,7 +1461,7 @@ const Player = ({
   const setupWatchTimer = () => {
     // Clear any existing timer first
     cleanupWatchTimer();
-    
+
     // Set up a new timer
     watchTimerRef.current = setInterval(() => {
       watchedTimeRef.current += 1; // Increment watched time every second
@@ -1441,45 +1495,47 @@ const Player = ({
   // Add a function to safely fade out the poster only when video is confirmed playing
   const safeFadePosterOut = (force = false) => {
     if (!artPlayerInstanceRef.current?.template?.$poster) return;
-    
+
     const posterElement = artPlayerInstanceRef.current.template.$poster;
     const videoElement = artPlayerInstanceRef.current.video;
-    
+
     if (!videoElement) return;
-    
+
     // Use requestAnimationFrame to ensure style changes are batched properly
     requestAnimationFrame(() => {
       // Ensure transition is applied before changing opacity
-      if (!posterElement.classList.contains('art-poster-with-transition')) {
+      if (!posterElement.classList.contains("art-poster-with-transition")) {
         posterElement.style.cssText += `
           transition: opacity 1s ease-out !important;
           -webkit-transition: opacity 1s ease-out !important;
           visibility: visible !important;
           display: block !important;
         `;
-        posterElement.classList.add('art-poster-with-transition');
+        posterElement.classList.add("art-poster-with-transition");
         // Force a reflow to ensure transition is applied
         void posterElement.offsetWidth;
       }
-      
+
       // Only fade out if:
       // 1. We're forcing it (from a known good state) OR
       // 2. The video is actually ready to play AND either playing or has buffered content
-      if (force || 
-          (videoElement.readyState >= 3 && 
-           (artPlayerInstanceRef.current.playing || videoElement.buffered.length > 0)))
-      {
+      if (
+        force ||
+        (videoElement.readyState >= 3 &&
+          (artPlayerInstanceRef.current.playing ||
+            videoElement.buffered.length > 0))
+      ) {
         posterElement.style.cssText += `opacity: 0 !important;`;
       }
     });
   };
-  
+
   // Explicitly show poster with animation
   const showPoster = () => {
     if (!artPlayerInstanceRef.current?.template?.$poster) return;
-    
+
     const posterElement = artPlayerInstanceRef.current.template.$poster;
-    
+
     // Use requestAnimationFrame to ensure styles are applied together
     requestAnimationFrame(() => {
       // Apply all styles in a single operation
@@ -1489,14 +1545,14 @@ const Player = ({
         transition: opacity 1s ease-out !important;
         -webkit-transition: opacity 1s ease-out !important;
       `;
-      
-      if (!posterElement.classList.contains('art-poster-with-transition')) {
-        posterElement.classList.add('art-poster-with-transition');
+
+      if (!posterElement.classList.contains("art-poster-with-transition")) {
+        posterElement.classList.add("art-poster-with-transition");
       }
-      
+
       // Force a reflow to ensure style changes are processed
       void posterElement.offsetWidth;
-      
+
       // Now set opacity in a separate frame to ensure transition happens
       requestAnimationFrame(() => {
         posterElement.style.cssText += `opacity: 1 !important;`;
@@ -1539,7 +1595,7 @@ const Player = ({
       // Reset watch time tracking when switching videos
       watchedTimeRef.current = 0;
       apiCalledRef.current = false;
-      
+
       // Cleanup when inactive
       if (artPlayerInstanceRef.current) {
         artPlayerInstanceRef.current.destroy();
@@ -1695,7 +1751,7 @@ const Player = ({
       // Reset API called flag to ensure proper tracking for next mount
       apiCalledRef.current = false;
       watchedTimeRef.current = 0;
-      
+
       // Save position before unmounting
       if (artPlayerInstanceRef.current) {
         saveVideoPosition(artPlayerInstanceRef.current.currentTime);
@@ -1865,49 +1921,52 @@ const Player = ({
     if (playstart) {
       // Ensure poster is visible and loading indicator is shown during play attempt
       showPoster();
-      
+
       const loadingIndicator =
         artPlayerInstanceRef.current?.template?.$loading?.querySelector(
           ".video-loading-indicator"
         ) as HTMLDivElement;
       if (loadingIndicator) loadingIndicator.style.display = "block";
-      
+
       // Hide play button during initial autoplay attempt
       hidePlayButton();
-      
+
       // For HLS videos, make sure video is loaded before attempting play
       if (hlsRef.current) {
         // Ensure HLS has loaded enough data
         const videoElement = artPlayerInstanceRef.current.video;
         const buffered = videoElement.buffered;
-        
+
         if (buffered && buffered.length > 0) {
           const bufferedEnd = buffered.end(buffered.length - 1);
           const currentTime = videoElement.currentTime || 0;
-          
+
           // If we have enough buffered data, play
           if (bufferedEnd - currentTime > 1) {
-            artPlayerInstanceRef.current.play()
+            artPlayerInstanceRef.current
+              .play()
               .then(() => {
                 // Play succeeded - hide loading indicator and wait for video frames
                 if (loadingIndicator) loadingIndicator.style.display = "none";
                 hidePlayButton();
-                
+
                 // Only fade out poster when we have actual frames
                 setTimeout(() => {
-                  if (artPlayerInstanceRef.current?.video && 
-                      artPlayerInstanceRef.current.video.readyState >= 3) {
+                  if (
+                    artPlayerInstanceRef.current?.video &&
+                    artPlayerInstanceRef.current.video.readyState >= 3
+                  ) {
                     safeFadePosterOut(true);
                   }
                 }, 100);
               })
               .catch((error) => {
                 console.error("Video play failed:", error);
-                
+
                 // Play failed - hide loading indicator and show play button
                 if (loadingIndicator) loadingIndicator.style.display = "none";
                 showPlayButton();
-                
+
                 // Keep poster visible on error
                 showPoster();
               });
@@ -1921,27 +1980,30 @@ const Player = ({
         }
       } else {
         // For non-HLS videos, just try to play
-        artPlayerInstanceRef.current.play()
+        artPlayerInstanceRef.current
+          .play()
           .then(() => {
             // Play succeeded - hide loading indicator and wait for video frames
             if (loadingIndicator) loadingIndicator.style.display = "none";
             hidePlayButton();
-            
+
             // Only fade out poster when we have actual frames
             setTimeout(() => {
-              if (artPlayerInstanceRef.current?.video && 
-                  artPlayerInstanceRef.current.video.readyState >= 3) {
+              if (
+                artPlayerInstanceRef.current?.video &&
+                artPlayerInstanceRef.current.video.readyState >= 3
+              ) {
                 safeFadePosterOut(true);
               }
             }, 100);
           })
           .catch((error) => {
             console.error("Video play failed:", error);
-            
+
             // Play failed - hide loading indicator and show play button
             if (loadingIndicator) loadingIndicator.style.display = "none";
             showPlayButton();
-            
+
             // Keep poster visible on error
             showPoster();
 
