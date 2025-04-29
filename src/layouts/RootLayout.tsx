@@ -81,28 +81,28 @@ const RootLayout = ({ children }: any) => {
   useGetApplicationAdsQuery("", { skip: true });
 
   const { data: currentEventData } = useGetCurrentEventQuery("");
-  // const { data: eventDetailsData } = useGetEventDetailsQuery(currentEventData?.data?.id || '', {
-  //     skip: !currentEventData?.data?.id
-  //   });
-  const [triggerGetEventDetails, { data: eventDetailsData }] = useLazyGetEventDetailsQuery();
-
-  // const [eventId, setEventId] = useState<string | undefined>(undefined);
-  // const [showAnimation, setShowAnimation] = useState(false);
+  const [triggerGetEventDetails] = useLazyGetEventDetailsQuery();
   const showAnimation = useSelector((state: RootState) => state.event.isShowAnimation);
   const currentDuration = useSelector((state: RootState) => state.event.duration);
 
   useEffect(() => {
-    if (currentEventData?.data) {
-      if (currentEventData?.status === true && !showAd && !showAlert && !isOpen) {
-        const timeout = setTimeout(() => {
-          dispatch(setAnimation(true));
-        }, 5000);
-        return () => clearTimeout(timeout);
-      } else {
-        dispatch(setAnimation(false));
-      }
+    if(showAd && showAlert && isOpen && !showLanding) {
+      dispatch(setAnimation(false));
     }
-  }, [currentEventData, dispatch]);
+   else  {
+      if (currentEventData?.data) {
+        if (currentEventData?.status === true && !showAd && !showAlert && !isOpen) {
+          const timeout = setTimeout(() => {
+            dispatch(setAnimation(true));
+          }, 5000);
+          return () => clearTimeout(timeout);
+        } else {
+          dispatch(setAnimation(false));
+        }
+      }
+      dispatch(setAnimation(false));
+    }
+  }, [currentEventData?.status, dispatch, showAd, showLanding, showAlert]);
 
   // Check if ads have already been seen in this session
   useEffect(() => {
