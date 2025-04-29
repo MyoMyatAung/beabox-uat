@@ -153,7 +153,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
       for (const file of images) {
         const base64 = await toBase64(file);
         const { data } = await uploadImage({
-          filePath: "notification",
+          filePath: "withdrawl",
           file: base64,
         }).unwrap();
         // console.log(data)
