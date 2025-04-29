@@ -4,7 +4,7 @@ import logo from "../assets/alertlogo.jpeg";
 import closeIcon from "../assets/close.png";
 import { useDispatch } from "react-redux";
 import { setPlay } from "@/page/home/services/playSlice";
-
+import guide from '../assets/guide.png';
 const imageToBlob = (url: string, callback: (blobUrl: string) => void) => {
   fetch(url)
     .then((response) => response.blob())
@@ -22,10 +22,21 @@ const isWebClip = (): boolean => {
   );
 };
 
+// Function to detect in-app browsers
+const detectInAppBrowser = () => {
+  const ua = navigator.userAgent.toLowerCase();
+  return {
+    inWeChat: ua.indexOf('micromessenger') !== -1,
+    inAlipay: ua.indexOf('alipayclient') !== -1,
+    inWeibo: ua.indexOf('weibo') !== -1,
+    inQQ: ua.indexOf('qq/') !== -1 || ua.indexOf('mqqbrowser') !== -1
+  };
+};
+
 interface AlertRedirectProps {
   setShowAlert: (show: boolean) => void;
   app_download_link: string;
-  event: any;
+  event?: React.MouseEvent | null;
 }
 
 const AlertRedirect: React.FC<AlertRedirectProps> = ({
@@ -43,6 +54,7 @@ const AlertRedirect: React.FC<AlertRedirectProps> = ({
   const alertRef = useRef(null);
 
   const [logoBlobUrl, setLogoBlobUrl] = useState<string | null>(null);
+  const [showInAppBrowserAlert, setShowInAppBrowserAlert] = useState(false);
 
   useEffect(() => {
     imageToBlob(logo, (blobUrl) => setLogoBlobUrl(blobUrl));
@@ -68,6 +80,16 @@ const AlertRedirect: React.FC<AlertRedirectProps> = ({
   //     dispatch(setPlay(true));
   //   }
   // };
+
+  const handleDownloadClick = (e: React.MouseEvent) => {
+    const browserInfo = detectInAppBrowser();
+    if (browserInfo.inWeChat || browserInfo.inAlipay || browserInfo.inWeibo || browserInfo.inQQ) {
+      e.preventDefault();
+      setShowInAppBrowserAlert(true);
+    } else {
+      window.open(app_download_link, '_blank');
+    }
+  };
 
   const onBrowserClick = () => {
     setShowAlert(false);
@@ -132,11 +154,41 @@ const AlertRedirect: React.FC<AlertRedirectProps> = ({
                 href={app_download_link}
                 target="_blank"
                 className="alert-body-btn"
+                onClick={handleDownloadClick}
               >
                 {isWebClip() ? "前往安装" : "打开"}
               </a>
             </div>
           </div>
+          {showInAppBrowserAlert && (
+            <div className="fixed w-full h-screen bg-black z-[3000] top-0 left-0">
+            <div className="w-full z-[1300] absolute h-full flex justify-center items-center">
+              <div className="text-[14px] bg-black rounded-lg text-center relative max-w-md w-full">
+                <div className="relative w-full">
+                  <img
+                    src={guide}
+                    alt=""
+                    className="w-full h-dvh object-contain"
+                  />
+                  <button
+                    onClick={() => setShowInAppBrowserAlert(false)}
+                    className="absolute bottom-12 left-1/2 transform -translate-x-1/2"
+                    style={{
+                      background: 'rgba(68, 68, 68, 1)',
+                      width: '200px',
+                      height: '50px',
+                      borderRadius: '12px',
+                    }}
+                  >
+                    好的
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          )}
           {/* Only show browser option if not used as a web clip */}
           {!isWebClip() && (
             <div className="flex items-center justify-between">
