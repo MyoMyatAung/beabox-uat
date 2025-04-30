@@ -21,6 +21,7 @@ interface WithDetailsProps {
   setActiveTab: any;
   refetch: any;
   balance: any;
+  config: any;
 }
 
 const WithDetails: React.FC<WithDetailsProps> = ({
@@ -30,6 +31,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
   setActiveTab,
   refetch,
   balance,
+  config,
 }) => {
   const [amount, setAmount] = useState<string>("");
   const [images, setImages] = useState<File[]>([]);
@@ -42,6 +44,9 @@ const WithDetails: React.FC<WithDetailsProps> = ({
   const [bankInfo, setBankInfo] = useState<{ [key: string]: string }>({});
   const [uploadImage, { isLoading: uploadLoading }] =
     useWallUploadImageMutation();
+
+  const rule = config?.data?.withdraw_rule;
+  console.log(rule);
 
   const toBase64 = (file: File): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -304,8 +309,10 @@ const WithDetails: React.FC<WithDetailsProps> = ({
         {/* upload */}
         <div className="">
           <label className="text-white text-[16px] font-[400] leading-[20px]">
-            Upload a Proof Screenshot (1/10) *
+            Upload a Proof Screenshot ({images.length}/10){" "}
+            <span className=" text-[#FF3B65]">*</span>
           </label>
+
           <Upload images={images} setImages={setImages} />
         </div>
         {/* rules */}
@@ -314,9 +321,9 @@ const WithDetails: React.FC<WithDetailsProps> = ({
             撤回规则
           </label>
           <div className="flex flex-col gap-[20px] pt-[10px] text-[#888] text-[12px] font-[300] leading-[18px]">
-            <p>1.每次提现最低限额为300元，且只能提现100的整数倍</p>
-            <p>2.原创作者获得60%的收益，UP主获得35%的收益</p>
-            <p>3.仅支持银行卡提现，收款账号和姓名必须一致，款项24小时内到账</p>
+            {rule?.map((rr: any) => (
+              <p>{rr.rule}</p>
+            ))}
           </div>
         </div>
         {/* button */}

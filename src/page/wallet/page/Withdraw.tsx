@@ -13,6 +13,7 @@ import RechRecord from "./RechRecord";
 import WithDetails from "./WithDetails";
 import { useSelector } from "react-redux";
 import { useGetMyOwnProfileQuery } from "@/store/api/profileApi";
+import { useGetConfigQuery } from "@/page/home/services/homeApi";
 
 interface WithdrawProps {}
 
@@ -24,8 +25,9 @@ const Withdraw: React.FC<WithdrawProps> = ({}) => {
     skip: !user,
   });
   // console.log(data)
-  const { data: config } = useGetInviteQuery("");
-  console.log(config)
+  // const { data: config } = useGetInviteQuery("");
+  const { data: config, isLoading: configLoading } = useGetConfigQuery({});
+
   const navigate = useNavigate();
   return (
     <div className=" flex justify-center items-center">
@@ -97,6 +99,7 @@ const Withdraw: React.FC<WithdrawProps> = ({}) => {
                   data={data}
                   dollar_withdraw_rate={config?.data?.dollar_withdraw_rate}
                   payment={paymentMeth?.data}
+                  config={config}
                 />
               </div>
             )}

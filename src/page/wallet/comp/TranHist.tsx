@@ -83,6 +83,8 @@ const TranHist: React.FC = () => {
     page: page,
   });
 
+  console.log(filter)
+
   useEffect(() => {
     if (data?.data) {
       // setTran(data?.data);
@@ -160,7 +162,7 @@ const TranHist: React.FC = () => {
 
         {/* transition */}
         <div className="py-[12px] px-[18px] mt-24">
-          {isLoading  ? (
+          {isLoading || isFetching  ? (
             <div className=" flex justify-center items-center py-[100px]">
               <div className="heart">
                 <img src={loader} className="w-[70px] h-[70px]" alt="加载中" />
