@@ -29,14 +29,14 @@ const Balance: React.FC<BalanceProps> = () => {
   // console.log(data);
   const navigate = useNavigate();
   useEffect(() => {
-    setBalance(data?.data.other_income || "0");
+    setBalance(data?.data.main_income || "0");
   }, [data]);
 
   const toggleVisibility = () => {
     setIsHidden((prev) => !prev);
   };
 
-  // console.log(data);
+  console.log(data);
 
   return (
     <div className="p-[20px]">
@@ -81,7 +81,7 @@ const Balance: React.FC<BalanceProps> = () => {
           <h1 className=" text-white text-[12px] font-[700] leading-[22px]">
             其他收入 :{" "}
             <span className=" text-[#CD3EFF]">
-              {data?.data?.income_coins ? data?.data?.income_coins : "0"}
+              {data?.data?.other_income ? data?.data?.other_income : "0"}
             </span>{" "}
             ¥
           </h1>
