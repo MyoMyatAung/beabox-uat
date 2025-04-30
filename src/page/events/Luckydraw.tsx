@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useRef, useState } from "react";
 import FlipNumber from "./Flipnumber";
 import backButton from "../../assets/backButton.svg";
@@ -101,21 +102,46 @@ const Luckydraw = () => {
   const handleCopyClick = async () => {
     try {
       const result = await triggerGetUserShareInfo('').unwrap();
-      if (result?.data.link) {
-        await navigator.clipboard.writeText(result.data.link);
-        dispatch(
-          showToast({
-            message: "复制成功",
-            type: "success",
-          })
-        );
+      const contentUrl = result?.data?.content;
+      if (isIOSApp()) {
+        sendEventToNative("copyAppdownloadUrl", contentUrl);
+      } else {
+        alert(contentUrl);
+        navigator.clipboard.writeText(contentUrl).then(() => {
+          dispatch(
+            showToast({
+              message: "复制成功",
+              type: "success",
+            })
+          );
+        });
       }
     } catch (error) {
       console.error("Failed to fetch user share info:", error);
     }
   };
 
+  const isIOSApp = () => {
+    return (
+      (window as any).webkit &&
+      (window as any).webkit.messageHandlers &&
+      (window as any).webkit.messageHandlers.jsBridge
+    );
+  };
 
+  const sendEventToNative = (name: string, text: string) => {
+    if (
+      (window as any).webkit &&
+      (window as any).webkit.messageHandlers &&
+      (window as any).webkit.messageHandlers.jsBridge
+    ) {
+      (window as any).webkit.messageHandlers.jsBridge.postMessage({
+        eventName: name,
+        value: text,
+      });
+    }
+  };
+  
   return (
     <div className="relative max-w-[480px] min-h-screen bg-no-repeat items-center mx-auto">
       <div
