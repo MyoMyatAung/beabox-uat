@@ -101,14 +101,16 @@ const Luckydraw = () => {
   const handleCopyClick = async () => {
     try {
       const result = await triggerGetUserShareInfo('').unwrap();
-      if (result?.data.link) {
-        await navigator.clipboard.writeText(result.data.link);
-        dispatch(
-          showToast({
-            message: "复制成功",
-            type: "success",
-          })
-        );
+      const contentUrl = result?.data?.link;
+      if (contentUrl) {
+        await navigator.clipboard.writeText(contentUrl).then(()=> {
+          dispatch(
+            showToast({
+              message: "复制成功",
+              type: "success",
+            })
+          );
+        });
       }
     } catch (error) {
       console.error("Failed to fetch user share info:", error);
