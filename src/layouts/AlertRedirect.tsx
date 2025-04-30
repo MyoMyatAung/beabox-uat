@@ -170,7 +170,7 @@ const AlertRedirect: React.FC<AlertRedirectProps> = ({
                     alt=""
                     className="w-full h-dvh object-contain"
                   />
-                  <button
+                  {/* <button
                     onClick={() => setShowInAppBrowserAlert(false)}
                     className="absolute bottom-12 left-1/2 transform -translate-x-1/2"
                     style={{
@@ -181,7 +181,7 @@ const AlertRedirect: React.FC<AlertRedirectProps> = ({
                     }}
                   >
                     好的
-                  </button>
+                  </button> */}
                 </div>
               </div>
             </div>
