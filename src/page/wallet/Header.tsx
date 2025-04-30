@@ -21,7 +21,7 @@ const Header: React.FC<HeaderProps> = ({ title, lv }) => {
   // console.log(lv)
   return (
     <div className=" flex px-[10px] relative pb-[20px]">
-      <div className=" fixed flex w-full justify-center items-center  py-[14px] bg-[#16131C]">
+      <div className=" fixed flex w-full justify-center items-center  py-[14px] bg-[#201c25]">
         <ChevronLeft
           className=" absolute left-0 z-[11]"
           onClick={() => navigate(-1)}

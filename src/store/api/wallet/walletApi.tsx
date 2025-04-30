@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "../../store";
 import { decryptWithAes } from "@/lib/decrypt";
-import { convertToSecureUrl } from "@/lib/encrypt";
+import { convertToSecurePayload, convertToSecureUrl } from "@/lib/encrypt";
 import { getDeviceInfo } from "@/lib/deviceInfo";
 
 export const walletApi = createApi({
@@ -12,7 +12,7 @@ export const walletApi = createApi({
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState)?.persist?.user?.token; // Adjust 'auth.token' to match your Redux slice structure
       const deviceInfo = getDeviceInfo();
-      
+
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
       }
@@ -73,7 +73,17 @@ export const walletApi = createApi({
       query: ({ formData }) => ({
         url: convertToSecureUrl("/wallet/purchase"),
         method: "POST",
-        body: formData,
+        body: convertToSecurePayload(formData),
+      }),
+    }),
+    WallUploadImage: builder.mutation<
+      { url: string },
+      { filePath: string; file: string }
+    >({
+      query: (body) => ({
+        url: convertToSecureUrl("/storage/upload"),
+        method: "POST",
+        body,
       }),
     }),
   }),
@@ -86,4 +96,5 @@ export const {
   useGetPaymentMethodQuery,
   usePostWalletWithdrawlMutation,
   usePostWalletRechargeMutation,
+  useWallUploadImageMutation
 } = walletApi;

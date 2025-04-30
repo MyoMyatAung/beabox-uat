@@ -32,7 +32,7 @@ interface RechRecordProps {}
 
 const RechRecord: React.FC<RechRecordProps> = ({}) => {
   const location = useLocation();
-  const type = location.pathname === "/wallet/withdraw" ? "withdraw" : "topup";
+  const type = location.pathname === "/wallet/withdraw" ? "withdrawl" : "topup";
   const [curMon, setCurMon] = useState("December");
   const [curYr, setCurYr] = useState(2027);
   const [plus, setPlus] = useState(12);
@@ -53,7 +53,7 @@ const RechRecord: React.FC<RechRecordProps> = ({}) => {
     type: type,
     page: page,
   });
-
+  console.log(data)
   useEffect(() => {
     if (data?.data) {
       // setTran(data?.data);
@@ -125,7 +125,7 @@ const RechRecord: React.FC<RechRecordProps> = ({}) => {
           setTran={setTran}
         />
         {/* transition */}
-        <div className=" py-[12px] px-[18px]">
+        <div className=" py-[12px]">
           {isLoading ? (
             // <div className=" flex flex-col justify-center items-center h-[300px]">
             //   <img src={noTran} alt="" />
@@ -158,58 +158,60 @@ const RechRecord: React.FC<RechRecordProps> = ({}) => {
                 </div>
               ) : (
                 <>
-                  {tran?.map((ts: any) => (
-                    <div
-                      key={ts.id}
-                      className=" transit_list py-[20px] flex justify-between"
-                    >
-                      <div className=" flex gap-[12px] items-center">
-                        <div className="bitcoin_border w-[56px] h-[56px] flex justify-center items-center">
-                          <img
-                            className=" w-[26px] h-[26px]"
-                            src={transit}
-                            alt=""
-                          />
-                        </div>
-                        <div className=" flex flex-col gap-[4px]">
-                          <span className=" text-white text-[14px] font-[500] leading-[20px]">
-                            {ts.description}
-                          </span>
-                          <span className=" text-[#777] text-[12px] font-[400] leading-[20px]">
-                            {ts.date}
-                          </span>
-                        </div>
-                      </div>
-                      <div className=" flex flex-col justify-center items-center gap-[6px]">
-                        <span>
-                          {ts.dr_cr === "cr" ? "+" : "-"} {ts.amount}
-                        </span>
-                        {ts.status && (
-                          <div
-                            style={{
-                              backgroundColor: getStatusClass(ts.status)
-                                .backgroundColor,
-                              color: getStatusClass(ts.status).color,
-                            }}
-                            className="px-[12px] py-[6px] flex justify-center items-center rounded-[6px]  text-[12px] font-[400] leading-[15px]"
-                          >
-                            {/* <span
-                            style={{}}
-                            className=" text-[12px] font-[400] leading-[15px]"
-                          > */}
-                            {/* {ts.status} */}
-                            {ts.status === "approved" && "已批准"}
-                            {ts.status === "pending" && "待处理"}
-                            {ts.status === "rejected" && "已拒绝"}
-                            {ts.status === "success" && "成功"}
-                            {ts.status === "failed" && "失败"}
-                            {ts.status === "default" && "默认"}
-                            {/* </span> */}
+                  <div className=" flex flex-col gap-[8px]">
+                    {tran?.map((ts: any) => (
+                      <div
+                        key={ts.id}
+                        className=" new_tran_box px-[12px] py-[20px] flex justify-between items-start"
+                      >
+                        <div className=" flex gap-[12px] items-center">
+                          <div className="bitcoin_borde hidden w-[56px] h-[56px] justify-center items-center">
+                            <img
+                              className=" w-[26px] h-[26px]"
+                              src={transit}
+                              alt=""
+                            />
                           </div>
-                        )}
+                          <div className=" flex flex-col gap-[4px]">
+                            <span className="new_tran_box_title">
+                              {ts.title}
+                            </span>
+                            <span className=" text-[#aaa] text-[14px] font-[500] leading-[20px]">
+                              {ts.description}
+                            </span>
+                            <span className=" text-[#777] text-[12px] font-[400] leading-[20px]">
+                              {ts.date}
+                            </span>
+                          </div>
+                        </div>
+                        <div className=" flex flex-col justify-center items-center gap-[6px]">
+                          <span>
+                            {ts.state === "increase" ? "+" : "-"} {ts.amount}
+                          </span>
+                          {ts.status && (
+                            <div
+                              style={{
+                                backgroundColor: getStatusClass(ts.status)
+                                  .backgroundColor,
+                                color: getStatusClass(ts.status).color,
+                              }}
+                              className="px-[12px] py-[6px] flex justify-center items-center rounded-[6px]  text-[12px] font-[400] leading-[15px]"
+                            >
+                              {/* <span className={getStatusClass(ts.status).text}> */}
+                              {/* {ts.status} */}
+                              {ts.status === "approved" && "已批准"}
+                              {ts.status === "pending" && "待处理"}
+                              {ts.status === "rejected" && "已拒绝"}
+                              {ts.status === "success" && "成功"}
+                              {ts.status === "failed" && "失败"}
+                              {ts.status === "default" && "默认"}
+                              {/* </span> */}
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                   <InfiniteScroll
                     className="py-[20px]"
                     dataLength={tran.length}

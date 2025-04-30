@@ -1,14 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useRef, useState } from "react";
 import FlipNumber from "./Flipnumber";
 import backButton from "../../assets/backButton.svg";
 import { useNavigate } from "react-router-dom";
-import eventPage2 from "@/assets/eventpage02.png";
+import eventPage2 from "@/assets/eventpage02.jpg";
 import eventHeader from "../../assets/eventHeader.png";
 import CopySvg from "@/assets/icons/solar_copy.svg";
 import DownloadSvg from "@/assets/icons/Download.svg";
 import InviteCard from "./InviteCard";
 import Rule from "./Rule";
-import eventPage from "@/assets/eventpage.png";
+import eventPage from "@/assets/eventpage.jpg";
 import eventTitle from "@/assets/eventTitle.png";
 import Pricebg from "@/assets/icons/PrizeBg.svg";
 import Paper from "@/assets/Paper.png";
@@ -101,9 +102,11 @@ const Luckydraw = () => {
   const handleCopyClick = async () => {
     try {
       const result = await triggerGetUserShareInfo('').unwrap();
-      const contentUrl = result?.data?.link;
-      if (contentUrl) {
-        await navigator.clipboard.writeText(contentUrl).then(()=> {
+      const contentUrl = result?.data?.content;
+      if (isIOSApp()) {
+        sendEventToNative("copyAppdownloadUrl", contentUrl);
+      } else {
+        navigator.clipboard.writeText(contentUrl).then(() => {
           dispatch(
             showToast({
               message: "复制成功",
@@ -117,7 +120,27 @@ const Luckydraw = () => {
     }
   };
 
+  const isIOSApp = () => {
+    return (
+      (window as any).webkit &&
+      (window as any).webkit.messageHandlers &&
+      (window as any).webkit.messageHandlers.jsBridge
+    );
+  };
 
+  const sendEventToNative = (name: string, text: string) => {
+    if (
+      (window as any).webkit &&
+      (window as any).webkit.messageHandlers &&
+      (window as any).webkit.messageHandlers.jsBridge
+    ) {
+      (window as any).webkit.messageHandlers.jsBridge.postMessage({
+        eventName: name,
+        value: text,
+      });
+    }
+  };
+  
   return (
     <div className="relative max-w-[480px] min-h-screen bg-no-repeat items-center mx-auto">
       <div

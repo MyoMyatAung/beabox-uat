@@ -34,7 +34,7 @@ const BalNew: React.FC<BalNewProps> = ({
           {/* head */}
           <div className="flex justify-cente items-center gap-[6px]">
             <span className="text-white text-[14px] font-[500] leading-[20px] flex gap-[6px]">
-              <img className=" w-[18px] h-[18px]" src={transit} alt="" />
+              <img className=" hidden w-[18px] h-[18px]" src={transit} alt="" />
               {title}
             </span>
             {/* Toggle between icons */}
@@ -54,7 +54,7 @@ const BalNew: React.FC<BalNewProps> = ({
         </div>
         <button
           onClick={() => navigate(to)}
-          className=" absolute z-[3] right-[20px] top-[40px] flex justify-center h-fit items-center rounded-[10px] bg-white/20 py-[4px] px-[8px]"
+          className=" absolute z-[3] hidden right-[20px] top-[40px] flex justify-center h-fit items-center rounded-[10px] bg-white/20 py-[4px] px-[8px]"
         >
           <span className=" text-[white] text-[12px] font-[500]">
             {btnText}

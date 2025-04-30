@@ -41,6 +41,16 @@ const TranHist: React.FC = () => {
   const pageHead = location.pathname === "/wallet/income" ? "收入" : "转账历史";
   const [status, setStatus] = useState([]);
   const { data: config } = useGetInviteQuery("");
+  const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
+
+  const [filter, setFilter] = useState<any>({});
+
+  // Only update the filter when config changes
+  useEffect(() => {
+    if (config?.data?.transaction_filter) {
+      setFilter(config?.data?.transaction_filter);
+    }
+  }, [config]);
 
   useEffect(() => {
     const now = new Date();
@@ -48,11 +58,6 @@ const TranHist: React.FC = () => {
     setCurYr(now.getFullYear()); // Get current year
     setPlus(now.getMonth() + 1); // Month index starts from 0, so +1
   }, []);
-  const { data, isLoading, isFetching } = useGetTransitionHistoryQuery({
-    period: `${plus}-${curYr}`,
-    type: "",
-    page: page,
-  });
 
   useEffect(() => {
     setPage(1);
@@ -65,6 +70,18 @@ const TranHist: React.FC = () => {
       setStatus(config?.data?.transaction_status_list);
     }
   }, [config]);
+
+  useEffect(() => {
+    if (filter && Object.keys(filter).length > 0) {
+      setSelectedFilter(Object.keys(filter)[0]); // Select the first filter by default
+    }
+  }, [filter]);
+
+  const { data, isLoading, isFetching } = useGetTransitionHistoryQuery({
+    period: `${plus}-${curYr}`,
+    type: selectedFilter,
+    page: page,
+  });
 
   useEffect(() => {
     if (data?.data) {
@@ -91,6 +108,15 @@ const TranHist: React.FC = () => {
   const fetchMoreData = () => {
     setPage((prevPage) => prevPage + 1);
   };
+
+  const handleFilterChange = (key: string) => {
+    setSelectedFilter(key);
+    setTran([]);
+    console.log(selectedFilter);
+    // Call API with the key (filter)
+    // fetchDataFromApi(key);
+  };
+
   return (
     <div className="flex justify-center items-center">
       <div className="w-screen xl:w-[800px]">
@@ -108,17 +134,36 @@ const TranHist: React.FC = () => {
             setCurYr={setCurYr}
             setplus={setPlus}
           />
+          {/* filter */}
+          <div
+            style={{ background: "rgba(255, 255, 255, 0.06)" }}
+            className=" bg-blac py-[12px] h-[64px]"
+          >
+            {/* <div className="">{filter.withdraw}</div> */}
+            <div className=" flex px-4 gap-[8px]">
+              {Object.keys(filter).map((key) => (
+                <div
+                  key={key}
+                  className={`cursor-pointer px-[12px] py-[8px]  rounded-[8px] ${
+                    selectedFilter === key
+                      ? "new_tran_filter_selected"
+                      : "bg-[#36333B]"
+                  }`}
+                  onClick={() => handleFilterChange(key)} // Handle filter click
+                >
+                  {filter[key as keyof typeof filter]}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
+
         {/* transition */}
-        <div className="py-[12px] px-[18px] mt-5">
-          {isLoading ? (
+        <div className="py-[12px] px-[18px] mt-24">
+          {isLoading || isFetching ? (
             <div className=" flex justify-center items-center py-[100px]">
               <div className="heart">
-                <img
-                  src={loader}
-                  className="w-[100px] h-[100px]"
-                  alt="加载中"
-                />
+                <img src={loader} className="w-[70px] h-[70px]" alt="加载中" />
               </div>
             </div>
           ) : (
@@ -134,58 +179,67 @@ const TranHist: React.FC = () => {
                       {" "}
                       {location.pathname === "/wallet/income"
                         ? "您的收入记录将在这里显示"
-                        : "您还没有任何过渡记录"}{""}
+                        : "您还没有任何过渡记录"}
+                      {""}
                     </span>
                   </div>
                 </div>
               ) : (
                 <>
-                  {tran?.map((ts: any, index: any) => (
-                    <div
-                      key={index}
-                      className="transit_list py-[16px] flex justify-between"
-                    >
-                      <div className="flex gap-[12px] items-center">
-                        <div className="bitcoin_border w-[56px] h-[56px] flex justify-center items-center">
-                          <img
-                            className="w-[26px] h-[26px]"
-                            src={transit}
-                            alt=""
-                          />
-                        </div>
-                        <div className="flex flex-col gap-[4px]">
-                          <span className="text-white text-[14px] font-[500] leading-[20px]">
-                            {ts.description}
-                          </span>
-                          <span className="text-[#777] text-[12px] font-[400] leading-[20px]">
-                            {ts.date}
-                          </span>
-                        </div>
-                      </div>
-                      <div className=" flex flex-col justify-center items-center gap-[6px]">
-                        <span>
-                          {ts.dr_cr === "cr" ? "+" : "-"} {ts.amount}
-                        </span>
-                        {ts.status && (
-                          <div
-                            style={{
-                              backgroundColor: getStatusClass(ts.status)
-                                .backgroundColor,
-                              color: getStatusClass(ts.status).color,
-                            }}
-                            className="px-[12px] py-[6px] flex justify-center items-center rounded-[6px]  text-[12px] font-[400] leading-[15px]"
-                          >
-                            {ts.status === "approved" && "已批准"}
-                            {ts.status === "pending" && "待处理"}
-                            {ts.status === "rejected" && "已拒绝"}
-                            {ts.status === "success" && "成功"}
-                            {ts.status === "failed" && "失败"}
-                            {ts.status === "default" && "默认"}
+                  <div className=" flex flex-col gap-[8px]">
+                    {tran?.map((ts: any, index: any) => (
+                      <div
+                        key={ts.id}
+                        className=" new_tran_box px-[12px] py-[20px] flex justify-between items-start"
+                      >
+                        <div className=" flex gap-[12px] items-center">
+                          <div className="bitcoin_borde hidden w-[56px] h-[56px] justify-center items-center">
+                            <img
+                              className=" w-[26px] h-[26px]"
+                              src={transit}
+                              alt=""
+                            />
                           </div>
-                        )}
+                          <div className=" flex flex-col gap-[4px]">
+                            <span className="new_tran_box_title">
+                              {ts.title}
+                            </span>
+                            <span className=" text-[#aaa] text-[14px] font-[500] leading-[20px]">
+                              {ts.description}
+                            </span>
+                            <span className=" text-[#777] text-[12px] font-[400] leading-[20px]">
+                              {ts.date}
+                            </span>
+                          </div>
+                        </div>
+                        <div className=" flex flex-col justify-center items-center gap-[6px]">
+                          <span>
+                            {ts.state === "increase" ? "+" : "-"} {ts.amount}
+                          </span>
+                          {ts.status && (
+                            <div
+                              style={{
+                                backgroundColor: getStatusClass(ts.status)
+                                  .backgroundColor,
+                                color: getStatusClass(ts.status).color,
+                              }}
+                              className="px-[12px] py-[6px] flex justify-center items-center rounded-[6px]  text-[12px] font-[400] leading-[15px]"
+                            >
+                              {/* <span className={getStatusClass(ts.status).text}> */}
+                              {/* {ts.status} */}
+                              {ts.status === "approved" && "已批准"}
+                              {ts.status === "pending" && "待处理"}
+                              {ts.status === "rejected" && "已拒绝"}
+                              {ts.status === "success" && "成功"}
+                              {ts.status === "failed" && "失败"}
+                              {ts.status === "default" && "默认"}
+                              {/* </span> */}
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                   <InfiniteScroll
                     className="py-[20px]"
                     dataLength={tran.length}
