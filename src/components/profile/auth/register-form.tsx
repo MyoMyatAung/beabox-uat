@@ -37,7 +37,7 @@ import Shield from "@/assets/profile/shield.png";
 import Portal from "./Portal";
 import AuthError from "@/components/shared/auth-error";
 
-const RegisterForm = ({ setIsOpen, refer_code }: any) => {
+const RegisterForm = ({ setIsOpen, refer_code, geetest_id }: any) => {
   const [flashLoading, setflashLoading] = useState(false);
 
   const [error, setError] = useState("");
@@ -89,7 +89,16 @@ const RegisterForm = ({ setIsOpen, refer_code }: any) => {
       password,
       captcha,
       captcha_key: data?.data?.captcha_key,
-      geetest_id: code,
+      geetest_id: geetest_id,
+      referral_code: code,
+    });
+    console.log({
+      username: emailOrPhone,
+      password,
+      captcha,
+      captcha_key: data?.data?.captcha_key,
+      geetest_id: geetest_id,
+      referral_code: code,
     });
     // console.log(registerData, "registerData");
     if (registerData?.status) {
