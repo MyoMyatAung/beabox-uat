@@ -44,7 +44,7 @@ const EventResultBox: React.FC<EventBoxProps> = ({
     setShowBonus(false);
     const timer = setTimeout(() => {
       setShowBonus(true); // Set the state to show the bonus after 1 second
-    }, 800); // 1 second delay
+    }, 0); // 1 second delay
 
     // Cleanup the timer when the component unmounts or when it's not needed
     return () => clearTimeout(timer);
@@ -85,15 +85,18 @@ const EventResultBox: React.FC<EventBoxProps> = ({
 
                   {/* <img src={bg} alt="" /> */}
                 </div>
-                <div className=" absolute z-[-1]">
-                  <AnimationCard animate={suprise} />
+                {newData?.register_bonus && (
+                  <div className="absolute z-[-1]">
+                    <AnimationCard animate={suprise} />
+                  </div>
+                )}
 
-                  {/* <img src={bg} alt="" /> */}
-                </div>
                 <div className=" w-[400px] h-full pt-[150px] pb-[30px] flex flex-col justify-between items-center media-w">
                   <div
                     className={`flex flex-col justify-center items-center gap-3
-                      ${showBonus ? "show-bonus" : ""} 
+                      ${
+                        newData?.register_bonus && showBonus ? "show-bonus" : ""
+                      } 
                       `}
                   >
                     <h1 className="event-money1 font-sfProB text-[#f2cb81]">
@@ -103,13 +106,8 @@ const EventResultBox: React.FC<EventBoxProps> = ({
                     <p className="event-money-p1 font-sfPro text-[#f2cb81]">
                       注册后奖励 +2¥
                     </p>
-
-                    {/* <h1 className="event-money font-sfProB">
-                      +{newData?.register_bonus} ¥
-                    </h1>
-                    <div className=" h-[1px] event-line w-[100px]"></div>
-                    <p className="event-money-p font-sfPro">注册后奖励 +2¥</p> */}
                   </div>
+
                   {/* <img className=" w-[210px] h-[70pxx]" src={logo} alt="" /> */}
                   <div className=" flex flex-col justify-center items-center mt-16">
                     <AsyncDecryptedImage

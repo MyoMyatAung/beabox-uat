@@ -134,16 +134,17 @@ const EventBox: React.FC<EventBoxProps> = ({
               pass_token: result?.pass_token,
               gen_time: result?.gen_time,
             };
+            setShowCaptcha(false); // This will be called when CAPTCHA is closed
+            setshownextBox(true);
 
             try {
               const fetchData = async () => {
                 const res = await verifyCaptcha(resultData);
 
                 const result1 = res.data?.data;
-                setshownextBox(true);
+
                 setnewData(result1);
                 setCode(result1?.geetest);
-                setShowCaptcha(false); // This will be called when CAPTCHA is closed
               };
               fetchData();
             } catch (error) {
