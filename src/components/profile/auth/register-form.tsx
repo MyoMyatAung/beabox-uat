@@ -92,14 +92,7 @@ const RegisterForm = ({ setIsOpen, refer_code, geetest_id }: any) => {
       geetest_id: geetest_id,
       referral_code: code,
     });
-    console.log({
-      username: emailOrPhone,
-      password,
-      captcha,
-      captcha_key: data?.data?.captcha_key,
-      geetest_id: geetest_id,
-      referral_code: code,
-    });
+
     // console.log(registerData, "registerData");
     if (registerData?.status) {
       dispatch(setUser(registerData?.data));

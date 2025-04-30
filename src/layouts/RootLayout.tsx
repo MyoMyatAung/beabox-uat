@@ -79,7 +79,6 @@ const RootLayout = ({ children }: any) => {
     }
   }, [eventData, event]);
 
-  // console.log(" here ", event, eventData);
   const { data: config } = useGetConfigQuery({});
 
   // Skip the API query since LoadingScreen handles it

@@ -11,6 +11,7 @@ import Animation from "./Animation";
 import { useVerifyCaptchaMutation } from "./eventApi";
 import EventResultBox from "./EventResultBox";
 import AnimationCard from "./AnimationCard";
+import { getDeviceInfo } from "@/lib/deviceInfo";
 
 declare global {
   interface Window {
@@ -125,15 +126,17 @@ const EventBox: React.FC<EventBoxProps> = ({
 
           gtInstance.onSuccess(() => {
             const result = gtInstance.getValidate();
-
+            const device = getDeviceInfo();
             const resultData = {
               event_id: eventData?.data?.event?.id,
+              device_id: device.uuid,
               refer_code: referCode,
               lot_number: result?.lot_number,
               captcha_output: result?.captcha_output,
               pass_token: result?.pass_token,
               gen_time: result?.gen_time,
             };
+
             setShowCaptcha(false); // This will be called when CAPTCHA is closed
             setshownextBox(true);
 
