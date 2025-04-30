@@ -94,7 +94,7 @@ const RootLayout = ({ children }: any) => {
         if (currentEventData?.status === true && !showAd && !showAlert && !isOpen) {
           const timeout = setTimeout(() => {
             dispatch(setAnimation(true));
-          }, 5000);
+          }, 9000);
           return () => clearTimeout(timeout);
         } else {
           dispatch(setAnimation(false));

@@ -207,44 +207,48 @@ const Luckydraw = () => {
             backgroundSize: "auto 100%",
             backgroundPosition: "center center",
             backgroundRepeat: "no-repeat",
-            maxHeight: '280px'
+            maxHeight: '295px'
           }}
         >
           <div className="bg-[#f14884] rounded-[12px] py-4 px-3 mt-8">
             <div
-              className="rounded-[12px] w-full font-[700] max-w-md p-3 text-[#4E4E4E] leading-[22px] font-sf mx-auto bg-transparent"
+              className="rounded-[12px] w-full font-[700] p-3 text-[#4E4E4E] leading-[22px] font-sf mx-auto bg-transparent"
               style={{
                 background:
                   "linear-gradient(180deg, #FFFFFF 0%, #FFC989 152.27%)",
               }}
             >
-              <div className="grid grid-cols-3 gap-4 pb-3 text-center"
-                style={{ borderBottom: '2px solid rgba(0, 0, 0, 0.12)' }}
-              >
-                <div style={{ borderRight: '2px solid rgba(0, 0, 0, 0.12)' }}>
+              <div className="grid grid-cols-3 px-1">
+                <div className="text-center border-r-[1.5px] border-black/10">
                   <p className="text-[14px]">今日收益</p>
                   <p className="mt-2 text-[20px]">{stats.today_earnings } {stats.today_earnings !== '0' ? `¥` : ""}</p>
                 </div>
-                <div style={{ borderRight: '2px solid rgba(0, 0, 0, 0.12)' }}>
+
+                <div className="text-center border-r-[1.5px] border-black/10">
                   <p className="text-[14px]">邀请人数</p>
                   <p className="mt-2 text-[20px]">{stats.invited_people}</p>
                 </div>
-                <div>
+
+                <div className="text-center">
                   <p className="text-[14px]">已注册用户</p>
                   <p className="mt-2 text-[20px]">{stats.registered_users}</p>
                 </div>
               </div>
 
-              <div className="mt-4 grid grid-cols-3 gap-4 text-center text-sm pb-1">
-                <div style={{ borderRight: '2px solid rgba(0, 0, 0, 0.12)' }}>
+              <div className="mx-7 my-4 border-b-[1.5px] border-black/10"></div>
+
+              <div className="grid grid-cols-3 px-1">
+                <div className="text-center border-r-[1.5px] border-black/10">
                   <p className="text-[14px]">累计收益</p>
                   <p className="mt-2 text-[20px]">{stats.cumulative_earnings } {stats.cumulative_earnings !== '0' ? `¥` : ""}</p>
                 </div>
-                <div style={{ borderRight: '2px solid rgba(0, 0, 0, 0.12)' }}>
+
+                <div className="text-center border-r-[1.5px] border-black/10">
                   <p className="text-[14px]">本月收益</p>
                   <p className="mt-2 text-[20px]">{stats.this_month_earnings } {stats.this_month_earnings !== '0' ? `¥` : ""}</p>
                 </div>
-                <div>
+
+                <div className="text-center">
                   <p className="text-[14px]">上月收益</p>
                   <p className="mt-2 text-[20px]"> {stats.last_month_earnings } {stats.last_month_earnings !== '0' ? `¥` : ""}</p>
                 </div>

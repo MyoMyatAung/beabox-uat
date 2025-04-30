@@ -2,8 +2,8 @@ import React from "react";
 
 const Rule = () => {
   return (
-    <div className="w-full max-w-md p-3 mt-2 text-xs backdrop-blur-[32px] leading-[20px] font-sf mx-auto">
-      <div className="bg-[#f14884] px-5 mx-2 py-2">
+    <div className="w-full p-3 mt-3 px-5 text-xs backdrop-blur-[32px] leading-[20px] font-sf mx-auto">
+      <div className="bg-[#f14884] px-5 py-2">
         <h3 className="text-center text-[24px] font-bold mb-2">邀请规则</h3>
         <ol className="list-decimal list-inside space-y-2 pt-2 text-white text-[12px]">
             <li>与分享的好友首次登录并注册即算邀请成功。</li>
