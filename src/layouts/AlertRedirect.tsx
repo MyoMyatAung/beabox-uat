@@ -29,7 +29,9 @@ const detectInAppBrowser = () => {
     inWeChat: ua.indexOf('micromessenger') !== -1,
     inAlipay: ua.indexOf('alipayclient') !== -1,
     inWeibo: ua.indexOf('weibo') !== -1,
-    inQQ: ua.indexOf('qq/') !== -1 || ua.indexOf('mqqbrowser') !== -1
+    inQQ: ua.indexOf('qq/') !== -1 || ua.indexOf('mqqbrowser') !== -1,
+    inDouyin: ua.includes('douyin'),
+    inToutiao: ua.includes('newsarticle')
   };
 };
 
@@ -170,24 +172,10 @@ const AlertRedirect: React.FC<AlertRedirectProps> = ({
                     alt=""
                     className="w-full h-dvh object-contain"
                   />
-                  {/* <button
-                    onClick={() => setShowInAppBrowserAlert(false)}
-                    className="absolute bottom-12 left-1/2 transform -translate-x-1/2"
-                    style={{
-                      background: 'rgba(68, 68, 68, 1)',
-                      width: '200px',
-                      height: '50px',
-                      borderRadius: '12px',
-                    }}
-                  >
-                    好的
-                  </button> */}
                 </div>
               </div>
             </div>
           </div>
-          
-          
           )}
           {/* Only show browser option if not used as a web clip */}
           {!isWebClip() && (
