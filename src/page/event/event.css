@@ -24,7 +24,7 @@
   border-radius: 12px;
   background: linear-gradient(339deg, #fccba3 41.82%, #fff 107.54%);
   box-shadow: 0px -8px 4px 0px rgba(255, 255, 255, 0.25) inset;
-  color: #4e4e4e;
+  color: #890a0a;
   text-align: center;
   font-family: Inter;
   font-size: 14px;
@@ -52,6 +52,53 @@
   /* font-style: italic; */
   font-weight: 600;
   line-height: 22px; /* 137.5% */
+}
+
+.event-money1 {
+  text-align: center;
+
+  font-size: 32px;
+  font-style: italic;
+  font-weight: 900;
+  line-height: 20px; /* 62.5% */
+  letter-spacing: 1px;
+}
+.event-money-p1 {
+  font-size: 16px;
+  /* font-style: italic; */
+  font-weight: 600;
+  line-height: 22px; /* 137.5% */
+}
+
+.event-money1,
+.event-money-p1,
+.event-line {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-in-out; /* Transition for opacity */
+}
+
+.show-bonus {
+  visibility: visible;
+  opacity: 1; /* Visible after transition */
+  transition: opacity 0.3s ease-in-out; /* Transition for opacity */
+}
+
+.show-bonus .event-money-p1 {
+  visibility: visible;
+  opacity: 1; /* Visible after transition */
+  transition: opacity 0.3s ease-in-out; /* Transition for opacity */
+}
+
+.show-bonus .event-money1 {
+  visibility: visible;
+  opacity: 1; /* Visible after transition */
+  transition: opacity 0.3s ease-in-out; /* Transition for opacity */
+}
+.show-bonus .event-line {
+  visibility: visible;
+  opacity: 1; /* Visible after transition */
+  transition: opacity 0.3s ease-in-out; /* Transition for opacity */
 }
 
 .dheight {
