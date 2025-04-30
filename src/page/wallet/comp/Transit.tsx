@@ -66,7 +66,7 @@ const Transit: React.FC<TransitProps> = ({}) => {
     };
   };
   return (
-    <div className=" py-[20p">
+    <div className=" min-h-[50vh]">
       {/* header */}
       <div className="transit_header px-[20px] py-[10px] flex items-center justify-between">
         <h1 className=" text-white text-[16px] font-[500] leading-normal">
