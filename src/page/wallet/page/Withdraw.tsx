@@ -25,6 +25,7 @@ const Withdraw: React.FC<WithdrawProps> = ({}) => {
   });
   // console.log(data)
   const { data: config } = useGetInviteQuery("");
+  console.log(config)
   const navigate = useNavigate();
   return (
     <div className=" flex justify-center items-center">
