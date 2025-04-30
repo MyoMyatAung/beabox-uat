@@ -298,6 +298,7 @@ option selected {
 
 .wallet_upload_box {
   border-radius: 8px;
+  height: 80px;
   background: rgba(255, 255, 255, 0.04);
 }
 
