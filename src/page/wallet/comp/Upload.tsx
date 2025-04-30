@@ -224,7 +224,7 @@ const Upload: React.FC<UploadProps> = ({ images, setImages }) => {
       {images.length < 10 && (
         <div
           onClick={open}
-          className="wallet_upload_box order-last cursor-pointer flex flex-col items-center justify-center bg-gray-800 rounded-md p-4"
+          className="wallet_upload_box order-last cursor-pointer flex flex-col items-center justify-center bg-gray-800 rounded-md"
         >
           <input {...getInputProps()} />
           <div className="flex flex-col items-center gap-2">
