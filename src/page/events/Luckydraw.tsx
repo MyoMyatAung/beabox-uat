@@ -106,7 +106,6 @@ const Luckydraw = () => {
       if (isIOSApp()) {
         sendEventToNative("copyAppdownloadUrl", contentUrl);
       } else {
-        alert(contentUrl);
         navigator.clipboard.writeText(contentUrl).then(() => {
           dispatch(
             showToast({
