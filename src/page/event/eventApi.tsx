@@ -25,12 +25,11 @@ export const eventInvitationApi = createApi({
     },
     responseHandler: async (response) => {
       const encryptedData = await response.json();
-      console.log(encryptedData);
+
       if (encryptedData?.status === false)
         localStorage.setItem("profile-error", encryptedData?.message);
       try {
         const decryptedData = decryptWithAes(encryptedData?.data);
-        console.log(decryptedData);
 
         return JSON.parse(decryptedData);
       } catch (err) {
@@ -60,4 +59,5 @@ export const eventInvitationApi = createApi({
   }),
 });
 
-export const { useGetUserByReferalQuery, useVerifyCaptchaMutation } = eventInvitationApi;
+export const { useGetUserByReferalQuery, useVerifyCaptchaMutation } =
+  eventInvitationApi;
