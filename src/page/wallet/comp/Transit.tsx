@@ -105,19 +105,15 @@ const Transit: React.FC<TransitProps> = ({}) => {
                       key={ts.id}
                       className=" new_tran_box px-[12px] py-[20px] flex justify-between items-start"
                     >
-                      <div className=" flex gap-[12px] items-center">
-                        <div className="bitcoin_borde hidden w-[56px] h-[56px] justify-center items-center">
-                          <img
-                            className=" w-[26px] h-[26px]"
-                            src={transit}
-                            alt=""
-                          />
-                        </div>
+                      <div className=" flex gap-[12px] items-center w-[70%]">
+                       
                         <div className=" flex flex-col gap-[4px]">
                           <span className="new_tran_box_title">{ts.title}</span>
-                          <span className=" text-[#aaa] text-[14px] font-[500] leading-[20px]">
+                          <span className="block text-[#aaa] text-[14px] font-[500] leading-[20px] w-[70%] break-words">
                             {ts.description}
+                            asdfasdfasdfdfadsfasdfasdfadsfasdfasdfasdfadsf
                           </span>
+
                           <span className=" text-[#777] text-[12px] font-[400] leading-[20px]">
                             {ts.date}
                           </span>
