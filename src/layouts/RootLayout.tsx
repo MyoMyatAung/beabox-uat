@@ -66,7 +66,7 @@ const RootLayout = ({ children }: any) => {
   const [isOpenNew, setIsOpenNew] = useState(false);
   const [code, setCode] = useState("");
   const [newData, setnewData] = useState(null);
-  const user = useSelector((state: any) => state.persist.user); 
+  const user = useSelector((state: any) => state.persist.user);
 
   const { data: eventData } = useGetUserByReferalQuery(
     { referral_code: referCode }, // or safely cast if you're confident it's a string
