@@ -11,7 +11,7 @@ import InviteCard from "./InviteCard";
 import Rule from "./Rule";
 import eventPage from "@/assets/eventpage.jpg";
 import eventTitle from "@/assets/eventTitle.png";
-import Pricebg from "@/assets/icons/PrizeBg.svg";
+import Pricebg from "@/assets/prizeBg.webp";
 import Paper from "@/assets/Paper.png";
 import { EventDetail } from "@/@types/lucky_draw";
 import DrawTime from "@/assets/draw_time.png";
@@ -203,7 +203,7 @@ const Luckydraw = () => {
             <div className="flex justify-center">
               <img src={DrawTime} className="w-20" />
             </div>
-            <div className="text-sm mb-5 mx-auto">
+            <div className="text-sm mb-7 mx-auto">
               <div className="flex justify-center text-sm mb-2 mx-auto gap-1">
                 <p className="flex gap-1">
                   {/* {remainingTime.split("").map((char, index) => (
