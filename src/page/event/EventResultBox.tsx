@@ -116,8 +116,8 @@ const EventResultBox: React.FC<EventBoxProps> = ({
                       alt="Profile"
                     />
                     <h1 className="user_invite_text mt-2 font-sfPro w-[250px] media-w2">
-                      '<span className="event_name">{eventData.data.name}</span>
-                      ' 邀请您一起使用笔盒，邀请好友瓜分百万现金红包！
+                      "<span className="event_name">{eventData.data.name}</span>
+                      " 邀请您一起使用笔盒，邀请好友瓜分百万现金红包！
                     </h1>
                   </div>
                   <div className="mt-14">

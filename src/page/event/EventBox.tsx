@@ -187,7 +187,7 @@ const EventBox: React.FC<EventBoxProps> = ({
                   alt="Profile"
                 />
                 <h1 className="user_invite_text font-sfPro mt-3 px-10 w-[320px]">
-                  '<span className="event_name">{eventData.data.name}</span>'
+                  "<span className="event_name">{eventData.data.name}</span>"
                   邀请您一起使用笔盒，邀请好友瓜分百万现金红包！
                 </h1>
               </div>
