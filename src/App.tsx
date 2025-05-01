@@ -8,6 +8,7 @@ import ErrorToast from "./page/home/services/ErrorToast";
 import { Toaster } from "./components/ui/toaster";
 import { useGetApplicationAdsQuery } from "./store/api/explore/exploreApi";
 import { initDeviceInfoListener } from "./lib/deviceInfo";
+import guide from './assets/guide.webp';
 
 const App = () => {
   const { panding } = useSelector((state: any) => state.model);
@@ -16,6 +17,7 @@ const App = () => {
 
   const [isMobileBrowser, setIsMobileBrowser] = useState(false);
   const dispatch = useDispatch();
+  const [showInAppBrowserAlert, setShowInAppBrowserAlert] = useState(false);
 
   useEffect(() => {
     // Function to check if the user is on a mobile browser
@@ -105,11 +107,48 @@ const App = () => {
     }
   }, [panding]);
 
+  const detectInAppBrowser = () => {
+    const ua = navigator.userAgent.toLowerCase();
+    return {
+      inWeChat: ua.indexOf('micromessenger') !== -1,
+      inAlipay: ua.indexOf('alipayclient') !== -1,
+      inWeibo: ua.indexOf('weibo') !== -1,
+      inQQ: ua.indexOf('qq/') !== -1 || ua.indexOf('mqqbrowser') !== -1,
+      inDouyin: ua.includes('douyin'),
+      inToutiao: ua.includes('newsarticle')
+    };
+  };
+
+  useEffect(()=>{
+    const browserInfo = detectInAppBrowser();
+    if (browserInfo.inWeChat || browserInfo.inAlipay || browserInfo.inWeibo || browserInfo.inQQ) {
+      setShowInAppBrowserAlert(true);
+    } 
+  },[]);
+
   return (
     <>
-      <Routing />
-      <Toaster />
-      <ErrorToast />
+      {!showInAppBrowserAlert && 
+      <>
+        <Routing />
+        <Toaster />
+        <ErrorToast />
+      </>}
+      {showInAppBrowserAlert && (
+            <div className="fixed w-full h-screen bg-white z-[3000] top-0 left-0">
+            <div className="w-full z-[1300] absolute h-full flex justify-center items-center">
+              <div className="text-[14px] bg-white rounded-lg text-center relative max-w-md w-full">
+                <div className="relative w-full">
+                  <img
+                    src={guide}
+                    alt=""
+                    className="w-full h-dvh object-contain"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          )}
     </>
   );
 };

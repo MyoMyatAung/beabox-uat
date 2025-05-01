@@ -11,6 +11,7 @@ import Animation from "./Animation";
 import { useVerifyCaptchaMutation } from "./eventApi";
 import EventResultBox from "./EventResultBox";
 import AnimationCard from "./AnimationCard";
+import { getDeviceInfo } from "@/lib/deviceInfo";
 
 declare global {
   interface Window {
@@ -125,9 +126,10 @@ const EventBox: React.FC<EventBoxProps> = ({
 
           gtInstance.onSuccess(() => {
             const result = gtInstance.getValidate();
-
+            const device = getDeviceInfo();
             const resultData = {
               event_id: eventData?.data?.event?.id,
+              device_id: device.uuid,
               refer_code: referCode,
               lot_number: result?.lot_number,
               captcha_output: result?.captcha_output,
@@ -135,15 +137,17 @@ const EventBox: React.FC<EventBoxProps> = ({
               gen_time: result?.gen_time,
             };
 
+            setShowCaptcha(false); // This will be called when CAPTCHA is closed
+            setshownextBox(true);
+
             try {
               const fetchData = async () => {
                 const res = await verifyCaptcha(resultData);
 
                 const result1 = res.data?.data;
-                setshownextBox(true);
+
                 setnewData(result1);
                 setCode(result1?.geetest);
-                setShowCaptcha(false); // This will be called when CAPTCHA is closed
               };
               fetchData();
             } catch (error) {
@@ -183,7 +187,7 @@ const EventBox: React.FC<EventBoxProps> = ({
                   alt="Profile"
                 />
                 <h1 className="user_invite_text font-sfPro mt-3 px-10 w-[320px]">
-                  '{eventData.data.name}'
+                  "<span className="event_name">{eventData.data.name}</span>"
                   邀请您一起使用笔盒，邀请好友瓜分百万现金红包！
                 </h1>
               </div>

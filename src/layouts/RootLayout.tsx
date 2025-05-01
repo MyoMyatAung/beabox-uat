@@ -14,14 +14,19 @@ import { setPlay } from "@/page/home/services/playSlice";
 import UserFeed from "@/components/UserFeed";
 import AnimationLoader from "@/components/shared/animation-loader";
 import loadingAnimation from "@/lotties/Animation.json";
-import { useGetCurrentEventQuery, useLazyGetEventDetailsQuery } from "@/store/api/events/eventApi";
+import {
+  useGetCurrentEventQuery,
+  useLazyGetEventDetailsQuery,
+} from "@/store/api/events/eventApi";
 import CloseSvg from "@/assets/icons/Close.svg";
 import { RootState } from "@/store/store";
 import { useNavigate } from "react-router-dom";
+import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 import {
-  setIsDrawerOpen
-} from "@/store/slices/profileSlice";
-import { setEventDetail, setAnimation, setDuration } from "@/store/slices/eventSlice";
+  setEventDetail,
+  setAnimation,
+  setDuration,
+} from "@/store/slices/eventSlice";
 import { useSearchParams } from "react-router-dom";
 import { useGetUserByReferalQuery } from "@/page/event/eventApi";
 import EventBox from "@/page/event/EventBox";
@@ -74,35 +79,38 @@ const RootLayout = ({ children }: any) => {
     }
   }, [eventData, event]);
 
-  // console.log(" here ", event, eventData);
   const { data: config } = useGetConfigQuery({});
 
   // Skip the API query since LoadingScreen handles it
   useGetApplicationAdsQuery("", { skip: true });
 
   const { data: currentEventData } = useGetCurrentEventQuery("");
-  // const { data: eventDetailsData } = useGetEventDetailsQuery(currentEventData?.data?.id || '', {
-  //     skip: !currentEventData?.data?.id
-  //   });
-  const [triggerGetEventDetails, { data: eventDetailsData }] = useLazyGetEventDetailsQuery();
-
-  // const [eventId, setEventId] = useState<string | undefined>(undefined);
-  // const [showAnimation, setShowAnimation] = useState(false);
+  const [triggerGetEventDetails] = useLazyGetEventDetailsQuery();
   const showAnimation = useSelector((state: RootState) => state.event.isShowAnimation);
-  const currentDuration = useSelector((state: RootState) => state.event.duration);
+  const currentDuration = useSelector((state: RootState) => state.event.event_start_time);
 
   useEffect(() => {
-    if (currentEventData?.data) {
-      if (currentEventData?.status === true && !showAd && !showAlert && !isOpen) {
-        const timeout = setTimeout(() => {
-          dispatch(setAnimation(true));
-        }, 5000);
-        return () => clearTimeout(timeout);
-      } else {
-        dispatch(setAnimation(false));
+    if (showAd && showAlert && isOpen && !showLanding) {
+      dispatch(setAnimation(false));
+    } else {
+      if (currentEventData?.data) {
+        if (
+          currentEventData?.status === true &&
+          !showAd &&
+          !showAlert &&
+          !isOpen
+        ) {
+          const timeout = setTimeout(() => {
+            dispatch(setAnimation(true));
+          }, 9000);
+          return () => clearTimeout(timeout);
+        } else {
+          dispatch(setAnimation(false));
+        }
       }
+      dispatch(setAnimation(false));
     }
-  }, [currentEventData, dispatch]);
+  }, [currentEventData?.status, dispatch, showAd, showLanding, showAlert]);
 
   // Check if ads have already been seen in this session
   useEffect(() => {
@@ -226,19 +234,18 @@ const RootLayout = ({ children }: any) => {
 
     const eventId = currentEventData?.data?.id;
     if (!eventId) return;
-
     // Only fetch event details if duration is 0
-    if (currentDuration <= 0) {
+    // if (currentDuration <= 0) {
       try {
         const eventDetails = await triggerGetEventDetails(eventId).unwrap();
         dispatch(setEventDetail(eventDetails.data));
-        if (eventDetails.data?.duration) {
-          dispatch(setDuration(eventDetails.data.duration));
+        if (eventDetails.data?.event_start_time) {
+          dispatch(setDuration(eventDetails.data.event_start_time));
         }
       } catch (error) {
-        console.error('Failed to fetch event details:', error);
+        console.error("Failed to fetch event details:", error);
       }
-    }
+    // }
 
     navigate(`/events/lucky-draw/${eventId}`);
   };
@@ -267,6 +274,7 @@ const RootLayout = ({ children }: any) => {
           isOpen={isOpenNew}
           setIsOpen={setIsOpenNew}
           code={referCode}
+          geetest_id={code}
         />
       )}
       {/* {box && (

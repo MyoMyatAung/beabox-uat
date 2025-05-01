@@ -78,6 +78,10 @@
   transition: opacity 0.3s ease-in-out; /* Transition for opacity */
 }
 
+.event_name {
+  color: #ffab0d;
+}
+
 .show-bonus {
   visibility: visible;
   opacity: 1; /* Visible after transition */
