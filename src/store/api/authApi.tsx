@@ -49,6 +49,7 @@ export const authApi = createApi({
         password,
         captcha,
         captcha_key,
+        geetest_id,
         referral_code,
       }: any) => ({
         url: "/register",
@@ -58,6 +59,7 @@ export const authApi = createApi({
           password,
           captcha,
           captcha_key,
+          geetest_id,
           referral_code,
         }),
       }),

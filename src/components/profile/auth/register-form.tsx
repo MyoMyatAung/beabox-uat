@@ -84,6 +84,7 @@ const RegisterForm = ({ setIsOpen, refer_code, geetest_id }: any) => {
     e.stopPropagation();
     e.preventDefault();
     const { emailOrPhone, password } = form.getValues();
+
     const { data: registerData, error: registerError } = await register({
       username: emailOrPhone,
       password,
