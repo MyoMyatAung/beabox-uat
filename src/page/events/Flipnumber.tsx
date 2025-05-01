@@ -50,6 +50,7 @@ const FlipNumber = ({
     fontSize: "39px",
     lineHeight: "27px",
     letterSpacing: "0%",
+    display: "inline-block",
     textAlign: "center" as const,
   };
 
@@ -87,7 +88,9 @@ const FlipNumber = ({
             style={{
               ...textBaseStyle,
               ...gradientStyle,
+              WebkitTextStroke: "1px rgba(255, 76, 28, 1)",
               position: "absolute",
+              transform: "scale(1.2, 1.1)", 
               zIndex: 2,
             }}
           >
@@ -103,6 +106,7 @@ const FlipNumber = ({
               WebkitTextStroke: "1px rgba(255, 76, 28, 1)",
               position: "absolute",
               zIndex: 1,
+              display: "inline-block",
             }}
           >
             {prevLastTwoDigits}
@@ -113,6 +117,8 @@ const FlipNumber = ({
               ...gradientStyle,
               position: "absolute",
               zIndex: 2,
+              transform: "scale(1.2, 1.1)",
+              display: "inline-block",
             }}
           >
             {lastTwoDigits}

@@ -38,7 +38,7 @@ const detectInAppBrowser = () => {
 interface AlertRedirectProps {
   setShowAlert: (show: boolean) => void;
   app_download_link: string;
-  event?: React.MouseEvent | null;
+  event?: boolean | false;
 }
 
 const AlertRedirect: React.FC<AlertRedirectProps> = ({

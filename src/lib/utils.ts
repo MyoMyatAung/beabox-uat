@@ -37,3 +37,22 @@ export const timeFormatter = new Intl.DateTimeFormat('en-US', {
   hour12: false,
   timeZone: 'UTC',
 });
+
+export function formatDateTime(timestampInSeconds: number, timeZone: string): string {
+  const date = new Date(timestampInSeconds * 1000); // Convert seconds to milliseconds
+
+  const parts = new Intl.DateTimeFormat('en-US', {
+    year: 'numeric', 
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+    timeZone: timeZone || 'UTC',
+  }).formatToParts(date);
+
+  const map = Object.fromEntries(parts.map(p => [p.type, p.value]));
+
+  // Format as yy-mm-dd hh:mm
+  return `${map.year}-${map.month}-${map.day} ${map.hour}:${map.minute}`;
+}

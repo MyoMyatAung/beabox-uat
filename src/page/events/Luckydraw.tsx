@@ -15,7 +15,7 @@ import Pricebg from "@/assets/icons/PrizeBg.svg";
 import Paper from "@/assets/Paper.png";
 import { EventDetail } from "@/@types/lucky_draw";
 import DrawTime from "@/assets/draw_time.png";
-import { timeFormatter } from "@/lib/utils";
+import { timeFormatter, formatDateTime } from "@/lib/utils";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "@/components/shared/loader";
 import { useLazyGetEventDetailsQuery, useLazyGetUserShareInfoQuery } from "@/store/api/events/eventApi";
@@ -32,7 +32,8 @@ const Luckydraw = () => {
   const dispatch = useDispatch();
   const { id } = useParams<{ id: string }>();
   const eventDetailsData = useSelector((state: any) => state.event.eventDetail);
-  const currentDuration = useSelector((state: RootState) => state.event.duration);
+  const currentDuration = useSelector((state: RootState) => state.event.event_start_time);
+  const timeZone = useSelector((state: RootState) => state.event.server_timezone)
   const durationRef = useRef(currentDuration);
   const [stats, setStats] = useState<EventDetail | null>(eventDetailsData);
   const [firstLoad, setFirstLoad] = useState(true);
@@ -59,19 +60,19 @@ const Luckydraw = () => {
     durationRef.current = currentDuration;
   }, [currentDuration]);
   
-  useEffect(() => {
-    startTimer(() => {
-      if (durationRef.current > 0) {
-        dispatch(decrementDuration());
-      } else {
-        stopTimer(); // Only stop when reaching 0
-      }
-    });
+  // useEffect(() => {
+  //   startTimer(() => {
+  //     if (durationRef.current > 0) {
+  //       dispatch(decrementDuration());
+  //     } else {
+  //       stopTimer(); // Only stop when reaching 0
+  //     }
+  //   });
   
-    return () => {
-      console.log('Unmount, but NOT stop timer');
-    };
-  }, [dispatch]);
+  //   return () => {
+  //     console.log('Unmount, but NOT stop timer');
+  //   };
+  // }, [dispatch]);
   
   useEffect(()=> {
     if (currentDuration === 0) {
@@ -88,16 +89,18 @@ const Luckydraw = () => {
     try {
       const eventDetails = await triggerGetEventDetails(id).unwrap();
       dispatch(setEventDetail(eventDetails?.data));
-      if (eventDetails?.data?.duration) {
-        dispatch(setDuration(eventDetails?.data.duration));
+      if (eventDetails?.data?.event_start_time) {
+        dispatch(setDuration(eventDetails?.data.event_start_time));
       }
     } catch (error) {
       console.error('Failed to fetch event details:', error);
     }
   }
   const remainPrizeDigits = stats?.remaining_amount?.padStart(5, "0").split("");
-  const time = timeFormatter.format(new Date(Number(currentDuration) || 0));
-  const remainingTime = time.startsWith("00:") ? time.slice(3) : time;
+  // const time = timeFormatter.format(new Date(Number(currentDuration) || 0));
+  const remainingTime = formatDateTime(Number(currentDuration) || 0, timeZone);
+
+  // const remainingTime = time.startsWith("00:") ? time.slice(3) : time;
 
   const handleCopyClick = async () => {
     try {
@@ -203,7 +206,7 @@ const Luckydraw = () => {
             <div className="text-sm mb-5 mx-auto">
               <div className="flex justify-center text-sm mb-2 mx-auto gap-1">
                 <p className="flex gap-1">
-                  {remainingTime.split("").map((char, index) => (
+                  {/* {remainingTime.split("").map((char, index) => (
                     <span className="font-[700]"
                       key={index}
                       style={{
@@ -217,7 +220,16 @@ const Luckydraw = () => {
                     >
                       {char}
                     </span>
-                  ))}
+                  ))} */}
+                  <span className="font-[700]"
+                      style={{
+                        background: "rgba(255, 255, 255, 0.2)",
+                        padding:"4px 6px",
+                        borderRadius: "4px",
+                      }}
+                    >
+                     {remainingTime}
+                    </span>
                 </p>
               </div>
             </div>
