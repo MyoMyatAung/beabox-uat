@@ -30,6 +30,7 @@ const Transit: React.FC<TransitProps> = ({}) => {
       setStatus(config?.data?.transaction_status_list);
     }
   }, [data, config]);
+  console.log(status)
 
   // console.log(status)
   // const getStatusClass = (status: string) => {
@@ -65,6 +66,7 @@ const Transit: React.FC<TransitProps> = ({}) => {
       color: statusObj?.text_color_code || "#FFF", // Default white if not found
     };
   };
+  console.log(tran)
   return (
     <div className=" min-h-[50vh]">
       {/* header */}
@@ -111,7 +113,6 @@ const Transit: React.FC<TransitProps> = ({}) => {
                           <span className="new_tran_box_title">{ts.title}</span>
                           <span className="block text-[#aaa] text-[14px] font-[500] leading-[20px] w-[70%] break-words">
                             {ts.description}
-                            asdfasdfasdfdfadsfasdfasdfadsfasdfasdfasdfadsf
                           </span>
 
                           <span className=" text-[#777] text-[12px] font-[400] leading-[20px]">
