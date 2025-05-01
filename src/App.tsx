@@ -8,7 +8,7 @@ import ErrorToast from "./page/home/services/ErrorToast";
 import { Toaster } from "./components/ui/toaster";
 import { useGetApplicationAdsQuery } from "./store/api/explore/exploreApi";
 import { initDeviceInfoListener } from "./lib/deviceInfo";
-import guide from './assets/guide.png';
+import guide from './assets/guide.webp';
 
 const App = () => {
   const { panding } = useSelector((state: any) => state.model);

@@ -4,7 +4,7 @@ import logo from "../assets/alertlogo.jpeg";
 import closeIcon from "../assets/close.png";
 import { useDispatch } from "react-redux";
 import { setPlay } from "@/page/home/services/playSlice";
-import guide from '../assets/guide.png';
+import guide from '../assets/guide.webp';
 const imageToBlob = (url: string, callback: (blobUrl: string) => void) => {
   fetch(url)
     .then((response) => response.blob())
