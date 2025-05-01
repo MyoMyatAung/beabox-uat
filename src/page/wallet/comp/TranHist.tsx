@@ -83,7 +83,7 @@ const TranHist: React.FC = () => {
     page: page,
   });
 
-  console.log(filter)
+  console.log(filter);
 
   useEffect(() => {
     if (data?.data) {
@@ -194,7 +194,7 @@ const TranHist: React.FC = () => {
                         key={ts.id}
                         className=" new_tran_box px-[12px] py-[20px] flex justify-between items-start"
                       >
-                        <div className=" flex gap-[12px] items-center">
+                        <div className=" flex gap-[12px] items-center w-[70%]">
                           <div className="bitcoin_borde hidden w-[56px] h-[56px] justify-center items-center">
                             <img
                               className=" w-[26px] h-[26px]"
@@ -206,7 +206,7 @@ const TranHist: React.FC = () => {
                             <span className="new_tran_box_title">
                               {ts.title}
                             </span>
-                            <span className=" text-[#aaa] text-[14px] font-[500] leading-[20px]">
+                            <span className="block text-[#aaa] text-[14px] font-[500] leading-[20px] w-[70%] break-words">
                               {ts.description}
                             </span>
                             <span className=" text-[#777] text-[12px] font-[400] leading-[20px]">
