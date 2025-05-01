@@ -14,14 +14,19 @@ import { setPlay } from "@/page/home/services/playSlice";
 import UserFeed from "@/components/UserFeed";
 import AnimationLoader from "@/components/shared/animation-loader";
 import loadingAnimation from "@/lotties/Animation.json";
-import { useGetCurrentEventQuery, useLazyGetEventDetailsQuery } from "@/store/api/events/eventApi";
+import {
+  useGetCurrentEventQuery,
+  useLazyGetEventDetailsQuery,
+} from "@/store/api/events/eventApi";
 import CloseSvg from "@/assets/icons/Close.svg";
 import { RootState } from "@/store/store";
 import { useNavigate } from "react-router-dom";
+import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 import {
-  setIsDrawerOpen
-} from "@/store/slices/profileSlice";
-import { setEventDetail, setAnimation, setDuration } from "@/store/slices/eventSlice";
+  setEventDetail,
+  setAnimation,
+  setDuration,
+} from "@/store/slices/eventSlice";
 import { useSearchParams } from "react-router-dom";
 import { useGetUserByReferalQuery } from "@/page/event/eventApi";
 import EventBox from "@/page/event/EventBox";
@@ -74,7 +79,6 @@ const RootLayout = ({ children }: any) => {
     }
   }, [eventData, event]);
 
-  // console.log(" here ", event, eventData);
   const { data: config } = useGetConfigQuery({});
 
   // Skip the API query since LoadingScreen handles it
@@ -86,12 +90,16 @@ const RootLayout = ({ children }: any) => {
   const currentDuration = useSelector((state: RootState) => state.event.event_start_time);
 
   useEffect(() => {
-    if(showAd && showAlert && isOpen && !showLanding) {
+    if (showAd && showAlert && isOpen && !showLanding) {
       dispatch(setAnimation(false));
-    }
-   else  {
+    } else {
       if (currentEventData?.data) {
-        if (currentEventData?.status === true && !showAd && !showAlert && !isOpen) {
+        if (
+          currentEventData?.status === true &&
+          !showAd &&
+          !showAlert &&
+          !isOpen
+        ) {
           const timeout = setTimeout(() => {
             dispatch(setAnimation(true));
           }, 9000);
@@ -235,7 +243,7 @@ const RootLayout = ({ children }: any) => {
           dispatch(setDuration(eventDetails.data.event_start_time));
         }
       } catch (error) {
-        console.error('Failed to fetch event details:', error);
+        console.error("Failed to fetch event details:", error);
       }
     // }
 
@@ -266,6 +274,7 @@ const RootLayout = ({ children }: any) => {
           isOpen={isOpenNew}
           setIsOpen={setIsOpenNew}
           code={referCode}
+          geetest_id={code}
         />
       )}
       {/* {box && (

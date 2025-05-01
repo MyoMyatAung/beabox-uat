@@ -118,8 +118,20 @@ const Luckydraw = () => {
           );
         });
       }
+      dispatch(
+        showToast({
+          message: "复制成功",
+          type: "success",
+        })
+      );
     } catch (error) {
       console.error("Failed to fetch user share info:", error);
+      dispatch(
+        showToast({
+          message: "复制成功",
+          type: "success",
+        })
+      );
     }
   };
 
