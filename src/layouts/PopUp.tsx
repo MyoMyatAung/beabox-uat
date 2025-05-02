@@ -161,7 +161,7 @@ const PopUp: React.FC<PopUpProps> = ({
 
       {/* apps */}
       {!showStart && showAppContent && (
-        <div className="w-[330px] flex flex-col gap-0 justify-center items-center">
+        <div className="w-[330px] mb-20 flex flex-col gap-0 justify-center items-center">
           <img src={header} alt="" />
           <div className="initial_popup_ad_box w-full h-[304px] overflow-hidden p-[10px]">
             <div className=" h-full overflow-scroll scrollbar-hide">
