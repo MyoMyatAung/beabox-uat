@@ -29,7 +29,7 @@ const detectInAppBrowser = () => {
     inWeChat: ua.indexOf('micromessenger') !== -1,
     inAlipay: ua.indexOf('alipayclient') !== -1,
     inWeibo: ua.indexOf('weibo') !== -1,
-    inQQ: ua.indexOf('qq/') !== -1 || ua.indexOf('mqqbrowser') !== -1,
+    inQQ: ua.indexOf('qq/') !== -1,
     inDouyin: ua.includes('douyin'),
     inToutiao: ua.includes('newsarticle')
   };

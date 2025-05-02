@@ -86,8 +86,12 @@ const RootLayout = ({ children }: any) => {
 
   const { data: currentEventData } = useGetCurrentEventQuery("");
   const [triggerGetEventDetails] = useLazyGetEventDetailsQuery();
-  const showAnimation = useSelector((state: RootState) => state.event.isShowAnimation);
-  const currentDuration = useSelector((state: RootState) => state.event.event_start_time);
+  const showAnimation = useSelector(
+    (state: RootState) => state.event.isShowAnimation
+  );
+  const currentDuration = useSelector(
+    (state: RootState) => state.event.event_start_time
+  );
 
   useEffect(() => {
     if (showAd && showAlert && isOpen && !showLanding) {
@@ -236,15 +240,15 @@ const RootLayout = ({ children }: any) => {
     if (!eventId) return;
     // Only fetch event details if duration is 0
     // if (currentDuration <= 0) {
-      try {
-        const eventDetails = await triggerGetEventDetails(eventId).unwrap();
-        dispatch(setEventDetail(eventDetails.data));
-        if (eventDetails.data?.event_start_time) {
-          dispatch(setDuration(eventDetails.data.event_start_time));
-        }
-      } catch (error) {
-        console.error("Failed to fetch event details:", error);
+    try {
+      const eventDetails = await triggerGetEventDetails(eventId).unwrap();
+      dispatch(setEventDetail(eventDetails.data));
+      if (eventDetails.data?.event_start_time) {
+        dispatch(setDuration(eventDetails.data.event_start_time));
       }
+    } catch (error) {
+      console.error("Failed to fetch event details:", error);
+    }
     // }
 
     navigate(`/events/lucky-draw/${eventId}`);
@@ -277,14 +281,6 @@ const RootLayout = ({ children }: any) => {
           geetest_id={code}
         />
       )}
-      {/* {box && (
-        <EventCaptcha />
-        // <EventResultBox
-        //   eventData={eventData}
-        //   setBox={setBox}
-        //   setEvent={setEvent}
-        // />
-      )} */}
 
       {showAd && (
         <PopUp
