@@ -1,3 +1,4 @@
+import FingerprintJS from '@fingerprintjs/fingerprintjs';
 // Device information service for webview integration
 
 /**
@@ -159,6 +160,19 @@ const defaultDeviceInfo: DeviceInfo = {
 
 let deviceInfo: DeviceInfo = { ...defaultDeviceInfo };
 
+export const initDeviceInfo = async () => {
+  try {
+    const fp = await FingerprintJS.load();
+    const result = await fp.get();
+    deviceInfo = {
+      ...defaultDeviceInfo,
+      ...result.components,
+    };
+  } catch (e) {
+    console.warn('FingerprintJS failed:', e);
+    deviceInfo = defaultDeviceInfo;
+  }
+};
 /**
  * Device info event from native applications
  */
