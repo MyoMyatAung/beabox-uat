@@ -209,9 +209,6 @@ const Ranking = () => {
     if (page == 5) setHasMore(false);
   }, [page]);
 
-  console.log(page);
-
-  console.log(data);
 
   if (loading1 && isLoading && page === 1) return <Loader />;
 
