@@ -3,6 +3,7 @@ import backButton from "../../../assets/backButton.svg";
 import { Link, useLocation } from "react-router-dom";
 import System from "@/assets/profile/system1.png";
 import Balance from "@/assets/profile/balance1.png";
+import { dateForamtter } from "@/lib/utils";
 
 const NotiDetail = () => {
   const state = useLocation();
@@ -30,7 +31,7 @@ const NotiDetail = () => {
             <div className="">
               <p className="text-[12px]">{state.state.main}</p>
               <p className="text-[#777777] text-[12px]">
-                {state.state.data.created_at}
+                {dateForamtter(state.state.data.created_at)}
               </p>
             </div>
           </div>
