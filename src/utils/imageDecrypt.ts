@@ -1,3 +1,4 @@
+import noPhoto from '../assets/noPhoto.webp'
 export async function decryptImage(imageUrl: string, defaultCover = ""): Promise<string> {
   // Return defaultCover directly for empty URLs
   if (!imageUrl || imageUrl.trim() === "") {
@@ -63,6 +64,6 @@ export async function decryptImage(imageUrl: string, defaultCover = ""): Promise
     return decryptedStr;
   } catch (error) {
     console.error("Error decrypting image:", error);
-    return defaultCover || imageUrl;
+    return defaultCover || noPhoto || imageUrl;
   }
 }
