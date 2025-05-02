@@ -184,7 +184,7 @@ const Recycle = () => {
     }
   };
   console.log(isFetching);
-  if ((isLoading && page == 1) || isFetching) return <Loader />;
+  if ((isLoading && page == 1) || (isFetching && page == 1)) return <Loader />;
   return (
     <div className="relative">
       {show ? (
