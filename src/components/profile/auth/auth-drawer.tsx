@@ -44,29 +44,12 @@ const AuthDrawer = () => {
           dragConstraints={{ top: 0 }}
           dragElastic={0.2}
           onDragEnd={handleDragEnd}
-          className="bg-[#262429] max-h-[80vh] rounded-t-xl w-full py-5"
+          className="bg-[#262429] max-h-[100vh] rounded-t-xl w-full py-5 overflow-y-auto hide-sb"
         >
           {authToggle ? <LoginForm /> : <RegisterForm />}
         </motion.div>
       </AnimatePresence>
     </div>
-    // <Drawer open={isOpen} onOpenChange={setIsOpen}>
-    //   <DrawerTrigger asChild>
-    //     <div className="z-[1200] flex items-center gap-2 flex-1">
-    //       <span className="z-[1200] text-[18px] ">点击登陆</span>
-    //       <ChevronRight size={18} />
-    //     </div>
-    //   </DrawerTrigger>
-    //   <DrawerContent className="border-0 bg-[#262429] max-h-[70vh] z-[2000]">
-    //     <div className="w-full px-5 py-7">
-    //       {authToggle ? (
-    //         <LoginForm setIsOpen={setIsOpen} />
-    //       ) : (
-    //         <RegisterForm setIsOpen={setIsOpen} />
-    //       )}
-    //     </div>
-    //   </DrawerContent>
-    // </Drawer>
   );
 };
 

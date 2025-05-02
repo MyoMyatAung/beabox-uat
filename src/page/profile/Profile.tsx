@@ -25,12 +25,11 @@ const Profile = () => {
   const headerRef = useRef(null);
   const [showHeader, setShowHeader] = useState(false);
   const user = useSelector((state: any) => state?.persist?.user) || "";
+  const isDrawerOpen = useSelector((state: any) => state.profile.isDrawerOpen);
   const { data, isLoading, refetch } = useGetMyOwnProfileQuery("", {
     skip: !user,
   });
-  // console.log(data, "profiledata");
   const progressData = data?.data?.level_progress;
-  // console.log(data, "data");
   const [show, setShow] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const dispatch = useDispatch();
@@ -90,15 +89,11 @@ const Profile = () => {
   if (isLoading) return <Loader />;
 
   return (
-    <div className="h-screen flex flex-col hide-sb max-w-[480px] mx-auto">
-      {/* <Covers /> */}
-
-      {/* {
-              user?.token
-                ? 'bg-[url("./assets/cover.jpg")]' ||
-                  'bg-[url("./assets/cover.jpg")]'
-                : 'bg-[url("./assets/cover.jpg")]'
-            }  */}
+    <div
+      className={`h-screen flex flex-col ${
+        isDrawerOpen ? "overflow-y-scroll" : ""
+      } hide-sb  max-w-[480px] mx-auto`}
+    >
       {showHeader ? (
         <>
           <div className="gradient-overlay2"></div>
@@ -106,7 +101,7 @@ const Profile = () => {
             className={`fixed top-0 w-full left-0 h-[155px] z-[1000] bg-cover bg-top bg-no-repeat`}
           >
             <AsyncDecryptedImage
-              imageUrl={user?.token ? (data?.data?.cover_photo || "") : ""}
+              imageUrl={user?.token ? data?.data?.cover_photo || "" : ""}
               defaultCover={defaultCover}
               className="fixed top-0 z-[1000] left-0 w-full h-[155px] object-cover object-center"
               alt="Cover"
@@ -117,7 +112,7 @@ const Profile = () => {
         <>
           <div className="gradient-overlay"></div>
           <AsyncDecryptedImage
-            imageUrl={user?.token ? (data?.data?.cover_photo || "") : ""}
+            imageUrl={user?.token ? data?.data?.cover_photo || "" : ""}
             defaultCover={defaultCover}
             className="fixed top-0 left-0 w-full h-[23vh] object-cover object-center"
             alt="Cover"
@@ -126,10 +121,10 @@ const Profile = () => {
       )}
       {isCopied && (
         <div className="w-full z-[1300] absolute top-[80vh] flex justify-center">
-        <p className="text-[14px] bg-[#191721] px-2 py-1 rounded-lg w-[83px] text-center">
-          已复制 ID
-        </p>
-      </div>
+          <p className="text-[14px] bg-[#191721] px-2 py-1 rounded-lg w-[83px] text-center">
+            已复制 ID
+          </p>
+        </div>
       )}
       {show && (
         <div className="fixed top-0 z-[2300] left-0 w-full h-full mx-auto flex flex-col justify-center items-center bg-black/80">
@@ -185,10 +180,7 @@ const Profile = () => {
         </div>
         <div className="z-[1900] flex my-5 justify-between items-center px-5">
           {user?.token ? (
-            <EditCover
-              coverimg={data?.data?.cover_photo}
-              refetch={refetch}
-            />
+            <EditCover coverimg={data?.data?.cover_photo} refetch={refetch} />
           ) : (
             <div></div>
           )}
