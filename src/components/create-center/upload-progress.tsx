@@ -49,7 +49,7 @@ const UploadProgress = ({
             style={{ width: `${uploadPercentage}%` }}
           ></div>
         </div>
-        {uploadedSize !== totalSize &&  (
+        {uploadedSize !== totalSize && (
           <button
             className="w-full bg-[#FFFFFF14] text-[16px] py-2 rounded-[16px] cursor-pointer"
             onClick={onCancel}
