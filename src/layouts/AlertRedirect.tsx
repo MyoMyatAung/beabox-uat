@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import "../page/explore/explore.css";
-import logo from "../assets/alertlogo.jpeg";
+import logo from "../assets/alertlogo.webp";
 import closeIcon from "../assets/close.png";
 import { useDispatch } from "react-redux";
 import { setPlay } from "@/page/home/services/playSlice";
@@ -142,7 +142,7 @@ const AlertRedirect: React.FC<AlertRedirectProps> = ({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <img
-                src={logoBlobUrl || logo}
+                src={logo}
                 alt=""
                 className="w-[50px] h-[50px]"
               />
