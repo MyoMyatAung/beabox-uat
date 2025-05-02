@@ -77,7 +77,8 @@ const VideoCard = ({ videoData }: any) => {
       // onClick={() => showDetailsVod(videoData)}
     >
       <div className="">
-        {!decryptedPhoto ? (
+        <div className="h-[170px] animate-pulse object-cover w-full object-center bg-[#FFFFFF1F]"></div>
+        {/* {!decryptedPhoto ? (
           <div className="h-[170px] animate-pulse object-cover w-full object-center bg-[#FFFFFF1F]"></div>
         ) : (
           <ImageWithPlaceholder
@@ -88,7 +89,7 @@ const VideoCard = ({ videoData }: any) => {
             alt="preview"
             src={videoData?.preview_image}
           />
-        )}
+        )} */}
       </div>
       <div className="absolute bottom-0 flex justify-between items-center px-2 w-full">
         <div className="flex items-center gap-1">
