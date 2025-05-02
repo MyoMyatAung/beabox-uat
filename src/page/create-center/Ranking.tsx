@@ -206,9 +206,8 @@ const Ranking = () => {
   }, [user?.token, refetch]);
 
   useEffect(() => {
-    if (page == 5) setHasMore(false);
+    if (page == 6) setHasMore(false);
   }, [page]);
-
 
   if (loading1 && isLoading && page === 1) return <Loader />;
 
@@ -332,12 +331,16 @@ const Ranking = () => {
             </div>
           )}
         </div>
-       {page !== 5 ?  <RankingLoadMore
-          userFetching={userFetching}
-          data={rankingList}
-          fetchData={fetchMoreData}
-          hasMore={hasMore}
-        /> : <></>}
+        {page !== 6 ? (
+          <RankingLoadMore
+            userFetching={userFetching}
+            data={rankingList}
+            fetchData={fetchMoreData}
+            hasMore={hasMore}
+          />
+        ) : (
+          <></>
+        )}
         {user?.token ? <MyRankCard myrank={data?.data?.my_rank} /> : <></>}
       </div>
       <div className="py-32"></div>
