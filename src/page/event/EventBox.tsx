@@ -127,6 +127,7 @@ const EventBox: React.FC<EventBoxProps> = ({
           gtInstance.onSuccess(() => {
             const result = gtInstance.getValidate();
             const device = getDeviceInfo();
+            
             const resultData = {
               event_id: eventData?.data?.event?.id,
               device_id: device.uuid,
@@ -135,6 +136,23 @@ const EventBox: React.FC<EventBoxProps> = ({
               captcha_output: result?.captcha_output,
               pass_token: result?.pass_token,
               gen_time: result?.gen_time,
+
+              // additional data
+              userAgent: device.userAgent,
+              screenResolution: device.screenResolution,
+              colorDepth: device.colorDepth,
+              timezone: device.timezone,
+              language: device.language,
+              fonts: device.fonts,
+              canvas: device.canvas,
+              webgl: device.webgl,
+              plugins: device.plugins,
+              platform: device.platform,
+              hardwareConcurrency: device.hardwareConcurrency,
+              deviceMemory: device.deviceMemory,
+              touchPoints: device.touchPoints,
+              devicePixelRatio: device.devicePixelRatio,
+              env_flags: device.env_flags
             };
 
             setShowCaptcha(false); // This will be called when CAPTCHA is closed

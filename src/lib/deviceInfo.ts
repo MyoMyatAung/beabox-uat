@@ -1,15 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
 // Device information service for webview integration
 
 /**
  * Device information interface
  */
-interface DeviceInfo {
-  deviceName: string;
-  uuid: string;
-  osVersion: string;
-  appVersion: string;
-}
+// interface DeviceInfo {
+//   deviceName: string;
+//   uuid: string;
+//   osVersion: string;
+//   appVersion: string;
+// }
 
 // Application version - single source of truth
 const APP_VERSION = '1.1.5.5';
@@ -160,13 +161,68 @@ const defaultDeviceInfo: DeviceInfo = {
 
 let deviceInfo: DeviceInfo = { ...defaultDeviceInfo };
 
+/**
+ * Collect environment flags that might indicate emulation or suspicious environments
+ */
+const collectEnvironmentFlags = (): string[] => {
+  const flags: string[] = [];
+  
+  // Check WebGL renderer for emulation signs
+  try {
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (gl) {
+      const renderer = gl.getParameter(gl.RENDERER);
+      if (/SwiftShader|llvmpipe|ANGLE/i.test(renderer)) {
+        flags.push(`suspicious_webgl:${renderer}`);
+      }
+    }
+  } catch (e) {
+    flags.push('webgl_error');
+  }
+  
+  return flags;
+}
+
+/**
+ * Simple hash function for strings
+ */
+const hashString = async (str: string): Promise<string> => {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(str);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
 export const initDeviceInfo = async () => {
   try {
     const fp = await FingerprintJS.load();
     const result = await fp.get();
+    
+    // Create enhanced payload with additional fingerprinting data
+    const c = result.components;
+    const payload = {
+      userAgent: navigator.userAgent,
+      screenResolution: `${screen.width}x${screen.height}`,
+      colorDepth: screen.colorDepth,
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      language: navigator.language,
+      fonts: c.fonts?.value || ['Arial', 'Times New Roman'],
+      canvas: await hashString(JSON.stringify(c.canvas?.value || '')),
+      webgl: await hashString(JSON.stringify(c.webgl?.value || '')),
+      plugins: Array.from(navigator.plugins).map(p => p.name),
+      platform: navigator.platform,
+      hardwareConcurrency: navigator.hardwareConcurrency || 0,
+      deviceMemory: (navigator as any).deviceMemory || 0,
+      touchPoints: navigator.maxTouchPoints || 0,
+      devicePixelRatio: window.devicePixelRatio || 1,
+      env_flags: collectEnvironmentFlags()
+    };
+    
     deviceInfo = {
       ...defaultDeviceInfo,
-      ...result.components,
+      ...payload
     };
   } catch (e) {
     console.warn('FingerprintJS failed:', e);
@@ -177,7 +233,7 @@ export const initDeviceInfo = async () => {
  * Device info event from native applications
  */
 interface DeviceInfoEvent extends CustomEvent {
-  detail: Partial<DeviceInfo>;
+  detail: Partial<any>;
 }
 
 /**
@@ -198,7 +254,7 @@ export const initDeviceInfoListener = (): void => {
 /**
  * Get current device information
  */
-export const getDeviceInfo = (): DeviceInfo => {
+export const getDeviceInfo = (): any => {
   return { ...deviceInfo };
 };
 
@@ -206,7 +262,7 @@ export const getDeviceInfo = (): DeviceInfo => {
  * Set device information manually
  * @param info Partial device information to update
  */
-export const setDeviceInfo = (info: Partial<DeviceInfo>): void => {
+export const setDeviceInfo = (info: Partial<any>): void => {
   deviceInfo = {
     ...deviceInfo,
     ...info
