@@ -422,15 +422,6 @@ input:checked + .slider:before {
   background-repeat: no-repeat;
 }
 
-.rankbg {
-  width: 100%;
-  height: 176px; /* Adjust as needed */
-  background-image: url("./assets/createcenter/rbg.png"); /* Replace with your image URL */
-  background-size: cover; /* Ensures the image covers the div */
-  background-position: center;
-  background-repeat: no-repeat; /* Prevents repetition */
-}
-
 .rankbg-gradient {
   width: 100%;
   height: 176px;
