@@ -175,10 +175,49 @@ const collectEnvironmentFlags = (): string[] => {
       const renderer = gl.getParameter(gl.RENDERER);
       if (/SwiftShader|llvmpipe|ANGLE/i.test(renderer)) {
         flags.push(`suspicious_webgl:${renderer}`);
+      } else {
+        // Always add the renderer info even if not suspicious
+        flags.push(`webgl:${renderer}`);
       }
+      
+      // Add WebGL vendor information
+      const vendor = gl.getParameter(gl.VENDOR);
+      flags.push(`webgl_vendor:${vendor}`);
     }
   } catch (e) {
     flags.push('webgl_error');
+  }
+  
+  // Check for automation-related properties
+  if (navigator.webdriver) {
+    flags.push('webdriver_detected');
+  }
+  
+  // Check for headless browser indicators
+  if (!('ontouchstart' in window) && navigator.maxTouchPoints === 0) {
+    flags.push('no_touch_support');
+  }
+  
+  // Check for inconsistent platform/userAgent
+  const ua = navigator.userAgent.toLowerCase();
+  const platform = navigator.platform.toLowerCase();
+  
+  if (ua.includes('android') && !platform.includes('linux')) {
+    flags.push('platform_ua_mismatch');
+  }
+  
+  if (ua.includes('iphone') && !platform.includes('iphone')) {
+    flags.push('platform_ua_mismatch');
+  }
+  
+  // Add browser features as flags
+  flags.push(`screen:${window.screen.width}x${window.screen.height}`);
+  flags.push(`dpr:${window.devicePixelRatio}`);
+  flags.push(`lang:${navigator.language}`);
+  
+  // Ensure we always have at least one flag
+  if (flags.length === 0) {
+    flags.push('standard_environment');
   }
   
   return flags;
