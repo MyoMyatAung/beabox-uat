@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 
 const AuthDrawer = () => {
+  
   const authToggle = useSelector((state: any) => state.profile.authToggle);
   const dispatch = useDispatch();
   const variants = {
@@ -46,7 +47,7 @@ const AuthDrawer = () => {
           onDragEnd={handleDragEnd}
           className="bg-[#262429] max-h-[100vh] rounded-t-xl w-full py-5 overflow-y-auto hide-sb"
         >
-          {authToggle ? <LoginForm /> : <RegisterForm />}
+          {authToggle ? <LoginForm /> : <RegisterForm setIsOpen={setIsDrawerOpen} />}
         </motion.div>
       </AnimatePresence>
     </div>

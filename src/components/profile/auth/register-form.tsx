@@ -269,7 +269,7 @@ const RegisterForm = ({ setIsOpen, refer_code, geetest_id }: any) => {
                   isLoading ||
                   !emailOrPhoneValue ||
                   !passwordValue ||
-                  passwordValue?.length < 8 ||
+                  passwordValue?.length < 6 ||
                   passwordValue?.length > 25
                 }
                 onClick={async () => {

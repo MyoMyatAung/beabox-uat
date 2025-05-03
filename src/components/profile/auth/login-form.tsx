@@ -301,7 +301,7 @@ const LoginForm = ({ setIsOpen }: any) => {
                   captchaLoading ||
                   !emailOrPhoneValue ||
                   !passwordValue ||
-                  passwordValue?.length < 8 ||
+                  passwordValue?.length < 6 ||
                   passwordValue?.length > 25
                 }
                 // type="submit"
