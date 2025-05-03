@@ -82,6 +82,14 @@ const LoginForm = ({ setIsOpen }: any) => {
       captcha_key: data?.data?.captcha_key,
     });
     setIsLoad(false);
+
+   if(!loginData){
+    const message = localStorage.getItem("auth-error")
+    setflashLoading(false);
+    setShow验证码(false);
+    setError(message);
+    setCaptcha("");
+   }
     if (loginData?.status) {
       dispatch(setUser(loginData?.data));
       dispatch(setIsDrawerOpen(false));
@@ -91,6 +99,8 @@ const LoginForm = ({ setIsOpen }: any) => {
       setflashLoading(false);
       setIsOpen(false);
     }
+
+
 
     // if (!lerror) {
     //   dispatch(setUser(loginData?.data));
