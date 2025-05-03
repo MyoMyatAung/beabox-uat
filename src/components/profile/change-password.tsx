@@ -72,6 +72,7 @@ const ChangePassword = () => {
                 onChange={(e: any) => setCurrentPassword(e.target.value)}
                 value={current_password}
                 type={show ? "text" : "password"}
+                minLength={6}
                 maxLength={25}
               />
               <div className="absolute right-0 bottom-3">
@@ -93,6 +94,7 @@ const ChangePassword = () => {
                 onChange={(e: any) => setNewPassword(e.target.value)}
                 value={new_password}
                 type={show2 ? "text" : "password"}
+                minLength={6}
                 maxLength={25}
               />
               <div className="absolute right-0 bottom-3">
@@ -106,21 +108,12 @@ const ChangePassword = () => {
             <h1 className="mt-5 text-red-500 text-sm">
               {error ? "当前密码错误" : ""}
             </h1>
-            {/* <Button
-              type="submit"
-              disabled={isLoading ? true : false}
-              className={`w-full ${
-                current_password.length > 1 && new_password?.length > 1
-                  ? "gradient-bg hover:gradient-bg"
-                  : "bg-[#FFFFFF0A] hover:bg-[#FFFFFF0A]"
-              }  bg-[#FFFFFF0A] mt-10 rounded-xl`}
-            >
-              Continue
-            </Button> */}
             <SubmitButton
               isLoading={isLoading}
               condition={
-                current_password.length >= 8 && new_password?.length >= 8
+                current_password.length >= 6 &&
+                new_password?.length >= 6 &&
+                current_password?.length === new_password?.length
               }
               text="设置新密码"
             />

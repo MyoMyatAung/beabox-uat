@@ -49,7 +49,7 @@ const ResetPassword = () => {
               onChange={(e) => setPassword1(e.target.value)}
               type={show1 ? "text" : "password"}
               className="block w-full py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none mt-2"
-              placeholder="密码必须为8-25个字符"
+              placeholder="密码必须为6-25个字符"
               maxLength={25}
             />
             <button
@@ -77,6 +77,7 @@ const ResetPassword = () => {
               type={show2 ? "text" : "password"}
               className="block w-full py-2 text-white bg-transparent bg-clip-padding transition ease-in-out m-0 focus:text-white focus:bg-transparent focus:outline-none mt-2"
               placeholder="再次确认您的新秘密"
+              minLength={6}
               maxLength={25}
             />
             <button
@@ -102,7 +103,11 @@ const ResetPassword = () => {
               isLoading={
                 (password === retypePassword ? false : true) || isLoading
               }
-              condition={password.length > 1 && retypePassword?.length > 1}
+              condition={
+                password.length >= 6 &&
+                retypePassword?.length >= 6 &&
+                password?.length === retypePassword?.length
+              }
             />
           </>
         </form>
