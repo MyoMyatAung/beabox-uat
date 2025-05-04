@@ -39,13 +39,22 @@ const ForgotPassword = () => {
       captcha,
       captcha_key: captchaData?.data?.captcha_key,
     });
-    if (!data?.status) {
-      setError("用户名不存在");
-      setShow验证码(false);
-    } else {
+    console.log(data?.data);
+    if (data?.data?.question) {
       dispatch(setForgotData(data?.data));
       navigate(paths.check_answer);
+    } else {
+      setError("用户名不存在");
+      setShow验证码(false);
     }
+
+    // if (!data?.status && !data?.data?.question) {
+    //   setError("用户名不存在");
+    //   setShow验证码(false);
+    // } else {
+    //   dispatch(setForgotData(data?.data));
+    //   navigate(paths.check_answer);
+    // }
   };
   // console.log(data, "cun");
   return (
