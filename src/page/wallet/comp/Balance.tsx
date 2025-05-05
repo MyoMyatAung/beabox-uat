@@ -15,6 +15,10 @@ import { paths } from "@/routes/paths";
 import { useSelector } from "react-redux";
 import balc from "../../../assets/wallet/balc.png";
 import RedBox from "./RedBox";
+import {
+  useGetCurrentEventQuery,
+  useLazyGetEventDetailsQuery,
+} from "@/store/api/events/eventApi";
 
 interface BalanceProps {}
 
@@ -22,6 +26,9 @@ const Balance: React.FC<BalanceProps> = () => {
   const [showBox, setShowBox] = useState(false);
   const [balance, setBalance] = useState("");
   const [isHidden, setIsHidden] = useState(false); // State to toggle visibility
+
+  const { data: currentEventData } = useGetCurrentEventQuery("");
+  const [triggerGetEventDetails] = useLazyGetEventDetailsQuery();
   const user = useSelector((state: any) => state?.persist?.user) || "";
   const { data, isLoading, refetch } = useGetMyOwnProfileQuery("", {
     skip: !user,
@@ -36,11 +43,17 @@ const Balance: React.FC<BalanceProps> = () => {
     setIsHidden((prev) => !prev);
   };
 
-  console.log(data);
+  // console.log(data);
 
   return (
     <div className="p-[20px]">
-      {showBox && <RedBox setShowBox={setShowBox} />}
+      {showBox && (
+        <RedBox
+          currentEventData={currentEventData}
+          triggerGetEventDetails={triggerGetEventDetails}
+          setShowBox={setShowBox}
+        />
+      )}
       <div className="balance_box p-[22px] flex flex-col gap-[12px]">
         {/* head */}
         {/* <img src={balc} alt="" /> */}

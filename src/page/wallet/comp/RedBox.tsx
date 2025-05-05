@@ -2,14 +2,23 @@ import React, { useEffect, useRef } from "react";
 import "../wallet.css";
 import invite from "../invite.png";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setDuration, setEventDetail } from "@/store/slices/eventSlice";
 
 interface RedBoxProps {
   setShowBox: any;
+  triggerGetEventDetails: any;
+  currentEventData: any;
 }
 
-const RedBox: React.FC<RedBoxProps> = ({ setShowBox }) => {
+const RedBox: React.FC<RedBoxProps> = ({
+  setShowBox,
+  currentEventData,
+  triggerGetEventDetails,
+}) => {
   const boxRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch()
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -24,6 +33,32 @@ const RedBox: React.FC<RedBoxProps> = ({ setShowBox }) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [setShowBox]);
+
+  const handleAnimationClick = async () => {
+    // if (!user?.token) {
+    //   dispatch(setIsDrawerOpen(true));
+    //   return;
+    // }
+
+    const eventId = currentEventData?.data?.id;
+    if (!eventId){
+      navigate("/wallet/invite")
+    }
+    // Only fetch event details if duration is 0
+    // if (currentDuration <= 0) {
+    try {
+      const eventDetails = await triggerGetEventDetails(eventId).unwrap();
+      dispatch(setEventDetail(eventDetails.data));
+      if (eventDetails.data?.event_start_time) {
+        dispatch(setDuration(eventDetails.data.event_start_time));
+      }
+    } catch (error) {
+      console.error("Failed to fetch event details:", error);
+    }
+    // }
+
+    navigate(`/events/lucky-draw/${eventId}`);
+  };
 
   return (
     <div className="h-screen bg-black/60 w-screen flex flex-col gap-[20px] justify-center items-center fixed top-0 left-0 z-[9999]">
@@ -56,7 +91,11 @@ const RedBox: React.FC<RedBoxProps> = ({ setShowBox }) => {
         </p>
         <div className=" flex flex-col justify-center items-center gap-[12px] w-full">
           {/* invite */}
-          <div onClick={() => navigate("/wallet/invite")} className=" w-full flex justify-between items-center p-[16px] red_popup_box_list">
+          <div
+            // onClick={() => navigate("/wallet/invite")}
+            onClick={() => handleAnimationClick()}
+            className=" w-full flex justify-between items-center p-[16px] red_popup_box_list"
+          >
             {/* content */}
             <div className=" flex gap-[12px] justify-center items-center">
               <img className=" w-[36px] h-[36px]" src={invite} alt="" />
@@ -86,7 +125,10 @@ const RedBox: React.FC<RedBoxProps> = ({ setShowBox }) => {
             </svg>
           </div>
           {/* upload */}
-          <div onClick={() => navigate("/creator/upload/video")} className=" w-full flex justify-between items-center p-[16px] red_popup_box_list">
+          <div
+            onClick={() => navigate("/creator/upload/video")}
+            className=" w-full flex justify-between items-center p-[16px] red_popup_box_list"
+          >
             {/* content */}
             <div className=" flex gap-[12px] justify-center items-center">
               {/* <img className=" w-[36px] h-[36px]" src={invite} alt="" /> */}
