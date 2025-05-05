@@ -35,7 +35,7 @@ const Luckydraw = () => {
   const { id } = useParams<{ id: string }>();
   const eventDetailsData = useSelector((state: any) => state.event.eventDetail);
   const currentDuration = useSelector((state: RootState) => state.event.event_start_time);
-  const timeZone = useSelector((state: RootState) => state.event.server_timezone)
+  const timeZone = useSelector((state: RootState) => state.event.eventDetail?.server_timezone)
   const durationRef = useRef(currentDuration);
   const [stats, setStats] = useState<EventDetail | null>(eventDetailsData);
   const [firstLoad, setFirstLoad] = useState(true);
@@ -102,7 +102,7 @@ const Luckydraw = () => {
   }
   const remainPrizeDigits = stats?.remaining_amount?.padStart(5, "0").split("");
   // const time = timeFormatter.format(new Date(Number(currentDuration) || 0));
-  const remainingTime = formatDateTime(Number(currentDuration) || 0, timeZone);
+  const remainingTime = formatDateTime(currentDuration, timeZone);
 
   // const remainingTime = time.startsWith("00:") ? time.slice(3) : time;
 
