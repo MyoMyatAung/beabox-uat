@@ -14,6 +14,8 @@ import {
 } from "@/store/api/profileApi";
 import TranLoader from "../shared/tran-loader";
 import ImageUpload from "../profile/image-upload";
+import loader from "@/page/home/vod_loader.gif";
+import Portal from "../profile/auth/Portal";
 
 const ProfilePhotoUpload = ({
   imgurl,
@@ -47,7 +49,16 @@ const ProfilePhotoUpload = ({
 
   return (
     <>
-      {isLoading || loading1 || loading2 ? <TranLoader /> : <></>}
+      {isLoading || loading1 || loading2 ? (
+        <Portal>
+          <div className="fixed inset-0 z-[9999] bg-[#00000099] flex justify-center items-center">
+            <div className="bg-[#000000E5] p-1 rounded">
+              <img src={loader} alt="Loading" className="w-14" />
+            </div>
+          </div>
+        </Portal>
+      ) : null}
+      {/* {isLoading || loading1 || loading2 ? <Loader /> : <></>} */}
       <Drawer open={isOpen} onOpenChange={setIsOpen}>
         <DrawerTrigger asChild>
           <div>

@@ -17,6 +17,7 @@ import backButton from "../../assets/backButton.svg";
 import Avatars from "@/components/avatar/avatars";
 import ProfilePhotoUpload from "@/components/shared/profile-photo-upload";
 import { useGetConfigQuery } from "@/store/api/createCenterApi";
+import Loader from "@/components/shared/loader";
 
 const ProfileDetail = () => {
   const [showAvatar, setShowAvatar] = useState(false);
@@ -27,6 +28,7 @@ const ProfileDetail = () => {
   const profileData = useSelector((state: any) => state?.persist?.profileData);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
   const { data: config } = useGetConfigQuery({});
+  const [uploadLoading, setUploadLoading] = useState(false);
 
   const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
     const data = new Uint8Array(arrayBuffer);
@@ -96,10 +98,11 @@ const ProfileDetail = () => {
     }, 2000);
   };
 
-  console.log(data?.data);
+  // console.log(data?.data);
 
   return (
     <>
+      {/* {!uploadLoading ? <Loader /> : <></>} */}
       {/* <TranLoader /> */}
       <div className="w-full h-screen px-5 bg-[#16131C]">
         {showAlert ? (
