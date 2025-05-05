@@ -5,13 +5,9 @@ import { Link } from "react-router-dom";
 import EditUsername from "@/components/profile/edit-username";
 import EditGender from "@/components/profile/edit-gender";
 import EditReferral from "@/components/profile/edit-referral";
-import ChangePassword from "@/components/profile/change-password";
 import EditBio from "@/components/profile/edit-bio";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  useGetMyOwnProfileQuery,
-  useGetMyProfileQuery,
-} from "@/store/api/profileApi";
+import { useGetMyOwnProfileQuery } from "@/store/api/profileApi";
 import { useEffect, useState } from "react";
 import { setProfileData } from "@/store/slices/persistSlice";
 import EditNickName from "@/components/profile/edit-nickname";
@@ -19,9 +15,8 @@ import EditRegion from "@/components/profile/edit-region";
 import logo from "@/assets/logo.svg";
 import backButton from "../../assets/backButton.svg";
 import Avatars from "@/components/avatar/avatars";
-import AvatarUpload from "@/components/avatar/avatar-upload";
 import ProfilePhotoUpload from "@/components/shared/profile-photo-upload";
-import ImageUpload from "@/components/profile/image-upload";
+import { useGetConfigQuery } from "@/store/api/createCenterApi";
 
 const ProfileDetail = () => {
   const [showAvatar, setShowAvatar] = useState(false);
@@ -31,6 +26,7 @@ const ProfileDetail = () => {
   const user = useSelector((state: any) => state?.persist?.user);
   const profileData = useSelector((state: any) => state?.persist?.profileData);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
+  const { data: config } = useGetConfigQuery({});
 
   const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
     const data = new Uint8Array(arrayBuffer);
@@ -50,7 +46,7 @@ const ProfileDetail = () => {
     await refetch();
   };
 
-  // console.log(data?.data?.user_profile_review_status, "pddata");
+  console.log(data?.data?.user_profile_review_status, "pddata");
   useEffect(() => {
     if (data?.status) dispatch(setProfileData(data?.data));
   }, []);
@@ -147,6 +143,7 @@ const ProfileDetail = () => {
           refetchHandler={refetchHandler}
           exist={data?.data?.user_profile_exist}
           refetch={refetch}
+          imageLimit={config?.data?.profile_image_limit}
         />
         {/* <ImageUpload imgurl={decryptedPhoto} /> */}
 

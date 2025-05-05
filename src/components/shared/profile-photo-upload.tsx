@@ -22,7 +22,8 @@ const ProfilePhotoUpload = ({
   reviewStatus,
   refetchHandler,
   exist,
-  refetch
+  refetch,
+  imageLimit,
 }: any) => {
   const [isOpen, setIsOpen] = useState(false);
   const [removeAvatar, { isLoading, data }] = useRemoveAvatarMutation();
@@ -76,7 +77,7 @@ const ProfilePhotoUpload = ({
           <div className="p-5">
             <h1 className="text-[16px] text-white text-center">头像</h1>
             <div className="space-y-5 mt-5">
-            {/* <ImageUpload
+              <ImageUpload
                 imgurl=""
                 reviewStatus={reviewStatus}
                 setIsOpen={setIsOpen}
@@ -85,8 +86,9 @@ const ProfilePhotoUpload = ({
                 settingUploadData={settingUploadData}
                 profileUpload={profileUpload}
                 refetch={refetch}
+                imageLimit={imageLimit}
               />
-              <Divider show={true} /> */}
+              <Divider show={true} />
               <div
                 className=""
                 onClick={() => {
