@@ -67,6 +67,7 @@ const RootLayout = ({ children }: any) => {
   const [code, setCode] = useState("");
   const [newData, setnewData] = useState(null);
   const user = useSelector((state: any) => state.persist.user);
+  const currentTab = useSelector((state: any) => state.home.currentTab);
 
   const { data: eventData } = useGetUserByReferalQuery(
     { referral_code: referCode }, // or safely cast if you're confident it's a string
@@ -310,6 +311,7 @@ const RootLayout = ({ children }: any) => {
         location.pathname === "/" &&
         !event &&
         showAnimation && 
+        currentTab === 2 &&
         (
           <div className="fixed bottom-[8rem] right-9 z-[9999] rounded-full p-2">
             <div className="relative">
