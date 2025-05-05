@@ -45,8 +45,6 @@ const ProfilePhotoUpload = ({
     refetchHandler();
   }, [isOpen]);
 
-  console.log(loading1, loading2, isLoading, "srcImg");
-
   return (
     <>
       {isLoading || loading1 || loading2 ? (
