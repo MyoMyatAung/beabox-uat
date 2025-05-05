@@ -23,7 +23,7 @@ const TopNavbar = ({
   ];
 
   return (
-    <div className="fixed top-5 left-0 px-5 right-0 flex justify-between items-center z-[9999] max-w-[480px] mx-auto">
+    <div className=" absolute top-5 left-0 px-5 right-0 flex justify-between items-center z-[9999] max-w-[480px] mx-auto">
       <div
         onClick={
           user?.token
