@@ -30,7 +30,7 @@ const Transit: React.FC<TransitProps> = ({}) => {
       setStatus(config?.data?.transaction_status_list);
     }
   }, [data, config]);
-  console.log(status)
+  console.log(status);
 
   // console.log(status)
   // const getStatusClass = (status: string) => {
@@ -63,10 +63,10 @@ const Transit: React.FC<TransitProps> = ({}) => {
     );
     return {
       backgroundColor: statusObj?.bg_color_code || "#777", // Default grey if not found
-      color: statusObj?.text_color_code || "#FFF", // Default white if not found
+      color: statusObj?.text_color_code || "#00FFC3", // Default white if not found
     };
   };
-  console.log(tran)
+  console.log(tran);
   return (
     <div className=" min-h-[50vh]">
       {/* header */}
@@ -107,11 +107,10 @@ const Transit: React.FC<TransitProps> = ({}) => {
                       key={ts.id}
                       className=" new_tran_box px-[12px] py-[20px] flex justify-between items-start"
                     >
-                      <div className=" flex gap-[12px] items-center w-[70%]">
-                       
+                      <div className=" flex gap-[12px] items-center w-[80%]">
                         <div className=" flex flex-col gap-[4px]">
                           <span className="new_tran_box_title">{ts.title}</span>
-                          <span className="block text-[#aaa] text-[14px] font-[500] leading-[20px] w-[70%] break-words">
+                          <span className="block text-[#aaa] text-[14px] font-[500] leading-[20px] w-[80%] break-words">
                             {ts.description}
                           </span>
 
@@ -121,7 +120,11 @@ const Transit: React.FC<TransitProps> = ({}) => {
                         </div>
                       </div>
                       <div className=" flex flex-col justify-center items-center gap-[6px]">
-                        <span>
+                        <span
+                          style={{
+                            color: getStatusClass(ts.status).color
+                          }}
+                        >
                           {ts.state === "increase" ? "+" : "-"} {ts.amount}
                         </span>
                         {ts.status && (
