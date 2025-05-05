@@ -2,7 +2,7 @@ import Stats from "@/components/profile/stats";
 import defaultCover from "@/assets/cover.jpg";
 import center from "@/assets/profile/center3.png";
 import VideoTabs from "@/components/profile/video-tabs";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { paths } from "@/routes/paths";
 import { useGetMyOwnProfileQuery } from "@/store/api/profileApi";
 import { useDispatch, useSelector } from "react-redux";
@@ -33,6 +33,14 @@ const Profile = () => {
   const [show, setShow] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const bellHandeler = () => {
+    if (user) {
+      navigate(paths.noti);
+    } else {
+      dispatch(setIsDrawerOpen(true));
+    }
+  };
 
   useEffect(() => {
     if (show) {
@@ -185,12 +193,12 @@ const Profile = () => {
             <div></div>
           )}
           <div className="z-[1900] flex gap-3 items-center">
-            <Link
-              to={paths.noti}
+            <div
+              onClick={bellHandeler}
               className="z-[1900] bg-[#FFFFFF12] w-10 h-10 rounded-full flex items-center justify-center"
             >
               <Bell />
-            </Link>
+            </div>
             <SettingBtn setShow={setShow} />
           </div>
         </div>
