@@ -46,11 +46,11 @@ const EditCover = ({ refetch, coverimg }: EditCoverProps) => {
       // Create a blob URL for preview
       const url = URL.createObjectURL(file);
       setBlobUrl(url);
-      
+
       // Convert to base64 only for API submission
       const base64 = await fileToBase64(file);
       setImage(url); // Use the blob URL for display
-      
+
       await settingUpload({
         filedata: base64,
         filePath: "cover_photo",
@@ -59,7 +59,7 @@ const EditCover = ({ refetch, coverimg }: EditCoverProps) => {
       console.error("Error handling file:", error);
     }
   };
-  
+
   // Helper function to convert File to base64 (only for API)
   const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {

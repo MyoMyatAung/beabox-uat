@@ -1,20 +1,4 @@
-import {
-  useProfileUploadMutation,
-  useSettingUploadMutation,
-} from "@/store/api/profileApi";
-import { Camera } from "lucide-react";
-
 import { useEffect, useState } from "react";
-import Loader from "../shared/loader";
-import TranLoader from "../shared/tran-loader";
-import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
-
-// interface ImageUploadProps {
-//   imgurl: string;
-//   reviewStatus: any;
-//   setIsOpen: (isOpen: boolean) => void;
-//   refetchHandler: () => void;
-// }
 
 const ImageUpload = ({
   imgurl,
@@ -25,18 +9,26 @@ const ImageUpload = ({
   settingUploadData,
   profileUpload,
   refetch,
+  imageLimit,
 }: any) => {
   const [image, setImage] = useState<string | null>(null);
   const [blobUrl, setBlobUrl] = useState<string | null>(null);
-  // const [settingUpload, { data: settingUploadData, isLoading: loading1 }] =
-  //   useSettingUploadMutation();
-
-  // const [profileUpload, { data: profileUploadData, isLoading: loading2 }] =
-  //   useProfileUploadMutation();
+  const [error, setError] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsOpen(false);
-    if (e.target.files && e.target.files[0]) handleFile(e.target.files[0]);
+    setError(null); // Reset error state
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+
+      // Validate file size (2MB limit)
+      if (file.size > imageLimit * 1024 * 1024) {
+        setError("文件大小超过2MB限制");
+        return;
+      }
+
+      handleFile(file);
+    }
   };
 
   const handleFile = async (file: File) => {
@@ -72,10 +64,8 @@ const ImageUpload = ({
   };
 
   useEffect(() => {
-    // setIsOpen(false);
     if (settingUploadData?.status)
       profileUpload({ file_url: settingUploadData?.data?.url });
-    // refetchHandler();
   }, [settingUploadData]);
 
   // Cleanup blob URLs when component unmounts
@@ -102,7 +92,7 @@ const ImageUpload = ({
                   上传图片
                 </h1>
                 <p className="text-[12px] text-[#888888]">
-                  上传 PNG/JPG，限1MB
+                  上传 PNG/JPG，限{imageLimit}MB
                 </p>
               </div>
               {reviewStatus === "pending" ? (
@@ -114,22 +104,6 @@ const ImageUpload = ({
               )}
             </div>
           </label>
-          {/* {image ? (
-            <label htmlFor="image-upload" className="">
-              <div className="flex justify-center items-center relative">
-                <AsyncDecryptedImage
-                  imageUrl={image || "/placeholder.svg"}
-                  alt="Preview"
-                  className="w-[80px] h-[80px] rounded-full bg-[#FFFFFF12] flex justify-center items-center object-cover object-center filter saturate-50 brightness-75"
-                />
-                <div className="absolute">
-                  <Camera />
-                </div>
-              </div>
-            </label>
-          ) : (
-            <></>
-          )} */}
           <input
             type="file"
             accept="image/*"
@@ -137,31 +111,6 @@ const ImageUpload = ({
             className="hidden"
             id="image-upload"
           />
-          {/* {!image && !imgurl?.length ? (
-            <label htmlFor="image-upload" className="">
-              <div className="w-[80px] h-[80px] rounded-full bg-[#FFFFFF12] flex justify-center items-center mx-auto">
-                <Camera />
-              </div>
-            </label>
-          ) : (
-            <></>
-          )}
-          {!image && imgurl?.length ? (
-            <label htmlFor="image-upload" className="">
-              <div className="flex justify-center items-center relative">
-                <img
-                  src={imgurl}
-                  alt="Preview"
-                  className="w-[80px] h-[80px] rounded-full bg-[#FFFFFF12] flex justify-center items-center object-cover object-center filter saturate-50 brightness-75"
-                />
-                <div className="absolute">
-                  <Camera />
-                </div>
-              </div>
-            </label>
-          ) : (
-            <></>
-          )} */}
         </div>
       </div>
     </>
