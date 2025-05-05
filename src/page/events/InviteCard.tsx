@@ -1,13 +1,13 @@
-import UserSvg from "@/assets/icons/User.svg";
-import Group from "@/assets/icons/Group.svg";
-import Vector from "@/assets/icons/Vector.svg";
-import SendSvg from "@/assets/icons/send.svg";
+import UserSvg from "@/assets/User.png";
+import Group from "@/assets/Group.png";
+import Vector from "@/assets/Vector.png";
+import SendSvg from "@/assets/send.png";
 import Participate from "@/assets/participate.png"
 import React from "react";
 const InviteCard:React.FC = () => {
   return (
     <div className="rounded-lg w-full max-w-md">
-      <img src={Participate} className="mx-auto"/>
+      <img src={Participate} className="mx-auto max-w-[89px]"/>
       <div className="flex justify-around items-center text-center text-white my-3 mt-5">
         <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: "rgba(255, 255, 255, 0.2)" }}>
           <img src={UserSvg} alt="" className="w-7 h-7 text-white" />

@@ -11,7 +11,7 @@ import InviteCard from "./InviteCard";
 import Rule from "./Rule";
 import eventPage from "@/assets/eventpage.jpg";
 import eventTitle from "@/assets/eventTitle.png";
-import Pricebg from "@/assets/prizeBg.svg";
+import Pricebg from "@/assets/prizeBg.png";
 import Paper from "@/assets/Paper.png";
 import { EventDetail } from "@/@types/lucky_draw";
 import DrawTime from "@/assets/draw_time.png";
@@ -275,9 +275,9 @@ const Luckydraw = () => {
             maxHeight: '295px'
           }}
         >
-          <div className="bg-[#f14884] rounded-[12px] py-4 px-3 mt-8">
+          <div className="rounded-[12px] py-2 px-2 mt-8">
             <div
-              className="rounded-[12px] w-full font-[700] p-3 text-[#4E4E4E] leading-[22px] font-sf mx-auto bg-transparent"
+              className="rounded-[12px] w-full font-[700] p-3 text-[#4E4E4E] leading-[22px] font-sf mx-auto bg-transparent max-w-[305px]"
               style={{
                 background:
                   "linear-gradient(180deg, #FFFFFF 0%, #FFC989 152.27%)",
