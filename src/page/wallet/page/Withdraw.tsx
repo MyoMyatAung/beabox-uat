@@ -80,7 +80,7 @@ const Withdraw: React.FC<WithdrawProps> = ({}) => {
               to={paths.wallet_recharge}
               amountType={"¥"}
             />
-            {isLoading ? (
+            {isLoading || !data || !config ? (
               <div className=" flex justify-center items-center py-[100px]">
                 <div className="heart">
                   <img
