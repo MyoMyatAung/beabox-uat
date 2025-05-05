@@ -110,7 +110,7 @@ const Transit: React.FC<TransitProps> = ({}) => {
                       <div className=" flex gap-[12px] items-center w-[80%]">
                         <div className=" flex flex-col gap-[4px]">
                           <span className="new_tran_box_title">{ts.title}</span>
-                          <span className="block text-[#aaa] text-[14px] font-[500] leading-[20px] w-[80%] break-words">
+                          <span className="block text-[#aaa] text-[13px] font-[500] leading-[20px] w-[80%] break-words">
                             {ts.description}
                           </span>
 
@@ -121,9 +121,14 @@ const Transit: React.FC<TransitProps> = ({}) => {
                       </div>
                       <div className=" flex flex-col justify-center items-center gap-[6px]">
                         <span
-                          style={{
-                            color: getStatusClass(ts.status).color
-                          }}
+                          // style={{
+                          //   color: getStatusClass(ts.status).color
+                          // }}
+                          className={`${
+                            ts.state === "increase"
+                              ? " text-[#00FFC3]"
+                              : " text-[#FF7245]"
+                          }`}
                         >
                           {ts.state === "increase" ? "+" : "-"} {ts.amount}
                         </span>

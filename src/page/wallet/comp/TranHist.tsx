@@ -206,7 +206,7 @@ const TranHist: React.FC = () => {
                             <span className="new_tran_box_title">
                               {ts.title}
                             </span>
-                            <span className="block text-[#aaa] text-[14px] font-[500] leading-[20px] w-[80%] break-words">
+                            <span className="block text-[#aaa] text-[13px] font-[500] leading-[20px] w-[80%] break-words">
                               {ts.description}
                             </span>
                             <span className=" text-[#777] text-[12px] font-[400] leading-[20px]">
@@ -216,9 +216,14 @@ const TranHist: React.FC = () => {
                         </div>
                         <div className=" flex flex-col justify-center items-center gap-[6px]">
                           <span
-                            style={{
-                              color: getStatusClass(ts.status).color,
-                            }}
+                            // style={{
+                            //   color: getStatusClass(ts.status).color,
+                            // }}
+                            className={`${
+                              ts.state === "increase"
+                                ? " text-[#00FFC3]"
+                                : " text-[#FF7245]"
+                            }`}
                           >
                             {ts.state === "increase" ? "+" : "-"} {ts.amount}
                           </span>
