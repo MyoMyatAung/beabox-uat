@@ -48,7 +48,7 @@ const FlipNumber = ({
     fontFamily: "Ultra",
     fontWeight: 400,
     fontSize: "39px",
-    lineHeight: "27px",
+    // lineHeight: "27px",
     letterSpacing: "0%",
     display: "inline-block",
     textAlign: "center" as const,
@@ -90,7 +90,7 @@ const FlipNumber = ({
               ...gradientStyle,
               WebkitTextStroke: "1px rgba(255, 76, 28, 1)",
               position: "absolute",
-              transform: "scale(1.2, 1.1)", 
+              // transform: "scale(1.2, 1.1)", 
               zIndex: 2,
             }}
           >
