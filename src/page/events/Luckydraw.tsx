@@ -11,7 +11,7 @@ import InviteCard from "./InviteCard";
 import Rule from "./Rule";
 import eventPage from "@/assets/eventpage.jpg";
 import eventTitle from "@/assets/eventTitle.png";
-import Pricebg from "@/assets/prizeBg.webp";
+import Pricebg from "@/assets/prizeBg.svg";
 import Paper from "@/assets/Paper.png";
 import { EventDetail } from "@/@types/lucky_draw";
 import DrawTime from "@/assets/draw_time.png";
@@ -26,6 +26,8 @@ import { RootState } from "@/store/store";
 import { startTimer, stopTimer } from "./timer"; 
 import { Link } from "react-router-dom";
 import { paths } from "@/routes/paths";
+import { setIsDrawerOpen } from "@/store/slices/profileSlice";
+import AuthDrawer from "@/components/profile/auth/auth-drawer";
 
 const Luckydraw = () => {
   const navigate = useNavigate();
@@ -37,6 +39,8 @@ const Luckydraw = () => {
   const durationRef = useRef(currentDuration);
   const [stats, setStats] = useState<EventDetail | null>(eventDetailsData);
   const [firstLoad, setFirstLoad] = useState(true);
+  const user = useSelector((state: any) => state.persist.user);
+  const isOpen = useSelector((state: any) => state.profile.isDrawerOpen);
 
   // const {
   //   data: newEventDetails,
@@ -103,6 +107,10 @@ const Luckydraw = () => {
   // const remainingTime = time.startsWith("00:") ? time.slice(3) : time;
 
   const handleCopyClick = async () => {
+    if (!user?.token) {
+      dispatch(setIsDrawerOpen(true));
+      return;
+    }
     try {
       const result = await triggerGetUserShareInfo('').unwrap();
       const contentUrl = result?.data?.content;
@@ -156,6 +164,14 @@ const Luckydraw = () => {
     }
   };
   
+  const handleWithdrawClick = () => {
+    if (!user?.token) {
+      dispatch(setIsDrawerOpen(true));
+      return;
+    }
+    navigate(paths.wallet_withdraw);
+  };
+
   return (
     <div className="relative max-w-[480px] min-h-screen bg-no-repeat items-center mx-auto">
       <div
@@ -303,23 +319,23 @@ const Luckydraw = () => {
                 </div>
               </div>
 
-              <Link to={paths.wallet_withdraw}>
-                <button
-                  className="bg-red-500 text-white mt-4 w-full py-3 rounded-[8px] font-bold flex items-center justify-center"
-                  style={{
-                    background:
-                      "linear-gradient(166.1deg, #FF637D 45.09%, #F11F5D 65.22%, #FF1278 86.11%, #FF38B9 104.96%)",
-                  }}
-                >
-                  立即提现
-                  <img src={DownloadSvg} className="ml-3" />
-                </button>
-              </Link>
+              <button
+                onClick={handleWithdrawClick}
+                className="bg-red-500 text-white mt-4 w-full py-3 rounded-[8px] font-bold flex items-center justify-center"
+                style={{
+                  background:
+                    "linear-gradient(166.1deg, #FF637D 45.09%, #F11F5D 65.22%, #FF1278 86.11%, #FF38B9 104.96%)",
+                }}
+              >
+                立即提现
+                <img src={DownloadSvg} className="ml-3" />
+              </button>
             </div>
           </div>
         </div>
         <Rule />
       </div>
+      {isOpen ? <AuthDrawer /> : <></>}
     </div>
   );
 };

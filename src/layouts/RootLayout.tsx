@@ -231,10 +231,10 @@ const RootLayout = ({ children }: any) => {
     return <Landing onComplete={handleLandingComplete} />;
   }
   const handleAnimationClick = async () => {
-    if (!user?.token) {
-      dispatch(setIsDrawerOpen(true));
-      return;
-    }
+    // if (!user?.token) {
+    //   dispatch(setIsDrawerOpen(true));
+    //   return;
+    // }
 
     const eventId = currentEventData?.data?.id;
     if (!eventId) return;
@@ -309,7 +309,8 @@ const RootLayout = ({ children }: any) => {
         !isOpen &&
         location.pathname === "/" &&
         !event &&
-        showAnimation && (
+        showAnimation && 
+        (
           <div className="fixed bottom-[8rem] right-9 z-[9999] rounded-full p-2">
             <div className="relative">
               <button
