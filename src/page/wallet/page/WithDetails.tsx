@@ -321,7 +321,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
         {/* upload */}
         <div className="">
           <label className="text-white text-[16px] font-[400] leading-[20px]">
-            Upload a Proof Screenshot ({images.length}/10){" "}
+            上传证明截图 ({images.length}/10){" "}
             <span className=" text-[#FF3B65]">*</span>
           </label>
 
