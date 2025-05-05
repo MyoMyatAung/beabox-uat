@@ -44,7 +44,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
   const [bankInfo, setBankInfo] = useState<{ [key: string]: string }>({});
   const [uploadImage, { isLoading: uploadLoading }] =
     useWallUploadImageMutation();
-  console.log(" this is mf", data);
+  // console.log(" this is mf", data);
   const rule = config?.data?.withdraw_rule;
   // console.log(rule);
 
@@ -91,7 +91,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
 
   const isFormValid =
     // Ensure balance is greater than or equal to amount
-    // amount >= data.data.total_income &&
+    amount <= data.data?.total_income &&
     images.length !== 0 &&
     amount !== "" && // Ensure amount is not empty
     selectedPayment !== "" &&
