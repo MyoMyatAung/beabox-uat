@@ -9,10 +9,16 @@ import Loader from "@/components/shared/loader";
 import Divider from "@/components/shared/divider";
 import System from "@/assets/profile/system1.png";
 import Balance from "@/assets/profile/balance1.png";
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 
 const Noti = () => {
-  const { data, isLoading } = useGetNotiQuery("");
-  // console.log(data, "notis");
+  const { data, isLoading, refetch } = useGetNotiQuery("");
+  const [loading, setLoading] = useState(false);
+  const user = useSelector((state: any) => state.persist.user);
+  useEffect(() => {
+    if (user) refetch();
+  }, [user, refetch]);
   if (isLoading) return <Loader />;
   return (
     <div className="w-full h-screen bg-[#16131C] px-5 flex flex-col items-center justify-between no-scrollbar">
