@@ -11,6 +11,13 @@ import { X } from "lucide-react";
 import { useSelector } from "react-redux";
 import { useChangeReferralCodeMutation } from "@/store/api/profileApi";
 import Loader from "../shared/loader";
+function isWebView() {
+  return (
+    (window as any).webkit &&
+    (window as any).webkit.messageHandlers &&
+    (window as any).webkit.messageHandlers.jsBridge
+  );
+}
 const EditReferral = ({
   referral_code,
   showAlertHandler,
@@ -19,6 +26,7 @@ const EditReferral = ({
   const [isOpen, setIsOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [value, setValue] = useState("");
+  const [vh, setVh] = useState("100vh");
   const closeRef = useRef<HTMLButtonElement>(null);
   const user = useSelector((state: any) => state?.persist?.user);
   const [changeRerralCode, { data, isLoading, error }] =
@@ -43,6 +51,10 @@ const EditReferral = ({
   useEffect(() => {
     setValue(referral_code);
   }, [isOpen]);
+  useEffect(() => {
+    // setVh(isMobile ? "95vh" : "100vh");
+    setVh(isWebView() ? "100vh" : "100dvh");
+  }, []);
   // console.log(referral_code, "referral code data");
   return (
     <Drawer open={isOpen} onOpenChange={handleOpenChange}>
@@ -68,10 +80,10 @@ const EditReferral = ({
           </div>
         </DrawerTrigger>
       )}
-      <DrawerContent className="border-0">
+      <DrawerContent className="border-0" style={{ height: vh }}>
         {isLoading ? <Loader /> : <></>}
 
-        <div className="w-full h-screen px-5">
+        <div className="w-full px-5">
           <div className="flex justify-between items-center py-5">
             <DrawerClose>
               <button>
@@ -79,7 +91,7 @@ const EditReferral = ({
               </button>
             </DrawerClose>
             <p className="text-[16px]">我的推广达人</p>
-            <div></div>
+            <div className="px-3"></div>
           </div>
           <form onSubmit={onSubmitHandler}>
             <label htmlFor="" className="text-[14px] text-[#888] pt-10">

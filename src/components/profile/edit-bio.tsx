@@ -12,6 +12,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { setBio } from "@/store/slices/persistSlice";
 import SubmitButton from "../shared/submit-button";
 import Loader from "../shared/loader";
+import { isWebView } from "@/lib/utils";
+import { showToast } from "@/page/home/services/errorSlice";
 
 const EditBio = ({ bio, refetchHandler }: any) => {
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -21,6 +23,11 @@ const EditBio = ({ bio, refetchHandler }: any) => {
   const maxLength = 100;
   const [changeBio, { data, isLoading }] = useChangeBioMutation();
   const dispatch = useDispatch();
+  const [vh, setVh] = useState("100vh");
+  useEffect(() => {
+    // setVh(isMobile ? "95vh" : "100vh");
+    setVh(isWebView() ? "100vh" : "100dvh");
+  }, []);
   const onSubmitHandler = async (e: any) => {
     e.preventDefault();
     dispatch(setBio(value));
@@ -28,6 +35,12 @@ const EditBio = ({ bio, refetchHandler }: any) => {
     await refetchHandler();
     // setIsOpen(false);
     closeRef.current?.click();
+    dispatch(
+      showToast({
+        message: "设置成功",
+        type: "error",
+      })
+    );
   };
 
   const setValueHandler = (e: any) => {
@@ -55,14 +68,16 @@ const EditBio = ({ bio, refetchHandler }: any) => {
         <div className="text-[14px] flex items-center justify-between">
           <h1>个性签名</h1>
           <p className="flex items-start gap-1 text-[#888]">
-            <span className="max-w-[200px] ml-auto truncate">{bio ? bio : ""}</span>
+            <span className="max-w-[200px] ml-auto truncate">
+              {bio ? bio : ""}
+            </span>
             <FaAngleRight className="mt-1" />
           </p>
         </div>
       </DrawerTrigger>
-      <DrawerContent className="border-0">
+      <DrawerContent className="border-0" style={{ height: vh }}>
         {isLoading ? <Loader /> : <></>}
-        <div className="w-full px-5 c-height bg-[#16131C]">
+        <div className="w-full px-5 bg-[#16131C]">
           <div className="flex justify-between items-center py-5">
             <DrawerClose className="z-[1200]">
               <button>
@@ -70,7 +85,7 @@ const EditBio = ({ bio, refetchHandler }: any) => {
               </button>
             </DrawerClose>
             <p className="text-[16px]">个性签名</p>
-            <div></div>
+            <div className="px-3"></div>
           </div>
           <form onSubmit={onSubmitHandler}>
             <label htmlFor="" className="text-[14px] text-[#888] pt-10">

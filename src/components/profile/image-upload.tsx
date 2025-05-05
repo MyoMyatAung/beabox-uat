@@ -1,4 +1,6 @@
+import { showToast } from "@/page/home/services/errorSlice";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
 const ImageUpload = ({
   imgurl,
@@ -14,7 +16,7 @@ const ImageUpload = ({
   const [image, setImage] = useState<string | null>(null);
   const [blobUrl, setBlobUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-
+  const dispatch = useDispatch();
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsOpen(false);
     setError(null); // Reset error state
@@ -23,7 +25,13 @@ const ImageUpload = ({
 
       // Validate file size (2MB limit)
       if (file.size > imageLimit * 1024 * 1024) {
-        setError("文件大小超过2MB限制");
+        // setError("文件大小超过2MB限制");
+        dispatch(
+          showToast({
+            message: "文件大小超过2MB限制",
+            type: "error",
+          })
+        );
         return;
       }
 
