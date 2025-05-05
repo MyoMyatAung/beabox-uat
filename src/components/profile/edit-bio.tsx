@@ -13,6 +13,7 @@ import { setBio } from "@/store/slices/persistSlice";
 import SubmitButton from "../shared/submit-button";
 import Loader from "../shared/loader";
 import { isWebView } from "@/lib/utils";
+import { showToast } from "@/page/home/services/errorSlice";
 
 const EditBio = ({ bio, refetchHandler }: any) => {
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -34,6 +35,12 @@ const EditBio = ({ bio, refetchHandler }: any) => {
     await refetchHandler();
     // setIsOpen(false);
     closeRef.current?.click();
+    dispatch(
+      showToast({
+        message: "设置成功",
+        type: "error",
+      })
+    );
   };
 
   const setValueHandler = (e: any) => {

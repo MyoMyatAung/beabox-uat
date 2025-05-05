@@ -8,12 +8,13 @@ import {
 import { Button } from "../ui/button";
 import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useChangeUsernameMutation } from "@/store/api/profileApi";
 import { useNavigate } from "react-router-dom";
 import SubmitButton from "../shared/submit-button";
 import Loader from "../shared/loader";
 import { isWebView } from "@/lib/utils";
+import { showToast } from "@/page/home/services/errorSlice";
 
 const EditUsername = ({
   username,
@@ -28,14 +29,19 @@ const EditUsername = ({
   const [changeUsername, { data, isLoading }] = useChangeUsernameMutation();
   const navigate = useNavigate();
   const closeRef = useRef<HTMLButtonElement>(null);
-
+  const dispatch = useDispatch();
   const onSubmitHandler = async (e: any) => {
     e.preventDefault();
 
     await changeUsername({ username: value });
     await refetchHandler();
-    // setIsOpen(false);
     closeRef.current?.click();
+    dispatch(
+      showToast({
+        message: "设置成功",
+        type: "error",
+      })
+    );
   };
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
