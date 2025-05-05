@@ -80,10 +80,10 @@ const EditReferral = ({
           </div>
         </DrawerTrigger>
       )}
-      <DrawerContent className="border-0">
+      <DrawerContent className="border-0" style={{ height: vh }}>
         {isLoading ? <Loader /> : <></>}
 
-        <div className="w-full px-5" style={{ height: vh }}>
+        <div className="w-full px-5">
           <div className="flex justify-between items-center py-5">
             <DrawerClose>
               <button>
@@ -91,7 +91,7 @@ const EditReferral = ({
               </button>
             </DrawerClose>
             <p className="text-[16px]">我的推广达人</p>
-            <div></div>
+            <div className="px-3"></div>
           </div>
           <form onSubmit={onSubmitHandler}>
             <label htmlFor="" className="text-[14px] text-[#888] pt-10">
