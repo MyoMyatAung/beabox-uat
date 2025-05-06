@@ -1,5 +1,8 @@
-import React, { useState, useEffect, forwardRef } from "react";
+import React, { useState, useEffect, forwardRef, memo } from "react";
 import { decryptImage } from "./imageDecrypt";
+
+// Global image cache to avoid re-decrypting the same images
+const imageCache: Record<string, string> = {};
 
 export interface AsyncDecryptedImageProps
   extends React.ImgHTMLAttributes<HTMLImageElement> {
@@ -7,7 +10,7 @@ export interface AsyncDecryptedImageProps
   defaultCover?: string;
 }
 
-const AsyncDecryptedImage = forwardRef<
+const AsyncDecryptedImage = memo(forwardRef<
   HTMLImageElement,
   AsyncDecryptedImageProps
 >(
@@ -15,11 +18,22 @@ const AsyncDecryptedImage = forwardRef<
     { imageUrl, defaultCover = "", alt, className, ...props },
     ref
   ) => {
-    const [src, setSrc] = useState(defaultCover);
-    const [isLoading, setIsLoading] = useState(true);
+    const [src, setSrc] = useState(() => {
+      // Initialize with cached image if available
+      return imageCache[imageUrl] || defaultCover;
+    });
+    const [isLoading, setIsLoading] = useState(!imageCache[imageUrl]);
 
     useEffect(() => {
       let isMounted = true;
+      
+      // If the image is already in cache, use it immediately
+      if (imageCache[imageUrl]) {
+        setSrc(imageCache[imageUrl]);
+        setIsLoading(false);
+        return;
+      }
+
       // Capture the previous blob URL to revoke it on cleanup
       const previousBlobUrl = src && src !== defaultCover ? src : null;
 
@@ -38,14 +52,14 @@ const AsyncDecryptedImage = forwardRef<
       async function loadImage() {
         try {
           const decryptedUrl = await decryptImage(imageUrl, defaultCover);
+          
+          // Add to cache
+          imageCache[imageUrl] = decryptedUrl;
+          
           if (isMounted) {
             setSrc(decryptedUrl);
-            // Add a small delay before showing the image to ensure it's fully loaded
-            setTimeout(() => {
-              if (isMounted) {
-                setIsLoading(false);
-              }
-            }, 50);
+            // Set loaded immediately since we're caching
+            setIsLoading(false);
           } else if (decryptedUrl.startsWith('blob:')) {
             // Clean up blob URL if component is no longer mounted
             URL.revokeObjectURL(decryptedUrl);
@@ -64,21 +78,11 @@ const AsyncDecryptedImage = forwardRef<
       return () => {
         isMounted = false;
         // Revoke previous blob URL to prevent memory leaks
-        if (previousBlobUrl && previousBlobUrl.startsWith("blob:")) {
+        if (previousBlobUrl && previousBlobUrl.startsWith("blob:") && previousBlobUrl !== imageCache[imageUrl]) {
           URL.revokeObjectURL(previousBlobUrl);
         }
       };
     }, [imageUrl, defaultCover]);
-
-    // Add another effect to clean up blob URL when component unmounts
-    useEffect(() => {
-      return () => {
-        // Final cleanup when component unmounts
-        if (src && src.startsWith("blob:")) {
-          URL.revokeObjectURL(src);
-        }
-      };
-    }, []);
 
     // Use the same style of img but with opacity transition while loading
     return <img 
@@ -93,7 +97,11 @@ const AsyncDecryptedImage = forwardRef<
       {...props} 
     />;
   }
-);
+), (prevProps, nextProps) => {
+  // Custom comparison function for memo
+  // Only re-render if the imageUrl changed
+  return prevProps.imageUrl === nextProps.imageUrl;
+});
 
 AsyncDecryptedImage.displayName = "AsyncDecryptedImage";
 
