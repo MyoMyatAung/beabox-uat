@@ -310,9 +310,8 @@ const RootLayout = ({ children }: any) => {
         !isOpen &&
         location.pathname === "/" &&
         !event &&
-        showAnimation && 
-        currentTab === 2 &&
-        (
+        showAnimation &&
+        currentTab === 2 && (
           <div className="fixed bottom-[8rem] right-9 z-[9999] rounded-full p-2">
             <div className="relative">
               <button

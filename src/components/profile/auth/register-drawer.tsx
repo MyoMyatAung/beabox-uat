@@ -15,15 +15,17 @@ const RegisterDrawer = ({
 }) => {
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
-      <DrawerContent className="border-0 bg-[#262429] min-h-[65vh] z-[2000]">
-        <div className="w-full px-5 py-7">
-          <RegisterForm
-            setIsOpen={setIsOpen}
-            refer_code={code}
-            geetest_id={geetest_id}
-          />
-        </div>
-      </DrawerContent>
+      <div className="fixed inset-0">
+        <DrawerContent className="border-0 bg-[#262429]  min-h-[45vh] z-[2000]">
+          <div className="w-full px-5 py-7">
+            <RegisterForm
+              setIsOpen={setIsOpen}
+              refer_code={code}
+              geetest_id={geetest_id}
+            />
+          </div>
+        </DrawerContent>
+      </div>
     </Drawer>
   );
 };
