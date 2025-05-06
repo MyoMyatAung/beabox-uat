@@ -150,6 +150,8 @@ const WithDetails: React.FC<WithDetailsProps> = ({
   const submitHandler = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
+    if (!isFormValid) return;
+
     if (amount >= data.data?.total_income) {
       console.log(data.data?.total_income, amount);
       dispatch(
@@ -160,8 +162,6 @@ const WithDetails: React.FC<WithDetailsProps> = ({
       );
       return;
     }
-
-    if (!isFormValid) return;
 
     try {
       // 1. Convert all files to base64 in parallel
