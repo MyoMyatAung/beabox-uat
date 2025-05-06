@@ -34,7 +34,7 @@ const Luckydraw = () => {
   const dispatch = useDispatch();
   const { id } = useParams<{ id: string }>();
   const eventDetailsData = useSelector((state: any) => state.event.eventDetail);
-  const currentDuration = useSelector((state: RootState) => state.event.event_start_time);
+  const currentDuration = useSelector((state: RootState) => state.event.eventDetail?.event_end_time);
   const timeZone = useSelector((state: RootState) => state.event.eventDetail?.server_timezone)
   const durationRef = useRef(currentDuration);
   const [stats, setStats] = useState<EventDetail | null>(eventDetailsData);
