@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import BalNew from "./BalNew";
 import { useNavigate } from "react-router-dom";
 import loader from "../../home/vod_loader.gif";
@@ -27,6 +27,10 @@ const Withdraw: React.FC<WithdrawProps> = ({}) => {
   // console.log(data)
   // const { data: config } = useGetInviteQuery("");
   const { data: config, isLoading: configLoading } = useGetConfigQuery({});
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const navigate = useNavigate();
   return (
