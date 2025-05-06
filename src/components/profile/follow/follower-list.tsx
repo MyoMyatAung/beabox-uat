@@ -114,7 +114,7 @@ const FollowerList = ({ searchTerm, id, allowToFetch }: any) => {
               <div className="flex flex-col items-center gap-3">
                 <UsersRound className="text-[#888]" />
                 <p className="text-[12px] text-[#888] w-[90px] text-center">
-                  快关注你感兴 趣的用户吧！
+                  还没有粉丝，继续加油吧！
                 </p>
               </div>
             </div>
@@ -149,7 +149,7 @@ const FollowerList = ({ searchTerm, id, allowToFetch }: any) => {
               <div className="flex flex-col items-center gap-3">
                 <UsersRound className="text-[#888]" />
                 <p className="text-[12px] text-[#888] w-[90px] text-center">
-                  快关注你感兴 趣的用户吧！
+                  还没有粉丝，继续加油吧！
                 </p>
               </div>
             </div>
