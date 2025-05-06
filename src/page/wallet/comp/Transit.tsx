@@ -66,7 +66,19 @@ const Transit: React.FC<TransitProps> = ({}) => {
       color: statusObj?.text_color_code || "#00FFC3", // Default white if not found
     };
   };
-  console.log(tran);
+  // console.log(tran);
+  const getStatusLabel = (status: string): string => {
+    const statusMap: Record<string, string> = {
+      approved: "已批准",
+      pending: "待处理",
+      rejected: "已拒绝",
+      success: "成功",
+      failed: "失败",
+    };
+
+    return statusMap[status] || status;
+  };
+
   return (
     <div className=" min-h-[50vh]">
       {/* header */}
@@ -141,14 +153,15 @@ const Transit: React.FC<TransitProps> = ({}) => {
                             }}
                             className="px-[12px] py-[6px] flex justify-center items-center rounded-[6px]  text-[12px] font-[400] leading-[15px]"
                           >
+                            {getStatusLabel(ts.status)}
                             {/* <span className={getStatusClass(ts.status).text}> */}
                             {/* {ts.status} */}
-                            {ts.status === "approved" && "已批准"}
+                            {/* {ts.status === "approved" && "已批准"}
                             {ts.status === "pending" && "待处理"}
                             {ts.status === "rejected" && "已拒绝"}
                             {ts.status === "success" && "成功"}
                             {ts.status === "failed" && "失败"}
-                            {ts.status === "default" && "默认"}
+                            {ts.status === "default" && "默认"} */}
                             {/* </span> */}
                           </div>
                         )}

@@ -110,6 +110,18 @@ const RechRecord: React.FC<RechRecordProps> = ({}) => {
     };
   };
 
+  const getStatusLabel = (status: string): string => {
+    const statusMap: Record<string, string> = {
+      approved: "已批准",
+      pending: "待处理",
+      rejected: "已拒绝",
+      success: "成功",
+      failed: "失败",
+    };
+
+    return statusMap[status] || status;
+  };
+
   return (
     <div className=" flex justify-center items-center py-[20px]">
       <div className="w-screen xl:w-[800px]">
@@ -205,12 +217,13 @@ const RechRecord: React.FC<RechRecordProps> = ({}) => {
                             >
                               {/* <span className={getStatusClass(ts.status).text}> */}
                               {/* {ts.status} */}
-                              {ts.status === "approved" && "已批准"}
+                              {/* {ts.status === "approved" && "已批准"}
                               {ts.status === "pending" && "待处理"}
                               {ts.status === "rejected" && "已拒绝"}
                               {ts.status === "success" && "成功"}
                               {ts.status === "failed" && "失败"}
-                              {ts.status === "default" && "默认"}
+                              {ts.status === "default" && "默认"} */}
+                              {getStatusLabel(ts.status)}
                               {/* </span> */}
                             </div>
                           )}
