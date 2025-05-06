@@ -3,7 +3,7 @@ import { NoVideo } from "@/assets/profile";
 const NoVideoCard = ({ from = 'default' }: { from?: string }) => {
   return (
     <div className="pb-16">
-      <div className="flex flex-col justify-center items-center w-full mt-[150px]">
+      <div className="flex flex-col justify-center items-center w-full mt-[80px]">
         <NoVideo />
         { from === 'upload' &&
         <>
