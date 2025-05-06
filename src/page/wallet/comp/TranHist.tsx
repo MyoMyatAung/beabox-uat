@@ -123,16 +123,23 @@ const TranHist: React.FC = () => {
     }, 500);
   };
 
-  const getStatusLabel = (status: string): string => {
-    const statusMap: Record<string, string> = {
-      approved: "已批准",
-      pending: "待处理",
-      rejected: "已拒绝",
-      success: "成功",
-      failed: "失败",
-    };
+  // const getStatusLabel = (status: string): string => {
+  //   const statusMap: Record<string, string> = {
+  //     approved: "已批准",
+  //     pending: "待处理",
+  //     rejected: "已拒绝",
+  //     success: "成功",
+  //     failed: "失败",
+  //   };
 
-    return statusMap[status] || status;
+  //   return statusMap[status] || status;
+  // };
+
+  const getStatusLabel = (keyword: string): string => {
+    const statusObj: any = status.find(
+      (s: any) => s.keyword?.toLowerCase() === keyword.toLowerCase()
+    );
+    return statusObj?.title || keyword;
   };
 
   const labelMap = useMemo(() => {
