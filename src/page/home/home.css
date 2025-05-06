@@ -145,6 +145,16 @@ html {
 
 .app {
   height: 100vh;
+  /* height: calc(100dvh - 75px); */
+  /* height: 100dvh; */
+  background-color: black;
+  display: grid;
+  place-items: center;
+}
+
+.app_home {
+  height: 100vh;
+  height: calc(100dvh - 75px);
   /* height: 100dvh; */
   background-color: black;
   display: grid;

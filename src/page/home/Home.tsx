@@ -397,9 +397,9 @@ const Home = () => {
       <div className="max-w-[1024px] home-main w-full">
         <TopNavbar currentTab={currentTab} onTabClick={handleTabClick} />
 
-        <div className="app bg-[#16131C]">
+        <div className="app_home bg-[#16131C]">
           {isDecrypting && (
-            <div className="app bg-[#16131C]">
+            <div className="app_home bg-[#16131C]">
               <div
                 style={{
                   textAlign: "center",
@@ -424,7 +424,7 @@ const Home = () => {
             <>
               {currentTab === 0 &&
                 (isLoading && videos["follow"] === 0 ? (
-                  <div className="app bg-[#16131C]">
+                  <div className="app_home bg-[#16131C]">
                     <div
                       style={{
                         textAlign: "center",
@@ -529,7 +529,7 @@ const Home = () => {
                     )}
                   </>
                 ) : (
-                  <div className="app bg-[#16131C]">
+                  <div className="app_home bg-[#16131C]">
                     <div style={{ textAlign: "center", padding: "20px" }}>
                       <div className="text-white flex flex-col justify-center items-center  gap-2">
                         <div>
@@ -577,7 +577,7 @@ const Home = () => {
 
               {currentTab == 2 &&
                 (isLoading && videos["foryou"]?.length === 0 ? (
-                  <div className="app bg-[#16131C]">
+                  <div className="app_home bg-[#16131C]">
                     <div
                       style={{
                         textAlign: "center",
@@ -687,7 +687,7 @@ const Home = () => {
                     )}
                   </>
                 ) : (
-                  <div className="app bg-[#16131C]">
+                  <div className="app_home bg-[#16131C]">
                     <div style={{ textAlign: "center", padding: "20px" }}>
                       <div className="text-white flex flex-col justify-center items-center  gap-2">
                         <div>
