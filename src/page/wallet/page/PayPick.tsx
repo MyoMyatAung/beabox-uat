@@ -84,7 +84,7 @@ const PayPick: React.FC<PayPickProps> = ({
                   <AsyncDecryptedImage
                     className=" h-[20px]"
                     imageUrl={pp.image}
-                  />{" "}
+                  />
                 </div>
               </SelectItem>
             ))}
