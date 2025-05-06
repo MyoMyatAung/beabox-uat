@@ -18,24 +18,36 @@ import DrawTime from "@/assets/draw_time.png";
 import { timeFormatter, formatDateTime } from "@/lib/utils";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "@/components/shared/loader";
-import { useLazyGetEventDetailsQuery, useLazyGetUserShareInfoQuery } from "@/store/api/events/eventApi";
+import {
+  useLazyGetEventDetailsQuery,
+  useLazyGetUserShareInfoQuery,
+} from "@/store/api/events/eventApi";
 import { useParams } from "react-router-dom";
-import { decrementDuration, setDuration, setEventDetail } from "@/store/slices/eventSlice";
+import {
+  decrementDuration,
+  setDuration,
+  setEventDetail,
+} from "@/store/slices/eventSlice";
 import { showToast } from "../home/services/errorSlice";
 import { RootState } from "@/store/store";
-import { startTimer, stopTimer } from "./timer"; 
+import { startTimer, stopTimer } from "./timer";
 import { Link } from "react-router-dom";
 import { paths } from "@/routes/paths";
 import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 import AuthDrawer from "@/components/profile/auth/auth-drawer";
+import copy from "copy-to-clipboard";
 
 const Luckydraw = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { id } = useParams<{ id: string }>();
   const eventDetailsData = useSelector((state: any) => state.event.eventDetail);
-  const currentDuration = useSelector((state: RootState) => state.event.eventDetail?.event_end_time);
-  const timeZone = useSelector((state: RootState) => state.event.eventDetail?.server_timezone)
+  const currentDuration = useSelector(
+    (state: RootState) => state.event.eventDetail?.event_end_time
+  );
+  const timeZone = useSelector(
+    (state: RootState) => state.event.eventDetail?.server_timezone
+  );
   const durationRef = useRef(currentDuration);
   const [stats, setStats] = useState<EventDetail | null>(eventDetailsData);
   const [firstLoad, setFirstLoad] = useState(true);
@@ -53,7 +65,6 @@ const Luckydraw = () => {
   const [triggerGetUserShareInfo] = useLazyGetUserShareInfoQuery();
   const [triggerGetEventDetails] = useLazyGetEventDetailsQuery();
 
-
   useEffect(() => {
     if (eventDetailsData) {
       setStats(eventDetailsData);
@@ -63,7 +74,7 @@ const Luckydraw = () => {
   useEffect(() => {
     durationRef.current = currentDuration;
   }, [currentDuration]);
-  
+
   // useEffect(() => {
   //   startTimer(() => {
   //     if (durationRef.current > 0) {
@@ -72,24 +83,24 @@ const Luckydraw = () => {
   //       stopTimer(); // Only stop when reaching 0
   //     }
   //   });
-  
+
   //   return () => {
   //     console.log('Unmount, but NOT stop timer');
   //   };
   // }, [dispatch]);
-  
-  useEffect(()=> {
+
+  useEffect(() => {
     if (currentDuration === 0) {
-        getDetails()
+      getDetails();
     }
-  }, [currentDuration, dispatch])
+  }, [currentDuration, dispatch]);
 
   if (!stats) {
     return <Loader />;
   }
 
   const getDetails = async () => {
-    setFirstLoad(true)
+    setFirstLoad(true);
     try {
       const eventDetails = await triggerGetEventDetails(id).unwrap();
       dispatch(setEventDetail(eventDetails?.data));
@@ -97,9 +108,9 @@ const Luckydraw = () => {
         dispatch(setDuration(eventDetails?.data.event_start_time));
       }
     } catch (error) {
-      console.error('Failed to fetch event details:', error);
+      console.error("Failed to fetch event details:", error);
     }
-  }
+  };
   const remainPrizeDigits = stats?.remaining_amount?.padStart(5, "0").split("");
   // const time = timeFormatter.format(new Date(Number(currentDuration) || 0));
   const remainingTime = formatDateTime(currentDuration, timeZone);
@@ -112,19 +123,12 @@ const Luckydraw = () => {
       return;
     }
     try {
-      const result = await triggerGetUserShareInfo('').unwrap();
+      const result = await triggerGetUserShareInfo("").unwrap();
       const contentUrl = result?.data?.content;
       if (isIOSApp()) {
         sendEventToNative("copyAppdownloadUrl", contentUrl);
       } else {
-        navigator.clipboard.writeText(contentUrl).then(() => {
-          dispatch(
-            showToast({
-              message: "复制成功",
-              type: "success",
-            })
-          );
-        });
+        copy(contentUrl);
       }
       dispatch(
         showToast({
@@ -163,7 +167,7 @@ const Luckydraw = () => {
       });
     }
   };
-  
+
   const handleWithdrawClick = () => {
     if (!user?.token) {
       dispatch(setIsDrawerOpen(true));
@@ -199,11 +203,7 @@ const Luckydraw = () => {
         </div>
 
         <div className="w-full max-w-md p-4 text-center mx-auto">
-            <img
-              src={eventTitle}
-              alt="event title"
-              className="mx-auto"
-            />
+          <img src={eventTitle} alt="event title" className="mx-auto" />
           <div
             className="rounded-lg p-9 text-white mt-6  bg-cover bg-center bg-no-repeat flex flex-col gap-y-2"
             style={{
@@ -212,7 +212,11 @@ const Luckydraw = () => {
           >
             <div className="flex justify-center mt-5 space-x-1">
               {remainPrizeDigits?.map((digit, index) => (
-                <FlipNumber key={index} number={parseInt(digit)} firstLoad={firstLoad} />
+                <FlipNumber
+                  key={index}
+                  number={parseInt(digit)}
+                  firstLoad={firstLoad}
+                />
               ))}
             </div>
 
@@ -237,15 +241,16 @@ const Luckydraw = () => {
                       {char}
                     </span>
                   ))} */}
-                  <span className="font-[700]"
-                      style={{
-                        background: "rgba(255, 255, 255, 0.2)",
-                        padding:"4px 6px",
-                        borderRadius: "4px",
-                      }}
-                    >
-                     {remainingTime}
-                    </span>
+                  <span
+                    className="font-[700]"
+                    style={{
+                      background: "rgba(255, 255, 255, 0.2)",
+                      padding: "4px 6px",
+                      borderRadius: "4px",
+                    }}
+                  >
+                    {remainingTime}
+                  </span>
                 </p>
               </div>
             </div>
@@ -253,7 +258,8 @@ const Luckydraw = () => {
         </div>
         <div className="mx-5 ">
           <InviteCard />
-          <button onClick={handleCopyClick}
+          <button
+            onClick={handleCopyClick}
             className="flex items-center text-black justify-center mt-6 w-full py-3 rounded-[8px] font-[700]"
             style={{
               background:
@@ -272,7 +278,7 @@ const Luckydraw = () => {
             backgroundSize: "auto 100%",
             backgroundPosition: "center center",
             backgroundRepeat: "no-repeat",
-            maxHeight: '295px'
+            maxHeight: "295px",
           }}
         >
           <div className="rounded-[12px] py-2 px-2 mt-8">
@@ -286,7 +292,10 @@ const Luckydraw = () => {
               <div className="grid grid-cols-3 px-1">
                 <div className="text-center border-r-[1.5px] border-black/10">
                   <p className="text-[14px]">今日收益</p>
-                  <p className="mt-2 text-[20px]">{stats.today_earnings } {stats.today_earnings !== '0' ? `¥` : ""}</p>
+                  <p className="mt-2 text-[20px]">
+                    {stats.today_earnings}{" "}
+                    {stats.today_earnings !== "0" ? `¥` : ""}
+                  </p>
                 </div>
 
                 <div className="text-center border-r-[1.5px] border-black/10">
@@ -305,17 +314,27 @@ const Luckydraw = () => {
               <div className="grid grid-cols-3 px-1">
                 <div className="text-center border-r-[1.5px] border-black/10">
                   <p className="text-[14px]">累计收益</p>
-                  <p className="mt-2 text-[20px]">{stats.cumulative_earnings } {stats.cumulative_earnings !== '0' ? `¥` : ""}</p>
+                  <p className="mt-2 text-[20px]">
+                    {stats.cumulative_earnings}{" "}
+                    {stats.cumulative_earnings !== "0" ? `¥` : ""}
+                  </p>
                 </div>
 
                 <div className="text-center border-r-[1.5px] border-black/10">
                   <p className="text-[14px]">本月收益</p>
-                  <p className="mt-2 text-[20px]">{stats.this_month_earnings } {stats.this_month_earnings !== '0' ? `¥` : ""}</p>
+                  <p className="mt-2 text-[20px]">
+                    {stats.this_month_earnings}{" "}
+                    {stats.this_month_earnings !== "0" ? `¥` : ""}
+                  </p>
                 </div>
 
                 <div className="text-center">
                   <p className="text-[14px]">上月收益</p>
-                  <p className="mt-2 text-[20px]"> {stats.last_month_earnings } {stats.last_month_earnings !== '0' ? `¥` : ""}</p>
+                  <p className="mt-2 text-[20px]">
+                    {" "}
+                    {stats.last_month_earnings}{" "}
+                    {stats.last_month_earnings !== "0" ? `¥` : ""}
+                  </p>
                 </div>
               </div>
 
