@@ -59,7 +59,7 @@ const Stats = ({ followers, followings, likes, nickname }: any) => {
                   {/* {followers?.length ? followers?.length : 0} */}
                   {followers ? followers : "0"}
                 </div>
-                <div className="z-[1900] text-gray-400 text-[14px]">粉丝</div>
+                <div className="z-[1900] text-gray-400 text-[16px]">粉丝</div>
               </div>
             </DrawerTrigger>
           ) : (
@@ -68,7 +68,7 @@ const Stats = ({ followers, followings, likes, nickname }: any) => {
                 {/* {followers?.length ? followers?.length : 0} */}
                 {followers ? followers : "0"}
               </div>
-              <div className="z-[1900] text-gray-400 text-[14px]">粉丝</div>
+              <div className="z-[1900] text-gray-400 text-[16px]">粉丝</div>
             </div>
           )}
         </div>
@@ -84,7 +84,7 @@ const Stats = ({ followers, followings, likes, nickname }: any) => {
                   {/* {following?.length ? following?.length : 0} */}
                   {followings ? followings : "0"}
                 </div>
-                <div className="z-[1900] text-gray-400 text-[14px]">已关注</div>
+                <div className="z-[1900] text-gray-400 text-[16px]">已关注</div>
               </div>
             </DrawerTrigger>
           ) : (
@@ -93,7 +93,7 @@ const Stats = ({ followers, followings, likes, nickname }: any) => {
                 {/* {following?.length ? following?.length : 0} */}
                 {followings ? followings : "0"}
               </div>
-              <div className="z-[1900] text-gray-400 text-[14px]">已关注</div>
+              <div className="z-[1900] text-gray-400 text-[16px]">已关注</div>
             </div>
           )}
         </div>
@@ -102,7 +102,7 @@ const Stats = ({ followers, followings, likes, nickname }: any) => {
           <div className="z-[1900] text-[14px] font-semibold">
             {likes ? likes : "0"}
           </div>
-          <div className="z-[1900] text-gray-400 text-[14px]">点赞</div>
+          <div className="z-[1900] text-gray-400 text-[16px]">点赞</div>
         </div>
       </div>
       <DrawerContent className="z-[1900] border-0" style={{ height: vh }}>

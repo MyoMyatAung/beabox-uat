@@ -28,17 +28,17 @@ const YourVideos = () => {
         </div>
       </div>
       <div className="flex justify-between items-center pt-5">
-        <div className="text-[12px] flex flex-col items-center justify-center">
+        <div className="text-[14px] flex flex-col items-center justify-center">
           <p>{published}</p>
           <p className="text-[#888888]">已发布</p>
         </div>
         <Divider />
-        <div className="text-[12px] flex flex-col items-center justify-center">
+        <div className="text-[14px] flex flex-col items-center justify-center">
           <p>{review}</p>
           <p className="text-[#888888]">待处理</p>
         </div>
         <Divider />
-        <div className="text-[12px] flex flex-col items-center justify-center">
+        <div className="text-[14px] flex flex-col items-center justify-center">
           <p>{declined}</p>
           <p className="text-[#888888]">已拒绝</p>
         </div>

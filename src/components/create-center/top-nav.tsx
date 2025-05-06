@@ -6,7 +6,7 @@ const TopNav = ({ left, center, right, styles }: any) => {
   return (
     <nav className="flex justify-between items-center p-5">
       <ChevronLeft onClick={left ? left : () => navigate(-1)} />
-      <p className={`text-[16px] ${styles}`}>{center}</p>
+      <p className={`text-[18px] ${styles}`}>{center}</p>
       {right ? right : <div className="px-3" />}
     </nav>
   );
