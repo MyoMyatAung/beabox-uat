@@ -14,6 +14,7 @@ import { setVideos } from "../services/videosSlice";
 import { setCurrentActivePost } from "../services/activeSlice";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
 import loader from "../vod_loader.gif";
+import copy from "copy-to-clipboard";
 
 const ShareOverlay: React.FC<any> = ({
   alertVisible,
@@ -188,14 +189,13 @@ const ShareOverlay: React.FC<any> = ({
     if (isIOSApp()) {
       sendEventToNative("copyAppdownloadUrl", contentUrl);
     } else {
-      navigator.clipboard.writeText(contentUrl).then(() => {
-        dispatch(
-          showToast({
-            message: "复制成功",
-            type: "success",
-          })
-        );
-      });
+      copy(contentUrl);
+      dispatch(
+        showToast({
+          message: "复制成功",
+          type: "success",
+        })
+      );
     }
   };
 
@@ -203,14 +203,13 @@ const ShareOverlay: React.FC<any> = ({
     if (isIOSApp()) {
       sendEventToNative("copyAppdownloadUrl", contentUrl);
     } else {
-      navigator.clipboard.writeText(contentUrl).then(() => {
-        dispatch(
-          showToast({
-            message: "复制成功",
-            type: "success",
-          })
-        );
-      });
+      copy(contentUrl);
+      dispatch(
+        showToast({
+          message: "复制成功",
+          type: "success",
+        })
+      );
     }
   };
 

@@ -15,6 +15,7 @@ import { showToast } from "@/page/home/services/errorSlice";
 import { useDispatch } from "react-redux";
 import { QRCodeCanvas } from "qrcode.react";
 import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder";
+import copy from "copy-to-clipboard";
 interface InviteProps {}
 
 const Invite: React.FC<InviteProps> = ({}) => {
@@ -34,7 +35,7 @@ const Invite: React.FC<InviteProps> = ({}) => {
       setShareUrl(data?.data?.share_link);
       setAppDownloadLink(newData?.data?.content);
     }
-  }, [data,newData]);
+  }, [data, newData]);
   // console.log(appDownloadLink)
 
   const isIOSApp = () => {
@@ -72,10 +73,10 @@ const Invite: React.FC<InviteProps> = ({}) => {
               console.error("Failed to create blob from canvas");
               return;
             }
-            
+
             // Create blob URL
             const blobUrl = URL.createObjectURL(blob);
-            
+
             // Create a temporary link to trigger the download
             const link = document.createElement("a");
             link.href = blobUrl;
@@ -83,7 +84,7 @@ const Invite: React.FC<InviteProps> = ({}) => {
             document.body.appendChild(link); // Append link to the body
             link.click(); // Trigger download
             document.body.removeChild(link); // Remove link after download
-            
+
             // Clean up the blob URL after download
             setTimeout(() => {
               URL.revokeObjectURL(blobUrl);
@@ -122,14 +123,13 @@ const Invite: React.FC<InviteProps> = ({}) => {
     if (isIOSApp()) {
       sendEventToNative("copyAppdownloadUrl", appDownloadLink);
     } else {
-      navigator.clipboard.writeText(appDownloadLink).then(() => {
-        dispatch(
-          showToast({
-            message: "复制成功",
-            type: "success",
-          })
-        );
-      });
+      copy(appDownloadLink);
+      dispatch(
+        showToast({
+          message: "复制成功",
+          type: "success",
+        })
+      );
     }
   };
 
@@ -139,14 +139,13 @@ const Invite: React.FC<InviteProps> = ({}) => {
       console.log("Event:copyShareUrl");
       sendEventToNative("copyShareUrl", shareUrl);
     } else {
-      navigator.clipboard.writeText(shareUrl).then(() => {
-        dispatch(
-          showToast({
-            message: "复制成功",
-            type: "success",
-          })
-        );
-      });
+      copy(shareUrl);
+      dispatch(
+        showToast({
+          message: "复制成功",
+          type: "success",
+        })
+      );
     }
   };
 
