@@ -19,8 +19,8 @@ import { timeFormatter, formatDateTime } from "@/lib/utils";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "@/components/shared/loader";
 import {
+  useGetUserShareInfoQuery,
   useLazyGetEventDetailsQuery,
-  useLazyGetUserShareInfoQuery,
 } from "@/store/api/events/eventApi";
 import { useParams } from "react-router-dom";
 import {
@@ -54,6 +54,8 @@ const Luckydraw = () => {
   const user = useSelector((state: any) => state.persist.user);
   const isOpen = useSelector((state: any) => state.profile.isDrawerOpen);
 
+  const { data } = useGetUserShareInfoQuery({});
+
   // const {
   //   data: newEventDetails,
   //   refetch,
@@ -62,7 +64,7 @@ const Luckydraw = () => {
   //   skip: false,
   // });
 
-  const [triggerGetUserShareInfo] = useLazyGetUserShareInfoQuery();
+  // const [triggerGetUserShareInfo] = useLazyGetUserShareInfoQuery();
   const [triggerGetEventDetails] = useLazyGetEventDetailsQuery();
 
   useEffect(() => {
@@ -123,8 +125,8 @@ const Luckydraw = () => {
       return;
     }
     try {
-      const result = await triggerGetUserShareInfo("").unwrap();
-      const contentUrl = result?.data?.content;
+      // const result = await triggerGetUserShareInfo("").unwrap();
+      const contentUrl = data?.data?.content;
       if (isIOSApp()) {
         sendEventToNative("copyAppdownloadUrl", contentUrl);
       } else {

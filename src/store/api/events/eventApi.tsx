@@ -12,7 +12,7 @@ export const eventApi = createApi({
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState)?.persist?.user?.token; // Adjust 'auth.token' to match your Redux slice structure
       const deviceInfo = getDeviceInfo();
-      
+
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
       }
@@ -29,7 +29,6 @@ export const eventApi = createApi({
       try {
         const decryptedData = decryptWithAes(encryptedData?.data); // Decrypt the response data
         return JSON.parse(decryptedData); // Parse the decrypted data into JSON format
-        
       } catch (err) {
         console.error("Error decrypting response:", err);
         throw new Error("Failed to decrypt response.");
@@ -44,18 +43,17 @@ export const eventApi = createApi({
       }),
     }),
     getEventDetails: builder.query<any, any>({
-        query: (id) =>
-          convertToSecureUrl(`/events/detail?event_id=${id}`),
+      query: (id) => convertToSecureUrl(`/events/detail?event_id=${id}`),
     }),
     getUserShareInfo: builder.query<any, any>({
-      query: () =>
-        convertToSecureUrl(`/user/share/info`),
+      query: () => convertToSecureUrl(`/user/share/info`),
+    }),
   }),
-  })
 });
 
 export const {
   useGetCurrentEventQuery,
   useLazyGetEventDetailsQuery,
-  useLazyGetUserShareInfoQuery
+  useGetUserShareInfoQuery,
+  // useLazyGetUserShareInfoQuery
 } = eventApi;
