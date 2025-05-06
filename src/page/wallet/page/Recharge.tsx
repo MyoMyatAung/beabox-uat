@@ -54,7 +54,7 @@ const Recharge: React.FC<RechargeProps> = () => {
             >
               <span className="text-[#fff] text-[18px] font-[500]">
                 {/* record */}
-                充值记录
+                提现记录
               </span>
               {activeTab === 2 ? (
                 <span

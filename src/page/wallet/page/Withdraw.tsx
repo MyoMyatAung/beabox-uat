@@ -60,7 +60,7 @@ const Withdraw: React.FC<WithdrawProps> = ({}) => {
               onClick={() => setActiveTab(2)}
             >
               <span className="text-[#fff] text-[18px] font-[500]">
-                充值记录
+                提现记录
               </span>
               {activeTab === 2 ? (
                 <span

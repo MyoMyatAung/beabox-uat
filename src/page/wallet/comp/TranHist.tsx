@@ -38,7 +38,7 @@ const TranHist: React.FC = () => {
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
   const location = useLocation();
-  const pageHead = location.pathname === "/wallet/income" ? "收入" : "转账历史";
+  const pageHead = location.pathname === "/wallet/income" ? "收入" : "钱包明细";
   const [status, setStatus] = useState([]);
   const { data: config } = useGetInviteQuery("");
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
