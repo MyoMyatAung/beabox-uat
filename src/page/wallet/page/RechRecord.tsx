@@ -2,7 +2,7 @@ import {
   useGetInviteQuery,
   useGetTransitionHistoryQuery,
 } from "@/store/api/wallet/walletApi";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import DatePick from "../comp/DatePick";
 import noTran from "../../../assets/wallet/noTran.svg";
 import transit from "../../../assets/wallet/transit.png";
@@ -53,7 +53,7 @@ const RechRecord: React.FC<RechRecordProps> = ({}) => {
     type: type,
     page: page,
   });
-  console.log(data);
+  // console.log(data);
   useEffect(() => {
     if (data?.data) {
       // setTran(data?.data);
@@ -121,6 +121,17 @@ const RechRecord: React.FC<RechRecordProps> = ({}) => {
 
     return statusMap[status] || status;
   };
+
+  const labelMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const item of tran) {
+      const status = item.status;
+      if (!map[status]) {
+        map[status] = getStatusLabel(status);
+      }
+    }
+    return map;
+  }, [tran]);
 
   return (
     <div className=" flex justify-center items-center py-[20px]">
@@ -215,15 +226,9 @@ const RechRecord: React.FC<RechRecordProps> = ({}) => {
                               }}
                               className="px-[12px] py-[6px] flex justify-center items-center rounded-[6px]  text-[12px] font-[400] leading-[15px]"
                             >
-                              {/* <span className={getStatusClass(ts.status).text}> */}
-                              {/* {ts.status} */}
-                              {/* {ts.status === "approved" && "已批准"}
-                              {ts.status === "pending" && "待处理"}
-                              {ts.status === "rejected" && "已拒绝"}
-                              {ts.status === "success" && "成功"}
-                              {ts.status === "failed" && "失败"}
-                              {ts.status === "default" && "默认"} */}
-                              {getStatusLabel(ts.status)}
+                             
+                              {/* {getStatusLabel(ts.status)} */}
+                              {labelMap[ts.status]}
                               {/* </span> */}
                             </div>
                           )}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Header from "../Header";
 import empty from "./empty.svg";
 import "../wallet.css";
@@ -135,6 +135,17 @@ const TranHist: React.FC = () => {
     return statusMap[status] || status;
   };
 
+  const labelMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const item of tran) {
+      const status = item.status;
+      if (!map[status]) {
+        map[status] = getStatusLabel(status);
+      }
+    }
+    return map;
+  }, [tran]);
+
   return (
     <div className="flex justify-center items-center">
       <div className="w-screen xl:w-[800px]">
@@ -253,14 +264,9 @@ const TranHist: React.FC = () => {
                               className="px-[12px] py-[6px] flex justify-center items-center rounded-[6px]  text-[12px] font-[400] leading-[15px]"
                             >
                               {/* <span className={getStatusClass(ts.status).text}> */}
-                              {/* {ts.status} */}
-                              {/* {ts.status === "approved" && "已批准"}
-                              {ts.status === "pending" && "待处理"}
-                              {ts.status === "rejected" && "已拒绝"}
-                              {ts.status === "success" && "成功"}
-                              {ts.status === "failed" && "失败"}
-                              {ts.status === "default" && "默认"} */}
-                              {getStatusLabel(ts.status)}
+
+                              {/* {getStatusLabel(ts.status)} */}
+                              {labelMap[ts.status]}
                               {/* </span> */}
                             </div>
                           )}
