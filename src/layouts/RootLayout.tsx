@@ -20,7 +20,7 @@ import {
 } from "@/store/api/events/eventApi";
 import CloseSvg from "@/assets/icons/Close.svg";
 import { RootState } from "@/store/store";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 import {
   setEventDetail,
@@ -31,7 +31,7 @@ import { useSearchParams } from "react-router-dom";
 import { useGetUserByReferalQuery } from "@/page/event/eventApi";
 import EventBox from "@/page/event/EventBox";
 import RegisterDrawer from "@/components/profile/auth/register-drawer";
-import { useLocation } from "react-router-dom";
+import { EventDetail } from "@/@types/lucky_draw";
 
 // Function to check if the app is running in a WebView
 function isWebView() {
@@ -222,6 +222,44 @@ const RootLayout = ({ children }: any) => {
 
   const isOpen = useSelector((state: any) => state.profile.isDrawerOpen);
 
+  const [cachedEventDetails, setCachedEventDetails] = useState<{ data: EventDetail } | null>(null);
+  const [isFetchingDetails, setIsFetchingDetails] = useState(false);
+
+  // Preload the lucky draw component and prefetch event details
+  useEffect(() => {
+    const shouldPreload = !showAd && 
+      !showAlert && 
+      !isOpen && 
+      location.pathname === "/" && 
+      !event && 
+      showAnimation && 
+      currentTab === 2;
+
+    if (shouldPreload) {
+      // Preload the component
+      import("@/page/events/Luckydraw");
+
+      // Prefetch event details
+      const prefetchEventDetails = async () => {
+        const eventId = currentEventData?.data?.id;
+        if (!eventId || isFetchingDetails) return;
+
+        try {
+          setIsFetchingDetails(true);
+          const eventDetails = await triggerGetEventDetails(eventId).unwrap();
+          setCachedEventDetails(eventDetails);
+          // Don't dispatch to Redux yet, wait for click
+        } catch (error) {
+          console.error("Failed to prefetch event details:", error);
+        } finally {
+          setIsFetchingDetails(false);
+        }
+      };
+
+      prefetchEventDetails();
+    }
+  }, [showAd, showAlert, isOpen, location.pathname, event, showAnimation, currentTab, currentEventData?.data?.id, isFetchingDetails]);
+
   // If loading, show loading screen
   if (isLoading) {
     return <LoadingScreen onLoadComplete={handleLoadComplete} />;
@@ -232,27 +270,41 @@ const RootLayout = ({ children }: any) => {
     return <Landing onComplete={handleLandingComplete} />;
   }
   const handleAnimationClick = async () => {
-    // if (!user?.token) {
-    //   dispatch(setIsDrawerOpen(true));
-    //   return;
-    // }
-
     const eventId = currentEventData?.data?.id;
     if (!eventId) return;
-    // Only fetch event details if duration is 0
-    // if (currentDuration <= 0) {
+
+    // Immediately use cached data if available
+    if (cachedEventDetails) {
+      dispatch(setEventDetail(cachedEventDetails.data));
+      if (cachedEventDetails.data?.event_start_time) {
+        dispatch(setDuration(cachedEventDetails.data.event_start_time));
+      }
+      navigate(`/events/lucky-draw/${eventId}`);
+
+      // Refresh in background
+      try {
+        const freshEventDetails = await triggerGetEventDetails(eventId).unwrap();
+        dispatch(setEventDetail(freshEventDetails.data));
+        if (freshEventDetails.data?.event_start_time) {
+          dispatch(setDuration(freshEventDetails.data.event_start_time));
+        }
+      } catch (error) {
+        console.error("Failed to refresh event details:", error);
+      }
+      return;
+    }
+
+    // If no cached data, fetch synchronously
     try {
       const eventDetails = await triggerGetEventDetails(eventId).unwrap();
       dispatch(setEventDetail(eventDetails.data));
       if (eventDetails.data?.event_start_time) {
         dispatch(setDuration(eventDetails.data.event_start_time));
       }
+      navigate(`/events/lucky-draw/${eventId}`);
     } catch (error) {
       console.error("Failed to fetch event details:", error);
     }
-    // }
-
-    navigate(`/events/lucky-draw/${eventId}`);
   };
 
   return (
