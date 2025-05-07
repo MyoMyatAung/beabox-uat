@@ -219,7 +219,7 @@ option selected {
 
 .red_box_wal {
   border-radius: 8px;
-  background: rgba(255, 39, 93, 0.12);
+  background: linear-gradient(98.26deg, #FFBE92 3.43%, #FF4C1C 36.26%, #EF1989 78.53%, #FFB081 106.41%);
 }
 
 .red_popup_box {
