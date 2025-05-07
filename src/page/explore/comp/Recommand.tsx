@@ -298,7 +298,7 @@ const Recommand: React.FC<RecommandProps> = ({
                       <div className="flex flex-col items-center">
                         <img src={empty} className="w-[80px]" alt="" />
                         <h1 className="text-center text-white/60">
-                          这里空空如也～
+                          暂无视频内容
                         </h1>
                       </div>
                     </div>

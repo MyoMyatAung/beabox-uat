@@ -225,7 +225,7 @@ const Latest: React.FC<LatestPorp> = ({
               <div className={`flex justify-center items-center py-[60px]`}>
                 <div className="flex flex-col items-center">
                   <img src={empty} className="w-[80px]" alt="" />
-                  <h1 className="text-center text-white/60">这里空空如也～</h1>
+                  <h1 className="text-center text-white/60">暂无视频内容</h1>
                 </div>
               </div>
             </div>
