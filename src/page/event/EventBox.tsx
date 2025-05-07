@@ -127,7 +127,7 @@ const EventBox: React.FC<EventBoxProps> = ({
           gtInstance.onSuccess(() => {
             const result = gtInstance.getValidate();
             const device = getDeviceInfo();
-            
+
             const resultData = {
               event_id: eventData?.data?.event?.id,
               device_id: device.uuid,
@@ -152,7 +152,7 @@ const EventBox: React.FC<EventBoxProps> = ({
               deviceMemory: device.deviceMemory,
               touchPoints: device.touchPoints,
               devicePixelRatio: device.devicePixelRatio,
-              env_flags: device.env_flags
+              env_flags: device.env_flags,
             };
 
             setShowCaptcha(false); // This will be called when CAPTCHA is closed
@@ -188,16 +188,16 @@ const EventBox: React.FC<EventBoxProps> = ({
 
   return (
     <div className="dheight bg-black/80 w-screen flex justify-center items-center fixed top-0 z-[9999]">
-      {!shownextBox && !showCaptcha && (
+      {!shownextBox && (
         <div className="flex flex-col  gap-[0px] justify-center items-center">
           <div className="absolute z-[-2] top-[150px]">
             <Animation animate={light} />
           </div>
           <div className="flex flex-col justify-between items-center  event_bo">
-            <div className="absolute z-[-1]">
-              <img src={card} alt="" className="w-[300px] h-[400px]" />
+            <div className="absolute z-[-1] mt-[-20px]">
+              <img src={card} alt="" className="w-[293.33px] h-[445px]" />
             </div>
-            <div className="w-[400px] h-full pt-[85px]  flex flex-col justify-between  items-center media-w1">
+            <div className="w-[400px] h-full pt-[90px] flex flex-col justify-between  items-center media-w1">
               <div className="flex flex-col justify-center items-center px-[30px] mt-20">
                 <AsyncDecryptedImage
                   imageUrl={eventData.data.avatar}
@@ -209,7 +209,7 @@ const EventBox: React.FC<EventBoxProps> = ({
                   邀请您一起使用笔盒，邀请好友瓜分百万现金红包！
                 </h1>
               </div>
-              <div className="mt-10">
+              <div className="mt-14">
                 <button onClick={handleEvent} className="event_btn">
                   打开红包
                   {/* <Animation animate={btn2} /> */}
