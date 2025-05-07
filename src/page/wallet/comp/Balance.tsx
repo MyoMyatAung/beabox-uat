@@ -103,21 +103,20 @@ const Balance: React.FC<BalanceProps> = () => {
         <div className=" flex justify-between items-center">
           <div
             onClick={() => setShowBox(true)}
-            className=" w-1/2 flex justify-between items-center px-[12px] h-[46px] red_box_wal"
+            className=" w-1/2 flex justify-between items-center px-[12px] h-[40px] red_box_wal"
           >
-            <div className=" flex justify-center items-center gap-[6px]">
-              {/* <img src={we} alt="" /> */}
-              <img className=" w-[24px] h-[24px]" src={red} alt="" />
-              <span className=" text-white text-[13px] font-[400] leading-[15px]">
+            <div className="flex justify-center items-center gap-[6px]">
+              <img src={red} alt="Red Icon" className="w-[28px] h-[28px]" />
+              <span className="text-white text-[13px] font-[400] leading-[15px]">
                 我要赚钱
               </span>
             </div>
-            <ChevronRight className="" />
+            <ChevronRight />
           </div>
           <p className=" w-[1px] h-[30px] mx-2"></p>
           <div
             onClick={() => navigate(paths.wallet_withdraw)}
-            className=" w-1/2 flex justify-between items-center income_box px-[12px] h-[46px]"
+            className=" w-1/2 flex justify-between items-center income_box px-[12px] h-[40px]"
           >
             <div className=" flex justify-center items-center gap-[6px]">
               <img src={we} alt="" />
