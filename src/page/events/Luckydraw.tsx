@@ -258,7 +258,7 @@ const Luckydraw = () => {
             </div>
           </div>
         </div>
-        <div className="mx-5 ">
+        <div className="mx-5 px-1">
           <InviteCard />
           <button
             onClick={handleCopyClick}
@@ -277,15 +277,15 @@ const Luckydraw = () => {
           className="mx-5 py-5 mt-8"
           style={{
             backgroundImage: `url(${Paper})`,
-            backgroundSize: "auto 100%",
+            backgroundSize: "102% 100%",
             backgroundPosition: "center center",
             backgroundRepeat: "no-repeat",
-            maxHeight: "295px",
+            // maxHeight: "295px",
           }}
         >
-          <div className="rounded-[12px] py-2 px-2 mt-8">
+          <div className="rounded-[12px] pt-5 px-5 mt-8">
             <div
-              className="rounded-[12px] w-full font-[700] p-3 text-[#4E4E4E] leading-[22px] font-sf mx-auto bg-transparent max-w-[305px]"
+              className="rounded-[12px] w-full font-[700] p-3 text-[#4E4E4E] leading-[22px] font-sf mx-auto bg-transparent"
               style={{
                 background:
                   "linear-gradient(180deg, #FFFFFF 0%, #FFC989 152.27%)",
