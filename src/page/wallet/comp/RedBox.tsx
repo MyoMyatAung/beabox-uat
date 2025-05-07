@@ -18,7 +18,7 @@ const RedBox: React.FC<RedBoxProps> = ({
 }) => {
   const boxRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -41,8 +41,8 @@ const RedBox: React.FC<RedBoxProps> = ({
     // }
 
     const eventId = currentEventData?.data?.id;
-    if (!eventId){
-      navigate("/wallet/invite")
+    if (!eventId) {
+      navigate("/wallet/invite");
     }
     // Only fetch event details if duration is 0
     // if (currentDuration <= 0) {
@@ -98,7 +98,51 @@ const RedBox: React.FC<RedBoxProps> = ({
           >
             {/* content */}
             <div className=" flex gap-[12px] justify-center items-center">
-              <img className=" w-[36px] h-[36px]" src={invite} alt="" />
+              {/* <img className=" w-[36px] h-[36px]" src={invite} alt="" /> */}
+              <svg
+                width="36"
+                height="37"
+                viewBox="0 0 36 37"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  y="0.5"
+                  width="36"
+                  height="36"
+                  rx="18"
+                  fill="url(#paint0_linear_3565_9772)"
+                  fill-opacity="0.32"
+                />
+                <g clip-path="url(#clip0_3565_9772)">
+                  <path
+                    d="M16.7813 20.5616C20.0248 20.5616 22.7629 21.0953 22.7629 23.1564C22.7629 25.2176 20.0072 25.7335 16.7813 25.7335C13.5379 25.7335 10.7998 25.199 10.7998 23.1387C10.7998 21.0775 13.5547 20.5616 16.7813 20.5616ZM24.3571 14.568C24.7529 14.568 25.0741 14.8945 25.0741 15.295V16.2331H26.0336C26.4286 16.2331 26.7506 16.5597 26.7506 16.9602C26.7506 17.3607 26.4286 17.6872 26.0336 17.6872H25.0741V18.6261C25.0741 19.0266 24.7529 19.3532 24.3571 19.3532C23.9622 19.3532 23.6402 19.0266 23.6402 18.6261V17.6872H22.6823C22.2865 17.6872 21.9653 17.3607 21.9653 16.9602C21.9653 16.5597 22.2865 16.2331 22.6823 16.2331H23.6402V15.295C23.6402 14.8945 23.9622 14.568 24.3571 14.568ZM16.7813 10.5803C18.9782 10.5803 20.7392 12.3641 20.7392 14.5894C20.7392 16.8147 18.9782 18.5985 16.7813 18.5985C14.5845 18.5985 12.8235 16.8147 12.8235 14.5894C12.8235 12.3641 14.5845 10.5803 16.7813 10.5803Z"
+                    fill="#F8E4FF"
+                  />
+                </g>
+                <defs>
+                  <linearGradient
+                    id="paint0_linear_3565_9772"
+                    x1="18"
+                    y1="0.5"
+                    x2="18"
+                    y2="36.5"
+                    gradientUnits="userSpaceOnUse"
+                  >
+                    <stop stop-color="#E28EFF" />
+                    <stop offset="1" stop-color="#633672" />
+                  </linearGradient>
+                  <clipPath id="clip0_3565_9772">
+                    <rect
+                      width="17.28"
+                      height="17.28"
+                      fill="white"
+                      transform="translate(9.35986 9.85992)"
+                    />
+                  </clipPath>
+                </defs>
+              </svg>
+
               <div className=" flex flex-col gap-[8px]">
                 <span className=" text-white text-[14px] font-[500]">
                   邀请好友{" "}
