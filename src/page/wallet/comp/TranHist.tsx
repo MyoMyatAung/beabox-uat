@@ -215,7 +215,7 @@ const TranHist: React.FC = () => {
                       {" "}
                       {location.pathname === "/wallet/income"
                         ? "您的收入记录将在这里显示"
-                        : "您还没有任何过渡记录"}
+                        : "暂无支付交易记录"}
                       {""}
                     </span>
                   </div>

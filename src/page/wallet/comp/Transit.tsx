@@ -127,7 +127,7 @@ const Transit: React.FC<TransitProps> = ({}) => {
               <div className=" flex flex-col justify-center items-center h-[400px] gap-[16px]">
                 <img src={empty} alt="" />
                 <h1 className=" text-[#888] font-[400] text-[14px]">
-                  您还没有任何过渡记录
+                  暂无支付交易记录
                 </h1>
               </div>
             ) : (
