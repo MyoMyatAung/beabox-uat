@@ -117,7 +117,8 @@ const ImageUpload = ({
             accept="image/*"
             onChange={handleFileChange}
             className="hidden"
-            id="image-upload"
+            id={reviewStatus === "pending" ? "" : "image-upload"}
+            // id="image-upload"
           />
         </div>
       </div>
