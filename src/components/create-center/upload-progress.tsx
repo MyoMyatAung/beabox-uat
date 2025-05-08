@@ -38,7 +38,7 @@ const UploadProgress = ({
         <div className=" flex items-center justify-between">
           <div className="text-[16px]">正在上传 {uploadPercentage}%</div>
 
-          <div className="text-[12px] text-[#FFFFFF]">
+          <div className="text-[14px] text-[#FFFFFF]">
             {uploadedSize}MB / {totalSize}MB
           </div>
         </div>

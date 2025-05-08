@@ -523,7 +523,7 @@ html {
 }
 
 .feed_add_comment input {
-  color: #777;
+  color: white;
   font-variant-numeric: lining-nums proportional-nums;
   font-feature-settings: "dlig" on;
   font-family: cnFont, sans-serif;

@@ -18,7 +18,7 @@ const BalanceNoti = () => {
         <div className="space-y-5 pb-10">
           <Card />
           <Card />
-          <p className="text-[12px] text-[#666] text-center">
+          <p className="text-[14px] text-[#666] text-center">
             14-10-2024 12:24:10
           </p>
           <Card />

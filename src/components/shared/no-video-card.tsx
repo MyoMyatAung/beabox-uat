@@ -7,11 +7,11 @@ const NoVideoCard = ({ from = 'default' }: { from?: string }) => {
         <NoVideo />
         { (from === 'upload' || from === 'liked' || from === 'history') &&
         <>
-        <p className="text-[12px] text-white pt-3 pb-1">暂无视频内容</p>
+        <p className="text-[14px] text-white pt-3 pb-1">暂无视频内容</p>
         </>
         }
         { from === 'default' && 
-                <p className="text-[12px] text-white pt-3 pb-1">
+                <p className="text-[14px] text-white pt-3 pb-1">
                 暂无视频内容
                 </p>
         }

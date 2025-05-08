@@ -24,7 +24,7 @@ const OtherNoti = ({ item }: any) => {
             {/* <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div> */}
           </div>
           <div className="flex items-end justify-between w-full ">
-            <p className="text-[10px] w-[80%] text-[#888]">{item.message}</p>
+            <p className="text-[12px] w-[80%] text-[#888]">{item.message}</p>
             <p className="text-[10px] text-[#888]">
               {dateForamtter(item?.created_at)}
             </p>

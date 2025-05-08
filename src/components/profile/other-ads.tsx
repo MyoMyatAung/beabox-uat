@@ -26,7 +26,7 @@ const OtherAds = () => {
                     height={""}
                     alt={app.title}
                   />
-                  <h1 className="text-white text-[10px] font-[400]">
+                  <h1 className="text-white text-[12px] font-[400]">
                     {app.title}
                   </h1>
                 </a>

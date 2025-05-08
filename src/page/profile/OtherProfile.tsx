@@ -390,21 +390,21 @@ const OtherProfile = () => {
             userData?.data?.province &&
             userData?.data?.share_region == "on" ? (
               <div className="z-[1900] flex">
-                <div className="z-[1900] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
+                <div className="z-[1900] text-[14px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
                   <span>{userData?.data?.province}</span>:
                   <span>{userData?.data?.city}</span>
                 </div>
               </div>
             ) : (
               <div className="z-[1900] flex">
-                <div className="z-[1900] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
+                <div className="z-[1900] text-[14px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
                   <span>未知</span>
                 </div>
               </div>
             )}
           </div>
         </div>
-        <h1 className="text-[12px]  text-[#888] mb-5 px-5 z-[1900] relative xs:w-[100px] md:w-[340px] overflow-hidden break-words">
+        <h1 className="text-[14px]  text-[#888] mb-5 px-5 z-[1900] relative xs:w-[100px] md:w-[340px] overflow-hidden break-words">
           {userData?.data?.bio ? userData?.data?.bio : ""}
         </h1>
         <div className={`${showHeader ? "opacity-0" : "opacity-1"}`}>

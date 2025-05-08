@@ -304,7 +304,7 @@ const Ranking = () => {
             {ranges?.map((range: any) => (
               <button
                 onClick={() => setSelectedRange(range)}
-                className={`text-[12px] ${
+                className={`text-[14px] ${
                   selectedRange?.value == range?.value
                     ? "text-white bg-[#FFFFFF1F]"
                     : "text-[#999] bg-[#FFFFFF05]"
@@ -326,7 +326,7 @@ const Ranking = () => {
             <div className="w-full flex justify-center items-center mt-[100px]">
               <div className="flex flex-col justify-center items-center gap-3">
                 <UsersRound className="text-[#888888]" />
-                <p className="text-[12px] text-[#888888]">当前没有创作者展示</p>
+                <p className="text-[14px] text-[#888888]">当前没有创作者展示</p>
               </div>
             </div>
           )}

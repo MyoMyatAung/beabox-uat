@@ -42,11 +42,11 @@ const BalNew: React.FC<BalNewProps> = ({
           <div className="">
             {/* Show balance or asterisks */}
             <span className="text-white text-[24px] font-[500] leading-[20px]">
-              {balance} <span className=" text-[12px]">. 00</span>
+              {balance} <span className=" text-[14px]">. 00</span>
             </span>
           </div>
           <div className="">
-            <h1 className=" text-white text-[12px] font-[700] leading-[22px]">
+            <h1 className=" text-white text-[14px] font-[700] leading-[22px]">
               {amountText} : <span className=" text-[#CD3EFF]">{amount}</span>{" "}
               {amountType}
             </h1>
@@ -56,7 +56,7 @@ const BalNew: React.FC<BalNewProps> = ({
           onClick={() => navigate(to)}
           className=" absolute z-[3] hidden right-[20px] top-[40px] flex justify-center h-fit items-center rounded-[10px] bg-white/20 py-[4px] px-[8px]"
         >
-          <span className=" text-[white] text-[12px] font-[500]">
+          <span className=" text-[white] text-[14px] font-[500]">
             {btnText}
           </span>
 

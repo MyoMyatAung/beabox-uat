@@ -170,7 +170,7 @@ const Invite: React.FC<InviteProps> = ({}) => {
         <Header lv={false} title="我要分享" />
         {copied && (
           <div className="absolute flex justify-center items-cente w-full h-ful ">
-            <p className="text-[#fff] text-[12px] font-[400] leading-[14px] text-center px-[20px] py-[12px] copy_btn">
+            <p className="text-[#fff] text-[14px] font-[400] leading-[14px] text-center px-[20px] py-[12px] copy_btn">
               已复制
             </p>
           </div>
@@ -206,7 +206,7 @@ const Invite: React.FC<InviteProps> = ({}) => {
                   />
                 </div>
               </div>
-              <p className=" text-[#888] text-[12px] font-[400] leading-[14px] text-center">
+              <p className=" text-[#888] text-[14px] font-[400] leading-[14px] text-center">
                 分享此邀请码邀请您的朋友下载app，即可领取 Bebit 币！
               </p>
               <div
@@ -233,13 +233,13 @@ const Invite: React.FC<InviteProps> = ({}) => {
           <div className=" flex justify-center items-center gap-[24px]">
             <button
               onClick={handleSaveAsImage}
-              className="px-[20px] py-[12px] copy_btn text-white text-[12px] font-[400] leading-[20px]"
+              className="px-[20px] py-[12px] copy_btn text-white text-[14px] font-[400] leading-[20px]"
             >
               保存邀请码
             </button>
             <button
               onClick={handleAppCopy}
-              className="px-[20px] py-[12px] copy_btn text-white text-[12px] font-[400] leading-[20px]"
+              className="px-[20px] py-[12px] copy_btn text-white text-[14px] font-[400] leading-[20px]"
             >
               复制邀请链接
             </button>

@@ -318,7 +318,7 @@ const RegisterForm = ({ setIsOpen, refer_code, geetest_id }: any) => {
                     size={14}
                     className={`${isLoading ? "animate-spin" : ""}`}
                   />
-                  <p className="text-[12px] text-[#bbb]">刷新</p>
+                  <p className="text-[14px] text-[#bbb]">刷新</p>
                 </div> */}
                   <Button
                     onClick={handleVerify}

@@ -99,7 +99,7 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
                       className="w-full flex items-center justify-between text-white"
                       onClick={() => dispatch(setSort("created_at"))}
                     >
-                      <p className="text-white text-[12px]">最新</p>
+                      <p className="text-white text-[14px]">最新</p>
                       {sort == "created_at" ? <Check /> : <></>}
                     </div>
                   </DropdownMenuItem>
@@ -108,7 +108,7 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
                       className="w-full flex items-center justify-between text-white"
                       onClick={() => dispatch(setSort("score"))}
                     >
-                      <p className="text-white text-[12px]">热门</p>
+                      <p className="text-white text-[14px]">热门</p>
                       {sort == "score" ? <Check /> : <></>}
                     </div>
                   </DropdownMenuItem>
@@ -184,7 +184,7 @@ export default VideoTab2;
 //       {/* <Tabs defaultValue={"liked"} className="my-5"> */}
 //       <TabsList className="grid w-full grid-cols-3 z-[1600] bg-transparent sticky top-[100px] px-5">
 //         <TabsTrigger
-//           className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2 "
+//           className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[14px] py-2 flex items-center gap-2 "
 //           value="video"
 //           onClick={() => dispatch(setDefaultTab2("video"))}
 //         >
@@ -193,7 +193,7 @@ export default VideoTab2;
 //           </span>
 //         </TabsTrigger>
 //         <TabsTrigger
-//           className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[12px] py-2 flex items-center gap-2 "
+//           className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-[#FFFFFF0A] rounded-full text-[14px] py-2 flex items-center gap-2 "
 //           value="liked"
 //           onClick={() => dispatch(setDefaultTab2("liked"))}
 //         >

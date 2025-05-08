@@ -34,7 +34,7 @@ const HideBio = () => {
       <div className="flex justify-between items-start">
         <div className="">
           <p className="text-[14px]">隐藏生物</p>
-          <p className="text-[12px] w-[320px] text-[#888]">
+          <p className="text-[14px] w-[320px] text-[#888]">
             启用此设置后，您的个人简介将对所有用户隐藏。
           </p>
         </div>

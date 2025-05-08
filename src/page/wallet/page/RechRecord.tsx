@@ -181,7 +181,7 @@ const RechRecord: React.FC<RechRecordProps> = ({}) => {
                     <h1 className="text-white font-[400] text-[14px]">
                       暂时没有提现记录
                     </h1>
-                    <span className=" text-[#888] text-[12px] font-[400]">
+                    <span className=" text-[#888] text-[14px] font-[400]">
                       您的提现记录将在这里显示
                     </span>
                   </div>
@@ -209,7 +209,7 @@ const RechRecord: React.FC<RechRecordProps> = ({}) => {
                             <span className="block text-[#aaa] text-[13px] font-[500] leading-[20px] w-[80%] break-words">
                               {ts.description}
                             </span>
-                            <span className=" text-[#777] text-[12px] font-[400] leading-[20px]">
+                            <span className=" text-[#777] text-[14px] font-[400] leading-[20px]">
                               {ts.date}
                             </span>
                           </div>
@@ -231,7 +231,7 @@ const RechRecord: React.FC<RechRecordProps> = ({}) => {
                                   .backgroundColor,
                                 color: getStatusClass(ts.status).color,
                               }}
-                              className="px-[12px] py-[6px] flex justify-center items-center rounded-[6px]  text-[12px] font-[400] leading-[15px]"
+                              className="px-[12px] py-[6px] flex justify-center items-center rounded-[6px]  text-[14px] font-[400] leading-[15px]"
                             >
                              
                               {/* {getStatusLabel(ts.status)} */}

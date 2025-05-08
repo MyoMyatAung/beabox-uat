@@ -47,7 +47,7 @@ const DisableFollow = () => {
       <div className="flex justify-between items-start">
         <div className="">
           <p className="text-[14px]">禁用关注</p>
-          <p className="text-[12px] w-[320px] text-[#888]">
+          <p className="text-[14px] w-[320px] text-[#888]">
             开启后普通用户无法关注你{" "}
           </p>
         </div>

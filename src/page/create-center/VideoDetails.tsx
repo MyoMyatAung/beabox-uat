@@ -74,7 +74,7 @@ const VideoDetails = () => {
               <Unselected />
             </button>
           )}
-          <p className="text-[12px]">
+          <p className="text-[14px]">
             I have read and agree to the upload guidelines.
           </p>
         </div>

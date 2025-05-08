@@ -138,7 +138,7 @@ const Latest: React.FC<LatestPorp> = ({
                         className=" object-cover h-full w-full rounded-none"
                       />
                     </div>
-                    <h1 className="search_text font-cnFont line-clamp-2 text-left text-[12px] font-[400] px-[6px] pt-[6px]">
+                    <h1 className="search_text font-cnFont line-clamp-2 text-left text-[14px] font-[400] px-[6px] pt-[6px]">
                       {/* <h1 className="search_text font-cnFont px-[6px] line-clamp-2 text-left"> */}
                       {card.title.length > 50
                         ? `${card.title.slice(0, 50)}...`
@@ -161,7 +161,7 @@ const Latest: React.FC<LatestPorp> = ({
                           />
                         )}
                         <h1
-                          className=" text-[#888] text-[12px] font-[500] cursor-pointer hover:text-white"
+                          className=" text-[#888] text-[14px] font-[500] cursor-pointer hover:text-white"
                           onClick={(e) =>
                             navigateToUserProfile(card.user.id, e)
                           }
@@ -184,7 +184,7 @@ const Latest: React.FC<LatestPorp> = ({
                             stroke-width="0.8"
                           />
                         </svg>
-                        <h1 className=" text-[#888] text-[12px] font-[400] leading-[20px]">
+                        <h1 className=" text-[#888] text-[14px] font-[400] leading-[20px]">
                           {formatNumber(card?.like_count)}
                         </h1>
                       </span>

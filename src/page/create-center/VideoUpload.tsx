@@ -1016,7 +1016,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
               </div>
             )}
           </div>
-          <p className="text-[12px] text-[#888] text-center pt-2">
+          <p className="text-[14px] text-[#888] text-center pt-2">
             视频大小不得超过 <br /> 100MB
             {/* Video size must not exceed 100MB */}
           </p>
@@ -1121,7 +1121,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
               </div>
             )}
           </div>
-          <p className="text-[12px] text-[#888] text-center pt-2">
+          <p className="text-[14px] text-[#888] text-center pt-2">
             点击选择图片 <br />
             (可选)
           </p>

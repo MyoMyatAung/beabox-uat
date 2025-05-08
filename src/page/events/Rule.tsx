@@ -5,7 +5,7 @@ const Rule = () => {
     <div className="w-full p-3 mt-3 px-5 text-xs backdrop-blur-[32px] leading-[20px] font-sf mx-auto">
       <div className="bg-[#f14884] px-5 py-2">
         <h3 className="text-center text-[24px] font-bold mb-2">邀请规则</h3>
-        <ol className="list-decimal list-inside space-y-2 pt-2 text-white text-[12px]">
+        <ol className="list-decimal list-inside space-y-2 pt-2 text-white text-[14px]">
             <li>与分享的好友首次登录并注册即算邀请成功。</li>
             <li>如果用户异常注册，奖励可能会被取消。</li>
             <li>收益按照系统实时统计数据为准。</li>

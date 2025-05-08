@@ -29,8 +29,8 @@ const NotiDetail = () => {
             />
 
             <div className="">
-              <p className="text-[12px]">{state.state.main}</p>
-              <p className="text-[#777777] text-[12px]">
+              <p className="text-[14px]">{state.state.main}</p>
+              <p className="text-[#777777] text-[14px]">
                 {dateForamtter(state.state.data.created_at)}
               </p>
             </div>

@@ -42,7 +42,7 @@ const May: React.FC<MayProps> = ({}) => {
         </h1>
         <span
           onClick={handleRefresh}
-          className=" text-white/60 flex items-center gap-2 text-[12px] font-[500] leading-[18px]"
+          className=" text-white/60 flex items-center gap-2 text-[14px] font-[500] leading-[18px]"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

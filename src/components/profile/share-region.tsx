@@ -33,7 +33,7 @@ const ShareRegion = () => {
       <div className="flex justify-between items-start">
         <div className="">
           <p className="text-[14px]">共享地区</p>
-          <p className="text-[12px] w-[320px] text-[#888]">
+          <p className="text-[14px] w-[320px] text-[#888]">
             开启后将显示您所在的地区信息
           </p>
         </div>

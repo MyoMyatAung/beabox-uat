@@ -364,7 +364,7 @@ const LoginForm = ({ setIsOpen }: any) => {
                     className={`${captchaLoading ? "animate-spin" : ""}`}
                     size={14}
                   />
-                  <p className="text-[12px] text-[#bbb]">刷新</p>
+                  <p className="text-[14px] text-[#bbb]">刷新</p>
                 </div> */}
                   <Button
                     onClick={handleVerify}

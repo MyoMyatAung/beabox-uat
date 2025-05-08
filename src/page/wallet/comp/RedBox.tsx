@@ -148,7 +148,7 @@ const RedBox: React.FC<RedBoxProps> = ({
                   邀请好友{" "}
                   <span className="recommand_span px-[6px] py-[1px]">推荐</span>{" "}
                 </span>
-                <span className=" text-white/80 text-[12px]">
+                <span className=" text-white/80 text-[14px]">
                   邀请好友，瓜分百万现金红包
                 </span>
               </div>
@@ -211,7 +211,7 @@ const RedBox: React.FC<RedBoxProps> = ({
                   上传作品{" "}
                   <span className="recommand_span px-[6px] py-[1px]">推荐</span>{" "}
                 </span>
-                <span className=" text-white/80 text-[12px]">
+                <span className=" text-white/80 text-[14px]">
                   发布您的视频，持续获得收益
                 </span>
               </div>
@@ -270,7 +270,7 @@ const RedBox: React.FC<RedBoxProps> = ({
                   幸运大转盘{" "}
                   <span className="recommand_span px-[6px] py-[1px]">推荐</span>{" "}
                 </span>
-                <span className=" text-white/80 text-[12px]">
+                <span className=" text-white/80 text-[14px]">
                   获得丰厚的奖励和奖金
                 </span>
               </div>

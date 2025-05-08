@@ -131,7 +131,7 @@ const UploadFrom = ({
                   <div
                     key={index}
                     onClick={() => removeTag(index)}
-                    className="text-[12px] bg-[#FFFFFF14] px-2 py-0.5 rounded-full"
+                    className="text-[14px] bg-[#FFFFFF14] px-2 py-0.5 rounded-full"
                   >
                     # {tag}
                   </div>
@@ -187,7 +187,7 @@ const UploadFrom = ({
               <Unselected />
             </button>
           )}
-          <p className="text-[12px]">我已阅读并同意上传指南。</p>
+          <p className="text-[14px]">我已阅读并同意上传指南。</p>
         </div>
         <button
           onClick={handleSubmit}

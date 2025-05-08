@@ -56,7 +56,7 @@ const EditCover = ({ refetch, coverimg }: EditCoverProps) => {
         className="flex gap-2 z-[1900] bg-[#FFFFFF14]  justify-center min-w-[55px] px-3 h-[34px] rounded-[12px] items-center"
       >
         <img src={pensvg} className="w-[14px] h-auto" alt="" />
-        <p className="text-[12px]">设置封面</p>
+        <p className="text-[14px]">设置封面</p>
       </div>
     </>
   );

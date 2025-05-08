@@ -29,7 +29,7 @@ const ViewAll = () => {
           </p>
         </div>
         <div className="w-full py-1 px-2">
-          <button className="text-[12px] text-white z-20 flex items-center gap-1 ml-auto">
+          <button className="text-[14px] text-white z-20 flex items-center gap-1 ml-auto">
             <span className="text-white z-50">查看全部</span>
             <ChevronRight size={14} className="text-white z-50" />
           </button>
@@ -37,7 +37,7 @@ const ViewAll = () => {
       </div>
       <div className="w-full px-2 z-50 absolute -bottom-5 pb-10">
         <img src={topgp} className="object-contain w-[240px] mx-auto" alt="" />
-        <p className="text-[#FFFFFF99] text-center text-[12px] z-50 pt-3">
+        <p className="text-[#FFFFFF99] text-center text-[14px] z-50 pt-3">
           创作者成为闪亮之星，从创作者开始。
         </p>
       </div>

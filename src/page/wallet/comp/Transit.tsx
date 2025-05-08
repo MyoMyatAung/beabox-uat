@@ -146,7 +146,7 @@ const Transit: React.FC<TransitProps> = ({}) => {
                             {ts.description}
                           </span>
 
-                          <span className=" text-[#777] text-[12px] font-[400] leading-[20px]">
+                          <span className=" text-[#777] text-[14px] font-[400] leading-[20px]">
                             {ts.date}
                           </span>
                         </div>
@@ -171,7 +171,7 @@ const Transit: React.FC<TransitProps> = ({}) => {
                                 .backgroundColor,
                               color: getStatusClass(ts.status).color,
                             }}
-                            className="px-[12px] py-[6px] flex justify-center items-center rounded-[6px]  text-[12px] font-[400] leading-[15px]"
+                            className="px-[12px] py-[6px] flex justify-center items-center rounded-[6px]  text-[14px] font-[400] leading-[15px]"
                           >
                             {/* {getStatusLabel(ts.status)} */}
                             {labelMap[ts.status]}

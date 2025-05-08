@@ -77,12 +77,12 @@ const Balance: React.FC<BalanceProps> = () => {
           <span className="text-white text-[32px] font-[500] leading-[20px]">
             {isHidden ? "****" : `${balance}`}
 
-            {!isHidden && <span className=" text-[12px]">. 00</span>}
+            {!isHidden && <span className=" text-[14px]">. 00</span>}
           </span>
         </div>
         <div className="flex justify-between items-center">
           {/* work */}
-          <h1 className=" text-white text-[12px] font-[700] leading-[22px]">
+          <h1 className=" text-white text-[14px] font-[700] leading-[22px]">
             作品收益 :{" "}
             <span className=" text-[#CD3EFF]">
               {data?.data?.income_coins ? data?.data?.income_coins : "0"}
@@ -91,7 +91,7 @@ const Balance: React.FC<BalanceProps> = () => {
           </h1>
           <p className=" w-[0.5px] h-[12px] bg-white/60 mx-2"></p>
           {/* other */}
-          <h1 className=" text-white text-[12px] font-[700] leading-[22px]">
+          <h1 className=" text-white text-[14px] font-[700] leading-[22px]">
             其他收入 :{" "}
             <span className=" text-[#CD3EFF]">
               {data?.data?.other_income ? data?.data?.other_income : "0"}

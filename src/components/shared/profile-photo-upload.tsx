@@ -106,7 +106,7 @@ const ProfilePhotoUpload = ({
                 }}
               >
                 <h1 className="text-[16px] text-white">获取头像</h1>
-                <p className="text-[12px] text-[#888888]">
+                <p className="text-[14px] text-[#888888]">
                   升级即可解锁专属头像！
                 </p>
               </div>

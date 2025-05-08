@@ -16,7 +16,7 @@ const BalanceNotiLink = () => {
           {/* <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div> */}
         </div>
         <div className="flex items-end justify-between">
-          <p className="text-[10px] w-[80%] text-[#888]">
+          <p className="text-[12px] w-[80%] text-[#888]">
             Withdraw Notice : You’ve successfully added 20 coins to your wallet.
             A chan...
           </p>

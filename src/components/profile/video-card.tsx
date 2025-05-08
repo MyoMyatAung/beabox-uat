@@ -93,7 +93,7 @@ const VideoCard = ({ videoData }: any) => {
       <div className="absolute bottom-0 flex justify-between items-center px-2 w-full">
         <div className="flex items-center gap-1">
           <FaHeart size={10} />
-          <span className="text-[12px]">{videoData?.like_count}</span>
+          <span className="text-[14px]">{videoData?.like_count}</span>
         </div>
         <FaEarthAmericas size={10} />
       </div>

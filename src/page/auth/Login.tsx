@@ -251,7 +251,7 @@ const Login = () => {
                       size={14}
                       className={`${captchaLoading ? "animate-spin" : ""}`}
                     />
-                    <p className="text-[12px] text-[#bbb]">刷新</p>
+                    <p className="text-[14px] text-[#bbb]">刷新</p>
                   </div> */}
                   <Button
                     onClick={handleVerify}

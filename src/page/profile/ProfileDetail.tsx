@@ -151,7 +151,7 @@ const ProfileDetail = () => {
         {/* <ImageUpload imgurl={decryptedPhoto} /> */}
 
         <div className="flex flex-col gap-7 my-7">
-          <h1 className="text-[12px] text-[#888]">关于你</h1>
+          <h1 className="text-[14px] text-[#888]">关于你</h1>
           <EditUsername
             username={data?.data?.username}
             refetchHandler={refetchHandler}
@@ -178,7 +178,7 @@ const ProfileDetail = () => {
         </div>
         <div className="w-full h-[0.08px] bg-[#FFFFFF0A]"></div>
         <div className="flex flex-col gap-7 my-7">
-          <h1 className="text-[12px] text-[#888]">邀请函</h1>
+          <h1 className="text-[14px] text-[#888]">邀请函</h1>
           <EditReferral
             referral_code={data?.data?.referral_by}
             showAlertHandler={showAlertHandler}
@@ -187,7 +187,7 @@ const ProfileDetail = () => {
         </div>
         <div className="w-full h-[0.08px] bg-[#FFFFFF0A]"></div>
         {/* <div className="flex flex-col gap-7 my-7">
-        <h1 className="text-[12px] text-[#888]">Account Security</h1>
+        <h1 className="text-[14px] text-[#888]">Account Security</h1>
         <ChangePassword />
       </div> */}
       </div>

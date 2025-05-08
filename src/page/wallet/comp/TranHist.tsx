@@ -211,7 +211,7 @@ const TranHist: React.FC = () => {
                     <h1 className="text-white font-[400] text-[14px]">
                       {location.pathname === "/wallet/income" ? "暂无转账" : ""}
                     </h1>
-                    <span className=" text-[#888] text-[12px] font-[400]">
+                    <span className=" text-[#888] text-[14px] font-[400]">
                       {" "}
                       {location.pathname === "/wallet/income"
                         ? "您的收入记录将在这里显示"
@@ -243,7 +243,7 @@ const TranHist: React.FC = () => {
                             <span className="block text-[#aaa] text-[13px] font-[500] leading-[20px] w-[80%] break-words">
                               {ts.description}
                             </span>
-                            <span className=" text-[#777] text-[12px] font-[400] leading-[20px]">
+                            <span className=" text-[#777] text-[14px] font-[400] leading-[20px]">
                               {ts.date}
                             </span>
                           </div>
@@ -268,7 +268,7 @@ const TranHist: React.FC = () => {
                                   .backgroundColor,
                                 color: getStatusClass(ts.status).color,
                               }}
-                              className="px-[12px] py-[6px] flex justify-center items-center rounded-[6px]  text-[12px] font-[400] leading-[15px]"
+                              className="px-[12px] py-[6px] flex justify-center items-center rounded-[6px]  text-[14px] font-[400] leading-[15px]"
                             >
                               {/* <span className={getStatusClass(ts.status).text}> */}
 

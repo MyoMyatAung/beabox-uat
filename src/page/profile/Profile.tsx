@@ -29,7 +29,6 @@ const Profile = () => {
   const { data, isLoading, refetch } = useGetMyOwnProfileQuery("", {
     skip: !user,
   });
-  console.log(data, "data for profile");
   const progressData = data?.data?.level_progress;
   const [show, setShow] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
@@ -205,7 +204,7 @@ const Profile = () => {
         </div>
         <div className="w-full flex items-center gap-3 pb-5 px-5">
           <ProfileAvatar
-            progressData={data?.data?.level_progress}
+            progressData={80}//{data?.data?.level_progress}
             levelImage={data?.data?.level}
             photo={data?.data?.profile_photo}
           />
@@ -238,7 +237,7 @@ const Profile = () => {
               </p>
               {data?.data?.share_region === "on" ? (
                 <div className="z-[1900] flex">
-                  <div className="z-[1900] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
+                  <div className="z-[1900] text-[14px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
                     {!data?.data?.city?.length &&
                     !data?.data?.province?.length ? (
                       <span>未知</span>
@@ -252,7 +251,7 @@ const Profile = () => {
                 </div>
               ) : (
                 <div className="z-[1900] flex">
-                  <div className="z-[1200] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
+                  <div className="z-[1200] text-[14px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
                     <span>未知</span>
                   </div>
                 </div>
@@ -260,17 +259,17 @@ const Profile = () => {
             </div>
           )}
         </div>
-        <h1 className="text-[12px]  text-[#888] z-[1900] relative">
+        <h1 className="text-[14px]  text-[#888] z-[1900] relative">
           {user?.token ? (
             <>
               {data?.data?.hide_bio?.length ? (
-                <div className="text-[12px] xs:w-[100px] md:w-[340px] overflow-hidden break-words px-5  text-[#888] mb-5">
+                <div className="text-[14px] xs:w-[100px] md:w-[340px] overflow-hidden break-words px-5  text-[#888] mb-5">
                   {data?.data?.bio}
                 </div>
               ) : (
                 <Link
                   to={paths.add_bio}
-                  className="text-[12px] ml-5 text-[#FFFFFFCC] bg-[#FFFFFF14] px-2 py-1 w-[91px] text-center rounded-full"
+                  className="text-[14px] ml-5 text-[#FFFFFFCC] bg-[#FFFFFF14] px-2 py-1 w-[91px] text-center rounded-full"
                 >
                   + 个人简介
                 </Link>
@@ -279,19 +278,19 @@ const Profile = () => {
           ) : (
             // <>
             //   {data?.data?.hide_bio === "on" ? (
-            //     <div className="text-[12px] xs:w-[100px] md:w-[340px] overflow-hidden break-words px-5  text-[#888] mb-5">
+            //     <div className="text-[14px] xs:w-[100px] md:w-[340px] overflow-hidden break-words px-5  text-[#888] mb-5">
             //       {data?.data?.bio}
             //     </div>
             //   ) : (
             //     <>
             //       {data?.data?.hide_bio?.length ? (
-            //         <div className="text-[12px] xs:w-[100px] md:w-[340px] overflow-hidden break-words px-5  text-[#888] mb-5">
+            //         <div className="text-[14px] xs:w-[100px] md:w-[340px] overflow-hidden break-words px-5  text-[#888] mb-5">
             //           {data?.data?.bio}
             //         </div>
             //       ) : (
             //         <Link
             //           to={paths.add_bio}
-            //           className="text-[12px] ml-5 text-[#FFFFFFCC] bg-[#FFFFFF14] px-2 py-1 w-[91px] text-center rounded-full"
+            //           className="text-[14px] ml-5 text-[#FFFFFFCC] bg-[#FFFFFF14] px-2 py-1 w-[91px] text-center rounded-full"
             //         >
             //           + 个人简介
             //         </Link>

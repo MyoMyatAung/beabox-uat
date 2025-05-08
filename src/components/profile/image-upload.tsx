@@ -99,7 +99,7 @@ const ImageUpload = ({
                 >
                   上传图片
                 </h1>
-                <p className="text-[12px] text-[#888888]">
+                <p className="text-[14px] text-[#888888]">
                   上传 PNG/JPG，限{imageLimit}MB
                 </p>
               </div>

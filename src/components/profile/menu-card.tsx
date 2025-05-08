@@ -9,7 +9,7 @@ const MenuCard = ({ Icon, title }: any) => {
       <div className="">
         <Icon />
       </div>
-      <p className="text-white text-[12px]">{title}</p>
+      <p className="text-white text-[14px]">{title}</p>
     </Card>
   );
 };

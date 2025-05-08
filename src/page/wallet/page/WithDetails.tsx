@@ -332,7 +332,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
           <label className="text-white text-[16px] font-[400] leading-[20px]">
             撤回规则
           </label>
-          <div className="flex flex-col gap-[20px] pt-[10px] text-[#888] text-[12px] font-[300] leading-[18px]">
+          <div className="flex flex-col gap-[20px] pt-[10px] text-[#888] text-[14px] font-[300] leading-[18px]">
             {rule?.map((rr: any) => (
               <p>{rr.rule}</p>
             ))}
