@@ -46,7 +46,7 @@ const TopNavbar = ({
             <p
               className={`${
                 currentTab == tab.id
-                  ? "text-[20px] opacity-100 font-semibold home-normal-text-shadow"
+                  ? "text-[24px] opacity-100 font-semibold home-normal-text-shadow"
                   : "home-normal-text"
               }`}
             >

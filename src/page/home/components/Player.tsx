@@ -728,15 +728,15 @@ const Player = ({
                 progressBarRef.current.style.height = "4px";
                 progressBarRef.current.style.setProperty(
                   "--thumb-width",
-                  "12px"
+                  "6px"
                 );
                 progressBarRef.current.style.setProperty(
                   "--thumb-height",
-                  "12px"
+                  "16px"
                 );
                 progressBarRef.current.style.setProperty(
                   "--thumb-radius",
-                  "50%"
+                  "5px"
                 );
               }
               timeDisplayRef.current!.style.display = "none";
@@ -826,12 +826,12 @@ const Player = ({
               isDraggingRef.current = false;
               dispatch(sethideBar(false));
               progressBarRef.current.style.height = "4px";
-              progressBarRef.current.style.setProperty("--thumb-width", "12px");
+              progressBarRef.current.style.setProperty("--thumb-width", "6px");
               progressBarRef.current.style.setProperty(
                 "--thumb-height",
-                "12px"
+                "16px"
               );
-              progressBarRef.current.style.setProperty("--thumb-radius", "50%");
+              progressBarRef.current.style.setProperty("--thumb-radius", "5px");
               timeDisplayRef.current!.style.display = "none";
               artPlayerInstanceRef.current.currentTime = seekTimeRef.current;
             });

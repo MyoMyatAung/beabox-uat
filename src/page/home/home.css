@@ -916,10 +916,10 @@ html {
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 16px;
-  height: 16px;
+  width: 4px;
+  height: 10px;
   background: #d53ff0;
-  border-radius: 50%;
+  border-radius: 5px;
   opacity: 0;
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
@@ -941,7 +941,7 @@ html {
   line-height: 20px;
   letter-spacing: 0.24px;
   position: absolute;
-  bottom: 50px;
+  bottom: 80px;
   right: 22%;
   display: flex;
   justify-content: center;
@@ -1022,12 +1022,15 @@ html {
 }
 
 .custom-progress-bar::-webkit-slider-thumb {
-  padding: 8px;
+  padding: 6px;
+  /* padding-left: 4px;
+  padding-right: 4px; */
+
   -webkit-appearance: none !important;
   appearance: none !important;
-  width: var(--thumb-width, 12px);
-  height: var(--thumb-height, 12px);
-  border-radius: var(--thumb-radius, 50%);
+  width: var(--thumb-width, 6px);
+  height: var(--thumb-height, 16px);
+  border-radius: var(--thumb-radius, 5px);
   background: #cd3eff !important;
   cursor: pointer;
 }
