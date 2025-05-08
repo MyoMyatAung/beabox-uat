@@ -29,6 +29,7 @@ const Profile = () => {
   const { data, isLoading, refetch } = useGetMyOwnProfileQuery("", {
     skip: !user,
   });
+  console.log(data, "data for profile");
   const progressData = data?.data?.level_progress;
   const [show, setShow] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
