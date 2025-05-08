@@ -9,19 +9,33 @@ import {
 import { FaCaretDown } from "react-icons/fa";
 import { Swiper, SwiperSlide } from "swiper/react";
 
+// const months = [
+//   "January",
+//   "February",
+//   "March",
+//   "April",
+//   "May",
+//   "June",
+//   "July",
+//   "August",
+//   "September",
+//   "October",
+//   "November",
+//   "December",
+// ];
 const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
+  "一月",
+  "二月",
+  "三月",
+  "四月",
+  "五月",
+  "六月",
+  "七月",
+  "八月",
+  "九月",
+  "十月",
+  "十一月",
+  "十二月",
 ];
 const currentYear = new Date().getFullYear();
 const defaultMonth = months[new Date().getMonth()];
@@ -34,7 +48,7 @@ const DatePick: React.FC<any> = ({
   setCurMon,
   setCurYr,
   setplus,
-  setTran
+  setTran,
 }) => {
   const swiperRef = useRef<any>(null);
   const swiperYrRef = useRef<any>(null);
@@ -54,7 +68,7 @@ const DatePick: React.FC<any> = ({
   };
 
   const handleDoneClick = () => {
-    setTran([])
+    setTran([]);
     setCurMon(selectedMonth);
     setCurYr(selectedYear);
     setplus(months.indexOf(selectedMonth) + 1);

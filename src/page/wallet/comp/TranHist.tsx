@@ -15,20 +15,35 @@ import loader from "../../home/vod_loader.gif";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useLocation } from "react-router-dom";
 
+// const months = [
+//   "January",
+//   "February",
+//   "March",
+//   "April",
+//   "May",
+//   "June",
+//   "July",
+//   "August",
+//   "September",
+//   "October",
+//   "November",
+//   "December",
+// ];
+
 const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
+  "一月",
+  "二月",
+  "三月",
+  "四月",
+  "五月",
+  "六月",
+  "七月",
+  "八月",
+  "九月",
+  "十月",
+  "十一月",
+  "十二月"
+]
 
 const TranHist: React.FC = () => {
   const [curMon, setCurMon] = useState("");
@@ -59,6 +74,8 @@ const TranHist: React.FC = () => {
     setCurYr(now.getFullYear()); // Get current year
     setPlus(now.getMonth() + 1); // Month index starts from 0, so +1
   }, []);
+
+  console.log(curMon,plus)
 
   useEffect(() => {
     setPage(1);
