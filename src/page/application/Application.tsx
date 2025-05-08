@@ -245,7 +245,7 @@ const Application: React.FC<any> = () => {
                           className="flex flex-col justify-center items-center gap-[6px]"
                         >
                           <ImageWithPlaceholder
-                            className="w-full rounded-[6px] border-[#222]"
+                            className="min-w-[56px] min-h-[56px] rounded-[6px] border-[#222]"
                             src={app.image}
                             width={""}
                             height={""}

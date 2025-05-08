@@ -20,7 +20,7 @@ const OtherAds = () => {
                   className="flex flex-col justify-center items-center gap-[4px]"
                 >
                   <ImageWithPlaceholder
-                    className="rounded-[6px] border-[#222]"
+                    className="min-w-[56px] min-h-[56px] rounded-[6px] border-[#222]"
                     src={app.image}
                     width={""}
                     height={""}
