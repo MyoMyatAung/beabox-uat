@@ -94,7 +94,7 @@ const Settings = ({
         {user?.token ? (
           <>
             <div className="flex flex-col gap-4">
-              <h1 className="text-[14px] text-[#888]">账户安全</h1>
+              <h1 className="text-[16px] text-[#888]">账户安全</h1>
               <ChangePassword />
               <div className="mt-5">
                 <EditSecurity />
@@ -108,7 +108,7 @@ const Settings = ({
         {user?.token ? (
           <>
             <div className="flex flex-col gap-4 mt-5">
-              <h1 className="text-[14px] text-[#888]">
+              <h1 className="text-[16px] text-[#888]">
                 {/* Account Privacy */}
                 账号隐私设置
               </h1>
