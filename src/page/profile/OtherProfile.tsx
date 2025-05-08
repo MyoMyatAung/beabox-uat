@@ -413,6 +413,7 @@ const OtherProfile = () => {
             followings={userData?.data?.following_count}
             likes={userData?.data?.likes_sum_count}
             id={userData?.data?.id}
+            nickname={userData?.data?.nickname}
           />
         </div>
         {user && user.id === id ? (
