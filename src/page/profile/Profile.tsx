@@ -204,7 +204,7 @@ const Profile = () => {
         </div>
         <div className="w-full flex items-center gap-3 pb-5 px-5">
           <ProfileAvatar
-            progressData={80}//{data?.data?.level_progress}
+            progressData={data?.data?.level_progress}
             levelImage={data?.data?.level}
             photo={data?.data?.profile_photo}
           />
