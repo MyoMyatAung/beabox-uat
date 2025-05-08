@@ -63,7 +63,7 @@ const EditReferral = ({
           onClick={showAlertHandler}
           className="text-[14px] flex items-center justify-between"
         >
-          <h1>邀请码</h1>
+          <h1>邀请函</h1>
           <p className="flex items-center gap-1 text-[#888]">
             {referral_code}
             <FaAngleRight />
@@ -72,7 +72,7 @@ const EditReferral = ({
       ) : (
         <DrawerTrigger asChild>
           <div className="text-[14px] flex items-center justify-between">
-            <h1>邀请码</h1>
+            <h1>邀请函</h1>
             <p className="flex items-center gap-1 text-[#888]">
               {referral_code}
               <FaAngleRight />

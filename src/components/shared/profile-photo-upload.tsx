@@ -84,7 +84,7 @@ const ProfilePhotoUpload = ({
         </DrawerTrigger>
         <DrawerContent className="border-0">
           <div className="p-5">
-            <h1 className="text-[16px] text-white text-center">头像</h1>
+            <h1 className="text-[16px] text-white text-center">等级专属头像</h1>
             <div className="space-y-5 mt-5">
               <ImageUpload
                 imgurl=""
@@ -105,7 +105,7 @@ const ProfilePhotoUpload = ({
                   setShowAvatar(true);
                 }}
               >
-                <h1 className="text-[16px] text-white">获取头像</h1>
+                <h1 className="text-[16px] text-white">等级专属头像</h1>
                 <p className="text-[14px] text-[#888888]">
                   升级即可解锁专属头像！
                 </p>
