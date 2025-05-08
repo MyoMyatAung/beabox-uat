@@ -7,7 +7,7 @@ import { useCoverUploadMutation } from "@/store/api/profileApi";
 import TranLoader from "../shared/tran-loader";
 import { MdLock } from "react-icons/md";
 
-const Covers = ({ setShowCovers }: any) => {
+const Covers = ({ setShowCovers, refetch }: any) => {
   const [selectedCovers, setSelectedCovers] = useState<any>({});
   const [activeId, setActiveId] = useState("");
   const { data } = useGetCoverListQuery("");
@@ -16,6 +16,7 @@ const Covers = ({ setShowCovers }: any) => {
   const uploadHandler = async () => {
     const { data } = await coverUpload({ id: activeId });
     if (data?.status) setShowCovers(false);
+    refetch();
   };
   useEffect(() => {
     if (data) setSelectedCovers(data?.data[0]);
