@@ -67,7 +67,7 @@ const ProfileAvatar = ({
       {photo ? (
         <AsyncDecryptedImage
           imageUrl={photo}
-          className="w-[58px] h-[58px] rounded-full object-cover object-center"
+          className="w-[58px] h-[58px] rounded-full object-cover object-center p-1.5"
           alt="Profile"
         />
       ) : (
