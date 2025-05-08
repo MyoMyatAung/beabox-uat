@@ -106,7 +106,7 @@ const DatePick: React.FC<any> = ({
       <DrawerContent className="border-0 bg-[#121012]">
         <div className="w-full flex flex-col justify-between px-5 py-7 h-[320px] overflow-hidden">
           <div className="flex relative h-[50px] mt-[40px] justify-around items-center border border-white/20 border-x-black">
-            <div className="fixed z-[99] left-20 top-14">
+            <div className="fixed z-[99] left-20 top-12">
               <Swiper
                 className="h-[80px]"
                 direction="vertical"
@@ -134,7 +134,7 @@ const DatePick: React.FC<any> = ({
                 ))}
               </Swiper>
             </div>
-            <div className="fixed z-[99] right-20 top-14">
+            <div className="fixed z-[99] right-20 top-12">
               <Swiper
                 className="h-[80px]"
                 direction="vertical"
