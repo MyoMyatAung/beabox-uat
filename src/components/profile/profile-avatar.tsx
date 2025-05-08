@@ -72,7 +72,7 @@ const ProfileAvatar = ({
           alt="Profile"
         />
       ) : (
-        <div className="w-[76px] h-[76px] rounded-full bg-[#FFFFFF12] flex justify-center items-center p-2">
+        <div className="w-[70px] h-[70px] rounded-full bg-[#FFFFFF12] flex justify-center items-center p-[5px]">
           <Person />
         </div>
       )}
