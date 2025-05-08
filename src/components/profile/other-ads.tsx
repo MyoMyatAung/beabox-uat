@@ -11,7 +11,7 @@ const OtherAds = () => {
       {applicationData?.application?.length > 0 &&
         applicationData?.application.map((appSection: any) => (
           <div key={appSection.id} className="">
-            <div className="grid grid-cols-6 gap-[10px]">
+            <div className="grid grid-cols-6 gap-[5px]">
               {appSection?.apps?.map((app: any) => (
                 <a
                   key={app.id}
@@ -20,7 +20,7 @@ const OtherAds = () => {
                   className="flex flex-col justify-center items-center gap-[4px]"
                 >
                   <ImageWithPlaceholder
-                    className="w-[52px] h-[52px] rounded-[6px] border-[#222]"
+                    className="rounded-[6px] border-[#222]"
                     src={app.image}
                     width={""}
                     height={""}

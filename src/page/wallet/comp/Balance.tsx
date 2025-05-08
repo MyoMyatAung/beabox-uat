@@ -107,7 +107,7 @@ const Balance: React.FC<BalanceProps> = () => {
           >
             <div className="flex justify-center items-center gap-[6px]">
               <img src={red} alt="Red Icon" className="w-[28px] h-[28px]" />
-              <span className="text-white text-[13px] font-[400] leading-[15px]">
+              <span className="text-white text-[14px] font-[400] leading-[15px]">
                 我要赚钱
               </span>
             </div>
@@ -120,7 +120,7 @@ const Balance: React.FC<BalanceProps> = () => {
           >
             <div className=" flex justify-center items-center gap-[6px]">
               <img src={we} alt="" />
-              <span className=" text-white text-[13px] font-[400] leading-[15px]">
+              <span className=" text-white text-[14px] font-[400] leading-[15px]">
                 提现
               </span>
             </div>

@@ -41,7 +41,7 @@ const History: React.FC<HistoryProps> = ({}) => {
             onClick={() => handleSearch(hs)}
             className="py-[10px] items-center flex justify-between text-white font-[400]"
           >
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-1 min-w-0">
               {" "}
               <span>
                 <svg
@@ -78,7 +78,7 @@ const History: React.FC<HistoryProps> = ({}) => {
                   />
                 </svg>
               </span>{" "}
-              <span>{hs}</span>
+              <span className="truncate pr-1">{hs}</span>
             </div>
             <button
               onClick={(e) => {
