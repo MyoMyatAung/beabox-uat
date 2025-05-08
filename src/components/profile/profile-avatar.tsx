@@ -7,7 +7,11 @@ interface ProfileAvatarProps {
   photo?: string;
 }
 
-const ProfileAvatar = ({ progressData, levelImage, photo }: ProfileAvatarProps) => {
+const ProfileAvatar = ({
+  progressData,
+  levelImage,
+  photo,
+}: ProfileAvatarProps) => {
   const progress = progressData || 0;
   const circleRadius = 30; // Adjusted radius to fit within 60px
   const strokeWidth = 4; // Stroke width
@@ -16,17 +20,12 @@ const ProfileAvatar = ({ progressData, levelImage, photo }: ProfileAvatarProps) 
   const strokeDashoffset = circumference - (progress / 100) * circumference;
 
   return (
-    // <img
-    //   className="w-[58px] h-[58px] rounded-full object-cover object-center"
-    //   src={photo}
-    //   alt=""
-    // />
     <div className="w-[60px] z-[1900] h-[60px] rounded-full bg-[#FFFFFF12] flex justify-center items-center relative">
       {progressData ? (
         <svg
           height={circleRadius * 2}
           width={circleRadius * 2}
-          className="absolute transform rotate-[-90deg]"
+          className="absolute transform rotate-[90deg] scale-x-[-1]"
         >
           <defs>
             <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -42,14 +41,14 @@ const ProfileAvatar = ({ progressData, levelImage, photo }: ProfileAvatarProps) 
           </defs>
           {/* Background Circle */}
           <circle
-            stroke="#888" // Tailwind gray-300
+            stroke="#888"
             fill="transparent"
             strokeWidth={strokeWidth}
             r={normalizedRadius}
             cx={circleRadius}
             cy={circleRadius}
           />
-          {/* Progress Circle */}
+          {/* Progress Circle (now counter-clockwise starting from top) */}
           <circle
             stroke="url(#gradient)"
             fill="transparent"
@@ -78,10 +77,10 @@ const ProfileAvatar = ({ progressData, levelImage, photo }: ProfileAvatarProps) 
       )}
 
       {levelImage && (
-        <AsyncDecryptedImage 
-          imageUrl={levelImage} 
-          className="absolute -bottom-3 right-1" 
-          alt="Level" 
+        <AsyncDecryptedImage
+          imageUrl={levelImage}
+          className="absolute -bottom-3 right-1"
+          alt="Level"
         />
       )}
     </div>
@@ -89,9 +88,3 @@ const ProfileAvatar = ({ progressData, levelImage, photo }: ProfileAvatarProps) 
 };
 
 export default ProfileAvatar;
-
-{
-  /* <div className="w-[58px] h-[58px] rounded-full bg-[#FFFFFF12] flex justify-center items-center">
-<Person />
-</div> */
-}
