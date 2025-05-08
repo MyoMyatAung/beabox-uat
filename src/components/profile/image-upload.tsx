@@ -97,11 +97,15 @@ const ImageUpload = ({
                     reviewStatus === "pending" ? "text-[#888]" : "text-white"
                   } `}
                 >
-                  上传图片
+                  上传头像 (需审核)
                 </h1>
                 <p className="text-[14px] text-[#888888]">
                   上传 PNG/JPG，限{imageLimit}MB
+                  {/* 上传 PNG/JPG，限{imageLimit}MB */}
                 </p>
+                {/* <p className="text-[12px] text-[#F54C4F] mt-1">
+                  您的图片未通过审核，请重新上传合适的图片
+                </p> */}
               </div>
               {reviewStatus === "pending" ? (
                 <button className="text-[#E79AFE] bg-[#E79AFE14] text-[14px] px-2 py-1 rounded-[4px]">

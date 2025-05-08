@@ -31,11 +31,11 @@ const Covers = ({ setShowCovers, refetch }: any) => {
           <TopBar setShowCovers={setShowCovers} />
         </div>
         <div className="flex-1 overflow-hidden overflow-y-scroll hide-sb">
-          <div className="sticky top-0 z-50 flex whitespace-nowrap overflow-x-auto hide-sb bg-[#16131C]">
+          <div className="sticky top-0 z-50 flex gap-5 px-4 whitespace-nowrap overflow-x-auto hide-sb bg-[#16131C]">
             {data?.data?.map((item: any, index: any) => (
               <div
                 key={index}
-                className="w-[72px] flex flex-col items-center justify-center gap-3"
+                className="flex flex-col items-center justify-center gap-3"
                 onClick={() => setSelectedCovers(item)}
               >
                 <div className="w-[72px] h-[3px] bg-transparent"></div>
@@ -46,16 +46,17 @@ const Covers = ({ setShowCovers, refetch }: any) => {
                       : "text-[#888888]"
                   }`}
                 >
-                  Lvl-{index + 1}
+                  Unlock Lvl-{index + 1}
                 </h1>
                 <div
-                  className={`w-[72px] h-[3px] ${
+                  className={`w-[32px] h-[3px] ${
                     selectedCovers == item ? "bg-[#CD3EFF]" : "bg-transparent"
                   }`}
                 ></div>
               </div>
             ))}
           </div>
+          <div className="bg-[#FFFFFF1F] h-[0.5px] w-full"></div>
           <div className="space-y-5 py-5 px-3">
             {selectedCovers?.list?.map((cover: any) => (
               <div
@@ -114,7 +115,7 @@ const TopBar = ({ setShowCovers }: any) => {
     <div className="flex justify-between items-center p-5">
       <div className=""></div>
       <div className="">
-        <p className="text-[18px]">选择背景</p>
+        <p className="text-[18px]">等级专属背景</p>
       </div>
       <div className="">
         <button
