@@ -115,7 +115,7 @@ const TopBar = ({ setShowCovers }: any) => {
     <div className="flex justify-between items-center p-5">
       <div className=""></div>
       <div className="">
-        <p className="text-[18px]">选择背景</p>
+        <p className="text-[18px]">等级专属背景</p>
       </div>
       <div className="">
         <button
