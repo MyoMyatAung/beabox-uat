@@ -1437,12 +1437,12 @@ const Player = ({
     });
 
     // When video is paused after attempting to play, ensure poster is visible
-    artPlayerInstanceRef.current.on("video:stalled", () => {
-      if (!artPlayerInstanceRef.current?.playing) {
-        showPoster();
-        showPlayButton();
-      }
-    });
+    // artPlayerInstanceRef.current.on("video:stalled", () => {
+    //   if (!artPlayerInstanceRef.current?.playing) {
+    //     showPoster();
+    //     showPlayButton();
+    //   }
+    // });
 
     // Keep poster visible if video waiting for data
     artPlayerInstanceRef.current.on("video:waiting", function () {
