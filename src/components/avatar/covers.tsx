@@ -31,7 +31,7 @@ const Covers = ({ setShowCovers, refetch }: any) => {
           <TopBar setShowCovers={setShowCovers} />
         </div>
         <div className="flex-1 overflow-hidden overflow-y-scroll hide-sb">
-          <div className="sticky top-0 z-50 flex justify-between px-4 whitespace-nowrap overflow-x-auto hide-sb bg-[#16131C]">
+          <div className="sticky top-0 z-50 flex gap-5 px-4 whitespace-nowrap overflow-x-auto hide-sb bg-[#16131C]">
             {data?.data?.map((item: any, index: any) => (
               <div
                 key={index}
