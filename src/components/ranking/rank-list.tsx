@@ -18,7 +18,7 @@ const RankList = () => {
           to={paths.ranking}
           className="flex items-center justify-center gap-1 bg-[#FFFFFF1F] rounded-full px-2 py-1"
         >
-          <span className="text-[10px]">查看更多</span>
+          <span className="text-[12px]">查看更多</span>
           <ChevronRight size={10} />
         </Link>
       </div>

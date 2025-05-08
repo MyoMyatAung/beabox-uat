@@ -16,31 +16,34 @@ const YourVideos = () => {
   useEffect(() => {
     refetch();
   }, []);
-//   to={paths.your_videos}
-// to={paths.your_videos}
+  //   to={paths.your_videos}
+  // to={paths.your_videos}
   return (
-    <section onClick={() => navigate(paths.your_videos)} className="bg-[#24222C] p-5 rounded-[20px] mx-5">
+    <section
+      onClick={() => navigate(paths.your_videos)}
+      className="bg-[#24222C] p-5 rounded-[20px] mx-5"
+    >
       <div className="flex items-center gap-2 ">
         <img src={yourvideo} className="w-9" alt="" />
-        <div className="text-[14px]">你的视频</div>
+        <div className="text-[16px]">你的视频</div>
         <div>
           <ChevronRight size={14} />
         </div>
       </div>
       <div className="flex justify-between items-center pt-5">
-        <div className="text-[14px] flex flex-col items-center justify-center">
-          <p>{published}</p>
-          <p className="text-[#888888]">已发布</p>
+        <div className=" flex flex-col items-center justify-center">
+          <p className="text-[14px]">{published}</p>
+          <p className="text-[#888888] text-[16px]">已发布</p>
         </div>
         <Divider />
-        <div className="text-[14px] flex flex-col items-center justify-center">
-          <p>{review}</p>
-          <p className="text-[#888888]">待处理</p>
+        <div className=" flex flex-col items-center justify-center">
+          <p className="text-[14px]">{review}</p>
+          <p className="text-[#888888] text-[16px]">待处理</p>
         </div>
         <Divider />
-        <div className="text-[14px] flex flex-col items-center justify-center">
-          <p>{declined}</p>
-          <p className="text-[#888888]">已拒绝</p>
+        <div className=" flex flex-col items-center justify-center">
+          <p className="text-[14px]">{declined}</p>
+          <p className="text-[#888888] text-[16px]">已拒绝</p>
         </div>
       </div>
     </section>
