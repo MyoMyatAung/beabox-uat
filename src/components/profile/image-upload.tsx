@@ -16,9 +16,10 @@ const ImageUpload = ({
   const [image, setImage] = useState<string | null>(null);
   const [blobUrl, setBlobUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [msg, setMsg] = useState(false);
   const dispatch = useDispatch();
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsOpen(false);
+    // setIsOpen(false);
     setError(null); // Reset error state
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -26,12 +27,13 @@ const ImageUpload = ({
       // Validate file size (2MB limit)
       if (file.size > imageLimit * 1024 * 1024) {
         // setError("文件大小超过2MB限制");
-        dispatch(
-          showToast({
-            message: "文件大小超过2MB限制",
-            type: "error",
-          })
-        );
+        setMsg(true);
+        // dispatch(
+        //   showToast({
+        //     message: "文件大小超过2MB限制",
+        //     type: "error",
+        //   })
+        // );
         return;
       }
 
@@ -48,8 +50,8 @@ const ImageUpload = ({
       // Convert to base64 only for API submission
       const base64 = await fileToBase64(file);
       setImage(url); // Use the blob URL for display
-      // setIsOpen(false);
       await settingUpload({ filedata: base64, filePath: "profile" });
+      setIsOpen(false);
     } catch (error) {
       console.error("Error handling file:", error);
     }
@@ -103,9 +105,13 @@ const ImageUpload = ({
                   上传 PNG/JPG，限{imageLimit}MB
                   {/* 上传 PNG/JPG，限{imageLimit}MB */}
                 </p>
-                {/* <p className="text-[12px] text-[#F54C4F] mt-1">
-                  您的图片未通过审核，请重新上传合适的图片
-                </p> */}
+                {msg ? (
+                  <p className="text-[12px] text-[#F54C4F] mt-1">
+                    您的图片未通过审核，请重新上传合适的图片
+                  </p>
+                ) : (
+                  <></>
+                )}
               </div>
               {reviewStatus === "pending" ? (
                 <button className="text-[#E79AFE] bg-[#E79AFE14] text-[14px] px-2 py-1 rounded-[4px]">
