@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Decrypted Sprite Thumbnail Preview</title>
+  <style>
+    #preview {
+      width: 160px;
+      height: 90px;
+      background-repeat: no-repeat;
+      background-size: auto;
+      border: 1px solid #ccc;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h3>Simulated Sprite Thumbnail Preview</h3>
+  <label>
+    Current Time (seconds):
+    <input type="number" id="currentTime" value="0" />
+  </label>
+  <button onclick="updatePreview()">Show Thumbnail</button>
+
+  <div id="preview"></div>
+
+  <script>
+    // === Configuration ===
+    const spriteUrl = "https://cjngi4nglk.zwkil.cn/resources/7a/7ac2fe91a5a1b86e53a9d1a111211186.txt";
+    const xorKey = 0x12;
+    const encryptSize = 4096;
+
+    // Sprite metadata
+    const metadata = {
+      video_duration: 606.643991,
+      frame_count: 87,
+      frame_interval: 7,
+      tile_rows: 18,
+      tile_cols: 5,
+      tileWidth: 160,
+      tileHeight: 90
+    };
+
+    let spriteImageUrl = null;
+
+    /**
+     * Load and decrypt the base64-encoded sprite image from the server.
+     * The first 4096 characters are XORed with a given key.
+     */
+    async function loadAndDecryptBase64Image(url, xorKey = 0x12, encryptSize = 4096) {
+      const response = await fetch(url);
+      const base64Text = await response.text();
+
+      // XOR-decrypt the first N characters
+      const chars = base64Text.split('');
+      const max = Math.min(encryptSize, chars.length);
+      for (let i = 0; i < max; i++) {
+        const xorCharCode = chars[i].charCodeAt(0) ^ xorKey;
+        chars[i] = String.fromCharCode(xorCharCode);
+      }
+
+      const decryptedBase64 = chars.join('');
+
+      // Parse base64 into Blob
+      const [header, base64Data] = decryptedBase64.includes('base64,')
+        ? decryptedBase64.split(',')
+        : ['data:image/jpeg;base64', decryptedBase64];
+
+      const byteString = atob(base64Data);
+      const byteArray = new Uint8Array(byteString.length);
+      for (let i = 0; i < byteString.length; i++) {
+        byteArray[i] = byteString.charCodeAt(i);
+      }
+
+      const mimeType = header.match(/data:(.*);base64/)?.[1] || 'image/jpeg';
+      const blob = new Blob([byteArray], { type: mimeType });
+
+      // Create object URL
+      spriteImageUrl = URL.createObjectURL(blob);
+    }
+
+    /**
+     * Given a time in seconds, return the corresponding x, y position
+     * in the sprite image based on tile size and layout.
+     */
+    function getSpritePosition(time) {
+      const index = Math.floor(time / metadata.frame_interval);
+      if (index >= metadata.frame_count) return null;
+
+      const col = index % metadata.tile_cols;
+      const row = Math.floor(index / metadata.tile_cols);
+      const x = col * metadata.tileWidth;
+      const y = row * metadata.tileHeight;
+
+      return { x, y };
+    }
+
+    /**
+     * Update the preview box based on the input time.
+     * Loads the sprite if not yet loaded.
+     */
+    async function updatePreview() {
+      if (!spriteImageUrl) {
+        await loadAndDecryptBase64Image(spriteUrl, xorKey, encryptSize);
+      }
+
+      const time = parseFloat(document.getElementById("currentTime").value);
+      const pos = getSpritePosition(time);
+      const preview = document.getElementById("preview");
+
+      if (!pos) {
+        preview.style.display = 'none';
+        alert('Time is out of frame range.');
+        return;
+      }
+
+      // Show the corresponding area in the sprite
+      preview.style.display = 'block';
+      preview.style.backgroundImage = `url(${spriteImageUrl})`;
+      preview.style.backgroundPosition = `-${pos.x}px -${pos.y}px`;
+      preview.style.backgroundSize = `${metadata.tile_cols * metadata.tileWidth}px ${metadata.tile_rows * metadata.tileHeight}px`;
+    }
+
+    // Optional: preload sprite on load
+    loadAndDecryptBase64Image(spriteUrl, xorKey, encryptSize);
+  </script>
+</body>
+</html>

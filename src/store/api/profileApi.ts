@@ -245,7 +245,7 @@ export const profileApi = createApi({
     getNoti: builder.query<any, string>({
       query: () => ({
         url: convertToSecureUrl(
-          `/notification/list?type=general&pageSize=3&page=1`
+          `/notification/list?type=general&pageSize=10&page=1`
         ),
         method: "GET",
       }),

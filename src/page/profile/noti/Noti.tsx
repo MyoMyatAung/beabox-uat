@@ -22,6 +22,7 @@ const Noti = () => {
   //   (item: any) => item?.type == "balance_alert"
   // );
   // console.log(balance_alert);
+
   if (isLoading) return <Loader />;
   return (
     <div className="w-full h-screen bg-[#16131C] px-5 flex flex-col items-center justify-between no-scrollbar">
@@ -35,14 +36,15 @@ const Noti = () => {
         </div>
         <div className="space-y-4 pb-10">
           {data?.data?.map((item: any) => {
-            if (item?.type == "general") {
+            if (item?.type == "creator") {
               return (
                 <>
                   <OtherNoti item={item} key={item?.id} />
                   <Divider show={true} />
                 </>
               );
-            } else if (item?.type == "balance_alert") {
+            } else 
+            if (item?.type == "balance_alert") {
               return (
                 <>
                   <Link
@@ -82,7 +84,7 @@ const Noti = () => {
               return (
                 <>
                   <Link
-                    to={`/notifications/${item?.id}`}
+                    to={`/notifications/system`}
                     state={{ data: item, main: "Beabox Team" }}
                     className="system flex items-start gap-2"
                   >

@@ -1,5 +1,6 @@
 import { dateForamtter } from "@/lib/utils";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
+import creator from '@/assets/creator.png'
 
 const OtherNoti = ({ item }: any) => {
   return (
@@ -7,7 +8,7 @@ const OtherNoti = ({ item }: any) => {
       <div className="flex items-start gap-2">
         <AsyncDecryptedImage
           className="w-10 h-10 object-cover rounded-full"
-          imageUrl={item?.icon || item?.metadata?.image}
+          imageUrl={item?.icon || item?.metadata?.image || creator}
           alt="avatar"
         />
         <div className="w-full">
@@ -22,7 +23,7 @@ const OtherNoti = ({ item }: any) => {
           <div className="flex items-end justify-between w-full ">
             <p className="text-[12px] w-[80%] text-[#888]">{item.message}</p>
             <p className="text-[10px] text-[#888]">
-              {dateForamtter(item?.created_at)}
+              {item.time_ago}
             </p>
           </div>
         </div>
