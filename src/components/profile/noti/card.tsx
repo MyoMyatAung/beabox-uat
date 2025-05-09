@@ -1,9 +1,9 @@
-import Balance from "@/assets/profile/balance.png";
+import Balance from "@/assets/profile/balance1.png";
 import System from "@/assets/profile/system.png";
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 
-const Card = ({ type }: any) => {
+const Card = ({ type, item }: any) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -14,30 +14,31 @@ const Card = ({ type }: any) => {
           className="w-10 h-10 rounded-full"
           alt=""
         />
-        <p className="text-[14px]">🎄 Holiday Cheer is Here! 🎅</p>
+        <p className="text-[14px]">{item?.title}</p>
+        {item?.is_read ? (
+          <></>
+        ) : (
+          <div className="w-2 h-2 rounded-full bg-[#FF0004]"></div>
+        )}
       </div>
       <div className="mt-3">
         <p
-          className={`text-[10px] text-[#888] leading-4 ${
+          className={`text-[14px] text-[#888] leading-4 ${
             !isExpanded && "line-clamp-2"
           }`}
         >
-          ✨It's the most wonderful time of the year! 🎉 Join us this Christmas
-          season for exciting events, exclusive offers, and festive surprises.
-          🎄 Let's make this holiday unforgettable with joy, laughter, and love.
-          Stay tuned for more updates and spread the holiday cheer! 🌟" Merry
-          Christmas and Happy Holidays! 🎅
+          {item?.message}
         </p>
-        <button
+        {/* <button
           onClick={() => setIsExpanded(!isExpanded)}
           className="text-[10px] text-[#888]"
         >
           {isExpanded ? "Hide" : "See more"}
-        </button>
+        </button> */}
       </div>
       <div className="w-full h-[1px] bg-[#444] my-3"></div>
       <div className="flex items-center justify-between">
-        <p className="text-[14px]">View More</p>
+        <p className="text-[14px]">进入首页</p>
         <ChevronRight size={14} />
       </div>
     </div>

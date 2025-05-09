@@ -1,5 +1,4 @@
 import { paths } from "@/routes/paths";
-// import { FaAngleLeft } from "react-icons/fa";
 import backButton from "../../../assets/backButton.svg";
 import { Link } from "react-router-dom";
 import OtherNoti from "@/components/profile/noti/other-noti";
@@ -10,22 +9,25 @@ import Divider from "@/components/shared/divider";
 import System from "@/assets/profile/system1.png";
 import Balance from "@/assets/profile/balance1.png";
 import { useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import BalanceNotiLink from "@/components/profile/noti/balance-noti-link";
 
 const Noti = () => {
   const { data, isLoading, refetch } = useGetNotiQuery("");
-  const [loading, setLoading] = useState(false);
   const user = useSelector((state: any) => state.persist.user);
   useEffect(() => {
     if (user) refetch();
   }, [user, refetch]);
+  // const balance_alert = data?.data?.filter(
+  //   (item: any) => item?.type == "balance_alert"
+  // );
+  // console.log(balance_alert);
   if (isLoading) return <Loader />;
   return (
     <div className="w-full h-screen bg-[#16131C] px-5 flex flex-col items-center justify-between no-scrollbar">
       <div className="w-full">
         <div className="flex justify-between items-center py-5 sticky top-0 bg-[#16131C00] z-50">
           <Link to={paths.profile}>
-            {/* <FaAngleLeft size={22} /> */}
             <img src={backButton} alt="" />
           </Link>
           <p className="text-[16px]">通知</p>
@@ -44,20 +46,24 @@ const Noti = () => {
               return (
                 <>
                   <Link
-                    to={`/notifications/${item?.id}`}
-                    state={{ data: item, main: "Balance Alert" }}
+                    to={`/notifications/balance`}
+                    state={{
+                      data: data?.data?.filter(
+                        (item: any) => item?.type == "balance_alert"
+                      ),
+                      main: "Balance Alert",
+                    }}
                     className="flex items-start gap-2"
                   >
-                    <img
-                      // src={item?.metadata?.image}
-                      src={Balance}
-                      className="w-10 h-10 mt-1"
-                      alt=""
-                    />
+                    <img src={Balance} className="w-10 h-10 mt-1" alt="" />
                     <div className="w-full">
                       <div className="flex items-center text-[14px] justify-between">
                         <p>{item?.title}</p>
-                        {/* <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div> */}
+                        {item?.is_read ? (
+                          <></>
+                        ) : (
+                          <div className="w-2 h-2 rounded-full bg-[#FF0004]"></div>
+                        )}
                       </div>
                       <div className="flex items-end justify-between">
                         <p className="text-[12px] w-[80%] text-[#888]">
@@ -80,16 +86,15 @@ const Noti = () => {
                     state={{ data: item, main: "Beabox Team" }}
                     className="system flex items-start gap-2"
                   >
-                    <img
-                      // src={item?.metadata?.image}
-                      src={System}
-                      className="w-10 h-10 mt-1"
-                      alt=""
-                    />
+                    <img src={System} className="w-10 h-10 mt-1" alt="" />
                     <div className="w-full">
                       <div className="flex items-center text-[14px] justify-between">
                         <p>{item.title}</p>
-                        <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
+                        {item?.is_read ? (
+                          <></>
+                        ) : (
+                          <div className="w-2 h-2 rounded-full bg-[#FF0004]"></div>
+                        )}
                       </div>
                       <div className="flex items-end justify-between ">
                         <p className="text-[10px] w-[80%]">{item.message}</p>
@@ -104,6 +109,7 @@ const Noti = () => {
               );
             }
           })}
+          {/* <BalanceNotiLink /> */}
           {/* <SystemNotiLink />
           <BalanceNotiLink />
           <OtherNoti /> */}

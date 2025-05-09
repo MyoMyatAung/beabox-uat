@@ -1139,7 +1139,7 @@ const Player = ({
       `;
 
       // Add a custom class for easier targeting
-      posterElement.classList.add("art-poster-with-transition");
+      posterElement.classList.add("");
 
       // Add transitionend listener to properly handle the end of transition
       posterElement.addEventListener("transitionend", (e) => {
