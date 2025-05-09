@@ -66,10 +66,8 @@ const Avatars = ({
                       }
                     >
                       <AvatarImage
-                        className={`w-[60px] h-[60px] ${
-                          avatarId == item?.id ? "" : "brightness-75"
-                        } rounded-full ${
-                          !list?.is_available ? "brightness-50" : ""
+                        className={`w-[60px] h-[60px] rounded-full ${
+                          !list?.is_available ? "brightness-50" : avatarId !== item?.id ? "brightness-75" : ""
                         }`}
                         src={item.image}
                         width={"60px"}
