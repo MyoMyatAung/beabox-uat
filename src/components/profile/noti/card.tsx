@@ -1,16 +1,21 @@
 import Balance from "@/assets/profile/balance1.png";
-import System from "@/assets/profile/system.png";
+import System from "@/assets/profile/system1.png";
+import Creator from "@/assets/profile/Wallet.png";
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 
 const Card = ({ type, item }: any) => {
   const [isExpanded, setIsExpanded] = useState(false);
-
+  console.log(type);
   return (
     <div className="bg-[#1E1C28] p-3 rounded-[12px]">
       <div className="flex gap-2 items-center">
         <img
-          src={type ? System : Balance}
+          src={
+            (type == "balance" && Balance) ||
+            (type == "system" && System) ||
+            (type == "creator" && Creator)
+          }
           className="w-10 h-10 rounded-full"
           alt=""
         />
