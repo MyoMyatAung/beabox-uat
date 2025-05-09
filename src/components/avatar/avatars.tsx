@@ -51,31 +51,33 @@ const Avatars = ({
                 >
                   {list?.level}
                 </h1>
-                <div className="flex justify-between">
-                  {list?.list?.map((item: any) => (
-                    <div
-                      className=""
-                      key={item?.image}
-                      onClick={
-                        list?.is_available
-                          ? () => {
-                              setSrcImg(item?.image);
-                              setAvatarId(item?.id);
-                            }
-                          : () => {}
-                      }
-                    >
-                      <AvatarImage
-                        className={`w-[60px] h-[60px] rounded-full ${
-                          !list?.is_available ? "brightness-50" : avatarId !== item?.id ? "brightness-75" : ""
-                        }`}
-                        src={item.image}
-                        width={"60px"}
-                        height={"60px"}
-                        alt={""}
-                      />
-                    </div>
-                  ))}
+                <div className="flex overflow-x-auto overflow-y-hidden pb-2 scrollbar-hide">
+                  <div className="flex space-x-4">
+                    {list?.list?.map((item: any) => (
+                      <div
+                        className="flex-shrink-0"
+                        key={item?.image}
+                        onClick={
+                          list?.is_available
+                            ? () => {
+                                setSrcImg(item?.image);
+                                setAvatarId(item?.id);
+                              }
+                            : () => {}
+                        }
+                      >
+                        <AvatarImage
+                          className={`w-[60px] h-[60px] rounded-full ${
+                            !list?.is_available ? "brightness-50" : avatarId !== item?.id ? "brightness-75" : ""
+                          }`}
+                          src={item.image}
+                          width={"60px"}
+                          height={"60px"}
+                          alt={""}
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             ))}
