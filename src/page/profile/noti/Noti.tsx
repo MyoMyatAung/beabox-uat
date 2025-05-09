@@ -72,7 +72,7 @@ const Noti = () => {
                           {item?.message}
                         </p>
                         <p className="text-[10px] text-[#888]">
-                          {dateForamtter(item?.created_at)}
+                          {item?.time_ago}
                         </p>
                       </div>
                     </div>
@@ -101,7 +101,7 @@ const Noti = () => {
                       <div className="flex items-end justify-between ">
                         <p className="text-[10px] w-[80%]">{item.message}</p>
                         <p className="text-[10px] text-[#888]">
-                          {dateForamtter(item.created_at)}
+                          {item.time_ago}
                         </p>
                       </div>
                     </div>
