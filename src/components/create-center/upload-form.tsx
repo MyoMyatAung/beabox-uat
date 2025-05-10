@@ -171,11 +171,11 @@ const UploadFrom = ({
           </a>
         </p>
       </div> */}
-      {editPost ? (
+      {/* {editPost ? (
         <Info status={editPost?.status} reason={editPost?.reason} />
       ) : (
         <></>
-      )}
+      )} */}
       <div className="mx-5 pb-5 pt-10 mt-5">
         <div className="flex gap-2 justify-center items-center pb-5">
           {agree ? (
