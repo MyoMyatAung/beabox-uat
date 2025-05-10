@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { BottomNav } from "@/components/shared/bottom-nav";
 import PopUp from "./PopUp";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useGetApplicationAdsQuery } from "@/store/api/explore/exploreApi";
 import { useSelector, useDispatch } from "react-redux";
 import AuthDrawer from "@/components/profile/auth/auth-drawer";
@@ -224,6 +224,7 @@ const RootLayout = ({ children }: any) => {
 
   const [cachedEventDetails, setCachedEventDetails] = useState<{ data: EventDetail } | null>(null);
   const [isFetchingDetails, setIsFetchingDetails] = useState(false);
+  const isFetchingRef = useRef(false);
 
   // Preload the lucky draw component and prefetch event details
   useEffect(() => {
@@ -242,9 +243,10 @@ const RootLayout = ({ children }: any) => {
       // Prefetch event details
       const prefetchEventDetails = async () => {
         const eventId = currentEventData?.data?.id;
-        if (!eventId || isFetchingDetails) return;
+        if (!eventId || isFetchingRef.current) return;
 
         try {
+          isFetchingRef.current = true;
           setIsFetchingDetails(true);
           const eventDetails = await triggerGetEventDetails(eventId).unwrap();
           setCachedEventDetails(eventDetails);
@@ -253,12 +255,13 @@ const RootLayout = ({ children }: any) => {
           console.error("Failed to prefetch event details:", error);
         } finally {
           setIsFetchingDetails(false);
+          isFetchingRef.current = false;
         }
       };
 
       prefetchEventDetails();
     }
-  }, [showAd, showAlert, isOpen, location.pathname, event, showAnimation, currentTab, currentEventData?.data?.id, isFetchingDetails]);
+  }, [showAd, showAlert, isOpen, location.pathname, event, showAnimation, currentTab, currentEventData?.data?.id]);
 
   // If loading, show loading screen
   if (isLoading) {
