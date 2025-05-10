@@ -9,7 +9,7 @@ import { dateForamtter } from "@/lib/utils";
 
 const NotiDetail = () => {
   const state = useLocation();
-  // console.log(state.state);
+  console.log(state.state);
   const navigate = useNavigate();
   return (
     <div className="w-full h-screen bg-[#16131C] px-5 flex flex-col items-center justify-between no-scrollbar">
@@ -20,7 +20,7 @@ const NotiDetail = () => {
             <img src={backButton} alt="" />
           </div>
           <p className="text-[16px] font-bold">详情</p>
-          <div></div>
+<div className="px-2"></div>
         </div>
 
         <div className="space-y-6">
@@ -43,7 +43,8 @@ const NotiDetail = () => {
                   (state.state.data.type == "creator" && "创作者里程碑提醒")}
               </p>
               <p className="text-[#777777] text-[14px]">
-                {dateForamtter(state.state.data.created_at)}
+                {/* {dateForamtter(state.state.data.time_ago)} */}
+                {state.state.data.time_ago}
               </p>
             </div>
           </div>

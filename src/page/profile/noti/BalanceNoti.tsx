@@ -68,7 +68,8 @@ const BalanceNoti = () => {
             groupedData?.map((item: any) => (
               <div>
                 <p className="text-[12px] text-[#666666] text-center my-2">
-                  {formatdate(item?.date)}
+                  {/* {formatdate(item?.date)} */}
+                  {item?.date === today ? <></> : formatdate(item?.date)}
                 </p>
                 <div className="space-y-5">
                   {item?.list?.map((item: any) => (
