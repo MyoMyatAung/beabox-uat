@@ -3,6 +3,10 @@ import backButton from "../../../assets/backButton.svg";
 import { Link, useLocation } from "react-router-dom";
 import Card from "@/components/profile/noti/card";
 import creatorbell from "@/assets/profile/creatorbell.png";
+import { useGetNotiQuery } from "@/store/api/profileApi";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import Loader from "@/components/shared/loader";
 const formatdate = (data: any) => {
   const date = new Date(data);
   const formattedDate = date
@@ -19,14 +23,14 @@ const formatdate = (data: any) => {
 };
 
 const CreatorNoti = () => {
-  const state = useLocation();
+  const { data, isLoading, refetch } = useGetNotiQuery("creator");
   const uniqueDates = [
-    ...new Set(state?.state?.data?.map((item: any) => item?.created_at)),
+    ...new Set(data?.data?.map((item: any) => item?.created_at)),
   ];
 
   const groupedData = uniqueDates.map((date) => ({
     date,
-    list: state?.state?.data
+    list: data?.data
       ?.filter((item: any) => item?.created_at === date)
       ?.map((item: any) => item),
   }));
@@ -39,6 +43,13 @@ const CreatorNoti = () => {
     return `${year}-${month}-${day}`;
   };
   const today = getTodayDate();
+
+  const user = useSelector((state: any) => state.persist.user);
+  useEffect(() => {
+    if (user) refetch();
+  }, [user, refetch]);
+
+  if (isLoading) return <Loader />;
   return (
     <div className="w-full h-screen px-5 flex flex-col items-center justify-between no-scrollbar">
       <div className="w-full">
