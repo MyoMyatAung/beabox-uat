@@ -101,6 +101,126 @@ const Player = ({
 
   const dispatch = useDispatch();
 
+  const [thumbnailPreview, setThumbnailPreview] = useState({
+    visible: false,
+    position: { x: 0, y: 0 },
+    time: 0,
+  });
+  const spriteImageUrlRef = useRef<string | null>(null);
+
+  // Load and decrypt the sprite image
+  const loadAndDecryptSprite = async () => {
+    try {
+      const spriteUrl =
+        "https://cjngi4nglk.zwkil.cn/resources/7a/7ac2fe91a5a1b86e53a9d1a111211186.txt";
+      const xorKey = 0x12;
+      const encryptSize = 4096;
+
+      const response = await fetch(spriteUrl);
+      const base64Text = await response.text();
+
+      // XOR-decrypt the first N characters
+      const chars = base64Text.split("");
+      const max = Math.min(encryptSize, chars.length);
+      for (let i = 0; i < max; i++) {
+        const xorCharCode = chars[i].charCodeAt(0) ^ xorKey;
+        chars[i] = String.fromCharCode(xorCharCode);
+      }
+
+      const decryptedBase64 = chars.join("");
+
+      // Parse base64 into Blob
+      const [header, base64Data] = decryptedBase64.includes("base64,")
+        ? decryptedBase64.split(",")
+        : ["data:image/jpeg;base64", decryptedBase64];
+
+      const byteString = atob(base64Data);
+      const byteArray = new Uint8Array(byteString.length);
+      for (let i = 0; i < byteString.length; i++) {
+        byteArray[i] = byteString.charCodeAt(i);
+      }
+
+      const mimeType = header.match(/data:(.*);base64/)?.[1] || "image/jpeg";
+      const blob = new Blob([byteArray], { type: mimeType });
+
+      // Create object URL
+      const url = URL.createObjectURL(blob);
+
+      spriteImageUrlRef.current = url; // Update the ref
+    } catch (error) {
+      console.error("Error loading sprite:", error);
+    }
+  };
+
+  // Get sprite position for a given time
+  const getSpritePosition = (time: number) => {
+    const metadata = {
+      video_duration: 606.643991,
+      frame_count: 87,
+      frame_interval: 7,
+      tile_rows: 18,
+      tile_cols: 5,
+      tileWidth: 160,
+      tileHeight: 90,
+    };
+
+    const index = Math.floor(time / metadata.frame_interval);
+    if (index >= metadata.frame_count) return null;
+
+    const col = index % metadata.tile_cols;
+    const row = Math.floor(index / metadata.tile_cols);
+    const x = col * metadata.tileWidth;
+    const y = row * metadata.tileHeight;
+
+    return { x, y };
+  };
+
+  console.log(thumbnailPreview);
+  console.log(spriteImageUrlRef.current);
+
+  // Update thumbnail preview
+  const updateThumbnailPreview = (time: number, clientX: number) => {
+    console.log("winn", spriteImageUrlRef.current);
+    if (!artPlayerInstanceRef.current || !spriteImageUrlRef.current) return;
+
+    const pos = getSpritePosition(time);
+    if (!pos) return;
+
+    setThumbnailPreview({
+      visible: true,
+      position: {
+        x: clientX - 80, // Center the preview under the cursor
+        y: -100, // Position above the progress bar
+      },
+      time,
+    });
+  };
+
+  // Add this useEffect near your other hooks
+  useEffect(() => {
+    if (!artPlayerInstanceRef.current) return;
+
+    // Find the preview element in the DOM
+    const previewElement = playerContainerRef.current?.querySelector(
+      ".thumbnail-preview"
+    ) as HTMLDivElement;
+    if (!previewElement || !spriteImageUrlRef.current) return;
+
+    if (thumbnailPreview.visible) {
+      const pos = getSpritePosition(thumbnailPreview.time);
+      if (pos) {
+        previewElement.style.display = "block";
+        previewElement.style.left = `${thumbnailPreview.position.x + 80}px`;
+        previewElement.style.bottom = "30px";
+        previewElement.style.backgroundImage = `url(${spriteImageUrlRef.current})`;
+        previewElement.style.backgroundPosition = `-${pos.x}px -${pos.y}px`;
+        previewElement.style.backgroundSize = `800px 1620px`;
+      }
+    } else {
+      previewElement.style.display = "none";
+    }
+  }, [thumbnailPreview]);
+
   // Format time (e.g., 65 => "01:05")
   const formatTime = (time: number) => {
     const hours = Math.floor(time / 3600);
@@ -682,6 +802,7 @@ const Player = ({
 
             // Desktop events
             progressBarRef.current.addEventListener("input", (e) => {
+              setShowRotate(true);
               if (!artPlayerInstanceRef.current) return;
               if (!isDraggingRef.current) {
                 dispatch(sethideBar(true));
@@ -712,6 +833,11 @@ const Player = ({
                 `${value}%`
               );
 
+              // Update thumbnail preview
+              if (e instanceof MouseEvent) {
+                updateThumbnailPreview(seekTimeRef.current, e.clientX);
+              }
+
               if (timeDisplayRef.current) {
                 const currentTime = formatTime(seekTimeRef.current);
                 const duration = formatTime(
@@ -722,9 +848,11 @@ const Player = ({
             });
 
             progressBarRef.current.addEventListener("change", () => {
+              setShowRotate(false);
               if (!artPlayerInstanceRef.current || !isDraggingRef.current)
                 return;
               isDraggingRef.current = false;
+              setThumbnailPreview((prev) => ({ ...prev, visible: false }));
               dispatch(sethideBar(false));
               if (progressBarRef.current) {
                 progressBarRef.current.style.height = "4px";
@@ -747,9 +875,11 @@ const Player = ({
 
             // Mobile touch events
             element.addEventListener("touchstart", (e) => {
+              setShowRotate(true);
               if (!artPlayerInstanceRef.current || !progressBarRef.current)
                 return;
               const touch = e.touches[0];
+
               const rect = element.getBoundingClientRect();
               const touchX = touch.clientX - rect.left;
               const percent = Math.min(
@@ -776,6 +906,7 @@ const Player = ({
               const newTime =
                 (percent / 100) * artPlayerInstanceRef.current.duration;
               seekTimeRef.current = newTime;
+              updateThumbnailPreview(newTime, touch.clientX);
               if (timeDisplayRef.current) {
                 const currentTime = formatTime(newTime);
                 const duration = formatTime(
@@ -786,6 +917,7 @@ const Player = ({
             });
 
             element.addEventListener("touchmove", (e) => {
+              setShowRotate(true);
               if (
                 !artPlayerInstanceRef.current ||
                 !progressBarRef.current ||
@@ -794,6 +926,7 @@ const Player = ({
                 return;
               e.preventDefault();
               const touch = e.touches[0];
+              updateThumbnailPreview(seekTimeRef.current, touch.clientX);
               const rect = element.getBoundingClientRect();
               const touchX = touch.clientX - rect.left;
               const percent = Math.min(
@@ -819,6 +952,7 @@ const Player = ({
             });
 
             element.addEventListener("touchend", () => {
+              setShowRotate(false);
               if (
                 !artPlayerInstanceRef.current ||
                 !progressBarRef.current ||
@@ -827,6 +961,7 @@ const Player = ({
                 return;
               isDraggingRef.current = false;
               dispatch(sethideBar(false));
+              setThumbnailPreview((prev) => ({ ...prev, visible: false }));
               progressBarRef.current.style.height = "4px";
               progressBarRef.current.style.setProperty("--thumb-width", "6px");
               progressBarRef.current.style.setProperty(
@@ -839,6 +974,69 @@ const Player = ({
             });
           },
         },
+        {
+          html: `
+    <div class="thumbnail-preview" style="
+      position: absolute;
+      width: 160px;
+      height: 90px;
+      background-repeat: no-repeat;
+      background-size: auto;
+      border-radius: 4px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      pointer-events: none;
+      display:none;
+      z-index: 10000;
+    "></div>
+  `,
+          style: {
+            position: "absolute",
+            top: "0",
+            left: "0",
+            width: "100%",
+            height: "100%",
+            pointerEvents: "none",
+            zIndex: "9999",
+          },
+          mounted: (element: HTMLElement) => {
+            const previewElement = element.querySelector(
+              ".thumbnail-preview"
+            ) as HTMLDivElement;
+
+            // Create a function to update the preview
+            const updatePreview = () => {
+              if (!previewElement || !spriteImageUrlRef.current) return;
+
+              if (thumbnailPreview.visible) {
+                const pos = getSpritePosition(thumbnailPreview.time);
+                if (pos) {
+                  previewElement.style.display = "block";
+                  previewElement.style.left = `${
+                    thumbnailPreview.position.x + 80
+                  }px`;
+                  previewElement.style.bottom = "30px";
+                  previewElement.style.backgroundImage = `url(${spriteImageUrlRef.current})`;
+                  previewElement.style.backgroundPosition = `-${pos.x}px -${pos.y}px`;
+                  previewElement.style.backgroundSize = `800px 1620px`;
+                }
+              } else {
+                previewElement.style.display = "none";
+              }
+            };
+
+            // Initial update
+            updatePreview();
+
+            // Store the preview element reference
+            const previewRef = { current: previewElement };
+
+            // Return a cleanup function
+            return () => {
+              // previewRef?.current = null;
+            };
+          },
+        },
+
         {
           html: `<div class="custom-play-icon">
                     <img src="${indicator}" width="50" height="50" alt="Play">
@@ -1569,6 +1767,9 @@ const Player = ({
     if (!playerContainerRef.current) return;
 
     if (isActive) {
+      if (!spriteImageUrlRef.current) {
+        loadAndDecryptSprite();
+      }
       // Increment the index when a new video becomes active
       indexRef.current++;
 

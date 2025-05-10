@@ -1132,6 +1132,7 @@ const VideoContainer = ({
   if (isOpen) {
     return <LoginDrawer isOpen={isOpen} setIsOpen={setIsOpen} />;
   }
+  console.log(video);
 
   return (
     <>
