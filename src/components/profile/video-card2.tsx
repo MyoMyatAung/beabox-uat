@@ -8,6 +8,7 @@ import { FaEarthAmericas } from "react-icons/fa6";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import "../../page/search/search.css";
+import { Heart } from "lucide-react";
 const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
   const data = new Uint8Array(arrayBuffer);
   const maxSize = Math.min(decryptSize, data.length);
@@ -17,7 +18,7 @@ const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
   // Decode the entire data as text.
   return new TextDecoder().decode(data);
 };
-const VideoCard = ({ videoData }: any) => {
+const VideoCard2 = ({ videoData }: any) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isLoad, setIsLoad] = useState(false);
@@ -89,40 +90,12 @@ const VideoCard = ({ videoData }: any) => {
     return 200;
   };
 
+  console.log(videoData, "videoData");
+
   return (
-    // <div
-    //   className="bg-gradient-to-r h-[170px] relative"
-    //   // onClick={() => showDetailsVod(videoData)}
-    // >
-    //   <div className="">
-    //     {!decryptedPhoto ? (
-    //       <div className="h-[170px] animate-pulse object-cover w-full object-center bg-[#FFFFFF1F]"></div>
-    //     ) : (
-    //       <ImageWithPlaceholder
-    //         needGradient={true}
-    //         className="h-[170px]  w-full  object-contain"
-    //         width={""}
-    //         height={""}
-    //         alt="preview"
-    //         src={videoData?.preview_image}
-    //       />
-    //     )}
-    //   </div>
-    //   <div className="absolute bottom-0 flex justify-between items-center px-2 w-full">
-    //     <div className="flex items-center gap-1">
-    //       <FaHeart size={10} />
-    //       <span className="text-[14px]">{videoData?.like_count}</span>
-    //     </div>
-    //     <FaEarthAmericas size={10} />
-    //   </div>
-    // </div>
     <div className="chinese_photo h-[320px] max-w-full relative pt-[20px]">
-      <div
-        className=" relative flex justify-center items-center bg-[#010101] rounded-t-[4px] overflow-hidden  h-[240px]"
-        // onClick={() => showDetailsVod(videoData)}
-      >
+      <div className=" relative flex justify-center items-center bg-[#010101] rounded-t-[4px] overflow-hidden  h-[240px]">
         <ImageWithPlaceholder
-          // needGradient={true}
           src={videoData?.preview_image}
           alt={videoData.title || "Video"}
           width={"100%"}
@@ -132,22 +105,38 @@ const VideoCard = ({ videoData }: any) => {
           )}
           className=" object-cover h-full w-full rounded-none"
         />
-        <div className="absolute card_style_2 bottom-0 flex justify-between items-center h-[50px] px-3 w-full">
+        {/* <div className="absolute card_style_2 bottom-0 flex justify-between items-center h-[50px] px-3 w-full">
           <div className="flex items-center gap-1">
-            <FaHeart size={10} />
+            <Heart />
             <span className="text-[14px]">{videoData?.like_count}</span>
           </div>
           <FaEarthAmericas size={10} />
-        </div>
+        </div> */}
       </div>
+      {/* line-clamp-2 */}
       <h1 className="search_text font-cnFont line-clamp-2 text-left text-[14px] font-[400] px-[6px] pt-[6px]">
-        {/* <h1 className="search_text font-cnFont px-[6px] line-clamp-2 text-left"> */}
         {videoData.title.length > 50
           ? `${videoData.title.slice(0, 50)}...`
           : videoData.title}
       </h1>
+      <div className="px-[6px] flex justify-between items-center w-full my-2">
+        <div className="flex items-center gap-1">
+          <ImageWithPlaceholder
+            src={videoData?.user?.avatar}
+            alt={videoData?.user?.avatar || "Video"}
+            width={"20px"}
+            height={"20px"}
+            className=" object-cover h-full w-full rounded-full"
+          />
+          <p className="text-[12px] text-[#BBBBBB]">{videoData?.user?.name}</p>
+        </div>
+        <div className="flex items-center gap-1">
+          <Heart size={11} />
+          <p className="text-[12px] text-[#BBBBBB]">{videoData?.like_count}</p>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default VideoCard;
+export default VideoCard2;

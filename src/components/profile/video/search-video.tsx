@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { usePostsSearchMutation } from "@/store/api/profileApi";
 import { ChevronLeft, Search } from "lucide-react";
 import { FaSearch } from "react-icons/fa";
-import VideoCard from "../video-card";
+import VideoCard2 from "../video-card2";
 import InfinitLoad from "@/components/shared/infinit-load";
 import loader from "@/page/home/vod_loader.gif";
 import { useSearchParams } from "react-router-dom";
@@ -184,7 +184,7 @@ const SearchVideo = ({ id }: { id: string }) => {
                             setShowVideoFeed(true);
                           }}
                         >
-                          <VideoCard videoData={item} />
+                          <VideoCard2 videoData={item} />
                         </div>
                       ))}
                     </div>

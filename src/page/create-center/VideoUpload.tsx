@@ -31,7 +31,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   const [uploadPercentage, setUploadPercentage] = useState(0);
   const [uploadComplete, setUploadComplete] = useState(false);
   const [agree, setAgree] = useState(editPost ? true : false);
-  console.log(editPost, "ed post");
+  // console.log(editPost, "ed post");
   const [videoDuration, setVideoDuration] = useState(
     editPost?.files[0].duration || 0
   );
@@ -41,7 +41,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
     editPost?.files[0].height || 0
   );
   const videoUrlRef = useRef(editPost?.files[0].resourceURL || null);
-  console.log(videoUrlRef, "ref");
+  // console.log(videoUrlRef, "ref");
   const [uploadedSize, setUploadedSize] = useState(0); // Added
   const roundToOneDecimal = (size: number): number => {
     return Math.round(size * 10) / 10;
@@ -185,10 +185,10 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
         /Safari/.test(userAgent) && /Apple Computer/.test(vendor);
       const isChrome = /Chrome/.test(userAgent) && /Google Inc/.test(vendor);
 
-      console.log(
-        { isMac, isSafari, isChrome, userAgent, vendor },
-        "Browser detection"
-      );
+      // console.log(
+      //   { isMac, isSafari, isChrome, userAgent, vendor },
+      //   "Browser detection"
+      // );
 
       // Only Safari needs special handling
       if (isSafari && !isChrome) {
