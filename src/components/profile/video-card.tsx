@@ -119,7 +119,7 @@ const VideoCard = ({ videoData }: any) => {
     <div className="chinese_photo h-[320px] max-w-full relative pt-[20px]">
       <div
         className=" relative flex justify-center items-center bg-[#010101] rounded-t-[4px] overflow-hidden  h-[240px]"
-        onClick={() => showDetailsVod(videoData)}
+        // onClick={() => showDetailsVod(videoData)}
       >
         <ImageWithPlaceholder
           // needGradient={true}
