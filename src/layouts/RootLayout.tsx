@@ -68,6 +68,7 @@ const RootLayout = ({ children }: any) => {
   const [newData, setnewData] = useState(null);
   const user = useSelector((state: any) => state.persist.user);
   const currentTab = useSelector((state: any) => state.home.currentTab);
+  const hideBar = useSelector((state: RootState) => state.hideBarSlice.hideBar);
 
   const { data: eventData } = useGetUserByReferalQuery(
     { referral_code: referCode }, // or safely cast if you're confident it's a string
@@ -380,7 +381,8 @@ const RootLayout = ({ children }: any) => {
         location.pathname === "/" &&
         !event &&
         showAnimation &&
-        currentTab === 2 && (
+        currentTab === 2 && 
+        !hideBar && (
           <div className="fixed bottom-[8rem] right-9 z-[9999] rounded-full p-2">
             <div className="relative">
               <button

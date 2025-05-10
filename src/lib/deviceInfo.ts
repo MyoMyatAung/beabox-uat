@@ -13,7 +13,7 @@ import FingerprintJS from '@fingerprintjs/fingerprintjs';
 // }
 
 // Application version - single source of truth
-const APP_VERSION = '1.1.6.6';
+const APP_VERSION = '1.1.6.7';
 
 /**
  * Generate a UUID v4

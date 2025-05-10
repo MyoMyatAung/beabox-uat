@@ -629,7 +629,7 @@ const Player = ({
           html: `
             <div class="custom-progress-container">
               <input type="range" min="0" max="100" step="0.1" class="custom-progress-bar chrome-fix" />
-                <div class="custom-time-display"></div>
+                <div class="custom-time-display" style="display: flex; justify-content: center; position: absolute; width: 100%; left: 0; text-align: center;"></div>
             </div>
           `,
           style: {
@@ -801,6 +801,9 @@ const Player = ({
                 100
               );
 
+              // Make sure hideBar stays true during the entire touch drag operation
+              dispatch(sethideBar(true));
+                
               progressBarRef.current.value = percent.toString();
               progressBarRef.current.style.setProperty(
                 "--progress",
