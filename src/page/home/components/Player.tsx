@@ -45,6 +45,7 @@ const Player = ({
   abortControllerRef,
   indexRef,
   videoData,
+  setShowRotate,
 }: {
   src: string;
   thumbnail: string;
@@ -61,6 +62,7 @@ const Player = ({
   abortControllerRef: any;
   indexRef: any;
   videoData: any;
+  setShowRotate: any;
 }) => {
   const playerContainerRef = useRef<HTMLDivElement | null>(null);
   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
@@ -983,6 +985,7 @@ const Player = ({
             }
 
             const handleLongPressStart = (e: TouchEvent | MouseEvent) => {
+              setShowRotate(true);
               if ("touches" in e) {
                 const touch = e.touches[0];
                 touchStartPosRef.current = {
@@ -1012,6 +1015,7 @@ const Player = ({
             };
 
             const handleLongPressEnd = () => {
+              setShowRotate(false);
               if (longPressTimerRef.current) {
                 clearTimeout(longPressTimerRef.current);
                 longPressTimerRef.current = null;
