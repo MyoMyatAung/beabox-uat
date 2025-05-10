@@ -171,11 +171,11 @@ const UploadFrom = ({
           </a>
         </p>
       </div> */}
-      {editPost ? (
+      {/* {editPost ? (
         <Info status={editPost?.status} reason={editPost?.reason} />
       ) : (
         <></>
-      )}
+      )} */}
       <div className="mx-5 pb-5 pt-10 mt-5">
         <div className="flex gap-2 justify-center items-center pb-5">
           {agree ? (
@@ -191,9 +191,11 @@ const UploadFrom = ({
         </div>
         <button
           onClick={handleSubmit}
-          disabled={agree ? false : true}
+          disabled={
+            agree && contentTitle?.length > 0 && hashtags?.length ? false : true
+          }
           className={`text-[16px] font-semibold ${
-            agree
+            agree && contentTitle?.length > 0 && hashtags?.length
               ? "bg-gradient-to-b from-[#FFB2E0] to-[#CD3EFF] text-white"
               : "bg-[#FFFFFF0A] text-[#444444]"
           }    w-full rounded-[16px] py-3`}

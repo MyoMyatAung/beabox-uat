@@ -16,6 +16,7 @@ import UploadProgress from "@/components/create-center/upload-progress";
 import DeleteDetail from "@/components/create-center/delete-detail";
 import { setAlertText } from "@/store/slices/profileSlice";
 import { useDispatch } from "react-redux";
+import Info from "@/components/create-center/info";
 
 const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   // console.log(editPost?.files[0]?.image_url, "editpost");
@@ -47,7 +48,9 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   };
 
   const [totalSize, setTotalSize] = useState(
-    editPost?.files[0]?.size ? roundToOneDecimal(editPost.files[0].size / (1000 * 1000)) : 0
+    editPost?.files[0]?.size
+      ? roundToOneDecimal(editPost.files[0].size / (1000 * 1000))
+      : 0
   ); // Round to match OS display
   const abortController = useRef<any>(null); // Added
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -77,10 +80,10 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
             // Error loading image, create a default thumbnail
             console.error("Error loading preview image, creating default");
             createDefaultThumbnail()
-              .then(file => {
+              .then((file) => {
                 setThumbnail(URL.createObjectURL(file));
               })
-              .catch(err => {
+              .catch((err) => {
                 console.error("Failed to create default thumbnail:", err);
               });
           };
@@ -101,43 +104,43 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   // Add this function to capture first frame from video URL
   const captureFirstFrameFromUrl = (videoUrl: string): Promise<string> => {
     return new Promise((resolve, reject) => {
-      const video = document.createElement('video');
+      const video = document.createElement("video");
       video.crossOrigin = "anonymous";
       video.muted = true;
       video.playsInline = true;
       video.preload = "metadata";
-      
+
       // Handle loading
       video.onloadedmetadata = () => {
         video.currentTime = 0.1; // Go slightly past first frame for better results
       };
-      
+
       video.onloadeddata = () => {
         try {
           // Create canvas and draw video frame
-          const canvas = document.createElement('canvas');
+          const canvas = document.createElement("canvas");
           canvas.width = video.videoWidth || 320;
           canvas.height = video.videoHeight || 240;
-          
-          const ctx = canvas.getContext('2d', { alpha: false });
+
+          const ctx = canvas.getContext("2d", { alpha: false });
           if (ctx) {
             ctx.fillStyle = "#000";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
+
             // Convert canvas to blob and create blob URL
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+            const dataUrl = canvas.toDataURL("image/jpeg", 0.95);
             resolve(dataUrl);
             // canvas.toBlob((blob) => {
             //   if (!blob) {
             //     reject(new Error("Failed to create blob from canvas"));
             //     return;
             //   }
-              
+
             //   // Create blob URL instead of data URL
             //   const blobUrl = URL.createObjectURL(blob);
             //   resolve(blobUrl);
-              
+
             // }, 'image/jpeg', 0.95);
           } else {
             reject(new Error("Could not get canvas context"));
@@ -150,15 +153,15 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
           video.load();
         }
       };
-      
+
       // Handle errors
       video.onerror = () => {
         reject(new Error("Error loading video"));
       };
-      
+
       // Set source and start loading
       video.src = videoUrl;
-      
+
       // Set timeout in case video never loads
       setTimeout(() => {
         if (!video.videoWidth) {
@@ -173,200 +176,210 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
     // For edited videos, always capture the first frame as poster for better cross-browser compatibility
     if (editPost?.files[0]?.resourceURL) {
       const videoUrl = `${domain}/${editPost.files[0].resourceURL}`;
-      
+
       // More reliable browser detection
       const userAgent = navigator.userAgent;
       const vendor = navigator.vendor || "";
-      const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-      const isSafari = /Safari/.test(userAgent) && /Apple Computer/.test(vendor);
+      const isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0;
+      const isSafari =
+        /Safari/.test(userAgent) && /Apple Computer/.test(vendor);
       const isChrome = /Chrome/.test(userAgent) && /Google Inc/.test(vendor);
-      
-      console.log({isMac, isSafari, isChrome, userAgent, vendor}, "Browser detection");
-      
+
+      console.log(
+        { isMac, isSafari, isChrome, userAgent, vendor },
+        "Browser detection"
+      );
+
       // Only Safari needs special handling
       if (isSafari && !isChrome) {
         captureFirstFrameFromUrl(videoUrl)
-          .then(posterUrl => {
+          .then((posterUrl) => {
             // Update files state with poster
-            setFiles((prevFiles: any) => [{
-              ...prevFiles[0],
-              poster: posterUrl, // Store poster URL directly (not a File object in this case)
-              isSafariPoster: true
-            }]);
+            setFiles((prevFiles: any) => [
+              {
+                ...prevFiles[0],
+                poster: posterUrl, // Store poster URL directly (not a File object in this case)
+                isSafariPoster: true,
+              },
+            ]);
           })
-          .catch(error => {
+          .catch((error) => {
             console.error("Failed to generate poster:", error);
             // Fall back to default thumbnail
-            createDefaultThumbnail()
-              .then(file => {
-                setFiles((prevFiles: any) => [{
+            createDefaultThumbnail().then((file) => {
+              setFiles((prevFiles: any) => [
+                {
                   ...prevFiles[0],
                   poster: URL.createObjectURL(file),
-                  isSafariPoster: true
-                }]);
-              });
+                  isSafariPoster: true,
+                },
+              ]);
+            });
           });
       }
     }
   }, [editPost, domain]);
 
   // Handle video file drop
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    const videoFile = acceptedFiles.find((file) =>
-      file.type.startsWith("video/")
-    );
+  const onDrop = useCallback(
+    async (acceptedFiles: File[]) => {
+      const videoFile = acceptedFiles.find((file) =>
+        file.type.startsWith("video/")
+      );
 
-    if (!videoFile) {
-      toast.error("请选择一个有效的视频文件。", {
-        // Please select a valid video file.
-        style: {
-          background: "#25212a",
-          color: "white",
-        },
-      });
-      return;
-    }
-
-    // Add size validation here (100MB limit)
-    const maxSize = 100 * 1024 * 1024; // 100MB in bytes
-    if (videoFile.size > maxSize) {
-      setShowAlert(true);
-      setTimeout(() => setShowAlert(false), 3000);
-      return;
-    }
-
-    if (acceptedFiles.length > 1) {
-      toast.error("你只能上传一个视频。", {
-        // You can only upload one video.
-        style: {
-          background: "#25212a",
-          color: "white",
-        },
-      });
-      return;
-    }
-    
-    // Check file size - 100MB limit (100 * 1024 * 1024 bytes)
-    if (videoFile.size > 100 * 1024 * 1024) {
-      toast.error("视频大小不能超过100MB。", {
-        // Video size cannot exceed 100MB.
-        style: {
-          background: "#25212a",
-          color: "white",
-        },
-      });
-      return;
-    }
-
-    try {
-      // Generate thumbnails for the video - one for video poster and one for cover
-      const generatedThumbnail = await generateThumbnail(videoFile);
-      
-      // Only set the thumbnail if one doesn't exist yet
-      if (!thumbnail) {
-        setThumbnail(generatedThumbnail);
+      if (!videoFile) {
+        toast.error("请选择一个有效的视频文件。", {
+          // Please select a valid video file.
+          style: {
+            background: "#25212a",
+            color: "white",
+          },
+        });
+        return;
       }
 
-      // Create a video element to extract metadata
-      const video = document.createElement("video");
-      
-      // iOS Safari compatibility attributes
-      video.playsInline = true;
-      video.preload = "metadata";
-      video.muted = true;
-      video.crossOrigin = "anonymous";
-      video.controls = false;
-      
-      // Set poster to ensure something is visible on iOS
-      if (generatedThumbnail) {
-        const posterUrl = URL.createObjectURL(generatedThumbnail);
-        video.poster = posterUrl;
+      // Add size validation here (100MB limit)
+      const maxSize = 100 * 1024 * 1024; // 100MB in bytes
+      if (videoFile.size > maxSize) {
+        setShowAlert(true);
+        setTimeout(() => setShowAlert(false), 3000);
+        return;
       }
-      
-      video.src = URL.createObjectURL(videoFile);
 
-      // Add a promise to handle iOS autoplay restrictions
-      const metadataPromise = new Promise<void>((resolve) => {
-        let metadataLoaded = false;
-        
-        video.onloadedmetadata = () => {
-          metadataLoaded = true;
-          
-          // For iOS Safari, setting currentTime helps ensure metadata is properly loaded
-          video.currentTime = 0.1;
-        };
-        
-        video.onloadeddata = async () => {
-          try {
-            // For iOS, we don't need to play, just check if we can access the metadata
-            setVideoDuration(video.duration || 0);
-            setVideoWidth(video.videoWidth || 0);
-            setVideoHeight(video.videoHeight || 0);
-            resolve();
-          } catch (error) {
-            console.error("Error loading video metadata:", error);
+      if (acceptedFiles.length > 1) {
+        toast.error("你只能上传一个视频。", {
+          // You can only upload one video.
+          style: {
+            background: "#25212a",
+            color: "white",
+          },
+        });
+        return;
+      }
+
+      // Check file size - 100MB limit (100 * 1024 * 1024 bytes)
+      if (videoFile.size > 100 * 1024 * 1024) {
+        toast.error("视频大小不能超过100MB。", {
+          // Video size cannot exceed 100MB.
+          style: {
+            background: "#25212a",
+            color: "white",
+          },
+        });
+        return;
+      }
+
+      try {
+        // Generate thumbnails for the video - one for video poster and one for cover
+        const generatedThumbnail = await generateThumbnail(videoFile);
+
+        // Only set the thumbnail if one doesn't exist yet
+        if (!thumbnail) {
+          setThumbnail(generatedThumbnail);
+        }
+
+        // Create a video element to extract metadata
+        const video = document.createElement("video");
+
+        // iOS Safari compatibility attributes
+        video.playsInline = true;
+        video.preload = "metadata";
+        video.muted = true;
+        video.crossOrigin = "anonymous";
+        video.controls = false;
+
+        // Set poster to ensure something is visible on iOS
+        if (generatedThumbnail) {
+          const posterUrl = URL.createObjectURL(generatedThumbnail);
+          video.poster = posterUrl;
+        }
+
+        video.src = URL.createObjectURL(videoFile);
+
+        // Add a promise to handle iOS autoplay restrictions
+        const metadataPromise = new Promise<void>((resolve) => {
+          let metadataLoaded = false;
+
+          video.onloadedmetadata = () => {
+            metadataLoaded = true;
+
+            // For iOS Safari, setting currentTime helps ensure metadata is properly loaded
+            video.currentTime = 0.1;
+          };
+
+          video.onloadeddata = async () => {
+            try {
+              // For iOS, we don't need to play, just check if we can access the metadata
+              setVideoDuration(video.duration || 0);
+              setVideoWidth(video.videoWidth || 0);
+              setVideoHeight(video.videoHeight || 0);
+              resolve();
+            } catch (error) {
+              console.error("Error loading video metadata:", error);
+              setVideoDuration(0);
+              setVideoWidth(0);
+              setVideoHeight(0);
+              resolve();
+            }
+          };
+
+          // Handle errors
+          video.onerror = () => {
+            console.error("Error loading video:", video.error);
             setVideoDuration(0);
             setVideoWidth(0);
             setVideoHeight(0);
             resolve();
-          }
-        };
+          };
 
-        // Handle errors
-        video.onerror = () => {
-          console.error("Error loading video:", video.error);
-          setVideoDuration(0);
-          setVideoWidth(0);
-          setVideoHeight(0);
-          resolve();
-        };
-        
-        // Add a timeout for iOS Safari, which may not trigger events properly
-        setTimeout(() => {
-          if (!metadataLoaded) {
-            console.warn("Metadata loading timeout - using default values");
-            setVideoDuration(0);
-            setVideoWidth(0);
-            setVideoHeight(0);
-            resolve();
-          }
-        }, 3000);
-      });
+          // Add a timeout for iOS Safari, which may not trigger events properly
+          setTimeout(() => {
+            if (!metadataLoaded) {
+              console.warn("Metadata loading timeout - using default values");
+              setVideoDuration(0);
+              setVideoWidth(0);
+              setVideoHeight(0);
+              resolve();
+            }
+          }, 3000);
+        });
 
-      // Wait for metadata to be loaded
-      await metadataPromise;
+        // Wait for metadata to be loaded
+        await metadataPromise;
 
-      // Clean up resources
-      URL.revokeObjectURL(video.src);
-      video.src = "";
-      video.load();
+        // Clean up resources
+        URL.revokeObjectURL(video.src);
+        video.src = "";
+        video.load();
 
-      // Add video to files state with its own poster for independence from thumbnail
-      setFiles([
-        {
-          video: videoFile,
-          size: videoFile.size,
-          type: "video",
-          poster: generatedThumbnail, // Store poster with video so it remains even if thumbnail is removed
-        },
-      ]);
-      setTotalSize(roundToOneDecimal(videoFile.size / (1000 * 1000))); // Round to match OS display
+        // Add video to files state with its own poster for independence from thumbnail
+        setFiles([
+          {
+            video: videoFile,
+            size: videoFile.size,
+            type: "video",
+            poster: generatedThumbnail, // Store poster with video so it remains even if thumbnail is removed
+          },
+        ]);
+        setTotalSize(roundToOneDecimal(videoFile.size / (1000 * 1000))); // Round to match OS display
 
-      if (videoUrlRef.current) {
-        URL.revokeObjectURL(videoUrlRef.current);
+        if (videoUrlRef.current) {
+          URL.revokeObjectURL(videoUrlRef.current);
+        }
+        videoUrlRef.current = URL.createObjectURL(videoFile);
+      } catch (error) {
+        console.error("Error processing video:", error);
+        toast.error("处理视频时出错。请重试。", {
+          // Error processing video. Please try again.
+          style: {
+            background: "#25212a",
+            color: "white",
+          },
+        });
       }
-      videoUrlRef.current = URL.createObjectURL(videoFile);
-    } catch (error) {
-      console.error("Error processing video:", error);
-      toast.error("处理视频时出错。请重试。", {
-        // Error processing video. Please try again.
-        style: {
-          background: "#25212a",
-          color: "white",
-        },
-      });
-    }
-  }, [thumbnail]);
+    },
+    [thumbnail]
+  );
 
   // Handle thumbnail drop
   const onThumbnailDrop = useCallback((acceptedFiles: any) => {
@@ -447,7 +460,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
           // First clear canvas with a solid color to avoid transparency issues
           ctx.fillStyle = "#000000";
           ctx.fillRect(0, 0, canvas.width, canvas.height);
-          
+
           // Then draw the video frame
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
@@ -510,7 +523,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
       // Fill with a solid background first (works better on iOS)
       ctx.fillStyle = "#2980b9";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
+
       // Then add a gradient background
       const gradient = ctx.createLinearGradient(
         0,
@@ -651,15 +664,19 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
           upload.on("httpUploadProgress", (progress) => {
             // Only update progress if upload is not yet complete
             if (!uploadComplete) {
-              const uploadedMB = roundToOneDecimal(progress.loaded / (1000 * 1000));
-              
+              const uploadedMB = roundToOneDecimal(
+                progress.loaded / (1000 * 1000)
+              );
+
               // If we're at 100%, mark as complete and set final values
               if (progress.loaded >= progress.total) {
                 setUploadComplete(true);
                 setUploadPercentage(100);
                 setUploadedSize(totalSize);
               } else {
-                setUploadPercentage(Math.round((progress.loaded / progress.total) * 100));
+                setUploadPercentage(
+                  Math.round((progress.loaded / progress.total) * 100)
+                );
                 setUploadedSize(uploadedMB);
               }
             }
@@ -676,7 +693,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
           });
         });
       };
-      
+
       let thumbnailUrl: string;
       let videoUrl: string;
       let thumbnailKey: string;
@@ -690,14 +707,14 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
           .substr(2, 9)}.${videoFile.name.split(".").pop()}`;
         await uploadFileToS3(videoFile, videoKey, videoFile.type);
         videoUrl = `${directory}/${videoKey}`;
-        
+
         // Now that video is complete, move on to thumbnail without showing progress
         if (typeof thumbnail !== "string") {
           // Upload thumbnail file silently (no progress update)
           thumbnailKey = `thumbnail_${Date.now()}_${Math.random()
             .toString(36)
             .substr(2, 9)}.${thumbnail.name.split(".").pop()}`;
-            
+
           // Use a simpler upload method for thumbnail without progress tracking
           const uploadThumbnail = () => {
             const uploadParams = {
@@ -707,7 +724,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
               ContentType: thumbnail.type,
               ContentDisposition: "inline",
             };
-            
+
             return new Promise((resolve, reject) => {
               s3.upload(uploadParams).send((err, data) => {
                 if (err) reject(err);
@@ -715,7 +732,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
               });
             });
           };
-          
+
           await uploadThumbnail();
           thumbnailUrl = `${directory}/${thumbnailKey}`;
         } else {
@@ -723,7 +740,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
         }
       } else {
         videoUrl = files[0].resourceURL;
-        
+
         if (typeof thumbnail !== "string") {
           // Upload thumbnail file
           thumbnailKey = `thumbnail_${Date.now()}_${Math.random()
@@ -910,33 +927,51 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
       ) : (
         <TopNav center={"上传视频"} />
       )}
-
+      {editPost ? (
+        <Info status={editPost?.status} reason={editPost?.reason} />
+      ) : (
+        <></>
+      )}
       <div className="flex items-center justify-center mx-5 gap-3 pt-5">
         <div className="flex flex-col justify-center items-center">
           <div className="preview-container">
             {files?.length > 0 ? (
-              <div className="preview-item" style={{ position: "relative", overflow: "hidden", borderRadius: "8px", backgroundColor: "#000" }}>
+              <div
+                className="preview-item"
+                style={{
+                  position: "relative",
+                  overflow: "hidden",
+                  borderRadius: "8px",
+                  backgroundColor: "#000",
+                }}
+              >
                 <video
                   src={
                     editPost
                       ? `${domain}/${videoUrlRef.current}`
                       : videoUrlRef.current
                   }
-                  poster={files[0]?.isSafariPoster ? files[0].poster : (files[0]?.poster ? URL.createObjectURL(files[0].poster) : "")}
+                  poster={
+                    files[0]?.isSafariPoster
+                      ? files[0].poster
+                      : files[0]?.poster
+                      ? URL.createObjectURL(files[0].poster)
+                      : ""
+                  }
                   className="preview-video"
                   playsInline
                   muted
                   preload="metadata"
                   crossOrigin="anonymous"
                   controls={false}
-                  style={{ 
-                    objectFit: "cover", 
-                    backgroundColor: "#000", 
-                    width: "100%", 
-                    height: "100%", 
+                  style={{
+                    objectFit: "cover",
+                    backgroundColor: "#000",
+                    width: "100%",
+                    height: "100%",
                     display: "block",
                     position: "relative",
-                    zIndex: 1
+                    zIndex: 1,
                   }}
                   onError={(e) => {
                     console.error("Error loading video preview");
@@ -945,7 +980,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
                     target.onerror = null; // Prevent infinite error loop
                     target.style.backgroundColor = "#000";
                     target.controls = false;
-                    
+
                     // Use appropriate poster based on browser
                     if (files[0]?.poster) {
                       if (files[0]?.isSafariPoster) {
@@ -955,11 +990,14 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
                       }
                     } else {
                       createDefaultThumbnail()
-                        .then(file => {
+                        .then((file) => {
                           target.poster = URL.createObjectURL(file);
                         })
-                        .catch(err => {
-                          console.error("Failed to create default poster:", err);
+                        .catch((err) => {
+                          console.error(
+                            "Failed to create default poster:",
+                            err
+                          );
                         });
                     }
                   }}
@@ -969,7 +1007,13 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
                   <button
                     onClick={() => setFiles([])}
                     className="upload-progress1"
-                    style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", zIndex: 2 }}
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                      zIndex: 2,
+                    }}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -1024,7 +1068,15 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
         <div className="flex flex-col justify-center items-center">
           <div className="preview-container">
             {thumbnail ? (
-              <div className="thumbnail-preview" style={{ position: "relative", overflow: "hidden", borderRadius: "8px", backgroundColor: "#000" }}>
+              <div
+                className="thumbnail-preview"
+                style={{
+                  position: "relative",
+                  overflow: "hidden",
+                  borderRadius: "8px",
+                  backgroundColor: "#000",
+                }}
+              >
                 <img
                   src={
                     typeof thumbnail === "string"
@@ -1033,11 +1085,11 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
                   }
                   alt="thumbnail preview"
                   className="preview-image"
-                  style={{ 
-                    objectFit: "cover", 
-                    width: "100%", 
-                    height: "100%", 
-                    display: "block" 
+                  style={{
+                    objectFit: "cover",
+                    width: "100%",
+                    height: "100%",
+                    display: "block",
                   }}
                   onError={(e) => {
                     console.error("Error loading thumbnail image");
@@ -1062,7 +1114,13 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
                     setThumbnail(null);
                   }}
                   className="upload-progress1"
-                  style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", zIndex: 2 }}
+                  style={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    zIndex: 2,
+                  }}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -1142,4 +1200,3 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
 };
 
 export default UploadVideos;
-
