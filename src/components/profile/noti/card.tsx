@@ -3,6 +3,7 @@ import System from "@/assets/profile/system1.png";
 import Creator from "@/assets/profile/Wallet.png";
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Card = ({ type, item }: any) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -42,10 +43,21 @@ const Card = ({ type, item }: any) => {
         </button> */}
       </div>
       <div className="w-full h-[1px] bg-[#444] my-3"></div>
-      <div className="flex items-center justify-between">
+      {/* <div className="flex items-center justify-between">
         <p className="text-[14px]">进入首页</p>
         <ChevronRight size={14} />
-      </div>
+      </div> */}
+      <Link
+        to={`/notifications/${item?.id}`}
+        state={{
+          data: item,
+          main: item?.title,
+        }}
+        className="flex items-center justify-between"
+      >
+        <p className="text-[14px]">进入首页</p>
+        <ChevronRight size={14} />
+      </Link>
     </div>
   );
 };
