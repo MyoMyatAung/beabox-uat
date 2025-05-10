@@ -174,7 +174,7 @@ const SearchVideo = ({ id }: { id: string }) => {
                   </div>
                 ) : (
                   <div className="py-5">
-                    <div className="grid grid-cols-3 gap-1">
+                    <div className="grid grid-cols-2 gap-1">
                       {videos.map((item: any) => (
                         <div
                           key={item.post_id}
