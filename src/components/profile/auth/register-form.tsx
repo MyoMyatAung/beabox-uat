@@ -94,6 +94,15 @@ const RegisterForm = ({ setIsOpen, refer_code, geetest_id }: any) => {
       referral_code: code,
     });
 
+
+    if (!registerData) {
+      const message = localStorage.getItem("auth-error");
+      setflashLoading(false);
+      setShow验证码(false);
+      setError(message);
+      setCaptcha("");
+    }
+
     // console.log(registerData, "registerData");
     if (registerData?.status) {
       dispatch(setUser(registerData?.data));
@@ -127,9 +136,9 @@ const RegisterForm = ({ setIsOpen, refer_code, geetest_id }: any) => {
     }
   };
 
-  useEffect(() => {
-    errorHandler();
-  }, [rerror]);
+  // useEffect(() => {
+  //   errorHandler();
+  // }, [rerror]);
   return (
     <>
       {(registerLoading && !show验证码) || isLoading || flashLoading ? (
