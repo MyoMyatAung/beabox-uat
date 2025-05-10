@@ -132,7 +132,7 @@ const VideoCard = ({ videoData }: any) => {
           )}
           className=" object-cover h-full w-full rounded-none"
         />
-        <div className="absolute card_style_2 bottom-0 flex justify-between items-center px-3 w-full">
+        <div className="absolute card_style_2 bottom-0 flex justify-between items-center h-[50px] px-3 w-full">
           <div className="flex items-center gap-1">
             <FaHeart size={10} />
             <span className="text-[14px]">{videoData?.like_count}</span>
