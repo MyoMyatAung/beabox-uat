@@ -21,7 +21,7 @@ const Covers = ({ setShowCovers, refetch }: any) => {
   useEffect(() => {
     if (data) setSelectedCovers(data?.data[0]);
   }, [data]);
-
+  console.log(data);
   return (
     <div className="bg-[#000000CC] w-full flex justify-center items-center h-screen fixed top-0 left-0 z-[9999]">
       {isLoading ? <TranLoader /> : <></>}
@@ -46,7 +46,7 @@ const Covers = ({ setShowCovers, refetch }: any) => {
                       : "text-[#888888]"
                   }`}
                 >
-                  Unlock Lvl-{index + 1}
+                  {item?.level}
                 </h1>
                 <div
                   className={`w-[32px] h-[3px] ${
