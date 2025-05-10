@@ -107,7 +107,7 @@ const RootLayout = ({ children }: any) => {
         ) {
           const timeout = setTimeout(() => {
             dispatch(setAnimation(true));
-          }, 9000);
+          }, 5000);
           return () => clearTimeout(timeout);
         } else {
           dispatch(setAnimation(false));
