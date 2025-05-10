@@ -764,6 +764,7 @@ const Player = ({
             visibility: "visible", // Ensure visibility
           },
           mounted: (element: HTMLElement) => {
+
             progressBarRef.current = element.querySelector(
               ".custom-progress-bar"
             ) as HTMLInputElement;
@@ -843,7 +844,7 @@ const Player = ({
                 const duration = formatTime(
                   artPlayerInstanceRef.current.duration
                 );
-                timeDisplayRef.current.textContent = `${currentTime} / ${duration}`;
+                timeDisplayRef.current.innerHTML = `<span style="color: #d53ff0">${currentTime}</span> / ${duration}`;
               }
             });
 
@@ -912,7 +913,7 @@ const Player = ({
                 const duration = formatTime(
                   artPlayerInstanceRef.current.duration
                 );
-                timeDisplayRef.current.textContent = `${currentTime} / ${duration}`;
+                timeDisplayRef.current.innerHTML = `<span style="color: #d53ff0">${currentTime}</span> / ${duration}`;
               }
             });
 
@@ -947,7 +948,9 @@ const Player = ({
                 const duration = formatTime(
                   artPlayerInstanceRef.current.duration
                 );
-                timeDisplayRef.current.textContent = `${currentTime} / ${duration}`;
+                // timeDisplayRef.current.textContent = `${currentTime} / ${duration}`;
+                timeDisplayRef.current.innerHTML = `<span style="font-size: 24px;"><span style="color: #d53ff0">${currentTime}</span> / ${duration}<span>`;
+
               }
             });
 
