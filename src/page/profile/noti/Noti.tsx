@@ -21,7 +21,7 @@ const Noti = () => {
           <Link to={paths.profile}>
             <img src={backButton} alt="" />
           </Link>
-          <p className="text-[16px]">通知</p>
+          <p className="text-[18px] font-bold">通知</p>
           <div></div>
         </div>
         <div className="space-y-4 pb-10">
@@ -31,7 +31,7 @@ const Noti = () => {
           >
             <img src={System} className="w-10 h-10 mt-1" alt="" />
             <div className="w-full">
-              <div className="flex items-center text-[14px] justify-between">
+              <div className="flex items-center text-[14px] justify-between font-bold">
                 <p>系统通知</p>
               </div>
               <div className="flex items-end justify-between">
@@ -49,7 +49,7 @@ const Noti = () => {
           >
             <img src={Balance} className="w-10 h-10 mt-1" alt="" />
             <div className="w-full">
-              <div className="flex items-center text-[14px] justify-between">
+              <div className="flex items-center text-[14px] justify-between font-bold">
                 <p>余额提醒</p>
               </div>
               <div className="flex items-end justify-between">
@@ -67,7 +67,7 @@ const Noti = () => {
           >
             <img src={Creator} className="w-10 h-10 mt-1" alt="" />
             <div className="w-full">
-              <div className="flex items-center text-[14px] justify-between">
+              <div className="flex items-center text-[14px] justify-between font-bold">
                 <p>创作者里程碑提醒</p>
               </div>
               <div className="flex items-end justify-between">
@@ -113,7 +113,7 @@ export default Noti;
 //         >
 //           <img src={Balance} className="w-10 h-10 mt-1" alt="" />
 //           <div className="w-full">
-//             <div className="flex items-center text-[14px] justify-between">
+//             <div className="flex items-center text-[14px] justify-between font-bold">
 //               <p>{item?.title}</p>
 //               {item?.is_read ? (
 //                 <></>
@@ -144,7 +144,7 @@ export default Noti;
 //         >
 //           <img src={System} className="w-10 h-10 mt-1" alt="" />
 //           <div className="w-full">
-//             <div className="flex items-center text-[14px] justify-between">
+//             <div className="flex items-center text-[14px] justify-between font-bold">
 //               <p>{item.title}</p>
 //               {item?.is_read ? (
 //                 <></>

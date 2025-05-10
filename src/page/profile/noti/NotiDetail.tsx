@@ -19,7 +19,7 @@ const NotiDetail = () => {
             {/* <FaAngleLeft size={22} /> */}
             <img src={backButton} alt="" />
           </div>
-          <p className="text-[16px]">Details</p>
+          <p className="text-[16px] font-bold">详情</p>
           <div></div>
         </div>
 
