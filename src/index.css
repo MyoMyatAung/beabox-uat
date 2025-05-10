@@ -849,3 +849,12 @@ user_feed_ques_tags_btn {
 .geetest_captcha.geetest_dark .geetest_box_wrap .geetest_box {
   background-color: #2c2d31 !important;
 }
+
+.card_style_2 {
+  background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.7) 100%
+    ),
+    linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 100%);
+}

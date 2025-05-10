@@ -7,6 +7,7 @@ import { FaHeart } from "react-icons/fa";
 import { FaEarthAmericas } from "react-icons/fa6";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import "../../page/search/search.css"
 const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
   const data = new Uint8Array(arrayBuffer);
   const maxSize = Math.min(decryptSize, data.length);
@@ -71,32 +72,80 @@ const VideoCard = ({ videoData }: any) => {
     loadAndDecryptPhoto();
   }, [videoData?.preview_image]);
 
+  const formatNumber = (num: number) => {
+    if (num >= 1000) {
+      return `${(num / 1000).toFixed(1).replace(/\.0$/, "")}k`;
+    }
+    return num;
+  };
+
+  const calculateHeight = (width: number, height: number) => {
+    if (width > height) {
+      return 112; // Portrait
+    }
+    if (width < height) {
+      return 240; // Landscape
+    }
+    return 200;
+  };
+
   return (
-    <div
-      className="bg-gradient-to-r h-[170px] relative"
-      // onClick={() => showDetailsVod(videoData)}
-    >
-      <div className="">
-        {!decryptedPhoto ? (
-          <div className="h-[170px] animate-pulse object-cover w-full object-center bg-[#FFFFFF1F]"></div>
-        ) : (
-          <ImageWithPlaceholder
-            needGradient={true}
-            className="h-[170px]  w-full  object-contain"
-            width={""}
-            height={""}
-            alt="preview"
-            src={videoData?.preview_image}
-          />
-        )}
-      </div>
-      <div className="absolute bottom-0 flex justify-between items-center px-2 w-full">
-        <div className="flex items-center gap-1">
-          <FaHeart size={10} />
-          <span className="text-[14px]">{videoData?.like_count}</span>
+    // <div
+    //   className="bg-gradient-to-r h-[170px] relative"
+    //   // onClick={() => showDetailsVod(videoData)}
+    // >
+    //   <div className="">
+    //     {!decryptedPhoto ? (
+    //       <div className="h-[170px] animate-pulse object-cover w-full object-center bg-[#FFFFFF1F]"></div>
+    //     ) : (
+    //       <ImageWithPlaceholder
+    //         needGradient={true}
+    //         className="h-[170px]  w-full  object-contain"
+    //         width={""}
+    //         height={""}
+    //         alt="preview"
+    //         src={videoData?.preview_image}
+    //       />
+    //     )}
+    //   </div>
+    //   <div className="absolute bottom-0 flex justify-between items-center px-2 w-full">
+    //     <div className="flex items-center gap-1">
+    //       <FaHeart size={10} />
+    //       <span className="text-[14px]">{videoData?.like_count}</span>
+    //     </div>
+    //     <FaEarthAmericas size={10} />
+    //   </div>
+    // </div>
+    <div className="chinese_photo h-[320px] max-w-full relative pt-[20px]">
+      <div
+        className=" relative flex justify-center items-center bg-[#010101] rounded-t-[4px] overflow-hidden  h-[240px]"
+        onClick={() => showDetailsVod(videoData)}
+      >
+        <ImageWithPlaceholder
+          // needGradient={true}
+          src={videoData?.preview_image}
+          alt={videoData.title || "Video"}
+          width={"100%"}
+          height={calculateHeight(
+            videoData?.files[0]?.width,
+            videoData?.files[0]?.height
+          )}
+          className=" object-cover h-full w-full rounded-none"
+        />
+        <div className="absolute card_style_2 bottom-0 flex justify-between items-center px-3 w-full">
+          <div className="flex items-center gap-1">
+            <FaHeart size={10} />
+            <span className="text-[14px]">{videoData?.like_count}</span>
+          </div>
+          <FaEarthAmericas size={10} />
         </div>
-        <FaEarthAmericas size={10} />
       </div>
+      <h1 className="search_text font-cnFont line-clamp-2 text-left text-[14px] font-[400] px-[6px] pt-[6px]">
+        {/* <h1 className="search_text font-cnFont px-[6px] line-clamp-2 text-left"> */}
+        {videoData.title.length > 50
+          ? `${videoData.title.slice(0, 50)}...`
+          : videoData.title}
+      </h1>
     </div>
   );
 };

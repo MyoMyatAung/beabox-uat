@@ -72,7 +72,7 @@ const ImageWithPlaceholder = ({
       />
       {needGradient && (
         <img
-          className={`h-[170px]  absolute bottom-0`}
+          className={`h-[170px] w-full  absolute bottom-0`}
           src={covergradient}
           alt=""
         />

@@ -100,7 +100,7 @@ const CreatedVideo2 = ({ id }: any) => {
         ) : (
           <>
             <div>
-              <div className="grid grid-cols-3 gap-1">
+              <div className="grid grid-cols-2 gap-1">
                 {videos.map((item: any) => (
                   <div
                     key={item.post_id}
