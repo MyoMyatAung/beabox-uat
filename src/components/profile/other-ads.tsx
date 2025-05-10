@@ -5,7 +5,6 @@ const OtherAds = () => {
   const { applicationData, isLoading } = useSelector(
     (state: any) => state.explore
   );
-  console.log(applicationData?.application);
   return (
     <div className="pt-5">
       {applicationData?.application?.length > 0 &&
@@ -26,7 +25,7 @@ const OtherAds = () => {
                     height={""}
                     alt={app.title}
                   />
-                  <h1 className="text-white text-[12px] font-[400]">
+                  <h1 className="text-white text-[14px] font-[400]">
                     {app.title}
                   </h1>
                 </a>
