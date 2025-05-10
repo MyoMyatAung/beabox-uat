@@ -102,12 +102,12 @@ const RootLayout = ({ children }: any) => {
         if (
           currentEventData?.status === true &&
           !showAd &&
-          !showAlert &&
+          // !showAlert &&
           !isOpen
         ) {
           const timeout = setTimeout(() => {
             dispatch(setAnimation(true));
-          }, 9000);
+          }, 5000);
           return () => clearTimeout(timeout);
         } else {
           dispatch(setAnimation(false));
@@ -222,18 +222,21 @@ const RootLayout = ({ children }: any) => {
 
   const isOpen = useSelector((state: any) => state.profile.isDrawerOpen);
 
-  const [cachedEventDetails, setCachedEventDetails] = useState<{ data: EventDetail } | null>(null);
+  const [cachedEventDetails, setCachedEventDetails] = useState<{
+    data: EventDetail;
+  } | null>(null);
   const [isFetchingDetails, setIsFetchingDetails] = useState(false);
   const isFetchingRef = useRef(false);
 
   // Preload the lucky draw component and prefetch event details
   useEffect(() => {
-    const shouldPreload = !showAd && 
-      !showAlert && 
-      !isOpen && 
-      location.pathname === "/" && 
-      !event && 
-      showAnimation && 
+    const shouldPreload =
+      !showAd &&
+      !showAlert &&
+      !isOpen &&
+      location.pathname === "/" &&
+      !event &&
+      showAnimation &&
       currentTab === 2;
 
     if (shouldPreload) {
@@ -261,7 +264,16 @@ const RootLayout = ({ children }: any) => {
 
       prefetchEventDetails();
     }
-  }, [showAd, showAlert, isOpen, location.pathname, event, showAnimation, currentTab, currentEventData?.data?.id]);
+  }, [
+    showAd,
+    showAlert,
+    isOpen,
+    location.pathname,
+    event,
+    showAnimation,
+    currentTab,
+    currentEventData?.data?.id,
+  ]);
 
   // If loading, show loading screen
   if (isLoading) {
@@ -286,7 +298,9 @@ const RootLayout = ({ children }: any) => {
 
       // Refresh in background
       try {
-        const freshEventDetails = await triggerGetEventDetails(eventId).unwrap();
+        const freshEventDetails = await triggerGetEventDetails(
+          eventId
+        ).unwrap();
         dispatch(setEventDetail(freshEventDetails.data));
         if (freshEventDetails.data?.event_start_time) {
           dispatch(setDuration(freshEventDetails.data.event_start_time));
@@ -361,7 +375,7 @@ const RootLayout = ({ children }: any) => {
       </div>
 
       {!showAd &&
-        !showAlert &&
+        // !showAlert &&
         !isOpen &&
         location.pathname === "/" &&
         !event &&

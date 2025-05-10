@@ -12,7 +12,7 @@ const OtherNoti = ({ item }: any) => {
           alt="avatar"
         />
         <div className="w-full">
-          <div className="flex items-center text-[14px] justify-between">
+          <div className="flex items-center text-[14px] justify-between font-bold">
             <p>{item.title}</p>
             {item?.is_read ? (
               <></>
