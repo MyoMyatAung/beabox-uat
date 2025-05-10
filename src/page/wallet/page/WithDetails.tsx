@@ -345,7 +345,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
             isLoading ? " opacity-40" : " opacity-100 py-[12px] px-[16px]"
           }  text-white text-[14px] font-[600] leading-[22px] w-full ${
             isFormValid
-              ? " bg-gradient-to-tl from-[#CD3EFF] to-[#FFB2E0]"
+              ? "with_new_btn"
               : "bg-white/10"
           }`}
           //   disabled={!isFormValid}
