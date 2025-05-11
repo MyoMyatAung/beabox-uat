@@ -25,9 +25,7 @@ const AdItemComponent: React.FC<AdItemProps> = ({ item }) => {
     >
       {imageLoading && (
         <div className="w-[58px] h-[58px] object-cover rounded-[8px] mx-auto bg-white/15 animate-pulse flex justify-center items-center">
-          <p className="text-[14px] font-[500] text-[#888]">
-            {item?.remarks}
-          </p>
+          <p className="text-[14px] font-[500] text-[#888]">{item?.remarks}</p>
         </div>
       )}
       {imgSrc && (
@@ -38,9 +36,7 @@ const AdItemComponent: React.FC<AdItemProps> = ({ item }) => {
           loading="lazy"
         />
       )}
-      <p className="text-[10px] font-[500] text-[#888]">
-        {item?.title || ""}
-      </p>
+      <p className="text-[10px] font-[500] text-[#888]">{item?.title || ""}</p>
     </Link>
   );
 };
@@ -54,7 +50,7 @@ const Poppizza: React.FC<PoppizzaProps> = ({}) => {
   // console.log(gg)
   useEffect(() => {
     if (data?.data) {
-      console.log('data is=>', data?.data);
+      console.log("data is=>", data?.data);
       const cur = data?.data?.ads?.application?.apps;
       setad(cur);
     }
@@ -102,7 +98,7 @@ const Poppizza: React.FC<PoppizzaProps> = ({}) => {
                 src={app.image}
                 alt=""
               />
-              <h1 className=" text-white text-[14px] font-[400]">
+              <h1 className=" text-white ad_update text-[14px] font-[400]">
                 {app.title}
               </h1>
             </a>
