@@ -65,15 +65,15 @@ const EditNickName = ({
 
   return (
     <Drawer open={isOpen} onOpenChange={handleOpenChange}>
-      {/* <DrawerTrigger>
+      <DrawerTrigger>
         <div className="text-[14px] flex items-center justify-between">
           <h1>昵称</h1>
           <p className="flex items-center gap-1 text-[#888]">
             {nickname} <FaAngleRight />
           </p>
         </div>
-      </DrawerTrigger> */}
-      <div>
+      </DrawerTrigger>
+      {/* <div>
         <div
           onClick={() => showErrorToast()}
           className="text-[14px] flex items-center justify-between"
@@ -83,7 +83,7 @@ const EditNickName = ({
             {nickname} <FaAngleRight />
           </p>
         </div>
-      </div>
+      </div> */}
       <DrawerContent className="border-0" style={{ height: vh }}>
         {isLoading ? <Loader /> : <></>}
         <div className="w-full px-5 bg-[#16131C]">
@@ -94,7 +94,7 @@ const EditNickName = ({
               </button>
             </DrawerClose>
             <p className="text-[16px]">昵称</p>
-            <div></div>
+            <div className="px-3"></div>
           </div>
           <form onSubmit={onSubmitHandler}>
             <label htmlFor="" className="text-[14px] text-[#888] pt-10">
