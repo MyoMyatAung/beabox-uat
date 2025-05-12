@@ -528,9 +528,14 @@ const Results: React.FC<ResultsProps> = ({}) => {
           artPlayerInstanceRef.current = null;
         }
 
-        // Create new ArtPlayer instance
         const videoUrl = activeLongPressCard?.preview?.url;
-        const isM3u8 = videoUrl.includes(".m3u8");
+        if (!videoUrl) return;
+
+        // Create new ArtPlayer instance
+        const preloadedHls = preloadedVideos[activeLongPressCard.post_id];
+
+        console.log("Video URL:", videoUrl);
+        console.log("Is blob URL:", preloadedHls);
 
         const options: Artplayer["Option"] = {
           container: videoPlayerRef.current,
@@ -544,13 +549,19 @@ const Results: React.FC<ResultsProps> = ({}) => {
           controls: [],
           fullscreen: false,
           theme: "#d53ff0",
+          type: videoUrl.includes(".m3u8") ? "m3u8" : "auto",
+
           moreVideoAttr: {
             playsInline: true,
             preload: "auto",
           },
-          type: isM3u8 ? "m3u8" : "auto",
           customType: {
             m3u8: (videoElement: HTMLVideoElement, url: string) => {
+              if (preloadedHls) {
+                // Reuse the preloaded HLS instance
+                preloadedHls?.attachMedia(videoElement);
+                preloadedHls?.startLoad();
+              }
               if (Hls.isSupported()) {
                 const hls = new Hls();
                 hls.loadSource(url);
@@ -561,6 +572,17 @@ const Results: React.FC<ResultsProps> = ({}) => {
                 videoElement.src = url;
               }
             },
+            // m3u8: (videoElement: HTMLVideoElement, url: string) => {
+            //   if (Hls.isSupported()) {
+            //     const hls = new Hls();
+            //     hls.loadSource(url);
+            //     hls.attachMedia(videoElement);
+            //   } else if (
+            //     videoElement.canPlayType("application/vnd.apple.mpegurl")
+            //   ) {
+            //     videoElement.src = url;
+            //   }
+            // },
           },
           // Remove loading indicator
           icons: {
@@ -588,7 +610,6 @@ const Results: React.FC<ResultsProps> = ({}) => {
           if (loadingIndicator) loadingIndicator.style.display = "none";
 
           // Hide controls and make video seamless
-          artPlayerInstanceRef.current.controls.hide();
 
           artPlayerInstanceRef.current.on("ready", () => {
             console.log("ArtPlayer ready");
@@ -637,7 +658,12 @@ const Results: React.FC<ResultsProps> = ({}) => {
       setActiveLongPressCard(null);
     }
   };
-  // Add Intersection Observer to preload videos when they're near the viewport
+
+  const [preloadStatus, setPreloadStatus] = useState<{
+    [key: string]: boolean;
+  }>({});
+
+  // Modified Intersection Observer with HLS support
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -647,34 +673,110 @@ const Results: React.FC<ResultsProps> = ({}) => {
             const videoUrl = movies.find((m) => m.post_id === postId)?.preview
               ?.url;
 
-            if (videoUrl && !preloadedVideos[postId]) {
-              // Preload the video
-              const video = document.createElement("video");
-              video.src = videoUrl;
-              video.preload = "auto";
-              video.load();
+            if (videoUrl && !preloadStatus[postId]) {
+              console.log("Preloading video:", postId);
+              if (videoUrl.includes(".m3u8")) {
+                // Handle HLS streams
+                if (Hls.isSupported()) {
+                  const hls = new Hls({
+                    maxBufferLength: 30, // Preload 30 seconds
+                    maxMaxBufferLength: 30,
+                    maxBufferSize: 6000000, // 6MB buffer
+                    maxBufferHole: 0.5,
+                  });
 
-              // Mark as preloaded
-              setPreloadedVideos((prev) => ({
-                ...prev,
-                [postId]: true,
-              }));
+                  // Create a dummy video element for preloading
+                  const video = document.createElement("video");
+                  video.style.display = "none";
+                  document.body.appendChild(video);
+
+                  hls.loadSource(videoUrl);
+                  hls.attachMedia(video);
+
+                  hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                    // Start preloading but don't play
+                    video.currentTime = 0;
+                    video.muted = true;
+                    video
+                      .play()
+                      .catch((e) => console.log("Preload play attempt:", e));
+
+                    setPreloadedVideos((prev) => ({ ...prev, [postId]: hls }));
+                    setPreloadStatus((prev) => ({ ...prev, [postId]: true }));
+
+                    // Remove the dummy video after some time
+                    setTimeout(() => {
+                      hls.destroy();
+                      video.remove();
+                    }, 10000); // Keep preloaded for 10 seconds
+                  });
+                }
+              } else {
+                // Handle regular video files
+                const video = document.createElement("video");
+                video.src = videoUrl;
+                video.preload = "auto";
+                video.load();
+
+                setPreloadStatus((prev) => ({ ...prev, [postId]: true }));
+              }
             }
           }
         });
       },
       {
-        rootMargin: "200px", // Start preloading when 200px away from viewport
+        rootMargin: "500px", // Start preloading earlier
         threshold: 0.01,
       }
     );
 
-    // Observe all video cards
     const cards = document.querySelectorAll("[data-video-card]");
     cards.forEach((card) => observer.observe(card));
 
-    return () => observer.disconnect();
-  }, [movies, preloadedVideos]);
+    return () => {
+      observer.disconnect();
+      // Clean up any HLS instances
+      Object.values(preloadedVideos).forEach((hls) => hls.destroy());
+    };
+  }, [movies, preloadStatus]);
+  // // Add Intersection Observer to preload videos when they're near the viewport
+  // useEffect(() => {
+  //   const observer = new IntersectionObserver(
+  //     (entries) => {
+  //       entries.forEach((entry) => {
+  //         if (entry.isIntersecting) {
+  //           const postId = entry.target.getAttribute("data-postid");
+  //           const videoUrl = movies.find((m) => m.post_id === postId)?.preview
+  //             ?.url;
+
+  //           if (videoUrl && !preloadedVideos[postId]) {
+  //             // Preload the video
+  //             const video = document.createElement("video");
+  //             video.src = videoUrl;
+  //             video.preload = "auto";
+  //             video.load();
+
+  //             // Mark as preloaded
+  //             setPreloadedVideos((prev) => ({
+  //               ...prev,
+  //               [postId]: true,
+  //             }));
+  //           }
+  //         }
+  //       });
+  //     },
+  //     {
+  //       rootMargin: "200px", // Start preloading when 200px away from viewport
+  //       threshold: 0.01,
+  //     }
+  //   );
+
+  //   // Observe all video cards
+  //   const cards = document.querySelectorAll("[data-video-card]");
+  //   cards.forEach((card) => observer.observe(card));
+
+  //   return () => observer.disconnect();
+  // }, [movies, preloadedVideos]);
 
   return (
     <div className="">
@@ -786,7 +888,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
                         onTouchMove={handleTouchEnd} // Cancel on move as well
                         key={card.post_id}
                         data-video-card
-                        data-postid={card.post_id}
+                        data-postid={card?.post_id}
                         className="max-w-full pb-[12px] chinese_photo h-[325px]"
                       >
                         <div
