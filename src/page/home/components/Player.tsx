@@ -109,6 +109,8 @@ const Player = ({
     time: 0,
   });
 
+  console.log(video);
+
   const spriteImageUrlRef = useRef<string | null>(null);
   const metadata = video?.sprite_metadata || {};
 
