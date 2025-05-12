@@ -918,7 +918,10 @@ const Player = ({
                 }
                 timeDisplayRef.current.innerHTML = `<span style="border-radius: 100px;
   background: rgba(0, 0, 0, 0.5);
-  padding: 16px 20px;"><span style="color: #d53ff0;  
+  padding: 16px 20px;
+  width: 240px;
+  display: inline-block;
+  text-align: center;"><span style="color: #d53ff0;  
 "  >${currentTime}</span> / ${duration} </span>`;
               }
             });
@@ -1005,7 +1008,10 @@ const Player = ({
                 }
                 timeDisplayRef.current.innerHTML = `<span style="border-radius: 100px;
                 background: rgba(0, 0, 0, 0.5);
-                padding: 16px 20px;"><span style="color: #d53ff0;  
+                padding: 16px 20px;
+                width: 240px;
+                display: inline-block;
+                text-align: center;"><span style="color: #d53ff0;  
               "  >${currentTime}</span> / ${duration} </span>`;
               }
             });
@@ -1063,7 +1069,10 @@ const Player = ({
                 // timeDisplayRef.current.textContent = `${currentTime} / ${duration}`;
                 timeDisplayRef.current.innerHTML = `<span style="border-radius: 100px;
                 background: rgba(0, 0, 0, 0.5);
-                padding: 16px 20px;"><span style="color: #d53ff0;  
+                padding: 16px 20px;
+                width: 240px;
+                display: inline-block;
+                text-align: center;"><span style="color: #d53ff0;  
               "  >${currentTime}</span> / ${duration} </span>`;
               }
             });
