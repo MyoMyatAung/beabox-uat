@@ -15,28 +15,28 @@ const FlipNumber = ({
   const lastTwoDigits = number % 100;
   const prevLastTwoDigits = prevNumber % 100;
 
-  useEffect(() => {
-    if (firstLoad) {
-      setAnimating(true);
-      const timeout = setTimeout(() => {
-        setAnimating(false);
-        setFirstLoad(false);
-      }, 1000);
-      return () => clearTimeout(timeout);
-    }
-  }, [firstLoad]);
+  // useEffect(() => {
+  //   if (firstLoad) {
+  //     setAnimating(true);
+  //     const timeout = setTimeout(() => {
+  //       setAnimating(false);
+  //       setFirstLoad(false);
+  //     }, 1000);
+  //     return () => clearTimeout(timeout);
+  //   }
+  // }, [firstLoad]);
 
-  useEffect(() => {
-    if (!firstLoad && prevNumber !== number) {
-      setDirection(number > prevNumber ? "up" : "down");
-      setAnimating(true);
-      const timeout = setTimeout(() => {
-        setAnimating(false);
-        setPrevNumber(number);
-      }, 1000);
-      return () => clearTimeout(timeout);
-    }
-  }, [number, prevNumber, firstLoad]);
+  // useEffect(() => {
+  //   if (!firstLoad && prevNumber !== number) {
+  //     setDirection(number > prevNumber ? "up" : "down");
+  //     setAnimating(true);
+  //     const timeout = setTimeout(() => {
+  //       setAnimating(false);
+  //       setPrevNumber(number);
+  //     }, 1000);
+  //     return () => clearTimeout(timeout);
+  //   }
+  // }, [number, prevNumber, firstLoad]);
 
   const gradientStyle = {
     background: "linear-gradient(96.97deg, #FFBE92 3.5%, #FF4C1C 24.69%, rgba(239, 25, 137, 0.8) 71.84%, #FFB081 97.21%)",
@@ -80,48 +80,10 @@ const FlipNumber = ({
               WebkitTextStroke: "1px rgba(255, 76, 28, 1)",
               position: "absolute",
               zIndex: 1,
-            }}
-          >
-            {prevNumber}
-          </span>
-          <span
-            style={{
-              ...textBaseStyle,
-              ...gradientStyle,
-              WebkitTextStroke: "1px rgba(255, 76, 28, 1)",
-              position: "absolute",
-              // transform: "scale(1.2, 1.1)", 
-              zIndex: 2,
-            }}
-          >
-            {prevNumber}
-          </span>
-        </div>
-
-        <div className="h-1/2 flex items-center justify-center relative">
-          <span
-            style={{
-              ...textBaseStyle,
-              ...gradientStyle,
-              WebkitTextStroke: "1px rgba(255, 76, 28, 1)",
-              position: "absolute",
-              zIndex: 1,
               display: "inline-block",
             }}
           >
-            {prevLastTwoDigits}
-          </span>
-          <span
-            style={{
-              ...textBaseStyle,
-              ...gradientStyle,
-              position: "absolute",
-              zIndex: 2,
-              transform: "scale(1.2, 1.1)",
-              display: "inline-block",
-            }}
-          >
-            {lastTwoDigits}
+            {number}
           </span>
         </div>
       </div>
