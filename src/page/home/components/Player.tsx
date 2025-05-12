@@ -751,7 +751,7 @@ const Player = ({
           html: `
             <div class="custom-progress-container">
               <input type="range" min="0" max="100" step="0.1" class="custom-progress-bar chrome-fix" />
-                <div class="custom-time-display" style="display: flex; justify-content: center; position: absolute; width: 100%; left: 0; text-align: center;"></div>
+                <div class="custom-time-display" style="display: none; justify-content: center; position: absolute; width: 100%; left: 0; text-align: center;"></div>
             </div>
           `,
           style: {
@@ -846,12 +846,19 @@ const Player = ({
                   artPlayerInstanceRef.current.duration
                 );
 
-                if (metadata?.isPortrait) {
-                  timeDisplayRef.current.style.bottom = `200px`;
+                if (video?.sprite_url) {
+                  if (metadata?.isPortrait) {
+                    timeDisplayRef.current.style.bottom = `220px`;
+                  } else {
+                    timeDisplayRef.current.style.bottom = `150px`;
+                  }
                 } else {
-                  timeDisplayRef.current.style.bottom = `150px`;
+                  timeDisplayRef.current.style.bottom = `100px`;
                 }
-                timeDisplayRef.current.innerHTML = `<span style="color: #d53ff0">${currentTime}</span> / ${duration}`;
+                timeDisplayRef.current.innerHTML = `<span style="border-radius: 100px;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 16px 20px;"><span style="color: #d53ff0;  
+"  >${currentTime}</span> / ${duration} </span>`;
               }
             });
 
@@ -921,12 +928,19 @@ const Player = ({
                   artPlayerInstanceRef.current.duration
                 );
 
-                if (metadata?.isPortrait) {
-                  timeDisplayRef.current.style.bottom = `200px`;
+                if (video?.sprite_url) {
+                  if (metadata?.isPortrait) {
+                    timeDisplayRef.current.style.bottom = `220px`;
+                  } else {
+                    timeDisplayRef.current.style.bottom = `150px`;
+                  }
                 } else {
-                  timeDisplayRef.current.style.bottom = `150px`;
+                  timeDisplayRef.current.style.bottom = `100px`;
                 }
-                timeDisplayRef.current.innerHTML = `<span style="color: #d53ff0">${currentTime}</span> / ${duration}`;
+                timeDisplayRef.current.innerHTML = `<span style="border-radius: 100px;
+                background: rgba(0, 0, 0, 0.5);
+                padding: 16px 20px;"><span style="color: #d53ff0;  
+              "  >${currentTime}</span> / ${duration} </span>`;
               }
             });
 
@@ -950,7 +964,7 @@ const Player = ({
 
               // Make sure hideBar stays true during the entire touch drag operation
               dispatch(sethideBar(true));
-                
+
               progressBarRef.current.value = percent.toString();
               progressBarRef.current.style.setProperty(
                 "--progress",
@@ -965,13 +979,21 @@ const Player = ({
                   artPlayerInstanceRef.current.duration
                 );
 
-                if (metadata?.isPortrait) {
-                  timeDisplayRef.current.style.bottom = `200px`;
+                if (video?.sprite_url) {
+                  if (metadata?.isPortrait) {
+                    timeDisplayRef.current.style.bottom = `220px`;
+                  } else {
+                    timeDisplayRef.current.style.bottom = `150px`;
+                  }
                 } else {
-                  timeDisplayRef.current.style.bottom = `150px`;
+                  timeDisplayRef.current.style.bottom = `100px`;
                 }
+
                 // timeDisplayRef.current.textContent = `${currentTime} / ${duration}`;
-                timeDisplayRef.current.innerHTML = `<span><span style="color: #d53ff0">${currentTime}</span> / ${duration}<span>`;
+                timeDisplayRef.current.innerHTML = `<span style="border-radius: 100px;
+                background: rgba(0, 0, 0, 0.5);
+                padding: 16px 20px;"><span style="color: #d53ff0;  
+              "  >${currentTime}</span> / ${duration} </span>`;
               }
             });
 
@@ -1800,14 +1822,20 @@ const Player = ({
     });
   };
 
+  useEffect(() => {
+    if (!spriteImageUrlRef.current && video.sprite_url) {
+      loadAndDecryptSprite();
+    }
+  }, [video?.sprite_url]);
+
   // Handle active state changes
   useEffect(() => {
     if (!playerContainerRef.current) return;
 
     if (isActive) {
-      if (!spriteImageUrlRef.current && video.sprite_url) {
-        loadAndDecryptSprite();
-      }
+      // if (!spriteImageUrlRef.current && video.sprite_url) {
+      //   loadAndDecryptSprite();
+      // }
       // Increment the index when a new video becomes active
       indexRef.current++;
 
