@@ -22,7 +22,7 @@ const Noti = () => {
             <img src={backButton} alt="" />
           </Link>
           <p className="text-[18px] font-bold">通知</p>
-          <div></div>
+          <div className="px-3"></div>
         </div>
         <div className="space-y-4 pb-10">
           <Link

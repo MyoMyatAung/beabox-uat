@@ -9,7 +9,10 @@ import { Button } from "../ui/button";
 import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { useChangeNicknameMutation } from "@/store/api/profileApi";
+import {
+  useChangeNicknameMutation,
+  useCheckNicknameQuery,
+} from "@/store/api/profileApi";
 import { useNavigate } from "react-router-dom";
 import SubmitButton from "../shared/submit-button";
 import Loader from "../shared/loader";
@@ -23,6 +26,8 @@ const EditNickName = ({
   nickname: string;
   refetchHandler: any;
 }) => {
+  const { data: checkData, refetch: checkRefetch } = useCheckNicknameQuery("");
+  console.log(checkData?.data, "checkdata");
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState(nickname);
   const [changeNickname, { data, isLoading }] = useChangeNicknameMutation();
@@ -38,6 +43,7 @@ const EditNickName = ({
     e.preventDefault();
     await changeNickname({ nickname: value });
     await refetchHandler();
+    checkRefetch();
     // setIsOpen(false);
     closeRef.current?.click();
   };
@@ -53,11 +59,16 @@ const EditNickName = ({
     setValue(nickname);
   }, [isOpen]);
 
+  const user = useSelector((state: any) => state.persist.user);
+  useEffect(() => {
+    if (user) checkRefetch();
+  }, [user, checkRefetch]);
+
   const showErrorToast = () => {
     console.log("eror");
     dispatch(
       showToast({
-        message: "这个功能目前不可用",
+        message: checkData?.data?.message,
         type: "error",
       })
     );
@@ -65,25 +76,29 @@ const EditNickName = ({
 
   return (
     <Drawer open={isOpen} onOpenChange={handleOpenChange}>
-      {/* <DrawerTrigger>
-        <div className="text-[14px] flex items-center justify-between">
-          <h1>昵称</h1>
-          <p className="flex items-center gap-1 text-[#888]">
-            {nickname} <FaAngleRight />
-          </p>
+      {checkData?.data?.review_exist ? (
+        <div>
+          <div
+            onClick={() => showErrorToast()}
+            className="text-[14px] flex items-center justify-between"
+          >
+            <h1>昵称</h1>
+            <p className="flex items-center gap-1 text-[#888]">
+              {nickname} <FaAngleRight />
+            </p>
+          </div>
         </div>
-      </DrawerTrigger> */}
-      <div>
-        <div
-          onClick={() => showErrorToast()}
-          className="text-[14px] flex items-center justify-between"
-        >
-          <h1>昵称</h1>
-          <p className="flex items-center gap-1 text-[#888]">
-            {nickname} <FaAngleRight />
-          </p>
-        </div>
-      </div>
+      ) : (
+        <DrawerTrigger>
+          <div className="text-[14px] flex items-center justify-between">
+            <h1>昵称</h1>
+            <p className="flex items-center gap-1 text-[#888]">
+              {nickname} <FaAngleRight />
+            </p>
+          </div>
+        </DrawerTrigger>
+      )}
+
       <DrawerContent className="border-0" style={{ height: vh }}>
         {isLoading ? <Loader /> : <></>}
         <div className="w-full px-5 bg-[#16131C]">
@@ -94,7 +109,7 @@ const EditNickName = ({
               </button>
             </DrawerClose>
             <p className="text-[16px]">昵称</p>
-            <div></div>
+            <div className="px-3"></div>
           </div>
           <form onSubmit={onSubmitHandler}>
             <label htmlFor="" className="text-[14px] text-[#888] pt-10">
