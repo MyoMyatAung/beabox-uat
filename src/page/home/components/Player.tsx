@@ -11,6 +11,7 @@ import { c } from "node_modules/framer-motion/dist/types.d-6pKw1mTI";
 import { setMute } from "../services/muteSlice";
 import { sethideBar } from "../services/hideBarSlice";
 import forward from "../Fastforward.gif";
+import sprite_loading from "../../../assets/sprite_loading.gif";
 // Constants for video preloading
 const BUFFER_THRESHOLD = 10; // seconds before current position to start buffering
 const MAX_BUFFER_SIZE = 50 * 1024 * 1024; // 50MB maximum buffer size
@@ -100,6 +101,7 @@ const Player = ({
   const isLongPressActiveRef = useRef(false); // Track if long press is active to prevent early cancellation
   const [newStart, setnewStart] = useState(false);
   const watchTimerRef = useRef<NodeJS.Timeout | null>(null); // Reference to store the watch timer
+  const [isSpriteLoading, setIsSpriteLoading] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -109,19 +111,68 @@ const Player = ({
     time: 0,
   });
 
-  console.log(video);
-
   const spriteImageUrlRef = useRef<string | null>(null);
   const metadata = video?.sprite_metadata || {};
 
-  // Load and decrypt the sprite image
+  // // Load and decrypt the sprite image
+  // const loadAndDecryptSprite = async () => {
+  //   try {
+  //     const spriteUrl = video.sprite_url || "";
+  //     setIsSpriteLoading(true); // Set loading state
+
+  //     const xorKey = 0x12;
+  //     const encryptSize = 4096;
+
+  //     const response = await fetch(spriteUrl);
+
+  //     const base64Text = await response.text();
+
+  //     // XOR-decrypt the first N characters
+  //     const chars = base64Text.split("");
+  //     const max = Math.min(encryptSize, chars.length);
+  //     for (let i = 0; i < max; i++) {
+  //       const xorCharCode = chars[i].charCodeAt(0) ^ xorKey;
+  //       chars[i] = String.fromCharCode(xorCharCode);
+  //     }
+
+  //     const decryptedBase64 = chars.join("");
+
+  //     // Parse base64 into Blob
+  //     const [header, base64Data] = decryptedBase64.includes("base64,")
+  //       ? decryptedBase64.split(",")
+  //       : ["data:image/jpeg;base64", decryptedBase64];
+
+  //     const byteString = atob(base64Data);
+  //     const byteArray = new Uint8Array(byteString.length);
+  //     for (let i = 0; i < byteString.length; i++) {
+  //       byteArray[i] = byteString.charCodeAt(i);
+  //     }
+
+  //     const mimeType = header.match(/data:(.*);base64/)?.[1] || "image/jpeg";
+  //     const blob = new Blob([byteArray], { type: mimeType });
+
+  //     // Create object URL
+  //     const url = URL.createObjectURL(blob);
+
+  //     spriteImageUrlRef.current = url; // Update the ref
+  //   } catch (error) {
+  //     console.error("Error loading sprite:", error);
+  //   }
+  // };
+
   const loadAndDecryptSprite = async () => {
     try {
-      const spriteUrl = video.sprite_url || "";
+      if (spriteImageUrlRef.current || !video?.sprite_url) return;
+
+      setIsSpriteLoading(true); // Set loading state
+
+      const spriteUrl = video.sprite_url;
       const xorKey = 0x12;
       const encryptSize = 4096;
 
       const response = await fetch(spriteUrl);
+      if (!response.ok)
+        throw new Error(`HTTP error! status: ${response.status}`);
 
       const base64Text = await response.text();
 
@@ -151,13 +202,13 @@ const Player = ({
 
       // Create object URL
       const url = URL.createObjectURL(blob);
-
-      spriteImageUrlRef.current = url; // Update the ref
+      spriteImageUrlRef.current = url;
     } catch (error) {
       console.error("Error loading sprite:", error);
+    } finally {
+      setIsSpriteLoading(false); // Clear loading state
     }
   };
-
   // Get sprite position for a given time
   const getSpritePosition = (time: number) => {
     const index = Math.floor(time / metadata.frameInterval);
@@ -173,7 +224,7 @@ const Player = ({
 
   // Update thumbnail preview
   const updateThumbnailPreview = (time: number, clientX: number) => {
-    if (!artPlayerInstanceRef.current || !spriteImageUrlRef.current) return;
+    // if (!artPlayerInstanceRef.current || !spriteImageUrlRef.current) return;
 
     const pos = getSpritePosition(time);
     if (!pos) return;
@@ -196,7 +247,7 @@ const Player = ({
     const previewElement = playerContainerRef.current?.querySelector(
       ".thumbnail-preview"
     ) as HTMLDivElement;
-    if (!previewElement || !spriteImageUrlRef.current) return;
+    //  if (!previewElement || !spriteImageUrlRef.current) return;
 
     if (thumbnailPreview.visible) {
       const pos = getSpritePosition(thumbnailPreview.time);
@@ -213,7 +264,12 @@ const Player = ({
 
         previewElement.style.left = `${leftPosition}px`;
         previewElement.style.bottom = "30px";
-        previewElement.style.backgroundImage = `url(${spriteImageUrlRef.current})`;
+        if (isSpriteLoading || !video?.sprite_url) {
+          previewElement.style.backgroundImage = `url(${sprite_loading})`;
+        } else {
+          previewElement.style.backgroundImage = `url(${spriteImageUrlRef.current})`;
+        }
+        // previewElement.style.backgroundImage = `url(${spriteImageUrlRef.current})`;
         previewElement.style.backgroundPosition = `-${pos.x}px -${pos.y}px`;
 
         previewElement.style.backgroundSize = `${
@@ -846,14 +902,19 @@ const Player = ({
                   artPlayerInstanceRef.current.duration
                 );
 
-                if (video?.sprite_url) {
-                  if (metadata?.isPortrait) {
-                    timeDisplayRef.current.style.bottom = `220px`;
-                  } else {
-                    timeDisplayRef.current.style.bottom = `150px`;
-                  }
+                // if (video?.sprite_url) {
+                //   if (metadata?.isPortrait) {
+                //     timeDisplayRef.current.style.bottom = `220px`;
+                //   } else {
+                //     timeDisplayRef.current.style.bottom = `150px`;
+                //   }
+                // } else {
+                //   timeDisplayRef.current.style.bottom = `100px`;
+                // }
+                if (metadata?.isPortrait) {
+                  timeDisplayRef.current.style.bottom = `220px`;
                 } else {
-                  timeDisplayRef.current.style.bottom = `100px`;
+                  timeDisplayRef.current.style.bottom = `150px`;
                 }
                 timeDisplayRef.current.innerHTML = `<span style="border-radius: 100px;
   background: rgba(0, 0, 0, 0.5);
@@ -928,14 +989,19 @@ const Player = ({
                   artPlayerInstanceRef.current.duration
                 );
 
-                if (video?.sprite_url) {
-                  if (metadata?.isPortrait) {
-                    timeDisplayRef.current.style.bottom = `220px`;
-                  } else {
-                    timeDisplayRef.current.style.bottom = `150px`;
-                  }
+                // if (video?.sprite_url) {
+                //   if (metadata?.isPortrait) {
+                //     timeDisplayRef.current.style.bottom = `220px`;
+                //   } else {
+                //     timeDisplayRef.current.style.bottom = `150px`;
+                //   }
+                // } else {
+                //   timeDisplayRef.current.style.bottom = `100px`;
+                // }
+                if (metadata?.isPortrait) {
+                  timeDisplayRef.current.style.bottom = `220px`;
                 } else {
-                  timeDisplayRef.current.style.bottom = `100px`;
+                  timeDisplayRef.current.style.bottom = `150px`;
                 }
                 timeDisplayRef.current.innerHTML = `<span style="border-radius: 100px;
                 background: rgba(0, 0, 0, 0.5);
@@ -979,14 +1045,19 @@ const Player = ({
                   artPlayerInstanceRef.current.duration
                 );
 
-                if (video?.sprite_url) {
-                  if (metadata?.isPortrait) {
-                    timeDisplayRef.current.style.bottom = `220px`;
-                  } else {
-                    timeDisplayRef.current.style.bottom = `150px`;
-                  }
+                // if (video?.sprite_url) {
+                //   if (metadata?.isPortrait) {
+                //     timeDisplayRef.current.style.bottom = `220px`;
+                //   } else {
+                //     timeDisplayRef.current.style.bottom = `150px`;
+                //   }
+                // } else {
+                //   timeDisplayRef.current.style.bottom = `100px`;
+                // }
+                if (metadata?.isPortrait) {
+                  timeDisplayRef.current.style.bottom = `220px`;
                 } else {
-                  timeDisplayRef.current.style.bottom = `100px`;
+                  timeDisplayRef.current.style.bottom = `150px`;
                 }
 
                 // timeDisplayRef.current.textContent = `${currentTime} / ${duration}`;
@@ -1052,7 +1123,7 @@ const Player = ({
 
             // Create a function to update the preview
             const updatePreview = () => {
-              if (!previewElement || !spriteImageUrlRef.current) return;
+              // if (!previewElement || !spriteImageUrlRef.current) return;
 
               if (thumbnailPreview.visible) {
                 const pos = getSpritePosition(thumbnailPreview.time);
@@ -1069,11 +1140,13 @@ const Player = ({
 
                   previewElement.style.left = `${leftPosition}px`;
                   previewElement.style.bottom = "30px";
-                  previewElement.style.backgroundImage = `url(${spriteImageUrlRef.current})`;
+                  if (isSpriteLoading && video?.sprite_url) {
+                    previewElement.style.backgroundImage = `url(${sprite_loading})`;
+                  } else {
+                    previewElement.style.backgroundImage = `url(${spriteImageUrlRef.current})`;
+                  }
+
                   previewElement.style.backgroundPosition = `-${pos.x}px -${pos.y}px`;
-                  previewElement.style.left = `${
-                    thumbnailPreview.position.x + 40
-                  }px`;
 
                   previewElement.style.backgroundSize = `${
                     metadata.tileCols * metadata.tileWidth
