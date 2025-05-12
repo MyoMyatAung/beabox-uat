@@ -785,6 +785,8 @@ const Results: React.FC<ResultsProps> = ({}) => {
                         onTouchEnd={handleTouchEnd}
                         onTouchMove={handleTouchEnd} // Cancel on move as well
                         key={card.post_id}
+                        data-video-card
+                        data-postid={card.post_id}
                         className="max-w-full pb-[12px] chinese_photo h-[325px]"
                       >
                         <div
