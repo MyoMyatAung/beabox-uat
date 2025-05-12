@@ -25,7 +25,7 @@ const AdItemComponent: React.FC<AdItemProps> = ({ item }) => {
     >
       {imageLoading && (
         <div className="w-[58px] h-[58px] object-cover rounded-[8px] mx-auto bg-white/15 animate-pulse flex justify-center items-center">
-          <p className="text-[12px] font-[500] text-[#888]">
+          <p className="text-[14px] font-[500] text-[#888]">
             {item?.remarks}
           </p>
         </div>
@@ -89,7 +89,7 @@ const Poppizza: React.FC<PoppizzaProps> = ({}) => {
           <div className="w-[56px] h-[53px] rounded-md bg-white/20 animate-pulse"></div>
         </div>
       ) : (
-        <div className=" grid grid-cols-6 gap-[10px]">
+        <div className=" grid grid-cols-6 gap-[5px]">
           {ad?.map((app: any) => (
             <a
               key={app.id}
@@ -98,11 +98,11 @@ const Poppizza: React.FC<PoppizzaProps> = ({}) => {
               className=" flex flex-col justify-center items-center gap-[4px]"
             >
               <img
-                className=" w-[52px] h-[52px] rounded-[6px] border-[#222]"
+                className="min-w-[56px] min-h-[56px] rounded-[6px] border-[#222]"
                 src={app.image}
                 alt=""
               />
-              <h1 className=" text-white text-[10px] font-[400]">
+              <h1 className=" text-white text-[14px] font-[400]">
                 {app.title}
               </h1>
             </a>

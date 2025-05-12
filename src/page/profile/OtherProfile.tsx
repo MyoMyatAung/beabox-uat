@@ -328,9 +328,9 @@ const OtherProfile = () => {
       )}
       <div className="flex-1">
         <div
-          className={`px-5 fixed ${
+          className={`px-3 fixed ${
             showHeader ? "opacity-1" : "opacity-0"
-          } top-0 w-full z-[1600] py-5`}
+          } top-0 w-full z-[1600] py-3`}
         >
           <OscrollHeader
             userData={userData}
@@ -342,7 +342,7 @@ const OtherProfile = () => {
             dphoto={userData?.data?.cover_photo}
           />
         </div>
-        <div className="z-[1900] relative px-5 w-full flex gap-3 my-5 justify-between items-center">
+        <div className="z-[1900] relative px-3 w-full flex gap-3 my-3 justify-between items-center">
           <ChevronLeft onClick={() => navigate(-1)} />
           <div className="flex gap-3 z-[1500] items-center">
             <SearchVideo id={userData?.data?.id} />
@@ -361,7 +361,7 @@ const OtherProfile = () => {
             </div>
           </div>
         </div>
-        <div className="w-full flex items-center gap-3 pb-5 px-5">
+        <div className="w-full flex items-center gap-3 pb-5 px-3">
           <ProfileAvatar
             progressData={userData?.data?.level_progress}
             levelImage={userData?.data?.level}
@@ -390,21 +390,21 @@ const OtherProfile = () => {
             userData?.data?.province &&
             userData?.data?.share_region == "on" ? (
               <div className="z-[1900] flex">
-                <div className="z-[1900] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
+                <div className="z-[1900] text-[14px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
                   <span>{userData?.data?.province}</span>:
                   <span>{userData?.data?.city}</span>
                 </div>
               </div>
             ) : (
               <div className="z-[1900] flex">
-                <div className="z-[1900] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
+                <div className="z-[1900] text-[14px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
                   <span>未知</span>
                 </div>
               </div>
             )}
           </div>
         </div>
-        <h1 className="text-[12px]  text-[#888] mb-5 px-5 z-[1900] relative xs:w-[100px] md:w-[340px] overflow-hidden break-words">
+        <h1 className="text-[14px]  text-[#888] mb-5 px-3 z-[1900] relative xs:w-[100px] md:w-[340px] overflow-hidden break-words">
           {userData?.data?.bio ? userData?.data?.bio : ""}
         </h1>
         <div className={`${showHeader ? "opacity-0" : "opacity-1"}`}>
@@ -413,13 +413,14 @@ const OtherProfile = () => {
             followings={userData?.data?.following_count}
             likes={userData?.data?.likes_sum_count}
             id={userData?.data?.id}
+            nickname={userData?.data?.nickname}
           />
         </div>
         {user && user.id === id ? (
           <></>
         ) : (
           <div
-            className={`px-5 z-[1900] relative ${
+            className={`px-3 z-[1900] relative ${
               showHeader ? "opacity-0" : "opacity-1"
             }`}
           >
@@ -432,7 +433,7 @@ const OtherProfile = () => {
           </div>
         )}
         <div
-          className={`px-5 relative z-[1900] ${
+          className={`px-3 relative z-[1900] ${
             showHeader ? "opacity-0" : "opacity-1"
           }`}
         >

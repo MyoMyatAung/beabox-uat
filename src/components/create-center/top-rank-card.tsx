@@ -81,7 +81,7 @@
 //       </Avatar> */}
 
 //       <h1 className="text-[14px] font-semibold z-50">{data?.nickname}</h1>
-//       <h1 className="text-[#AAA] text-[12px] z-50">
+//       <h1 className="text-[#AAA] text-[14px] z-50">
 //         {/* {data?.total >= 1000 ? formatToK(data?.total) : data?.total} followers */}
 //         {data?.total_followers}
 //       </h1>
@@ -175,7 +175,7 @@ const TopRankCard = ({
       <p className="text-[14px] pt-3 z-50">
         {data?.nickname ? data?.nickname : "未知"}
       </p>
-      <p className="text-[#AAA] text-[12px] z-50 pb-1">
+      <p className="text-[#AAA] text-[14px] z-50 pb-1">
         {data?.total_followers}
       </p>
       {data?.id == me ? (

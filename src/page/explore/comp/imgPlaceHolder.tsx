@@ -32,6 +32,11 @@ const ImageWithPlaceholder = ({
           if (entry.isIntersecting) {
             try {
               const decryptedUrl = await decryptImage(src);
+              if (imgRef.current) {
+                imgRef.current.onload = () => {
+                  URL.revokeObjectURL(decryptedUrl); // revoke after image is loaded
+                };
+              }
               setDecryptedSrc(decryptedUrl);
             } catch (error) {
               console.error("Error decrypting image:", error);
@@ -50,7 +55,9 @@ const ImageWithPlaceholder = ({
       observer.observe(containerRef.current);
     }
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+    };
   }, [src]);
 
   return (
@@ -72,7 +79,7 @@ const ImageWithPlaceholder = ({
       />
       {needGradient && (
         <img
-          className={`h-[170px]  absolute bottom-0`}
+          className={`h-[170px] w-full  absolute bottom-0`}
           src={covergradient}
           alt=""
         />

@@ -5,13 +5,9 @@ import { Link } from "react-router-dom";
 import EditUsername from "@/components/profile/edit-username";
 import EditGender from "@/components/profile/edit-gender";
 import EditReferral from "@/components/profile/edit-referral";
-import ChangePassword from "@/components/profile/change-password";
 import EditBio from "@/components/profile/edit-bio";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  useGetMyOwnProfileQuery,
-  useGetMyProfileQuery,
-} from "@/store/api/profileApi";
+import { useGetMyOwnProfileQuery } from "@/store/api/profileApi";
 import { useEffect, useState } from "react";
 import { setProfileData } from "@/store/slices/persistSlice";
 import EditNickName from "@/components/profile/edit-nickname";
@@ -19,9 +15,9 @@ import EditRegion from "@/components/profile/edit-region";
 import logo from "@/assets/logo.svg";
 import backButton from "../../assets/backButton.svg";
 import Avatars from "@/components/avatar/avatars";
-import AvatarUpload from "@/components/avatar/avatar-upload";
 import ProfilePhotoUpload from "@/components/shared/profile-photo-upload";
-import ImageUpload from "@/components/profile/image-upload";
+import { useGetConfigQuery } from "@/store/api/createCenterApi";
+import Loader from "@/components/shared/loader";
 
 const ProfileDetail = () => {
   const [showAvatar, setShowAvatar] = useState(false);
@@ -31,6 +27,8 @@ const ProfileDetail = () => {
   const user = useSelector((state: any) => state?.persist?.user);
   const profileData = useSelector((state: any) => state?.persist?.profileData);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
+  const { data: config } = useGetConfigQuery({});
+  const [uploadLoading, setUploadLoading] = useState(false);
 
   const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
     const data = new Uint8Array(arrayBuffer);
@@ -50,7 +48,7 @@ const ProfileDetail = () => {
     await refetch();
   };
 
-  // console.log(data?.data?.user_profile_review_status, "pddata");
+  console.log(data?.data?.user_profile_review_status, "pddata");
   useEffect(() => {
     if (data?.status) dispatch(setProfileData(data?.data));
   }, []);
@@ -100,10 +98,11 @@ const ProfileDetail = () => {
     }, 2000);
   };
 
-  console.log(data?.data);
+  // console.log(data?.data);
 
   return (
     <>
+      {/* {!uploadLoading ? <Loader /> : <></>} */}
       {/* <TranLoader /> */}
       <div className="w-full h-screen px-5 bg-[#16131C]">
         {showAlert ? (
@@ -147,11 +146,12 @@ const ProfileDetail = () => {
           refetchHandler={refetchHandler}
           exist={data?.data?.user_profile_exist}
           refetch={refetch}
+          imageLimit={config?.data?.profile_image_limit}
         />
         {/* <ImageUpload imgurl={decryptedPhoto} /> */}
 
         <div className="flex flex-col gap-7 my-7">
-          <h1 className="text-[12px] text-[#888]">关于你</h1>
+          <h1 className="text-[16px] text-[#888]">关于你</h1>
           <EditUsername
             username={data?.data?.username}
             refetchHandler={refetchHandler}
@@ -178,7 +178,7 @@ const ProfileDetail = () => {
         </div>
         <div className="w-full h-[0.08px] bg-[#FFFFFF0A]"></div>
         <div className="flex flex-col gap-7 my-7">
-          <h1 className="text-[12px] text-[#888]">邀请函</h1>
+          <h1 className="text-[16px] text-[#888]">邀请函</h1>
           <EditReferral
             referral_code={data?.data?.referral_by}
             showAlertHandler={showAlertHandler}
@@ -187,7 +187,7 @@ const ProfileDetail = () => {
         </div>
         <div className="w-full h-[0.08px] bg-[#FFFFFF0A]"></div>
         {/* <div className="flex flex-col gap-7 my-7">
-        <h1 className="text-[12px] text-[#888]">Account Security</h1>
+        <h1 className="text-[14px] text-[#888]">Account Security</h1>
         <ChangePassword />
       </div> */}
       </div>

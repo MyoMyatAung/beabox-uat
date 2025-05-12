@@ -41,7 +41,7 @@ const PrivateProfile = () => {
             {/* Private Profile */}
             私密账号
           </p>
-          <p className="text-[12px] w-[320px] text-[#888] mt-1">
+          <p className="text-[14px] w-[320px] text-[#888] mt-1">
             {/* Followers and following list will be invisible and your works will
             also be invisible to followers when this setting turn on. */}
             开启后，粉丝和关注列表将不可见，您的作品将被全部隐藏，即便粉丝也无法查看您的作品

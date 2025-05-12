@@ -397,9 +397,9 @@ const Home = () => {
       <div className="max-w-[1024px] home-main w-full">
         <TopNavbar currentTab={currentTab} onTabClick={handleTabClick} />
 
-        <div className="app bg-[#16131C]">
+        <div className="app_home bg-[#16131C]">
           {isDecrypting && (
-            <div className="app bg-[#16131C]">
+            <div className="app_home bg-[#16131C]">
               <div
                 style={{
                   textAlign: "center",
@@ -424,7 +424,7 @@ const Home = () => {
             <>
               {currentTab === 0 &&
                 (isLoading && videos["follow"] === 0 ? (
-                  <div className="app bg-[#16131C]">
+                  <div className="app_home bg-[#16131C]">
                     <div
                       style={{
                         textAlign: "center",
@@ -523,13 +523,48 @@ const Home = () => {
 
                     {(!followData?.data?.length ||
                       !forYouData?.data?.length) && (
-                      <p style={{ textAlign: "center" }}>
-                        {/* <b>You have seen all videos</b> */}
-                      </p>
+                        <div className="app_home bg-[#16131C]">
+                        <div style={{ textAlign: "center", padding: "20px" }}>
+                          <div className="text-white flex flex-col justify-center items-center  gap-2">
+                            <div>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="33"
+                                height="33"
+                                viewBox="0 0 33 33"
+                                fill="none"
+                              >
+                                <path
+                                  d="M24.4993 28.7502C24.4993 25.9212 23.3755 23.2081 21.3752 21.2077C19.3748 19.2073 16.6617 18.0835 13.8327 18.0835C11.0037 18.0835 8.2906 19.2073 6.29021 21.2077C4.28982 23.2081 3.16602 25.9212 3.16602 28.7502"
+                                  stroke="#888888"
+                                  stroke-width="2"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                />
+                                <path
+                                  d="M13.8327 18.0833C17.5146 18.0833 20.4993 15.0986 20.4993 11.4167C20.4993 7.73477 17.5146 4.75 13.8327 4.75C10.1508 4.75 7.16602 7.73477 7.16602 11.4167C7.16602 15.0986 10.1508 18.0833 13.8327 18.0833Z"
+                                  stroke="#888888"
+                                  stroke-width="2"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                />
+                                <path
+                                  d="M29.8337 27.4164C29.8337 22.9231 27.1671 18.7498 24.5004 16.7498C25.3769 16.0921 26.0779 15.2286 26.5411 14.2355C27.0044 13.2424 27.2157 12.1504 27.1564 11.0562C27.0971 9.96195 26.7689 8.89922 26.201 7.96204C25.6331 7.02486 24.8429 6.24212 23.9004 5.68311"
+                                  stroke="#888888"
+                                  stroke-width="2"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                />
+                              </svg>
+                            </div>
+                            <div className="follow-error">关注您喜欢的作者</div>
+                          </div>
+                        </div>
+                      </div>
                     )}
                   </>
                 ) : (
-                  <div className="app bg-[#16131C]">
+                  <div className="app_home bg-[#16131C]">
                     <div style={{ textAlign: "center", padding: "20px" }}>
                       <div className="text-white flex flex-col justify-center items-center  gap-2">
                         <div>
@@ -577,7 +612,7 @@ const Home = () => {
 
               {currentTab == 2 &&
                 (isLoading && videos["foryou"]?.length === 0 ? (
-                  <div className="app bg-[#16131C]">
+                  <div className="app_home bg-[#16131C]">
                     <div
                       style={{
                         textAlign: "center",
@@ -687,7 +722,7 @@ const Home = () => {
                     )}
                   </>
                 ) : (
-                  <div className="app bg-[#16131C]">
+                  <div className="app_home bg-[#16131C]">
                     <div style={{ textAlign: "center", padding: "20px" }}>
                       <div className="text-white flex flex-col justify-center items-center  gap-2">
                         <div>

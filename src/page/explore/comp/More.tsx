@@ -245,7 +245,7 @@ const More: React.FC<MoreProps> = () => {
                         className=" object-cover h-full w-full rounded-none"
                       />
                     </div>
-                    <h1 className="search_text font-cnFont line-clamp-2 text-left text-[12px] font-[400] px-[6px] pt-[6px]">
+                    <h1 className="search_text font-cnFont line-clamp-2 text-left text-[14px] font-[400] px-[6px] pt-[6px]">
                       {/* <h1 className="search_text font-cnFont px-[6px] line-clamp-2 text-left"> */}
                       {item.title.length > 50
                         ? `${item.title.slice(0, 50)}...`
@@ -268,7 +268,7 @@ const More: React.FC<MoreProps> = () => {
                           />
                         )}
                         <h1
-                          className=" text-[#888] text-[12px] font-[500] cursor-pointer hover:text-white"
+                          className=" text-[#888] text-[14px] font-[500] cursor-pointer hover:text-white"
                           onClick={(e) =>
                             navigateToUserProfile(item.user.id, e)
                           }
@@ -291,7 +291,7 @@ const More: React.FC<MoreProps> = () => {
                             stroke-width="0.8"
                           />
                         </svg>
-                        <h1 className=" text-[#888] text-[12px] font-[400] leading-[20px]">
+                        <h1 className=" text-[#888] text-[14px] font-[400] leading-[20px]">
                           {formatNumber(item?.like_count)}
                         </h1>
                       </span>

@@ -8,11 +8,13 @@ import {
 import { Button } from "../ui/button";
 import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useChangeUsernameMutation } from "@/store/api/profileApi";
 import { useNavigate } from "react-router-dom";
 import SubmitButton from "../shared/submit-button";
 import Loader from "../shared/loader";
+import { isWebView } from "@/lib/utils";
+import { showToast } from "@/page/home/services/errorSlice";
 
 const EditUsername = ({
   username,
@@ -21,19 +23,25 @@ const EditUsername = ({
   username: string;
   refetchHandler: any;
 }) => {
+  const [vh, setVh] = useState("100vh");
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState(username);
   const [changeUsername, { data, isLoading }] = useChangeUsernameMutation();
   const navigate = useNavigate();
   const closeRef = useRef<HTMLButtonElement>(null);
-
+  const dispatch = useDispatch();
   const onSubmitHandler = async (e: any) => {
     e.preventDefault();
 
     await changeUsername({ username: value });
     await refetchHandler();
-    // setIsOpen(false);
     closeRef.current?.click();
+    dispatch(
+      showToast({
+        message: "设置成功",
+        type: "error",
+      })
+    );
   };
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
@@ -45,6 +53,10 @@ const EditUsername = ({
   useEffect(() => {
     setValue(username);
   }, [isOpen]);
+  useEffect(() => {
+    // setVh(isMobile ? "95vh" : "100vh");
+    setVh(isWebView() ? "100vh" : "100dvh");
+  }, []);
 
   return (
     <Drawer open={isOpen} onOpenChange={handleOpenChange}>
@@ -56,9 +68,9 @@ const EditUsername = ({
           </p>
         </div>
       </DrawerTrigger>
-      <DrawerContent className="border-0">
+      <DrawerContent className="border-0" style={{ height: vh }}>
         {isLoading ? <Loader /> : <></>}
-        <div className="w-full c-height px-5 bg-[#16131C]">
+        <div className="w-full px-5 bg-[#16131C]">
           <div className="flex justify-between items-center py-5">
             <DrawerClose className="z-[1200]">
               <button>
@@ -66,7 +78,7 @@ const EditUsername = ({
               </button>
             </DrawerClose>
             <p className="text-[16px]">用户名</p>
-            <div></div>
+            <div className="px-3"></div>
           </div>
           <form onSubmit={onSubmitHandler}>
             <label htmlFor="" className="text-[14px] text-[#888] pt-10">

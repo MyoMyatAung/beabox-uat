@@ -33,8 +33,8 @@ const BalNew: React.FC<BalNewProps> = ({
         <div className=" bg-white/  rounded-[20px flex flex-col gap-[12px]">
           {/* head */}
           <div className="flex justify-cente items-center gap-[6px]">
-            <span className="text-white text-[14px] font-[500] leading-[20px] flex gap-[6px]">
-              <img className=" w-[18px] h-[18px]" src={transit} alt="" />
+            <span className="text-[#BBB] text-[14px] font-[500] leading-[20px] flex gap-[6px]">
+              <img className=" hidden w-[18px] h-[18px]" src={transit} alt="" />
               {title}
             </span>
             {/* Toggle between icons */}
@@ -42,21 +42,21 @@ const BalNew: React.FC<BalNewProps> = ({
           <div className="">
             {/* Show balance or asterisks */}
             <span className="text-white text-[24px] font-[500] leading-[20px]">
-              {balance} <span className=" text-[12px]">. 00</span>
+              {balance} <span className=" text-[14px]">. 00</span>
             </span>
           </div>
           <div className="">
-            <h1 className=" text-white text-[12px] font-[700] leading-[22px]">
-              {amountText} : <span className=" text-[#CD3EFF]">{amount}</span>{" "}
+            <h1 className=" text-white text-[14px] font-[700] leading-[22px]">
+              {amountText} : <span className=" text-[#DA72FF]">{amount}</span>{" "}
               {amountType}
             </h1>
           </div>
         </div>
         <button
           onClick={() => navigate(to)}
-          className=" absolute z-[3] right-[20px] top-[40px] flex justify-center h-fit items-center rounded-[10px] bg-white/20 py-[4px] px-[8px]"
+          className=" absolute z-[3] hidden right-[20px] top-[40px] flex justify-center h-fit items-center rounded-[10px] bg-white/20 py-[4px] px-[8px]"
         >
-          <span className=" text-[white] text-[12px] font-[500]">
+          <span className=" text-[white] text-[14px] font-[500]">
             {btnText}
           </span>
 

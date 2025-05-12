@@ -26,7 +26,7 @@ export const authApi = createApi({
     },
     responseHandler: async (response) => {
       const encryptedData = await response.json();
-      console.log(encryptedData, "encryptedData");
+      // console.log(encryptedData, "encryptedData");
       if (encryptedData?.status === false)
         localStorage.setItem("auth-error", encryptedData?.message);
       try {
@@ -49,6 +49,7 @@ export const authApi = createApi({
         password,
         captcha,
         captcha_key,
+        geetest_id,
         referral_code,
       }: any) => ({
         url: "/register",
@@ -58,6 +59,7 @@ export const authApi = createApi({
           password,
           captcha,
           captcha_key,
+          geetest_id,
           referral_code,
         }),
       }),

@@ -79,14 +79,12 @@ const PopUp: React.FC<PopUpProps> = ({
   const handleAppClose = () => {
     if (!isBrowser) {
       setShowAlert(false);
-      dispatch(setPlay(true));
     } else {
       setShowAlert(true);
-      dispatch(setPlay(true));
     }
     setShowAppContent(false);
     setShowAd(false);
-    
+
     // Call the onComplete callback if provided
     if (onComplete) {
       onComplete();
@@ -94,10 +92,9 @@ const PopUp: React.FC<PopUpProps> = ({
   };
 
   const handleNoticeClose = () => {
-    dispatch(setPlay(true));
     setShowNotice(false);
     setShowAd(false);
-    
+
     // Call the onComplete callback if provided
     if (onComplete) {
       onComplete();
@@ -164,24 +161,27 @@ const PopUp: React.FC<PopUpProps> = ({
 
       {/* apps */}
       {!showStart && showAppContent && (
-        <div className="w-[330px] flex flex-col gap-0 justify-center items-center">
+        <div className="w-[330px] mb-20 flex flex-col gap-0 justify-center items-center">
           <img src={header} alt="" />
-          <div className="initial_popup_ad_box w-full h-[304px] overflow-hidden p-[10px]">
-            <div className=" h-full overflow-scroll scrollbar-hide">
-              <div className="grid grid-cols-4 gap-[10px]">
+          <div className="initial_popup_ad_box w-full h-[325px] overflow-hidden p-2">
+            <div className="h-full overflow-y-auto scrollbar-hide">
+              <div className="grid grid-cols-4 gap-2">
                 {ad?.map((app) => (
                   <a
                     key={app.id}
                     href={app.url}
                     target="_blank"
-                    className="flex h-[75px] flex-col justify-center items-center gap-[4px]"
+                    className="flex flex-col justify-center items-center"
                   >
-                    <ImageWithSkeleton
-                      src={app?.image}
-                      alt="Ad"
-                      className="w-[52px] h-[50px] rounded-[6px] border-[#222]"
-                    />
-                    <h1 className="text-white text-[10px] font-[400]">
+                    <div className="w-full aspect-square">
+                      <ImageWithSkeleton
+                        src={app?.image}
+                        alt="Ad"
+                        className="w-full h-full object-cover rounded-lg border border-[#222]"
+                        rounded={true}
+                      />
+                    </div>
+                    <h1 className="text-white text-[14px] mt-1 truncate w-full text-center">
                       {app.title}
                     </h1>
                   </a>

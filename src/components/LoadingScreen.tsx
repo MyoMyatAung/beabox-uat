@@ -6,8 +6,8 @@ import { useGetAdsPopUpQuery } from "@/utils/helperService";
 import { useGetAdsNoticeQuery } from "@/store/api/explore/exploreApi";
 import { useGetApplicationAdsQuery } from "@/store/api/explore/exploreApi";
 import { useGetConfigQuery } from "@/page/home/services/homeApi";
-import splashVideo from '@/assets/splash.mp4';
-import logo from '@/assets/b_logo.webp';
+import splashVideo from "@/assets/splash.mp4";
+import logo from "@/assets/b_logo.webp";
 
 // Types for our data
 interface AdImage {
@@ -32,7 +32,7 @@ interface LoadingScreenProps {
 
 const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
   const dispatch = useDispatch();
-  
+
   // States for tracking progress
   const [progress, setProgress] = useState(0);
   const [imagesLoaded, setImagesLoaded] = useState(0);
@@ -72,13 +72,16 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
     "愿兄弟快意人生，乘风而上。",
     "愿兄弟昂扬斗志，笑看风云。",
     "愿兄弟江湖纵横，精彩无限。",
-    "愿兄弟自律笃行，终成大器。"
+    "愿兄弟自律笃行，终成大器。",
   ];
-  
+
   // API queries
-  const { data: adsPopUpData, isLoading: adsPopUpLoading } = useGetAdsPopUpQuery();
-  const { data: adsNoticeData, isLoading: adsNoticeLoading } = useGetAdsNoticeQuery("");
-  const { data: applicationAdsData, isLoading: applicationAdsLoading } = useGetApplicationAdsQuery("");
+  const { data: adsPopUpData, isLoading: adsPopUpLoading } =
+    useGetAdsPopUpQuery();
+  const { data: adsNoticeData, isLoading: adsNoticeLoading } =
+    useGetAdsNoticeQuery("");
+  const { data: applicationAdsData, isLoading: applicationAdsLoading } =
+    useGetApplicationAdsQuery("");
   const { data: configData, isLoading: configLoading } = useGetConfigQuery({});
 
   // Choose a single random quote when component mounts
@@ -93,57 +96,68 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
     const timer = setTimeout(() => {
       setMinTimeElapsed(true);
     }, 3000);
-    
+
     return () => clearTimeout(timer);
   }, []);
 
   // Process and preload images when data is available
   useEffect(() => {
     // Only proceed if all API data has been fetched
-    if (adsPopUpLoading || adsNoticeLoading || applicationAdsLoading || configLoading) {
+    if (
+      adsPopUpLoading ||
+      adsNoticeLoading ||
+      applicationAdsLoading ||
+      configLoading
+    ) {
       setProgress(25); // Set to 25% when APIs are still loading
       return;
     }
-    
+
     setProgress(50); // Set to 50% when APIs finish loading
-    
+
     // Save application ads data to Redux
     if (applicationAdsData?.data) {
       // Make sure to save all necessary data to Redux
       const dataToSave = {
-        ...applicationAdsData.data
+        ...applicationAdsData.data,
       };
-      
+
       // If splash screen exists in adsPopUpData, add it to applicationData
       if (adsPopUpData?.data?.splash_screen) {
         dataToSave.splash_screen = adsPopUpData.data.splash_screen;
       }
-      
+
       dispatch(setApplicationData(dataToSave));
       dispatch(setisLoading(applicationAdsLoading));
     }
-    
+
     // Collect all image URLs to preload
     const imagesToLoad: string[] = [];
-    
+
     // Add popup images
     if (adsPopUpData?.data) {
       // Splash screen image - this is used by Landing component
       if (adsPopUpData.data.splash_screen?.image) {
         imagesToLoad.push(adsPopUpData.data.splash_screen.image);
       }
-      
+
       // Index popup images
-      if (adsPopUpData.data.index_popup && adsPopUpData.data.index_popup.length > 0) {
+      if (
+        adsPopUpData.data.index_popup &&
+        adsPopUpData.data.index_popup.length > 0
+      ) {
         adsPopUpData.data.index_popup.forEach((item: IndexPopupItem) => {
           if (item.image) {
             imagesToLoad.push(item.image);
           }
         });
       }
-      
+
       // App images
-      if (adsPopUpData.data.popup_application?.apps && adsPopUpData.data.popup_application.apps.length > 0) {
+      if (
+        adsPopUpData.data.popup_application?.apps &&
+        adsPopUpData.data.popup_application.apps.length > 0
+      ) {
         adsPopUpData.data.popup_application.apps.forEach((app: AppItem) => {
           if (app.image) {
             imagesToLoad.push(app.image);
@@ -151,10 +165,10 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
         });
       }
     }
-    
+
     // Set total images count
     setTotalImages(imagesToLoad.length);
-    
+
     // Preload all images
     if (imagesToLoad.length > 0) {
       imagesToLoad.forEach((imageUrl) => {
@@ -163,7 +177,8 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
           setImagesLoaded((prev) => {
             const newCount = prev + 1;
             // Update progress based on loaded images (from 50% to 100%)
-            const newProgress = 50 + Math.floor((newCount / imagesToLoad.length) * 50);
+            const newProgress =
+              50 + Math.floor((newCount / imagesToLoad.length) * 50);
             setProgress(newProgress);
             return newCount;
           });
@@ -172,7 +187,8 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
           // Count failed loads too, so we don't stall on 404 images
           setImagesLoaded((prev) => {
             const newCount = prev + 1;
-            const newProgress = 50 + Math.floor((newCount / imagesToLoad.length) * 50);
+            const newProgress =
+              50 + Math.floor((newCount / imagesToLoad.length) * 50);
             setProgress(newProgress);
             return newCount;
           });
@@ -185,29 +201,27 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
       setAllDataLoaded(true);
     }
   }, [
-    adsPopUpData, 
-    adsNoticeData, 
-    applicationAdsData, 
+    adsPopUpData,
+    adsNoticeData,
+    applicationAdsData,
     configData,
-    adsPopUpLoading, 
-    adsNoticeLoading, 
-    applicationAdsLoading, 
+    adsPopUpLoading,
+    adsNoticeLoading,
+    applicationAdsLoading,
     configLoading,
-    dispatch
+    dispatch,
   ]);
-  
+
   // Check if everything is loaded
   useEffect(() => {
     if (totalImages > 0 && imagesLoaded >= totalImages) {
       setAllDataLoaded(true);
     }
   }, [imagesLoaded, totalImages]);
-  
+
   // Complete loading when both data is loaded and minimum time has elapsed
   useEffect(() => {
     if (allDataLoaded && minTimeElapsed) {
-      // Set play state to true in Redux
-      dispatch(setPlay(true));
       // Store that the user has seen the popup for this session
       sessionStorage.setItem("hasSeenAdPopUp", "true");
       // Notify parent component that loading is complete
@@ -219,31 +233,31 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
     <div className="fixed inset-0 flex flex-col items-center justify-center z-[9999] font-['Noto_Sans_SC',sans-serif]">
       <div className="w-full h-full relative overflow-hidden">
         {/* Video Background */}
-        <video 
+        <video
           className="absolute top-0 left-0 w-full h-full object-cover"
-          autoPlay 
-          loop 
-          muted 
+          autoPlay
+          loop
+          muted
           playsInline
         >
           <source src={splashVideo} type="video/mp4" />
         </video>
-        
+
         {/* Blur Overlay */}
         <div className="absolute inset-0 backdrop-blur-md"></div>
-        
+
         {/* Dark Overlay */}
         <div className="absolute inset-0 bg-black bg-opacity-60"></div>
-        
+
         {/* Content Container */}
         <div className="relative z-10 flex flex-col items-center justify-center h-full">
           {/* Logo */}
-          <img 
-            className="w-[140px] mb-3 animate-[slideDown_1s_ease_forwards]" 
+          <img
+            className="w-[140px] mb-3 animate-[slideDown_1s_ease_forwards]"
             src={logo}
             alt="App Logo"
           />
-          
+
           {/* Quote Container */}
           <div className="text-center px-6 mb-6">
             <p className="my-1.5 text-lg leading-normal text-white text-opacity-95">
@@ -253,24 +267,25 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
               {currentQuote}
             </p>
           </div>
-          
+
           {/* Progress Bar */}
           <div className="w-4/5 text-center">
             <div className="w-full h-1.5 bg-white bg-opacity-15 rounded-full overflow-hidden">
-              <div 
+              <div
                 className="h-full bg-gradient-to-r from-[#de62f5] to-[#a848ec] transition-all duration-300"
                 style={{ width: `${progress}%` }}
               ></div>
             </div>
             <div className="mt-2 text-sm text-white text-opacity-80">
-              正在为您加载最优线路 <span className="text-[#de62f5] font-bold ml-1">{progress}%</span>
+              正在为您加载最优线路{" "}
+              <span className="text-[#de62f5] font-bold ml-1">{progress}%</span>
             </div>
           </div>
-          
+
           {/* Footer Text */}
           <div className="absolute bottom-4 w-full text-center text-xs text-white text-opacity-60 px-4">
-            本软件不适合未成年人使用，如果您未满18岁请立刻离开。<br/>
-            © 笔盒@2025 ｜ 联系邮箱：zhaohui@beabox.net
+            本软件不适合未成年人使用，如果您未满18岁请立刻离开。
+            <br />© 笔盒@2025 ｜ 联系邮箱：zhaohui@beabox.net
           </div>
         </div>
       </div>
@@ -278,4 +293,4 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
   );
 };
 
-export default LoadingScreen; 
+export default LoadingScreen;

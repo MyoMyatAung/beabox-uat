@@ -82,6 +82,14 @@ const LoginForm = ({ setIsOpen }: any) => {
       captcha_key: data?.data?.captcha_key,
     });
     setIsLoad(false);
+
+   if(!loginData){
+    const message = localStorage.getItem("auth-error")
+    setflashLoading(false);
+    setShow验证码(false);
+    setError(message);
+    setCaptcha("");
+   }
     if (loginData?.status) {
       dispatch(setUser(loginData?.data));
       dispatch(setIsDrawerOpen(false));
@@ -91,6 +99,8 @@ const LoginForm = ({ setIsOpen }: any) => {
       setflashLoading(false);
       setIsOpen(false);
     }
+
+
 
     // if (!lerror) {
     //   dispatch(setUser(loginData?.data));
@@ -291,7 +301,7 @@ const LoginForm = ({ setIsOpen }: any) => {
                   captchaLoading ||
                   !emailOrPhoneValue ||
                   !passwordValue ||
-                  passwordValue?.length < 8 ||
+                  passwordValue?.length < 6 ||
                   passwordValue?.length > 25
                 }
                 // type="submit"
@@ -354,7 +364,7 @@ const LoginForm = ({ setIsOpen }: any) => {
                     className={`${captchaLoading ? "animate-spin" : ""}`}
                     size={14}
                   />
-                  <p className="text-[12px] text-[#bbb]">刷新</p>
+                  <p className="text-[14px] text-[#bbb]">刷新</p>
                 </div> */}
                   <Button
                     onClick={handleVerify}

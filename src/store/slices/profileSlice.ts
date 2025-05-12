@@ -7,12 +7,16 @@ const initialState: any = {
   showAlert: false,
   alertText: "",
   sort: "created_at",
+  recycleRefetch: false,
 };
 
 export const profileSlice = createSlice({
   name: "profile",
   initialState,
   reducers: {
+    setRecycleRefetch: (state, { payload }) => {
+      state.recycleRefetch = payload;
+    },
     setSort: (state, { payload }) => {
       state.sort = payload;
     },
@@ -41,6 +45,7 @@ export const {
   setAuthToggle,
   setShowAlert,
   setAlertText,
+  setRecycleRefetch,
 } = profileSlice.actions;
 
 export default profileSlice.reducer;

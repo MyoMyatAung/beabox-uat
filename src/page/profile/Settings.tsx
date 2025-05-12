@@ -94,7 +94,7 @@ const Settings = ({
         {user?.token ? (
           <>
             <div className="flex flex-col gap-4">
-              <h1 className="text-[12px] text-[#888]">账户安全</h1>
+              <h1 className="text-[16px] text-[#888]">账户安全</h1>
               <ChangePassword />
               <div className="mt-5">
                 <EditSecurity />
@@ -108,7 +108,7 @@ const Settings = ({
         {user?.token ? (
           <>
             <div className="flex flex-col gap-4 mt-5">
-              <h1 className="text-[12px] text-[#888]">
+              <h1 className="text-[16px] text-[#888]">
                 {/* Account Privacy */}
                 账号隐私设置
               </h1>
@@ -154,7 +154,7 @@ const Settings = ({
         <div className="flex justify-between items-center">
           <p className="flex items-center gap-1 text-[14px]">当前版本</p>
           <p className="flex items-center gap-1 text-[14px]">
-            V 1.1.5.2 <ChevronRight size={15} className="text-[#777777]" />
+            V 1.1.6.7 <ChevronRight size={15} className="text-[#777777]" />
           </p>
         </div>
 

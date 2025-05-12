@@ -15,6 +15,7 @@ import { showToast } from "@/page/home/services/errorSlice";
 import { useDispatch } from "react-redux";
 import { QRCodeCanvas } from "qrcode.react";
 import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder";
+import copy from "copy-to-clipboard";
 interface InviteProps {}
 
 const Invite: React.FC<InviteProps> = ({}) => {
@@ -34,7 +35,7 @@ const Invite: React.FC<InviteProps> = ({}) => {
       setShareUrl(data?.data?.share_link);
       setAppDownloadLink(newData?.data?.content);
     }
-  }, [data,newData]);
+  }, [data, newData]);
   // console.log(appDownloadLink)
 
   const isIOSApp = () => {
@@ -72,10 +73,10 @@ const Invite: React.FC<InviteProps> = ({}) => {
               console.error("Failed to create blob from canvas");
               return;
             }
-            
+
             // Create blob URL
             const blobUrl = URL.createObjectURL(blob);
-            
+
             // Create a temporary link to trigger the download
             const link = document.createElement("a");
             link.href = blobUrl;
@@ -83,7 +84,7 @@ const Invite: React.FC<InviteProps> = ({}) => {
             document.body.appendChild(link); // Append link to the body
             link.click(); // Trigger download
             document.body.removeChild(link); // Remove link after download
-            
+
             // Clean up the blob URL after download
             setTimeout(() => {
               URL.revokeObjectURL(blobUrl);
@@ -122,14 +123,13 @@ const Invite: React.FC<InviteProps> = ({}) => {
     if (isIOSApp()) {
       sendEventToNative("copyAppdownloadUrl", appDownloadLink);
     } else {
-      navigator.clipboard.writeText(appDownloadLink).then(() => {
-        dispatch(
-          showToast({
-            message: "复制成功",
-            type: "success",
-          })
-        );
-      });
+      copy(appDownloadLink);
+      dispatch(
+        showToast({
+          message: "复制成功",
+          type: "success",
+        })
+      );
     }
   };
 
@@ -139,14 +139,13 @@ const Invite: React.FC<InviteProps> = ({}) => {
       console.log("Event:copyShareUrl");
       sendEventToNative("copyShareUrl", shareUrl);
     } else {
-      navigator.clipboard.writeText(shareUrl).then(() => {
-        dispatch(
-          showToast({
-            message: "复制成功",
-            type: "success",
-          })
-        );
-      });
+      copy(shareUrl);
+      dispatch(
+        showToast({
+          message: "复制成功",
+          type: "success",
+        })
+      );
     }
   };
 
@@ -171,7 +170,7 @@ const Invite: React.FC<InviteProps> = ({}) => {
         <Header lv={false} title="我要分享" />
         {copied && (
           <div className="absolute flex justify-center items-cente w-full h-ful ">
-            <p className="text-[#fff] text-[12px] font-[400] leading-[14px] text-center px-[20px] py-[12px] copy_btn">
+            <p className="text-[#fff] text-[14px] font-[400] leading-[14px] text-center px-[20px] py-[12px] copy_btn">
               已复制
             </p>
           </div>
@@ -207,7 +206,7 @@ const Invite: React.FC<InviteProps> = ({}) => {
                   />
                 </div>
               </div>
-              <p className=" text-[#888] text-[12px] font-[400] leading-[14px] text-center">
+              <p className=" text-[#888] text-[14px] font-[400] leading-[14px] text-center">
                 分享此邀请码邀请您的朋友下载app，即可领取 Bebit 币！
               </p>
               <div
@@ -234,13 +233,13 @@ const Invite: React.FC<InviteProps> = ({}) => {
           <div className=" flex justify-center items-center gap-[24px]">
             <button
               onClick={handleSaveAsImage}
-              className="px-[20px] py-[12px] copy_btn text-white text-[12px] font-[400] leading-[20px]"
+              className="px-[20px] py-[12px] copy_btn text-white text-[14px] font-[400] leading-[20px]"
             >
               保存邀请码
             </button>
             <button
               onClick={handleAppCopy}
-              className="px-[20px] py-[12px] copy_btn text-white text-[12px] font-[400] leading-[20px]"
+              className="px-[20px] py-[12px] copy_btn text-white text-[14px] font-[400] leading-[20px]"
             >
               复制邀请链接
             </button>

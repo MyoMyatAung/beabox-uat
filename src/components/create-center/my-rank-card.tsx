@@ -24,7 +24,7 @@ const MyRankCard = ({ myrank }: any) => {
           />
           <div className="flex flex-col">
             <p className="text-[14px]">{data?.data?.nickname}</p>
-            <p className="text-[12px] text-[#AAAAAA]">
+            <p className="text-[14px] text-[#AAAAAA]">
               {data?.data?.followers_count} 粉丝
             </p>
           </div>

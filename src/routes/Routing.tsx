@@ -1,5 +1,9 @@
 import { lazy, ReactNode } from "react";
-import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from "react-router-dom";
 import { paths } from "./paths";
 import RootLayout from "@/layouts/RootLayout";
 import More from "@/page/explore/comp/More";
@@ -13,6 +17,7 @@ import Results from "@/page/search/page/Results";
 import VodDetails from "@/page/explore/comp/VodDetails";
 import Report from "@/page/report/Report";
 import SafeLazyLoad from "@/components/SafeLazyLoad";
+import CreatorNoti from "@/page/profile/noti/CreatorNoti";
 
 const Home = lazy(() => import("../page/home/Home"));
 const Explore = lazy(() => import("../page/explore/Explore"));
@@ -54,206 +59,243 @@ const ForgotPassword = lazy(
 const ResetPassword = lazy(
   () => import("../components/profile/auth/reset-password")
 );
+const LuckyDraw = lazy(() => import("../page/events/Luckydraw"));
 
 const Routing = () => {
   // Create a wrapper component that includes SafeLazyLoad for error handling
   const withErrorHandling = (Component: ReactNode) => {
     return {
-      element: (
-        <SafeLazyLoad>
-          {Component}
-        </SafeLazyLoad>
-      ),
+      element: <SafeLazyLoad>{Component}</SafeLazyLoad>,
       // On route error, navigate to home page
-      errorElement: <Navigate to="/" replace />
+      errorElement: <Navigate to="/" replace />,
     };
   };
 
   const routes = [
     {
       path: paths.login,
-      ...withErrorHandling(<Login />)
+      ...withErrorHandling(<Login />),
     },
     {
       path: paths.regiter,
-      ...withErrorHandling(<Register />)
+      ...withErrorHandling(<Register />),
     },
     {
       path: paths.forgot_password,
-      ...withErrorHandling(<ForgotPassword />)
+      ...withErrorHandling(<ForgotPassword />),
     },
     {
       path: paths.reset_password,
-      ...withErrorHandling(<ResetPassword />)
+      ...withErrorHandling(<ResetPassword />),
     },
     {
       path: paths.upload,
-      ...withErrorHandling(<RootLayout><UploadComponent /></RootLayout>)
+      ...withErrorHandling(
+        <RootLayout>
+          <UploadComponent />
+        </RootLayout>
+      ),
     },
     {
       path: paths.upload_process,
-      ...withErrorHandling(<UploadProcess />)
+      ...withErrorHandling(<UploadProcess />),
     },
     {
       path: paths.otp,
-      ...withErrorHandling(<OTP />)
+      ...withErrorHandling(<OTP />),
     },
     {
       path: paths.security_questions,
-      ...withErrorHandling(<SecurityQuestion />)
+      ...withErrorHandling(<SecurityQuestion />),
     },
     {
       path: paths.check_answer,
-      ...withErrorHandling(<Question />)
+      ...withErrorHandling(<Question />),
     },
     {
       path: paths.check_answer2,
-      ...withErrorHandling(<CheckAnswer />)
+      ...withErrorHandling(<CheckAnswer />),
     },
     {
       path: paths.answer,
-      ...withErrorHandling(<Answer />)
+      ...withErrorHandling(<Answer />),
     },
     {
       path: paths.manage,
-      ...withErrorHandling(<Manage />)
+      ...withErrorHandling(<Manage />),
     },
     {
       path: paths.home,
-      ...withErrorHandling(<RootLayout><Home /></RootLayout>)
+      ...withErrorHandling(
+        <RootLayout>
+          <Home />
+        </RootLayout>
+      ),
     },
     {
       path: paths.add_bio,
-      ...withErrorHandling(<RootLayout><AddBio /></RootLayout>)
+      ...withErrorHandling(
+        <RootLayout>
+          <AddBio />
+        </RootLayout>
+      ),
     },
     {
       path: paths.explore,
-      ...withErrorHandling(<RootLayout><Explore /></RootLayout>)
+      ...withErrorHandling(
+        <RootLayout>
+          <Explore />
+        </RootLayout>
+      ),
     },
     {
       path: paths.application,
-      ...withErrorHandling(<RootLayout><Application /></RootLayout>)
+      ...withErrorHandling(
+        <RootLayout>
+          <Application />
+        </RootLayout>
+      ),
     },
     {
       path: paths.profile,
-      ...withErrorHandling(<RootLayout><Profile /></RootLayout>)
+      ...withErrorHandling(
+        <RootLayout>
+          <Profile />
+        </RootLayout>
+      ),
     },
     {
       path: paths.user_profile,
-      ...withErrorHandling(<RootLayout><OtherProfile /></RootLayout>)
+      ...withErrorHandling(
+        <RootLayout>
+          <OtherProfile />
+        </RootLayout>
+      ),
     },
     {
       path: paths.profileDetail,
-      ...withErrorHandling(<ProfileDetail />)
+      ...withErrorHandling(<ProfileDetail />),
     },
     {
       path: paths.settings,
-      ...withErrorHandling(<Settings />)
+      ...withErrorHandling(<Settings />),
     },
     {
       path: paths.privacy_settings,
-      ...withErrorHandling(<PrivacySettings />)
+      ...withErrorHandling(<PrivacySettings />),
     },
     {
       path: paths.noti,
-      ...withErrorHandling(<Noti />)
+      ...withErrorHandling(<Noti />),
     },
     {
       path: paths.noti_detail,
-      ...withErrorHandling(<NotiDetail />)
+      ...withErrorHandling(<NotiDetail />),
     },
     {
       path: paths.system_noti,
-      ...withErrorHandling(<SystemNoti />)
+      ...withErrorHandling(<SystemNoti />),
     },
     {
       path: paths.balance_noti,
-      ...withErrorHandling(<BalanceNoti />)
+      ...withErrorHandling(<BalanceNoti />),
+    },
+    {
+      path: paths.creator_noti,
+      ...withErrorHandling(<CreatorNoti />),
     },
     {
       path: paths.recommand_more,
-      ...withErrorHandling(<More />)
+      ...withErrorHandling(<More />),
     },
     {
       path: "*",
       element: <h1>Page Not Found!</h1>,
-      errorElement: <Navigate to="/" replace />
+      errorElement: <Navigate to="/" replace />,
     },
     {
       path: paths.wallet,
-      ...withErrorHandling(<Wallet />)
+      ...withErrorHandling(<Wallet />),
     },
     {
       path: paths.wallet_invite,
-      ...withErrorHandling(<Invite />)
+      ...withErrorHandling(<Invite />),
     },
     {
       path: paths.wallet_history,
-      ...withErrorHandling(<TranHist />)
+      ...withErrorHandling(<TranHist />),
     },
     {
       path: paths.wallet_income,
-      ...withErrorHandling(<TranHist />)
+      ...withErrorHandling(<TranHist />),
     },
     {
       path: paths.wallet_recharge,
-      ...withErrorHandling(<Recharge />)
+      ...withErrorHandling(<Recharge />),
     },
     {
       path: paths.wallet_withdraw,
-      ...withErrorHandling(<Withdraw />)
+      ...withErrorHandling(<Withdraw />),
     },
     {
       path: paths.search,
-      ...withErrorHandling(<Search />)
+      ...withErrorHandling(<Search />),
     },
     {
       path: paths.search_result,
-      ...withErrorHandling(<Results />)
+      ...withErrorHandling(<Results />),
     },
     {
       path: paths.vod_details,
-      ...withErrorHandling(<VodDetails />)
+      ...withErrorHandling(<VodDetails />),
     },
     {
       path: paths.reports,
-      ...withErrorHandling(<Report />)
+      ...withErrorHandling(<Report />),
     },
     {
       path: paths.create_center,
-      ...withErrorHandling(<CreateCenter />)
+      ...withErrorHandling(<CreateCenter />),
     },
     {
       path: paths.your_videos,
-      ...withErrorHandling(<YourVideos />)
+      ...withErrorHandling(<YourVideos />),
     },
     {
       path: paths.video_detail,
-      ...withErrorHandling(<VideoDetails />)
+      ...withErrorHandling(<VideoDetails />),
     },
     {
       path: paths.recycle,
-      ...withErrorHandling(<Recycle />)
+      ...withErrorHandling(<Recycle />),
     },
     {
       path: paths.ranking,
-      ...withErrorHandling(<RootLayout><Ranking /></RootLayout>)
+      ...withErrorHandling(
+        <RootLayout>
+          <Ranking />
+        </RootLayout>
+      ),
     },
     {
       path: paths.creator_upload,
-      ...withErrorHandling(<CreatorUpload />)
+      ...withErrorHandling(<CreatorUpload />),
     },
     {
       path: paths.creator_upload_video,
-      ...withErrorHandling(<VideoUpload />)
+      ...withErrorHandling(<VideoUpload />),
     },
     {
       path: paths.tags,
-      ...withErrorHandling(<Tags />)
+      ...withErrorHandling(<Tags />),
     },
     {
       path: paths.user_feed,
-      ...withErrorHandling(<UserFeedSet />)
+      ...withErrorHandling(<UserFeedSet />),
+    },
+    {
+      path: paths.lucky_draw,
+      ...withErrorHandling(<LuckyDraw />),
     },
   ];
 

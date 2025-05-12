@@ -25,6 +25,7 @@ export const profileApi = createApi({
     },
     responseHandler: async (response) => {
       const encryptedData = await response.json();
+      console.log(encryptedData, "encryptedData");
       if (encryptedData?.status === false)
         localStorage.setItem("profile-error", encryptedData?.message);
       try {
@@ -242,9 +243,9 @@ export const profileApi = createApi({
       }),
     }),
     getNoti: builder.query<any, string>({
-      query: () => ({
+      query: (type) => ({
         url: convertToSecureUrl(
-          `/notification/list?type=general&pageSize=3&page=1`
+          `/notification/list?type=general&pageSize=10&page=1&type=${type}`
         ),
         method: "GET",
       }),
@@ -411,7 +412,7 @@ export const profileApi = createApi({
         url: convertToSecureUrl(`user/personalize/update`),
         method: "POST",
         body: convertToSecurePayload({
-          tags : tags,
+          tags: tags,
           interest: interest,
         }),
       }),
@@ -467,5 +468,5 @@ export const {
   useRemoveCoverMutation,
   useGetWatchHistoryQuery,
   useGetMyOwnProfileQuery,
-  usePostPersonalizationMutation
+  usePostPersonalizationMutation,
 } = profileApi;

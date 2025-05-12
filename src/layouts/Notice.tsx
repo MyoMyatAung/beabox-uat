@@ -53,7 +53,7 @@ const Notice: React.FC<NoticeProps> = ({ notice, handleNoticeClose }) => {
                         : "initial_popup_ad_box_notice_title_box_gg"
                     }`}
                   >
-                    <h1 className="text-white text-center px-[12px] py-[8px]  text-[12px] font-[500] leading-[14px]">
+                    <h1 className="text-white text-center px-[12px] py-[8px]  text-[14px] font-[500] leading-[14px]">
                       {nn.title}
                     </h1>
                   </div>
@@ -61,7 +61,7 @@ const Notice: React.FC<NoticeProps> = ({ notice, handleNoticeClose }) => {
               </div>
               {/* texts */}
               <div className="col-span-3 flex flex-col gap-[8px] text-white h-full pt-2">
-                <h1 className="text-white text-[12px] font-[500] leading-[12px]">
+                <h1 className="text-white text-[14px] font-[500] leading-[12px]">
                   {activeText.title}
                 </h1>
                 <p className="text-[#888] text-[10px] font-[500]">

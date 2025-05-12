@@ -42,7 +42,7 @@ const Tabs: React.FC<TabsProps> = ({}) => {
             <div className="tabs_icon w-[48px] h-[48px] flex justify-center items-center">
               <img className="" src={tb.pic} alt="" />
             </div>
-            <h1 className=" text-white text-[13px] font-[400] leading-[15px]">{tb.title}</h1>
+            <h1 className=" text-white text-[14px] font-[400] leading-[15px]">{tb.title}</h1>
           </Link>
         ))}
       </div>

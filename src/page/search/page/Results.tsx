@@ -549,7 +549,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
                             {card.title}
                           </p>
                         </div>
-                        {/* <h1 className="text-white w-full text-[12px] font-[400] px-[6px] pt-[6px] leading-[20px] break-words">
+                        {/* <h1 className="text-white w-full text-[14px] font-[400] px-[6px] pt-[6px] leading-[20px] break-words">
                         {card.title.length > 50
                           ? `${card.title.slice(0, 50)}...`
                           : card.title}
@@ -574,7 +574,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
                               />
                             )}
                             <h1
-                              className=" text-white text-[12px] font-[400] leading-[20px] cursor-pointer hover:text-purple-300"
+                              className=" text-white text-[14px] font-[400] leading-[20px] cursor-pointer hover:text-purple-300"
                               onClick={(e) =>
                                 navigateToUserProfile(card.user.id, e)
                               }
@@ -640,7 +640,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
                               </defs>
                             </svg>
                             {/* <FaHeart /> */}
-                            <h1 className=" text-white text-[12px] font-[400] leading-[20px]">
+                            <h1 className=" text-white text-[14px] font-[400] leading-[20px]">
                               {formatNumber(card?.like_count)}
                             </h1>
                           </div>

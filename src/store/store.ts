@@ -32,6 +32,9 @@ import { createCenterApi } from "./api/createCenterApi";
 import playSlice from "@/page/home/services/playSlice";
 import scrollSlice from "@/page/home/services/scrollSlice";
 import followSlice from "./slices/followSlice";
+import eventSlice from "./slices/eventSlice"
+import { eventApi } from "./api/events/eventApi";
+import { eventInvitationApi } from "../page/event/eventApi";
 
 const sessionStorageWrapper: Storage = {
   getItem: (key: string) => {
@@ -62,7 +65,7 @@ const persistHomeSliceConfig = {
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["persist", "history", "explore", "unlike"], // Reducers you want to persist
+  whitelist: ["persist", "history", "explore", "unlike","event"], // Reducers you want to persist
 };
 
 const rootReducer = combineReducers({
@@ -95,6 +98,9 @@ const rootReducer = combineReducers({
   [exploreApi.reducerPath]: exploreApi.reducer,
   [searchApi.reducerPath]: searchApi.reducer,
   [createCenterApi.reducerPath]: createCenterApi.reducer,
+  event: eventSlice,
+  [eventApi.reducerPath] : eventApi.reducer,
+  [eventInvitationApi.reducerPath]: eventInvitationApi.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -109,7 +115,9 @@ export const store: any = configureStore({
       .concat(walletApi.middleware)
       .concat(exploreApi.middleware)
       .concat(searchApi.middleware)
-      .concat(createCenterApi.middleware),
+      .concat(createCenterApi.middleware)
+      .concat(eventApi.middleware)
+      .concat(eventInvitationApi.middleware),
 });
 
 export const persistor = persistStore(store);

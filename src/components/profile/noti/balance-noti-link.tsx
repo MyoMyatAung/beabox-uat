@@ -11,12 +11,12 @@ const BalanceNotiLink = () => {
     >
       <img src={Balance} className="w-10 h-10 mt-1" alt="" />
       <div className="w-full">
-        <div className="flex items-center text-[14px] justify-between">
+        <div className="flex items-center text-[14px] justify-between font-bold">
           <p>Balance Alert</p>
           {/* <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div> */}
         </div>
         <div className="flex items-end justify-between">
-          <p className="text-[10px] w-[80%] text-[#888]">
+          <p className="text-[12px] w-[80%] text-[#888]">
             Withdraw Notice : You’ve successfully added 20 coins to your wallet.
             A chan...
           </p>

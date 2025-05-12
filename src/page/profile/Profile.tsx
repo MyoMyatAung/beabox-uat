@@ -2,7 +2,7 @@ import Stats from "@/components/profile/stats";
 import defaultCover from "@/assets/cover.jpg";
 import center from "@/assets/profile/center3.png";
 import VideoTabs from "@/components/profile/video-tabs";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { paths } from "@/routes/paths";
 import { useGetMyOwnProfileQuery } from "@/store/api/profileApi";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,15 +25,21 @@ const Profile = () => {
   const headerRef = useRef(null);
   const [showHeader, setShowHeader] = useState(false);
   const user = useSelector((state: any) => state?.persist?.user) || "";
+  const isDrawerOpen = useSelector((state: any) => state.profile.isDrawerOpen);
   const { data, isLoading, refetch } = useGetMyOwnProfileQuery("", {
     skip: !user,
   });
-  // console.log(data, "profiledata");
-  const progressData = data?.data?.level_progress;
-  // console.log(data, "data");
   const [show, setShow] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const bellHandeler = () => {
+    if (user) {
+      navigate(paths.noti);
+    } else {
+      dispatch(setIsDrawerOpen(true));
+    }
+  };
 
   useEffect(() => {
     if (show) {
@@ -90,15 +96,11 @@ const Profile = () => {
   if (isLoading) return <Loader />;
 
   return (
-    <div className="h-screen flex flex-col hide-sb max-w-[480px] mx-auto">
-      {/* <Covers /> */}
-
-      {/* {
-              user?.token
-                ? 'bg-[url("./assets/cover.jpg")]' ||
-                  'bg-[url("./assets/cover.jpg")]'
-                : 'bg-[url("./assets/cover.jpg")]'
-            }  */}
+    <div
+      className={`h-screen flex flex-col ${
+        isDrawerOpen ? "overflow-y-scroll" : ""
+      } hide-sb  max-w-[480px] mx-auto`}
+    >
       {showHeader ? (
         <>
           <div className="gradient-overlay2"></div>
@@ -106,7 +108,7 @@ const Profile = () => {
             className={`fixed top-0 w-full left-0 h-[155px] z-[1000] bg-cover bg-top bg-no-repeat`}
           >
             <AsyncDecryptedImage
-              imageUrl={user?.token ? (data?.data?.cover_photo || "") : ""}
+              imageUrl={user?.token ? data?.data?.cover_photo || "" : ""}
               defaultCover={defaultCover}
               className="fixed top-0 z-[1000] left-0 w-full h-[155px] object-cover object-center"
               alt="Cover"
@@ -117,7 +119,7 @@ const Profile = () => {
         <>
           <div className="gradient-overlay"></div>
           <AsyncDecryptedImage
-            imageUrl={user?.token ? (data?.data?.cover_photo || "") : ""}
+            imageUrl={user?.token ? data?.data?.cover_photo || "" : ""}
             defaultCover={defaultCover}
             className="fixed top-0 left-0 w-full h-[23vh] object-cover object-center"
             alt="Cover"
@@ -126,10 +128,10 @@ const Profile = () => {
       )}
       {isCopied && (
         <div className="w-full z-[1300] absolute top-[80vh] flex justify-center">
-        <p className="text-[14px] bg-[#191721] px-2 py-1 rounded-lg w-[83px] text-center">
-          已复制 ID
-        </p>
-      </div>
+          <p className="text-[14px] bg-[#191721] px-2 py-1 rounded-lg w-[83px] text-center">
+            已复制 ID
+          </p>
+        </div>
       )}
       {show && (
         <div className="fixed top-0 z-[2300] left-0 w-full h-full mx-auto flex flex-col justify-center items-center bg-black/80">
@@ -185,20 +187,17 @@ const Profile = () => {
         </div>
         <div className="z-[1900] flex my-5 justify-between items-center px-5">
           {user?.token ? (
-            <EditCover
-              coverimg={data?.data?.cover_photo}
-              refetch={refetch}
-            />
+            <EditCover coverimg={data?.data?.cover_photo} refetch={refetch} />
           ) : (
             <div></div>
           )}
           <div className="z-[1900] flex gap-3 items-center">
-            <Link
-              to={paths.noti}
+            <div
+              onClick={bellHandeler}
               className="z-[1900] bg-[#FFFFFF12] w-10 h-10 rounded-full flex items-center justify-center"
             >
               <Bell />
-            </Link>
+            </div>
             <SettingBtn setShow={setShow} />
           </div>
         </div>
@@ -237,7 +236,7 @@ const Profile = () => {
               </p>
               {data?.data?.share_region === "on" ? (
                 <div className="z-[1900] flex">
-                  <div className="z-[1900] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
+                  <div className="z-[1900] text-[14px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
                     {!data?.data?.city?.length &&
                     !data?.data?.province?.length ? (
                       <span>未知</span>
@@ -251,7 +250,7 @@ const Profile = () => {
                 </div>
               ) : (
                 <div className="z-[1900] flex">
-                  <div className="z-[1200] text-[12px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
+                  <div className="z-[1200] text-[14px] flex items-center gap-1 text-[#BBBBBB] bg-[#FFFFFF1F] px-3 py-1 rounded-full justify-center shrink-0">
                     <span>未知</span>
                   </div>
                 </div>
@@ -259,17 +258,17 @@ const Profile = () => {
             </div>
           )}
         </div>
-        <h1 className="text-[12px]  text-[#888] z-[1900] relative">
+        <h1 className="text-[14px]  text-[#888] z-[1900] relative">
           {user?.token ? (
             <>
               {data?.data?.hide_bio?.length ? (
-                <div className="text-[12px] xs:w-[100px] md:w-[340px] overflow-hidden break-words px-5  text-[#888] mb-5">
+                <div className="text-[14px] xs:w-[100px] md:w-[340px] overflow-hidden break-words px-5  text-[#888] mb-5">
                   {data?.data?.bio}
                 </div>
               ) : (
                 <Link
                   to={paths.add_bio}
-                  className="text-[12px] ml-5 text-[#FFFFFFCC] bg-[#FFFFFF14] px-2 py-1 w-[91px] text-center rounded-full"
+                  className="text-[14px] ml-5 text-[#FFFFFFCC] bg-[#FFFFFF14] px-2 py-1 w-[91px] text-center rounded-full"
                 >
                   + 个人简介
                 </Link>
@@ -278,19 +277,19 @@ const Profile = () => {
           ) : (
             // <>
             //   {data?.data?.hide_bio === "on" ? (
-            //     <div className="text-[12px] xs:w-[100px] md:w-[340px] overflow-hidden break-words px-5  text-[#888] mb-5">
+            //     <div className="text-[14px] xs:w-[100px] md:w-[340px] overflow-hidden break-words px-5  text-[#888] mb-5">
             //       {data?.data?.bio}
             //     </div>
             //   ) : (
             //     <>
             //       {data?.data?.hide_bio?.length ? (
-            //         <div className="text-[12px] xs:w-[100px] md:w-[340px] overflow-hidden break-words px-5  text-[#888] mb-5">
+            //         <div className="text-[14px] xs:w-[100px] md:w-[340px] overflow-hidden break-words px-5  text-[#888] mb-5">
             //           {data?.data?.bio}
             //         </div>
             //       ) : (
             //         <Link
             //           to={paths.add_bio}
-            //           className="text-[12px] ml-5 text-[#FFFFFFCC] bg-[#FFFFFF14] px-2 py-1 w-[91px] text-center rounded-full"
+            //           className="text-[14px] ml-5 text-[#FFFFFFCC] bg-[#FFFFFF14] px-2 py-1 w-[91px] text-center rounded-full"
             //         >
             //           + 个人简介
             //         </Link>

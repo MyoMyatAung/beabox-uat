@@ -60,7 +60,7 @@ const UploadList = ({
           ))}
         </>
       ) : (
-      <NoVideoCard />
+      <NoVideoCard from="upload"/>
       )}
 
       <InfinitLoad data={list} fetchData={fetchMoreData} hasMore={hasMore} />

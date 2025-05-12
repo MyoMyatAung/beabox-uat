@@ -63,8 +63,8 @@ const FollowingList2 = ({ searchTerm, id }: any) => {
                 <div className="h-full flex justify-center mt-[40%]">
                   <div className="flex flex-col items-center gap-3">
                     <UsersRound className="text-[#888]" />
-                    <p className="text-[12px] text-[#888] w-[90px] text-center">
-                      快关注你感兴 趣的用户吧！
+                    <p className="text-[14px] text-[#888] w-[90px] text-center">
+                      暂无账户
                     </p>
                   </div>
                 </div>
@@ -109,8 +109,8 @@ const FollowingList2 = ({ searchTerm, id }: any) => {
                 <div className="h-full flex justify-center mt-[40%]">
                   <div className="flex flex-col items-center gap-3">
                     <UsersRound className="text-[#888]" />
-                    <p className="text-[12px] text-[#888] w-[90px] text-center">
-                      快关注你感兴 趣的用户吧！
+                    <p className="text-[14px] text-[#888] w-[90px] text-center">
+                      暂无账户
                     </p>
                   </div>
                 </div>

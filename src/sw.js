@@ -18,7 +18,7 @@ registerRoute(
       }),
       new ExpirationPlugin({
         maxEntries: 50,
-        maxAgeSeconds: 30 * 24 * 60 * 60 // 30 days
+        maxAgeSeconds: 600 // 10 minutes
       })
     ]
   })
@@ -37,7 +37,7 @@ registerRoute(
       }),
       new ExpirationPlugin({
         maxEntries: 60,
-        maxAgeSeconds: 30 * 24 * 60 * 60 // 30 days
+        maxAgeSeconds: 60 // 5 minutes
       })
     ]
   })

@@ -19,6 +19,7 @@ export const paths = {
   noti_detail: "/notifications/:id",
   system_noti: "/notifications/system",
   balance_noti: "/notifications/balance",
+  creator_noti: "/notifications/creator",
   recommand_more: "/rec_more",
   wallet: "/wallet",
   wallet_invite: "/wallet/invite",
@@ -45,5 +46,6 @@ export const paths = {
   creator_upload_video: "/creator/upload/video",
   tags: "/creator/tags",
   user_feed: "/settings/feed",
+  lucky_draw: "/events/lucky-draw/:id",
   getUserProfileId: (id: any) => `/user/${id}`,
 };

@@ -14,6 +14,7 @@ import { setVideos } from "../services/videosSlice";
 import { setCurrentActivePost } from "../services/activeSlice";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
 import loader from "../vod_loader.gif";
+import copy from "copy-to-clipboard";
 
 const ShareOverlay: React.FC<any> = ({
   alertVisible,
@@ -31,6 +32,9 @@ const ShareOverlay: React.FC<any> = ({
   const { videos } = useSelector((state: any) => state.videoSlice);
   const { currentActivePost } = useSelector((state: any) => state.activeslice);
   const [isOpen, setIsOpen] = useState(false);
+  const [confirm, setConfirm] = useState(false);
+
+  const [isDownloadComplete, setIsDownloadComplete] = useState(false);
 
   const { data, isLoading } = useGetUserShareQuery(
     {
@@ -40,6 +44,9 @@ const ShareOverlay: React.FC<any> = ({
     },
     { skip: !alertVisible }
   );
+  const [downloadProgress, setDownloadProgress] = useState(0); // Track progress
+  const [isDownloading, setIsDownloading] = useState(false); // Track download status
+  const [isCanceled, setIsCanceled] = useState(false); // Track cancel status
 
   // const dispatch = useDispatch();
   const handleClose = () => {
@@ -48,6 +55,16 @@ const ShareOverlay: React.FC<any> = ({
       setIsClosing(false); // Reset the state
       setAlertVisible(false);
     }, 100); // Match the duration of the closing animation
+  };
+  const handleCancelClose = () => {
+    setIsClosing(false); // Reset the state
+    setAlertVisible(false);
+  };
+
+  const handleCancelDownload = () => {
+    setIsCanceled(true);
+    setIsDownloading(false);
+    handleCancelClose();
   };
 
   if (!alertVisible && !isClosing) return null;
@@ -83,37 +100,7 @@ const ShareOverlay: React.FC<any> = ({
     if (isIOSApp()) {
       sendEventToNative("saveVideo", post?.files[0].downloadURL);
     } else {
-      try {
-        const response = await fetch(post.files[0].downloadURL);
-        const blob = await response.blob();
-
-        const link = document.createElement("a");
-        const url = URL.createObjectURL(blob);
-        link.href = url;
-
-        link.download = new Date().getTime().toString();
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        setTimeout(() => {
-          const a = document.createElement('a');
-          a.href = post.files[0].downloadURL;
-          a.target = '_blank';
-          a.rel = 'noopener noreferrer';
-          a.click();
-        }, 1000); // 1-second delay to ensure the download starts
-
-        handleClose();
-      } catch (error) {
-        console.error("Download failed:", error);
-        dispatch(
-          showToast({
-            message: "下载失败",
-            type: "error",
-          })
-        );
-      }
+      setConfirm(true);
     }
   };
 
@@ -153,8 +140,8 @@ const ShareOverlay: React.FC<any> = ({
       try {
         // Convert data URL to blob
         const response = fetch(qrUrl)
-          .then(res => res.blob())
-          .then(blob => {
+          .then((res) => res.blob())
+          .then((blob) => {
             // Create a blob URL and initiate download
             const blobUrl = URL.createObjectURL(blob);
             const link = document.createElement("a");
@@ -163,7 +150,7 @@ const ShareOverlay: React.FC<any> = ({
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            
+
             // Clean up the blob URL after download
             setTimeout(() => {
               URL.revokeObjectURL(blobUrl);
@@ -202,14 +189,13 @@ const ShareOverlay: React.FC<any> = ({
     if (isIOSApp()) {
       sendEventToNative("copyAppdownloadUrl", contentUrl);
     } else {
-      navigator.clipboard.writeText(contentUrl).then(() => {
-        dispatch(
-          showToast({
-            message: "复制成功",
-            type: "success",
-          })
-        );
-      });
+      copy(contentUrl);
+      dispatch(
+        showToast({
+          message: "复制成功",
+          type: "success",
+        })
+      );
     }
   };
 
@@ -217,14 +203,13 @@ const ShareOverlay: React.FC<any> = ({
     if (isIOSApp()) {
       sendEventToNative("copyAppdownloadUrl", contentUrl);
     } else {
-      navigator.clipboard.writeText(contentUrl).then(() => {
-        dispatch(
-          showToast({
-            message: "复制成功",
-            type: "success",
-          })
-        );
-      });
+      copy(contentUrl);
+      dispatch(
+        showToast({
+          message: "复制成功",
+          type: "success",
+        })
+      );
     }
   };
 
@@ -272,8 +257,219 @@ const ShareOverlay: React.FC<any> = ({
     }
   };
 
+  const handleNo = () => {
+    setConfirm(false);
+  };
+
+  // const handleYes = async () => {
+  //   setConfirm(false);
+  //   try {
+  //     const response = await fetch(post.files[0].downloadURL);
+  //     const blob = await response.blob();
+
+  //     const link = document.createElement("a");
+  //     const url = URL.createObjectURL(blob);
+  //     link.href = url;
+
+  //     link.download = new Date().getTime().toString();
+  //     document.body.appendChild(link);
+  //     link.click();
+
+  //     document.body.removeChild(link);
+
+  //     setTimeout(() => {
+  //       const a = document.createElement("a");
+  //       a.href = post.files[0].downloadURL;
+  //       a.target = "_blank";
+  //       a.rel = "noopener noreferrer";
+  //       a.click();
+  //     }, 1000); // 1-second delay to ensure the download starts
+  //     handleClose();
+  //   } catch (error) {
+  //     console.error("Download failed:", error);
+  //     dispatch(
+  //       showToast({
+  //         message: "下载失败",
+  //         type: "error",
+  //       })
+  //     );
+  //   }
+  // };
+
+  // const handleYes = async () => {
+  //   setConfirm(false);
+  //   // handleClose();
+  //   setIsDownloading(true);
+  //   setIsCanceled(false); // Reset cancel state on new download
+
+  //   const fileUrl = post.files[0].downloadURL;
+  //   const fileName = new Date().getTime().toString();
+
+  //   try {
+  //     const xhr = new XMLHttpRequest();
+  //     xhr.open("GET", fileUrl, true);
+  //     xhr.responseType = "blob";
+
+  //     xhr.onprogress = (event) => {
+  //       if (event.lengthComputable) {
+  //         const percentComplete = (event.loaded / event.total) * 100;
+  //         setDownloadProgress(percentComplete);
+  //       }
+  //     };
+
+  //     xhr.onload = () => {
+  //       if (xhr.status === 200 && !isCanceled) {
+  //         const blob = xhr.response;
+  //         const link = document.createElement("a");
+  //         const url = URL.createObjectURL(blob);
+
+  //         link.href = url;
+  //         link.download = fileName;
+  //         document.body.appendChild(link);
+  //         link.click();
+  //         document.body.removeChild(link);
+
+  //         setIsDownloading(false); // Download finished
+  //       }
+  //     };
+
+  //     xhr.onerror = () => {
+  //       setIsDownloading(false);
+  //       console.error("Download failed");
+  //       setDownloadProgress(0); // Reset progress on error
+  //     };
+
+  //     xhr.send();
+  //   } catch (error) {
+  //     console.error("Download failed:", error);
+  //     setIsDownloading(false);
+  //     setDownloadProgress(0); // Reset progress on failure
+  //   }
+  // };
+  const handleYes = async () => {
+    setConfirm(false);
+    setIsDownloading(true);
+    setIsCanceled(false); // Reset cancel state on new download
+
+    const fileUrl = post.files[0].downloadURL;
+    const fileName = new Date().getTime().toString();
+
+    try {
+      const xhr = new XMLHttpRequest();
+      xhr.open("GET", fileUrl, true);
+      xhr.responseType = "blob";
+
+      xhr.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const percentComplete = (event.loaded / event.total) * 100;
+          setDownloadProgress(percentComplete);
+        }
+      };
+
+      xhr.onload = () => {
+        if (xhr.status === 200 && !isCanceled) {
+          const blob = xhr.response;
+          const link = document.createElement("a");
+          const url = URL.createObjectURL(blob);
+
+          link.href = url;
+          link.download = fileName;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+
+          // Show "Video Saved" message
+          handleCancelClose();
+          setIsDownloading(false);
+          setDownloadProgress(100); // Set progress to 100%
+
+          setTimeout(() => {
+            setIsDownloadComplete(true); // Set download complete
+            setTimeout(() => {
+              setIsDownloading(false); // Close download progress after 2 more seconds
+              setDownloadProgress(0); // Reset progress
+            }, 2000); // 2 seconds delay for hiding download progress
+          }, 2000); // 2 seconds delay before showing "Video Saved"
+        }
+      };
+
+      xhr.onerror = () => {
+        setIsDownloading(false);
+        console.error("Download failed");
+        setDownloadProgress(0); // Reset progress on error
+      };
+
+      xhr.send();
+    } catch (error) {
+      console.error("Download failed:", error);
+      setIsDownloading(false);
+      setDownloadProgress(0); // Reset progress on failure
+    }
+  };
+
+  // console.log(isDownloading);
+  // console.log(downloadProgress);
+
   if (isOpen) {
     return <LoginDrawer isOpen={isOpen} setIsOpen={setIsOpen} />;
+  }
+
+  if (isDownloading) {
+    return ReactDOM.createPortal(
+      <div className="dheight bg-transparent inset-0 w-screen flex justify-center items-center absolute top-0">
+        <div className="download-progress-container z-[9999999999]">
+          <div className="progress-bar">
+            {isDownloadComplete ? (
+              <>
+                <span>下载成功</span>
+              </>
+            ) : isDownloading && !isCanceled ? (
+              <>
+                <span>{Math.round(downloadProgress)}%</span>
+                <span className="ml-2">下载中...</span>
+              </>
+            ) : isCanceled ? (
+              <span>Download Canceled</span>
+            ) : (
+              <span>Click to Start Download</span>
+            )}
+          </div>
+          <div className="buttons">
+            {isDownloadComplete ? null : isDownloading && !isCanceled ? (
+              <button onClick={handleCancelDownload}>取消</button>
+            ) : (
+              <button onClick={handleYes}>Download</button>
+            )}
+          </div>
+        </div>
+      </div>,
+      document.getElementById("portal-download") as HTMLElement
+    );
+  }
+
+  if (confirm) {
+    return (
+      <div className="dheight bg-black/80 inset-0 w-screen flex justify-center items-center fixed top-0 z-[9999999999]">
+        <div className="event-box">
+          <p className="event-box-text px-8">您确定要保存这个视频吗？</p>
+          <div className="event-btn-box flex">
+            <button
+              className="w-[150px] p-3 event-btn-text text-white"
+              onClick={handleYes}
+            >
+              下载
+            </button>
+            <div className="h-[50px] w-[0.5px] bg-[#2a262f]"></div>
+            <button
+              className="w-[150px] p-3 event-btn-text text-[#C23033]"
+              onClick={handleNo}
+            >
+              取消
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return ReactDOM.createPortal(

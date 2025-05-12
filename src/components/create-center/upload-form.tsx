@@ -131,7 +131,7 @@ const UploadFrom = ({
                   <div
                     key={index}
                     onClick={() => removeTag(index)}
-                    className="text-[12px] bg-[#FFFFFF14] px-2 py-0.5 rounded-full"
+                    className="text-[14px] bg-[#FFFFFF14] px-2 py-0.5 rounded-full"
                   >
                     # {tag}
                   </div>
@@ -171,11 +171,11 @@ const UploadFrom = ({
           </a>
         </p>
       </div> */}
-      {editPost ? (
+      {/* {editPost ? (
         <Info status={editPost?.status} reason={editPost?.reason} />
       ) : (
         <></>
-      )}
+      )} */}
       <div className="mx-5 pb-5 pt-10 mt-5">
         <div className="flex gap-2 justify-center items-center pb-5">
           {agree ? (
@@ -187,13 +187,15 @@ const UploadFrom = ({
               <Unselected />
             </button>
           )}
-          <p className="text-[12px]">我已阅读并同意上传指南。</p>
+          <p className="text-[14px]">我已阅读并同意上传指南。</p>
         </div>
         <button
           onClick={handleSubmit}
-          disabled={agree ? false : true}
+          disabled={
+            agree && contentTitle?.length > 0 && hashtags?.length ? false : true
+          }
           className={`text-[16px] font-semibold ${
-            agree
+            agree && contentTitle?.length > 0 && hashtags?.length
               ? "bg-gradient-to-b from-[#FFB2E0] to-[#CD3EFF] text-white"
               : "bg-[#FFFFFF0A] text-[#444444]"
           }    w-full rounded-[16px] py-3`}

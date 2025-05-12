@@ -7,7 +7,7 @@ import ErrorToast from "./page/home/services/ErrorToast";
 
 import { Toaster } from "./components/ui/toaster";
 import { useGetApplicationAdsQuery } from "./store/api/explore/exploreApi";
-import { initDeviceInfoListener } from "./lib/deviceInfo";
+import { initDeviceInfoListener, initDeviceInfo } from "./lib/deviceInfo";
 import guide from './assets/guide.webp';
 
 const App = () => {
@@ -87,6 +87,7 @@ const App = () => {
   useEffect(() => {
     // Initialize device info listener
     initDeviceInfoListener();
+    initDeviceInfo();
   }, []);
 
   const sendNativeEvent = (message: string) => {
@@ -135,9 +136,9 @@ const App = () => {
         <ErrorToast />
       </>}
       {showInAppBrowserAlert && (
-            <div className="fixed w-full h-screen bg-[#f7fcff] z-[3000] top-0 left-0">
+            <div className="fixed w-full h-screen bg-white z-[3000] top-0 left-0">
             <div className="w-full z-[1300] absolute h-full flex justify-center items-center">
-              <div className="text-[14px] bg-[#f7fcff] rounded-lg text-center relative max-w-md w-full">
+              <div className="text-[14px] bg-white rounded-lg text-center relative max-w-md w-full">
                 <div className="relative w-full">
                   <img
                     src={guide}

@@ -231,8 +231,8 @@ const Recommand: React.FC<RecommandProps> = ({
                               </div>
                             </div>
                           </div>
-                          {/* <h1 className="text-white w-full text-[12px] font-[400] px-[6px] pt-[6px] leading-[20px] break-words"> */}
-                          <h1 className="search_text font-cnFont line-clamp-2 text-left text-[12px] font-[400] px-[6px] pt-[6px]">
+                          {/* <h1 className="text-white w-full text-[14px] font-[400] px-[6px] pt-[6px] leading-[20px] break-words"> */}
+                          <h1 className="search_text font-cnFont line-clamp-2 text-left text-[14px] font-[400] px-[6px] pt-[6px]">
                             {card.title.length > 50
                               ? `${card.title.slice(0, 50)}...`
                               : card.title}
@@ -257,7 +257,7 @@ const Recommand: React.FC<RecommandProps> = ({
                                 />
                               )}
                               <h1
-                                className=" text-[#888] text-[12px] font-[400] leading-[20px] cursor-pointer hover:text-white"
+                                className=" text-[#888] text-[14px] font-[400] leading-[20px] cursor-pointer hover:text-white"
                                 onClick={(e) =>
                                   navigateToUserProfile(card.user.id, e)
                                 }
@@ -281,7 +281,7 @@ const Recommand: React.FC<RecommandProps> = ({
                                 />
                               </svg>
                               {/* <FaHeart /> */}
-                              <h1 className=" text-[#888] text-[12px] font-[400] leading-[20px]">
+                              <h1 className=" text-[#888] text-[14px] font-[400] leading-[20px]">
                                 {formatNumber(card?.like_count)}
                               </h1>
                             </div>
@@ -298,7 +298,7 @@ const Recommand: React.FC<RecommandProps> = ({
                       <div className="flex flex-col items-center">
                         <img src={empty} className="w-[80px]" alt="" />
                         <h1 className="text-center text-white/60">
-                          这里空空如也～
+                          暂无视频内容
                         </h1>
                       </div>
                     </div>

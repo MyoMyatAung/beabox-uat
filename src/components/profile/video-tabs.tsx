@@ -108,7 +108,7 @@ const VideoTabs = () => {
                         className="w-full flex items-center justify-between text-white"
                         onClick={() => dispatch(setSort("created_at"))}
                       >
-                        <p className="text-white text-[12px]">最新</p>
+                        <p className="text-white text-[14px]">最新</p>
                         {sort == "created_at" ? <Check /> : <></>}
                       </div>
                     </DropdownMenuItem>
@@ -117,7 +117,7 @@ const VideoTabs = () => {
                         className="w-full flex items-center justify-between text-white"
                         onClick={() => dispatch(setSort("score"))}
                       >
-                        <p className="text-white text-[12px]">热门</p>
+                        <p className="text-white text-[14px]">热门</p>
                         {sort == "score" ? <Check /> : <></>}
                       </div>
                     </DropdownMenuItem>

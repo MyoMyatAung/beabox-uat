@@ -14,6 +14,8 @@ import {
 } from "@/store/api/profileApi";
 import TranLoader from "../shared/tran-loader";
 import ImageUpload from "../profile/image-upload";
+import loader from "@/page/home/vod_loader.gif";
+import Portal from "../profile/auth/Portal";
 
 const ProfilePhotoUpload = ({
   imgurl,
@@ -22,7 +24,8 @@ const ProfilePhotoUpload = ({
   reviewStatus,
   refetchHandler,
   exist,
-  refetch
+  refetch,
+  imageLimit,
 }: any) => {
   const [isOpen, setIsOpen] = useState(false);
   const [removeAvatar, { isLoading, data }] = useRemoveAvatarMutation();
@@ -42,11 +45,18 @@ const ProfilePhotoUpload = ({
     refetchHandler();
   }, [isOpen]);
 
-  console.log(srcImg, "srcImg");
-
   return (
     <>
-      {isLoading || loading1 || loading2 ? <TranLoader /> : <></>}
+      {isLoading || loading1 || loading2 ? (
+        <Portal>
+          <div className="fixed inset-0 z-[9999] bg-[#00000099] flex justify-center items-center">
+            <div className="bg-[#000000E5] p-1 rounded">
+              <img src={loader} alt="Loading" className="w-14" />
+            </div>
+          </div>
+        </Portal>
+      ) : null}
+      {/* {isLoading || loading1 || loading2 ? <Loader /> : <></>} */}
       <Drawer open={isOpen} onOpenChange={setIsOpen}>
         <DrawerTrigger asChild>
           <div>
@@ -74,9 +84,9 @@ const ProfilePhotoUpload = ({
         </DrawerTrigger>
         <DrawerContent className="border-0">
           <div className="p-5">
-            <h1 className="text-[16px] text-white text-center">头像</h1>
+            <h1 className="text-[16px] text-white text-center">等级专属头像</h1>
             <div className="space-y-5 mt-5">
-            {/* <ImageUpload
+              <ImageUpload
                 imgurl=""
                 reviewStatus={reviewStatus}
                 setIsOpen={setIsOpen}
@@ -85,8 +95,9 @@ const ProfilePhotoUpload = ({
                 settingUploadData={settingUploadData}
                 profileUpload={profileUpload}
                 refetch={refetch}
+                imageLimit={imageLimit}
               />
-              <Divider show={true} /> */}
+              <Divider show={true} />
               <div
                 className=""
                 onClick={() => {
@@ -94,8 +105,8 @@ const ProfilePhotoUpload = ({
                   setShowAvatar(true);
                 }}
               >
-                <h1 className="text-[16px] text-white">获取头像</h1>
-                <p className="text-[12px] text-[#888888]">
+                <h1 className="text-[16px] text-white">等级专属头像</h1>
+                <p className="text-[14px] text-[#888888]">
                   升级即可解锁专属头像！
                 </p>
               </div>

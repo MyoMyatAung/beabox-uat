@@ -72,7 +72,7 @@ const Tags = ({
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>
-        <button className="px-2 bg-[#F0C3FF66] border-[1px] border-[#F0C3FF] py-1 rounded-full text-[12px] text-[#F0C3FF]">
+        <button className="px-2 bg-[#F0C3FF66] border-[1px] border-[#F0C3FF] py-1 rounded-full text-[14px] text-[#F0C3FF]">
           选择标签
         </button>
       </DrawerTrigger>

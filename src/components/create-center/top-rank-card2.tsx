@@ -136,7 +136,7 @@ const TopRankCard2 = ({ data, rank }: { data: any; rank: any }) => {
     //     <AvatarImage className="" src={decryptedPhoto} alt="@shadcn" />
     //   </Avatar>
     //   <h1 className="text-[14px] font-semibold z-50">{data?.nickname}</h1>
-    //   <h1 className="text-[#AAA] text-[12px] z-50">
+    //   <h1 className="text-[#AAA] text-[14px] z-50">
     //     {data?.total >= 1000 ? formatToK(data?.total) : data?.total} followers
     //   </h1>
     //   {data?.id == me ? (

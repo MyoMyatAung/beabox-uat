@@ -9,19 +9,33 @@ import {
 import { FaCaretDown } from "react-icons/fa";
 import { Swiper, SwiperSlide } from "swiper/react";
 
+// const months = [
+//   "January",
+//   "February",
+//   "March",
+//   "April",
+//   "May",
+//   "June",
+//   "July",
+//   "August",
+//   "September",
+//   "October",
+//   "November",
+//   "December",
+// ];
 const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
+  "一月",
+  "二月",
+  "三月",
+  "四月",
+  "五月",
+  "六月",
+  "七月",
+  "八月",
+  "九月",
+  "十月",
+  "十一月",
+  "十二月",
 ];
 const currentYear = new Date().getFullYear();
 const defaultMonth = months[new Date().getMonth()];
@@ -34,7 +48,7 @@ const DatePick: React.FC<any> = ({
   setCurMon,
   setCurYr,
   setplus,
-  setTran
+  setTran,
 }) => {
   const swiperRef = useRef<any>(null);
   const swiperYrRef = useRef<any>(null);
@@ -54,7 +68,7 @@ const DatePick: React.FC<any> = ({
   };
 
   const handleDoneClick = () => {
-    setTran([])
+    setTran([]);
     setCurMon(selectedMonth);
     setCurYr(selectedYear);
     setplus(months.indexOf(selectedMonth) + 1);
@@ -90,63 +104,70 @@ const DatePick: React.FC<any> = ({
         </DrawerTrigger>
       </div>
       <DrawerContent className="border-0 bg-[#121012]">
-        <div className="w-full flex flex-col justify-between px-5 py-7 h-[320px] overflow-hidden">
-          <div className="flex relative h-[50px] mt-[40px] justify-around items-center border border-white/20 border-x-black">
-            <div className="fixed z-[99] left-20 top-14">
-              <Swiper
-                className="h-[80px]"
-                direction="vertical"
-                spaceBetween={1}
-                slidesPerView={2}
-                centeredSlides={true}
-                initialSlide={months.indexOf(curMon)}
-                onSlideChange={handleSlideChange}
-                onSwiper={(swiper: any) => (swiperRef.current = swiper)}
-              >
-                {months.map((mt) => (
-                  <SwiperSlide key={mt}>
-                    {({ isActive }) => (
-                      <h1
-                        className={`py-[16px] font-[400] ${
-                          isActive
-                            ? "text-[20px] text-white"
-                            : "text-[16px] text-[#888] "
-                        }`}
-                      >
-                        {mt}
-                      </h1>
-                    )}
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-            </div>
-            <div className="fixed z-[99] right-20 top-14">
-              <Swiper
-                className="h-[80px]"
-                direction="vertical"
-                spaceBetween={1}
-                slidesPerView={2}
-                centeredSlides={true}
-                initialSlide={years.indexOf(curYr)}
-                onSlideChange={handleSlideChangeYr}
-                onSwiper={(swiper: any) => (swiperYrRef.current = swiper)}
-              >
-                {years.map((yr) => (
-                  <SwiperSlide key={yr}>
-                    {({ isActive }) => (
-                      <h1
-                        className={`py-[16px] font-[400] ${
-                          isActive
-                            ? "text-[20px] text-white"
-                            : "text-[16px] text-[#888] "
-                        }`}
-                      >
-                        {yr}
-                      </h1>
-                    )}
-                  </SwiperSlide>
-                ))}
-              </Swiper>
+        <div className="w-full flex flex-col justify-between px-5 py-7 h-[350px]">
+          <div className="relative h-[240px]">
+            {/* Selection indicator lines */}
+            <div className="absolute w-full h-[52px] top-1/2 -translate-y-1/2 border-t border-b border-white/10"></div>
+            
+            <div className="flex justify-center gap-[60px] h-full">
+              <div className="w-[120px] h-full relative">
+                <Swiper
+                  className="h-full"
+                  direction="vertical"
+                  spaceBetween={-12}
+                  slidesPerView={5}
+                  centeredSlides={true}
+                  initialSlide={months.indexOf(curMon)}
+                  onSlideChange={handleSlideChange}
+                  onSwiper={(swiper: any) => (swiperRef.current = swiper)}
+                  touchEventsTarget="container"
+                >
+                  {months.map((mt) => (
+                    <SwiperSlide key={mt} className="flex items-center justify-center h-[52px]">
+                      {({ isActive }) => (
+                        <h1
+                          className={`text-center transition-all duration-200 ${
+                            isActive
+                              ? "text-[20px] text-white font-[500] leading-[52px]"
+                              : "text-[20px] text-[#333333] font-[400] leading-[52px]"
+                          }`}
+                        >
+                          {mt}
+                        </h1>
+                      )}
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </div>
+              <div className="w-[120px] h-full relative">
+                <Swiper
+                  className="h-full"
+                  direction="vertical"
+                  spaceBetween={-12}
+                  slidesPerView={5}
+                  centeredSlides={true}
+                  initialSlide={years.indexOf(curYr)}
+                  onSlideChange={handleSlideChangeYr}
+                  onSwiper={(swiper: any) => (swiperYrRef.current = swiper)}
+                  touchEventsTarget="container"
+                >
+                  {years.map((yr) => (
+                    <SwiperSlide key={yr} className="flex items-center justify-center h-[52px]">
+                      {({ isActive }) => (
+                        <h1
+                          className={`text-center transition-all duration-200 ${
+                            isActive
+                              ? "text-[20px] text-white font-[500] leading-[52px]"
+                              : "text-[20px] text-[#333333] font-[400] leading-[52px]"
+                          }`}
+                        >
+                          {yr}
+                        </h1>
+                      )}
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </div>
             </div>
           </div>
           <div className="flex flex-col items-center">

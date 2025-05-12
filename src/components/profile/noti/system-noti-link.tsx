@@ -11,7 +11,7 @@ const SystemNotiLink = () => {
     >
       <img src={System} className="w-10 h-10 mt-1" alt="" />
       <div className="w-full">
-        <div className="flex items-center text-[14px] justify-between">
+        <div className="flex items-center text-[14px] justify-between font-bold">
           <p>System Notification</p>
           <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
         </div>

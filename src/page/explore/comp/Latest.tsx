@@ -138,7 +138,7 @@ const Latest: React.FC<LatestPorp> = ({
                         className=" object-cover h-full w-full rounded-none"
                       />
                     </div>
-                    <h1 className="search_text font-cnFont line-clamp-2 text-left text-[12px] font-[400] px-[6px] pt-[6px]">
+                    <h1 className="search_text font-cnFont line-clamp-2 text-left text-[14px] font-[400] px-[6px] pt-[6px]">
                       {/* <h1 className="search_text font-cnFont px-[6px] line-clamp-2 text-left"> */}
                       {card.title.length > 50
                         ? `${card.title.slice(0, 50)}...`
@@ -161,7 +161,7 @@ const Latest: React.FC<LatestPorp> = ({
                           />
                         )}
                         <h1
-                          className=" text-[#888] text-[12px] font-[500] cursor-pointer hover:text-white"
+                          className=" text-[#888] text-[14px] font-[500] cursor-pointer hover:text-white"
                           onClick={(e) =>
                             navigateToUserProfile(card.user.id, e)
                           }
@@ -184,7 +184,7 @@ const Latest: React.FC<LatestPorp> = ({
                             stroke-width="0.8"
                           />
                         </svg>
-                        <h1 className=" text-[#888] text-[12px] font-[400] leading-[20px]">
+                        <h1 className=" text-[#888] text-[14px] font-[400] leading-[20px]">
                           {formatNumber(card?.like_count)}
                         </h1>
                       </span>
@@ -225,7 +225,7 @@ const Latest: React.FC<LatestPorp> = ({
               <div className={`flex justify-center items-center py-[60px]`}>
                 <div className="flex flex-col items-center">
                   <img src={empty} className="w-[80px]" alt="" />
-                  <h1 className="text-center text-white/60">这里空空如也～</h1>
+                  <h1 className="text-center text-white/60">暂无视频内容</h1>
                 </div>
               </div>
             </div>

@@ -1,17 +1,19 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import FingerprintJS from '@fingerprintjs/fingerprintjs';
 // Device information service for webview integration
 
 /**
  * Device information interface
  */
-interface DeviceInfo {
-  deviceName: string;
-  uuid: string;
-  osVersion: string;
-  appVersion: string;
-}
+// interface DeviceInfo {
+//   deviceName: string;
+//   uuid: string;
+//   osVersion: string;
+//   appVersion: string;
+// }
 
 // Application version - single source of truth
-const APP_VERSION = '1.1.5.2';
+const APP_VERSION = '1.1.6.7';
 
 /**
  * Generate a UUID v4
@@ -160,10 +162,117 @@ const defaultDeviceInfo: DeviceInfo = {
 let deviceInfo: DeviceInfo = { ...defaultDeviceInfo };
 
 /**
+ * Collect environment flags that might indicate emulation or suspicious environments
+ */
+const collectEnvironmentFlags = (): string[] => {
+  const flags: string[] = [];
+  
+  // Check WebGL renderer for emulation signs
+  try {
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (gl) {
+      const renderer = gl.getParameter(gl.RENDERER);
+      if (/SwiftShader|llvmpipe|ANGLE/i.test(renderer)) {
+        flags.push(`suspicious_webgl:${renderer}`);
+      } else {
+        // Always add the renderer info even if not suspicious
+        flags.push(`webgl:${renderer}`);
+      }
+      
+      // Add WebGL vendor information
+      const vendor = gl.getParameter(gl.VENDOR);
+      flags.push(`webgl_vendor:${vendor}`);
+    }
+  } catch (e) {
+    flags.push('webgl_error');
+  }
+  
+  // Check for automation-related properties
+  if (navigator.webdriver) {
+    flags.push('webdriver_detected');
+  }
+  
+  // Check for headless browser indicators
+  if (!('ontouchstart' in window) && navigator.maxTouchPoints === 0) {
+    flags.push('no_touch_support');
+  }
+  
+  // Check for inconsistent platform/userAgent
+  const ua = navigator.userAgent.toLowerCase();
+  const platform = navigator.platform.toLowerCase();
+  
+  if (ua.includes('android') && !platform.includes('linux')) {
+    flags.push('platform_ua_mismatch');
+  }
+  
+  if (ua.includes('iphone') && !platform.includes('iphone')) {
+    flags.push('platform_ua_mismatch');
+  }
+  
+  // Add browser features as flags
+  flags.push(`screen:${window.screen.width}x${window.screen.height}`);
+  flags.push(`dpr:${window.devicePixelRatio}`);
+  flags.push(`lang:${navigator.language}`);
+  
+  // Ensure we always have at least one flag
+  if (flags.length === 0) {
+    flags.push('standard_environment');
+  }
+  
+  return flags;
+}
+
+/**
+ * Simple hash function for strings
+ */
+const hashString = async (str: string): Promise<string> => {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(str);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+export const initDeviceInfo = async () => {
+  try {
+    const fp = await FingerprintJS.load();
+    const result = await fp.get();
+    
+    // Create enhanced payload with additional fingerprinting data
+    const c = result.components;
+    const payload = {
+      userAgent: navigator.userAgent,
+      screenResolution: `${screen.width}x${screen.height}`,
+      colorDepth: screen.colorDepth,
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      language: navigator.language,
+      fonts: c.fonts?.value || ['Arial', 'Times New Roman'],
+      canvas: await hashString(JSON.stringify(c.canvas?.value || '')),
+      webgl: await hashString(JSON.stringify(c.webgl?.value || '')),
+      plugins: Array.from(navigator.plugins).map(p => p.name),
+      platform: navigator.platform,
+      hardwareConcurrency: navigator.hardwareConcurrency || 0,
+      deviceMemory: (navigator as any).deviceMemory || 0,
+      touchPoints: navigator.maxTouchPoints || 0,
+      devicePixelRatio: window.devicePixelRatio || 1,
+      env_flags: collectEnvironmentFlags()
+    };
+    
+    deviceInfo = {
+      ...defaultDeviceInfo,
+      ...payload
+    };
+  } catch (e) {
+    console.warn('FingerprintJS failed:', e);
+    deviceInfo = defaultDeviceInfo;
+  }
+};
+/**
  * Device info event from native applications
  */
 interface DeviceInfoEvent extends CustomEvent {
-  detail: Partial<DeviceInfo>;
+  detail: Partial<any>;
 }
 
 /**
@@ -184,7 +293,7 @@ export const initDeviceInfoListener = (): void => {
 /**
  * Get current device information
  */
-export const getDeviceInfo = (): DeviceInfo => {
+export const getDeviceInfo = (): any => {
   return { ...deviceInfo };
 };
 
@@ -192,7 +301,7 @@ export const getDeviceInfo = (): DeviceInfo => {
  * Set device information manually
  * @param info Partial device information to update
  */
-export const setDeviceInfo = (info: Partial<DeviceInfo>): void => {
+export const setDeviceInfo = (info: Partial<any>): void => {
   deviceInfo = {
     ...deviceInfo,
     ...info

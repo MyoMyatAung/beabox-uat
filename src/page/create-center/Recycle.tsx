@@ -69,7 +69,7 @@ const DeleteCard = ({ index, setDeleteItems, item, deleteItems }: any) => {
         ) : (
           <img
             src={`${imgdomain}/${item?.preview_image}`}
-            className="w-[128px] h-[80px] object-cover object-center rounded-[8px]"
+            className="w-[128px] h-[80px] border border-[#FFFFFF0D] object-cover object-center rounded-[8px]"
             alt=""
           />
         )}

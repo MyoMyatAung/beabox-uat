@@ -37,7 +37,7 @@ const OtherStats = ({ followers, followings, likes, nickname, id }: any) => {
               {/* {followers?.length ? followers?.length : 0} */}
               {followers ? followers : "0"}
             </div>
-            <div className="z-[1900] text-gray-400 text-[14px]">粉丝</div>
+            <div className="z-[1900] text-gray-400 text-[16px]">粉丝</div>
           </div>
         </DrawerTrigger>
         <span className="z-[1900] w-[1px] h-[12px] line-bg"></span>
@@ -51,7 +51,7 @@ const OtherStats = ({ followers, followings, likes, nickname, id }: any) => {
                 {/* {following?.length ? following?.length : 0} */}
                 {followings ? followings : "0"}
               </div>
-              <div className="z-[1900] text-gray-400 text-[14px]">已关注</div>
+              <div className="z-[1900] text-gray-400 text-[16px]">已关注</div>
             </div>
           </DrawerTrigger>
         </div>
@@ -60,7 +60,7 @@ const OtherStats = ({ followers, followings, likes, nickname, id }: any) => {
           <div className="z-[1900] text-[14px] font-semibold">
             {likes ? likes : "0"}
           </div>
-          <div className="z-[1900] text-gray-400 text-[14px]">点赞</div>
+          <div className="z-[1900] text-gray-400 text-[16px]">点赞</div>
         </div>
       </div>
       <DrawerContent className="z-[2300] border-0" style={{ height: vh }}>

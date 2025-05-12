@@ -38,7 +38,7 @@ const UploadProgress = ({
         <div className=" flex items-center justify-between">
           <div className="text-[16px]">正在上传 {uploadPercentage}%</div>
 
-          <div className="text-[12px] text-[#FFFFFF]">
+          <div className="text-[14px] text-[#FFFFFF]">
             {uploadedSize}MB / {totalSize}MB
           </div>
         </div>
@@ -49,7 +49,7 @@ const UploadProgress = ({
             style={{ width: `${uploadPercentage}%` }}
           ></div>
         </div>
-        {uploadedSize !== totalSize &&  (
+        {uploadedSize !== totalSize && (
           <button
             className="w-full bg-[#FFFFFF14] text-[16px] py-2 rounded-[16px] cursor-pointer"
             onClick={onCancel}
