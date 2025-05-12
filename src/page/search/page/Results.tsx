@@ -70,7 +70,9 @@ const Results: React.FC<ResultsProps> = ({}) => {
   const [activeLongPressCard, setActiveLongPressCard] = useState<any>(null);
   const videoPlayerRef = useRef<HTMLDivElement>(null);
   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
-  
+  const [preloadedVideos, setPreloadedVideos] = useState<{
+    [key: string]: boolean;
+  }>({});
 
   // const scrollPositions = useSelector((state: any) => state.scroll.positions);
   // const location = useLocation();
@@ -78,7 +80,9 @@ const Results: React.FC<ResultsProps> = ({}) => {
   // const res = filter?.data?.post_filter;
   // const firstKey = res ? Object.keys(res)[0] : null;
 
-  const [longPressTimer, setLongPressTimer] = useState<NodeJS.Timeout | null>(null);
+  const [longPressTimer, setLongPressTimer] = useState<NodeJS.Timeout | null>(
+    null
+  );
 
   const handleSearch = () => {
     if (query.trim()) {
@@ -419,17 +423,103 @@ const Results: React.FC<ResultsProps> = ({}) => {
 
   // Long press handler function
   const handleLongPress = (card: any) => {
-    console.log('Long press detected on:', card.post_id);
-    console.log('Card details:', card);
+    console.log("Long press detected on:", card.post_id);
+    console.log("Card details:", card);
     // set active long press card
     setActiveLongPressCard(card);
     // Add your long press logic here
   };
 
+  // useEffect(() => {
+  //   if (activeLongPressCard) {
+  //     console.log("active long press card =>", activeLongPressCard);
+
+  //     // Initialize ArtPlayer when a card is long-pressed and has a preview URL
+  //     if (activeLongPressCard?.preview?.url && videoPlayerRef.current) {
+  //       // Destroy previous instance if it exists
+  //       if (artPlayerInstanceRef.current) {
+  //         artPlayerInstanceRef.current.destroy();
+  //         artPlayerInstanceRef.current = null;
+  //       }
+
+  //       // Create new ArtPlayer instance
+  //       const videoUrl = activeLongPressCard?.preview?.url;
+  //       const isM3u8 = videoUrl.includes(".m3u8");
+  //       const isBlob = videoUrl.startsWith("blob:");
+
+  //       console.log("Video URL:", videoUrl);
+  //       console.log("Is blob URL:", isBlob);
+
+  //       const options: Artplayer["Option"] = {
+  //         container: videoPlayerRef.current,
+  //         url: videoUrl,
+  //         volume: 0.5,
+  //         muted: true,
+  //         autoplay: true,
+  //         loop: true,
+  //         isLive: false,
+  //         aspectRatio: true,
+  //         fullscreen: false,
+  //         theme: "#d53ff0",
+  //         moreVideoAttr: {
+  //           playsInline: true,
+  //           preload: "auto" as const,
+  //         },
+  //         type: isM3u8 ? "m3u8" : "auto",
+  //         customType: {
+  //           m3u8: (videoElement: HTMLVideoElement, url: string) => {
+  //             if (Hls.isSupported()) {
+  //               const hls = new Hls();
+  //               hls.loadSource(url);
+  //               hls.attachMedia(videoElement);
+  //             } else if (
+  //               videoElement.canPlayType("application/vnd.apple.mpegurl")
+  //             ) {
+  //               videoElement.src = url;
+  //             }
+  //           },
+  //         },
+  //         icons: {
+  //           loading: `<div class="video-loading-indicator"><img width="50" height="50" src=${vod_loader}></div>`,
+  //           state: `<div class="video-play-indicator"><img src="${indicator}" width="25" height="25" alt="Play"></div>`,
+  //         },
+  //       };
+
+  //       try {
+  //         artPlayerInstanceRef.current = new Artplayer(options);
+
+  //         // Add event listeners for debugging
+  //         artPlayerInstanceRef.current.on("ready", () => {
+  //           console.log("ArtPlayer ready");
+  //         });
+
+  //         artPlayerInstanceRef.current.on("play", () => {
+  //           console.log("ArtPlayer playing");
+  //         });
+
+  //         artPlayerInstanceRef.current.on("error", (error) => {
+  //           console.error("ArtPlayer error:", error);
+  //         });
+  //       } catch (error) {
+  //         console.error("Error initializing ArtPlayer:", error);
+  //       }
+  //     }
+  //   }
+
+  //   // Cleanup function to destroy ArtPlayer instance when component unmounts or card changes
+  //   return () => {
+  //     if (artPlayerInstanceRef.current) {
+  //       artPlayerInstanceRef.current.destroy();
+  //       artPlayerInstanceRef.current = null;
+  //     }
+  //   };
+  // }, [activeLongPressCard]);
+
+  // Modify your Artplayer initialization code
   useEffect(() => {
     if (activeLongPressCard) {
-      console.log('active long press card =>', activeLongPressCard);
-      
+      console.log("active long press card =>", activeLongPressCard);
+
       // Initialize ArtPlayer when a card is long-pressed and has a preview URL
       if (activeLongPressCard?.preview?.url && videoPlayerRef.current) {
         // Destroy previous instance if it exists
@@ -437,16 +527,11 @@ const Results: React.FC<ResultsProps> = ({}) => {
           artPlayerInstanceRef.current.destroy();
           artPlayerInstanceRef.current = null;
         }
-        
+
         // Create new ArtPlayer instance
         const videoUrl = activeLongPressCard?.preview?.url;
-;
-        const isM3u8 = videoUrl.includes('.m3u8');
-        const isBlob = videoUrl.startsWith('blob:');
-        
-        console.log('Video URL:', videoUrl);
-        console.log('Is blob URL:', isBlob);
-        
+        const isM3u8 = videoUrl.includes(".m3u8");
+
         const options: Artplayer["Option"] = {
           container: videoPlayerRef.current,
           url: videoUrl,
@@ -456,11 +541,12 @@ const Results: React.FC<ResultsProps> = ({}) => {
           loop: true,
           isLive: false,
           aspectRatio: true,
+          controls: [],
           fullscreen: false,
           theme: "#d53ff0",
           moreVideoAttr: {
             playsInline: true,
-            preload: "auto" as const,
+            preload: "auto",
           },
           type: isM3u8 ? "m3u8" : "auto",
           customType: {
@@ -469,39 +555,63 @@ const Results: React.FC<ResultsProps> = ({}) => {
                 const hls = new Hls();
                 hls.loadSource(url);
                 hls.attachMedia(videoElement);
-              } else if (videoElement.canPlayType("application/vnd.apple.mpegurl")) {
+              } else if (
+                videoElement.canPlayType("application/vnd.apple.mpegurl")
+              ) {
                 videoElement.src = url;
               }
             },
           },
+          // Remove loading indicator
           icons: {
-            loading: `<div class="video-loading-indicator"><img width="50" height="50" src=${vod_loader}></div>`,
-            state: `<div class="video-play-indicator"><img src="${indicator}" width="25" height="25" alt="Play"></div>`,
+            loading: `<div class="video-loading-indicator" style="display: none;"><img width="100" height="100" src=${vod_loader}></div>`,
+            state: `<div class="video-play-indicator" style="display: none;"><img src="${indicator}" width="50" height="50" alt="Play"></div>`,
           },
+          // icons: {
+          //   state: `<div class="video-play-indicator"><img src="${indicator}" width="25" height="25" alt="Play"></div>`,
+          // },
         };
-        
+
         try {
           artPlayerInstanceRef.current = new Artplayer(options);
-          
-          // Add event listeners for debugging
-          artPlayerInstanceRef.current.on('ready', () => {
-            console.log('ArtPlayer ready');
+
+          const playIndicator =
+            artPlayerInstanceRef?.current?.template.$state.querySelector(
+              ".video-play-indicator"
+            ) as HTMLDivElement;
+          const loadingIndicator =
+            artPlayerInstanceRef?.current?.template.$state.querySelector(
+              ".video-loading-indicator"
+            ) as HTMLDivElement;
+          if (playIndicator) playIndicator.style.display = "none";
+
+          if (loadingIndicator) loadingIndicator.style.display = "none";
+
+          // Hide controls and make video seamless
+          artPlayerInstanceRef.current.controls.hide();
+
+          artPlayerInstanceRef.current.on("ready", () => {
+            console.log("ArtPlayer ready");
+            // Video is preloaded and ready to play
+            setPreloadedVideos((prev) => ({
+              ...prev,
+              [activeLongPressCard.post_id]: true,
+            }));
           });
-          
-          artPlayerInstanceRef.current.on('play', () => {
-            console.log('ArtPlayer playing');
+
+          artPlayerInstanceRef.current.on("play", () => {
+            console.log("ArtPlayer playing");
           });
-          
-          artPlayerInstanceRef.current.on('error', (error) => {
-            console.error('ArtPlayer error:', error);
+
+          artPlayerInstanceRef.current.on("error", (error) => {
+            console.error("ArtPlayer error:", error);
           });
         } catch (error) {
-          console.error('Error initializing ArtPlayer:', error);
+          console.error("Error initializing ArtPlayer:", error);
         }
       }
     }
-    
-    // Cleanup function to destroy ArtPlayer instance when component unmounts or card changes
+
     return () => {
       if (artPlayerInstanceRef.current) {
         artPlayerInstanceRef.current.destroy();
@@ -527,6 +637,44 @@ const Results: React.FC<ResultsProps> = ({}) => {
       setActiveLongPressCard(null);
     }
   };
+  // Add Intersection Observer to preload videos when they're near the viewport
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const postId = entry.target.getAttribute("data-postid");
+            const videoUrl = movies.find((m) => m.post_id === postId)?.preview
+              ?.url;
+
+            if (videoUrl && !preloadedVideos[postId]) {
+              // Preload the video
+              const video = document.createElement("video");
+              video.src = videoUrl;
+              video.preload = "auto";
+              video.load();
+
+              // Mark as preloaded
+              setPreloadedVideos((prev) => ({
+                ...prev,
+                [postId]: true,
+              }));
+            }
+          }
+        });
+      },
+      {
+        rootMargin: "200px", // Start preloading when 200px away from viewport
+        threshold: 0.01,
+      }
+    );
+
+    // Observe all video cards
+    const cards = document.querySelectorAll("[data-video-card]");
+    cards.forEach((card) => observer.observe(card));
+
+    return () => observer.disconnect();
+  }, [movies, preloadedVideos]);
 
   return (
     <div className="">
@@ -643,12 +791,11 @@ const Results: React.FC<ResultsProps> = ({}) => {
                           // onClick={() => showDetailsVod(card)}
                           className=" relative flex justify-center  items-center bg-[#010101] rounded-[4px] overflow-hidden  h-[240px]"
                         >
-                          {
-                          activeLongPressCard?.preview?.url &&
-                           card?.post_id === activeLongPressCard?.post_id ? (
+                          {activeLongPressCard?.preview?.url &&
+                          card?.post_id === activeLongPressCard?.post_id ? (
                             // Art player container for video preview
-                            <div 
-                              ref={videoPlayerRef} 
+                            <div
+                              ref={videoPlayerRef}
                               className="w-full h-full object-cover rounded-none"
                             ></div>
                           ) : (
