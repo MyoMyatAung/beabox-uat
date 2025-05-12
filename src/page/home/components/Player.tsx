@@ -46,6 +46,7 @@ const Player = ({
   indexRef,
   videoData,
   setShowRotate,
+  video,
 }: {
   src: string;
   thumbnail: string;
@@ -62,6 +63,7 @@ const Player = ({
   abortControllerRef: any;
   indexRef: any;
   videoData: any;
+  video: any;
   setShowRotate: any;
 }) => {
   const playerContainerRef = useRef<HTMLDivElement | null>(null);
@@ -106,17 +108,19 @@ const Player = ({
     position: { x: 0, y: 0 },
     time: 0,
   });
+
   const spriteImageUrlRef = useRef<string | null>(null);
+  const metadata = video?.sprite_metadata || {};
 
   // Load and decrypt the sprite image
   const loadAndDecryptSprite = async () => {
     try {
-      const spriteUrl =
-        "https://cjngi4nglk.zwkil.cn/resources/7a/7ac2fe91a5a1b86e53a9d1a111211186.txt";
+      const spriteUrl = video.sprite_url || "";
       const xorKey = 0x12;
       const encryptSize = 4096;
 
       const response = await fetch(spriteUrl);
+
       const base64Text = await response.text();
 
       // XOR-decrypt the first N characters
@@ -154,33 +158,19 @@ const Player = ({
 
   // Get sprite position for a given time
   const getSpritePosition = (time: number) => {
-    const metadata = {
-      video_duration: 606.643991,
-      frame_count: 87,
-      frame_interval: 7,
-      tile_rows: 18,
-      tile_cols: 5,
-      tileWidth: 160,
-      tileHeight: 90,
-    };
+    const index = Math.floor(time / metadata.frameInterval);
+    if (index >= metadata.frameCount) return null;
 
-    const index = Math.floor(time / metadata.frame_interval);
-    if (index >= metadata.frame_count) return null;
-
-    const col = index % metadata.tile_cols;
-    const row = Math.floor(index / metadata.tile_cols);
+    const col = index % metadata.tileCols;
+    const row = Math.floor(index / metadata.tileCols);
     const x = col * metadata.tileWidth;
     const y = row * metadata.tileHeight;
 
     return { x, y };
   };
 
-  console.log(thumbnailPreview);
-  console.log(spriteImageUrlRef.current);
-
   // Update thumbnail preview
   const updateThumbnailPreview = (time: number, clientX: number) => {
-    console.log("winn", spriteImageUrlRef.current);
     if (!artPlayerInstanceRef.current || !spriteImageUrlRef.current) return;
 
     const pos = getSpritePosition(time);
@@ -210,11 +200,23 @@ const Player = ({
       const pos = getSpritePosition(thumbnailPreview.time);
       if (pos) {
         previewElement.style.display = "block";
-        previewElement.style.left = `${thumbnailPreview.position.x + 80}px`;
+        // Calculate maximum left position to keep thumbnail within viewport
+        const thumbnailWidth = metadata.isPortrait ? 90 : 160;
+        const viewportWidth = window.innerWidth;
+        const maxLeft = viewportWidth - thumbnailWidth - 10; // 40px buffer from right edge
+
+        // Constrain the position
+        let leftPosition = thumbnailPreview.position.x + 20;
+        leftPosition = Math.max(10, Math.min(leftPosition, maxLeft)); // 10px minimum from left edge
+
+        previewElement.style.left = `${leftPosition}px`;
         previewElement.style.bottom = "30px";
         previewElement.style.backgroundImage = `url(${spriteImageUrlRef.current})`;
         previewElement.style.backgroundPosition = `-${pos.x}px -${pos.y}px`;
-        previewElement.style.backgroundSize = `800px 1620px`;
+
+        previewElement.style.backgroundSize = `${
+          metadata.tileCols * metadata.tileWidth
+        }px ${metadata.tileRows * metadata.tileHeight}px`;
       }
     } else {
       previewElement.style.display = "none";
@@ -668,8 +670,6 @@ const Player = ({
 
             // Pre-warm the player before playback starts
             hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
-              console.log("Manifest loaded, pre-warming fragments");
-
               // Start loading but don't play yet
               hls.startLoad(-1);
 
@@ -764,7 +764,6 @@ const Player = ({
             visibility: "visible", // Ensure visibility
           },
           mounted: (element: HTMLElement) => {
-
             progressBarRef.current = element.querySelector(
               ".custom-progress-bar"
             ) as HTMLInputElement;
@@ -844,6 +843,12 @@ const Player = ({
                 const duration = formatTime(
                   artPlayerInstanceRef.current.duration
                 );
+
+                if (metadata?.isPortrait) {
+                  timeDisplayRef.current.style.bottom = `200px`;
+                } else {
+                  timeDisplayRef.current.style.bottom = `150px`;
+                }
                 timeDisplayRef.current.innerHTML = `<span style="color: #d53ff0">${currentTime}</span> / ${duration}`;
               }
             });
@@ -913,6 +918,12 @@ const Player = ({
                 const duration = formatTime(
                   artPlayerInstanceRef.current.duration
                 );
+
+                if (metadata?.isPortrait) {
+                  timeDisplayRef.current.style.bottom = `200px`;
+                } else {
+                  timeDisplayRef.current.style.bottom = `150px`;
+                }
                 timeDisplayRef.current.innerHTML = `<span style="color: #d53ff0">${currentTime}</span> / ${duration}`;
               }
             });
@@ -948,9 +959,14 @@ const Player = ({
                 const duration = formatTime(
                   artPlayerInstanceRef.current.duration
                 );
-                // timeDisplayRef.current.textContent = `${currentTime} / ${duration}`;
-                timeDisplayRef.current.innerHTML = `<span style="font-size: 24px;"><span style="color: #d53ff0">${currentTime}</span> / ${duration}<span>`;
 
+                if (metadata?.isPortrait) {
+                  timeDisplayRef.current.style.bottom = `200px`;
+                } else {
+                  timeDisplayRef.current.style.bottom = `150px`;
+                }
+                // timeDisplayRef.current.textContent = `${currentTime} / ${duration}`;
+                timeDisplayRef.current.innerHTML = `<span><span style="color: #d53ff0">${currentTime}</span> / ${duration}<span>`;
               }
             });
 
@@ -981,8 +997,8 @@ const Player = ({
           html: `
     <div class="thumbnail-preview" style="
       position: absolute;
-      width: 160px;
-      height: 90px;
+      width: ${metadata.isPortrait ? "90px" : "160px"};
+      height: ${metadata.isPortrait ? "160px" : "90px"};
       background-repeat: no-repeat;
       background-size: auto;
       border-radius: 4px;
@@ -1001,6 +1017,7 @@ const Player = ({
             pointerEvents: "none",
             zIndex: "9999",
           },
+
           mounted: (element: HTMLElement) => {
             const previewElement = element.querySelector(
               ".thumbnail-preview"
@@ -1014,13 +1031,26 @@ const Player = ({
                 const pos = getSpritePosition(thumbnailPreview.time);
                 if (pos) {
                   previewElement.style.display = "block";
-                  previewElement.style.left = `${
-                    thumbnailPreview.position.x + 80
-                  }px`;
+                  // Calculate maximum left position to keep thumbnail within viewport
+                  const thumbnailWidth = metadata.isPortrait ? 90 : 160;
+                  const viewportWidth = window.innerWidth;
+                  const maxLeft = viewportWidth - thumbnailWidth - 20; // 40px buffer from right edge
+
+                  // Constrain the position
+                  let leftPosition = thumbnailPreview.position.x + 20;
+                  leftPosition = Math.max(10, Math.min(leftPosition, maxLeft)); // 10px minimum from left edge
+
+                  previewElement.style.left = `${leftPosition}px`;
                   previewElement.style.bottom = "30px";
                   previewElement.style.backgroundImage = `url(${spriteImageUrlRef.current})`;
                   previewElement.style.backgroundPosition = `-${pos.x}px -${pos.y}px`;
-                  previewElement.style.backgroundSize = `800px 1620px`;
+                  previewElement.style.left = `${
+                    thumbnailPreview.position.x + 40
+                  }px`;
+
+                  previewElement.style.backgroundSize = `${
+                    metadata.tileCols * metadata.tileWidth
+                  }px ${metadata.tileRows * metadata.tileHeight}px`;
                 }
               } else {
                 previewElement.style.display = "none";
@@ -1770,7 +1800,7 @@ const Player = ({
     if (!playerContainerRef.current) return;
 
     if (isActive) {
-      if (!spriteImageUrlRef.current) {
+      if (!spriteImageUrlRef.current && video.sprite_url) {
         loadAndDecryptSprite();
       }
       // Increment the index when a new video becomes active

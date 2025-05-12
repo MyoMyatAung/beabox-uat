@@ -1012,6 +1012,7 @@ const VideoContainerFeed = ({
     <>
       {" "}
       <Player
+        video={video}
         videoData={videoData}
         indexRef={indexRef}
         abortControllerRef={abortControllerRef}
