@@ -68,6 +68,7 @@ const RootLayout = ({ children }: any) => {
   const [newData, setnewData] = useState(null);
   const user = useSelector((state: any) => state.persist.user);
   const currentTab = useSelector((state: any) => state.home.currentTab);
+  const hideBar = useSelector((state: RootState) => state.hideBarSlice.hideBar);
 
   const { data: eventData } = useGetUserByReferalQuery(
     { referral_code: referCode }, // or safely cast if you're confident it's a string
@@ -102,12 +103,12 @@ const RootLayout = ({ children }: any) => {
         if (
           currentEventData?.status === true &&
           !showAd &&
-          !showAlert &&
+          // !showAlert &&
           !isOpen
         ) {
           const timeout = setTimeout(() => {
             dispatch(setAnimation(true));
-          }, 9000);
+          }, 5000);
           return () => clearTimeout(timeout);
         } else {
           dispatch(setAnimation(false));
@@ -222,18 +223,21 @@ const RootLayout = ({ children }: any) => {
 
   const isOpen = useSelector((state: any) => state.profile.isDrawerOpen);
 
-  const [cachedEventDetails, setCachedEventDetails] = useState<{ data: EventDetail } | null>(null);
+  const [cachedEventDetails, setCachedEventDetails] = useState<{
+    data: EventDetail;
+  } | null>(null);
   const [isFetchingDetails, setIsFetchingDetails] = useState(false);
   const isFetchingRef = useRef(false);
 
   // Preload the lucky draw component and prefetch event details
   useEffect(() => {
-    const shouldPreload = !showAd && 
-      !showAlert && 
-      !isOpen && 
-      location.pathname === "/" && 
-      !event && 
-      showAnimation && 
+    const shouldPreload =
+      !showAd &&
+      !showAlert &&
+      !isOpen &&
+      location.pathname === "/" &&
+      !event &&
+      showAnimation &&
       currentTab === 2;
 
     if (shouldPreload) {
@@ -261,7 +265,16 @@ const RootLayout = ({ children }: any) => {
 
       prefetchEventDetails();
     }
-  }, [showAd, showAlert, isOpen, location.pathname, event, showAnimation, currentTab, currentEventData?.data?.id]);
+  }, [
+    showAd,
+    showAlert,
+    isOpen,
+    location.pathname,
+    event,
+    showAnimation,
+    currentTab,
+    currentEventData?.data?.id,
+  ]);
 
   // If loading, show loading screen
   if (isLoading) {
@@ -286,7 +299,9 @@ const RootLayout = ({ children }: any) => {
 
       // Refresh in background
       try {
-        const freshEventDetails = await triggerGetEventDetails(eventId).unwrap();
+        const freshEventDetails = await triggerGetEventDetails(
+          eventId
+        ).unwrap();
         dispatch(setEventDetail(freshEventDetails.data));
         if (freshEventDetails.data?.event_start_time) {
           dispatch(setDuration(freshEventDetails.data.event_start_time));
@@ -361,12 +376,13 @@ const RootLayout = ({ children }: any) => {
       </div>
 
       {!showAd &&
-        !showAlert &&
+        // !showAlert &&
         !isOpen &&
         location.pathname === "/" &&
         !event &&
         showAnimation &&
-        currentTab === 2 && (
+        currentTab === 2 && 
+        !hideBar && (
           <div className="fixed bottom-[8rem] right-9 z-[9999] rounded-full p-2">
             <div className="relative">
               <button

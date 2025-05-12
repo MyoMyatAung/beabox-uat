@@ -32,6 +32,11 @@ const AvatarImage = ({
           if (entry.isIntersecting) {
             try {
               const decryptedUrl = await decryptImage(src);
+              if (imgRef.current) {
+                imgRef.current.onload = () => {
+                  URL.revokeObjectURL(decryptedUrl); // revoke after image is loaded
+                };
+              }
               setDecryptedSrc(decryptedUrl);
             } catch (error) {
               console.error("Error decrypting image:", error);

@@ -33,7 +33,7 @@ const BalNew: React.FC<BalNewProps> = ({
         <div className=" bg-white/  rounded-[20px flex flex-col gap-[12px]">
           {/* head */}
           <div className="flex justify-cente items-center gap-[6px]">
-            <span className="text-white text-[14px] font-[500] leading-[20px] flex gap-[6px]">
+            <span className="text-[#BBB] text-[14px] font-[500] leading-[20px] flex gap-[6px]">
               <img className=" hidden w-[18px] h-[18px]" src={transit} alt="" />
               {title}
             </span>
@@ -47,7 +47,7 @@ const BalNew: React.FC<BalNewProps> = ({
           </div>
           <div className="">
             <h1 className=" text-white text-[14px] font-[700] leading-[22px]">
-              {amountText} : <span className=" text-[#CD3EFF]">{amount}</span>{" "}
+              {amountText} : <span className=" text-[#DA72FF]">{amount}</span>{" "}
               {amountType}
             </h1>
           </div>

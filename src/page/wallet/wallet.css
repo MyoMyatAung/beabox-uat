@@ -219,7 +219,13 @@ option selected {
 
 .red_box_wal {
   border-radius: 8px;
-  background: linear-gradient(98.26deg, #FFBE92 3.43%, #FF4C1C 36.26%, #EF1989 78.53%, #FFB081 106.41%);
+  background: linear-gradient(
+    98.26deg,
+    #ffbe92 3.43%,
+    #ff4c1c 36.26%,
+    #ef1989 78.53%,
+    #ffb081 106.41%
+  );
 }
 
 .red_popup_box {
@@ -305,4 +311,12 @@ option selected {
 .upload_plus_btn {
   border-radius: 76.364px;
   background: rgba(255, 255, 255, 0.04);
+}
+
+.with_new_btn {
+  border-radius: 16px;
+  background: var(
+    --Purple-Gradient-2,
+    linear-gradient(325deg, #cd3eff 43.64%, #ffb2e0 100%)
+  );
 }

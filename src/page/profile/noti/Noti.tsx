@@ -14,17 +14,6 @@ import { useEffect } from "react";
 import BalanceNotiLink from "@/components/profile/noti/balance-noti-link";
 
 const Noti = () => {
-  const { data, isLoading, refetch } = useGetNotiQuery("");
-  const user = useSelector((state: any) => state.persist.user);
-  useEffect(() => {
-    if (user) refetch();
-  }, [user, refetch]);
-  // const balance_alert = data?.data?.filter(
-  //   (item: any) => item?.type == "balance_alert"
-  // );
-  console.log(data?.data);
-
-  if (isLoading) return <Loader />;
   return (
     <div className="w-full h-screen bg-[#16131C] px-5 flex flex-col items-center justify-between no-scrollbar">
       <div className="w-full">
@@ -32,21 +21,17 @@ const Noti = () => {
           <Link to={paths.profile}>
             <img src={backButton} alt="" />
           </Link>
-          <p className="text-[16px]">通知</p>
+          <p className="text-[18px] font-bold">通知</p>
           <div></div>
         </div>
         <div className="space-y-4 pb-10">
           <Link
             to={`/notifications/system`}
-            state={{
-              data: data?.data?.filter((item: any) => item?.type == "system"),
-              main: "system",
-            }}
             className="flex items-center gap-4"
           >
             <img src={System} className="w-10 h-10 mt-1" alt="" />
             <div className="w-full">
-              <div className="flex items-center text-[14px] justify-between">
+              <div className="flex items-center text-[14px] justify-between font-bold">
                 <p>系统通知</p>
               </div>
               <div className="flex items-end justify-between">
@@ -60,17 +45,11 @@ const Noti = () => {
           <Divider show={true} />
           <Link
             to={`/notifications/balance`}
-            state={{
-              data: data?.data?.filter(
-                (item: any) => item?.type == "balance_alert"
-              ),
-              main: "Balance Alert",
-            }}
             className="flex items-center gap-4"
           >
             <img src={Balance} className="w-10 h-10 mt-1" alt="" />
             <div className="w-full">
-              <div className="flex items-center text-[14px] justify-between">
+              <div className="flex items-center text-[14px] justify-between font-bold">
                 <p>余额提醒</p>
               </div>
               <div className="flex items-end justify-between">
@@ -84,15 +63,11 @@ const Noti = () => {
           <Divider show={true} />
           <Link
             to={`/notifications/creator`}
-            state={{
-              data: data?.data?.filter((item: any) => item?.type == "creator"),
-              main: "Creator",
-            }}
             className="flex items-center gap-4"
           >
             <img src={Creator} className="w-10 h-10 mt-1" alt="" />
             <div className="w-full">
-              <div className="flex items-center text-[14px] justify-between">
+              <div className="flex items-center text-[14px] justify-between font-bold">
                 <p>创作者里程碑提醒</p>
               </div>
               <div className="flex items-end justify-between">
@@ -138,7 +113,7 @@ export default Noti;
 //         >
 //           <img src={Balance} className="w-10 h-10 mt-1" alt="" />
 //           <div className="w-full">
-//             <div className="flex items-center text-[14px] justify-between">
+//             <div className="flex items-center text-[14px] justify-between font-bold">
 //               <p>{item?.title}</p>
 //               {item?.is_read ? (
 //                 <></>
@@ -169,7 +144,7 @@ export default Noti;
 //         >
 //           <img src={System} className="w-10 h-10 mt-1" alt="" />
 //           <div className="w-full">
-//             <div className="flex items-center text-[14px] justify-between">
+//             <div className="flex items-center text-[14px] justify-between font-bold">
 //               <p>{item.title}</p>
 //               {item?.is_read ? (
 //                 <></>

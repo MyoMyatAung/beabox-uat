@@ -3,6 +3,10 @@ import backButton from "../../../assets/backButton.svg";
 import { Link, useLocation } from "react-router-dom";
 import Card from "@/components/profile/noti/card";
 import balancebell from "@/assets/profile/balancebell.png";
+import { useGetNotiQuery } from "@/store/api/profileApi";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import Loader from "@/components/shared/loader";
 
 const formatdate = (data: any) => {
   const date = new Date(data);
@@ -20,14 +24,15 @@ const formatdate = (data: any) => {
 };
 
 const BalanceNoti = () => {
-  const state = useLocation();
+  const { data, isLoading, refetch } = useGetNotiQuery("balance_alert");
+
   const uniqueDates = [
-    ...new Set(state?.state?.data?.map((item: any) => item?.created_at)),
+    ...new Set(data?.data?.map((item: any) => item?.created_at)),
   ];
 
   const groupedData = uniqueDates.map((date) => ({
     date,
-    list: state?.state?.data
+    list: data?.data
       ?.filter((item: any) => item?.created_at === date)
       ?.map((item: any) => item),
   }));
@@ -41,6 +46,12 @@ const BalanceNoti = () => {
   };
   const today = getTodayDate();
 
+  const user = useSelector((state: any) => state.persist.user);
+  useEffect(() => {
+    if (user) refetch();
+  }, [user, refetch]);
+
+  if (isLoading) return <Loader />;
 
   return (
     <div className="w-full h-screen px-5 flex flex-col items-center justify-between no-scrollbar">
@@ -49,7 +60,7 @@ const BalanceNoti = () => {
           <Link to={paths.noti}>
             <img src={backButton} alt="" />
           </Link>
-          <p className="text-[16px]">余额提醒</p>
+          <p className="text-[16px] font-bold">余额提醒</p>
           <div className="px-2"></div>
         </div>
         <div className="space-y-5 pb-10">
@@ -57,7 +68,8 @@ const BalanceNoti = () => {
             groupedData?.map((item: any) => (
               <div>
                 <p className="text-[12px] text-[#666666] text-center my-2">
-                  {formatdate(item?.date)}
+                  {/* {formatdate(item?.date)} */}
+                  {item?.date === today ? <></> : formatdate(item?.date)}
                 </p>
                 <div className="space-y-5">
                   {item?.list?.map((item: any) => (
@@ -69,7 +81,7 @@ const BalanceNoti = () => {
           ) : (
             <div className="w-full flex flex-col justify-center items-center h-[80vh]">
               <img src={balancebell} className="w-10" alt="" />
-              <p className="text-[14px] mt-2">目前没有新的通知</p>
+              <p className="text-[14px] mt-3">目前没有新的通知</p>
             </div>
           )}
           {/* {state?.state?.data?.length ? (

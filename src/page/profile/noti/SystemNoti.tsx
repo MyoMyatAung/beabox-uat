@@ -1,8 +1,12 @@
 import { paths } from "@/routes/paths";
 import backButton from "../../../assets/backButton.svg";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Card from "@/components/profile/noti/card";
 import systembell from "@/assets/profile/systembell.png";
+import { useGetNotiQuery } from "@/store/api/profileApi";
+import Loader from "@/components/shared/loader";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
 const formatdate = (data: any) => {
   const date = new Date(data);
   const formattedDate = date
@@ -19,14 +23,15 @@ const formatdate = (data: any) => {
 };
 
 const SystemNoti = () => {
-  const state = useLocation();
+  const { data, isLoading, refetch } = useGetNotiQuery("system");
+
   const uniqueDates = [
-    ...new Set(state?.state?.data?.map((item: any) => item?.created_at)),
+    ...new Set(data?.data?.map((item: any) => item?.created_at)),
   ];
 
   const groupedData = uniqueDates.map((date) => ({
     date,
-    list: state?.state?.data
+    list: data?.data
       ?.filter((item: any) => item?.created_at === date)
       ?.map((item: any) => item),
   }));
@@ -39,6 +44,14 @@ const SystemNoti = () => {
     return `${year}-${month}-${day}`;
   };
   const today = getTodayDate();
+
+  const user = useSelector((state: any) => state.persist.user);
+  useEffect(() => {
+    if (user) refetch();
+  }, [user, refetch]);
+
+  if (isLoading) return <Loader />;
+
   return (
     <div className="w-full h-screen px-5 flex flex-col items-center justify-between no-scrollbar">
       <div className="w-full">
@@ -46,7 +59,7 @@ const SystemNoti = () => {
           <Link to={paths.noti}>
             <img src={backButton} alt="" />
           </Link>
-          <p className="text-[16px]">系统通知</p>
+          <p className="text-[16px] font-bold mt-3">系统通知</p>
           <div className="px-2"></div>
         </div>
         <div className="space-y-5 pb-10">
@@ -54,7 +67,8 @@ const SystemNoti = () => {
             groupedData?.map((item: any) => (
               <div>
                 <p className="text-[12px] text-[#666666] text-center my-2">
-                  {formatdate(item?.date)}
+                  {/* {formatdate(item?.date)} */}
+                  {item?.date === today ? <></> : formatdate(item?.date)}
                 </p>
                 <div className="space-y-5">
                   {item?.list?.map((item: any) => (
