@@ -16,6 +16,10 @@ import VideoFeed from "@/page/home/components/VideoFeed";
 import empty from "../../home/empty.png";
 import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder";
 import { paths } from "@/routes/paths";
+import Artplayer from "artplayer";
+import Hls from "hls.js";
+import indicator from "../../home/indicator.png";
+import vod_loader from "../../home/vod_loader.gif";
 
 // import ImageWithPlaceholder from "../comp/imgPlaceholder";
 import he from "he";
@@ -62,12 +66,19 @@ const Results: React.FC<ResultsProps> = ({}) => {
   const handleMoreRef = useRef<HTMLButtonElement | null>(null);
   const listRef = useRef<(HTMLLIElement | null)[]>([]);
   const scrollPositionRef = useRef(0);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [activeLongPressCard, setActiveLongPressCard] = useState<any>(null);
+  const videoPlayerRef = useRef<HTMLDivElement>(null);
+  const artPlayerInstanceRef = useRef<Artplayer | null>(null);
+  
 
   // const scrollPositions = useSelector((state: any) => state.scroll.positions);
   // const location = useLocation();
 
   // const res = filter?.data?.post_filter;
   // const firstKey = res ? Object.keys(res)[0] : null;
+
+  const [longPressTimer, setLongPressTimer] = useState<NodeJS.Timeout | null>(null);
 
   const handleSearch = () => {
     if (query.trim()) {
@@ -406,6 +417,117 @@ const Results: React.FC<ResultsProps> = ({}) => {
   //   );
   // }
 
+  // Long press handler function
+  const handleLongPress = (card: any) => {
+    console.log('Long press detected on:', card.post_id);
+    console.log('Card details:', card);
+    // set active long press card
+    setActiveLongPressCard(card);
+    // Add your long press logic here
+  };
+
+  useEffect(() => {
+    if (activeLongPressCard) {
+      console.log('active long press card =>', activeLongPressCard);
+      
+      // Initialize ArtPlayer when a card is long-pressed and has a preview URL
+      if (activeLongPressCard?.preview?.url && videoPlayerRef.current) {
+        // Destroy previous instance if it exists
+        if (artPlayerInstanceRef.current) {
+          artPlayerInstanceRef.current.destroy();
+          artPlayerInstanceRef.current = null;
+        }
+        
+        // Create new ArtPlayer instance
+        const videoUrl = activeLongPressCard?.preview?.url;
+;
+        const isM3u8 = videoUrl.includes('.m3u8');
+        const isBlob = videoUrl.startsWith('blob:');
+        
+        console.log('Video URL:', videoUrl);
+        console.log('Is blob URL:', isBlob);
+        
+        const options: Artplayer["Option"] = {
+          container: videoPlayerRef.current,
+          url: videoUrl,
+          volume: 0.5,
+          muted: true,
+          autoplay: true,
+          loop: true,
+          isLive: false,
+          aspectRatio: true,
+          fullscreen: false,
+          theme: "#d53ff0",
+          moreVideoAttr: {
+            playsInline: true,
+            preload: "auto" as const,
+          },
+          type: isM3u8 ? "m3u8" : "auto",
+          customType: {
+            m3u8: (videoElement: HTMLVideoElement, url: string) => {
+              if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(videoElement);
+              } else if (videoElement.canPlayType("application/vnd.apple.mpegurl")) {
+                videoElement.src = url;
+              }
+            },
+          },
+          icons: {
+            loading: `<div class="video-loading-indicator"><img width="50" height="50" src=${vod_loader}></div>`,
+            state: `<div class="video-play-indicator"><img src="${indicator}" width="25" height="25" alt="Play"></div>`,
+          },
+        };
+        
+        try {
+          artPlayerInstanceRef.current = new Artplayer(options);
+          
+          // Add event listeners for debugging
+          artPlayerInstanceRef.current.on('ready', () => {
+            console.log('ArtPlayer ready');
+          });
+          
+          artPlayerInstanceRef.current.on('play', () => {
+            console.log('ArtPlayer playing');
+          });
+          
+          artPlayerInstanceRef.current.on('error', (error) => {
+            console.error('ArtPlayer error:', error);
+          });
+        } catch (error) {
+          console.error('Error initializing ArtPlayer:', error);
+        }
+      }
+    }
+    
+    // Cleanup function to destroy ArtPlayer instance when component unmounts or card changes
+    return () => {
+      if (artPlayerInstanceRef.current) {
+        artPlayerInstanceRef.current.destroy();
+        artPlayerInstanceRef.current = null;
+      }
+    };
+  }, [activeLongPressCard]);
+
+  const handleTouchStart = (card: any) => {
+    const timer = setTimeout(() => {
+      handleLongPress(card);
+    }, 2000); // 2 seconds
+    setLongPressTimer(timer);
+  };
+
+  const handleTouchEnd = () => {
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+      setLongPressTimer(null);
+    }
+    // Also clear the active card when touch ends
+    if (activeLongPressCard) {
+      setActiveLongPressCard(null);
+    }
+  };
+
   return (
     <div className="">
       {showVideoFeed && selectedMovieId && (
@@ -511,27 +633,40 @@ const Results: React.FC<ResultsProps> = ({}) => {
                     {movies?.map((card: any) => (
                       <div
                         onClick={() => handleVideoClick(card?.post_id)}
+                        onTouchStart={() => handleTouchStart(card)}
+                        onTouchEnd={handleTouchEnd}
+                        onTouchMove={handleTouchEnd} // Cancel on move as well
                         key={card.post_id}
-                        className="max-w-full pb-[12px] chinese_photo  h-[325px]"
+                        className="max-w-full pb-[12px] chinese_photo h-[325px]"
                       >
                         <div
                           // onClick={() => showDetailsVod(card)}
                           className=" relative flex justify-center  items-center bg-[#010101] rounded-[4px] overflow-hidden  h-[240px]"
                         >
-                          <ImageWithPlaceholder
-                            src={card?.preview_image}
-                            alt={card.title || "Video"}
-                            width={"100%"}
-                            // height={240}
-                            height={
-                              card?.files[0]?.height &&
-                              calculateHeight(
-                                card?.files[0]?.width,
-                                card?.files[0]?.height
-                              )
-                            }
-                            className="object-cover h-full w-full rounded-none"
-                          />
+                          {
+                          activeLongPressCard?.preview?.url &&
+                           card?.post_id === activeLongPressCard?.post_id ? (
+                            // Art player container for video preview
+                            <div 
+                              ref={videoPlayerRef} 
+                              className="w-full h-full object-cover rounded-none"
+                            ></div>
+                          ) : (
+                            <ImageWithPlaceholder
+                              src={card?.preview_image}
+                              alt={card.title || "Video"}
+                              width={"100%"}
+                              // height={240}
+                              height={
+                                card?.files[0]?.height &&
+                                calculateHeight(
+                                  card?.files[0]?.width,
+                                  card?.files[0]?.height
+                                )
+                              }
+                              className="object-cover h-full w-full rounded-none"
+                            />
+                          )}
 
                           <div className=" absolute hidden left-0 mx-auto right-0 bottom-0 fle justify-around items-center w-full max-w-[175px] bg-blac">
                             <div className=" flex w-full  justify-between px-2">
