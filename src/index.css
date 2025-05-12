@@ -655,6 +655,12 @@ input:checked + .slider:before {
   text-shadow: 0px 1px 1px #000000;
 }
 
+@media screen and (max-width: 400px) {
+  .ad_update {
+    font-size: 12px;
+  }
+}
+
 .home-normal-text {
   text-shadow: 0 1px 1px #000000;
 

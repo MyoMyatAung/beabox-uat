@@ -81,6 +81,12 @@ export const profileApi = createApi({
         }),
       }),
     }),
+    checkNickname: builder.query<any, any>({
+      query: () => ({
+        url: convertToSecureUrl(`/profile/check-nickname`),
+        method: "Get",
+      }),
+    }),
     changeGender: builder.mutation({
       query: ({ gender }) => ({
         url: convertToSecureUrl(`/profile/change-gender`),
@@ -421,6 +427,7 @@ export const profileApi = createApi({
 });
 
 export const {
+  useCheckNicknameQuery,
   useRemoveAvatarMutation,
   useCoverUploadMutation,
   useAvatarUploadMutation,
