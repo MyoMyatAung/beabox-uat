@@ -5,15 +5,16 @@ import FingerprintJS from '@fingerprintjs/fingerprintjs';
 /**
  * Device information interface
  */
-// interface DeviceInfo {
-//   deviceName: string;
-//   uuid: string;
-//   osVersion: string;
-//   appVersion: string;
-// }
+interface DeviceInfo {
+  deviceName: string;
+  uuid: string;
+  osVersion: string;
+  appVersion: string;
+  [key: string]: any; // Allow additional properties for fingerprinting data
+}
 
 // Application version - single source of truth
-const APP_VERSION = '1.1.6.8';
+export const APP_VERSION = '1.1.6.8';
 
 /**
  * Generate a UUID v4
@@ -172,7 +173,9 @@ const collectEnvironmentFlags = (): string[] => {
     const canvas = document.createElement('canvas');
     const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
     if (gl) {
-      const renderer = gl.getParameter(gl.RENDERER);
+      // Type assert to WebGLRenderingContext
+      const webGl = gl as WebGLRenderingContext;
+      const renderer = webGl.getParameter(webGl.RENDERER);
       if (/SwiftShader|llvmpipe|ANGLE/i.test(renderer)) {
         flags.push(`suspicious_webgl:${renderer}`);
       } else {
@@ -181,10 +184,11 @@ const collectEnvironmentFlags = (): string[] => {
       }
       
       // Add WebGL vendor information
-      const vendor = gl.getParameter(gl.VENDOR);
+      const vendor = webGl.getParameter(webGl.VENDOR);
       flags.push(`webgl_vendor:${vendor}`);
     }
-  } catch (e) {
+  } catch {
+    // Silently catch any WebGL errors
     flags.push('webgl_error');
   }
   
@@ -247,9 +251,9 @@ export const initDeviceInfo = async () => {
       colorDepth: screen.colorDepth,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       language: navigator.language,
-      fonts: c.fonts?.value || ['Arial', 'Times New Roman'],
-      canvas: await hashString(JSON.stringify(c.canvas?.value || '')),
-      webgl: await hashString(JSON.stringify(c.webgl?.value || '')),
+      fonts: c.fonts && 'value' in c.fonts ? c.fonts.value : ['Arial', 'Times New Roman'],
+      canvas: await hashString(JSON.stringify(c.canvas && 'value' in c.canvas ? c.canvas.value : '')),
+      webgl: await hashString(JSON.stringify((c as any).webgl && 'value' in (c as any).webgl ? (c as any).webgl.value : '')),
       plugins: Array.from(navigator.plugins).map(p => p.name),
       platform: navigator.platform,
       hardwareConcurrency: navigator.hardwareConcurrency || 0,
@@ -332,4 +336,10 @@ export const isAndroidWebView = (): boolean => {
  */
 export const isMobileWebView = (): boolean => {
   return isIOSWebView() || isAndroidWebView();
-}; 
+};
+
+/**
+ * Check if app version needs update
+ * @returns Promise that resolves to true if update is needed
+ */
+// This function is now replaced by RTK Query in versionApi.ts 
