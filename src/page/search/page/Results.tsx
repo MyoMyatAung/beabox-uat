@@ -71,8 +71,13 @@ const Results: React.FC<ResultsProps> = ({}) => {
   const [activeLongPressCard, setActiveLongPressCard] = useState<any>(null);
   const videoPlayerRef = useRef<HTMLDivElement>(null);
   const artPlayerInstanceRef = useRef<Artplayer | null>(null);
+  const artPlayerInstances = useRef<{ [key: string]: Artplayer | null }>({});
 
+  const [videoReadyStates, setVideoReadyStates] = useState<{
+    [key: string]: boolean;
+  }>({});
   const [loadingVideoId, setLoadingVideoId] = useState<string | null>(null);
+  const videoPlayerRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   const handleSearch = () => {
     if (query.trim()) {
@@ -367,6 +372,11 @@ const Results: React.FC<ResultsProps> = ({}) => {
 
   // Long press handler function
   const handleLongPress = (card: any) => {
+    setVideoReadyStates((prev) => ({ ...prev, [card.post_id]: false }));
+
+    if (card?.preview?.url) {
+      initializePlayer(card);
+    }
     setLoadingVideoId(card.post_id); // Set loading state for this specific video
 
     console.log("Long press detected on:", card.post_id);
@@ -376,137 +386,216 @@ const Results: React.FC<ResultsProps> = ({}) => {
     // Add your long press logic here
   };
 
-  useEffect(() => {
-    if (activeLongPressCard) {
-      console.log("active long press card =>", activeLongPressCard);
-      console.log(videoPlayerRef.current);
+  const initializePlayer = (card: any) => {
+    const container = videoPlayerRefs.current[card.post_id];
+    if (!container) return;
 
-      // Initialize ArtPlayer when a card is long-pressed and has a preview URL
-      if (activeLongPressCard?.preview?.url && videoPlayerRef.current) {
-        // Destroy previous instance if it exists
-        if (artPlayerInstanceRef.current) {
-          artPlayerInstanceRef.current.destroy();
-          artPlayerInstanceRef.current = null;
-        }
-
-        // Create new ArtPlayer instance
-        const videoUrl = activeLongPressCard?.preview?.url;
-        const isM3u8 = videoUrl.includes(".m3u8");
-        const isBlob = videoUrl.startsWith("blob:");
-
-        console.log("Video URL:", videoUrl);
-        console.log("Is blob URL:", isBlob);
-
-        const options: Artplayer["Option"] = {
-          container: videoPlayerRef.current,
-          url: videoUrl,
-          volume: 0.5,
-          muted: true,
-          autoplay: true,
-          loop: true,
-          isLive: false,
-          aspectRatio: true,
-          fullscreen: false,
-          theme: "#d53ff0",
-          moreVideoAttr: {
-            playsInline: true,
-            preload: "auto" as const,
-          },
-          type: isM3u8 ? "m3u8" : "auto",
-          customType: {
-            m3u8: (videoElement: HTMLVideoElement, url: string) => {
-              if (Hls.isSupported()) {
-                const hls = new Hls();
-                hls.loadSource(url);
-                hls.attachMedia(videoElement);
-              } else if (
-                videoElement.canPlayType("application/vnd.apple.mpegurl")
-              ) {
-                videoElement.src = url;
-              }
-            },
-          },
-
-          icons: {
-            loading: `<div style="display:none"></div>`,
-            state: `<div style="display:none"></div>`,
-          },
-        };
-
-        try {
-          artPlayerInstanceRef.current = new Artplayer(options);
-
-          const playIndicator =
-            artPlayerInstanceRef.current.template.$state.querySelector(
-              ".video-play-indicator"
-            ) as HTMLDivElement;
-          if (playIndicator) playIndicator.style.display = "none";
-          const loadingIndicator =
-            artPlayerInstanceRef.current.template.$state.querySelector(
-              ".video-loading-indicator"
-            ) as HTMLDivElement;
-          if (loadingIndicator) loadingIndicator.style.display = "none";
-          const artplayerContainer = videoPlayerRef.current;
-          const controls = artplayerContainer.querySelectorAll(
-            ".art-controls, .art-mask"
-          );
-          controls.forEach((control: any) => {
-            (control as HTMLElement).style.display = "none";
-          });
-
-          // Add event listeners for debugging
-          artPlayerInstanceRef.current.on("ready", () => {
-            const playIndicator =
-              artPlayerInstanceRef?.current?.template.$state.querySelector(
-                ".video-play-indicator"
-              ) as HTMLDivElement;
-            if (playIndicator) playIndicator.style.display = "none";
-            const laodingIndicator =
-              artPlayerInstanceRef?.current?.template.$state.querySelector(
-                ".video-loading-indicator"
-              ) as HTMLDivElement;
-            if (laodingIndicator) laodingIndicator.style.display = "none";
-            console.log("ArtPlayer ready");
-          });
-
-          // Add event listeners for debugging
-          artPlayerInstanceRef.current.on("video:waiting", () => {
-            console.log("ArtPlayer waiting");
-            setLoadingVideoId(activeLongPressCard.post_id); // Set loading when buffering
-          });
-
-          artPlayerInstanceRef.current.on("play", () => {
-            setLoadingVideoId(null); // Clear loading state when ready
-            if (videoPlayerRef.current) {
-              videoPlayerRef.current.style.opacity = "1"; // Show video player
-            }
-            console.log("ArtPlayer playing");
-          });
-          artPlayerInstanceRef.current.on("video:playing", () => {
-            setLoadingVideoId(null); // Clear loading state when ready
-
-            console.log("ArtPlayer playing");
-          });
-
-          artPlayerInstanceRef.current.on("error", (error) => {
-            setLoadingVideoId(null); // Clear loading state when ready
-            console.error("ArtPlayer error:", error);
-          });
-        } catch (error) {
-          console.error("Error initializing ArtPlayer:", error);
-          setLoadingVideoId(null); // Clear loading state when ready
-        }
-      }
+    // Destroy previous instance if exists
+    if (artPlayerInstances.current[card.post_id]) {
+      artPlayerInstances.current[card.post_id]?.destroy();
     }
 
-    // Cleanup function to destroy ArtPlayer instance when component unmounts or card changes
-    return () => {
-      if (artPlayerInstanceRef.current) {
-        artPlayerInstanceRef.current.destroy();
-        artPlayerInstanceRef.current = null;
-      }
+    const isM3u8 = card?.preview?.url?.includes(".m3u8");
+
+    const options: Artplayer["Option"] = {
+      container: container,
+      url: card.preview.url,
+      muted: true,
+      autoplay: true,
+      loop: true,
+      isLive: false,
+      aspectRatio: true,
+      fullscreen: false,
+      theme: "#d53ff0",
+      moreVideoAttr: {
+        playsInline: true,
+        preload: "auto" as const,
+      },
+      type: isM3u8 ? "m3u8" : "auto",
+      customType: {
+        m3u8: (videoElement: HTMLVideoElement, url: string) => {
+          if (Hls.isSupported()) {
+            const hls = new Hls();
+            hls.loadSource(url);
+            hls.attachMedia(videoElement);
+          } else if (
+            videoElement.canPlayType("application/vnd.apple.mpegurl")
+          ) {
+            videoElement.src = url;
+          }
+        },
+      },
+
+      icons: {
+        loading: `<div style="display:none"></div>`,
+        state: `<div style="display:none"></div>`,
+      },
     };
-  }, [activeLongPressCard]);
+
+    try {
+      const player = new Artplayer(options);
+      artPlayerInstances.current[card.post_id] = player;
+
+      player.on("ready", () => {
+        setVideoReadyStates((prev) => ({ ...prev, [card.post_id]: true }));
+
+        setLoadingVideoId(null);
+      });
+
+      player.on("play", () => {
+        setLoadingVideoId(null);
+        setVideoReadyStates((prev) => ({ ...prev, [card.post_id]: true }));
+      });
+
+      player.on("video:playing", () => {
+        console.log("Video is playing");
+        setVideoReadyStates((prev) => ({ ...prev, [card.post_id]: true }));
+        setLoadingVideoId(null);
+      });
+      player.on("video:waiting", () => {
+        setLoadingVideoId(card.post_id);
+      });
+
+      player.on("error", () => {
+        setLoadingVideoId(null);
+      });
+    } catch (error) {
+      console.error("Error initializing ArtPlayer:", error);
+      setLoadingVideoId(null);
+    }
+  };
+
+  // useEffect(() => {
+  //   if (activeLongPressCard) {
+  //     console.log("active long press card =>", activeLongPressCard);
+  //     console.log(videoPlayerRef.current);
+
+  //     // Initialize ArtPlayer when a card is long-pressed and has a preview URL
+  //     if (activeLongPressCard?.preview?.url && videoPlayerRef.current) {
+  //       // Destroy previous instance if it exists
+  //       if (artPlayerInstanceRef.current) {
+  //         artPlayerInstanceRef.current.destroy();
+  //         artPlayerInstanceRef.current = null;
+  //       }
+
+  //       // Create new ArtPlayer instance
+  //       const videoUrl = activeLongPressCard?.preview?.url;
+  // const isM3u8 = videoUrl.includes(".m3u8");
+  //       const isBlob = videoUrl.startsWith("blob:");
+
+  //       console.log("Video URL:", videoUrl);
+  //       console.log("Is blob URL:", isBlob);
+
+  //       const options: Artplayer["Option"] = {
+  //         container: videoPlayerRef.current,
+  //         url: videoUrl,
+  //         volume: 0.5,
+  // muted: true,
+  // autoplay: true,
+  // loop: true,
+  // isLive: false,
+  // aspectRatio: true,
+  // fullscreen: false,
+  // theme: "#d53ff0",
+  // moreVideoAttr: {
+  //   playsInline: true,
+  //   preload: "auto" as const,
+  // },
+  // type: isM3u8 ? "m3u8" : "auto",
+  // customType: {
+  //   m3u8: (videoElement: HTMLVideoElement, url: string) => {
+  //     if (Hls.isSupported()) {
+  //       const hls = new Hls();
+  //       hls.loadSource(url);
+  //       hls.attachMedia(videoElement);
+  //     } else if (
+  //       videoElement.canPlayType("application/vnd.apple.mpegurl")
+  //     ) {
+  //       videoElement.src = url;
+  //     }
+  //   },
+  // },
+
+  // icons: {
+  //   loading: `<div style="display:none"></div>`,
+  //   state: `<div style="display:none"></div>`,
+  // },
+  //       };
+
+  //       try {
+  //         artPlayerInstanceRef.current = new Artplayer(options);
+
+  //         const playIndicator =
+  //           artPlayerInstanceRef.current.template.$state.querySelector(
+  //             ".video-play-indicator"
+  //           ) as HTMLDivElement;
+  //         if (playIndicator) playIndicator.style.display = "none";
+  //         const loadingIndicator =
+  //           artPlayerInstanceRef.current.template.$state.querySelector(
+  //             ".video-loading-indicator"
+  //           ) as HTMLDivElement;
+  //         if (loadingIndicator) loadingIndicator.style.display = "none";
+  //         const artplayerContainer = videoPlayerRef.current;
+  //         const controls = artplayerContainer.querySelectorAll(
+  //           ".art-controls, .art-mask"
+  //         );
+  //         controls.forEach((control: any) => {
+  //           (control as HTMLElement).style.display = "none";
+  //         });
+
+  //         // Add event listeners for debugging
+  //         artPlayerInstanceRef.current.on("ready", () => {
+  //           const playIndicator =
+  //             artPlayerInstanceRef?.current?.template.$state.querySelector(
+  //               ".video-play-indicator"
+  //             ) as HTMLDivElement;
+  //           if (playIndicator) playIndicator.style.display = "none";
+  //           const laodingIndicator =
+  //             artPlayerInstanceRef?.current?.template.$state.querySelector(
+  //               ".video-loading-indicator"
+  //             ) as HTMLDivElement;
+  //           if (laodingIndicator) laodingIndicator.style.display = "none";
+  //           console.log("ArtPlayer ready");
+  //         });
+
+  //         // Add event listeners for debugging
+  //         artPlayerInstanceRef.current.on("video:waiting", () => {
+  //           console.log("ArtPlayer waiting");
+  //           setLoadingVideoId(activeLongPressCard.post_id); // Set loading when buffering
+  //         });
+
+  //         artPlayerInstanceRef.current.on("play", () => {
+  //           setLoadingVideoId(null); // Clear loading state when ready
+  //           if (videoPlayerRef.current) {
+  //             videoPlayerRef.current.style.opacity = "1"; // Show video player
+  //           }
+  //           console.log("ArtPlayer playing");
+  //         });
+  //         artPlayerInstanceRef.current.on("video:playing", () => {
+  //           setLoadingVideoId(null); // Clear loading state when ready
+
+  //           console.log("ArtPlayer playing");
+  //         });
+
+  //         artPlayerInstanceRef.current.on("error", (error) => {
+  //           setLoadingVideoId(null); // Clear loading state when ready
+  //           console.error("ArtPlayer error:", error);
+  //         });
+  //       } catch (error) {
+  //         console.error("Error initializing ArtPlayer:", error);
+  //         setLoadingVideoId(null); // Clear loading state when ready
+  //       }
+  //     }
+  //   }
+
+  //   // Cleanup function to destroy ArtPlayer instance when component unmounts or card changes
+  //   return () => {
+  //     if (artPlayerInstanceRef.current) {
+  //       artPlayerInstanceRef.current.destroy();
+  //       artPlayerInstanceRef.current = null;
+  //     }
+  //   };
+  // }, [activeLongPressCard]);
 
   const handleTouchStart = (card: any) => {
     handleLongPress(card);
@@ -523,12 +612,14 @@ const Results: React.FC<ResultsProps> = ({}) => {
     // }
     // // Also clear the active card when touch ends
     if (activeLongPressCard) {
+      //setVideoReadyStates((prev) => ({ ...prev, [card.post_id]: false }));
+
       setActiveLongPressCard(null);
       setLoadingVideoId(null);
     }
   };
 
-  console.log(loadingVideoId);
+  console.log(videoReadyStates);
 
   return (
     <div className="">
@@ -643,51 +734,26 @@ const Results: React.FC<ResultsProps> = ({}) => {
                         data-postid={card?.post_id}
                         className="max-w-full pb-[12px] chinese_photo h-[325px]"
                       >
+                        {loadingVideoId === card.post_id && (
+                          <div className="loading-line-container absolute top-0 left-0 w-full h-[2px]">
+                            <div className="loading-line"></div>
+                          </div>
+                        )}
                         <div
-                          className={` relative flex justify-center  items-center bg-[#010101] rounded-[4px] overflow-hidden  h-[240px] ${
-                            loadingVideoId === card.post_id
-                              ? "border-t-2 border-red-600"
-                              : ""
-                          }`}
+                          className={` relative flex justify-center  items-center bg-[#010101] rounded-[4px] overflow-hidden  h-[240px]`}
                         >
-                          {activeLongPressCard?.preview?.url &&
-                          // !loadingVideoId &&
-                          card?.post_id === activeLongPressCard?.post_id ? (
-                            <div
-                              ref={videoPlayerRef}
-                              className="w-full h-full object-cover rounded-none"
-                            ></div>
-                          ) : (
-                            <ImageWithPlaceholder
-                              src={card?.preview_image}
-                              alt={card.title || "Video"}
-                              width={"100%"}
-                              height={
-                                card?.files[0]?.height &&
-                                calculateHeight(
-                                  card?.files[0]?.width,
-                                  card?.files[0]?.height
-                                )
-                              }
-                              className={`object-cover h-full w-full rounded-none `}
-                            />
-                          )}
+                          <div
+                            ref={(el) =>
+                              (videoPlayerRefs.current[card.post_id] = el)
+                            }
+                            className={`w-full h-full object-cover rounded-none ${
+                              videoReadyStates[card.post_id]
+                                ? "block"
+                                : "hidden"
+                            }`}
+                          />
 
-                          {/* <div
-                            ref={videoPlayerRef}
-                            className="w-full h-full object-cover rounded-none"
-                            style={{
-                              position: "absolute",
-                              top: 0,
-                              left: 0,
-                              zIndex: 1,
-
-                              opacity: 0,
-                              transition: "opacity 0.3s ease",
-                              pointerEvents: "none",
-                            }}
-                          ></div>
-
+                          {/* Always render image but hide when video is ready */}
                           <ImageWithPlaceholder
                             src={card?.preview_image}
                             alt={card.title || "Video"}
@@ -700,11 +766,11 @@ const Results: React.FC<ResultsProps> = ({}) => {
                               )
                             }
                             className={`object-cover h-full w-full rounded-none ${
-                              activeLongPressCard?.post_id !== card.post_id
-                                ? "block"
-                                : "hidden"
+                              videoReadyStates[card.post_id]
+                                ? "hidden"
+                                : "block"
                             }`}
-                          /> */}
+                          />
 
                           <div className=" absolute hidden left-0 mx-auto right-0 bottom-0 fle justify-around items-center w-full max-w-[175px] bg-blac">
                             <div className=" flex w-full  justify-between px-2">

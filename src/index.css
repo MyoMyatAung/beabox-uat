@@ -48,6 +48,30 @@ img {
   -webkit-touch-callout: none !important;
 }
 
+@keyframes loading-line {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.loading-line-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.loading-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background-color: #cc3efe; /* red-600 */
+  animation: loading-line 1.5s linear infinite;
+}
+
 @layer base {
   :root {
     --background: 0 0% 0%;
