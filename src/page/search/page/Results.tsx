@@ -370,20 +370,42 @@ const Results: React.FC<ResultsProps> = ({}) => {
     };
   }, []);
 
-  // Long press handler function
+  // // Long press handler function
+  // const handleLongPress = (card: any) => {
+  //   setVideoReadyStates((prev) => ({ ...prev, [card.post_id]: false }));
+
+  //   if (card?.preview?.url) {
+  //     initializePlayer(card);
+  //   }
+  //   setLoadingVideoId(card.post_id); // Set loading state for this specific video
+
+  //   console.log("Long press detected on:", card.post_id);
+  //   console.log("Card details:", card);
+  //   // set active long press card
+  //   setActiveLongPressCard(card);
+  //   // Add your long press logic here
+  // };
+
   const handleLongPress = (card: any) => {
+    // Pause any currently playing video
+    if (activeLongPressCard) {
+      const currentPlayer =
+        artPlayerInstances.current[activeLongPressCard.post_id];
+      if (currentPlayer) {
+        currentPlayer.muted = true;
+        currentPlayer.pause();
+      }
+    }
+
     setVideoReadyStates((prev) => ({ ...prev, [card.post_id]: false }));
 
     if (card?.preview?.url) {
       initializePlayer(card);
     }
-    setLoadingVideoId(card.post_id); // Set loading state for this specific video
+    setLoadingVideoId(card.post_id);
 
     console.log("Long press detected on:", card.post_id);
-    console.log("Card details:", card);
-    // set active long press card
     setActiveLongPressCard(card);
-    // Add your long press logic here
   };
 
   const initializePlayer = (card: any) => {
@@ -611,12 +633,13 @@ const Results: React.FC<ResultsProps> = ({}) => {
     //   clearTimeout(longPressTimer);
     // }
     // // Also clear the active card when touch ends
-    if (activeLongPressCard) {
-      //setVideoReadyStates((prev) => ({ ...prev, [card.post_id]: false }));
-
-      setActiveLongPressCard(null);
-      setLoadingVideoId(null);
+    const player = artPlayerInstances.current[activeLongPressCard.post_id];
+    if (player) {
+      player.muted = true;
+      player.pause();
     }
+    setActiveLongPressCard(null);
+    setLoadingVideoId(null);
   };
 
   console.log(videoReadyStates);
