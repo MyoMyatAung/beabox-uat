@@ -390,7 +390,8 @@ const Results: React.FC<ResultsProps> = ({}) => {
     // Pause any currently playing video
     if (activeLongPressCard) {
       const currentPlayer =
-        artPlayerInstances.current[activeLongPressCard.post_id];
+        artPlayerInstances.current[activeLongPressCard?.post_id];
+      console.log("currentPlayer", currentPlayer);
       if (currentPlayer) {
         currentPlayer.muted = true;
         currentPlayer.pause();
@@ -459,6 +460,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
       artPlayerInstances.current[card.post_id] = player;
 
       player.on("ready", () => {
+        // player.muted = false;
         setVideoReadyStates((prev) => ({ ...prev, [card.post_id]: true }));
 
         setLoadingVideoId(null);
@@ -487,157 +489,19 @@ const Results: React.FC<ResultsProps> = ({}) => {
     }
   };
 
-  // useEffect(() => {
-  //   if (activeLongPressCard) {
-  //     console.log("active long press card =>", activeLongPressCard);
-  //     console.log(videoPlayerRef.current);
-
-  //     // Initialize ArtPlayer when a card is long-pressed and has a preview URL
-  //     if (activeLongPressCard?.preview?.url && videoPlayerRef.current) {
-  //       // Destroy previous instance if it exists
-  //       if (artPlayerInstanceRef.current) {
-  //         artPlayerInstanceRef.current.destroy();
-  //         artPlayerInstanceRef.current = null;
-  //       }
-
-  //       // Create new ArtPlayer instance
-  //       const videoUrl = activeLongPressCard?.preview?.url;
-  // const isM3u8 = videoUrl.includes(".m3u8");
-  //       const isBlob = videoUrl.startsWith("blob:");
-
-  //       console.log("Video URL:", videoUrl);
-  //       console.log("Is blob URL:", isBlob);
-
-  //       const options: Artplayer["Option"] = {
-  //         container: videoPlayerRef.current,
-  //         url: videoUrl,
-  //         volume: 0.5,
-  // muted: true,
-  // autoplay: true,
-  // loop: true,
-  // isLive: false,
-  // aspectRatio: true,
-  // fullscreen: false,
-  // theme: "#d53ff0",
-  // moreVideoAttr: {
-  //   playsInline: true,
-  //   preload: "auto" as const,
-  // },
-  // type: isM3u8 ? "m3u8" : "auto",
-  // customType: {
-  //   m3u8: (videoElement: HTMLVideoElement, url: string) => {
-  //     if (Hls.isSupported()) {
-  //       const hls = new Hls();
-  //       hls.loadSource(url);
-  //       hls.attachMedia(videoElement);
-  //     } else if (
-  //       videoElement.canPlayType("application/vnd.apple.mpegurl")
-  //     ) {
-  //       videoElement.src = url;
-  //     }
-  //   },
-  // },
-
-  // icons: {
-  //   loading: `<div style="display:none"></div>`,
-  //   state: `<div style="display:none"></div>`,
-  // },
-  //       };
-
-  //       try {
-  //         artPlayerInstanceRef.current = new Artplayer(options);
-
-  //         const playIndicator =
-  //           artPlayerInstanceRef.current.template.$state.querySelector(
-  //             ".video-play-indicator"
-  //           ) as HTMLDivElement;
-  //         if (playIndicator) playIndicator.style.display = "none";
-  //         const loadingIndicator =
-  //           artPlayerInstanceRef.current.template.$state.querySelector(
-  //             ".video-loading-indicator"
-  //           ) as HTMLDivElement;
-  //         if (loadingIndicator) loadingIndicator.style.display = "none";
-  //         const artplayerContainer = videoPlayerRef.current;
-  //         const controls = artplayerContainer.querySelectorAll(
-  //           ".art-controls, .art-mask"
-  //         );
-  //         controls.forEach((control: any) => {
-  //           (control as HTMLElement).style.display = "none";
-  //         });
-
-  //         // Add event listeners for debugging
-  //         artPlayerInstanceRef.current.on("ready", () => {
-  //           const playIndicator =
-  //             artPlayerInstanceRef?.current?.template.$state.querySelector(
-  //               ".video-play-indicator"
-  //             ) as HTMLDivElement;
-  //           if (playIndicator) playIndicator.style.display = "none";
-  //           const laodingIndicator =
-  //             artPlayerInstanceRef?.current?.template.$state.querySelector(
-  //               ".video-loading-indicator"
-  //             ) as HTMLDivElement;
-  //           if (laodingIndicator) laodingIndicator.style.display = "none";
-  //           console.log("ArtPlayer ready");
-  //         });
-
-  //         // Add event listeners for debugging
-  //         artPlayerInstanceRef.current.on("video:waiting", () => {
-  //           console.log("ArtPlayer waiting");
-  //           setLoadingVideoId(activeLongPressCard.post_id); // Set loading when buffering
-  //         });
-
-  //         artPlayerInstanceRef.current.on("play", () => {
-  //           setLoadingVideoId(null); // Clear loading state when ready
-  //           if (videoPlayerRef.current) {
-  //             videoPlayerRef.current.style.opacity = "1"; // Show video player
-  //           }
-  //           console.log("ArtPlayer playing");
-  //         });
-  //         artPlayerInstanceRef.current.on("video:playing", () => {
-  //           setLoadingVideoId(null); // Clear loading state when ready
-
-  //           console.log("ArtPlayer playing");
-  //         });
-
-  //         artPlayerInstanceRef.current.on("error", (error) => {
-  //           setLoadingVideoId(null); // Clear loading state when ready
-  //           console.error("ArtPlayer error:", error);
-  //         });
-  //       } catch (error) {
-  //         console.error("Error initializing ArtPlayer:", error);
-  //         setLoadingVideoId(null); // Clear loading state when ready
-  //       }
-  //     }
-  //   }
-
-  //   // Cleanup function to destroy ArtPlayer instance when component unmounts or card changes
-  //   return () => {
-  //     if (artPlayerInstanceRef.current) {
-  //       artPlayerInstanceRef.current.destroy();
-  //       artPlayerInstanceRef.current = null;
-  //     }
-  //   };
-  // }, [activeLongPressCard]);
-
   const handleTouchStart = (card: any) => {
     handleLongPress(card);
-    // const timer = setTimeout(() => {
-
-    // }, 2000); // 2 seconds
-    // setLongPressTimer(timer);
   };
 
   const handleTouchEnd = () => {
-    // setLongPressTimer(null);
-    // if (longPressTimer) {
-    //   clearTimeout(longPressTimer);
-    // }
-    // // Also clear the active card when touch ends
-    const player = artPlayerInstances.current[activeLongPressCard.post_id];
-    if (player) {
-      player.muted = true;
-      player.pause();
+    if (activeLongPressCard?.post_id) {
+      const player = artPlayerInstances.current[activeLongPressCard?.post_id];
+      if (player) {
+        player.muted = true;
+        player.pause();
+      }
     }
+
     setActiveLongPressCard(null);
     setLoadingVideoId(null);
   };
