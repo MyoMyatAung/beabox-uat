@@ -44,6 +44,10 @@ body::-webkit-scrollbar {
   display: none !important; /* For Chrome, Safari, and Edge */
 }
 
+img {
+  -webkit-touch-callout: none !important;
+}
+
 @layer base {
   :root {
     --background: 0 0% 0%;

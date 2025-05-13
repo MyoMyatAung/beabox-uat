@@ -316,77 +316,291 @@ const Latest: React.FC<LatestPorp> = ({
     }
   }, [data, exp_header]);
 
-  // Initialize all video players when waterfall changes
+  // Add this at the top of your component
+  const observerRef = useRef<IntersectionObserver | null>(null);
+
+  // Initialize video players when they enter the viewport
   useEffect(() => {
-    waterfall.forEach((card: any) => {
-      if (card?.preview?.url) {
-        const container = videoPlayerRefs.current[card.post_id];
-        if (container && !artPlayerInstances.current[card.post_id]) {
-          const options: Artplayer["Option"] = {
-            container: container,
-            url: card.preview.url,
-            volume: 0.5, // Set initial volume
-            muted: true, // Start muted
-            autoplay: false, // Don't autoplay initially
-            loop: true,
-            isLive: false,
-            aspectRatio: true,
-            controls: [], // No controls
-            fullscreen: false,
-            theme: "#d53ff0",
-            type: card.preview.url.includes(".m3u8") ? "m3u8" : "auto",
-            moreVideoAttr: {
-              playsInline: true,
-            },
-            customType: {
-              m3u8: (videoElement: HTMLVideoElement, url: string) => {
-                if (Hls.isSupported()) {
-                  const hls = new Hls();
-                  hls.loadSource(url);
-                  hls.attachMedia(videoElement);
-                } else if (
-                  videoElement.canPlayType("application/vnd.apple.mpegurl")
-                ) {
-                  videoElement.src = url;
-                }
-              },
-            },
-            icons: {
-              loading: `<div style="display:none"></div>`,
-              state: `<div style="display:none"></div>`,
-            },
-          };
+    // Clean up previous observer if it exists
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
 
-          try {
-            const player = new Artplayer(options);
-            artPlayerInstances.current[card.post_id] = player;
+    // Create new Intersection Observer
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const postId = (entry.target as HTMLElement).dataset.postId;
+            if (!postId) return;
 
-            // Hide all controls
-            const controls = container.querySelectorAll(
-              ".art-controls, .art-mask"
-            );
-            controls.forEach((control) => {
-              (control as HTMLElement).style.display = "none";
-            });
+            const card = waterfall.find((c: any) => c.post_id === postId);
+            if (!card?.preview?.url) return;
 
-            player.on("error", (error) => {
-              console.error("ArtPlayer error:", error);
-            });
-          } catch (error) {
-            console.error("Error initializing ArtPlayer:", error);
+            // Only initialize if not already initialized
+            if (!artPlayerInstances.current[postId]) {
+              initializePlayer(card);
+            }
           }
-        }
+        });
+      },
+      {
+        root: null,
+        rootMargin: "200px", // Load when 200px away from viewport
+        threshold: 0.01,
+      }
+    );
+
+    // Observe all video containers
+    Object.keys(videoPlayerRefs.current).forEach((postId) => {
+      const container = videoPlayerRefs.current[postId];
+      if (container) {
+        container.dataset.postId = postId; // Set postId as data attribute
+        observerRef.current?.observe(container);
       }
     });
 
     return () => {
-      // Clean up all players
+      observerRef.current?.disconnect();
+    };
+  }, [waterfall]);
+  const initializePlayer = (card: any) => {
+    const container = videoPlayerRefs.current[card.post_id];
+    if (!container) return;
+
+    const options: Artplayer["Option"] = {
+      container: container,
+      url: card.preview.url,
+      volume: 0.5,
+      muted: true,
+      autoplay: false,
+      loop: true,
+      isLive: false,
+      aspectRatio: true,
+      controls: [],
+      fullscreen: false,
+      theme: "#d53ff0",
+      type: card.preview.url.includes(".m3u8") ? "m3u8" : "auto",
+      moreVideoAttr: {
+        playsInline: true,
+      },
+      customType: {
+        m3u8: (videoElement: HTMLVideoElement, url: string) => {
+          if (Hls.isSupported()) {
+            const hls = new Hls({
+              maxBufferLength: 1, // Maximum buffer length in seconds
+              maxMaxBufferLength: 1, // Absolute maximum buffer length
+              maxBufferSize: 1 * 1000 * 1000, // 2MB buffer size
+              maxBufferHole: 0.5, // Skip small gaps in the stream
+              lowLatencyMode: true, // Reduce latency
+              enableWorker: true, // Use web worker for better performance
+              backBufferLength: 1, // Keep only 1 second of back buffer
+            });
+
+            hls.on(Hls.Events.MANIFEST_PARSED, () => {
+              // Only load the first 2 seconds
+              hls.startLoad(0);
+              // hls.stopLoad(2);
+            });
+
+            hls.loadSource(url);
+            hls.attachMedia(videoElement);
+
+            // Optional: Clean up buffer when not playing
+            videoElement.addEventListener("pause", () => {
+              hls.stopLoad();
+            });
+            videoElement.addEventListener("play", () => {
+              hls.startLoad(-1); // Resume loading from current position
+            });
+          } else if (
+            videoElement.canPlayType("application/vnd.apple.mpegurl")
+          ) {
+            // For Safari's native HLS support, we have less control
+            videoElement.src = url;
+            videoElement.preload = "none"; // Minimal preloading
+          }
+        },
+      },
+      icons: {
+        loading: `<div style="display:none"></div>`,
+        state: `<div style="display:none"></div>`,
+      },
+    };
+
+    try {
+      const player = new Artplayer(options);
+      artPlayerInstances.current[card.post_id] = player;
+
+      // Hide all controls
+      const controls = container.querySelectorAll(".art-controls, .art-mask");
+      controls.forEach((control) => {
+        (control as HTMLElement).style.display = "none";
+      });
+
+      player.on("error", (error) => {
+        console.error("ArtPlayer error:", error);
+      });
+
+      // Additional optimization: Only load video when needed
+      player.on("play", () => {
+        const hlsInstance = player.hls;
+        if (hlsInstance) {
+          hlsInstance.startLoad(-1); // Start loading from current position
+        }
+      });
+
+      player.on("pause", () => {
+        const hlsInstance = player.hls;
+        if (hlsInstance) {
+          hlsInstance.stopLoad(); // Stop loading when paused
+        }
+      });
+    } catch (error) {
+      console.error("Error initializing ArtPlayer:", error);
+    }
+  };
+
+  // // Extract player initialization to a separate function
+  // const initializePlayer = (card: any) => {
+  //   const container = videoPlayerRefs.current[card.post_id];
+  //   if (!container) return;
+
+  //   const options: Artplayer["Option"] = {
+  //     container: container,
+  //     url: card.preview.url,
+  //     volume: 0.5,
+  //     muted: true,
+  //     autoplay: false,
+  //     loop: true,
+  //     isLive: false,
+  //     aspectRatio: true,
+  //     controls: [],
+  //     fullscreen: false,
+  //     theme: "#d53ff0",
+  //     type: card.preview.url.includes(".m3u8") ? "m3u8" : "auto",
+  //     moreVideoAttr: {
+  //       playsInline: true,
+  //     },
+  //     customType: {
+  //       m3u8: (videoElement: HTMLVideoElement, url: string) => {
+  //         if (Hls.isSupported()) {
+  //           const hls = new Hls();
+  //           hls.loadSource(url);
+  //           hls.attachMedia(videoElement);
+  //         } else if (
+  //           videoElement.canPlayType("application/vnd.apple.mpegurl")
+  //         ) {
+  //           videoElement.src = url;
+  //         }
+  //       },
+  //     },
+  //     icons: {
+  //       loading: `<div style="display:none"></div>`,
+  //       state: `<div style="display:none"></div>`,
+  //     },
+  //   };
+
+  //   try {
+  //     const player = new Artplayer(options);
+  //     artPlayerInstances.current[card.post_id] = player;
+
+  //     // Hide all controls
+  //     const controls = container.querySelectorAll(".art-controls, .art-mask");
+  //     controls.forEach((control) => {
+  //       (control as HTMLElement).style.display = "none";
+  //     });
+
+  //     player.on("error", (error) => {
+  //       console.error("ArtPlayer error:", error);
+  //     });
+  //   } catch (error) {
+  //     console.error("Error initializing ArtPlayer:", error);
+  //   }
+  // };
+
+  // Clean up all players when component unmounts
+  useEffect(() => {
+    return () => {
       Object.values(artPlayerInstances.current).forEach((player) => {
         player?.destroy();
       });
       artPlayerInstances.current = {};
+      observerRef.current?.disconnect();
     };
-  }, [waterfall]);
+  }, []);
+
+  // // Initialize all video players when waterfall changes
+  // useEffect(() => {
+  //   waterfall.forEach((card: any) => {
+  //     if (card?.preview?.url) {
+  //       const container = videoPlayerRefs.current[card.post_id];
+  //       if (container && !artPlayerInstances.current[card.post_id]) {
+  //         const options: Artplayer["Option"] = {
+  //           container: container,
+  //           url: card.preview.url,
+  //           volume: 0.5, // Set initial volume
+  //           muted: true, // Start muted
+  //           autoplay: false, // Don't autoplay initially
+  //           loop: true,
+  //           isLive: false,
+  //           aspectRatio: true,
+  //           controls: [], // No controls
+  //           fullscreen: false,
+  //           theme: "#d53ff0",
+  //           type: card.preview.url.includes(".m3u8") ? "m3u8" : "auto",
+  //           moreVideoAttr: {
+  //             playsInline: true,
+  //           },
+  //           customType: {
+  //             m3u8: (videoElement: HTMLVideoElement, url: string) => {
+  //               if (Hls.isSupported()) {
+  //                 const hls = new Hls();
+  //                 hls.loadSource(url);
+  //                 hls.attachMedia(videoElement);
+  //               } else if (
+  //                 videoElement.canPlayType("application/vnd.apple.mpegurl")
+  //               ) {
+  //                 videoElement.src = url;
+  //               }
+  //             },
+  //           },
+  //           icons: {
+  //             loading: `<div style="display:none"></div>`,
+  //             state: `<div style="display:none"></div>`,
+  //           },
+  //         };
+
+  //         try {
+  //           const player = new Artplayer(options);
+  //           artPlayerInstances.current[card.post_id] = player;
+
+  //           // Hide all controls
+  //           const controls = container.querySelectorAll(
+  //             ".art-controls, .art-mask"
+  //           );
+  //           controls.forEach((control) => {
+  //             (control as HTMLElement).style.display = "none";
+  //           });
+
+  //           player.on("error", (error) => {
+  //             console.error("ArtPlayer error:", error);
+  //           });
+  //         } catch (error) {
+  //           console.error("Error initializing ArtPlayer:", error);
+  //         }
+  //       }
+  //     }
+  //   });
+
+  //   return () => {
+  //     // Clean up all players
+  //     Object.values(artPlayerInstances.current).forEach((player) => {
+  //       player?.destroy();
+  //     });
+  //     artPlayerInstances.current = {};
+  //   };
+  // }, [waterfall]);
 
   const formatNumber = (num: number) => {
     if (num >= 1000) {
