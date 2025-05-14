@@ -71,7 +71,7 @@ img {
   width: 100%;
   background-color: #cc3efe;
   animation: loading-line 1.5s linear forwards; /* 'forwards' keeps final state */
-  transform: translateX(-100%); /* Start position */
+  /* transform: translateX(-100%); Start position */
 }
 /* 
 @keyframes loading-line {

@@ -30,6 +30,8 @@ import backButton from "../../../assets/backButton.svg";
 import { useGetConfigQuery } from "@/page/home/services/homeApi";
 import { decryptImage } from "@/utils/imageDecrypt";
 import { load } from "@fingerprintjs/fingerprintjs";
+import { set } from "react-hook-form";
+import LoadingAnimation from "../comp/LoadingAnimation";
 
 interface ResultsProps {}
 
@@ -511,6 +513,35 @@ const Results: React.FC<ResultsProps> = ({}) => {
     // handleLongPress(card);
   };
 
+  const [minimumLoadingTimeElapsed, setMinimumLoadingTimeElapsed] = useState<{
+    [key: string]: boolean;
+  }>({});
+  const loadingTimerRef = useRef<NodeJS.Timeout>();
+
+  useEffect(() => {
+    if (loadingVideoId) {
+      setMinimumLoadingTimeElapsed((prev) => ({
+        ...prev,
+        [loadingVideoId]: false,
+      }));
+
+      // Set timer for 1.5 seconds
+      loadingTimerRef.current = setTimeout(() => {
+        setMinimumLoadingTimeElapsed((prev) => ({
+          ...prev,
+          [loadingVideoId]: true,
+        }));
+      }, 1500);
+
+      // Clear timer on unmount
+      return () => {
+        if (loadingTimerRef.current) {
+          clearTimeout(loadingTimerRef.current);
+        }
+      };
+    }
+  }, [loadingVideoId]);
+
   return (
     <div className="">
       {showVideoFeed && selectedMovieId && (
@@ -627,11 +658,15 @@ const Results: React.FC<ResultsProps> = ({}) => {
                         <div className="w-full h-[2px] relative">
                           {" "}
                           {/* Container with fixed height */}
-                          {loadingVideoId === card.post_id && (
+                          <LoadingAnimation
+                            loadingVideoId={loadingVideoId}
+                            postId={card?.post_id}
+                          />
+                          {/* {loadingVideoId === card.post_id && (
                             <div className="loading-line-container absolute top-0 left-0 w-full h-[2px]">
                               <div className="loading-line"></div>
                             </div>
-                          )}
+                          )} */}
                         </div>
 
                         <div
