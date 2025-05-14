@@ -40,9 +40,7 @@ const App = () => {
   // Handle version check result
   useEffect(() => {
     if (versionCheckSuccess && versionData) {
-      console.log('versionData is=>', versionData);
       const needsUpdate = versionData?.data?.update_status;
-      
       if (needsUpdate) {
         if(isWebClip()) {
           window.location.reload();
