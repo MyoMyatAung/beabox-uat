@@ -256,7 +256,7 @@ const Player = ({
         // Calculate maximum left position to keep thumbnail within viewport
         const thumbnailWidth = metadata.isPortrait ? 90 : 160;
         const viewportWidth = window.innerWidth;
-        const maxLeft = viewportWidth - thumbnailWidth - 10; // 40px buffer from right edge
+        const maxLeft = viewportWidth - thumbnailWidth - 10; // buffer from right edge
 
         // Constrain the position
         let leftPosition = thumbnailPreview.position.x + 20;
@@ -269,12 +269,30 @@ const Player = ({
         } else {
           previewElement.style.backgroundImage = `url(${spriteImageUrlRef.current})`;
         }
-        // previewElement.style.backgroundImage = `url(${spriteImageUrlRef.current})`;
-        previewElement.style.backgroundPosition = `-${pos.x}px -${pos.y}px`;
+        
+        // Calculate the correct scale factor to fit the sprite in our thumbnail
+        const scaleX = metadata.isPortrait ? 90 / metadata.tileWidth : 160 / metadata.tileWidth;
+        const scaleY = metadata.isPortrait ? 160 / metadata.tileHeight : 90 / metadata.tileHeight;
+        
+        // Use the same scaling for X and Y to maintain aspect ratio
+        const scale = Math.min(scaleX, scaleY);
+        
+        // Calculate scaled position based on the size ratio
+        const scaledX = pos.x * scale;
+        const scaledY = pos.y * scale;
 
-        previewElement.style.backgroundSize = `${
-          metadata.tileCols * metadata.tileWidth
-        }px ${metadata.tileRows * metadata.tileHeight}px`;
+        // Set the background size and position with appropriate scaling
+        previewElement.style.backgroundPosition = `-${scaledX}px -${scaledY}px`;
+        
+        // Calculate the full sprite size
+        const fullWidth = metadata.tileCols * metadata.tileWidth;
+        const fullHeight = metadata.tileRows * metadata.tileHeight; 
+        
+        // Scale the full sprite to match our thumbnail dimensions while maintaining aspect ratio
+        const scaledWidth = fullWidth * scale;
+        const scaledHeight = fullHeight * scale;
+        
+        previewElement.style.backgroundSize = `${scaledWidth}px ${scaledHeight}px`;
       }
     } else {
       previewElement.style.display = "none";
@@ -1107,7 +1125,7 @@ const Player = ({
       width: ${metadata.isPortrait ? "90px" : "160px"};
       height: ${metadata.isPortrait ? "160px" : "90px"};
       background-repeat: no-repeat;
-      background-size: auto;
+      background-size: cover;
       border-radius: 4px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.3);
       pointer-events: none;
@@ -1141,7 +1159,7 @@ const Player = ({
                   // Calculate maximum left position to keep thumbnail within viewport
                   const thumbnailWidth = metadata.isPortrait ? 90 : 160;
                   const viewportWidth = window.innerWidth;
-                  const maxLeft = viewportWidth - thumbnailWidth - 20; // 40px buffer from right edge
+                  const maxLeft = viewportWidth - thumbnailWidth - 20; // buffer from right edge
 
                   // Constrain the position
                   let leftPosition = thumbnailPreview.position.x + 20;
@@ -1154,12 +1172,30 @@ const Player = ({
                   } else {
                     previewElement.style.backgroundImage = `url(${spriteImageUrlRef.current})`;
                   }
+                  
+                  // Calculate the correct scale factor to fit the sprite in our thumbnail
+                  const scaleX = metadata.isPortrait ? 90 / metadata.tileWidth : 160 / metadata.tileWidth;
+                  const scaleY = metadata.isPortrait ? 160 / metadata.tileHeight : 90 / metadata.tileHeight;
+                  
+                  // Use the same scaling for X and Y to maintain aspect ratio
+                  const scale = Math.min(scaleX, scaleY);
+                  
+                  // Calculate scaled position based on the size ratio
+                  const scaledX = pos.x * scale;
+                  const scaledY = pos.y * scale;
 
-                  previewElement.style.backgroundPosition = `-${pos.x}px -${pos.y}px`;
-
-                  previewElement.style.backgroundSize = `${
-                    metadata.tileCols * metadata.tileWidth
-                  }px ${metadata.tileRows * metadata.tileHeight}px`;
+                  // Set the background size and position with appropriate scaling
+                  previewElement.style.backgroundPosition = `-${scaledX}px -${scaledY}px`;
+                  
+                  // Calculate the full sprite size
+                  const fullWidth = metadata.tileCols * metadata.tileWidth;
+                  const fullHeight = metadata.tileRows * metadata.tileHeight; 
+                  
+                  // Scale the full sprite to match our thumbnail dimensions while maintaining aspect ratio
+                  const scaledWidth = fullWidth * scale;
+                  const scaledHeight = fullHeight * scale;
+                  
+                  previewElement.style.backgroundSize = `${scaledWidth}px ${scaledHeight}px`;
                 }
               } else {
                 previewElement.style.display = "none";

@@ -25,7 +25,6 @@ export const profileApi = createApi({
     },
     responseHandler: async (response) => {
       const encryptedData = await response.json();
-      console.log(encryptedData, "encryptedData");
       if (encryptedData?.status === false)
         localStorage.setItem("profile-error", encryptedData?.message);
       try {
