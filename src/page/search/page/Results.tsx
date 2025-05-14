@@ -69,6 +69,9 @@ const Results: React.FC<ResultsProps> = ({}) => {
   const scrollPositionRef = useRef(0);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [activeLongPressCard, setActiveLongPressCard] = useState<any>(null);
+  const [playingVideos, setPlayingVideos] = useState<{
+    [key: string]: boolean;
+  }>({});
 
   const artPlayerInstances = useRef<{ [key: string]: Artplayer | null }>({});
 
@@ -369,14 +372,19 @@ const Results: React.FC<ResultsProps> = ({}) => {
   const longPressTimer = useRef<NodeJS.Timeout | null>(null);
 
   const handleLongPress = (card: any) => {
+    if (playingVideos[card.post_id]) return;
+    if (!card?.preview?.url) return;
     // Pause any currently playing video
     if (activeLongPressCard) {
       const currentPlayer =
         artPlayerInstances.current[activeLongPressCard?.post_id];
-
       if (currentPlayer) {
         currentPlayer.muted = true;
         currentPlayer.pause();
+        setPlayingVideos((prev) => ({
+          ...prev,
+          [activeLongPressCard.post_id]: false,
+        }));
       }
     }
 
@@ -441,17 +449,25 @@ const Results: React.FC<ResultsProps> = ({}) => {
       player.on("ready", () => {
         player.muted = false;
         player.play();
+        setPlayingVideos((prev) => ({ ...prev, [card.post_id]: true }));
 
         setLoadingVideoId(null);
       });
 
       player.on("play", () => {
         player.muted = false;
+        setPlayingVideos((prev) => ({ ...prev, [card.post_id]: true }));
+
         setLoadingVideoId(null);
+      });
+
+      player.on("pause", () => {
+        setPlayingVideos((prev) => ({ ...prev, [card.post_id]: false }));
       });
 
       player.on("video:playing", () => {
         player.muted = false;
+        setPlayingVideos((prev) => ({ ...prev, [card.post_id]: true }));
 
         setLoadingVideoId(null);
       });
@@ -460,35 +476,24 @@ const Results: React.FC<ResultsProps> = ({}) => {
       });
 
       player.on("error", () => {
+        setPlayingVideos((prev) => ({ ...prev, [card.post_id]: false }));
         setLoadingVideoId(null);
       });
     } catch (error) {
+      setPlayingVideos((prev) => ({ ...prev, [card.post_id]: false }));
       console.error("Error initializing ArtPlayer:", error);
       setLoadingVideoId(null);
     }
   };
 
   const handleTouchStart = (card: any) => {
+    if (playingVideos[card.post_id]) return;
+
     longPressTimer.current = setTimeout(() => {
       handleLongPress(card);
     }, 500); // 500ms threshold for long press
     // handleLongPress(card);
   };
-
-  // const handleTouchEnd = () => {
-  //   // Clear the timer if touch ends before long press threshold
-
-  //   if (activeLongPressCard?.post_id) {
-  //     const player = artPlayerInstances.current[activeLongPressCard?.post_id];
-  //     if (player) {
-  //       player.muted = true;
-  //       player.pause();
-  //     }
-  //   }
-
-  //   setActiveLongPressCard(null);
-  //   setLoadingVideoId(null);
-  // };
 
   return (
     <div className="">
@@ -603,11 +608,15 @@ const Results: React.FC<ResultsProps> = ({}) => {
                         data-postid={card?.post_id}
                         className="max-w-full pb-[12px] chinese_photo h-[325px]"
                       >
-                        {loadingVideoId === card.post_id && (
-                          <div className="loading-line-container absolute top-0 left-0 w-full h-[2px]">
-                            <div className="loading-line"></div>
-                          </div>
-                        )}
+                        <div className="w-full h-[2px] relative">
+                          {" "}
+                          {/* Container with fixed height */}
+                          {loadingVideoId === card.post_id && (
+                            <div className="loading-line-container absolute top-0 left-0 w-full h-[2px]">
+                              <div className="loading-line"></div>
+                            </div>
+                          )}
+                        </div>
 
                         <div
                           className={` relative flex justify-center  items-center bg-[#010101] rounded-[4px] overflow-hidden  h-[240px]`}
