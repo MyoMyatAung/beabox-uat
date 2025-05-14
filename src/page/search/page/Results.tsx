@@ -396,8 +396,24 @@ const Results: React.FC<ResultsProps> = ({}) => {
     setActiveLongPressCard(card);
   };
 
+  // Add this right after your state declarations
+  // Add this useEffect
+  useEffect(() => {
+    if (movies.length > 0 && movies.length <= 10) {
+      const firstVideo = movies[0];
+      if (firstVideo?.preview?.url) {
+        console.log("Initializing player for first video");
+        // Small timeout to ensure DOM is ready
+        setTimeout(() => {
+          handleLongPress(firstVideo);
+        }, 300);
+      }
+    }
+  }, [movies]);
+
   const initializePlayer = (card: any) => {
     const container = videoPlayerRefs.current[card.post_id];
+
     if (!container) return;
 
     // Destroy previous instance if exists
@@ -447,7 +463,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
       artPlayerInstances.current[card.post_id] = player;
 
       player.on("ready", () => {
-        player.muted = false;
+        // player.muted = false;
         player.play();
         setPlayingVideos((prev) => ({ ...prev, [card.post_id]: true }));
 
@@ -455,7 +471,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
       });
 
       player.on("play", () => {
-        player.muted = false;
+        // player.muted = false;
         setPlayingVideos((prev) => ({ ...prev, [card.post_id]: true }));
 
         setLoadingVideoId(null);
@@ -466,7 +482,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
       });
 
       player.on("video:playing", () => {
-        player.muted = false;
+        // player.muted = false;
         setPlayingVideos((prev) => ({ ...prev, [card.post_id]: true }));
 
         setLoadingVideoId(null);
@@ -637,7 +653,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
                                 loadingVideoId !== card.post_id
                                   ? 1
                                   : 0,
-                              transition: "opacity 0.3s ease",
+                              transition: "opacity 1s ease",
                               pointerEvents: "none",
                             }}
                           />
@@ -661,7 +677,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
                                 loadingVideoId !== card.post_id
                                   ? 0
                                   : 1,
-                              transition: "opacity 0.3s ease",
+                              transition: "opacity 1s ease",
                             }}
                           />
                           {/* <div
