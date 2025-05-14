@@ -37,6 +37,28 @@ import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 import AuthDrawer from "@/components/profile/auth/auth-drawer";
 import copy from "copy-to-clipboard";
 
+// Sample notification data
+const notificationData = [
+  {
+    text: "用户：不安的香氛 成功瓜分红包：11元",
+    nickname: "不安的香氛",
+    amount: 11,
+    currency: "元"
+  },
+  {
+    text: "用户：风中的咖啡豆 成功瓜分红包：17元",
+    nickname: "风中的咖啡豆",
+    amount: 17,
+    currency: "元"
+  },
+  {
+    text: "用户：能干的小兔子 成功瓜分红包：33元",
+    nickname: "能干的小兔子",
+    amount: 33,
+    currency: "元"
+  }
+];
+
 const Luckydraw = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -56,6 +78,8 @@ const Luckydraw = () => {
   const [prizeDigit, setPrizeDigit] = useState<number[]>([0,0,0,0,0,0]);
   const [isAnimating, setIsAnimating] = useState(false);
   const { data } = useGetUserShareInfoQuery({});
+  const [currentNotification, setCurrentNotification] = useState(0);
+  const [notificationVisible, setNotificationVisible] = useState(true);
 
   // const {
   //   data: newEventDetails,
@@ -143,6 +167,22 @@ const Luckydraw = () => {
     
     return () => clearInterval(animationInterval);
   }, [stats?.remaining_amount]);
+
+  // Notification rotation effect
+  useEffect(() => {
+    const notificationInterval = setInterval(() => {
+      setNotificationVisible(false);
+      
+      setTimeout(() => {
+        setCurrentNotification((prev) => 
+          (prev + 1) % notificationData.length
+        );
+        setNotificationVisible(true);
+      }, 500);
+    }, 3000);
+    
+    return () => clearInterval(notificationInterval);
+  }, []);
 
   if (!stats) {
     return <Loader />;
@@ -241,12 +281,12 @@ const Luckydraw = () => {
         <div className="w-full max-w-md p-4 text-center mx-auto">
           <img src={eventTitle} alt="event title" className="mx-auto" />
           <div
-            className="rounded-lg p-9 text-white mt-6  bg-cover bg-center bg-no-repeat flex flex-col gap-y-2"
+            className="rounded-lg pt-[3rem] pb-[2rem] text-white mt-4  bg-cover bg-center bg-no-repeat flex flex-col gap-y-2"
             style={{
               backgroundImage: `url(${Pricebg})`,
             }}
           >
-            <div className="flex justify-center mt-5 space-x-1">
+            <div className="flex justify-center space-x-1">
               {prizeDigit?.map((digit, index) => (
                 <FlipNumber
                   key={index}
@@ -256,10 +296,10 @@ const Luckydraw = () => {
               ))}
             </div>
 
-            <div className="flex justify-center">
+            <div className="flex justify-center mt-[12px]">
               <img src={DrawTime} className="w-20" />
             </div>
-            <div className="text-sm mb-7 mx-auto">
+            <div className="text-sm mx-auto">
               <div className="flex justify-center text-sm mb-2 mx-auto gap-1">
                 <p className="flex gap-1">
                   {/* {remainingTime.split("").map((char, index) => (
@@ -278,7 +318,7 @@ const Luckydraw = () => {
                     </span>
                   ))} */}
                   <span
-                    className="font-[700]"
+                    className="font-[700] mt-[5px]"
                     style={{
                       background: "rgba(255, 255, 255, 0.2)",
                       padding: "4px 6px",
@@ -287,6 +327,20 @@ const Luckydraw = () => {
                   >
                     {remainingTime}
                   </span>
+                </p>
+              </div>
+            </div>
+            <div className="text-sm mb-7 h-8 overflow-hidden">
+              <div
+                className={`transition-transform duration-1000 ${
+                  notificationVisible 
+                    ? "transform translate-y-0 opacity-100" 
+                    : "transform -translate-y-6 opacity-5"
+                }`}
+              >
+                <p>
+                  用户：<span className="font-bold text-[16px]">{notificationData[currentNotification].nickname}</span> 成功瓜分红包：
+                  <span className="font-bold text-[18px]">{notificationData[currentNotification].amount}{notificationData[currentNotification].currency}</span>
                 </p>
               </div>
             </div>

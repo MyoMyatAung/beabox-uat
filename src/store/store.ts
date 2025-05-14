@@ -23,7 +23,7 @@ import pageSlice from "@/page/home/services/pageSlice";
 import muteSlice from "@/page/home/services/muteSlice";
 import loaderSlice from "@/page/home/services/loaderSlice";
 import hideBarSlice from "@/page/home/services/hideBarSlice";
-
+import { versionApi } from "./api/versionApi";
 import previousSlice from "@/page/home/services/previousSlice";
 import videoRenderSlice from "@/page/home/services/videoRenderSlice";
 import startSlice from "@/page/home/services/startSlice";
@@ -101,6 +101,7 @@ const rootReducer = combineReducers({
   event: eventSlice,
   [eventApi.reducerPath] : eventApi.reducer,
   [eventInvitationApi.reducerPath]: eventInvitationApi.reducer,
+  [versionApi.reducerPath]: versionApi.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -117,7 +118,8 @@ export const store: any = configureStore({
       .concat(searchApi.middleware)
       .concat(createCenterApi.middleware)
       .concat(eventApi.middleware)
-      .concat(eventInvitationApi.middleware),
+      .concat(eventInvitationApi.middleware)
+      .concat(versionApi.middleware),
 });
 
 export const persistor = persistStore(store);
