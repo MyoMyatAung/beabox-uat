@@ -103,7 +103,7 @@ const VideoCard2 = ({ videoData }: any) => {
             videoData?.files[0]?.width,
             videoData?.files[0]?.height
           )}
-          className=" object-cover h-full w-full rounded-none"
+          className=" object-contain h-full w-full rounded-none"
         />
         {/* <div className="absolute card_style_2 bottom-0 flex justify-between items-center h-[50px] px-3 w-full">
           <div className="flex items-center gap-1">
