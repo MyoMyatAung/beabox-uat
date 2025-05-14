@@ -39,7 +39,6 @@ const ForgotPassword = () => {
       captcha,
       captcha_key: captchaData?.data?.captcha_key,
     });
-    console.log(data?.data);
     if (data?.data?.question) {
       dispatch(setForgotData(data?.data));
       navigate(paths.check_answer);
