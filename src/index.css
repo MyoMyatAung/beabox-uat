@@ -44,6 +44,60 @@ body::-webkit-scrollbar {
   display: none !important; /* For Chrome, Safari, and Edge */
 }
 
+img {
+  -webkit-touch-callout: none !important;
+}
+@keyframes loading-line {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+.loading-line-container {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 2px;
+}
+
+.loading-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: #cc3efe;
+  animation: loading-line 1.5s linear forwards; /* 'forwards' keeps final state */
+  /* transform: translateX(-100%); Start position */
+}
+/* 
+@keyframes loading-line {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.loading-line-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.loading-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background-color: #cc3efe; 
+  animation: loading-line 1.5s linear infinite;
+} */
+
 @layer base {
   :root {
     --background: 0 0% 0%;
