@@ -32,17 +32,21 @@ const App = () => {
     skip: !numericVersion
   });
 
+  const isWebClip = (): boolean => {
+    return (
+      "standalone" in window.navigator && window.navigator.standalone === true
+    );
+  };
   // Handle version check result
   useEffect(() => {
     if (versionCheckSuccess && versionData) {
       console.log('versionData is=>', versionData);
-      const needsUpdate = versionData.status === 'update_required' || versionData.need_update === true;
+      const needsUpdate = versionData?.data?.update_status;
       
       if (needsUpdate) {
-        console.log('App update required, reloading...');
-        // Make sure hasSeenLanding is set before reloading to avoid showing landing page again
-        sessionStorage.setItem("hasSeenLanding", "true");
-        window.location.reload();
+        if(isWebClip()) {
+          window.location.reload();
+        }
       }
     }
   }, [versionCheckSuccess, versionData]);
