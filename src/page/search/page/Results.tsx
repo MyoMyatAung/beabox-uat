@@ -69,13 +69,9 @@ const Results: React.FC<ResultsProps> = ({}) => {
   const scrollPositionRef = useRef(0);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [activeLongPressCard, setActiveLongPressCard] = useState<any>(null);
-  const videoPlayerRef = useRef<HTMLDivElement>(null);
-  const artPlayerInstanceRef = useRef<Artplayer | null>(null);
+
   const artPlayerInstances = useRef<{ [key: string]: Artplayer | null }>({});
 
-  const [videoReadyStates, setVideoReadyStates] = useState<{
-    [key: string]: boolean;
-  }>({});
   const [loadingVideoId, setLoadingVideoId] = useState<string | null>(null);
   const videoPlayerRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
@@ -370,42 +366,25 @@ const Results: React.FC<ResultsProps> = ({}) => {
     };
   }, []);
 
-  // // Long press handler function
-  // const handleLongPress = (card: any) => {
-  //   setVideoReadyStates((prev) => ({ ...prev, [card.post_id]: false }));
-
-  //   if (card?.preview?.url) {
-  //     initializePlayer(card);
-  //   }
-  //   setLoadingVideoId(card.post_id); // Set loading state for this specific video
-
-  //   console.log("Long press detected on:", card.post_id);
-  //   console.log("Card details:", card);
-  //   // set active long press card
-  //   setActiveLongPressCard(card);
-  //   // Add your long press logic here
-  // };
+  const longPressTimer = useRef<NodeJS.Timeout | null>(null);
 
   const handleLongPress = (card: any) => {
     // Pause any currently playing video
     if (activeLongPressCard) {
       const currentPlayer =
         artPlayerInstances.current[activeLongPressCard?.post_id];
-      console.log("currentPlayer", currentPlayer);
+
       if (currentPlayer) {
         currentPlayer.muted = true;
         currentPlayer.pause();
       }
     }
 
-    setVideoReadyStates((prev) => ({ ...prev, [card.post_id]: false }));
-
     if (card?.preview?.url) {
       initializePlayer(card);
     }
     setLoadingVideoId(card.post_id);
 
-    console.log("Long press detected on:", card.post_id);
     setActiveLongPressCard(card);
   };
 
@@ -460,20 +439,20 @@ const Results: React.FC<ResultsProps> = ({}) => {
       artPlayerInstances.current[card.post_id] = player;
 
       player.on("ready", () => {
-        // player.muted = false;
-        setVideoReadyStates((prev) => ({ ...prev, [card.post_id]: true }));
+        player.muted = false;
+        player.play();
 
         setLoadingVideoId(null);
       });
 
       player.on("play", () => {
+        player.muted = false;
         setLoadingVideoId(null);
-        setVideoReadyStates((prev) => ({ ...prev, [card.post_id]: true }));
       });
 
       player.on("video:playing", () => {
-        console.log("Video is playing");
-        setVideoReadyStates((prev) => ({ ...prev, [card.post_id]: true }));
+        player.muted = false;
+
         setLoadingVideoId(null);
       });
       player.on("video:waiting", () => {
@@ -490,23 +469,26 @@ const Results: React.FC<ResultsProps> = ({}) => {
   };
 
   const handleTouchStart = (card: any) => {
-    handleLongPress(card);
+    longPressTimer.current = setTimeout(() => {
+      handleLongPress(card);
+    }, 500); // 500ms threshold for long press
+    // handleLongPress(card);
   };
 
-  const handleTouchEnd = () => {
-    if (activeLongPressCard?.post_id) {
-      const player = artPlayerInstances.current[activeLongPressCard?.post_id];
-      if (player) {
-        player.muted = true;
-        player.pause();
-      }
-    }
+  // const handleTouchEnd = () => {
+  //   // Clear the timer if touch ends before long press threshold
 
-    setActiveLongPressCard(null);
-    setLoadingVideoId(null);
-  };
+  //   if (activeLongPressCard?.post_id) {
+  //     const player = artPlayerInstances.current[activeLongPressCard?.post_id];
+  //     if (player) {
+  //       player.muted = true;
+  //       player.pause();
+  //     }
+  //   }
 
-  console.log(videoReadyStates);
+  //   setActiveLongPressCard(null);
+  //   setLoadingVideoId(null);
+  // };
 
   return (
     <div className="">
@@ -610,13 +592,13 @@ const Results: React.FC<ResultsProps> = ({}) => {
               {movies?.length > 0 && (
                 <div className=" py-[12px] w-full grid grid-cols-2 justify-center items-center  gap-[8px]">
                   <>
-                    {movies?.map((card: any) => (
+                    {movies?.map((card: any, index: any) => (
                       <div
                         onClick={() => handleVideoClick(card?.post_id)}
                         onTouchStart={() => handleTouchStart(card)}
-                        onTouchEnd={handleTouchEnd}
-                        onTouchMove={handleTouchEnd} // Cancel on move as well
-                        key={card.post_id}
+                        // onTouchEnd={handleTouchEnd}
+                        // onTouchMove={handleTouchEnd} // Cancel on move as well
+                        key={index}
                         data-video-card
                         data-postid={card?.post_id}
                         className="max-w-full pb-[12px] chinese_photo h-[325px]"
@@ -626,10 +608,54 @@ const Results: React.FC<ResultsProps> = ({}) => {
                             <div className="loading-line"></div>
                           </div>
                         )}
+
                         <div
                           className={` relative flex justify-center  items-center bg-[#010101] rounded-[4px] overflow-hidden  h-[240px]`}
                         >
                           <div
+                            ref={(el) =>
+                              (videoPlayerRefs.current[card.post_id] = el)
+                            }
+                            className={`w-full h-full object-cover rounded-none`}
+                            style={{
+                              position: "absolute",
+                              top: 0,
+                              left: 0,
+                              zIndex: 1,
+                              backgroundColor: "#000",
+                              opacity:
+                                activeLongPressCard?.post_id === card.post_id &&
+                                loadingVideoId !== card.post_id
+                                  ? 1
+                                  : 0,
+                              transition: "opacity 0.3s ease",
+                              pointerEvents: "none",
+                            }}
+                          />
+
+                          {/* Always render image but hide when video is ready */}
+                          <ImageWithPlaceholder
+                            src={card?.preview_image}
+                            alt={card.title || "Video"}
+                            width={"100%"}
+                            height={
+                              card?.files[0]?.height &&
+                              calculateHeight(
+                                card?.files[0]?.width,
+                                card?.files[0]?.height
+                              )
+                            }
+                            className={`object-cover h-full w-full rounded-none`}
+                            style={{
+                              opacity:
+                                activeLongPressCard?.post_id === card.post_id &&
+                                loadingVideoId !== card.post_id
+                                  ? 0
+                                  : 1,
+                              transition: "opacity 0.3s ease",
+                            }}
+                          />
+                          {/* <div
                             ref={(el) =>
                               (videoPlayerRefs.current[card.post_id] = el)
                             }
@@ -641,7 +667,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
                           />
 
                           {/* Always render image but hide when video is ready */}
-                          <ImageWithPlaceholder
+                          {/* <ImageWithPlaceholder
                             src={card?.preview_image}
                             alt={card.title || "Video"}
                             width={"100%"}
@@ -657,7 +683,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
                                 ? "hidden"
                                 : "block"
                             }`}
-                          />
+                          />  */}
 
                           <div className=" absolute hidden left-0 mx-auto right-0 bottom-0 fle justify-around items-center w-full max-w-[175px] bg-blac">
                             <div className=" flex w-full  justify-between px-2">
@@ -1370,8 +1396,8 @@ export default Results;
 //   //           },
 //   //         },
 //   //         icons: {
-// loading: `<div style="display:none"></div>`,
-// state: `<div style="display:none"></div>`,
+//   // loading: `<div style="display:none"></div>`,
+//   // state: `<div style="display:none"></div>`,
 //   //         },
 //   //       };
 
@@ -1379,7 +1405,7 @@ export default Results;
 //   //         artPlayerInstanceRef.current = new Artplayer(options);
 
 //   //         // Hide all controls
-// const artplayerContainer = videoPlayerRef.current;
+//   // const artplayerContainer = videoPlayerRef.current;
 //   //         if (artplayerContainer) {
 //   //           const controls = artplayerContainer.querySelectorAll(
 //   //             ".art-controls, .art-mask"
