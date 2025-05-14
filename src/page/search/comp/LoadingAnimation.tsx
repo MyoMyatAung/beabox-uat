@@ -19,7 +19,7 @@ const LoadingAnimation = ({
       // Start animation
       setIsAnimating(true);
       setAnimationStartedAt(Date.now());
-    } else if (loadingVideoId !== postId && isAnimating) {
+    } else if (loadingVideoId === null && isAnimating) {
       // If condition becomes false, check if 1.5s has passed
       const elapsed = animationStartedAt ? Date.now() - animationStartedAt : 0;
       const remainingTime = 1500 - elapsed;
@@ -35,6 +35,10 @@ const LoadingAnimation = ({
         setIsAnimating(false);
         setAnimationStartedAt(null);
       }
+    } else if (loadingVideoId !== postId && isAnimating) {
+      // If loadingVideoId is not postId and animation is running, stop it
+      setIsAnimating(false);
+      setAnimationStartedAt(null);
     }
 
     return () => clearTimeout(timeout); // Cleanup timeout
