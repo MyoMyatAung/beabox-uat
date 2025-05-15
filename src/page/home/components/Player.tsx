@@ -269,29 +269,33 @@ const Player = ({
         } else {
           previewElement.style.backgroundImage = `url(${spriteImageUrlRef.current})`;
         }
-        
+
         // Calculate the correct scale factor to fit the sprite in our thumbnail
-        const scaleX = metadata.isPortrait ? 90 / metadata.tileWidth : 160 / metadata.tileWidth;
-        const scaleY = metadata.isPortrait ? 160 / metadata.tileHeight : 90 / metadata.tileHeight;
-        
+        const scaleX = metadata.isPortrait
+          ? 90 / metadata.tileWidth
+          : 160 / metadata.tileWidth;
+        const scaleY = metadata.isPortrait
+          ? 160 / metadata.tileHeight
+          : 90 / metadata.tileHeight;
+
         // Use the same scaling for X and Y to maintain aspect ratio
         const scale = Math.min(scaleX, scaleY);
-        
+
         // Calculate scaled position based on the size ratio
         const scaledX = pos.x * scale;
         const scaledY = pos.y * scale;
 
         // Set the background size and position with appropriate scaling
         previewElement.style.backgroundPosition = `-${scaledX}px -${scaledY}px`;
-        
+
         // Calculate the full sprite size
         const fullWidth = metadata.tileCols * metadata.tileWidth;
-        const fullHeight = metadata.tileRows * metadata.tileHeight; 
-        
+        const fullHeight = metadata.tileRows * metadata.tileHeight;
+
         // Scale the full sprite to match our thumbnail dimensions while maintaining aspect ratio
         const scaledWidth = fullWidth * scale;
         const scaledHeight = fullHeight * scale;
-        
+
         previewElement.style.backgroundSize = `${scaledWidth}px ${scaledHeight}px`;
       }
     } else {
@@ -1172,29 +1176,33 @@ const Player = ({
                   } else {
                     previewElement.style.backgroundImage = `url(${spriteImageUrlRef.current})`;
                   }
-                  
+
                   // Calculate the correct scale factor to fit the sprite in our thumbnail
-                  const scaleX = metadata.isPortrait ? 90 / metadata.tileWidth : 160 / metadata.tileWidth;
-                  const scaleY = metadata.isPortrait ? 160 / metadata.tileHeight : 90 / metadata.tileHeight;
-                  
+                  const scaleX = metadata.isPortrait
+                    ? 90 / metadata.tileWidth
+                    : 160 / metadata.tileWidth;
+                  const scaleY = metadata.isPortrait
+                    ? 160 / metadata.tileHeight
+                    : 90 / metadata.tileHeight;
+
                   // Use the same scaling for X and Y to maintain aspect ratio
                   const scale = Math.min(scaleX, scaleY);
-                  
+
                   // Calculate scaled position based on the size ratio
                   const scaledX = pos.x * scale;
                   const scaledY = pos.y * scale;
 
                   // Set the background size and position with appropriate scaling
                   previewElement.style.backgroundPosition = `-${scaledX}px -${scaledY}px`;
-                  
+
                   // Calculate the full sprite size
                   const fullWidth = metadata.tileCols * metadata.tileWidth;
-                  const fullHeight = metadata.tileRows * metadata.tileHeight; 
-                  
+                  const fullHeight = metadata.tileRows * metadata.tileHeight;
+
                   // Scale the full sprite to match our thumbnail dimensions while maintaining aspect ratio
                   const scaledWidth = fullWidth * scale;
                   const scaledHeight = fullHeight * scale;
-                  
+
                   previewElement.style.backgroundSize = `${scaledWidth}px ${scaledHeight}px`;
                 }
               } else {
@@ -1519,7 +1527,6 @@ const Player = ({
       `;
 
       // Add a custom class for easier targeting
-      posterElement.classList.add("");
 
       // Add transitionend listener to properly handle the end of transition
       posterElement.addEventListener("transitionend", (e) => {
