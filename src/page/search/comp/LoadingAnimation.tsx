@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import LineAnimation from "./LineAnimation";
+import line from "@/assets/line.json";
 
 const LoadingAnimation = ({
   postId,
@@ -20,21 +22,23 @@ const LoadingAnimation = ({
       setIsAnimating(true);
       setAnimationStartedAt(Date.now());
     } else if (loadingVideoId === null && isAnimating) {
+      setIsAnimating(false);
+      setAnimationStartedAt(null);
       // If condition becomes false, check if 1.5s has passed
-      const elapsed = animationStartedAt ? Date.now() - animationStartedAt : 0;
-      const remainingTime = 1500 - elapsed;
+      // const elapsed = animationStartedAt ? Date.now() - animationStartedAt : 0;
+      // const remainingTime = 1500 - elapsed;
 
-      if (remainingTime > 0) {
-        // Keep animation running until 1.5s
-        timeout = setTimeout(() => {
-          setIsAnimating(false);
-          setAnimationStartedAt(null);
-        }, remainingTime);
-      } else {
-        // Animation already completed, hide immediately
-        setIsAnimating(false);
-        setAnimationStartedAt(null);
-      }
+      // if (remainingTime > 0) {
+      //   // Keep animation running until 1.5s
+      //   timeout = setTimeout(() => {
+      //     setIsAnimating(false);
+      //     setAnimationStartedAt(null);
+      //   }, remainingTime);
+      // } else {
+      //   // Animation already completed, hide immediately
+      //   setIsAnimating(false);
+      //   setAnimationStartedAt(null);
+      // }
     } else if (loadingVideoId !== postId && isAnimating) {
       // If loadingVideoId is not postId and animation is running, stop it
       setIsAnimating(false);
@@ -48,7 +52,8 @@ const LoadingAnimation = ({
     <>
       {isAnimating && (
         <div className="loading-line-container absolute top-0 left-0 w-full h-[2px]">
-          <div className="loading-line"></div>
+          <LineAnimation animate={line} />
+          {/* <div className="loading-line"></div> */}
         </div>
       )}
     </>
