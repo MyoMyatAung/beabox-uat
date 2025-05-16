@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import "../../page/search/search.css";
 import LoadingAnimation from "@/page/search/comp/LoadingAnimation";
 import Hls from "hls.js";
+import Artplayer from "artplayer";
 
 const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
   const data = new Uint8Array(arrayBuffer);
@@ -20,7 +21,7 @@ const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
   // Decode the entire data as text.
   return new TextDecoder().decode(data);
 };
-const VideoCard = ({ videoData }: any) => {
+const VideoCard = ({ videoData, loadingVideoId, setLoadingVideoId }: any) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isLoad, setIsLoad] = useState(false);
@@ -31,7 +32,6 @@ const VideoCard = ({ videoData }: any) => {
   const [playingVideos, setPlayingVideos] = useState<{
     [key: string]: boolean;
   }>({});
-  const [loadingVideoId, setLoadingVideoId] = useState<string | null>(null);
 
   const videoPlayerRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const artPlayerInstances = useRef<{ [key: string]: Artplayer | null }>({});
@@ -227,6 +227,8 @@ const VideoCard = ({ videoData }: any) => {
       Object.values(artPlayerInstances.current).forEach((player) => {
         player?.destroy();
       });
+      setLoadingVideoId(null); // Clear loading state on unmount
+
       artPlayerInstances.current = {};
 
       if (longPressTimer.current) {

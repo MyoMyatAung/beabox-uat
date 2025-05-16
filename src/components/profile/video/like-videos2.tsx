@@ -10,6 +10,7 @@ import VideoFeed from "@/page/home/components/VideoFeed";
 import NoVideoCard from "@/components/shared/no-video-card";
 
 const LikedVideos2 = ({ id }: any) => {
+  const [loadingVideoId, setLoadingVideoId] = useState<string | null>(null);
   const user = useSelector((state: any) => state?.persist?.user);
   const [videos, setVideos] = useState<any[]>([]);
   const [page, setPage] = useState(1);
@@ -109,7 +110,11 @@ const LikedVideos2 = ({ id }: any) => {
                       setShowVideoFeed(true);
                     }}
                   >
-                    <VideoCard videoData={item} />
+                    <VideoCard
+                      videoData={item}
+                      loadingVideoId={loadingVideoId}
+                      setLoadingVideoId={setLoadingVideoId}
+                    />
                   </div>
                 ))}
               </div>

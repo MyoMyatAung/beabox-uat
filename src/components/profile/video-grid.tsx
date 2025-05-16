@@ -4,15 +4,22 @@ import VideoCard from "./video-card";
 import Loader from "../../page/home/vod_loader.gif";
 import ScrollHeader from "./scroll-header";
 import InfinitLoad from "../shared/infinit-load";
+import { useState } from "react";
 
 const VideoGrid = ({ data, hasMore, fetchMoreData }: any) => {
+  const [loadingVideoId, setLoadingVideoId] = useState<string | null>(null);
   return (
     <>
       <div className={`grid grid-cols-3 gap-2`}>
         {data && (
           <>
             {data?.map((item: any) => (
-              <VideoCard key={item?.id} videoData={item} />
+              <VideoCard
+                key={item?.id}
+                videoData={item}
+                loadingVideoId={loadingVideoId}
+                setLoadingVideoId={setLoadingVideoId}
+              />
             ))}
           </>
         )}

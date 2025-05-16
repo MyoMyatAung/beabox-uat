@@ -46,6 +46,7 @@ export function isWebView() {
 }
 
 const SearchVideo = ({ id }: { id: string }) => {
+  const [loadingVideoId, setLoadingVideoId] = useState<string | null>(null);
   const [vh, setVh] = useState("100vh");
   const [postsSearch, { isLoading }] = usePostsSearchMutation();
   const [search, setSearch] = useState<string>("");
@@ -184,7 +185,11 @@ const SearchVideo = ({ id }: { id: string }) => {
                             setShowVideoFeed(true);
                           }}
                         >
-                          <VideoCard2 videoData={item} />
+                          <VideoCard2
+                            videoData={item}
+                            loadingVideoId={loadingVideoId}
+                            setLoadingVideoId={setLoadingVideoId}
+                          />
                         </div>
                       ))}
                     </div>

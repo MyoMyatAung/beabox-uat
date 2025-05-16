@@ -19,7 +19,7 @@ const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
   // Decode the entire data as text.
   return new TextDecoder().decode(data);
 };
-const VideoCard2 = ({ videoData }: any) => {
+const VideoCard2 = ({ videoData, loadingVideoId, setLoadingVideoId }: any) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isLoad, setIsLoad] = useState(false);
@@ -29,7 +29,6 @@ const VideoCard2 = ({ videoData }: any) => {
   const [playingVideos, setPlayingVideos] = useState<{
     [key: string]: boolean;
   }>({});
-  const [loadingVideoId, setLoadingVideoId] = useState<string | null>(null);
 
   const videoPlayerRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const artPlayerInstances = useRef<{ [key: string]: Artplayer | null }>({});
