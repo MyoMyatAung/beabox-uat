@@ -263,11 +263,14 @@ const Player = ({
         leftPosition = Math.max(10, Math.min(leftPosition, maxLeft)); // 10px minimum from left edge
 
         previewElement.style.left = `${leftPosition}px`;
-        previewElement.style.bottom = "30px";
+        previewElement.style.bottom = "100px";
+        previewElement.style.border = "3px solid rgba(221, 221, 221, 0.00);";
         if (isSpriteLoading || !video?.sprite_url) {
           previewElement.style.backgroundImage = `url(${sprite_loading})`;
+          previewElement.style.backgroundColor = "#D9D9D9"; // or lightgray
         } else {
           previewElement.style.backgroundImage = `url(${spriteImageUrlRef.current})`;
+          previewElement.style.backgroundColor = "#D9D9D9"; // or lightgray
         }
 
         // Calculate the correct scale factor to fit the sprite in our thumbnail
@@ -934,9 +937,9 @@ const Player = ({
                 //   timeDisplayRef.current.style.bottom = `100px`;
                 // }
                 if (metadata?.isPortrait) {
-                  timeDisplayRef.current.style.bottom = `220px`;
+                  timeDisplayRef.current.style.bottom = `270px`;
                 } else {
-                  timeDisplayRef.current.style.bottom = `150px`;
+                  timeDisplayRef.current.style.bottom = `200px`;
                 }
                 timeDisplayRef.current.innerHTML = `<span style="border-radius: 100px;
                   background: rgba(0, 0, 0, 0.5);
@@ -1024,9 +1027,9 @@ const Player = ({
                 //   timeDisplayRef.current.style.bottom = `100px`;
                 // }
                 if (metadata?.isPortrait) {
-                  timeDisplayRef.current.style.bottom = `220px`;
+                  timeDisplayRef.current.style.bottom = `270px`;
                 } else {
-                  timeDisplayRef.current.style.bottom = `150px`;
+                  timeDisplayRef.current.style.bottom = `200px`;
                 }
                 timeDisplayRef.current.innerHTML = `<span style="border-radius: 100px;
                 background: rgba(0, 0, 0, 0.5);
@@ -1083,9 +1086,9 @@ const Player = ({
                 //   timeDisplayRef.current.style.bottom = `100px`;
                 // }
                 if (metadata?.isPortrait) {
-                  timeDisplayRef.current.style.bottom = `220px`;
+                  timeDisplayRef.current.style.bottom = `270px`;
                 } else {
-                  timeDisplayRef.current.style.bottom = `150px`;
+                  timeDisplayRef.current.style.bottom = `200px`;
                 }
 
                 // timeDisplayRef.current.textContent = `${currentTime} / ${duration}`;
@@ -1133,6 +1136,7 @@ const Player = ({
       border-radius: 4px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.3);
       pointer-events: none;
+ 
       display:none;
       z-index: 10000;
     "></div>
@@ -1168,13 +1172,16 @@ const Player = ({
                   // Constrain the position
                   let leftPosition = thumbnailPreview.position.x + 20;
                   leftPosition = Math.max(10, Math.min(leftPosition, maxLeft)); // 10px minimum from left edge
-
+                  previewElement.style.border =
+                    "3px solid rgba(221, 221, 221, 0.00);";
                   previewElement.style.left = `${leftPosition}px`;
-                  previewElement.style.bottom = "30px";
+                  previewElement.style.bottom = "100px";
                   if (isSpriteLoading && video?.sprite_url) {
                     previewElement.style.backgroundImage = `url(${sprite_loading})`;
+                    previewElement.style.backgroundColor = "#D9D9D9"; // or lightgray
                   } else {
                     previewElement.style.backgroundImage = `url(${spriteImageUrlRef.current})`;
+                    previewElement.style.backgroundColor = "#D9D9D9"; // or lightgray
                   }
 
                   // Calculate the correct scale factor to fit the sprite in our thumbnail
