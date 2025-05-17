@@ -392,6 +392,11 @@ const Home = () => {
     }
   };
 
+  console.log("videos", videos);
+
+  console.log(isError);
+  console.log(currentTab);
+
   return (
     <div className="flex justify-center items-center">
       <div className="max-w-[1024px] home-main w-full">
@@ -453,7 +458,11 @@ const Home = () => {
                           data-post-id={video?.post_id} // Add post ID to the container
                         >
                           {video?.file_type !== "video" ? (
-                            <a href={video?.ads_info?.jump_url} target="_blank" className="flex items-center justify-center h-full">
+                            <a
+                              href={video?.ads_info?.jump_url}
+                              target="_blank"
+                              className="flex items-center justify-center h-full"
+                            >
                               <img
                                 src={video?.files[0]?.resourceURL}
                                 alt=""
@@ -521,9 +530,8 @@ const Home = () => {
                       ))}
                     </div>
 
-                    {(!followData?.data?.length ||
-                      !forYouData?.data?.length) && (
-                        <div className="app_home bg-[#16131C]">
+                    {!followData?.data?.length && (
+                      <div className="app_home bg-[#16131C]">
                         <div style={{ textAlign: "center", padding: "20px" }}>
                           <div className="text-white flex flex-col justify-center items-center  gap-2">
                             <div>
@@ -598,7 +606,9 @@ const Home = () => {
                             />
                           </svg>
                         </div>
-                        <div className="follow-error">关注您喜欢的作者</div>
+                        <div className="follow-error">
+                          关注您喜欢的作者 fuckkkkkkkk
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -641,7 +651,11 @@ const Home = () => {
                           data-post-id={video.post_id} // Add post ID to the container
                         >
                           {video?.file_type !== "video" ? (
-                            <a href={video?.ads_info?.jump_url} target="_blank" className="flex items-center justify-center h-full overflow-hidden">
+                            <a
+                              href={video?.ads_info?.jump_url}
+                              target="_blank"
+                              className="flex items-center justify-center h-full overflow-hidden"
+                            >
                               <img
                                 src={video?.files[0]?.resourceURL}
                                 alt=""
@@ -714,8 +728,7 @@ const Home = () => {
                       ))}
                     </div>
 
-                    {(!followData?.data?.length ||
-                      !forYouData?.data?.length) && (
+                    {!forYouData?.data?.length && (
                       <p style={{ textAlign: "center" }}>
                         {/* <b>You have seen all videos</b> */}
                       </p>
