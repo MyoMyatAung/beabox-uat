@@ -32,7 +32,7 @@ const InviteCard: React.FC = () => {
             <SendIcon icon={Vector} />
             <div className=""></div>
           </div>
-          <Text text={"完成注册领取更多"} />
+          <Text2 text={"完成注册领取更多"} />
         </div>
         {/* <SendIcon icon={UserSvg} />
         <div className="mx-2">
@@ -68,8 +68,20 @@ const SendIcon = ({ icon }: any) => {
 
 const Text = ({ text }: any) => {
   return (
-    <p className="text-[12px] leading-[18px] font-[700] font-[Helvetica Neue] px-4 pt-3">
-      {text}
-    </p>
+    <div className="w-full">
+      <p className="text-[12px] leading-[18px] font-[700] font-[Helvetica Neue] px-3  pt-3">
+        {text}
+      </p>
+    </div>
+  );
+};
+
+const Text2 = ({ text }: any) => {
+  return (
+    <div className="w-full">
+      <p className="text-[12px] leading-[18px] font-[700] font-[Helvetica Neue] px-4  pt-3">
+        {text}
+      </p>
+    </div>
   );
 };
