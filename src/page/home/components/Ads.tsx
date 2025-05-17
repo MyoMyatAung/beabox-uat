@@ -96,8 +96,8 @@ const Ads = ({ ads, type }: { ads: any; type: any }) => {
             <svg
               className="mt-3"
               xmlns="http://www.w3.org/2000/svg"
-              width="14"
-              height="19"
+              width="28"
+              height="28"
               viewBox="0 0 14 19"
               fill="none"
             >
@@ -105,10 +105,10 @@ const Ads = ({ ads, type }: { ads: any; type: any }) => {
                 <path
                   d="M5.18164 1.5L8.818 5.5L5.18164 9.5"
                   stroke="white"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  shape-rendering="crispEdges"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  shapeRendering="crispEdges"
                 />
               </g>
               <defs>
@@ -119,9 +119,9 @@ const Ads = ({ ads, type }: { ads: any; type: any }) => {
                   width="13.1367"
                   height="17.5"
                   filterUnits="userSpaceOnUse"
-                  color-interpolation-filters="sRGB"
+                  colorInterpolationFilters="sRGB"
                 >
-                  <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                  <feFlood floodOpacity="0" result="BackgroundImageFix" />
                   <feColorMatrix
                     in="SourceAlpha"
                     type="matrix"
