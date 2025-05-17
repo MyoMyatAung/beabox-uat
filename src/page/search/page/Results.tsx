@@ -705,7 +705,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
                                 card?.files[0]?.height
                               )
                             }
-                            className={`object-cover h-full w-full rounded-none`}
+                            className={`object-contain h-full w-full rounded-none`}
                             style={{
                               opacity:
                                 activeLongPressCard?.post_id === card.post_id &&
@@ -738,7 +738,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
                                 card?.files[0]?.height
                               )
                             }
-                            className={`object-cover h-full w-full rounded-none ${
+                            className={`object-contain h-full w-full rounded-none ${
                               videoReadyStates[card.post_id]
                                 ? "hidden"
                                 : "block"
@@ -1622,7 +1622,7 @@ export default Results;
 //                                 card?.files[0]?.height
 //                               )
 //                             }
-//                             className="object-cover h-full w-full rounded-none"
+//                             className="object-contain h-full w-full rounded-none"
 //                           />
 //                         )} */}
 
@@ -1657,7 +1657,7 @@ export default Results;
 //                               card?.files[0]?.height
 //                             )
 //                           }
-//                           className="object-cover h-full w-full rounded-none"
+//                           className="object-contain h-full w-full rounded-none"
 //                           style={{
 //                             opacity:
 //                               activeLongPressCard?.post_id === card.post_id

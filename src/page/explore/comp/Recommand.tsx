@@ -418,7 +418,7 @@
 //                                 card?.files[0]?.width,
 //                                 card?.files[0]?.height
 //                               )}
-//                               className="object-cover h-full w-full rounded-none"
+//                               className="object-contain h-full w-full rounded-none"
 //                               style={{
 //                                 opacity:
 //                                   activeLongPressCard?.post_id ===
@@ -441,7 +441,7 @@
 //                                   card?.files[0]?.height
 //                                 )
 //                               }
-//                               className=" object-cover h-full w-full rounded-none"
+//                               className=" object-contain h-full w-full rounded-none"
 //                             /> */}
 
 //                             <div className=" absolute hidden left-0 mx-auto right-0 bottom-0 fle justify-around items-center w-full max-w-[175px] bg-blac">
@@ -931,7 +931,7 @@ const Recommand: React.FC<RecommandProps> = ({
                                   card?.files[0]?.height
                                 )
                               }
-                              className=" object-cover h-full w-full rounded-none"
+                              className=" object-contain h-full w-full rounded-none"
                               style={{
                                 opacity:
                                   activeLongPressCard?.post_id + ll?.title ===

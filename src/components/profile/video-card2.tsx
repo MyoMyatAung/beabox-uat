@@ -279,7 +279,7 @@ const VideoCard2 = ({ videoData, loadingVideoId, setLoadingVideoId }: any) => {
             videoData?.files[0]?.width,
             videoData?.files[0]?.height
           )}
-          className="object-cover h-full w-full rounded-none"
+          className="object-contain h-full w-full rounded-none"
           style={{
             opacity:
               activeLongPressCard?.post_id === videoData.post_id &&

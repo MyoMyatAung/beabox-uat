@@ -242,7 +242,7 @@
 //                           item?.files[0]?.width,
 //                           item?.files[0]?.height
 //                         )}
-//                         className=" object-cover h-full w-full rounded-none"
+//                         className=" object-contain h-full w-full rounded-none"
 //                       />
 //                     </div>
 //                     <h1 className="search_text font-cnFont line-clamp-2 text-left text-[14px] font-[400] px-[6px] pt-[6px]">
@@ -759,7 +759,7 @@ const More: React.FC<MoreProps> = () => {
                           item?.files[0]?.width,
                           item?.files[0]?.height
                         )}
-                        className="object-cover h-full w-full rounded-none"
+                        className="object-contain h-full w-full rounded-none"
                         style={{
                           opacity:
                             activeLongPressCard?.post_id === item.post_id &&
