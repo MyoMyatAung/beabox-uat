@@ -319,7 +319,7 @@ const Luckydraw = () => {
             </div>
             <div className="text-sm mb-7 h-8 overflow-hidden">
               <div
-                className={`transition-transform duration-1000 ${
+                className={`transition-all duration-1000 ${
                   notificationVisible 
                     ? "transform translate-y-0 opacity-100" 
                     : "transform -translate-y-6 opacity-5"
