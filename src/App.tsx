@@ -78,6 +78,10 @@ const App = () => {
         ".videoFooter"
       ) as HTMLElement | null;
 
+      const videoFooter2 = document.querySelector(
+        ".videoFooter"
+      ) as HTMLElement | null;
+
       if (videoElement && isMobileBrowser) {
         // Adjusted height for mobile browsers
         videoElement.style.height = "calc(100dvh - 64px)";
@@ -86,6 +90,11 @@ const App = () => {
       if (videoFooter && isMobileBrowser) {
         // Adjusted height for mobile browsers
         videoFooter.style.bottom = "40px";
+      }
+
+      if (videoFooter2 && isMobileBrowser) {
+        // Adjusted height for mobile browsers
+        videoFooter2.style.bottom = "40px";
       }
 
       if (videoElement1 && isMobileBrowser) {

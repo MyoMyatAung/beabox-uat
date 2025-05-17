@@ -9,7 +9,7 @@ const Ads = ({ ads, type }: { ads: any; type: any }) => {
 
   return (
     <div
-      className={`videoFooter w-full`}
+      className={`videoFooter2 px-[10px] w-full`}
       style={{
         bottom: type === "ads_virtual" ? "10px" : "30px",
       }}
@@ -88,7 +88,7 @@ const Ads = ({ ads, type }: { ads: any; type: any }) => {
           )}
 
           <a
-            className={`ads-btn w-[75%] flex items-center justify-center py-2`}
+            className={`ads-btn w-full flex items-center justify-center py-2`}
             target="_blank"
             href={ads?.jump_url}
           >

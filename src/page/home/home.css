@@ -192,6 +192,15 @@ html {
   scrollbar-width: none; /* Firefox */
 }
 
+.videoFooter2 {
+  z-index: 99;
+
+  position: absolute;
+  color: white;
+  bottom: 30px;
+  display: flex;
+}
+
 .videoFooter {
   z-index: 99;
 
