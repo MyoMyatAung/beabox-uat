@@ -278,7 +278,7 @@ const VideoCard = ({ videoData, loadingVideoId, setLoadingVideoId }: any) => {
 
       <div
         className="relative flex justify-center items-center bg-[#010101] rounded-[4px] overflow-hidden h-[240px]"
-        onClick={() => showDetailsVod(videoData)}
+        // onClick={() => showDetailsVod(videoData)}
         onTouchStart={() => handleTouchStart(videoData)}
       >
         {/* Video Player */}
