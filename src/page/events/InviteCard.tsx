@@ -8,7 +8,7 @@ import React from "react";
 const InviteCard: React.FC = () => {
   return (
     <div className="rounded-lg w-full max-w-md">
-      <img src={Participate} className="mx-auto max-w-[89px]" />
+      <img src={Participate} className="mx-auto max-w-[89px] py-4" />
       <div className="flex justify-around items-start text-center text-white my-3 mt-5">
         <div className="flex flex-col justify-center items-center flex-1">
           <div className="flex items-center w-full justify-between">
@@ -69,7 +69,7 @@ const SendIcon = ({ icon }: any) => {
 const Text = ({ text }: any) => {
   return (
     <div className="w-full">
-      <p className="text-[12px] leading-[18px] font-[700] font-[Helvetica Neue] px-3  pt-3">
+      <p className="text-[12px] leading-[18px] font-[500] font-[Helvetica Neue] px-3  pt-3">
         {text}
       </p>
     </div>
@@ -79,7 +79,7 @@ const Text = ({ text }: any) => {
 const Text2 = ({ text }: any) => {
   return (
     <div className="w-full">
-      <p className="text-[12px] leading-[18px] font-[700] font-[Helvetica Neue] px-4  pt-3">
+      <p className="text-[12px] leading-[18px] font-[500] font-[Helvetica Neue]  px-5  pt-3">
         {text}
       </p>
     </div>

@@ -350,13 +350,13 @@ const Luckydraw = () => {
           <InviteCard />
           <button
             onClick={handleCopyClick}
-            className="flex items-center text-black justify-center mt-6 w-full py-3 rounded-[8px] font-[700]"
+            className="flex items-center text-black justify-center mt-6 w-full py-3 rounded-[8px] font-[500]"
             style={{
               background:
                 "linear-gradient(180deg, #FFFFFF 0%, #FFC989 152.27%)",
             }}
           >
-            <span className="text-[14px]">复制邀请链接</span>
+            <span className="text-[14px] tracking-wider">复制邀请链接</span>
             <img src={CopySvg} alt="Copy" className="ml-2" />
           </button>
         </div>
