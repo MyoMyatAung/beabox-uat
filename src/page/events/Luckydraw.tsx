@@ -37,28 +37,6 @@ import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 import AuthDrawer from "@/components/profile/auth/auth-drawer";
 import copy from "copy-to-clipboard";
 
-// Sample notification data
-const notificationData = [
-  {
-    text: "用户：不安的香氛 成功瓜分红包：11元",
-    nickname: "不安的香氛",
-    amount: 11,
-    currency: "元"
-  },
-  {
-    text: "用户：风中的咖啡豆 成功瓜分红包：17元",
-    nickname: "风中的咖啡豆",
-    amount: 17,
-    currency: "元"
-  },
-  {
-    text: "用户：能干的小兔子 成功瓜分红包：33元",
-    nickname: "能干的小兔子",
-    amount: 33,
-    currency: "元"
-  }
-];
-
 const Luckydraw = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -80,6 +58,7 @@ const Luckydraw = () => {
   const { data } = useGetUserShareInfoQuery({});
   const [currentNotification, setCurrentNotification] = useState(0);
   const [notificationVisible, setNotificationVisible] = useState(true);
+  const [notificationData, setNotificationData] = useState<any[]>([]);
 
   // const {
   //   data: newEventDetails,
@@ -95,6 +74,12 @@ const Luckydraw = () => {
   useEffect(() => {
     if (eventDetailsData) {
       setStats(eventDetailsData);
+      console.log('eventDetailsData', eventDetailsData);
+      
+      // Set notification data from virtual_user_reward
+      if (eventDetailsData.virtual_user_reward && Array.isArray(eventDetailsData.virtual_user_reward)) {
+        setNotificationData(eventDetailsData.virtual_user_reward);
+      }
     }
   }, [eventDetailsData]);
 
@@ -170,6 +155,8 @@ const Luckydraw = () => {
 
   // Notification rotation effect
   useEffect(() => {
+    if (notificationData.length === 0) return;
+    
     const notificationInterval = setInterval(() => {
       setNotificationVisible(false);
       
@@ -182,7 +169,7 @@ const Luckydraw = () => {
     }, 3000);
     
     return () => clearInterval(notificationInterval);
-  }, []);
+  }, [notificationData]);
 
   if (!stats) {
     return <Loader />;
@@ -338,10 +325,12 @@ const Luckydraw = () => {
                     : "transform -translate-y-6 opacity-5"
                 }`}
               >
-                <p>
-                  用户：<span className="font-bold text-[16px]">{notificationData[currentNotification].nickname}</span> 成功瓜分红包：
-                  <span className="font-bold text-[18px]">{notificationData[currentNotification].amount}{notificationData[currentNotification].currency}</span>
-                </p>
+                {notificationData.length > 0 && (
+                  <p>
+                    用户：<span className="font-bold text-[16px]">{notificationData[currentNotification]?.nickname}</span> 成功瓜分红包：
+                    <span className="font-bold text-[18px]">{notificationData[currentNotification]?.amount}{notificationData[currentNotification]?.currency}</span>
+                  </p>
+                )}
               </div>
             </div>
           </div>
