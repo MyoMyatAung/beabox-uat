@@ -1174,7 +1174,7 @@ const Player = ({
         bottom: -1.5px;
         background: linear-gradient(to bottom, 
             #da72ff 0%, 
-            transparent 30%,
+            #da72ff 30%,
             transparent 100%);
         border-radius: 4px;
         z-index: -1;
