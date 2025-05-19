@@ -257,6 +257,7 @@ const Player = ({
         const thumbnailWidth = metadata.isPortrait ? 90 : 160;
         const viewportWidth = window.innerWidth;
         const maxLeft = viewportWidth - thumbnailWidth - 10; // buffer from right edge
+        const innerDiv = previewElement.querySelector(".bg-th");
 
         // Constrain the position
         let leftPosition = thumbnailPreview.position.x + 20;
@@ -265,10 +266,17 @@ const Player = ({
         previewElement.style.left = `${leftPosition}px`;
         previewElement.style.bottom = "100px";
 
-        if (isSpriteLoading || !video?.sprite_url) {
-          previewElement.style.backgroundImage = `url(${sprite_loading})`;
+        if (isSpriteLoading && video?.sprite_url) {
+          const innerDiv = previewElement.querySelector(".bg-th");
+
+          if (innerDiv) {
+            innerDiv.style.backgroundImage = `url(${sprite_loading})`;
+          }
         } else {
-          previewElement.style.backgroundImage = `url(${spriteImageUrlRef.current})`;
+          const innerDiv = previewElement.querySelector(".bg-th");
+          if (innerDiv) {
+            innerDiv.style.backgroundImage = `url(${spriteImageUrlRef.current})`;
+          }
         }
 
         // Calculate the correct scale factor to fit the sprite in our thumbnail
@@ -286,8 +294,10 @@ const Player = ({
         const scaledX = pos.x * scale;
         const scaledY = pos.y * scale;
 
-        // Set the background size and position with appropriate scaling
-        previewElement.style.backgroundPosition = `-${scaledX}px -${scaledY}px`;
+        if (innerDiv) {
+          // Set the background size and position with appropriate scaling
+          innerDiv.style.backgroundPosition = `-${scaledX}px -${scaledY}px`;
+        }
 
         // Calculate the full sprite size
         const fullWidth = metadata.tileCols * metadata.tileWidth;
@@ -297,7 +307,9 @@ const Player = ({
         const scaledWidth = fullWidth * scale;
         const scaledHeight = fullHeight * scale;
 
-        previewElement.style.backgroundSize = `${scaledWidth}px ${scaledHeight}px`;
+        if (innerDiv) {
+          innerDiv.style.backgroundSize = `${scaledWidth}px ${scaledHeight}px`;
+        }
       }
     } else {
       previewElement.style.display = "none";
@@ -1101,6 +1113,10 @@ const Player = ({
             });
 
             element.addEventListener("touchend", () => {
+              if (!artPlayerInstanceRef.current?.playing) {
+                artPlayerInstanceRef.current?.play();
+              }
+
               setShowRotate(false);
               if (
                 !artPlayerInstanceRef.current ||
@@ -1131,23 +1147,51 @@ const Player = ({
     height: ${metadata.isPortrait ? "160px" : "90px"};
     background-repeat: no-repeat;
     background-size: cover;
-    background-origin: border-box;
     pointer-events: none;
     z-index: 10000;
-    
-    /* Gradient border */
-    border: 4px solid transparent;
-    border-image: linear-gradient(to bottom, #D9D9D9 0%, #000000 100%) 1;
-    border-image-slice: 1;
-    
-    /* Simulate border-radius with masking */
+    box-sizing: content-box;
+    padding: 0;
     border-radius: 4px;
-    -webkit-mask: 
-        linear-gradient(#fff, #fff) content-box, 
-        linear-gradient(#fff, #fff);
-    padding: 4px;
-    box-sizing: border-box;
-"></div>
+    /* Create space for the outside border */
+    margin: 1.5px;
+">
+    <!-- Background image container -->
+    <div style="
+        width: 100%;
+        height: 100%;
+        border-radius: inherit;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-origin: border-box;
+    " class="bg-th"></div>
+    
+    <!-- Gradient border positioned outside -->
+    <div style="
+        position: absolute;
+        top: -1.5px;
+        left: -1.5px;
+        right: -1.5px;
+        bottom: -1.5px;
+        background: linear-gradient(to bottom, 
+            #da72ff 0%, 
+            #da72ff 30%,
+            transparent 100%);
+        border-radius: 4px;
+        z-index: -1;
+        pointer-events: none;
+        padding: 1.5px;
+        box-sizing: border-box;
+    ">
+        <!-- Inner mask to create the border effect -->
+        <div style="
+            width: 100%;
+            height: 100%;
+            background: #000;
+            border-radius: inherit;
+        "></div>
+    </div>
+</div>
+
 
           `,
           style: {
@@ -1181,17 +1225,22 @@ const Player = ({
                   // Constrain the position
                   let leftPosition = thumbnailPreview.position.x + 20;
                   leftPosition = Math.max(10, Math.min(leftPosition, maxLeft)); // 10px minimum from left edge
+                  const innerDiv = previewElement.querySelector(".bg-th");
 
-                  // Apply styling - ensure we don't override the CSS class
                   previewElement.style.left = `${leftPosition}px`;
                   previewElement.style.bottom = "100px";
 
                   if (isSpriteLoading && video?.sprite_url) {
-                    previewElement.style.backgroundImage = `url(${sprite_loading})`;
+                    const innerDiv = previewElement.querySelector(".bg-th");
+                    if (innerDiv) {
+                      innerDiv.style.backgroundImage = `url(${sprite_loading})`;
+                    }
                   } else {
-                    previewElement.style.backgroundImage = `url(${spriteImageUrlRef.current})`;
+                    const innerDiv = previewElement.querySelector(".bg-th");
+                    if (innerDiv) {
+                      innerDiv.style.backgroundImage = `url(${spriteImageUrlRef.current})`;
+                    }
                   }
-
                   // Calculate the correct scale factor to fit the sprite in our thumbnail
                   const scaleX = metadata.isPortrait
                     ? 90 / metadata.tileWidth
@@ -1207,8 +1256,11 @@ const Player = ({
                   const scaledX = pos.x * scale;
                   const scaledY = pos.y * scale;
 
+                  if (innerDiv) {
+                    innerDiv.style.backgroundPosition = `-${scaledX}px -${scaledY}px`;
+                  }
+
                   // Set the background size and position with appropriate scaling
-                  previewElement.style.backgroundPosition = `-${scaledX}px -${scaledY}px`;
 
                   // Calculate the full sprite size
                   const fullWidth = metadata.tileCols * metadata.tileWidth;
@@ -1218,7 +1270,9 @@ const Player = ({
                   const scaledWidth = fullWidth * scale;
                   const scaledHeight = fullHeight * scale;
 
-                  previewElement.style.backgroundSize = `${scaledWidth}px ${scaledHeight}px`;
+                  if (innerDiv) {
+                    innerDiv.style.backgroundSize = `${scaledWidth}px ${scaledHeight}px`;
+                  }
                 }
               } else {
                 previewElement.style.display = "none";
