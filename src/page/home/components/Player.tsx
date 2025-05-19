@@ -1101,6 +1101,10 @@ const Player = ({
             });
 
             element.addEventListener("touchend", () => {
+              if (!artPlayerInstanceRef.current?.playing) {
+                artPlayerInstanceRef.current?.play();
+              }
+
               setShowRotate(false);
               if (
                 !artPlayerInstanceRef.current ||
@@ -1128,19 +1132,20 @@ const Player = ({
 <div class="thumbnail-preview" style="
     position: absolute;
     width: ${metadata.isPortrait ? "90px" : "160px"};
-    height: ${metadata.isPortrait ? "160px" : "90px"};
+    height: ${metadata.isPortrait ? "163px" : "93px"};
     background-repeat: no-repeat;
     background-size: cover;
     background-origin: border-box;
     pointer-events: none;
     z-index: 10000;
+
     
-    /* Gradient border */
-    border: 4px solid transparent;
-    border-image: linear-gradient(to bottom, #D9D9D9 0%, #000000 100%) 1;
-    border-image-slice: 1;
-    
-    /* Simulate border-radius with masking */
+
+    border: 1.5px solid transparent;
+    border-image: linear-gradient(to bottom, 
+        #da72ff 0%, 
+        transparent 30%,  /* Replace #000000 with your bottom color */
+        transparent 100%) 1;  /* Same color here for solid continuation */    border-image-slice: 1;
     border-radius: 4px;
     -webkit-mask: 
         linear-gradient(#fff, #fff) content-box, 
@@ -1148,6 +1153,7 @@ const Player = ({
     padding: 4px;
     box-sizing: border-box;
 "></div>
+
 
           `,
           style: {
