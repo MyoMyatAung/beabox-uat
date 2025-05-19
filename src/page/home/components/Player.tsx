@@ -1128,7 +1128,7 @@ const Player = ({
 <div class="thumbnail-preview" style="
     position: absolute;
     width: ${metadata.isPortrait ? "90px" : "160px"};
-    height: ${metadata.isPortrait ? "163px" : "93px"};
+    height: ${metadata.isPortrait ? "160px" : "90px"};
     background-repeat: no-repeat;
     background-size: cover;
     background-origin: border-box;
