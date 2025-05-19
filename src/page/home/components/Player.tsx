@@ -264,7 +264,7 @@ const Player = ({
 
         previewElement.style.left = `${leftPosition}px`;
         previewElement.style.bottom = "100px";
-        previewElement.style.border = "3px solid rgba(221, 221, 221, 0.00);";
+        previewElement.style.border = "none";
         if (isSpriteLoading || !video?.sprite_url) {
           previewElement.style.backgroundImage = `url(${sprite_loading})`;
           previewElement.style.backgroundColor = "#D9D9D9"; // or lightgray
@@ -1128,18 +1128,26 @@ const Player = ({
         {
           html: `
     <div class="thumbnail-preview" style="
-      position: absolute;
-      width: ${metadata.isPortrait ? "90px" : "160px"};
-      height: ${metadata.isPortrait ? "160px" : "90px"};
-      background-repeat: no-repeat;
-      background-size: cover;
-      border-radius: 4px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-      pointer-events: none;
- 
-      display:none;
-      z-index: 10000;
-    "></div>
+  position: absolute;
+  width: ${metadata.isPortrait ? '90px' : '160px'};
+  height: ${metadata.isPortrait ? '163px' : '93px'};
+  background-repeat: no-repeat;
+  background-size: cover;
+  border-radius: 4px;
+  box-shadow:
+    0 2px 10px rgba(0,0,0,0.3),
+    0 0 0 3px rgba(221, 221, 221, 0),
+    0 0 0 3px rgba(221, 221, 221, 0.6) inset;
+  background-origin: border-box;
+  pointer-events: none;
+  display: none;
+  z-index: 10000;
+
+  /* Hide bottom part of the inset border */
+  -webkit-mask-image: linear-gradient(to bottom, white 70%, transparent 100%);
+  mask-image: linear-gradient(to bottom, white 70%, transparent 100%);
+"></div>
+
   `,
           style: {
             position: "absolute",
@@ -1172,10 +1180,13 @@ const Player = ({
                   // Constrain the position
                   let leftPosition = thumbnailPreview.position.x + 20;
                   leftPosition = Math.max(10, Math.min(leftPosition, maxLeft)); // 10px minimum from left edge
-                  previewElement.style.border =
-                    "3px solid rgba(221, 221, 221, 0.00);";
+                  
+                  // Apply styling - ensure we don't override the CSS class
+                  previewElement.style.border = "none";
                   previewElement.style.left = `${leftPosition}px`;
                   previewElement.style.bottom = "100px";
+                  
+                  
                   if (isSpriteLoading && video?.sprite_url) {
                     previewElement.style.backgroundImage = `url(${sprite_loading})`;
                     previewElement.style.backgroundColor = "#D9D9D9"; // or lightgray
