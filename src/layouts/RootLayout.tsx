@@ -51,6 +51,9 @@ const RootLayout = ({ children }: any) => {
   const [showDialog, setShowDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showLanding, setShowLanding] = useState(false);
+  const [userHasClosedAnimation, setUserHasClosedAnimation] = useState(
+    sessionStorage.getItem("animationClosed") === "true"
+  );
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -99,7 +102,7 @@ const RootLayout = ({ children }: any) => {
     if (showAd && showAlert && isOpen && !showLanding) {
       dispatch(setAnimation(false));
     } else {
-      if (currentEventData?.data) {
+      if (currentEventData?.data && !userHasClosedAnimation) {
         if (
           currentEventData?.status === true &&
           !showAd &&
@@ -114,9 +117,11 @@ const RootLayout = ({ children }: any) => {
           dispatch(setAnimation(false));
         }
       }
-      dispatch(setAnimation(false));
+      if (userHasClosedAnimation) {
+        dispatch(setAnimation(false));
+      }
     }
-  }, [currentEventData?.status, dispatch, showAd, showLanding, showAlert]);
+  }, [currentEventData?.status, dispatch, showAd, showLanding, showAlert, userHasClosedAnimation]);
 
   // Check if ads have already been seen in this session
   useEffect(() => {
@@ -382,12 +387,17 @@ const RootLayout = ({ children }: any) => {
         !event &&
         showAnimation &&
         currentTab === 2 && 
-        !hideBar && (
+        !hideBar &&
+        !userHasClosedAnimation && (
           <div className="fixed bottom-[8rem] right-9 z-[9999] rounded-full p-2">
             <div className="relative">
               <button
                 className="absolute top-4 right-7 bg-white rounded-full w-5 h-5 flex items-center justify-center text-black z-[10000]"
-                onClick={() => dispatch(setAnimation(false))}
+                onClick={() => {
+                  dispatch(setAnimation(false));
+                  setUserHasClosedAnimation(true);
+                  sessionStorage.setItem("animationClosed", "true");
+                }}
               >
                 <img src={CloseSvg} />
               </button>

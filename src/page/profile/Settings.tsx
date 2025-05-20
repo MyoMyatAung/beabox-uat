@@ -154,7 +154,7 @@ const Settings = ({
         <div className="flex justify-between items-center">
           <p className="flex items-center gap-1 text-[14px]">当前版本</p>
           <p className="flex items-center gap-1 text-[14px]">
-            V 1.1.7.6 <ChevronRight size={15} className="text-[#777777]" />
+            V 1.1.7.7 <ChevronRight size={15} className="text-[#777777]" />
           </p>
         </div>
 
