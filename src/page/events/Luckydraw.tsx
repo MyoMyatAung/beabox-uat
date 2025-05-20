@@ -327,7 +327,7 @@ const Luckydraw = () => {
               >
                 {notificationData.length > 0 && (
                   <p>
-                    用户：<span className="font-bold text-[16px]">{notificationData[currentNotification]?.nickname}</span> 成功瓜分红包：
+                    用户：<span className="font-bold text-[16px]">{notificationData[currentNotification]?.nickname?.substring(0, 5)}</span> 成功瓜分红包：
                     <span className="font-bold text-[18px]">{notificationData[currentNotification]?.amount}{notificationData[currentNotification]?.currency}</span>
                   </p>
                 )}
