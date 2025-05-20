@@ -607,7 +607,7 @@ const Home = () => {
                           </svg>
                         </div>
                         <div className="follow-error">
-                          关注您喜欢的作者 fuckkkkkkkk
+                          关注您喜欢的作者
                         </div>
                       </div>
                     </div>
