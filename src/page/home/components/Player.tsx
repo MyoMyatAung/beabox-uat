@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useWatchtPostMutation } from "../services/homeApi";
 import { showToast } from "../services/errorSlice";
 import { decryptImage } from "@/utils/imageDecrypt";
-import { c } from "node_modules/framer-motion/dist/types.d-6pKw1mTI";
+import { ar, c } from "node_modules/framer-motion/dist/types.d-6pKw1mTI";
 import { setMute } from "../services/muteSlice";
 import { sethideBar } from "../services/hideBarSlice";
 import forward from "../Fastforward.gif";
@@ -962,6 +962,9 @@ const Player = ({
             });
 
             progressBarRef.current.addEventListener("change", () => {
+              if (!artPlayerInstanceRef.current?.playing) {
+                artPlayerInstanceRef.current?.play();
+              }
               setShowRotate(false);
               if (!artPlayerInstanceRef.current || !isDraggingRef.current)
                 return;
@@ -989,6 +992,10 @@ const Player = ({
 
             // Mobile touch events
             element.addEventListener("touchstart", (e) => {
+              if (!artPlayerInstanceRef.current?.playing) {
+                artPlayerInstanceRef.current?.play();
+                artPlayerInstanceRef.current?.pause();
+              }
               setShowRotate(true);
               if (!artPlayerInstanceRef.current || !progressBarRef.current)
                 return;
