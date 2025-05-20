@@ -328,7 +328,7 @@ const Player = ({
 
   // Save video position to local storage
   const saveVideoPosition = (position: number) => {
-    if (!user?.token || !post_id) return;
+    if (!post_id) return;
 
     try {
       // Get existing positions from local storage
@@ -350,7 +350,7 @@ const Player = ({
 
   // Get saved position for current video
   const getSavedPosition = (): number | null => {
-    if (!user?.token || !post_id) return null;
+    if (!post_id) return null;
 
     try {
       const positionsJson = localStorage.getItem(VIDEO_POSITIONS_KEY) || "{}";
