@@ -237,7 +237,10 @@ const VideoCard2 = ({ videoData, loadingVideoId, setLoadingVideoId }: any) => {
   }, []);
 
   return (
-    <div className="chinese_photo h-[320p max-w-full relative pt-[20px]">
+    <div
+      //h-[320px] remove
+      className="chinese_photo  max-w-full relative pt-[20px]"
+    >
       <div className="w-full h-[2px] relative">
         <LoadingAnimation
           loadingVideoId={loadingVideoId}

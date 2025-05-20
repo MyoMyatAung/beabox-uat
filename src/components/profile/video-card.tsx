@@ -268,7 +268,9 @@ const VideoCard = ({ videoData, loadingVideoId, setLoadingVideoId }: any) => {
     //     <FaEarthAmericas size={10} />
     //   </div>
     // </div>
-    <div className="chinese_photo h-[320px max-w-full relative pt-[20px]">
+    <div
+     //h-[320px] remove
+    className="chinese_photo  max-w-full relative pt-[20px]">
       <div className="w-full h-[2px] relative">
         <LoadingAnimation
           loadingVideoId={loadingVideoId}
