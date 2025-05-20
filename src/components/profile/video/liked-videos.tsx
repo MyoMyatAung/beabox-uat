@@ -91,7 +91,7 @@ const LikedVideos = ({ id }: any) => {
         ) : (
           <>
             <div>
-              <div className="grid grid-cols-2 gap-">
+              <div className="grid grid-cols-2 gap-1">
                 {videos.map((item: any) => (
                   <div
                     key={item.post_id}
