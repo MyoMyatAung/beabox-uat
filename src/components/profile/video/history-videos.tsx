@@ -94,7 +94,7 @@ const HistoryVideos = () => {
         ) : (
           <>
             <div>
-              <div className="grid grid-cols-2 gap-1">
+              <div className="grid grid-cols-2 gap-">
                 {videos.map((item: any) => (
                   <div
                     key={item.post_id}
