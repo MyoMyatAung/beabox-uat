@@ -1,4 +1,4 @@
-import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder";
+import ImageWithPlaceholder1 from "@/page/explore/comp/ImgPlaceHolder1";
 import { useSelector } from "react-redux";
 
 const OtherAds = () => {
@@ -18,7 +18,7 @@ const OtherAds = () => {
                   target="_blank"
                   className="flex flex-col justify-center items-center gap-[4px]"
                 >
-                  <ImageWithPlaceholder
+                  <ImageWithPlaceholder1
                     className="min-w-[56px] min-h-[56px] rounded-[6px] border-[#222]"
                     src={app.image}
                     width={""}

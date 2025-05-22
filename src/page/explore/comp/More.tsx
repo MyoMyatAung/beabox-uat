@@ -754,11 +754,6 @@ const More: React.FC<MoreProps> = () => {
                       <ImageWithPlaceholder
                         src={item?.preview_image}
                         alt={item.title || "Video"}
-                        width={"100%"}
-                        height={calculateHeight(
-                          item?.files[0]?.width,
-                          item?.files[0]?.height
-                        )}
                         className="object-cover h-full w-full rounded-none"
                         style={{
                           opacity:

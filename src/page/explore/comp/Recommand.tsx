@@ -923,14 +923,6 @@ const Recommand: React.FC<RecommandProps> = ({
                             <ImageWithPlaceholder
                               src={card?.preview_image}
                               alt={card.title || "Video"}
-                              width={"100%"}
-                              height={
-                                card?.files[0]?.height &&
-                                calculateHeight(
-                                  card?.files[0]?.width,
-                                  card?.files[0]?.height
-                                )
-                              }
                               className=" object-cover h-full w-full rounded-none"
                               style={{
                                 opacity:

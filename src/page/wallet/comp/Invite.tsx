@@ -16,6 +16,7 @@ import { useDispatch } from "react-redux";
 import { QRCodeCanvas } from "qrcode.react";
 import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder";
 import copy from "copy-to-clipboard";
+import ImageWithPlaceholder1 from "@/page/explore/comp/ImgPlaceHolder1";
 interface InviteProps {}
 
 const Invite: React.FC<InviteProps> = ({}) => {
@@ -196,7 +197,7 @@ const Invite: React.FC<InviteProps> = ({}) => {
                   // ref={imageRef}
                   className="text-right bg-white p-3 rounded-[20px]"
                 >
-                  <ImageWithPlaceholder
+                  <ImageWithPlaceholder1
                     needGradient={false}
                     alt="gg"
                     src={newData?.data.qrcode?.data}

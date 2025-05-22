@@ -1129,6 +1129,19 @@ const VideoContainer = ({
     return () => observer.disconnect();
   }, [video.post_id]);
 
+  const [isPortrait, setIsPortrait] = useState(false);
+
+  useEffect(() => {
+    if (video?.decryptedPreview) {
+      const img = new Image();
+      img.onload = function () {
+        // Compare width and height of the decrypted image
+        setIsPortrait(img.width <= img.height);
+      };
+      img.src = video.decryptedPreview;
+    }
+  }, [video?.decryptedPreview]);
+
   if (isOpen) {
     return <LoginDrawer isOpen={isOpen} setIsOpen={setIsOpen} />;
   }
@@ -1145,7 +1158,7 @@ const VideoContainer = ({
         type={video?.type == "ads" ? true : false}
         rotate={rotateVideoId === video?.post_id}
         src={video?.files[0].resourceURL}
-        p_img={video?.files[0].width > video?.files[0].height ? true : false}
+        p_img={!isPortrait}
         // thumbnail={video?.preview_image || ""}
         thumbnail={video?.decryptedPreview || video?.preview_image}
         handleLike={handleLike}

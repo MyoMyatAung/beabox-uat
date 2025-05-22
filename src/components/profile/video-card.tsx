@@ -269,8 +269,9 @@ const VideoCard = ({ videoData, loadingVideoId, setLoadingVideoId }: any) => {
     //   </div>
     // </div>
     <div
-     //h-[320px] remove
-    className="chinese_photo  max-w-full relative pt-[20px]">
+      //h-[320px] remove
+      className="chinese_photo  max-w-full relative pt-[20px]"
+    >
       <div className="w-full h-[2px] relative">
         <LoadingAnimation
           loadingVideoId={loadingVideoId}
@@ -307,11 +308,6 @@ const VideoCard = ({ videoData, loadingVideoId, setLoadingVideoId }: any) => {
         <ImageWithPlaceholder
           src={videoData?.preview_image}
           alt={videoData.title || "Video"}
-          width={"100%"}
-          height={calculateHeight(
-            videoData?.files[0]?.width,
-            videoData?.files[0]?.height
-          )}
           className="object-cover h-full w-full rounded-none"
           style={{
             opacity:

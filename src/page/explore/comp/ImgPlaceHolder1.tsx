@@ -6,13 +6,17 @@ import "../explore.css";
 type ImageWithPlaceholderProps = {
   src: string;
   alt: string;
+  width: string | number;
+  height: string | number;
   className: string;
   needGradient?: boolean;
 };
 
-const ImageWithPlaceholder = ({
+const ImageWithPlaceholder1 = ({
   src,
   alt,
+  width,
+  height,
   className,
   needGradient,
   ...props
@@ -20,8 +24,6 @@ const ImageWithPlaceholder = ({
   const imgRef = useRef<HTMLImageElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [decryptedSrc, setDecryptedSrc] = useState<string>("");
-  const [width, setWidth] = useState<any>(0);
-  const [height, setHeight] = useState<any>(0);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -58,33 +60,11 @@ const ImageWithPlaceholder = ({
     };
   }, [src]);
 
-  const calculateHeight = (width: number, height: number) => {
-    if (width > height) {
-      return 112; // Portrait
-    }
-    if (width < height) {
-      return 240; // Landscape
-    }
-    return 200;
-  };
-
-  useEffect(() => {
-    if (decryptedSrc) {
-      const img = new Image();
-      img.onload = function () {
-        setWidth(img.width);
-        setHeight(img.height);
-        // Compare width and height of the decrypted image
-      };
-      img.src = decryptedSrc;
-    }
-  }, [decryptedSrc]);
-
   return (
     <div
       ref={containerRef}
       className={`image-container_exp bg-black relative ${className}`}
-      style={{ width, height: height && calculateHeight(width, height) }}
+      style={{ width, height }}
     >
       <img
         ref={imgRef}
@@ -108,4 +88,4 @@ const ImageWithPlaceholder = ({
   );
 };
 
-export default ImageWithPlaceholder;
+export default ImageWithPlaceholder1;

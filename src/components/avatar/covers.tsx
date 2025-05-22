@@ -6,6 +6,7 @@ import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder";
 import { useCoverUploadMutation } from "@/store/api/profileApi";
 import TranLoader from "../shared/tran-loader";
 import { MdLock } from "react-icons/md";
+import ImageWithPlaceholder1 from "@/page/explore/comp/ImgPlaceHolder1";
 
 const Covers = ({ setShowCovers, refetch }: any) => {
   const [selectedCovers, setSelectedCovers] = useState<any>({});
@@ -72,7 +73,7 @@ const Covers = ({ setShowCovers, refetch }: any) => {
                 } overflow-hidden`}
                 key={cover?.image}
               >
-                <ImageWithPlaceholder
+                <ImageWithPlaceholder1
                   src={cover?.image}
                   width={""}
                   height={""}

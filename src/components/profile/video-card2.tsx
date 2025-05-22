@@ -277,11 +277,6 @@ const VideoCard2 = ({ videoData, loadingVideoId, setLoadingVideoId }: any) => {
         <ImageWithPlaceholder
           src={videoData?.preview_image}
           alt={videoData.title || "Video"}
-          width={"100%"}
-          height={calculateHeight(
-            videoData?.files[0]?.width,
-            videoData?.files[0]?.height
-          )}
           className="object-cover h-full w-full rounded-none"
           style={{
             opacity:
