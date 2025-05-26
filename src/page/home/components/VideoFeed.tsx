@@ -308,6 +308,23 @@ const VideoFeed = ({
     }
   };
 
+  const [isLastVideoVisible, setIsLastVideoVisible] = useState(false);
+
+  // Add this effect to track last video visibility
+  useEffect(() => {
+    const container = videoContainerRef.current;
+    if (!container) return;
+
+    const lastVideo = container.querySelector(`.video1:last-child`);
+
+    if (!lastVideo) return;
+
+    const lastPostId = lastVideo.getAttribute("data-post-id");
+    if (lastPostId === currentActivePost) {
+      setIsLastVideoVisible(true);
+    }
+  }, [currentActivePost]);
+
   const handleSearch = () => {
     navigate("/search_overlay");
   };
@@ -523,6 +540,11 @@ const VideoFeed = ({
                 </div>
               </div>
             ))}
+            {isLastVideoVisible && (
+              <div className="flex justify-center items-center p-3 w-full">
+                <img src={loader} className="w-[80px] h-[80px]" alt="Loading" />
+              </div>
+            )}
           </div>
         )}
 

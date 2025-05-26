@@ -414,42 +414,42 @@ const Home = () => {
     }
   }, [currentActivePost]);
 
-  const [isDraging, setIsDraging] = useState(false);
-  const scrollTimeoutRef = useRef<NodeJS.Timeout>();
+  // const [isDraging, setIsDraging] = useState(false);
+  // const scrollTimeoutRef = useRef<NodeJS.Timeout>();
 
-  // 2. Track scroll events
-  useEffect(() => {
-    const container = videoContainerRef.current;
-    if (!container) return;
+  // // 2. Track scroll events
+  // useEffect(() => {
+  //   const container = videoContainerRef.current;
+  //   if (!container) return;
 
-    const handleTouchStart = () => {
-      setIsDraging(true);
-      clearTimeout(scrollTimeoutRef.current);
-    };
+  //   const handleTouchStart = () => {
+  //     setIsDraging(true);
+  //     clearTimeout(scrollTimeoutRef.current);
+  //   };
 
-    const handleTouchMove = () => {
-      if (!isDraging) setIsDraging(true);
-      clearTimeout(scrollTimeoutRef.current);
-    };
+  //   const handleTouchMove = () => {
+  //     if (!isDraging) setIsDraging(true);
+  //     clearTimeout(scrollTimeoutRef.current);
+  //   };
 
-    const handleTouchEnd = () => {
-      scrollTimeoutRef.current = setTimeout(() => {
-        setIsDraging(false);
-      }, 100); // Short delay after touch ends
-    };
+  //   const handleTouchEnd = () => {
+  //     scrollTimeoutRef.current = setTimeout(() => {
+  //       setIsDraging(false);
+  //     }, 100); // Short delay after touch ends
+  //   };
 
-    container.addEventListener("touchstart", handleTouchStart);
-    container.addEventListener("touchmove", handleTouchMove);
-    container.addEventListener("touchend", handleTouchEnd);
+  //   container.addEventListener("touchstart", handleTouchStart);
+  //   container.addEventListener("touchmove", handleTouchMove);
+  //   container.addEventListener("touchend", handleTouchEnd);
 
-    return () => {
-      container.removeEventListener("touchstart", handleTouchStart);
-      container.removeEventListener("touchmove", handleTouchMove);
-      container.removeEventListener("touchend", handleTouchEnd);
+  //   return () => {
+  //     container.removeEventListener("touchstart", handleTouchStart);
+  //     container.removeEventListener("touchmove", handleTouchMove);
+  //     container.removeEventListener("touchend", handleTouchEnd);
 
-      clearTimeout(scrollTimeoutRef.current);
-    };
-  }, []);
+  //     clearTimeout(scrollTimeoutRef.current);
+  //   };
+  // }, []);
 
   return (
     <div className="flex justify-center items-center">
@@ -506,16 +506,10 @@ const Home = () => {
                       className={`app__videos pb-[80px] `}
                     >
                       {videos["follow"]?.map((video: any, index: any) => {
-                        const isLastVideo =
-                          index === videos["foryou"].length - 1;
-                        const shouldReduceOpacity = isLastVideo && isDraging;
-
                         return (
                           <div
                             key={index}
-                            className={`video mt-[20px] justify-center items-center overflow-hidden ${
-                              shouldReduceOpacity ? "opacity-70" : ""
-                            }`}
+                            className={`video mt-[20px] justify-center items-center overflow-hidden`}
                             data-post-id={video?.post_id} // Add post ID to the container
                           >
                             {video?.file_type !== "video" ? (
@@ -595,10 +589,7 @@ const Home = () => {
                         );
                       })}
                       {isLastVideoVisible && (
-                        <div
-                          className="flex justify-center items-center p-3 w-full
-                        "
-                        >
+                        <div className="flex justify-center items-center p-3 w-full">
                           <img
                             src={loader}
                             className="w-[80px] h-[80px]"
@@ -721,16 +712,10 @@ const Home = () => {
                       className={`app__videos pb-[80px]`}
                     >
                       {videos["foryou"]?.map((video: any, index: any) => {
-                        const isLastVideo =
-                          index === videos["foryou"].length - 1;
-                        const shouldReduceOpacity = isLastVideo && isDraging;
-
                         return (
                           <div
                             key={index}
-                            className={`video mt-[20px] justify-center items-center overflow-hidden ${
-                              shouldReduceOpacity ? "opacity-70" : ""
-                            }`}
+                            className={`video mt-[20px] justify-center items-center overflow-hidden`}
                             data-post-id={video.post_id} // Add post ID to the container
                           >
                             {video?.file_type !== "video" ? (
@@ -815,10 +800,7 @@ const Home = () => {
                         );
                       })}
                       {isLastVideoVisible && (
-                        <div
-                          className="flex justify-center items-center p-3 w-full
-                        "
-                        >
+                        <div className="flex justify-center items-center p-3 w-full">
                           <img
                             src={loader}
                             className="w-[80px] h-[80px]"
