@@ -32,6 +32,7 @@ import { useGetUserByReferalQuery } from "@/page/event/eventApi";
 import EventBox from "@/page/event/EventBox";
 import RegisterDrawer from "@/components/profile/auth/register-drawer";
 import { EventDetail } from "@/@types/lucky_draw";
+import DEventBox from "@/page/event/dragon/DEventBox";
 
 // Function to check if the app is running in a WebView
 function isWebView() {
@@ -121,7 +122,14 @@ const RootLayout = ({ children }: any) => {
         dispatch(setAnimation(false));
       }
     }
-  }, [currentEventData?.status, dispatch, showAd, showLanding, showAlert, userHasClosedAnimation]);
+  }, [
+    currentEventData?.status,
+    dispatch,
+    showAd,
+    showLanding,
+    showAlert,
+    userHasClosedAnimation,
+  ]);
 
   // Check if ads have already been seen in this session
   useEffect(() => {
@@ -335,7 +343,7 @@ const RootLayout = ({ children }: any) => {
       {children}
 
       {event && !box && !isOpenNew && !user && (
-        <EventBox
+        <DEventBox
           setshownextBox={setshownextBox}
           shownextBox={shownextBox}
           eventData={eventData}
@@ -386,7 +394,7 @@ const RootLayout = ({ children }: any) => {
         location.pathname === "/" &&
         !event &&
         showAnimation &&
-        currentTab === 2 && 
+        currentTab === 2 &&
         !hideBar &&
         !userHasClosedAnimation && (
           <div className="fixed bottom-[8rem] right-9 z-[9999] rounded-full p-2">
