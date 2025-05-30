@@ -72,51 +72,12 @@ const getPersistentUUIDFromIndexedDB = async (): Promise<string> => {
     };
     
     request.onerror = () => {
-      console.warn('Could not open IndexedDB, falling back to localStorage');
-      // Fallback to localStorage
-      let uuid = localStorage.getItem(storageKey);
-      
-      if (!uuid) {
-        uuid = generateUUID();
-        try {
-          localStorage.setItem(storageKey, uuid);
-        } catch {
-          console.warn('Could not store UUID in localStorage');
-        }
-      }
-      
+      console.warn('Could not open IndexedDB');
+      // Generate temporary UUID if IndexedDB fails
+      const uuid = generateUUID();
       resolve(uuid);
     };
   });
-};
-
-/**
- * Get or create a persistent UUID for this device/browser
- * Maintains backward compatibility with synchronous API
- */
-const getPersistentUUID = (): string => {
-  const storageKey = 'app_device_uuid';
-  let uuid = localStorage.getItem(storageKey);
-  
-  if (!uuid) {
-    uuid = generateUUID();
-    try {
-      localStorage.setItem(storageKey, uuid);
-    } catch {
-      console.warn('Could not store UUID in localStorage');
-    }
-  }
-  
-  // Initialize IndexedDB storage in the background
-  void getPersistentUUIDFromIndexedDB().then((persistentId: string) => {
-    if (persistentId !== uuid) {
-      setDeviceInfo({ uuid: persistentId });
-    }
-  }).catch((err: Error) => {
-    console.warn('IndexedDB error:', err);
-  });
-  
-  return uuid;
 };
 
 /**
@@ -152,15 +113,12 @@ const detectDeviceName = (): string => {
   return 'Unknown Device';
 };
 
-// Default device info for web browsers
-const defaultDeviceInfo: DeviceInfo = {
+let deviceInfo: DeviceInfo = { 
   deviceName: detectDeviceName(),
-  uuid: getPersistentUUID(),
   osVersion: navigator.userAgent,
-  appVersion: APP_VERSION
+  appVersion: APP_VERSION,
+  uuid: '' // Will be set by IndexedDB (browser) or native side (webview)
 };
-
-let deviceInfo: DeviceInfo = { ...defaultDeviceInfo };
 
 /**
  * Collect environment flags that might indicate emulation or suspicious environments
@@ -238,7 +196,25 @@ const hashString = async (str: string): Promise<string> => {
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
+/**
+ * Initialize device info with persistent UUID from IndexedDB (browser only)
+ */
+export const initPersistentDeviceInfo = async (): Promise<void> => {
+  // Only generate UUID if not in webview (browser usage)
+  if (!isMobileWebView()) {
+    try {
+      const persistentUuid = await getPersistentUUIDFromIndexedDB();
+      setDeviceInfo({ uuid: persistentUuid });
+    } catch (err) {
+      console.warn('Failed to initialize persistent device info:', err);
+    }
+  }
+};
+
 export const initDeviceInfo = async () => {
+  // Initialize UUID for browser usage only
+  await initPersistentDeviceInfo();
+  
   try {
     const fp = await FingerprintJS.load();
     const result = await fp.get();
@@ -264,14 +240,14 @@ export const initDeviceInfo = async () => {
     };
     
     deviceInfo = {
-      ...defaultDeviceInfo,
+      ...deviceInfo, // Keep existing UUID (from IndexedDB or native)
       ...payload
     };
   } catch (e) {
     console.warn('FingerprintJS failed:', e);
-    deviceInfo = defaultDeviceInfo;
   }
 };
+
 /**
  * Device info event from native applications
  */
@@ -281,15 +257,16 @@ interface DeviceInfoEvent extends CustomEvent {
 
 /**
  * Initialize device info listener for WebView communication
+ * Native side will provide device ID
  */
 export const initDeviceInfoListener = (): void => {
   window.addEventListener('getDeviceInfo', ((event: DeviceInfoEvent) => {
     if (event.detail) {
       deviceInfo = {
-        ...defaultDeviceInfo,
-        ...event.detail,
+        ...deviceInfo,
+        ...event.detail, // Native side provides device ID and other info
       };
-      console.log('Device info received:', deviceInfo);
+      console.log('Device info received from native:', deviceInfo);
     }
   }) as EventListener);
 };
