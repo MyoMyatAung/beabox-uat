@@ -8,6 +8,8 @@ import { useGetApplicationAdsQuery } from "@/store/api/explore/exploreApi";
 import { useGetConfigQuery } from "@/page/home/services/homeApi";
 import splashVideo from "@/assets/splash.mp4";
 import logo from "@/assets/b_logo.webp";
+import Lottie from "lottie-react";
+import loadingAnimation from "@/lotties/Slogan.json";
 
 // Types for our data
 interface AdImage {
@@ -40,6 +42,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
   const [allDataLoaded, setAllDataLoaded] = useState(false);
   const [minTimeElapsed, setMinTimeElapsed] = useState(false);
   const [currentQuote, setCurrentQuote] = useState("");
+  const [contentVisible, setContentVisible] = useState(false);
 
   // Quotes collection
   const quotes = [
@@ -96,6 +99,15 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
     const timer = setTimeout(() => {
       setMinTimeElapsed(true);
     }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Show content after 2 second delay
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setContentVisible(true);
+    }, 1500);
 
     return () => clearTimeout(timer);
   }, []);
@@ -231,6 +243,20 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
 
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center z-[9999] font-['Noto_Sans_SC',sans-serif]">
+      <style>{`
+        @keyframes steppedFadeIn {
+          0% { opacity: 0; }
+          20% { opacity: 0.2; }
+          40% { opacity: 0.4; }
+          60% { opacity: 0.6; }
+          80% { opacity: 0.8; }
+          100% { opacity: 1; }
+        }
+        .stepped-fade-in {
+          animation: steppedFadeIn 2.0s ease-in-out forwards;
+          opacity: 0;
+        }
+      `}</style>
       <div className="w-full h-full relative overflow-hidden">
         {/* Video Background */}
         <video
@@ -252,14 +278,21 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
         {/* Content Container */}
         <div className="relative z-10 flex flex-col items-center justify-center h-full">
           {/* Logo */}
-          <img
+          {/* <img
             className="w-[140px] mb-3 animate-[slideDown_1s_ease_forwards]"
             src={logo}
             alt="App Logo"
+          /> */}
+          <Lottie
+            className="-mt-[50px]"
+            animationData={loadingAnimation}
+            loop={false} // Play only once
+            autoplay={true} // Start playing automatically
           />
 
           {/* Quote Container */}
-          <div className="text-center px-6 mb-6">
+          <div className="w-full flex flex-col items-center justify-center -mt-[120px]">
+          <div className={`text-center px-6 mb-6 ${contentVisible ? 'stepped-fade-in' : 'opacity-0'}`}>
             <p className="my-1.5 text-lg leading-normal text-white text-opacity-95">
               真正的享受，来自于克制后的自由，
             </p>
@@ -269,7 +302,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
           </div>
 
           {/* Progress Bar */}
-          <div className="w-4/5 text-center">
+          <div className={`w-4/5 text-center ${contentVisible ? 'stepped-fade-in' : 'opacity-0'}`}>
             <div className="w-full h-1.5 bg-white bg-opacity-15 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-[#de62f5] to-[#a848ec] transition-all duration-300"
@@ -283,9 +316,10 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
           </div>
 
           {/* Footer Text */}
-          <div className="absolute bottom-4 w-full text-center text-xs text-white text-opacity-60 px-4">
+          <div className={`absolute bottom-4 w-full text-center text-xs text-white text-opacity-60 px-4`}>
             本软件不适合未成年人使用，如果您未满18岁请立刻离开。
             <br />© 笔盒@2025 ｜ 联系邮箱：zhaohui@beabox.net
+          </div>
           </div>
         </div>
       </div>
