@@ -1,0 +1,213 @@
+.event_box {
+  border-radius: 20px;
+  border: 3px solid #ffffc3;
+  background: linear-gradient(
+    156deg,
+    #f33e5c 5.39%,
+    #f11f5d 42.79%,
+    #ea126f 72.45%,
+    #f522ab 99.98%
+  );
+}
+
+.event-bo {
+  box-shadow: 0px 0px 60px 0px #fbbf9a;
+}
+
+.duser_invite_text {
+  color: #6a5c51;
+  text-align: center;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 20px; /* 142.857% */
+  letter-spacing: 1px;
+}
+
+.devent_close_btn {
+  position: absolute;
+  border-radius: 1000px;
+  background: rgba(251, 190, 151, 0.48);
+  display: flex;
+  width: 32px;
+  height: 32px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 9999;
+  margin-top: -200px;
+
+  margin-left: 290px;
+  /* padding-left: 230px; */
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.devent_btn {
+  border-radius: 100px;
+  background: linear-gradient(182deg, #fff2bd -49.06%, #faaf8f 50.38%);
+  /* box-shadow: 0px -8px 4px 0px rgba(255, 255, 255, 0.25) inset; */
+  color: #4f453d;
+  text-align: center;
+  font-family: Inter;
+  font-size: 16.25px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 29.219px; /* 137.5% */
+  width: 200px;
+  height: 45px;
+}
+
+.event-money {
+  color: #fff;
+  text-align: center;
+
+  font-size: 32px;
+  font-style: italic;
+  font-weight: 900;
+  line-height: 20px; /* 62.5% */
+  letter-spacing: 1px;
+}
+.event-money-p {
+  color: #fff;
+
+  font-size: 16px;
+  /* font-style: italic; */
+  font-weight: 600;
+  line-height: 22px; /* 137.5% */
+}
+
+.event-money1 {
+  text-align: center;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: #f67451;
+  font-size: 32px;
+  font-style: italic;
+  font-weight: 900;
+  line-height: 20px; /* 62.5% */
+  letter-spacing: 1px;
+}
+.event-money-p1 {
+  -webkit-text-stroke-width: 0.5px;
+  -webkit-text-stroke-color: #f67451;
+  font-size: 16px;
+  /* font-style: italic; */
+  font-weight: 900;
+  line-height: 22px; /* 137.5% */
+}
+
+.event-money1,
+.event-money-p1,
+.event-line {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-in-out; /* Transition for opacity */
+}
+
+.devent_name {
+  color: #f8825e;
+}
+
+.show-bonus {
+  visibility: visible;
+  opacity: 1; /* Visible after transition */
+  transition: opacity 0.3s ease-in-out; /* Transition for opacity */
+}
+
+.show-bonus .event-money-p1 {
+  visibility: visible;
+  opacity: 1; /* Visible after transition */
+  transition: opacity 0.3s ease-in-out; /* Transition for opacity */
+}
+
+.show-bonus .event-money1 {
+  visibility: visible;
+  opacity: 1; /* Visible after transition */
+  transition: opacity 0.3s ease-in-out; /* Transition for opacity */
+}
+.show-bonus .event-line {
+  visibility: visible;
+  opacity: 1; /* Visible after transition */
+  transition: opacity 0.3s ease-in-out; /* Transition for opacity */
+}
+
+.dheight {
+  height: 100%;
+  height: calc(100dvh - 75px);
+}
+
+.event-line {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.event_box_close {
+  border-radius: 2000px;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  width: 46px;
+  height: 46px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+.event-box {
+  width: 300px;
+  display: inline-flex;
+  padding: 32px 0px 4px 0px;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  border-radius: 16px;
+  background: #16131c;
+}
+
+.event-box-text {
+  color: #bbb;
+  text-align: center;
+  font-feature-settings: "liga" off, "clig" off;
+  font-family: "Helvetica Neue";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 132%; /* 21.12px */
+}
+.event-btn-box {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.event-btn-text {
+  text-align: center;
+  font-family: "Helvetica Neue";
+  font-size: 17px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+@media screen and (min-width: 1200px) {
+  .light_star {
+    top: -50px;
+  }
+}
+
+/* @media screen and (max-width: 374px) {
+    .media-w {
+      padding-top: 70px;
+    }
+  }
+  
+  @media screen and (max-width: 374px) {
+    .media-w1 {
+      padding-top: 60px;
+    }
+  }
+  
+  @media screen and (max-width: 374px) {
+    .media-w2 {
+      width: 230px;
+    }
+  } */
