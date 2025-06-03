@@ -482,7 +482,7 @@ const Home = () => {
           ) : (
             <>
               {currentTab === 0 &&
-                (isLoading && videos["follow"] === 0 ? (
+                (isLoading && videos["follow"].length === 0 ? (
                   <div className="app_home bg-[#16131C]">
                     <div
                       style={{
@@ -516,7 +516,7 @@ const Home = () => {
                               <a
                                 href={video?.ads_info?.jump_url}
                                 target="_blank"
-                                className="flex items-center justify-center h-full"
+                                className="flex items-center justify-center h-full overflow-hidden"
                               >
                                 <img
                                   src={video?.files[0]?.resourceURL}
