@@ -58,23 +58,25 @@ export function BottomNav() {
   const { bottomLoader } = useSelector((state: any) => state.loaderSlice);
   const [needsBottomPadding, setNeedsBottomPadding] = useState(false);
   const navigate = useNavigate();
-  const user = useSelector((state: any) => state.persist.user); 
+  const user = useSelector((state: any) => state.persist.user);
   const dispatch = useDispatch();
+  const { hideBar } = useSelector((state: any) => state.hideBarSlice);
 
   useEffect(() => {
     setNeedsBottomPadding(isIOSWebViewOrWebClip());
   }, []);
 
   const handleRoute = (route: string) => {
-    if (route === '/creator/upload/video' && !user?.token) {
+    if (route === "/creator/upload/video" && !user?.token) {
       dispatch(setIsDrawerOpen(true));
       return;
     }
     navigate(route);
-  }
+  };
 
   return (
     <nav
+      style={{ display: hideBar ? "none" : "flex" }}
       className={`flex items-center justify-around p-4 bg-[#191721] backdrop-blur-sm border-t border-white/10 ${
         bottomLoader && "loading-border"
       } ${needsBottomPadding ? "h-[80px] pb-10" : "h-[76px]"}`}
@@ -83,7 +85,7 @@ export function BottomNav() {
       {navItems.map((item) => (
         <div
           key={item.name}
-          onClick={()=>handleRoute(item.href)}
+          onClick={() => handleRoute(item.href)}
           // to={item.href}
           className={cn(
             "flex flex-col items-center gap-1",
