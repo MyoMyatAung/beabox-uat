@@ -55,7 +55,7 @@ const Luckydraw = () => {
   const isOpen = useSelector((state: any) => state.profile.isDrawerOpen);
   const [prizeDigit, setPrizeDigit] = useState<number[]>([0,0,0,0,0,0]);
   const [isAnimating, setIsAnimating] = useState(false);
-  const { data } = useGetUserShareInfoQuery({});
+  const { data, refetch: refetchUserShareInfo } = useGetUserShareInfoQuery({});
   const [currentNotification, setCurrentNotification] = useState(0);
   const [notificationVisible, setNotificationVisible] = useState(true);
   const [notificationData, setNotificationData] = useState<any[]>([]);
@@ -171,6 +171,13 @@ const Luckydraw = () => {
     return () => clearInterval(notificationInterval);
   }, [notificationData]);
 
+
+  useEffect(() => {
+    if (user?.token) {
+      refetchUserShareInfo();
+    }
+  }, [user?.token]);
+  
   if (!stats) {
     return <Loader />;
   }
@@ -179,6 +186,7 @@ const Luckydraw = () => {
   const remainingTime = formatDateTime(currentDuration, timeZone);
 
   // const remainingTime = time.startsWith("00:") ? time.slice(3) : time;
+
 
   const handleCopyClick = async () => {
     if (!user?.token) {
