@@ -505,6 +505,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
   };
 
   const handleTouchStart = (card: any) => {
+    if (loadingVideoId === card.post_id) return;
     if (playingVideos[card.post_id]) return;
 
     longPressTimer.current = setTimeout(() => {

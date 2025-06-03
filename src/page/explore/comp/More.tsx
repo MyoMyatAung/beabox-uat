@@ -606,6 +606,7 @@ const More: React.FC<MoreProps> = () => {
   };
 
   const handleTouchStart = (card: any) => {
+    if (loadingVideoId === card.post_id) return;
     if (playingVideos[card.post_id]) return;
 
     longPressTimer.current = setTimeout(() => {
