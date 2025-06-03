@@ -788,6 +788,7 @@ const Recommand: React.FC<RecommandProps> = ({
   };
 
   const handleTouchStart = (card: any, title: any) => {
+    if (loadingVideoId === card.post_id + title) return;
     if (playingVideos[card.post_id]) return;
 
     longPressTimer.current = setTimeout(() => {
