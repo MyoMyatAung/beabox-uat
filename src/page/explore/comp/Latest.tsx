@@ -884,6 +884,34 @@ const Latest: React.FC<LatestPorp> = ({
   const longPressTimer = useRef<NodeJS.Timeout | null>(null);
   const loadingTimerRef = useRef<NodeJS.Timeout>();
 
+  const cleanupPlayer = (postId: string) => {
+    const player = artPlayerInstances.current[postId];
+    if (player) {
+      // Clean up video resources
+      const video = player.video;
+      if (video) {
+        video.pause();
+        video.removeAttribute("src");
+        video.load();
+      }
+
+      // Destroy HLS instance if it exists
+      if (player?.customType === "m3u8" && player.hls) {
+        player.hls.destroy();
+      }
+
+      player.destroy();
+      delete artPlayerInstances.current[postId];
+    }
+
+    // Clean up playing state
+    setPlayingVideos((prev) => {
+      const newState = { ...prev };
+      delete newState[postId];
+      return newState;
+    });
+  };
+
   useEffect(() => {
     if (contentRef.current) {
       contentRef.current.scrollTop = scrollPositionRef.current;
@@ -942,6 +970,10 @@ const Latest: React.FC<LatestPorp> = ({
 
     console.log("Touch start on card:", card.post_id);
 
+    if (activeLongPressCard) {
+      cleanupPlayer(activeLongPressCard.post_id);
+    }
+
     // Pause any currently playing video
     if (activeLongPressCard) {
       const currentPlayer =
@@ -968,10 +1000,11 @@ const Latest: React.FC<LatestPorp> = ({
 
     // Destroy previous instance if exists
     if (artPlayerInstances.current[card.post_id]) {
-      artPlayerInstances.current[card.post_id]?.destroy();
+      cleanupPlayer(card.post_id);
     }
 
     const isM3u8 = card?.preview?.url?.includes(".m3u8");
+    const hlsRef = { current: null as Hls | null };
 
     const options: Artplayer["Option"] = {
       container: container,
@@ -992,6 +1025,7 @@ const Latest: React.FC<LatestPorp> = ({
         m3u8: (videoElement: HTMLVideoElement, url: string) => {
           if (Hls.isSupported()) {
             const hls = new Hls();
+            hlsRef.current = hls;
             hls.loadSource(url);
             hls.attachMedia(videoElement);
           } else if (
@@ -1044,6 +1078,18 @@ const Latest: React.FC<LatestPorp> = ({
         setLoadingVideoId(null);
         setDisabled(null);
       });
+      artPlayerInstances.current[card.post_id] = player;
+      player.hls = hlsRef.current; // Store HLS reference for cleanup
+
+      // ... rest of your event listeners
+
+      // Add cleanup to player instance
+      player.on("destroy", () => {
+        if (hlsRef.current) {
+          hlsRef.current.destroy();
+          hlsRef.current = null;
+        }
+      });
     } catch (error) {
       setPlayingVideos((prev) => ({ ...prev, [card.post_id]: false }));
       console.error("Error initializing ArtPlayer:", error);
@@ -1053,7 +1099,8 @@ const Latest: React.FC<LatestPorp> = ({
   };
 
   const handleTouchStart = (card: any) => {
-    if (loadingVideoId === card.post_id || loadingDisable) return;
+    if (loadingVideoId === card.post_id || card.post_id === loadingDisable)
+      return;
     if (playingVideos[card.post_id]) return;
     setDisabled(card.post_id);
     longPressTimer.current = setTimeout(() => {
@@ -1062,20 +1109,43 @@ const Latest: React.FC<LatestPorp> = ({
     }, 500); // 500ms threshold for long press
   };
 
-  // Clean up all players when component unmounts
+  useEffect(() => {
+    // Clean up players for videos that are no longer in the waterfall
+    const currentPostIds = new Set(waterfall.map((card: any) => card.post_id));
+
+    Object.keys(artPlayerInstances.current).forEach((postId) => {
+      if (!currentPostIds.has(postId)) {
+        cleanupPlayer(postId);
+      }
+    });
+
+    // Clean up players for videos that aren't the active long press
+    if (activeLongPressCard) {
+      Object.keys(artPlayerInstances.current).forEach((postId) => {
+        if (postId !== activeLongPressCard.post_id) {
+          cleanupPlayer(postId);
+        }
+      });
+    }
+  }, [waterfall, activeLongPressCard]);
+
   useEffect(() => {
     return () => {
-      Object.values(artPlayerInstances.current).forEach((player) => {
-        player?.destroy();
+      // Clean up all players
+      Object.keys(artPlayerInstances.current).forEach((postId) => {
+        cleanupPlayer(postId);
       });
       artPlayerInstances.current = {};
 
+      // Clear timers
       if (longPressTimer.current) {
         clearTimeout(longPressTimer.current);
+        longPressTimer.current = null;
       }
 
       if (loadingTimerRef.current) {
         clearTimeout(loadingTimerRef.current);
+        loadingTimerRef.current = undefined;
       }
     };
   }, []);
