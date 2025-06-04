@@ -376,7 +376,6 @@ const More: React.FC<MoreProps> = () => {
     tag: title ? title : "Latest Drama",
     page: page,
   });
-  const [isTouchDisabled, setIsTouchDisabled] = useState(false);
 
   // Video player states
   const [activeLongPressCard, setActiveLongPressCard] = useState<any>(null);
@@ -500,7 +499,6 @@ const More: React.FC<MoreProps> = () => {
   const handleLongPress = (card: any) => {
     if (playingVideos[card.post_id]) return;
     if (!card?.preview?.url) return;
-    setIsTouchDisabled(false);
 
     // Pause any currently playing video
     if (activeLongPressCard) {
@@ -608,10 +606,8 @@ const More: React.FC<MoreProps> = () => {
   };
 
   const handleTouchStart = (card: any) => {
-    if (loadingVideoId === card.post_id || isTouchDisabled) return;
+    if (loadingVideoId === card.post_id) return;
     if (playingVideos[card.post_id]) return;
-
-    setIsTouchDisabled(true);
 
     longPressTimer.current = setTimeout(() => {
       handleLongPress(card);

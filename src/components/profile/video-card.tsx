@@ -37,7 +37,6 @@ const VideoCard = ({ videoData, loadingVideoId, setLoadingVideoId }: any) => {
   const artPlayerInstances = useRef<{ [key: string]: Artplayer | null }>({});
   const longPressTimer = useRef<NodeJS.Timeout | null>(null);
   const loadingTimerRef = useRef<NodeJS.Timeout>();
-  const [isTouchDisabled, setIsTouchDisabled] = useState(false);
 
   const showDetailsVod = (file: any) => {
     dispatch(setDetails(file));
@@ -108,8 +107,6 @@ const VideoCard = ({ videoData, loadingVideoId, setLoadingVideoId }: any) => {
   const handleLongPress = (card: any) => {
     if (playingVideos[card.post_id]) return;
     if (!card?.preview?.url) return;
-
-    setIsTouchDisabled(false);
 
     // Pause any currently playing video
     if (activeLongPressCard) {
@@ -217,10 +214,8 @@ const VideoCard = ({ videoData, loadingVideoId, setLoadingVideoId }: any) => {
   };
 
   const handleTouchStart = (card: any) => {
-    if (loadingVideoId === card.post_id || isTouchDisabled) return;
+    if (loadingVideoId === card.post_id) return;
     if (playingVideos[card.post_id]) return;
-
-    setIsTouchDisabled(true);
 
     longPressTimer.current = setTimeout(() => {
       handleLongPress(card);
