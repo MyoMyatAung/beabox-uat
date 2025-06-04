@@ -2306,10 +2306,10 @@ const Player = ({
     // Set playback rate to 2x
     player.playbackRate = FAST_FORWARD_RATE;
 
-    // Ensure progress bar is visible during fast forward
+    // Hide progress bar during fast forward
     if (progressBarRef.current) {
-      progressBarRef.current.style.opacity = "1";
-      progressBarRef.current.style.display = "block";
+      progressBarRef.current.style.opacity = "0";
+      progressBarRef.current.style.display = "none";
     }
 
     fastForwardIntervalRef.current = setInterval(() => {
@@ -2317,7 +2317,7 @@ const Player = ({
         stopFastForward(); // Stop at end of video
       }
 
-      // Update progress bar during fast forward
+      // Update progress bar during fast forward (even though it's hidden)
       if (progressBarRef.current) {
         const currentTime = player.currentTime || 0;
         const duration = player.duration || 1;
@@ -2345,6 +2345,12 @@ const Player = ({
     setIsFastForwarding(false);
     isLongPressActiveRef.current = false; // Reset the ref when fast forward stops
     dispatch(sethideBar(false)); // Show UI layers again
+
+    // Show progress bar again after fast forward
+    if (progressBarRef.current) {
+      progressBarRef.current.style.opacity = "1";
+      progressBarRef.current.style.display = "block";
+    }
 
     // Always continue playing after fast forward
     player.play();

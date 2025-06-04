@@ -50,6 +50,7 @@ const VideoFeed = ({
   const [topmovies, setTopMovies] = useState(false);
   const { data: config } = useGetConfigQuery({});
   const user = useSelector((state: any) => state.persist.user);
+  const { hideBar } = useSelector((state: any) => state.hideBarSlice);
   // const profile = useSelector((state: any) => state.persist.profileData);
   // const { data: user1, refetch: refetchUser } = useGetMyOwnProfileQuery({});
 
@@ -389,7 +390,9 @@ const VideoFeed = ({
             className={`app__videos ${isOpen ? "opacity-50" : ""}`}
             style={{ pointerEvents: isOpen ? "none" : "auto" }}
           >
-            <div className="fixed top-3 left-0  flex gap-2 items-center w-full z-[9999]">
+            <div className="fixed top-3 left-0  flex gap-2 items-center w-full z-[9999]"
+              style={{ display: hideBar ? "none" : "flex" }}
+            >
               <button className="p-3" onClick={handleBack}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -510,7 +513,9 @@ const VideoFeed = ({
                 <CountdownCircle countNumber={countNumber} />
               </div>
             )} */}
-                <div className="absolute bottom-0 add_comment w-full  py-3 ">
+                <div className="absolute bottom-0 add_comment w-full  py-3 "
+                  style={{ display: hideBar ? "none" : "block" }}
+                >
                   <div className="flex items-center feed_add_comment gap-2 px-4">
                     <input
                       type="text"
