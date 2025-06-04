@@ -841,6 +841,7 @@ import empty from "../../../page/home/empty.png";
 import Artplayer from "artplayer";
 import Hls from "hls.js";
 import LoadingAnimation from "../../../page/search/comp/LoadingAnimation";
+import { set } from "react-hook-form";
 
 interface LatestPorp {
   list_id: string;
@@ -876,6 +877,7 @@ const Latest: React.FC<LatestPorp> = ({
     [key: string]: boolean;
   }>({});
   const [loadingVideoId, setLoadingVideoId] = useState<string | null>(null);
+  const [loadingDisable, setDisabled] = useState<string | null>(null);
 
   const videoPlayerRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const artPlayerInstances = useRef<{ [key: string]: Artplayer | null }>({});
@@ -938,6 +940,8 @@ const Latest: React.FC<LatestPorp> = ({
     if (playingVideos[card.post_id]) return;
     if (!card?.preview?.url) return;
 
+    console.log("Touch start on card:", card.post_id);
+
     // Pause any currently playing video
     if (activeLongPressCard) {
       const currentPlayer =
@@ -955,7 +959,6 @@ const Latest: React.FC<LatestPorp> = ({
     if (card?.preview?.url) {
       initializePlayer(card);
     }
-    setLoadingVideoId(card.post_id);
     setActiveLongPressCard(card);
   };
 
@@ -1012,11 +1015,13 @@ const Latest: React.FC<LatestPorp> = ({
         player.play();
         setPlayingVideos((prev) => ({ ...prev, [card.post_id]: true }));
         setLoadingVideoId(null);
+        setDisabled(null);
       });
 
       player.on("play", () => {
         setPlayingVideos((prev) => ({ ...prev, [card.post_id]: true }));
         setLoadingVideoId(null);
+        setDisabled(null);
       });
 
       player.on("pause", () => {
@@ -1026,28 +1031,33 @@ const Latest: React.FC<LatestPorp> = ({
       player.on("video:playing", () => {
         setPlayingVideos((prev) => ({ ...prev, [card.post_id]: true }));
         setLoadingVideoId(null);
+        setDisabled(null);
       });
 
       player.on("video:waiting", () => {
         setLoadingVideoId(card.post_id);
+        setDisabled(card.post_id);
       });
 
       player.on("error", () => {
         setPlayingVideos((prev) => ({ ...prev, [card.post_id]: false }));
         setLoadingVideoId(null);
+        setDisabled(null);
       });
     } catch (error) {
       setPlayingVideos((prev) => ({ ...prev, [card.post_id]: false }));
       console.error("Error initializing ArtPlayer:", error);
       setLoadingVideoId(null);
+      setDisabled(null);
     }
   };
 
   const handleTouchStart = (card: any) => {
-    if (loadingVideoId === card.post_id) return;
+    if (loadingVideoId === card.post_id || loadingDisable) return;
     if (playingVideos[card.post_id]) return;
-
+    setDisabled(card.post_id);
     longPressTimer.current = setTimeout(() => {
+      setLoadingVideoId(card.post_id);
       handleLongPress(card);
     }, 500); // 500ms threshold for long press
   };
