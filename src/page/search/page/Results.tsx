@@ -79,6 +79,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
 
   const [loadingVideoId, setLoadingVideoId] = useState<string | null>(null);
   const videoPlayerRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+  const [loadingDisable, setDisabled] = useState<string | null>(null);
 
   const handleSearch = () => {
     if (query.trim()) {
@@ -373,9 +374,84 @@ const Results: React.FC<ResultsProps> = ({}) => {
 
   const longPressTimer = useRef<NodeJS.Timeout | null>(null);
 
+  // const handleLongPress = (card: any) => {
+  //   if (playingVideos[card.post_id]) return;
+  //   if (!card?.preview?.url) return;
+  //   // Pause any currently playing video
+  //   if (activeLongPressCard) {
+  //     const currentPlayer =
+  //       artPlayerInstances.current[activeLongPressCard?.post_id];
+  //     if (currentPlayer) {
+  //       currentPlayer.muted = true;
+  //       currentPlayer.pause();
+  //       setPlayingVideos((prev) => ({
+  //         ...prev,
+  //         [activeLongPressCard.post_id]: false,
+  //       }));
+  //     }
+  //   }
+
+  //   if (card?.preview?.url) {
+  //     initializePlayer(card);
+  //   }
+  //   setLoadingVideoId(card.post_id);
+
+  //   setActiveLongPressCard(card);
+  // };
+
+  // Add this right after your state declarations
+  // Add this useEffect
+  useEffect(() => {
+    if (movies.length > 0 && movies.length <= 10) {
+      const firstVideo = movies[0];
+      if (firstVideo?.preview?.url) {
+        console.log("Initializing player for first video");
+        // Small timeout to ensure DOM is ready
+        setTimeout(() => {
+          handleLongPress(firstVideo);
+        }, 300);
+      }
+    }
+  }, [movies]);
+
+  const cleanupPlayer = (postId: string) => {
+    const player = artPlayerInstances.current[postId];
+    if (player) {
+      // Clean up video resources
+      const video = player.video;
+      if (video) {
+        video.pause();
+        video.removeAttribute("src");
+        video.load();
+      }
+
+      // Destroy HLS instance if it exists
+      if (player?.customType === "m3u8" && player.hls) {
+        player.hls.destroy();
+      }
+
+      player.destroy();
+      delete artPlayerInstances.current[postId];
+    }
+
+    // Clean up playing state
+    setPlayingVideos((prev) => {
+      const newState = { ...prev };
+      delete newState[postId];
+      return newState;
+    });
+  };
+
   const handleLongPress = (card: any) => {
     if (playingVideos[card.post_id]) return;
     if (!card?.preview?.url) return;
+
+    console.log("Touch start on card:", card.post_id);
+
+    if (activeLongPressCard) {
+      cleanupPlayer(activeLongPressCard.post_id);
+    }
+
     // Pause any currently playing video
     if (activeLongPressCard) {
       const currentPlayer =
@@ -393,37 +469,20 @@ const Results: React.FC<ResultsProps> = ({}) => {
     if (card?.preview?.url) {
       initializePlayer(card);
     }
-    setLoadingVideoId(card.post_id);
-
     setActiveLongPressCard(card);
   };
 
-  // Add this right after your state declarations
-  // Add this useEffect
-  useEffect(() => {
-    if (movies.length > 0 && movies.length <= 10) {
-      const firstVideo = movies[0];
-      if (firstVideo?.preview?.url) {
-        console.log("Initializing player for first video");
-        // Small timeout to ensure DOM is ready
-        setTimeout(() => {
-          handleLongPress(firstVideo);
-        }, 300);
-      }
-    }
-  }, [movies]);
-
   const initializePlayer = (card: any) => {
     const container = videoPlayerRefs.current[card.post_id];
-
     if (!container) return;
 
     // Destroy previous instance if exists
     if (artPlayerInstances.current[card.post_id]) {
-      artPlayerInstances.current[card.post_id]?.destroy();
+      cleanupPlayer(card.post_id);
     }
 
     const isM3u8 = card?.preview?.url?.includes(".m3u8");
+    const hlsRef = { current: null as Hls | null };
 
     const options: Artplayer["Option"] = {
       container: container,
@@ -444,6 +503,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
         m3u8: (videoElement: HTMLVideoElement, url: string) => {
           if (Hls.isSupported()) {
             const hls = new Hls();
+            hlsRef.current = hls;
             hls.loadSource(url);
             hls.attachMedia(videoElement);
           } else if (
@@ -453,7 +513,6 @@ const Results: React.FC<ResultsProps> = ({}) => {
           }
         },
       },
-
       icons: {
         loading: `<div style="display:none"></div>`,
         state: `<div style="display:none"></div>`,
@@ -465,18 +524,16 @@ const Results: React.FC<ResultsProps> = ({}) => {
       artPlayerInstances.current[card.post_id] = player;
 
       player.on("ready", () => {
-        // player.muted = false;
         player.play();
         setPlayingVideos((prev) => ({ ...prev, [card.post_id]: true }));
-
         setLoadingVideoId(null);
+        setDisabled(null);
       });
 
       player.on("play", () => {
-        // player.muted = false;
         setPlayingVideos((prev) => ({ ...prev, [card.post_id]: true }));
-
         setLoadingVideoId(null);
+        setDisabled(null);
       });
 
       player.on("pause", () => {
@@ -484,35 +541,193 @@ const Results: React.FC<ResultsProps> = ({}) => {
       });
 
       player.on("video:playing", () => {
-        // player.muted = false;
         setPlayingVideos((prev) => ({ ...prev, [card.post_id]: true }));
-
         setLoadingVideoId(null);
+        setDisabled(null);
       });
+
       player.on("video:waiting", () => {
         setLoadingVideoId(card.post_id);
+        setDisabled(card.post_id);
       });
 
       player.on("error", () => {
         setPlayingVideos((prev) => ({ ...prev, [card.post_id]: false }));
         setLoadingVideoId(null);
+        setDisabled(null);
+      });
+      artPlayerInstances.current[card.post_id] = player;
+      player.hls = hlsRef.current; // Store HLS reference for cleanup
+
+      // ... rest of your event listeners
+
+      // Add cleanup to player instance
+      player.on("destroy", () => {
+        if (hlsRef.current) {
+          hlsRef.current.destroy();
+          hlsRef.current = null;
+        }
       });
     } catch (error) {
       setPlayingVideos((prev) => ({ ...prev, [card.post_id]: false }));
       console.error("Error initializing ArtPlayer:", error);
       setLoadingVideoId(null);
+      setDisabled(null);
     }
   };
 
   const handleTouchStart = (card: any) => {
-    if (loadingVideoId === card.post_id) return;
+    if (loadingVideoId === card.post_id || card.post_id === loadingDisable)
+      return;
     if (playingVideos[card.post_id]) return;
+    setDisabled(card.post_id);
+    setLoadingVideoId(card.post_id);
+    handleLongPress(card);
+    // longPressTimer.current = setTimeout(() => {
 
-    longPressTimer.current = setTimeout(() => {
-      handleLongPress(card);
-    }, 500); // 500ms threshold for long press
-    // handleLongPress(card);
+    // }, 500); // 500ms threshold for long press
   };
+  useEffect(() => {
+    return () => {
+      // Clean up all players
+      Object.keys(artPlayerInstances.current).forEach((postId) => {
+        cleanupPlayer(postId);
+      });
+      artPlayerInstances.current = {};
+
+      // Clear timers
+      if (longPressTimer.current) {
+        clearTimeout(longPressTimer.current);
+        longPressTimer.current = null;
+      }
+
+      if (loadingTimerRef.current) {
+        clearTimeout(loadingTimerRef.current);
+        loadingTimerRef.current = undefined;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    // Clean up players for videos that are no longer in the waterfall
+    const currentPostIds = new Set(movies.map((card: any) => card.post_id));
+
+    Object.keys(artPlayerInstances.current).forEach((postId) => {
+      if (!currentPostIds.has(postId)) {
+        cleanupPlayer(postId);
+      }
+    });
+
+    // Clean up players for videos that aren't the active long press
+    if (activeLongPressCard) {
+      Object.keys(artPlayerInstances.current).forEach((postId) => {
+        if (postId !== activeLongPressCard.post_id) {
+          cleanupPlayer(postId);
+        }
+      });
+    }
+  }, [movies, activeLongPressCard]);
+
+  // const initializePlayer = (card: any) => {
+  //   const container = videoPlayerRefs.current[card.post_id];
+
+  //   if (!container) return;
+
+  //   // Destroy previous instance if exists
+  //   if (artPlayerInstances.current[card.post_id]) {
+  //     artPlayerInstances.current[card.post_id]?.destroy();
+  //   }
+
+  //   const isM3u8 = card?.preview?.url?.includes(".m3u8");
+
+  //   const options: Artplayer["Option"] = {
+  //     container: container,
+  //     url: card.preview.url,
+  //     muted: true,
+  //     autoplay: true,
+  //     loop: true,
+  //     isLive: false,
+  //     aspectRatio: true,
+  //     fullscreen: false,
+  //     theme: "#d53ff0",
+  //     moreVideoAttr: {
+  //       playsInline: true,
+  //       preload: "auto" as const,
+  //     },
+  //     type: isM3u8 ? "m3u8" : "auto",
+  //     customType: {
+  //       m3u8: (videoElement: HTMLVideoElement, url: string) => {
+  //         if (Hls.isSupported()) {
+  //           const hls = new Hls();
+  //           hls.loadSource(url);
+  //           hls.attachMedia(videoElement);
+  //         } else if (
+  //           videoElement.canPlayType("application/vnd.apple.mpegurl")
+  //         ) {
+  //           videoElement.src = url;
+  //         }
+  //       },
+  //     },
+
+  //     icons: {
+  //       loading: `<div style="display:none"></div>`,
+  //       state: `<div style="display:none"></div>`,
+  //     },
+  //   };
+
+  //   try {
+  //     const player = new Artplayer(options);
+  //     artPlayerInstances.current[card.post_id] = player;
+
+  //     player.on("ready", () => {
+  //       // player.muted = false;
+  //       player.play();
+  //       setPlayingVideos((prev) => ({ ...prev, [card.post_id]: true }));
+
+  //       setLoadingVideoId(null);
+  //     });
+
+  //     player.on("play", () => {
+  //       // player.muted = false;
+  //       setPlayingVideos((prev) => ({ ...prev, [card.post_id]: true }));
+
+  //       setLoadingVideoId(null);
+  //     });
+
+  //     player.on("pause", () => {
+  //       setPlayingVideos((prev) => ({ ...prev, [card.post_id]: false }));
+  //     });
+
+  //     player.on("video:playing", () => {
+  //       // player.muted = false;
+  //       setPlayingVideos((prev) => ({ ...prev, [card.post_id]: true }));
+
+  //       setLoadingVideoId(null);
+  //     });
+  //     player.on("video:waiting", () => {
+  //       setLoadingVideoId(card.post_id);
+  //     });
+
+  //     player.on("error", () => {
+  //       setPlayingVideos((prev) => ({ ...prev, [card.post_id]: false }));
+  //       setLoadingVideoId(null);
+  //     });
+  //   } catch (error) {
+  //     setPlayingVideos((prev) => ({ ...prev, [card.post_id]: false }));
+  //     console.error("Error initializing ArtPlayer:", error);
+  //     setLoadingVideoId(null);
+  //   }
+  // };
+
+  // const handleTouchStart = (card: any) => {
+  //   if (loadingVideoId === card.post_id) return;
+  //   if (playingVideos[card.post_id]) return;
+
+  //   longPressTimer.current = setTimeout(() => {
+  //     handleLongPress(card);
+  //   }, 500); // 500ms threshold for long press
+  //   // handleLongPress(card);
+  // };
 
   const [minimumLoadingTimeElapsed, setMinimumLoadingTimeElapsed] = useState<{
     [key: string]: boolean;

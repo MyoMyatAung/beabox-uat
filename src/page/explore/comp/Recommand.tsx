@@ -598,6 +598,7 @@ const Recommand: React.FC<RecommandProps> = ({
   const artPlayerInstances = useRef<{ [key: string]: Artplayer | null }>({});
   const longPressTimer = useRef<NodeJS.Timeout | null>(null);
   const loadingTimerRef = useRef<NodeJS.Timeout>();
+  const [loadingDisable, setDisabled] = useState<string | null>(null);
 
   useEffect(() => {
     if (data?.data) {
@@ -669,6 +670,10 @@ const Recommand: React.FC<RecommandProps> = ({
     if (playingVideos[card.post_id + title]) return;
     if (!card?.preview?.url) return;
 
+    if (activeLongPressCard) {
+      cleanupPlayer(activeLongPressCard.post_id);
+    }
+
     // Pause any currently playing video
     if (activeLongPressCard) {
       const currentPlayer =
@@ -686,7 +691,7 @@ const Recommand: React.FC<RecommandProps> = ({
     if (card?.preview?.url) {
       initializePlayer(card, title);
     }
-    setLoadingVideoId(card.post_id + title);
+
     setActiveLongPressCard(card);
   };
 
@@ -696,10 +701,10 @@ const Recommand: React.FC<RecommandProps> = ({
 
     // Destroy previous instance if exists
     if (artPlayerInstances.current[card.post_id + title]) {
-      artPlayerInstances.current[card.post_id + title]?.destroy();
+      cleanupPlayer(card.post_id + title);
     }
-
     const isM3u8 = card?.preview?.url?.includes(".m3u8");
+    const hlsRef = { current: null as Hls | null };
 
     const options: Artplayer["Option"] = {
       container: container,
@@ -720,6 +725,7 @@ const Recommand: React.FC<RecommandProps> = ({
         m3u8: (videoElement: HTMLVideoElement, url: string) => {
           if (Hls.isSupported()) {
             const hls = new Hls();
+            hlsRef.current = hls;
             hls.loadSource(url);
             hls.attachMedia(videoElement);
           } else if (
@@ -750,11 +756,13 @@ const Recommand: React.FC<RecommandProps> = ({
           });
         setPlayingVideos((prev) => ({ ...prev, [card.post_id + title]: true }));
         setLoadingVideoId(null);
+        setDisabled(null);
       });
 
       player.on("play", () => {
         setPlayingVideos((prev) => ({ ...prev, [card.post_id + title]: true }));
         setLoadingVideoId(null);
+        setDisabled(null);
       });
 
       player.on("pause", () => {
@@ -762,15 +770,18 @@ const Recommand: React.FC<RecommandProps> = ({
           ...prev,
           [card.post_id + title]: false,
         }));
+        setDisabled(null);
       });
 
       player.on("video:playing", () => {
         setPlayingVideos((prev) => ({ ...prev, [card.post_id + title]: true }));
         setLoadingVideoId(null);
+        setDisabled(null);
       });
 
       player.on("video:waiting", () => {
         setLoadingVideoId(card.post_id + title);
+        setDisabled(card.post_id + title);
       });
 
       player.on("error", () => {
@@ -779,6 +790,16 @@ const Recommand: React.FC<RecommandProps> = ({
           [card.post_id + title]: false,
         }));
         setLoadingVideoId(null);
+        setDisabled(null);
+      });
+      artPlayerInstances.current[card.post_id + title] = player;
+      player.hls = hlsRef.current; // Store HLS reference for cleanup
+
+      player.on("destroy", () => {
+        if (hlsRef.current) {
+          hlsRef.current.destroy();
+          hlsRef.current = null;
+        }
       });
     } catch (error) {
       setPlayingVideos((prev) => ({ ...prev, [card.post_id + title]: false }));
@@ -787,28 +808,196 @@ const Recommand: React.FC<RecommandProps> = ({
     }
   };
 
-  const handleTouchStart = (card: any, title: any) => {
-    if (loadingVideoId === card.post_id + title) return;
-    if (playingVideos[card.post_id]) return;
+  // const handleTouchStart = (card: any, title: any) => {
+  //   if (loadingVideoId === card.post_id + title) return;
+  //   if (playingVideos[card.post_id]) return;
 
-    longPressTimer.current = setTimeout(() => {
-      handleLongPress(card, title);
-    }, 500); // 500ms threshold for long press
+  //   longPressTimer.current = setTimeout(() => {
+  //     handleLongPress(card, title);
+  //   }, 500); // 500ms threshold for long press
+  // };
+
+  // useEffect(() => {
+  //   return () => {
+  //     Object.values(artPlayerInstances.current).forEach((player) => {
+  //       player?.destroy();
+  //     });
+  //     artPlayerInstances.current = {};
+
+  //     if (longPressTimer.current) {
+  //       clearTimeout(longPressTimer.current);
+  //     }
+
+  //     if (loadingTimerRef.current) {
+  //       clearTimeout(loadingTimerRef.current);
+  //     }
+  //   };
+  // }, []);
+
+  const cleanupPlayer = (postId: string) => {
+    const player = artPlayerInstances.current[postId];
+    if (player) {
+      // Clean up video resources
+      const video = player.video;
+      if (video) {
+        video.pause();
+        video.removeAttribute("src");
+        video.load();
+      }
+
+      // Destroy HLS instance if it exists
+      if (player?.customType === "m3u8" && player.hls) {
+        player.hls.destroy();
+      }
+
+      player.destroy();
+      delete artPlayerInstances.current[postId];
+    }
+
+    // Clean up playing state
+    setPlayingVideos((prev) => {
+      const newState = { ...prev };
+      delete newState[postId];
+      return newState;
+    });
+  };
+
+  // const initializePlayer = (card: any) => {
+  //   const container = videoPlayerRefs.current[card.post_id];
+  //   if (!container) return;
+
+  // // Destroy previous instance if exists
+  // if (artPlayerInstances.current[card.post_id]) {
+  //   cleanupPlayer(card.post_id);
+  // }
+
+  //   const isM3u8 = card?.preview?.url?.includes(".m3u8");
+  // const hlsRef = { current: null as Hls | null };
+
+  //   const options: Artplayer["Option"] = {
+  //     container: container,
+  //     url: card.preview.url,
+  //     muted: true,
+  //     autoplay: true,
+  //     loop: true,
+  //     isLive: false,
+  //     aspectRatio: true,
+  //     fullscreen: false,
+  //     theme: "#d53ff0",
+  //     moreVideoAttr: {
+  //       playsInline: true,
+  //       preload: "auto" as const,
+  //     },
+  //     type: isM3u8 ? "m3u8" : "auto",
+  //     customType: {
+  //       m3u8: (videoElement: HTMLVideoElement, url: string) => {
+  //         if (Hls.isSupported()) {
+  //           const hls = new Hls();
+  //           hlsRef.current = hls;
+  //           hls.loadSource(url);
+  //           hls.attachMedia(videoElement);
+  //         } else if (
+  //           videoElement.canPlayType("application/vnd.apple.mpegurl")
+  //         ) {
+  //           videoElement.src = url;
+  //         }
+  //       },
+  //     },
+  //     icons: {
+  //       loading: `<div style="display:none"></div>`,
+  //       state: `<div style="display:none"></div>`,
+  //     },
+  //   };
+
+  //   try {
+  //     const player = new Artplayer(options);
+  //     artPlayerInstances.current[card.post_id] = player;
+
+  //     player.on("ready", () => {
+  //       player.play();
+  //       setPlayingVideos((prev) => ({ ...prev, [card.post_id]: true }));
+  //       setLoadingVideoId(null);
+  //       setDisabled(null);
+  //     });
+
+  //     player.on("play", () => {
+  //       setPlayingVideos((prev) => ({ ...prev, [card.post_id]: true }));
+  //       setLoadingVideoId(null);
+  //       setDisabled(null);
+  //     });
+
+  //     player.on("pause", () => {
+  //       setPlayingVideos((prev) => ({ ...prev, [card.post_id]: false }));
+  //     });
+
+  //     player.on("video:playing", () => {
+  //       setPlayingVideos((prev) => ({ ...prev, [card.post_id]: true }));
+  //       setLoadingVideoId(null);
+  //       setDisabled(null);
+  //     });
+
+  //     player.on("video:waiting", () => {
+  //       setLoadingVideoId(card.post_id);
+  //       setDisabled(card.post_id);
+  //     });
+
+  //     player.on("error", () => {
+  //       setPlayingVideos((prev) => ({ ...prev, [card.post_id]: false }));
+  //       setLoadingVideoId(null);
+  //       setDisabled(null);
+  //     });
+  // artPlayerInstances.current[card.post_id] = player;
+  // player.hls = hlsRef.current; // Store HLS reference for cleanup
+
+  // // ... rest of your event listeners
+
+  // // Add cleanup to player instance
+  // player.on("destroy", () => {
+  //   if (hlsRef.current) {
+  //     hlsRef.current.destroy();
+  //     hlsRef.current = null;
+  //   }
+  // });
+  //   } catch (error) {
+  //     setPlayingVideos((prev) => ({ ...prev, [card.post_id]: false }));
+  //     console.error("Error initializing ArtPlayer:", error);
+  //     setLoadingVideoId(null);
+  //     setDisabled(null);
+  //   }
+  // };
+
+  const handleTouchStart = (card: any, title: any) => {
+    if (
+      loadingVideoId === card.post_id + title ||
+      card.post_id + title === loadingDisable + title
+    )
+      return;
+    if (playingVideos[card.post_id + title]) return;
+    setDisabled(card.post_id + title);
+    setLoadingVideoId(card.post_id + title);
+    handleLongPress(card, title);
+    // longPressTimer.current = setTimeout(() => {
+
+    // }, 500); // 500ms threshold for long press
   };
 
   useEffect(() => {
     return () => {
-      Object.values(artPlayerInstances.current).forEach((player) => {
-        player?.destroy();
+      // Clean up all players
+      Object.keys(artPlayerInstances.current).forEach((postId) => {
+        cleanupPlayer(postId);
       });
       artPlayerInstances.current = {};
 
+      // Clear timers
       if (longPressTimer.current) {
         clearTimeout(longPressTimer.current);
+        longPressTimer.current = null;
       }
 
       if (loadingTimerRef.current) {
         clearTimeout(loadingTimerRef.current);
+        loadingTimerRef.current = undefined;
       }
     };
   }, []);

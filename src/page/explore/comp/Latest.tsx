@@ -1103,32 +1103,12 @@ const Latest: React.FC<LatestPorp> = ({
       return;
     if (playingVideos[card.post_id]) return;
     setDisabled(card.post_id);
-    longPressTimer.current = setTimeout(() => {
-      setLoadingVideoId(card.post_id);
-      handleLongPress(card);
-    }, 500); // 500ms threshold for long press
+    setLoadingVideoId(card.post_id);
+    handleLongPress(card);
+    // longPressTimer.current = setTimeout(() => {
+
+    // }, 500); // 500ms threshold for long press
   };
-
-  useEffect(() => {
-    // Clean up players for videos that are no longer in the waterfall
-    const currentPostIds = new Set(waterfall.map((card: any) => card.post_id));
-
-    Object.keys(artPlayerInstances.current).forEach((postId) => {
-      if (!currentPostIds.has(postId)) {
-        cleanupPlayer(postId);
-      }
-    });
-
-    // Clean up players for videos that aren't the active long press
-    if (activeLongPressCard) {
-      Object.keys(artPlayerInstances.current).forEach((postId) => {
-        if (postId !== activeLongPressCard.post_id) {
-          cleanupPlayer(postId);
-        }
-      });
-    }
-  }, [waterfall, activeLongPressCard]);
-
   useEffect(() => {
     return () => {
       // Clean up all players
@@ -1149,6 +1129,26 @@ const Latest: React.FC<LatestPorp> = ({
       }
     };
   }, []);
+
+  useEffect(() => {
+    // Clean up players for videos that are no longer in the waterfall
+    const currentPostIds = new Set(waterfall.map((card: any) => card.post_id));
+
+    Object.keys(artPlayerInstances.current).forEach((postId) => {
+      if (!currentPostIds.has(postId)) {
+        cleanupPlayer(postId);
+      }
+    });
+
+    // Clean up players for videos that aren't the active long press
+    if (activeLongPressCard) {
+      Object.keys(artPlayerInstances.current).forEach((postId) => {
+        if (postId !== activeLongPressCard.post_id) {
+          cleanupPlayer(postId);
+        }
+      });
+    }
+  }, [waterfall, activeLongPressCard]);
 
   useEffect(() => {
     if (waterfall.length > 0 && waterfall.length <= 10) {
