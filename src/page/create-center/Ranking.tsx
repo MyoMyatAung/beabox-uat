@@ -5,6 +5,7 @@ import {
   useGetConfigQuery,
   useGetTopCreatorQuery,
 } from "@/store/api/createCenterApi";
+import { useGetExploreHeaderQuery } from "@/store/api/explore/exploreApi";
 import { UsersRound } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
@@ -36,6 +37,7 @@ const Ranking = () => {
   const [isCopied2, setIsCopied2] = useState(false);
   const [cachedDownloadLink, setCachedDownloadLink] = useState(null);
   const [shareInfo] = useShareInfoMutation();
+  const [ads, setAds] = useState<any>([]);
 
   const {
     data: userData,
@@ -52,11 +54,20 @@ const Ranking = () => {
     qr_code: 0,
   });
 
+  const { data: exploreData, isLoading: exploreLoading } = useGetExploreHeaderQuery("");
+
   useEffect(() => {
     if (shareData?.data?.link) {
       setCachedDownloadLink(shareData?.data?.content);
     }
   }, [shareData]);
+
+  useEffect(() => {
+    if (exploreData?.data) {
+      const adsData = exploreData?.data?.ads?.application?.apps;
+      setAds(adsData || []);
+    }
+  }, [exploreData]);
 
   const isIOSApp = () => {
     return (
@@ -252,6 +263,41 @@ const Ranking = () => {
         </div>
         <div ref={headerRef} className="w-full"></div>
 
+        {/* Ads Section - Only in normal view, not sticky */}
+        <div className="pt-[20px] px-[10px]">
+          {/* <h1 className="text-white text-[14px] font-[500] leading-[20px] pb-[12px] px-1">
+            {exploreData?.data?.ads?.application?.title || ""}
+          </h1> */}
+          {exploreLoading ? (
+            <div className="grid grid-cols-6 gap-[20px]">
+              {[...Array(12)].map((_, index) => (
+                <div key={index} className="w-[56px] h-[53px] rounded-md bg-white/20 animate-pulse"></div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-6 gap-[5px]">
+              {ads?.map((app: any) => (
+                <a
+                  key={app.id}
+                  href={app.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex flex-col justify-center items-center gap-[4px]"
+                >
+                  <img
+                    className="min-w-[56px] min-h-[56px] rounded-[6px] border-[#222]"
+                    src={app.image}
+                    alt={app.title}
+                  />
+                  <h1 className="text-white ad_update text-[14px] font-[400]">
+                    {app.title}
+                  </h1>
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+
         <div
           className={`w-full sticky top-0 ${
             showHeader ? "ccbg2 z-50 pb-1" : ""
@@ -264,6 +310,7 @@ const Ranking = () => {
           ) : (
             <></>
           )}
+          
           <div className="flex items-center gap-4 px-2">
             {configData?.data?.creator_center_ranking_filter?.map(
               (tag: any) => (
