@@ -965,6 +965,7 @@ const Latest: React.FC<LatestPorp> = ({
   };
 
   const handleLongPress = (card: any) => {
+    if (loadingVideoId === card.post_id) return;
     if (playingVideos[card.post_id]) return;
     if (!card?.preview?.url) return;
 
