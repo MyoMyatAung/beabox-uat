@@ -598,6 +598,7 @@ const Recommand: React.FC<RecommandProps> = ({
   const artPlayerInstances = useRef<{ [key: string]: Artplayer | null }>({});
   const longPressTimer = useRef<NodeJS.Timeout | null>(null);
   const loadingTimerRef = useRef<NodeJS.Timeout>();
+  const [isTouchDisabled, setIsTouchDisabled] = useState(false);
 
   useEffect(() => {
     if (data?.data) {
@@ -668,6 +669,7 @@ const Recommand: React.FC<RecommandProps> = ({
   const handleLongPress = (card: any, title: any) => {
     if (playingVideos[card.post_id + title]) return;
     if (!card?.preview?.url) return;
+    setIsTouchDisabled(false);
 
     // Pause any currently playing video
     if (activeLongPressCard) {
@@ -788,8 +790,10 @@ const Recommand: React.FC<RecommandProps> = ({
   };
 
   const handleTouchStart = (card: any, title: any) => {
-    if (loadingVideoId === card.post_id + title) return;
+    if (loadingVideoId === card.post_id + title || isTouchDisabled) return;
     if (playingVideos[card.post_id]) return;
+
+    setIsTouchDisabled(true);
 
     longPressTimer.current = setTimeout(() => {
       handleLongPress(card, title);

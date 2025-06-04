@@ -869,6 +869,7 @@ const Latest: React.FC<LatestPorp> = ({
   const navigate = useNavigate();
   const scrollPositionRef = useRef<number>(0);
   const contentRef = useRef<HTMLDivElement>(null);
+  const [isTouchDisabled, setIsTouchDisabled] = useState(false);
 
   // Video player states
   const [activeLongPressCard, setActiveLongPressCard] = useState<any>(null);
@@ -935,8 +936,10 @@ const Latest: React.FC<LatestPorp> = ({
   };
 
   const handleLongPress = (card: any) => {
+    if (loadingVideoId === card.post_id) return;
     if (playingVideos[card.post_id]) return;
     if (!card?.preview?.url) return;
+    setIsTouchDisabled(false);
 
     // Pause any currently playing video
     if (activeLongPressCard) {
@@ -955,7 +958,9 @@ const Latest: React.FC<LatestPorp> = ({
     if (card?.preview?.url) {
       initializePlayer(card);
     }
+
     setLoadingVideoId(card.post_id);
+
     setActiveLongPressCard(card);
   };
 
@@ -1044,8 +1049,9 @@ const Latest: React.FC<LatestPorp> = ({
   };
 
   const handleTouchStart = (card: any) => {
-    if (loadingVideoId === card.post_id) return;
+    if (loadingVideoId === card.post_id || isTouchDisabled) return;
     if (playingVideos[card.post_id]) return;
+    setIsTouchDisabled(true);
 
     longPressTimer.current = setTimeout(() => {
       handleLongPress(card);

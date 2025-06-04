@@ -79,6 +79,7 @@ const Results: React.FC<ResultsProps> = ({}) => {
 
   const [loadingVideoId, setLoadingVideoId] = useState<string | null>(null);
   const videoPlayerRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+  const [isTouchDisabled, setIsTouchDisabled] = useState(false);
 
   const handleSearch = () => {
     if (query.trim()) {
@@ -376,6 +377,8 @@ const Results: React.FC<ResultsProps> = ({}) => {
   const handleLongPress = (card: any) => {
     if (playingVideos[card.post_id]) return;
     if (!card?.preview?.url) return;
+
+    setIsTouchDisabled(false);
     // Pause any currently playing video
     if (activeLongPressCard) {
       const currentPlayer =
@@ -505,8 +508,10 @@ const Results: React.FC<ResultsProps> = ({}) => {
   };
 
   const handleTouchStart = (card: any) => {
-    if (loadingVideoId === card.post_id) return;
+    if (loadingVideoId === card.post_id || isTouchDisabled) return;
     if (playingVideos[card.post_id]) return;
+
+    setIsTouchDisabled(true); // Disable further touch events
 
     longPressTimer.current = setTimeout(() => {
       handleLongPress(card);
