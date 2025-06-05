@@ -3237,7 +3237,6 @@ const Player = ({
 
             // Improved error handling
             hls.on(Hls.Events.ERROR, function (event, data) {
-
               if (data.fatal) {
                 switch (data.type) {
                   case Hls.ErrorTypes.NETWORK_ERROR:
@@ -4857,8 +4856,8 @@ const Player = ({
 
     // Ensure progress bar is visible during fast forward
     if (progressBarRef.current) {
-      progressBarRef.current.style.opacity = "1";
-      progressBarRef.current.style.display = "block";
+      progressBarRef.current.style.opacity = "0";
+      progressBarRef.current.style.display = "none";
     }
 
     fastForwardIntervalRef.current = setInterval(() => {
@@ -4894,6 +4893,12 @@ const Player = ({
     setIsFastForwarding(false);
     isLongPressActiveRef.current = false; // Reset the ref when fast forward stops
     dispatch(sethideBar(false)); // Show UI layers again
+
+    // Ensure progress bar is visible during fast forward
+    if (progressBarRef.current) {
+      progressBarRef.current.style.opacity = "1";
+      progressBarRef.current.style.display = "block";
+    }
 
     // Always continue playing after fast forward
     player.play();
