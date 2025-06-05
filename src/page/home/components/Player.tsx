@@ -3811,7 +3811,7 @@ const Player = ({
         },
 
         {
-          html: `<div class="custom-play-icon z-index-[999]">
+          html: `<div class="custom-play-icon z-[999999999]">
                     <img src="${indicator}" width="50" height="50" alt="Play">
                  </div>`,
           style: {
@@ -3819,7 +3819,7 @@ const Player = ({
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            zIndex: "99999999",
+            zIndex: "999999",
             display: "none",
           },
           mounted: (element: HTMLElement) => {
@@ -4089,42 +4089,42 @@ const Player = ({
           },
         },
         // Add this to your layers array in the Artplayer options
-        {
-          html: `
-    <div  class="black-screen-layer" style="
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: transparent;
-      display: none;
-      z-index: 1;
-    "></div>
-  `,
-          style: {
-            position: "absolute",
-            top: "0",
-            left: "0",
-            width: " 100%",
-            height: "100%",
-            zIndex: "1",
-          },
+        //       {
+        //         html: `
+        //   <div  class="black-screen-layer" style="
+        //     position: absolute;
+        //     top: 0;
+        //     left: 0;
+        //     width: 100%;
+        //     height: 100%;
+        //     background-color: black;
+        //     display: block;
+        //     z-index: 9;
+        //   "></div>
+        // `,
+        //         style: {
+        //           position: "absolute",
+        //           top: "0",
+        //           left: "0",
+        //           width: " 100%",
+        //           height: "100%",
+        //           zIndex: "9",
+        //         },
 
-          mounted: (element: HTMLElement) => {
-            const blackScreenLayer = element.querySelector(
-              ".black-screen-layer"
-            ) as HTMLDivElement;
+        //         mounted: (element: HTMLElement) => {
+        //           const blackScreenLayer = element.querySelector(
+        //             ".black-screen-layer"
+        //           ) as HTMLDivElement;
 
-            // Store the reference to the black screen layer
-            blackScreenRef.current = blackScreenLayer;
+        //           // Store the reference to the black screen layer
+        //           blackScreenRef.current = blackScreenLayer;
 
-            // Return cleanup function
-            return () => {
-              blackScreenRef.current = null;
-            };
-          },
-        },
+        //           // Return cleanup function
+        //           return () => {
+        //             blackScreenRef.current = null;
+        //           };
+        //         },
+        //       },
       ],
     };
 
@@ -5043,23 +5043,41 @@ const Player = ({
   };
   const [isPosterVisible, setIsPosterVisible] = useState(true);
 
-  useEffect(() => {
-    if (blackScreenRef.current) {
-      console.log("p_img", p_img);
-      const shouldShow = p_img && isPosterVisible;
-      blackScreenRef.current.style.display = shouldShow ? "block" : "none";
-      blackScreenRef.current.style.backgroundColor = shouldShow
-        ? "black"
-        : "transparent";
-    }
-  }, [p_img, isPosterVisible]);
+  // useEffect(() => {
+  //   if (blackScreenRef.current) {
+  //     const shouldShow = p_img && isPosterVisible;
+  //     blackScreenRef.current.style.display = shouldShow ? "block" : "none";
+  //     blackScreenRef.current.style.backgroundColor = shouldShow
+  //       ? "black"
+  //       : "transparent";
+  //   }
+  // }, [p_img, isPosterVisible]);
 
   return (
-    <div
-      ref={playerContainerRef}
-      className={`video_player w-full ${p_img ? "poster_change" : ""}`}
-      style={{ minHeight: "200px" }} // Add minimum height to prevent collapse
-    />
+    <>
+      {p_img && isPosterVisible && (
+        <div
+          className="black-screen-layer"
+          ref={blackScreenRef}
+          style={{
+            position: "absolute",
+            top: "0",
+            left: "0",
+            width: " 100%",
+            height: "100%",
+            backgroundColor: "black",
+            display: "block",
+            zIndex: "11",
+          }}
+        ></div>
+      )}
+
+      <div
+        ref={playerContainerRef}
+        className={`video_player w-full ${p_img ? "poster_change" : ""}`}
+        style={{ minHeight: "200px" }} // Add minimum height to prevent collapse
+      ></div>
+    </>
   );
 };
 
