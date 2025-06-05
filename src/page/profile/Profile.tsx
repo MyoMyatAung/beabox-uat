@@ -20,6 +20,7 @@ import ScrollHeader from "@/components/profile/scroll-header";
 import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 import BadgeImg from "@/components/shared/badge-img";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
+import OtherAds from "@/components/profile/other-ads";
 
 const Profile = () => {
   const headerRef = useRef(null);
@@ -328,6 +329,13 @@ const Profile = () => {
           null}
         </div>
         <div ref={headerRef} className="sticky z-[1500] top-0"></div>
+        <div
+          className={`px-3 relative z-[1900] ${
+            showHeader ? "opacity-0" : "opacity-1"
+          }`}
+        >
+          <OtherAds />
+        </div>
         <div className="">
           <VideoTabs />
         </div>
