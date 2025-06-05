@@ -3237,7 +3237,6 @@ const Player = ({
 
             // Improved error handling
             hls.on(Hls.Events.ERROR, function (event, data) {
-              console.log("HLS error:", data.type, data.details);
 
               if (data.fatal) {
                 switch (data.type) {
