@@ -38,7 +38,7 @@ export default defineConfig({
     },
   },
   // produciton
-  base: 'https://viu34fdq.rrgsih.cn/',
+  base: '/',
   // development
   // base: '/',
   define: {
