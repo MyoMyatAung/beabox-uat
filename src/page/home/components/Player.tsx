@@ -3809,87 +3809,6 @@ const Player = ({
         },
 
         {
-          html: `<div class="custom-play-icon z-[999999999]">
-                    <img src="${indicator}" width="50" height="50" alt="Play">
-                 </div>`,
-          style: {
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            zIndex: "999999",
-            display: "none",
-          },
-          mounted: (element: HTMLElement) => {
-            playIconRef.current = element as HTMLDivElement;
-
-            playIconRef?.current?.addEventListener("click", () => {
-              if (artPlayerInstanceRef.current) {
-                // Show loading indicator during play attempt
-                const loadingIndicator =
-                  artPlayerInstanceRef.current?.template?.$loading?.querySelector(
-                    ".video-loading-indicator"
-                  ) as HTMLDivElement;
-                if (loadingIndicator) loadingIndicator.style.display = "block";
-
-                // Hide play button during play attempt
-                // hidePlayButton();
-
-                // Don't fade out poster immediately - wait until play succeeds
-                artPlayerInstanceRef.current
-                  .play()
-                  .then(() => {
-                    // Play succeeded - hide loading indicator and play button
-                    if (loadingIndicator)
-                      loadingIndicator.style.display = "none";
-                    hidePlayButton();
-
-                    // Only fade out poster when we have actual frames
-                    if (
-                      artPlayerInstanceRef.current?.video &&
-                      artPlayerInstanceRef.current.video.readyState >= 3
-                    ) {
-                      setTimeout(() => safeFadePosterOut(true), 100);
-                    } else if (artPlayerInstanceRef.current?.video) {
-                      // If video isn't ready yet, wait for it
-                      const checkReadyState = () => {
-                        if (
-                          artPlayerInstanceRef.current?.video &&
-                          artPlayerInstanceRef.current.video.readyState >= 3
-                        ) {
-                          safeFadePosterOut(true);
-                          artPlayerInstanceRef.current.video.removeEventListener(
-                            "canplay",
-                            checkReadyState
-                          );
-                        }
-                      };
-                      if (artPlayerInstanceRef.current) {
-                        artPlayerInstanceRef.current.video.addEventListener(
-                          "canplay",
-                          checkReadyState
-                        );
-                      }
-                    }
-                  })
-                  .catch((error) => {
-                    console.error("Manual play failed:", error);
-
-                    // Play failed - hide loading indicator and show play button again
-                    if (loadingIndicator)
-                      loadingIndicator.style.display = "none";
-                    if (playIconRef.current) {
-                      playIconRef.current.style.display = "block";
-                    }
-
-                    // Keep poster visible on error
-                    showPoster();
-                  });
-              }
-            });
-          },
-        },
-        {
           html: `
             <div class="click-layer">
               <div class="fast-forward-indicator" style="display: none; opacity: 0;">
@@ -4087,8 +4006,8 @@ const Player = ({
           },
         },
         // Add this to your layers array in the Artplayer options
-        //       {
-        //         html: `
+        // {
+        //   html: `
         //   <div  class="black-screen-layer" style="
         //     position: absolute;
         //     top: 0;
@@ -4097,32 +4016,114 @@ const Player = ({
         //     height: 100%;
         //     background-color: black;
         //     display: block;
-        //     z-index: 9;
+        //     inset:0;
         //   "></div>
         // `,
-        //         style: {
-        //           position: "absolute",
-        //           top: "0",
-        //           left: "0",
-        //           width: " 100%",
-        //           height: "100%",
-        //           zIndex: "9",
-        //         },
+        //   style: {
+        //     position: "absolute",
+        //     top: "0",
+        //     left: "0",
+        //     width: " 100%",
+        //     height: "100%",
+        //     zIndex: "11",
+        //     inset: "0",
+        //   },
 
-        //         mounted: (element: HTMLElement) => {
-        //           const blackScreenLayer = element.querySelector(
-        //             ".black-screen-layer"
-        //           ) as HTMLDivElement;
+        //   mounted: (element: HTMLElement) => {
+        //     const blackScreenLayer = element.querySelector(
+        //       ".black-screen-layer"
+        //     ) as HTMLDivElement;
 
-        //           // Store the reference to the black screen layer
-        //           blackScreenRef.current = blackScreenLayer;
+        //     // Store the reference to the black screen layer
+        //     blackScreenRef.current = blackScreenLayer;
 
-        //           // Return cleanup function
-        //           return () => {
-        //             blackScreenRef.current = null;
-        //           };
-        //         },
-        //       },
+        //     // Return cleanup function
+        //     return () => {
+        //       blackScreenRef.current = null;
+        //     };
+        //   },
+        // },
+        {
+          html: `<div class="custom-play-icon" style="z-index: 999;">
+                    <img src="${indicator}" width="50" height="50" alt="Play">
+                 </div>`,
+          style: {
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: "999",
+            display: "none",
+          },
+          mounted: (element: HTMLElement) => {
+            playIconRef.current = element as HTMLDivElement;
+
+            playIconRef?.current?.addEventListener("click", () => {
+              if (artPlayerInstanceRef.current) {
+                // Show loading indicator during play attempt
+                const loadingIndicator =
+                  artPlayerInstanceRef.current?.template?.$loading?.querySelector(
+                    ".video-loading-indicator"
+                  ) as HTMLDivElement;
+                if (loadingIndicator) loadingIndicator.style.display = "block";
+
+                // Hide play button during play attempt
+                // hidePlayButton();
+
+                // Don't fade out poster immediately - wait until play succeeds
+                artPlayerInstanceRef.current
+                  .play()
+                  .then(() => {
+                    // Play succeeded - hide loading indicator and play button
+                    if (loadingIndicator)
+                      loadingIndicator.style.display = "none";
+                    hidePlayButton();
+
+                    // Only fade out poster when we have actual frames
+                    if (
+                      artPlayerInstanceRef.current?.video &&
+                      artPlayerInstanceRef.current.video.readyState >= 3
+                    ) {
+                      setTimeout(() => safeFadePosterOut(true), 100);
+                    } else if (artPlayerInstanceRef.current?.video) {
+                      // If video isn't ready yet, wait for it
+                      const checkReadyState = () => {
+                        if (
+                          artPlayerInstanceRef.current?.video &&
+                          artPlayerInstanceRef.current.video.readyState >= 3
+                        ) {
+                          safeFadePosterOut(true);
+                          artPlayerInstanceRef.current.video.removeEventListener(
+                            "canplay",
+                            checkReadyState
+                          );
+                        }
+                      };
+                      if (artPlayerInstanceRef.current) {
+                        artPlayerInstanceRef.current.video.addEventListener(
+                          "canplay",
+                          checkReadyState
+                        );
+                      }
+                    }
+                  })
+                  .catch((error) => {
+                    console.error("Manual play failed:", error);
+
+                    // Play failed - hide loading indicator and show play button again
+                    if (loadingIndicator)
+                      loadingIndicator.style.display = "none";
+                    if (playIconRef.current) {
+                      playIconRef.current.style.display = "block";
+                    }
+
+                    // Keep poster visible on error
+                    showPoster();
+                  });
+              }
+            });
+          },
+        },
       ],
     };
 
@@ -5059,23 +5060,20 @@ const Player = ({
 
   return (
     <>
-      {p_img && isPosterVisible && (
-        <div
-          className="black-screen-layer"
-          ref={blackScreenRef}
-          style={{
-            position: "absolute",
-            top: "0",
-            left: "0",
-            width: " 100%",
-            height: "100%",
-            backgroundColor: "black",
-            display: "block",
-            zIndex: "11",
-          }}
-        ></div>
-      )}
-
+      <div
+        className="black-screen-layer"
+        ref={blackScreenRef}
+        style={{
+          position: "absolute",
+          top: "0",
+          left: "0",
+          width: " 100%",
+          height: "100%",
+          backgroundColor: p_img && isPosterVisible ? "black" : "transparent",
+          display: p_img && isPosterVisible ? "block" : "none",
+          zIndex: "11",
+        }}
+      ></div>
       <div
         ref={playerContainerRef}
         className={`video_player w-full ${p_img ? "poster_change" : ""}`}
