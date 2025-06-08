@@ -2979,7 +2979,7 @@ const Player = ({
 
     // Configure Artplayer options
     const options: Artplayer["Option"] = {
-      autoOrientation: true,
+      autoOrientation: false,
       container: playerContainerRef.current,
       url: src,
       volume: 0.5,
