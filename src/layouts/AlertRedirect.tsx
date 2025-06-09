@@ -153,8 +153,8 @@ const AlertRedirect: React.FC<AlertRedirectProps> = ({
             </div>
             <div>
               <a
-                href={app_download_link}
-                target="_blank"
+                // href={app_download_link}
+                // target="_blank"
                 className="alert-body-btn"
                 onClick={handleDownloadClick}
               >
