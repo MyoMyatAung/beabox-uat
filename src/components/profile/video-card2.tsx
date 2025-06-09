@@ -12,6 +12,7 @@ import { Heart } from "lucide-react";
 import LoadingAnimation from "@/page/search/comp/LoadingAnimation";
 import Hls from "hls.js";
 import Artplayer from "artplayer";
+import ImageWithPlaceholder1 from "@/page/explore/comp/ImgPlaceHolder1";
 const decryptImage = (arrayBuffer: any, key = 0x12, decryptSize = 4096) => {
   const data = new Uint8Array(arrayBuffer);
   const maxSize = Math.min(decryptSize, data.length);
@@ -511,7 +512,7 @@ const VideoCard2 = ({ videoData, loadingVideoId, setLoadingVideoId }: any) => {
       </h1>
       <div className="px-[6px] flex justify-between items-center w-full my-2">
         <div className="flex items-center gap-1">
-          <ImageWithPlaceholder
+          <ImageWithPlaceholder1
             src={videoData?.user?.avatar}
             alt={videoData?.user?.avatar || "Video"}
             width={"20px"}
