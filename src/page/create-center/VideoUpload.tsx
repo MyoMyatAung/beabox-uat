@@ -17,6 +17,7 @@ import DeleteDetail from "@/components/create-center/delete-detail";
 import { setAlertText } from "@/store/slices/profileSlice";
 import { useDispatch } from "react-redux";
 import Info from "@/components/create-center/info";
+import { ReceiptEuroIcon } from "lucide-react";
 
 const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   // console.log(editPost?.files[0]?.image_url, "editpost");
@@ -64,9 +65,9 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   const showToastWithLogo = (message: string, type: 'success' | 'error' = 'error') => {
     toast({
       description: (
-        <div className="flex items-center gap-2">
-          <img src={logo} className="w-5 h-5" alt="beabox" />
-          <span className="text-[14px] text-white">{message}</span>
+        <div className="flex items-center gap-2 whitespace-nowrap">
+          <img src={logo} className="w-5 h-5 flex-shrink-0" alt="beabox" />
+          <span className="text-[14px] text-white no-underline">{message}</span>
         </div>
       ),
       variant: type === 'error' ? 'destructive' : 'default',
