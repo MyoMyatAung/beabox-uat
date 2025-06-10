@@ -38,9 +38,9 @@ export default defineConfig({
     },
   },
   // produciton
-  base: 'https://vfurcsj.jfojf.cn/',
+  // base: 'https://vfurcsj.jfojf.cn/',
   // development
-  // base: '/',
+  base: '/',
   define: {
     global: {},
   },
@@ -48,8 +48,9 @@ export default defineConfig({
     minify: 'terser',
     terserOptions: {
       compress: {
-        drop_console: false,
-        drop_debugger: false,
+        pure_funcs: ['console.log', 'console.debug'], // Only remove specific console methods
+        drop_console: true,
+        drop_debugger: true,
       },
     },
   },
