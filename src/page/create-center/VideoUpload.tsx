@@ -599,6 +599,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
     setContentTitle: (value: string) => void;
     setHashtags: (value: string[]) => void;
   }) => {
+    // Validate video file upload
     if (files.length === 0) {
       toast.error("请上传一个视频。", {
         // Please upload a video.
@@ -607,13 +608,85 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
           color: "white",
         },
       });
-
       return;
     }
 
+    // Validate video file exists in files array
+    if (!files[0]?.video && !files[0]?.resourceURL) {
+      toast.error("视频文件无效。请重新上传视频。", {
+        // Video file is invalid. Please upload the video again.
+        style: {
+          background: "#25212a",
+          color: "white",
+        },
+      });
+      return;
+    }
+
+    // Validate thumbnail
     if (!thumbnail) {
       toast.error("请上传一个缩略图。", {
         // Please upload a thumbnail.
+        style: {
+          background: "#25212a",
+          color: "white",
+        },
+      });
+      return;
+    }
+
+    // Validate content title
+    if (!formData.contentTitle || formData.contentTitle.trim() === "") {
+      toast.error("请输入视频标题。", {
+        // Please enter a video title.
+        style: {
+          background: "#25212a",
+          color: "white",
+        },
+      });
+      return;
+    }
+
+    // Validate content title length (assuming max 100 characters)
+    if (formData.contentTitle.trim().length > 100) {
+      toast.error("视频标题不能超过100个字符。", {
+        // Video title cannot exceed 100 characters.
+        style: {
+          background: "#25212a",
+          color: "white",
+        },
+      });
+      return;
+    }
+
+    // Validate privacy setting
+    if (!formData.privacy || !["public", "private", "followers"].includes(formData.privacy)) {
+      toast.error("请选择有效的隐私设置。", {
+        // Please select a valid privacy setting.
+        style: {
+          background: "#25212a",
+          color: "white",
+        },
+      });
+      return;
+    }
+
+    // Validate user agreement (only for new posts, not edits)
+    if (!editPost && !agree) {
+      toast.error("请同意服务条款后再继续。", {
+        // Please agree to the terms of service to continue.
+        style: {
+          background: "#25212a",
+          color: "white",
+        },
+      });
+      return;
+    }
+
+    // Validate S3 configuration
+    if (!bucket || !region || !accessKeyId || !secretAccessKey || !directory) {
+      toast.error("上传配置错误。请稍后重试。", {
+        // Upload configuration error. Please try again later.
         style: {
           background: "#25212a",
           color: "white",
