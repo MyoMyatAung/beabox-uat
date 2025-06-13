@@ -92,7 +92,6 @@ const RedBox: React.FC<RedBoxProps> = ({
 
   return (
     <>
-      {!showIframe ? (
         <div className="h-screen bg-black/60 w-screen flex flex-col gap-[20px] justify-center items-center fixed top-0 left-0 z-[9999]">
           <div
             ref={boxRef}
@@ -329,27 +328,6 @@ const RedBox: React.FC<RedBoxProps> = ({
             </div>
           </div>
         </div>
-      ) : (
-        /* Full Page Iframe */
-        <div className="h-screen w-screen fixed top-0 left-0 z-[9999] bg-white">
-          {/* Back Button */}
-          <div className="absolute top-4 left-4 z-[10000]">
-            <img
-              src={backButton}
-              alt="Back"
-              className="w-5 h-5 cursor-pointer"
-              onClick={() => setShowIframe(false)}
-            />
-          </div>
-          {/* Iframe */}
-          <iframe
-            ref={iframeRef}
-            src="http://localhost:5001"
-            className="w-full h-full border-0"
-            title="Spin Game"
-          />
-        </div>
-      )}
     </>
   );
 };
