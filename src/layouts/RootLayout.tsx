@@ -349,6 +349,11 @@ const RootLayout = ({ children }: any) => {
     return <Landing onComplete={handleLandingComplete} />;
   }
   const handleAnimationClick = async () => {
+    if (!user?.token) {
+      dispatch(setIsDrawerOpen(true));
+      return;
+    }
+
     console.log('currentEventData is=>', currentEventData);
     const eventId = currentEventData?.data?.id;
     if (!eventId) return;
@@ -387,6 +392,14 @@ const RootLayout = ({ children }: any) => {
     } catch (error) {
       console.error("Failed to fetch event details:", error);
     }
+  };
+
+  const handleLuckySpinClick = () => {
+    if (!user?.token) {
+      dispatch(setIsDrawerOpen(true));
+      return;
+    }
+    setShowLuckySpin(true);
   };
 
   if(showLuckySpin) {
@@ -519,7 +532,7 @@ const RootLayout = ({ children }: any) => {
                           animationData={luckySpinAnimation}
                           width={85}
                           height={100}
-                          onClick={() => setShowLuckySpin(true)}
+                          onClick={handleLuckySpinClick}
                         />
                       </div>
                     </motion.div>
