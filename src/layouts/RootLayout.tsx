@@ -15,7 +15,7 @@ import UserFeed from "@/components/UserFeed";
 import AnimationLoader from "@/components/shared/animation-loader";
 import countdownAnimation from "@/lotties/Animation.json";
 import luckySpinAnimation from "@/lotties/SpinWheel.json";
-import fabAnimation from "@/lotties/welfare.json";
+import fabAnimation from "@/lotties/Welfare.json";
 import {
   useGetCurrentEventQuery,
   useLazyGetEventDetailsQuery,
