@@ -13,7 +13,9 @@ import Landing from "@/components/Landing";
 import { setPlay } from "@/page/home/services/playSlice";
 import UserFeed from "@/components/UserFeed";
 import AnimationLoader from "@/components/shared/animation-loader";
-import loadingAnimation from "@/lotties/Animation.json";
+import countdownAnimation from "@/lotties/Animation.json";
+import luckySpinAnimation from "@/lotties/SpinWheel.json";
+import fabAnimation from "@/lotties/welfare.json";
 import {
   useGetCurrentEventQuery,
   useLazyGetEventDetailsQuery,
@@ -100,6 +102,7 @@ const RootLayout = ({ children }: any) => {
   );
 
   useEffect(() => {
+    console.log('currentEvent data is=>', currentEventData);
     if (showAd && showAlert && isOpen && !showLanding) {
       dispatch(setAnimation(false));
     } else {
@@ -397,7 +400,7 @@ const RootLayout = ({ children }: any) => {
         currentTab === 2 &&
         !hideBar &&
         !userHasClosedAnimation && (
-          <div className="fixed bottom-[8rem] right-9 z-[9999] rounded-full p-2">
+          <div className="fixed bottom-[12rem] left-1 z-[9999] rounded-full p-2">
             <div className="relative">
               <button
                 className="absolute top-4 right-7 bg-white rounded-full w-5 h-5 flex items-center justify-center text-black z-[10000]"
@@ -410,7 +413,7 @@ const RootLayout = ({ children }: any) => {
                 <img src={CloseSvg} />
               </button>
               <AnimationLoader
-                animationData={loadingAnimation}
+                animationData={fabAnimation}
                 width={120}
                 height={120}
                 onClick={handleAnimationClick}
