@@ -4,7 +4,7 @@ import logo from "@/assets/logo.svg";
 import { useDropzone } from "react-dropzone";
 import AWS from "aws-sdk"; // Use AWS SDK v2
 import UploadForm from "@/components/create-center/upload-form";
-import toast from "react-hot-toast";
+import { useToast } from "@/hooks/use-toast";
 import { decryptImage } from "@/utils/image-decrypt";
 import {
   useCreatePostsMutation,
@@ -17,6 +17,7 @@ import DeleteDetail from "@/components/create-center/delete-detail";
 import { setAlertText } from "@/store/slices/profileSlice";
 import { useDispatch } from "react-redux";
 import Info from "@/components/create-center/info";
+import { ReceiptEuroIcon } from "lucide-react";
 
 const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   // console.log(editPost?.files[0]?.image_url, "editpost");
@@ -57,6 +58,23 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   const [successEnd, setsuccessEnd] = useState(false);
 
   const [createPosts, { isLoading }] = useCreatePostsMutation(); // Use the mutation hook
+
+  const { toast } = useToast();
+
+  // Custom toast function with beabox logo
+  const showToastWithLogo = (message: string, type: 'success' | 'error' = 'error') => {
+    toast({
+      description: (
+        <div className="flex items-center gap-2 whitespace-nowrap">
+          <img src={logo} className="w-5 h-5 flex-shrink-0" alt="beabox" />
+          <span className="text-[14px] text-white no-underline">{message}</span>
+        </div>
+      ),
+      variant: type === 'error' ? 'destructive' : 'default',
+      duration: 3000,
+      className: "bg-[#25212a] border-[#25212a] text-white",
+    });
+  };
 
   useEffect(() => {
     const decryptThumbnail = async () => {
@@ -228,13 +246,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
       );
 
       if (!videoFile) {
-        toast.error("请选择一个有效的视频文件。", {
-          // Please select a valid video file.
-          style: {
-            background: "#25212a",
-            color: "white",
-          },
-        });
+        showToastWithLogo("请选择一个有效的视频文件。");
         return;
       }
 
@@ -247,25 +259,13 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
       }
 
       if (acceptedFiles.length > 1) {
-        toast.error("你只能上传一个视频。", {
-          // You can only upload one video.
-          style: {
-            background: "#25212a",
-            color: "white",
-          },
-        });
+        showToastWithLogo("你只能上传一个视频。");
         return;
       }
 
       // Check file size - 100MB limit (100 * 1024 * 1024 bytes)
       if (videoFile.size > 100 * 1024 * 1024) {
-        toast.error("视频大小不能超过100MB。", {
-          // Video size cannot exceed 100MB.
-          style: {
-            background: "#25212a",
-            color: "white",
-          },
-        });
+        showToastWithLogo("视频大小不能超过100MB。");
         return;
       }
 
@@ -369,13 +369,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
         videoUrlRef.current = URL.createObjectURL(videoFile);
       } catch (error) {
         console.error("Error processing video:", error);
-        toast.error("处理视频时出错。请重试。", {
-          // Error processing video. Please try again.
-          style: {
-            background: "#25212a",
-            color: "white",
-          },
-        });
+        showToastWithLogo("处理视频时出错。请重试。");
       }
     },
     [thumbnail]
@@ -388,26 +382,14 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
     );
 
     if (acceptedFiles.length > 1) {
-      toast.error("你只能上传一个缩略图图像。", {
-        // You can only upload one image for the thumbnail.
-        style: {
-          background: "#25212a",
-          color: "white",
-        },
-      });
+      showToastWithLogo("你只能上传一个缩略图图像。");
       return;
     }
 
     if (thumbnailImage) {
       setThumbnail(thumbnailImage);
     } else {
-      toast.error("请上传一个有效的缩略图图像。", {
-        // Please upload a valid image for the thumbnail.
-        style: {
-          background: "#25212a",
-          color: "white",
-        },
-      });
+      showToastWithLogo("请上传一个有效的缩略图图像。");
     }
   }, []);
 
@@ -599,26 +581,51 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
     setContentTitle: (value: string) => void;
     setHashtags: (value: string[]) => void;
   }) => {
+    // Validate video file upload
     if (files.length === 0) {
-      toast.error("请上传一个视频。", {
-        // Please upload a video.
-        style: {
-          background: "#25212a",
-          color: "white",
-        },
-      });
-
+      showToastWithLogo("请上传一个视频。");
       return;
     }
 
+    // Validate video file exists in files array
+    if (!files[0]?.video && !files[0]?.resourceURL) {
+      showToastWithLogo("视频文件无效。请重新上传视频。");
+      return;
+    }
+
+    // Validate thumbnail
     if (!thumbnail) {
-      toast.error("请上传一个缩略图。", {
-        // Please upload a thumbnail.
-        style: {
-          background: "#25212a",
-          color: "white",
-        },
-      });
+      showToastWithLogo("请上传一个缩略图。");
+      return;
+    }
+
+    // Validate content title
+    if (!formData.contentTitle || formData.contentTitle.trim() === "") {
+      showToastWithLogo("请输入视频标题。");
+      return;
+    }
+
+    // Validate content title length (assuming max 100 characters)
+    if (formData.contentTitle.trim().length > 100) {
+      showToastWithLogo("视频标题不能超过100个字符。");
+      return;
+    }
+
+    // Validate privacy setting
+    if (!formData.privacy || !["public", "private", "followers"].includes(formData.privacy)) {
+      showToastWithLogo("请选择有效的隐私设置。");
+      return;
+    }
+
+    // Validate user agreement (only for new posts, not edits)
+    if (!editPost && !agree) {
+      showToastWithLogo("请同意服务条款后再继续。");
+      return;
+    }
+
+    // Validate S3 configuration
+    if (!bucket || !region || !accessKeyId || !secretAccessKey || !directory) {
+      showToastWithLogo("上传配置错误。请稍后重试。");
       return;
     }
 
@@ -757,13 +764,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
 
       // Ensure both video and thumbnail URLs are available before proceeding
       if (!videoUrl || !thumbnailUrl) {
-        toast.error("视频上传失败。请重试。", {
-          // Failed to upload video. Please try again.
-          style: {
-            background: "#25212a",
-            color: "white",
-          },
-        });
+        showToastWithLogo("视频上传失败。请重试。", 'error');
         throw new Error("Failed to generate URLs for uploaded files.");
       }
 
@@ -796,13 +797,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
         await createPosts(payload).unwrap();
 
         // Show success message
-        toast.success("视频上传成功！", {
-          // Video uploaded successfully!
-          style: {
-            background: "#25212a",
-            color: "white",
-          },
-        });
+        showToastWithLogo("视频上传成功！", 'success');
         setFiles([]);
         formData.setContentTitle("");
         formData.setHashtags([]);
@@ -813,14 +808,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
         setsuccessEnd(false);
         setUploadedSize(0);
 
-        console.error("Upload failed:", error);
-        toast.error("视频上传失败。请重试。", {
-          // Failed to upload video. Please try again.
-          style: {
-            background: "#25212a",
-            color: "white",
-          },
-        });
+        console.error("createPosts failed:", error);
+        showToastWithLogo("上传失败！请重试", 'error');
       } finally {
         setUploading(false);
       }
@@ -830,13 +819,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
       setUploadedSize(0);
 
       console.error("Upload failed:", error);
-      toast.error("视频上传失败。请重试。", {
-        // Failed to upload video. Please try again.
-        style: {
-          background: "#25212a",
-          color: "white",
-        },
-      });
+      showToastWithLogo("视频上传失败。请重试。", 'error');
     }
   };
 

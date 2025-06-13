@@ -44,4 +44,14 @@ export default defineConfig({
   define: {
     global: {},
   },
+  build: {
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        pure_funcs: ['console.log', 'console.debug'], // Only remove specific console methods
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
+  },
 });
