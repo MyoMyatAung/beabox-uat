@@ -263,11 +263,10 @@ const RedBox: React.FC<RedBoxProps> = ({
                 </svg>
               </div>
               {/* spin */}
-              <div 
+              {/* <div 
                 onClick={handleSpinClick}
                 className=" w-full flex justify-between items-center p-[16px] red_popup_box_list"
               >
-                {/* content */}
                 <div className=" flex gap-[12px] justify-center items-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -309,7 +308,6 @@ const RedBox: React.FC<RedBoxProps> = ({
                     </span>
                   </div>
                 </div>
-                {/* icon */}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="8"
@@ -323,8 +321,7 @@ const RedBox: React.FC<RedBoxProps> = ({
                     fill-opacity="0.7"
                   />
                 </svg>
-                {/* <span className="coming_soon">即将开放...</span> */}
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

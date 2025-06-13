@@ -324,6 +324,9 @@ const RootLayout = ({ children }: any) => {
         if (event?.data?.type === 'back_pressed') {
           setShowLuckySpin(false);
         }
+        if (event?.data?.type === 'navigate_to') {
+          navigate('wallet/withdraw');
+        }
       } catch (error) {
         console.error('Error handling message from iframe:', error);
       }
