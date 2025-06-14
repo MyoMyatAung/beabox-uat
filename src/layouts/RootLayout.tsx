@@ -437,11 +437,11 @@ const RootLayout = ({ children }: any) => {
     return (
       <>
         <div className="h-dvh w-screen fixed top-0 left-0 z-[9999]">
-          {isIframeLoading && (
+          {/* {isIframeLoading && (
             <div className="absolute inset-0 flex items-center justify-center bg-black">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
             </div>
-          )}
+          )} */}
           <iframe
             ref={iframeRef}
             src={luckySpinWebUrl}
