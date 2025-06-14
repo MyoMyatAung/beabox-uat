@@ -80,8 +80,11 @@ const RootLayout = ({ children }: any) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [showLuckySpin, setShowLuckySpin] = useState(false);
   const [isIframeLoading, setIsIframeLoading] = useState(true);
-  const [preloadedIframe, setPreloadedIframe] = useState<HTMLIFrameElement | null>(null);
-  const [luckySpinWebUrl, setLuckySpinWebUrl] = useState('http://localhost:5001');
+  const [preloadedIframe, setPreloadedIframe] =
+    useState<HTMLIFrameElement | null>(null);
+  const [luckySpinWebUrl, setLuckySpinWebUrl] = useState(
+    "http://localhost:5001"
+  );
   const { data: eventData } = useGetUserByReferalQuery(
     { referral_code: referCode }, // or safely cast if you're confident it's a string
     { skip: !referCode }
@@ -109,7 +112,7 @@ const RootLayout = ({ children }: any) => {
 
   useEffect(() => {
     // dev
-    const webUrl = 'http://localhost:5001';
+    const webUrl = "http://localhost:5001";
     // prod
     // const webUrl = currentEventData?.data.filter((x: any) => x.type === 'spin-wheel')[0]?.web_url;
     setLuckySpinWebUrl(webUrl);
@@ -272,7 +275,9 @@ const RootLayout = ({ children }: any) => {
 
       // Prefetch event details
       const prefetchEventDetails = async () => {
-        const eventId = currentEventData?.data?.filter((x: any) => x.type === 'event')[0]?.id;
+        const eventId = currentEventData?.data?.filter(
+          (x: any) => x.type === "event"
+        )[0]?.id;
         if (!eventId || isFetchingRef.current) return;
 
         try {
@@ -305,9 +310,9 @@ const RootLayout = ({ children }: any) => {
   // Preload iframe content
   useEffect(() => {
     const preloadIframe = () => {
-      const iframe = document.createElement('iframe');
+      const iframe = document.createElement("iframe");
       iframe.src = luckySpinWebUrl;
-      iframe.style.display = 'none';
+      iframe.style.display = "none";
       iframe.onload = () => {
         setPreloadedIframe(iframe);
       };
@@ -326,28 +331,29 @@ const RootLayout = ({ children }: any) => {
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       try {
-        if (event?.data?.type === 'back_pressed') {
+        if (event?.data?.type === "back_pressed") {
           setShowLuckySpin(false);
-          localStorage.removeItem('showLuckySpin');
+          localStorage.removeItem("showLuckySpin");
         }
-        if (event?.data?.type === 'withdraw') {
-          navigate('wallet/withdraw');
-          localStorage.setItem('showLuckySpin', 'true');
+        if (event?.data?.type === "withdraw") {
+          navigate("wallet/withdraw");
+          localStorage.setItem("showLuckySpin", "true");
         }
       } catch (error) {
-        console.error('Error handling message from iframe:', error);
+        console.error("Error handling message from iframe:", error);
       }
     };
 
-    window.addEventListener('message', handleMessage);
+    window.addEventListener("message", handleMessage);
     return () => {
-      window.removeEventListener('message', handleMessage);
+      window.removeEventListener("message", handleMessage);
     };
   }, []);
 
   // Check localStorage on component mount and route changes
   useEffect(() => {
-    const shouldShowLuckySpin = localStorage.getItem('showLuckySpin') === 'true';
+    const shouldShowLuckySpin =
+      localStorage.getItem("showLuckySpin") === "true";
     if (shouldShowLuckySpin) {
       setShowLuckySpin(true);
     }
@@ -368,8 +374,10 @@ const RootLayout = ({ children }: any) => {
       return;
     }
 
-    console.log('currentEventData is=>', currentEventData);
-    const eventId = currentEventData?.data?.filter((x: any) => x.type === 'event')[0]?.id;;
+    console.log("currentEventData is=>", currentEventData);
+    const eventId = currentEventData?.data?.filter(
+      (x: any) => x.type === "event"
+    )[0]?.id;
     if (!eventId) return;
 
     // Immediately use cached data if available
@@ -414,30 +422,38 @@ const RootLayout = ({ children }: any) => {
       return;
     }
     setShowLuckySpin(true);
-    localStorage.setItem('showLuckySpin', 'true');
+    localStorage.setItem("showLuckySpin", "true");
   };
 
-  if(showLuckySpin) {
-    const access_token = {type: 'access_token', data: {access_token: user.token}};
+  if (showLuckySpin) {
+    const access_token = {
+      type: "access_token",
+      data: { access_token: user.token },
+    };
     if (iframeRef.current?.contentWindow) {
-      iframeRef.current.contentWindow.postMessage(access_token, luckySpinWebUrl);
+      iframeRef.current.contentWindow.postMessage(
+        access_token,
+        luckySpinWebUrl
+      );
     }
-    return <>
-      <div className="h-screen w-screen fixed top-0 left-0 z-[9999]">
-        {isIframeLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-          </div>
-        )}
-        <iframe
-          ref={iframeRef}
-          src={luckySpinWebUrl}
-          className="w-full h-full border-0"
-          title="Spin Game"
-          onLoad={() => setIsIframeLoading(false)}
-        />
-      </div>
-    </>
+    return (
+      <>
+        <div className="h-dvh w-screen fixed top-0 left-0 z-[9999]">
+          {isIframeLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+            </div>
+          )}
+          <iframe
+            ref={iframeRef}
+            src={luckySpinWebUrl}
+            className="w-full h-full border-0"
+            title="Spin Game"
+            onLoad={() => setIsIframeLoading(false)}
+          />
+        </div>
+      </>
+    );
   }
   return (
     <>
