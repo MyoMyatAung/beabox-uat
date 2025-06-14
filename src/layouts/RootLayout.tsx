@@ -81,11 +81,12 @@ const RootLayout = ({ children }: any) => {
   const [showLuckySpin, setShowLuckySpin] = useState(false);
   const [isIframeLoading, setIsIframeLoading] = useState(true);
   const [preloadedIframe, setPreloadedIframe] = useState<HTMLIFrameElement | null>(null);
-  const [luckySpinWebUrl, setLuckySpinWebUrl] = useState('');
+  const [luckySpinWebUrl, setLuckySpinWebUrl] = useState('http://localhost:5001');
   const { data: eventData } = useGetUserByReferalQuery(
     { referral_code: referCode }, // or safely cast if you're confident it's a string
     { skip: !referCode }
   );
+  const [backToWebView,setBackToWebView] = useState(false);
 
   useEffect(() => {
     if (eventData?.data?.event?.status && !box && !user) {
@@ -108,7 +109,11 @@ const RootLayout = ({ children }: any) => {
   );
 
   useEffect(() => {
-    console.log('currentEvent data is=>', currentEventData);
+    // dev
+    const webUrl = 'localhost:5001';
+    // prod
+    // const webUrl = currentEventData?.data.filter((x: any) => x.type === 'spin-wheel')[0]?.web_url;
+    setLuckySpinWebUrl(webUrl);
     if (showAd && showAlert && isOpen && !showLanding) {
       dispatch(setAnimation(false));
     } else {
@@ -126,11 +131,6 @@ const RootLayout = ({ children }: any) => {
         } else {
           dispatch(setAnimation(false));
         }
-        // dev
-        const webUrl = 'localhost:5001';
-        // prod
-        // const webUrl = currentEventData?.data.filter((x: any) => x.type === 'spin-wheel')[0]?.web_url;
-        setLuckySpinWebUrl(webUrl);
       }
       if (userHasClosedAnimation) {
         dispatch(setAnimation(false));
@@ -332,6 +332,7 @@ const RootLayout = ({ children }: any) => {
         }
         if (event?.data?.type === 'withdraw') {
           navigate('wallet/withdraw');
+          setBackToWebView(true);
         }
       } catch (error) {
         console.error('Error handling message from iframe:', error);
@@ -414,11 +415,11 @@ const RootLayout = ({ children }: any) => {
     }
     return <>
       <div className="h-screen w-screen fixed top-0 left-0 z-[9999]">
-        {/* {isIframeLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-white">
+        {isIframeLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
           </div>
-        )} */}
+        )}
         <iframe
           ref={iframeRef}
           src={luckySpinWebUrl}
