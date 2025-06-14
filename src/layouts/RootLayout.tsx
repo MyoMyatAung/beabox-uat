@@ -126,7 +126,10 @@ const RootLayout = ({ children }: any) => {
         } else {
           dispatch(setAnimation(false));
         }
-        const webUrl = currentEventData?.data.filter((x: any) => x.type === 'spin-wheel')[0]?.web_url;
+        // dev
+        const webUrl = 'localhost:5001';
+        // prod
+        // const webUrl = currentEventData?.data.filter((x: any) => x.type === 'spin-wheel')[0]?.web_url;
         setLuckySpinWebUrl(webUrl);
       }
       if (userHasClosedAnimation) {
