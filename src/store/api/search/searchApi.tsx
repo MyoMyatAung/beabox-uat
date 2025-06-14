@@ -14,7 +14,7 @@ export const searchApi = createApi({
       
       headers.set("Accept-Language", "cn");
       headers.set("encrypt", "true");
-      headers.set("X-Client-Version", "2001");
+      headers.set("X-Client-Version", "2002");
       headers.set("Device-Id", deviceInfo.uuid);
       headers.set("User-Agent", deviceInfo.osVersion);
       

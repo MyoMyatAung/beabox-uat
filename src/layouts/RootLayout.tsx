@@ -81,7 +81,7 @@ const RootLayout = ({ children }: any) => {
   const [showLuckySpin, setShowLuckySpin] = useState(false);
   const [isIframeLoading, setIsIframeLoading] = useState(true);
   const [preloadedIframe, setPreloadedIframe] = useState<HTMLIFrameElement | null>(null);
-
+  const [luckySpinWebUrl, setLuckySpinWebUrl] = useState('');
   const { data: eventData } = useGetUserByReferalQuery(
     { referral_code: referCode }, // or safely cast if you're confident it's a string
     { skip: !referCode }
@@ -126,6 +126,8 @@ const RootLayout = ({ children }: any) => {
         } else {
           dispatch(setAnimation(false));
         }
+        const webUrl = currentEventData?.data.filter((x: any) => x.type === 'spin-wheel')[0]?.web_url;
+        setLuckySpinWebUrl(webUrl);
       }
       if (userHasClosedAnimation) {
         dispatch(setAnimation(false));
@@ -268,7 +270,7 @@ const RootLayout = ({ children }: any) => {
 
       // Prefetch event details
       const prefetchEventDetails = async () => {
-        const eventId = currentEventData?.data?.id;
+        const eventId = currentEventData?.data?.filter((x: any) => x.type === 'event')[0]?.id;
         if (!eventId || isFetchingRef.current) return;
 
         try {
@@ -302,7 +304,7 @@ const RootLayout = ({ children }: any) => {
   useEffect(() => {
     const preloadIframe = () => {
       const iframe = document.createElement('iframe');
-      iframe.src = "http://localhost:5001";
+      iframe.src = luckySpinWebUrl;
       iframe.style.display = 'none';
       iframe.onload = () => {
         setPreloadedIframe(iframe);
@@ -325,7 +327,7 @@ const RootLayout = ({ children }: any) => {
         if (event?.data?.type === 'back_pressed') {
           setShowLuckySpin(false);
         }
-        if (event?.data?.type === 'navigate_to') {
+        if (event?.data?.type === 'withdraw') {
           navigate('wallet/withdraw');
         }
       } catch (error) {
@@ -355,7 +357,7 @@ const RootLayout = ({ children }: any) => {
     }
 
     console.log('currentEventData is=>', currentEventData);
-    const eventId = currentEventData?.data?.id;
+    const eventId = currentEventData?.data?.filter((x: any) => x.type === 'event')[0]?.id;;
     if (!eventId) return;
 
     // Immediately use cached data if available
@@ -405,7 +407,7 @@ const RootLayout = ({ children }: any) => {
   if(showLuckySpin) {
     const access_token = {type: 'access_token', data: {access_token: user.token}};
     if (iframeRef.current?.contentWindow) {
-      iframeRef.current.contentWindow.postMessage(access_token, 'https://fdsgfevbgg.qdhgtch.com/');
+      iframeRef.current.contentWindow.postMessage(access_token, luckySpinWebUrl);
     }
     return <>
       <div className="h-screen w-screen fixed top-0 left-0 z-[9999]">
@@ -416,7 +418,7 @@ const RootLayout = ({ children }: any) => {
         )}
         <iframe
           ref={iframeRef}
-          src="https://fdsgfevbgg.qdhgtch.com/"
+          src={luckySpinWebUrl}
           className="w-full h-full border-0"
           title="Spin Game"
           onLoad={() => setIsIframeLoading(false)}

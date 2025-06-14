@@ -8,7 +8,7 @@ export const getMyProfile = async () => {
   const deviceInfo = getDeviceInfo();
   const res = await fetch(`${base_url}/profile/me`, {
     headers: {
-      "X-Client-Version": "2001",
+      "X-Client-Version": "2002",
       "Device-Id": deviceInfo.uuid,
       "User-Agent": deviceInfo.osVersion,
       Authorization: `Bearer ${token}`,
