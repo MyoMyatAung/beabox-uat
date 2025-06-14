@@ -405,7 +405,7 @@ const RootLayout = ({ children }: any) => {
   if(showLuckySpin) {
     const access_token = {type: 'access_token', data: {access_token: user.token}};
     if (iframeRef.current?.contentWindow) {
-      iframeRef.current.contentWindow.postMessage(access_token, 'http://fdsgfevbgg.qdhgtch.com:1777/');
+      iframeRef.current.contentWindow.postMessage(access_token, 'https://fdsgfevbgg.qdhgtch.com/');
     }
     return <>
       <div className="h-screen w-screen fixed top-0 left-0 z-[9999]">
@@ -416,7 +416,7 @@ const RootLayout = ({ children }: any) => {
         )}
         <iframe
           ref={iframeRef}
-          src="http://fdsgfevbgg.qdhgtch.com:1777/"
+          src="https://fdsgfevbgg.qdhgtch.com/"
           className="w-full h-full border-0"
           title="Spin Game"
           onLoad={() => setIsIframeLoading(false)}
