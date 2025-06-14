@@ -86,7 +86,6 @@ const RootLayout = ({ children }: any) => {
     { referral_code: referCode }, // or safely cast if you're confident it's a string
     { skip: !referCode }
   );
-  const [backToWebView,setBackToWebView] = useState(false);
 
   useEffect(() => {
     if (eventData?.data?.event?.status && !box && !user) {
@@ -329,10 +328,11 @@ const RootLayout = ({ children }: any) => {
       try {
         if (event?.data?.type === 'back_pressed') {
           setShowLuckySpin(false);
+          localStorage.removeItem('showLuckySpin');
         }
         if (event?.data?.type === 'withdraw') {
           navigate('wallet/withdraw');
-          setBackToWebView(true);
+          localStorage.setItem('showLuckySpin', 'true');
         }
       } catch (error) {
         console.error('Error handling message from iframe:', error);
@@ -344,6 +344,14 @@ const RootLayout = ({ children }: any) => {
       window.removeEventListener('message', handleMessage);
     };
   }, []);
+
+  // Check localStorage on component mount and route changes
+  useEffect(() => {
+    const shouldShowLuckySpin = localStorage.getItem('showLuckySpin') === 'true';
+    if (shouldShowLuckySpin) {
+      setShowLuckySpin(true);
+    }
+  }, [location.pathname]);
 
   // If loading, show loading screen
   if (isLoading) {
@@ -406,6 +414,7 @@ const RootLayout = ({ children }: any) => {
       return;
     }
     setShowLuckySpin(true);
+    localStorage.setItem('showLuckySpin', 'true');
   };
 
   if(showLuckySpin) {
