@@ -82,9 +82,7 @@ const RootLayout = ({ children }: any) => {
   const [isIframeLoading, setIsIframeLoading] = useState(true);
   const [preloadedIframe, setPreloadedIframe] =
     useState<HTMLIFrameElement | null>(null);
-  const [luckySpinWebUrl, setLuckySpinWebUrl] = useState(
-    "http://localhost:5001"
-  );
+  const [luckySpinWebUrl, setLuckySpinWebUrl] = useState();
   const { data: eventData } = useGetUserByReferalQuery(
     { referral_code: referCode }, // or safely cast if you're confident it's a string
     { skip: !referCode }
@@ -112,9 +110,9 @@ const RootLayout = ({ children }: any) => {
 
   useEffect(() => {
     // dev
-    const webUrl = "http://localhost:5001";
+    // const webUrl = "http://localhost:5001";
     // prod
-    // const webUrl = currentEventData?.data.filter((x: any) => x.type === 'spin-wheel')[0]?.web_url;
+    const webUrl = currentEventData?.data.filter((x: any) => x.type === 'spin-wheel')[0]?.web_url;
     setLuckySpinWebUrl(webUrl);
     if (showAd && showAlert && isOpen && !showLanding) {
       dispatch(setAnimation(false));
