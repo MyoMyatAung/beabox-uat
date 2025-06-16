@@ -338,6 +338,11 @@ const RootLayout = ({ children }: any) => {
           navigate("wallet/withdraw");
           localStorage.setItem("showLuckySpin", "true");
         }
+        if (event?.data?.type === "red_envelope") {
+          // navigate("wallet/withdraw");
+          handleAnimationClick();
+          localStorage.setItem("showLuckySpin", "true");
+        }
       } catch (error) {
         console.error("Error handling message from iframe:", error);
       }
