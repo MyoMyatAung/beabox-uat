@@ -372,8 +372,6 @@ const RootLayout = ({ children }: any) => {
       dispatch(setIsDrawerOpen(true));
       return;
     }
-
-    console.log("currentEventData is=>", currentEventData);
     const eventId = currentEventData?.data?.filter(
       (x: any) => x.type === "event"
     )[0]?.id;
@@ -417,6 +415,7 @@ const RootLayout = ({ children }: any) => {
 
   const handleLuckySpinClick = () => {
     if (!user?.token) {
+      dispatch(setPlay(false));
       dispatch(setIsDrawerOpen(true));
       return;
     }
