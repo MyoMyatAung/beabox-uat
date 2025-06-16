@@ -82,7 +82,7 @@ const RootLayout = ({ children }: any) => {
   const [isIframeLoading, setIsIframeLoading] = useState(true);
   const [preloadedIframe, setPreloadedIframe] =
     useState<HTMLIFrameElement | null>(null);
-  const [luckySpinWebUrl, setLuckySpinWebUrl] = useState();
+  const [luckySpinWebUrl, setLuckySpinWebUrl] = useState('');
   const { data: eventData } = useGetUserByReferalQuery(
     { referral_code: referCode }, // or safely cast if you're confident it's a string
     { skip: !referCode }
@@ -282,6 +282,7 @@ const RootLayout = ({ children }: any) => {
           isFetchingRef.current = true;
           setIsFetchingDetails(true);
           const eventDetails = await triggerGetEventDetails(eventId).unwrap();
+          console.log('eventDetails is=>', eventDetails);
           setCachedEventDetails(eventDetails);
           // Don't dispatch to Redux yet, wait for click
         } catch (error) {
@@ -428,6 +429,7 @@ const RootLayout = ({ children }: any) => {
       type: "access_token",
       data: { access_token: user.token },
     };
+    console.log('access_token is=>', access_token);
     if (iframeRef.current?.contentWindow) {
       iframeRef.current.contentWindow.postMessage(
         access_token,
@@ -444,7 +446,8 @@ const RootLayout = ({ children }: any) => {
           )} */}
           <iframe
             ref={iframeRef}
-            src={luckySpinWebUrl}
+            // src={luckySpinWebUrl}
+            src="http://localhost:5001"
             className="w-full h-full border-0"
             title="Spin Game"
             onLoad={() => setIsIframeLoading(false)}
