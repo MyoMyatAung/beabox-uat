@@ -265,7 +265,7 @@ const RegisterForm = ({ setIsOpen, refer_code, geetest_id }: any) => {
             <input
               type="text"
               // placeholder="Enter Promotion Code (Optional)"
-              placeholder="用户名输入邀请码=输入邀请码（可选）"
+              placeholder="输入邀请码（可选）"
               value={code}
               onChange={(e) => setCode(e.target.value)}
               className="bg-[#37363A] border-0 rounded-lg text-white placeholder:text-gray-600 px-4 py-4 text-center placeholder:text-center w-full outline-none"
