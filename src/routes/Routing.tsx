@@ -133,6 +133,10 @@ const Routing = () => {
       ),
     },
     {
+      path: paths.detial,
+      element: <Navigate to={paths.home} replace />,
+    },
+    {
       path: paths.add_bio,
       ...withErrorHandling(
         <RootLayout>
