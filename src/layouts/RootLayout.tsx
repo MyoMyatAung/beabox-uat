@@ -308,17 +308,21 @@ const RootLayout = ({ children }: any) => {
       try {
         if (event?.data?.type === "back_pressed") {
           setShowLuckySpin(false);
-          localStorage.removeItem("showLuckySpin");
+          sessionStorage.removeItem("showLuckySpin");
+          return;
         }
         if (event?.data?.type === "withdraw") {
           navigate("wallet/withdraw");
           localStorage.setItem("showLuckySpin", "true");
+          return;
         }
         if (event?.data?.type === "red_envelope") {
           // navigate("wallet/withdraw");
           handleAnimationClick();
           localStorage.setItem("showLuckySpin", "true");
+          return;
         }
+        sessionStorage.setItem("showLuckySpin", "false");
       } catch (error) {
         console.error("Error handling message from iframe:", error);
       }
@@ -402,7 +406,6 @@ const RootLayout = ({ children }: any) => {
     // }
     dispatch(setPlay(false));
     setShowLuckySpin(true);
-    sessionStorage.setItem("showLuckySpin", "true");
   };
 
 
