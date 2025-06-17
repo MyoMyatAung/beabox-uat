@@ -11,7 +11,6 @@ export const useLuckySpinManager = () => {
 
 
   const openLuckySpin = () => {
-    dispatch(setIsDrawerOpen(true));
     setShowLuckySpin(true);
 
     sessionStorage.setItem("showLuckySpin", "true");
