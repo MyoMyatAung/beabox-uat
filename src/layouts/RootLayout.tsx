@@ -36,6 +36,7 @@ import RegisterDrawer from "@/components/profile/auth/register-drawer";
 import { EventDetail } from "@/@types/lucky_draw";
 import DEventBox from "@/page/event/dragon/DEventBox";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLuckySpinManager } from "./useLuckySpinManager";
 
 // Function to check if the app is running in a WebView
 function isWebView() {
@@ -47,6 +48,9 @@ function isWebView() {
 }
 
 const RootLayout = ({ children }: any) => {
+  const { showLuckySpin, openLuckySpin, closeLuckySpin } =
+    useLuckySpinManager();
+
   const [showAd, setShowAd] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [isBrowser, setIsBrowser] = useState(false);
@@ -78,7 +82,7 @@ const RootLayout = ({ children }: any) => {
   const hideBar = useSelector((state: RootState) => state.hideBarSlice.hideBar);
   const [showEvent, setShowEvent] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [showLuckySpin, setShowLuckySpin] = useState(false);
+  // const [showLuckySpin, setShowLuckySpin] = useState(false);
   const [luckySpinWebUrl, setLuckySpinWebUrl] = useState("");
   const { data: eventData } = useGetUserByReferalQuery(
     { referral_code: referCode }, // or safely cast if you're confident it's a string
@@ -308,9 +312,10 @@ const RootLayout = ({ children }: any) => {
     const handleMessage = (event: MessageEvent) => {
       try {
         if (event?.data?.type === "back_pressed") {
-          window.history.pushState("", "/");
-          setShowLuckySpin(false);
-          sessionStorage.removeItem("showLuckySpin");
+          closeLuckySpin();
+          // window.history.pushState("", "/");
+          // setShowLuckySpin(false);
+          // sessionStorage.removeItem("showLuckySpin");
           return;
         }
         if (event?.data?.type === "withdraw") {
@@ -336,7 +341,6 @@ const RootLayout = ({ children }: any) => {
     };
   }, []);
 
-  // Check localStorage on component mount and route changes
   // useEffect(() => {
   //   const shouldShowLuckySpin =
   //     sessionStorage.getItem("showLuckySpin") === "true";
@@ -400,25 +404,32 @@ const RootLayout = ({ children }: any) => {
     }
   };
 
-  useEffect(() => {
-    const handleBackNavigation = () => {
-      // When user goes back, check if we should hide the lucky spin
-      if (showLuckySpin) {
-        window.history.pushState("", "/");
-        window.history.back();
-        setShowLuckySpin(false);
-        sessionStorage.removeItem("showLuckySpin");
-      }
-    };
+  // useEffect(() => {
+  //   if (location.pathname !== "/detail") {
+  //     setShowLuckySpin(false);
+  //     sessionStorage.removeItem("showLuckySpin");
+  //   }
+  // }, [location.pathname]);
 
-    // Add event listener for popstate (triggered by back navigation)
-    window.addEventListener("popstate", handleBackNavigation);
+  // useEffect(() => {
+  //   const handleBackNavigation = () => {
+  //     // When user goes back, check if we should hide the lucky spin
+  //     if (showLuckySpin) {
+  //       window.history.pushState("", "/");
+  //       window.history.back();
+  //       setShowLuckySpin(false);
+  //       sessionStorage.removeItem("showLuckySpin");
+  //     }
+  //   };
 
-    // Clean up the event listener when component unmounts
-    return () => {
-      window.removeEventListener("popstate", handleBackNavigation);
-    };
-  }, [showLuckySpin]);
+  //   // Add event listener for popstate (triggered by back navigation)
+  //   window.addEventListener("popstate", handleBackNavigation);
+
+  //   // Clean up the event listener when component unmounts
+  //   return () => {
+  //     window.removeEventListener("popstate", handleBackNavigation);
+  //   };
+  // }, [showLuckySpin]);
 
   const handleLuckySpinClick = () => {
     // if (!user?.token) {
@@ -430,10 +441,11 @@ const RootLayout = ({ children }: any) => {
     // window.history.pushState({ fake: true }, "", "/detail");
     // setShowLuckySpin(true);
     dispatch(setPlay(false));
+    openLuckySpin();
     // Push a new state to history when opening the lucky spin
-    window.history.pushState({ showLuckySpin: true }, "", "/detail");
-    setShowLuckySpin(true);
-    sessionStorage.setItem("showLuckySpin", "true");
+    // window.history.pushState({ showLuckySpin: true }, "", "/detail");
+    // // setShowLuckySpin(true);
+    // sessionStorage.setItem("showLuckySpin", "true");
   };
 
   if (showLuckySpin) {
