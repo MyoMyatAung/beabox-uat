@@ -7,9 +7,10 @@ export const useLuckySpinManager = () => {
   const navigate = useNavigate();
 
   const openLuckySpin = () => {
-    window.history.pushState({ isLuckySpinOpen: true }, "", "/detail");
     setShowLuckySpin(true);
+
     sessionStorage.setItem("showLuckySpin", "true");
+    window.history.pushState({ isLuckySpinOpen: true }, "", "/detail");
   };
 
   const closeLuckySpin = () => {

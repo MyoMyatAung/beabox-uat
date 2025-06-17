@@ -48,9 +48,6 @@ function isWebView() {
 }
 
 const RootLayout = ({ children }: any) => {
-  const { showLuckySpin, openLuckySpin, closeLuckySpin } =
-    useLuckySpinManager();
-
   const [showAd, setShowAd] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [isBrowser, setIsBrowser] = useState(false);
@@ -115,11 +112,15 @@ const RootLayout = ({ children }: any) => {
     data: EventDetail;
   } | null>(null);
   const [isFetchingDetails, setIsFetchingDetails] = useState(false);
+  const { showLuckySpin, openLuckySpin, closeLuckySpin } =
+    useLuckySpinManager();
   const isFetchingRef = useRef(false);
+
+  console.log("currentEventData is=>", luckySpinWebUrl);
 
   useEffect(() => {
     // dev
-    const webUrl = "http://192.168.1.163:5001/";
+    const webUrl = "http://192.168.100.105:5001/";
     // const webUrl = 'https://bespoke-piroshki-8ed2b8.netlify.app/';
     // prod
     // const webUrl = currentEventData?.data.filter((x: any) => x.type === 'spin-wheel')[0]?.web_url;
@@ -330,6 +331,7 @@ const RootLayout = ({ children }: any) => {
           return;
         }
         if (event?.data?.type === "login") {
+          console.log("Login message received from iframe");
           dispatch(setIsDrawerOpen(true));
           return;
         }
@@ -443,29 +445,51 @@ const RootLayout = ({ children }: any) => {
     // sessionStorage.setItem("showLuckySpin", "true");
   };
 
-  const sendTokenEvent = () => {
-    if (user?.token) {
-      const access_token = {
-        type: "access_token",
-        data: { access_token: user?.token },
-      };
-      if (iframeRef.current?.contentWindow) {
-        iframeRef.current.contentWindow.postMessage(
-          access_token,
-          luckySpinWebUrl
-        );
-      }
-    }
-  };
+  // const sendTokenEvent = () => {
+  //   console.log("sendTokenEvent called with user token:", user?.token);
+  //   if (user?.token) {
+  //     console.log("winn");
+  //     const access_token = {
+  //       type: "access_token",
+  //       data: { access_token: user?.token },
+  //     };
+  //     if (iframeRef.current?.contentWindow) {
+  //       iframeRef.current.contentWindow.postMessage(
+  //         access_token,
+  //         luckySpinWebUrl
+  //       );
+  //     }
+  //   }
+  // };
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+  // Remove the eslint-disable comment and fix the hook
   useEffect(() => {
-    sendTokenEvent();
-  }, [user?.token]);
+    const sendTokenEvent = () => {
+      if (user?.token && showLuckySpin) {
+        const access_token = {
+          type: "access_token",
+          data: { access_token: user?.token },
+        };
+        if (iframeRef.current?.contentWindow) {
+          iframeRef.current.contentWindow.postMessage(
+            access_token,
+            luckySpinWebUrl
+          );
+        }
+      }
+    };
 
-  if (showLuckySpin) {
     sendTokenEvent();
-  }
+  }, [user?.token, showLuckySpin]);
+
+  // // eslint-disable-next-line react-hooks/rules-of-hooks
+  // useEffect(() => {
+  //   sendTokenEvent();
+  // }, [user?.token]);
+
+  // if (showLuckySpin) {
+  //   sendTokenEvent();
+  // }
 
   // If loading, show loading screen
   if (isLoading) {
@@ -531,7 +555,6 @@ const RootLayout = ({ children }: any) => {
               app_download_link={jumpUrl}
             />
           )}
-        {isOpen ? <AuthDrawer /> : <></>}
 
         <AlertToast />
         <div className="fixed bottom-0 left-0 w-full z-[1600]">
@@ -620,8 +643,9 @@ const RootLayout = ({ children }: any) => {
             </>
           )}
       </div>
+      {isOpen ? <AuthDrawer /> : <></>}
       <div
-        className="h-dvh w-screen fixed top-0 left-0 z-[9999]"
+        className="h-dvh w-screen fixed top-0 left-0 z-[999]"
         style={{ display: showLuckySpin ? "block" : "none" }}
       >
         <iframe
