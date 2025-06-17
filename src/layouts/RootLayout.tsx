@@ -121,9 +121,8 @@ const RootLayout = ({ children }: any) => {
   useEffect(() => {
     // dev
     // const webUrl = "http://192.168.1.163:5001/";
-    const webUrl = 'https://dulcet-mousse-d7655d.netlify.app';
+    const webUrl = 'https://lovely-stroopwafel-626bd1.netlify.app';
     // prod
-    console.log('currentEventData is=>', currentEventData);
     // const webUrl = currentEventData?.data.filter((x: any) => x.type === 'spin-wheel')[0]?.web_url;
     setLuckySpinWebUrl(webUrl);
     if (showAd && showAlert && isOpen && !showLanding) {
@@ -313,6 +312,17 @@ const RootLayout = ({ children }: any) => {
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       try {
+        if (event?.data?.type === "red_envelope") {
+          // const eventId = currentEventData?.data?.filter(
+          //   (x: any) => x.type === "event"
+          // )[0]?.id;
+
+          // alert(eventId);
+          // navigate(`/events/lucky-draw/${eventId}`);
+          // // handleAnimationClick();
+          // localStorage.setItem("showLuckySpin", "true");
+          return;
+        }
         if (event?.data?.type === "back_pressed") {
           closeLuckySpin();
           // window.history.pushState("", "/");
@@ -322,12 +332,6 @@ const RootLayout = ({ children }: any) => {
         }
         if (event?.data?.type === "withdraw") {
           navigate("wallet/withdraw");
-          localStorage.setItem("showLuckySpin", "true");
-          return;
-        }
-        if (event?.data?.type === "red_envelope") {
-          // navigate("wallet/withdraw");
-          handleAnimationClick();
           localStorage.setItem("showLuckySpin", "true");
           return;
         }
