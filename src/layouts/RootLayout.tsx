@@ -111,10 +111,10 @@ const RootLayout = ({ children }: any) => {
 
   useEffect(() => {
     // dev
-    // const webUrl = "http://192.168.1.163:5001/";
-    // const webUrl = 'https://transcendent-kulfi-f090a3.netlify.app/';
+    const webUrl = "http://192.168.1.163:5001/";
+    // const webUrl = 'https://bespoke-piroshki-8ed2b8.netlify.app/';
     // prod
-    const webUrl = currentEventData?.data.filter((x: any) => x.type === 'spin-wheel')[0]?.web_url;
+    // const webUrl = currentEventData?.data.filter((x: any) => x.type === 'spin-wheel')[0]?.web_url;
     setLuckySpinWebUrl(webUrl);
     if (showAd && showAlert && isOpen && !showLanding) {
       dispatch(setAnimation(false));
@@ -329,6 +329,10 @@ const RootLayout = ({ children }: any) => {
           localStorage.setItem("showLuckySpin", "true");
           return;
         }
+        if (event?.data?.type === "login") {
+          dispatch(setIsDrawerOpen(true));
+          return;
+        }
         sessionStorage.setItem("showLuckySpin", "false");
       } catch (error) {
         console.error("Error handling message from iframe:", error);
@@ -448,13 +452,13 @@ const RootLayout = ({ children }: any) => {
     // sessionStorage.setItem("showLuckySpin", "true");
   };
 
-  if (showLuckySpin) {
+
+  const sendTokenEvent = () => {
     if (user?.token) {
       const access_token = {
         type: "access_token",
         data: { access_token: user?.token },
       };
-      console.log("access_token is=>", access_token);
       if (iframeRef.current?.contentWindow) {
         iframeRef.current.contentWindow.postMessage(
           access_token,
@@ -462,21 +466,18 @@ const RootLayout = ({ children }: any) => {
         );
       }
     }
-    // return (
-    //   <>
-    //     <div className="h-dvh w-screen fixed top-0 left-0 z-[9999]">
-    //       <iframe
-    //         ref={iframeRef}
-    //         src={luckySpinWebUrl}
-    //         className="w-full h-full border-0"
-    //         style={{ display: showLuckySpin ? 'block' : 'none' }}
-    //         title="Spin Game"
-    //         onLoad={() => setIsIframeLoading(false)}
-    //       />
-    //     </div>
-    //   </>
-    // );
   }
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(()=>{
+    sendTokenEvent();
+  }, [user?.token]);
+
+  if (showLuckySpin) {
+    sendTokenEvent();
+  }
+
+
   return (
     <>
       <div style={{ height: "calc(100dvh - 95px);", display: !showLuckySpin ? "block" : "none" }}>
@@ -626,6 +627,7 @@ const RootLayout = ({ children }: any) => {
             style={{ display: showLuckySpin ? "block" : "none" }}
             title="Spin Game"
           />
+          {/* {/* {isOpen ? <AuthDrawer /> : <></>} */}
         </div>
     </>
   );
