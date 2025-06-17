@@ -79,7 +79,7 @@ const RootLayout = ({ children }: any) => {
   const [showEvent, setShowEvent] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [showLuckySpin, setShowLuckySpin] = useState(false);
-  const [luckySpinWebUrl, setLuckySpinWebUrl] = useState('');
+  const [luckySpinWebUrl, setLuckySpinWebUrl] = useState("");
   const { data: eventData } = useGetUserByReferalQuery(
     { referral_code: referCode }, // or safely cast if you're confident it's a string
     { skip: !referCode }
@@ -107,7 +107,7 @@ const RootLayout = ({ children }: any) => {
 
   useEffect(() => {
     // dev
-    const webUrl = "http://localhost:5001";
+    const webUrl = "http://192.168.100.105:5001/";
     // const webUrl = 'https://transcendent-kulfi-f090a3.netlify.app/';
     // prod
     // const webUrl = currentEventData?.data.filter((x: any) => x.type === 'spin-wheel')[0]?.web_url;
@@ -280,7 +280,7 @@ const RootLayout = ({ children }: any) => {
           isFetchingRef.current = true;
           setIsFetchingDetails(true);
           const eventDetails = await triggerGetEventDetails(eventId).unwrap();
-          console.log('eventDetails is=>', eventDetails);
+          console.log("eventDetails is=>", eventDetails);
           setCachedEventDetails(eventDetails);
           // Don't dispatch to Redux yet, wait for click
         } catch (error) {
@@ -309,6 +309,8 @@ const RootLayout = ({ children }: any) => {
       try {
         if (event?.data?.type === "back_pressed") {
           setShowLuckySpin(false);
+
+          window.history.back();
           sessionStorage.removeItem("showLuckySpin");
           return;
         }
@@ -399,25 +401,47 @@ const RootLayout = ({ children }: any) => {
     }
   };
 
+  useEffect(() => {
+    const handleBackNavigation = () => {
+      // When user goes back, check if we should hide the lucky spin
+      if (showLuckySpin) {
+        setShowLuckySpin(false);
+        sessionStorage.removeItem("showLuckySpin");
+      }
+    };
+
+    // Add event listener for popstate (triggered by back navigation)
+    window.addEventListener("popstate", handleBackNavigation);
+
+    // Clean up the event listener when component unmounts
+    return () => {
+      window.removeEventListener("popstate", handleBackNavigation);
+    };
+  }, [showLuckySpin]);
+
   const handleLuckySpinClick = () => {
     // if (!user?.token) {
     //   dispatch(setPlay(false));
     //   dispatch(setIsDrawerOpen(true));
     //   return;
     // }
+    // dispatch(setPlay(false));
+    // window.history.pushState({ fake: true }, "", "/detail");
+    // setShowLuckySpin(true);
     dispatch(setPlay(false));
-    window.history.pushState({ fake: true }, '', '/detail');
+    // Push a new state to history when opening the lucky spin
+    window.history.pushState({ showLuckySpin: true }, "", "/detail");
     setShowLuckySpin(true);
+    sessionStorage.setItem("showLuckySpin", "true");
   };
 
-
   if (showLuckySpin) {
-    if(user?.token) {
+    if (user?.token) {
       const access_token = {
         type: "access_token",
         data: { access_token: user?.token },
       };
-      console.log('access_token is=>', access_token);
+      console.log("access_token is=>", access_token);
       if (iframeRef.current?.contentWindow) {
         iframeRef.current.contentWindow.postMessage(
           access_token,
@@ -577,13 +601,15 @@ const RootLayout = ({ children }: any) => {
               </div>
             </>
           )}
-          <div className="h-dvh w-screen fixed top-0 left-0 z-[9999]"
-          style={{ display: showLuckySpin ? 'block' : 'none' }}>
+        <div
+          className="h-dvh w-screen fixed top-0 left-0 z-[9999]"
+          style={{ display: showLuckySpin ? "block" : "none" }}
+        >
           <iframe
             ref={iframeRef}
             src={luckySpinWebUrl}
             className="w-full h-full border-0"
-            style={{ display: showLuckySpin ? 'block' : 'none' }}
+            style={{ display: showLuckySpin ? "block" : "none" }}
             title="Spin Game"
           />
         </div>
