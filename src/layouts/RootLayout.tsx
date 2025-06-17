@@ -79,9 +79,6 @@ const RootLayout = ({ children }: any) => {
   const [showEvent, setShowEvent] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [showLuckySpin, setShowLuckySpin] = useState(false);
-  const [isIframeLoading, setIsIframeLoading] = useState(true);
-  const [preloadedIframe, setPreloadedIframe] =
-    useState<HTMLIFrameElement | null>(null);
   const [luckySpinWebUrl, setLuckySpinWebUrl] = useState('');
   const { data: eventData } = useGetUserByReferalQuery(
     { referral_code: referCode }, // or safely cast if you're confident it's a string
@@ -306,35 +303,6 @@ const RootLayout = ({ children }: any) => {
     currentEventData?.data?.id,
   ]);
 
-  // Preload iframe content
-  useEffect(() => {
-    const preloadIframe = () => {
-      const iframe = document.createElement("iframe");
-      iframe.src = luckySpinWebUrl;
-      iframe.style.display = "none";
-      iframe.onload = () => {
-        setPreloadedIframe(iframe);
-      };
-      document.body.appendChild(iframe);
-    };
-
-    preloadIframe();
-
-    return () => {
-      if (preloadedIframe) {
-        document.body.removeChild(preloadedIframe);
-      }
-    };
-  }, []);
-
-  useEffect(()=>{
-    if(showLuckySpin) {
-      dispatch(setPlay(false));
-    } else {
-      dispatch(setPlay(true));
-    }
-  },[showLuckySpin]);
-
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       try {
@@ -365,7 +333,7 @@ const RootLayout = ({ children }: any) => {
   // Check localStorage on component mount and route changes
   useEffect(() => {
     const shouldShowLuckySpin =
-      localStorage.getItem("showLuckySpin") === "true";
+      sessionStorage.getItem("showLuckySpin") === "true";
     if (shouldShowLuckySpin) {
       setShowLuckySpin(true);
     }
@@ -434,20 +402,23 @@ const RootLayout = ({ children }: any) => {
     // }
     dispatch(setPlay(false));
     setShowLuckySpin(true);
-    localStorage.setItem("showLuckySpin", "true");
+    sessionStorage.setItem("showLuckySpin", "true");
   };
 
+
   if (showLuckySpin) {
-    const access_token = {
-      type: "access_token",
-      data: { access_token: user.token },
-    };
-    console.log('access_token is=>', access_token);
-    if (iframeRef.current?.contentWindow) {
-      iframeRef.current.contentWindow.postMessage(
-        access_token,
-        luckySpinWebUrl
-      );
+    if(user?.token) {
+      const access_token = {
+        type: "access_token",
+        data: { access_token: user?.token },
+      };
+      console.log('access_token is=>', access_token);
+      if (iframeRef.current?.contentWindow) {
+        iframeRef.current.contentWindow.postMessage(
+          access_token,
+          luckySpinWebUrl
+        );
+      }
     }
     // return (
     //   <>
@@ -609,7 +580,6 @@ const RootLayout = ({ children }: any) => {
             className="w-full h-full border-0"
             style={{ display: showLuckySpin ? 'block' : 'none' }}
             title="Spin Game"
-            onLoad={() => setIsIframeLoading(false)}
           />
         </div>
       </div>
