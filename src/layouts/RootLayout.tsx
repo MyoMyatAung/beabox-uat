@@ -564,7 +564,8 @@ const RootLayout = ({ children }: any) => {
         {!showAd &&
           // !showAlert &&
           !isOpen &&
-          location.pathname === "/" &&
+          (location.pathname === "/" ||
+          location.pathname === "/detail") &&
           !event &&
           showAnimation &&
           currentTab === 2 &&
