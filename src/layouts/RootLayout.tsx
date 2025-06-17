@@ -120,10 +120,10 @@ const RootLayout = ({ children }: any) => {
 
   useEffect(() => {
     // dev
-    const webUrl = "http://192.168.1.163:5001/";
+    // const webUrl = "http://192.168.1.163:5001/";
     // const webUrl = 'https://bespoke-piroshki-8ed2b8.netlify.app/';
     // prod
-    // const webUrl = currentEventData?.data.filter((x: any) => x.type === 'spin-wheel')[0]?.web_url;
+    const webUrl = currentEventData?.data.filter((x: any) => x.type === 'spin-wheel')[0]?.web_url;
     setLuckySpinWebUrl(webUrl);
     if (showAd && showAlert && isOpen && !showLanding) {
       dispatch(setAnimation(false));
