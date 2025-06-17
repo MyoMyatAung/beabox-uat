@@ -14,7 +14,7 @@ interface DeviceInfo {
 }
 
 // Application version - single source of truth
-export const APP_VERSION = '1.1.9.4';
+export const APP_VERSION = '1.1.9.5';
 
 /**
  * Generate a UUID v4
