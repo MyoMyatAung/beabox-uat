@@ -107,9 +107,9 @@ const RootLayout = ({ children }: any) => {
 
   useEffect(() => {
     // dev
-    const webUrl = "http://localhost:5001";
+    // const webUrl = "http://localhost:5001";
     // prod
-    // const webUrl = currentEventData?.data.filter((x: any) => x.type === 'spin-wheel')[0]?.web_url;
+    const webUrl = currentEventData?.data.filter((x: any) => x.type === 'spin-wheel')[0]?.web_url;
     setLuckySpinWebUrl(webUrl);
     if (showAd && showAlert && isOpen && !showLanding) {
       dispatch(setAnimation(false));
