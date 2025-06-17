@@ -111,10 +111,10 @@ const RootLayout = ({ children }: any) => {
 
   useEffect(() => {
     // dev
-    const webUrl = "http://192.168.100.105:5001/";
+    // const webUrl = "http://192.168.1.163:5001/";
     // const webUrl = 'https://transcendent-kulfi-f090a3.netlify.app/';
     // prod
-    // const webUrl = currentEventData?.data.filter((x: any) => x.type === 'spin-wheel')[0]?.web_url;
+    const webUrl = currentEventData?.data.filter((x: any) => x.type === 'spin-wheel')[0]?.web_url;
     setLuckySpinWebUrl(webUrl);
     if (showAd && showAlert && isOpen && !showLanding) {
       dispatch(setAnimation(false));
@@ -359,10 +359,10 @@ const RootLayout = ({ children }: any) => {
     return <Landing onComplete={handleLandingComplete} />;
   }
   const handleAnimationClick = async () => {
-    if (!user?.token) {
-      dispatch(setIsDrawerOpen(true));
-      return;
-    }
+    // if (!user?.token) {
+    //   dispatch(setIsDrawerOpen(true));
+    //   return;
+    // }
     const eventId = currentEventData?.data?.filter(
       (x: any) => x.type === "event"
     )[0]?.id;
@@ -440,7 +440,7 @@ const RootLayout = ({ children }: any) => {
     // dispatch(setPlay(false));
     // window.history.pushState({ fake: true }, "", "/detail");
     // setShowLuckySpin(true);
-    dispatch(setPlay(false));
+    // dispatch(setPlay(false));
     openLuckySpin();
     // Push a new state to history when opening the lucky spin
     // window.history.pushState({ showLuckySpin: true }, "", "/detail");
@@ -479,7 +479,7 @@ const RootLayout = ({ children }: any) => {
   }
   return (
     <>
-      <div style={{ height: "calc(100dvh - 95px);" }}>
+      <div style={{ height: "calc(100dvh - 95px);", display: !showLuckySpin ? "block" : "none" }}>
         {children}
 
         {event && !box && !isOpenNew && !user && (
@@ -614,7 +614,8 @@ const RootLayout = ({ children }: any) => {
               </div>
             </>
           )}
-        <div
+      </div>
+      <div
           className="h-dvh w-screen fixed top-0 left-0 z-[9999]"
           style={{ display: showLuckySpin ? "block" : "none" }}
         >
@@ -626,7 +627,6 @@ const RootLayout = ({ children }: any) => {
             title="Spin Game"
           />
         </div>
-      </div>
     </>
   );
 };
