@@ -465,16 +465,30 @@ const RootLayout = ({ children }: any) => {
   // Remove the eslint-disable comment and fix the hook
   useEffect(() => {
     const sendTokenEvent = () => {
-      if (user?.token && showLuckySpin) {
-        const access_token = {
-          type: "access_token",
-          data: { access_token: user?.token },
-        };
-        if (iframeRef.current?.contentWindow) {
-          iframeRef.current.contentWindow.postMessage(
-            access_token,
-            luckySpinWebUrl
-          );
+      if (showLuckySpin) {
+        if (user?.token) {
+          const access_token = {
+            type: "access_token",
+            data: { access_token: user?.token },
+          };
+          if (iframeRef.current?.contentWindow) {
+            iframeRef.current.contentWindow.postMessage(
+              access_token,
+              luckySpinWebUrl
+            );
+          }
+        } else {
+          // Send logout event when token is not present
+          const logoutEvent = {
+            type: "logout",
+            data: {}
+          };
+          if (iframeRef.current?.contentWindow) {
+            iframeRef.current.contentWindow.postMessage(
+              logoutEvent,
+              luckySpinWebUrl
+            );
+          }
         }
       }
     };
