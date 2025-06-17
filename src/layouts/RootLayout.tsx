@@ -327,6 +327,14 @@ const RootLayout = ({ children }: any) => {
     };
   }, []);
 
+  useEffect(()=>{
+    if(showLuckySpin) {
+      dispatch(setPlay(false));
+    } else {
+      dispatch(setPlay(true));
+    }
+  },[showLuckySpin]);
+
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       try {
@@ -419,11 +427,12 @@ const RootLayout = ({ children }: any) => {
   };
 
   const handleLuckySpinClick = () => {
-    if (!user?.token) {
-      dispatch(setPlay(false));
-      dispatch(setIsDrawerOpen(true));
-      return;
-    }
+    // if (!user?.token) {
+    //   dispatch(setPlay(false));
+    //   dispatch(setIsDrawerOpen(true));
+    //   return;
+    // }
+    dispatch(setPlay(false));
     setShowLuckySpin(true);
     localStorage.setItem("showLuckySpin", "true");
   };
