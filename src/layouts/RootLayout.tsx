@@ -669,6 +669,7 @@ const RootLayout = ({ children }: any) => {
         style={{ display: showLuckySpin ? "block" : "none" }}
       >
         <iframe
+          sandbox="allow-scripts allow-same-origin allow-forms"
           ref={iframeRef}
           src={luckySpinWebUrl}
           className="w-full h-full border-0"
