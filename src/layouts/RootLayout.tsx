@@ -107,9 +107,10 @@ const RootLayout = ({ children }: any) => {
 
   useEffect(() => {
     // dev
-    // const webUrl = "http://localhost:5001";
+    const webUrl = "http://localhost:5001";
+    // const webUrl = 'https://transcendent-kulfi-f090a3.netlify.app/';
     // prod
-    const webUrl = currentEventData?.data.filter((x: any) => x.type === 'spin-wheel')[0]?.web_url;
+    // const webUrl = currentEventData?.data.filter((x: any) => x.type === 'spin-wheel')[0]?.web_url;
     setLuckySpinWebUrl(webUrl);
     if (showAd && showAlert && isOpen && !showLanding) {
       dispatch(setAnimation(false));
@@ -405,6 +406,7 @@ const RootLayout = ({ children }: any) => {
     //   return;
     // }
     dispatch(setPlay(false));
+    window.history.pushState({ fake: true }, '', '/detail');
     setShowLuckySpin(true);
   };
 
