@@ -1,12 +1,17 @@
 // useLuckySpinManager.ts
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 
 export const useLuckySpinManager = () => {
   const [showLuckySpin, setShowLuckySpin] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
 
   const openLuckySpin = () => {
+    dispatch(setIsDrawerOpen(true));
     setShowLuckySpin(true);
 
     sessionStorage.setItem("showLuckySpin", "true");
