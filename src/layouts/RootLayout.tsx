@@ -36,6 +36,7 @@ import RegisterDrawer from "@/components/profile/auth/register-drawer";
 import { EventDetail } from "@/@types/lucky_draw";
 import DEventBox from "@/page/event/dragon/DEventBox";
 import { motion, AnimatePresence } from "framer-motion";
+import LuckySpinPage from "@/page/luckywheel/LuckySpinPage";
 
 // Function to check if the app is running in a WebView
 function isWebView() {
@@ -82,7 +83,7 @@ const RootLayout = ({ children }: any) => {
   const [isIframeLoading, setIsIframeLoading] = useState(true);
   const [preloadedIframe, setPreloadedIframe] =
     useState<HTMLIFrameElement | null>(null);
-  const [luckySpinWebUrl, setLuckySpinWebUrl] = useState('');
+  const [luckySpinWebUrl, setLuckySpinWebUrl] = useState("");
   const { data: eventData } = useGetUserByReferalQuery(
     { referral_code: referCode }, // or safely cast if you're confident it's a string
     { skip: !referCode }
@@ -112,8 +113,8 @@ const RootLayout = ({ children }: any) => {
     // dev
     // const webUrl = "http://localhost:5001";
     // prod
-    const webUrl = currentEventData?.data.filter((x: any) => x.type === 'spin-wheel')[0]?.web_url;
-    setLuckySpinWebUrl(webUrl);
+    // const webUrl = currentEventData?.data.filter((x: any) => x.type === 'spin-wheel')[0]?.web_url;
+    // setLuckySpinWebUrl(webUrl);
     if (showAd && showAlert && isOpen && !showLanding) {
       dispatch(setAnimation(false));
     } else {
@@ -282,7 +283,7 @@ const RootLayout = ({ children }: any) => {
           isFetchingRef.current = true;
           setIsFetchingDetails(true);
           const eventDetails = await triggerGetEventDetails(eventId).unwrap();
-          console.log('eventDetails is=>', eventDetails);
+          console.log("eventDetails is=>", eventDetails);
           setCachedEventDetails(eventDetails);
           // Don't dispatch to Redux yet, wait for click
         } catch (error) {
@@ -306,26 +307,26 @@ const RootLayout = ({ children }: any) => {
     currentEventData?.data?.id,
   ]);
 
-  // Preload iframe content
-  useEffect(() => {
-    const preloadIframe = () => {
-      const iframe = document.createElement("iframe");
-      iframe.src = luckySpinWebUrl;
-      iframe.style.display = "none";
-      iframe.onload = () => {
-        setPreloadedIframe(iframe);
-      };
-      document.body.appendChild(iframe);
-    };
+  // // Preload iframe content
+  // useEffect(() => {
+  //   const preloadIframe = () => {
+  //     const iframe = document.createElement("iframe");
+  //     iframe.src = luckySpinWebUrl;
+  //     iframe.style.display = "none";
+  //     iframe.onload = () => {
+  //       setPreloadedIframe(iframe);
+  //     };
+  //     document.body.appendChild(iframe);
+  //   };
 
-    preloadIframe();
+  //   preloadIframe();
 
-    return () => {
-      if (preloadedIframe) {
-        document.body.removeChild(preloadedIframe);
-      }
-    };
-  }, []);
+  //   return () => {
+  //     if (preloadedIframe) {
+  //       document.body.removeChild(preloadedIframe);
+  //     }
+  //   };
+  // }, []);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -429,33 +430,35 @@ const RootLayout = ({ children }: any) => {
   };
 
   if (showLuckySpin) {
-    const access_token = {
-      type: "access_token",
-      data: { access_token: user.token },
-    };
-    console.log('access_token is=>', access_token);
-    if (iframeRef.current?.contentWindow) {
-      iframeRef.current.contentWindow.postMessage(
-        access_token,
-        luckySpinWebUrl
-      );
-    }
+    console.log("showLuckySpin is true");
+    // const access_token = {
+    //   type: "access_token",
+    //   data: { access_token: user.token },
+    // };
+    // console.log("access_token is=>", access_token);
+    // if (iframeRef.current?.contentWindow) {
+    //   iframeRef.current.contentWindow.postMessage(
+    //     access_token,
+    //     luckySpinWebUrl
+    //   );
+    // }
     return (
       <>
-        <div className="h-dvh w-screen fixed top-0 left-0 z-[9999]">
+        <div className="flex justify-center items-center w-screen">
           {/* {isIframeLoading && (
             <div className="absolute inset-0 flex items-center justify-center bg-black">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
             </div>
           )} */}
-          <iframe
+          {/* <iframe
             ref={iframeRef}
             src={luckySpinWebUrl}
             // src="http://localhost:5001"
             className="w-full h-full border-0"
             title="Spin Game"
             onLoad={() => setIsIframeLoading(false)}
-          />
+          /> */}
+          <LuckySpinPage setShowLuckySpin={setShowLuckySpin} />
         </div>
       </>
     );
