@@ -109,6 +109,14 @@ const RootLayout = ({ children }: any) => {
     (state: RootState) => state.event.event_start_time
   );
 
+  const isOpen = useSelector((state: any) => state.profile.isDrawerOpen);
+
+  const [cachedEventDetails, setCachedEventDetails] = useState<{
+    data: EventDetail;
+  } | null>(null);
+  const [isFetchingDetails, setIsFetchingDetails] = useState(false);
+  const isFetchingRef = useRef(false);
+
   useEffect(() => {
     // dev
     const webUrl = "http://192.168.1.163:5001/";
@@ -250,14 +258,6 @@ const RootLayout = ({ children }: any) => {
     }
   }, [event]);
 
-  const isOpen = useSelector((state: any) => state.profile.isDrawerOpen);
-
-  const [cachedEventDetails, setCachedEventDetails] = useState<{
-    data: EventDetail;
-  } | null>(null);
-  const [isFetchingDetails, setIsFetchingDetails] = useState(false);
-  const isFetchingRef = useRef(false);
-
   // Preload the lucky draw component and prefetch event details
   useEffect(() => {
     const shouldPreload =
@@ -353,15 +353,6 @@ const RootLayout = ({ children }: any) => {
   //   }
   // }, [location.pathname]);
 
-  // If loading, show loading screen
-  if (isLoading) {
-    return <LoadingScreen onLoadComplete={handleLoadComplete} />;
-  }
-
-  // After loading, show Landing
-  if (showLanding) {
-    return <Landing onComplete={handleLandingComplete} />;
-  }
   const handleAnimationClick = async () => {
     // if (!user?.token) {
     //   dispatch(setIsDrawerOpen(true));
@@ -452,7 +443,6 @@ const RootLayout = ({ children }: any) => {
     // sessionStorage.setItem("showLuckySpin", "true");
   };
 
-
   const sendTokenEvent = () => {
     if (user?.token) {
       const access_token = {
@@ -466,10 +456,10 @@ const RootLayout = ({ children }: any) => {
         );
       }
     }
-  }
+  };
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  useEffect(()=>{
+  useEffect(() => {
     sendTokenEvent();
   }, [user?.token]);
 
@@ -477,10 +467,24 @@ const RootLayout = ({ children }: any) => {
     sendTokenEvent();
   }
 
+  // If loading, show loading screen
+  if (isLoading) {
+    return <LoadingScreen onLoadComplete={handleLoadComplete} />;
+  }
+
+  // After loading, show Landing
+  if (showLanding) {
+    return <Landing onComplete={handleLandingComplete} />;
+  }
 
   return (
     <>
-      <div style={{ height: "calc(100dvh - 95px);", display: !showLuckySpin ? "block" : "none" }}>
+      <div
+        style={{
+          height: "calc(100dvh - 95px);",
+          display: !showLuckySpin ? "block" : "none",
+        }}
+      >
         {children}
 
         {event && !box && !isOpenNew && !user && (
@@ -617,18 +621,18 @@ const RootLayout = ({ children }: any) => {
           )}
       </div>
       <div
-          className="h-dvh w-screen fixed top-0 left-0 z-[9999]"
+        className="h-dvh w-screen fixed top-0 left-0 z-[9999]"
+        style={{ display: showLuckySpin ? "block" : "none" }}
+      >
+        <iframe
+          ref={iframeRef}
+          src={luckySpinWebUrl}
+          className="w-full h-full border-0"
           style={{ display: showLuckySpin ? "block" : "none" }}
-        >
-          <iframe
-            ref={iframeRef}
-            src={luckySpinWebUrl}
-            className="w-full h-full border-0"
-            style={{ display: showLuckySpin ? "block" : "none" }}
-            title="Spin Game"
-          />
-          {/* {/* {isOpen ? <AuthDrawer /> : <></>} */}
-        </div>
+          title="Spin Game"
+        />
+        {/* {/* {isOpen ? <AuthDrawer /> : <></>} */}
+      </div>
     </>
   );
 };
