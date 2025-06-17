@@ -308,9 +308,8 @@ const RootLayout = ({ children }: any) => {
     const handleMessage = (event: MessageEvent) => {
       try {
         if (event?.data?.type === "back_pressed") {
+          window.history.pushState("", "/");
           setShowLuckySpin(false);
-
-          window.history.back();
           sessionStorage.removeItem("showLuckySpin");
           return;
         }
@@ -338,13 +337,13 @@ const RootLayout = ({ children }: any) => {
   }, []);
 
   // Check localStorage on component mount and route changes
-  useEffect(() => {
-    const shouldShowLuckySpin =
-      sessionStorage.getItem("showLuckySpin") === "true";
-    if (shouldShowLuckySpin) {
-      setShowLuckySpin(true);
-    }
-  }, [location.pathname]);
+  // useEffect(() => {
+  //   const shouldShowLuckySpin =
+  //     sessionStorage.getItem("showLuckySpin") === "true";
+  //   if (shouldShowLuckySpin) {
+  //     setShowLuckySpin(true);
+  //   }
+  // }, [location.pathname]);
 
   // If loading, show loading screen
   if (isLoading) {
@@ -405,6 +404,8 @@ const RootLayout = ({ children }: any) => {
     const handleBackNavigation = () => {
       // When user goes back, check if we should hide the lucky spin
       if (showLuckySpin) {
+        window.history.pushState("", "/");
+        window.history.back();
         setShowLuckySpin(false);
         sessionStorage.removeItem("showLuckySpin");
       }
