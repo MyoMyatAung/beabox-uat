@@ -110,9 +110,9 @@ const RootLayout = ({ children }: any) => {
 
   useEffect(() => {
     // dev
-    // const webUrl = "http://localhost:5001";
+    const webUrl = "http://localhost:5001";
     // prod
-    const webUrl = currentEventData?.data.filter((x: any) => x.type === 'spin-wheel')[0]?.web_url;
+    // const webUrl = currentEventData?.data.filter((x: any) => x.type === 'spin-wheel')[0]?.web_url;
     setLuckySpinWebUrl(webUrl);
     if (showAd && showAlert && isOpen && !showLanding) {
       dispatch(setAnimation(false));
@@ -440,25 +440,20 @@ const RootLayout = ({ children }: any) => {
         luckySpinWebUrl
       );
     }
-    return (
-      <>
-        <div className="h-dvh w-screen fixed top-0 left-0 z-[9999]">
-          {/* {isIframeLoading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-            </div>
-          )} */}
-          <iframe
-            ref={iframeRef}
-            src={luckySpinWebUrl}
-            // src="http://localhost:5001"
-            className="w-full h-full border-0"
-            title="Spin Game"
-            onLoad={() => setIsIframeLoading(false)}
-          />
-        </div>
-      </>
-    );
+    // return (
+    //   <>
+    //     <div className="h-dvh w-screen fixed top-0 left-0 z-[9999]">
+    //       <iframe
+    //         ref={iframeRef}
+    //         src={luckySpinWebUrl}
+    //         className="w-full h-full border-0"
+    //         style={{ display: showLuckySpin ? 'block' : 'none' }}
+    //         title="Spin Game"
+    //         onLoad={() => setIsIframeLoading(false)}
+    //       />
+    //     </div>
+    //   </>
+    // );
   }
   return (
     <>
@@ -597,6 +592,17 @@ const RootLayout = ({ children }: any) => {
               </div>
             </>
           )}
+          <div className="h-dvh w-screen fixed top-0 left-0 z-[9999]"
+          style={{ display: showLuckySpin ? 'block' : 'none' }}>
+          <iframe
+            ref={iframeRef}
+            src={luckySpinWebUrl}
+            className="w-full h-full border-0"
+            style={{ display: showLuckySpin ? 'block' : 'none' }}
+            title="Spin Game"
+            onLoad={() => setIsIframeLoading(false)}
+          />
+        </div>
       </div>
     </>
   );
