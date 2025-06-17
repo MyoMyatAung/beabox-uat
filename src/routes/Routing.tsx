@@ -20,6 +20,7 @@ import SafeLazyLoad from "@/components/SafeLazyLoad";
 import CreatorNoti from "@/page/profile/noti/CreatorNoti";
 
 const Home = lazy(() => import("../page/home/Home"));
+const Lucky = lazy(() => import("../page/luckywheel/LuckySpinPage"));
 const Explore = lazy(() => import("../page/explore/Explore"));
 const Application = lazy(() => import("../page/application/Application"));
 const CreateCenter = lazy(() => import("../page/create-center/CreateCenter"));
@@ -130,6 +131,12 @@ const Routing = () => {
         <RootLayout>
           <Home />
         </RootLayout>
+      ),
+    },
+    {
+      path: paths.lucky,
+      ...withErrorHandling(
+          <Lucky />
       ),
     },
     {

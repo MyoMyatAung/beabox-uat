@@ -228,6 +228,15 @@ const LuckySpinPage: React.FC = ({ setShowLuckySpin }: any) => {
       ]).finally(() => {
         setIsInitialLoading(false);
       });
+    } else {
+      const service = new SpinWheelService('');
+      setSpinService(service);
+      Promise.all([
+        fetchPrizes(service),
+        fetchCurrentEvent(service),
+      ]).finally(() => {
+        setIsInitialLoading(false);
+      });
     }
   }, [accessToken]);
 

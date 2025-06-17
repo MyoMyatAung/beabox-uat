@@ -374,10 +374,10 @@ const RootLayout = ({ children }: any) => {
     return <Landing onComplete={handleLandingComplete} />;
   }
   const handleAnimationClick = async () => {
-    if (!user?.token) {
-      dispatch(setIsDrawerOpen(true));
-      return;
-    }
+    // if (!user?.token) {
+    //   dispatch(setIsDrawerOpen(true));
+    //   return;
+    // }
     const eventId = currentEventData?.data?.filter(
       (x: any) => x.type === "event"
     )[0]?.id;
@@ -420,48 +420,7 @@ const RootLayout = ({ children }: any) => {
   };
 
   const handleLuckySpinClick = () => {
-    if (!user?.token) {
-      dispatch(setPlay(false));
-      dispatch(setIsDrawerOpen(true));
-      return;
-    }
-    setShowLuckySpin(true);
-    localStorage.setItem("showLuckySpin", "true");
-  };
-
-  if (showLuckySpin) {
-    console.log("showLuckySpin is true");
-    // const access_token = {
-    //   type: "access_token",
-    //   data: { access_token: user.token },
-    // };
-    // console.log("access_token is=>", access_token);
-    // if (iframeRef.current?.contentWindow) {
-    //   iframeRef.current.contentWindow.postMessage(
-    //     access_token,
-    //     luckySpinWebUrl
-    //   );
-    // }
-    return (
-      <>
-        <div className="flex justify-center items-center w-screen">
-          {/* {isIframeLoading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-            </div>
-          )} */}
-          {/* <iframe
-            ref={iframeRef}
-            src={luckySpinWebUrl}
-            // src="http://localhost:5001"
-            className="w-full h-full border-0"
-            title="Spin Game"
-            onLoad={() => setIsIframeLoading(false)}
-          /> */}
-          <LuckySpinPage setShowLuckySpin={setShowLuckySpin} />
-        </div>
-      </>
-    );
+    navigate('lucky');
   }
   return (
     <>

@@ -11,6 +11,7 @@ type HeadProps = {
 };
 
 export const GameHead = ({ setShowLuckySpin }: any) => {
+  const navigate = useNavigate();
   const [state, { toggle, setTrue, setFalse }] = useBoolean(false);
 
   // const handleHistoryClick = () => {
@@ -26,7 +27,7 @@ export const GameHead = ({ setShowLuckySpin }: any) => {
   return (
     <>
       <div className="w-full h-[64px] bg-transparent flex justify-between items-center p-4 relative">
-        <div className="" onClick={() => setShowLuckySpin(false)}>
+        <div className="" onClick={() => navigate('/')}>
           <img className="back" src="/svgs/back0.svg" alt="Back" />
         </div>
         <div className="flex justify-center items-center pl-14">
