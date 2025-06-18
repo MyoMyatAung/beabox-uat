@@ -328,41 +328,41 @@ const RootLayout = ({ children }: any) => {
   //   };
   // }, []);
 
-  useEffect(() => {
-    const handleMessage = (event: MessageEvent) => {
-      try {
-        if (event?.data?.type === "back_pressed") {
-          setShowLuckySpin(false);
-          localStorage.removeItem("showLuckySpin");
-        }
-        if (event?.data?.type === "withdraw") {
-          navigate("wallet/withdraw");
-          localStorage.setItem("showLuckySpin", "true");
-        }
-        if (event?.data?.type === "red_envelope") {
-          // navigate("wallet/withdraw");
-          handleAnimationClick();
-          localStorage.setItem("showLuckySpin", "true");
-        }
-      } catch (error) {
-        console.error("Error handling message from iframe:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const handleMessage = (event: MessageEvent) => {
+  //     try {
+  //       if (event?.data?.type === "back_pressed") {
+  //         setShowLuckySpin(false);
+  //         localStorage.removeItem("showLuckySpin");
+  //       }
+  //       if (event?.data?.type === "withdraw") {
+  //         navigate("wallet/withdraw");
+  //         localStorage.setItem("showLuckySpin", "true");
+  //       }
+  //       if (event?.data?.type === "red_envelope") {
+  //         // navigate("wallet/withdraw");
+  //         handleAnimationClick();
+  //         localStorage.setItem("showLuckySpin", "true");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error handling message from iframe:", error);
+  //     }
+  //   };
 
-    window.addEventListener("message", handleMessage);
-    return () => {
-      window.removeEventListener("message", handleMessage);
-    };
-  }, []);
+  //   window.addEventListener("message", handleMessage);
+  //   return () => {
+  //     window.removeEventListener("message", handleMessage);
+  //   };
+  // }, []);
 
-  // Check localStorage on component mount and route changes
-  useEffect(() => {
-    const shouldShowLuckySpin =
-      localStorage.getItem("showLuckySpin") === "true";
-    if (shouldShowLuckySpin) {
-      setShowLuckySpin(true);
-    }
-  }, [location.pathname]);
+  // // Check localStorage on component mount and route changes
+  // useEffect(() => {
+  //   const shouldShowLuckySpin =
+  //     localStorage.getItem("showLuckySpin") === "true";
+  //   if (shouldShowLuckySpin) {
+  //     setShowLuckySpin(true);
+  //   }
+  // }, [location.pathname]);
 
   // If loading, show loading screen
   if (isLoading) {
@@ -419,9 +419,11 @@ const RootLayout = ({ children }: any) => {
     }
   };
 
+  console.log(isOpen);
+
   const handleLuckySpinClick = () => {
-    navigate('lucky');
-  }
+    navigate("/lucky");
+  };
   return (
     <>
       <div style={{ height: "calc(100dvh - 95px);" }}>
@@ -471,9 +473,10 @@ const RootLayout = ({ children }: any) => {
               app_download_link={jumpUrl}
             />
           )}
-        {isOpen ? <AuthDrawer /> : <></>}
 
         <AlertToast />
+
+        {isOpen ? <AuthDrawer /> : <></>}
         <div className="fixed bottom-0 left-0 w-full z-[1600]">
           <BottomNav />
         </div>

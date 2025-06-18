@@ -16,7 +16,7 @@ const NotEnoughCouponPopup: React.FC<NotEnoughCouponPopupProps> = ({
         <div className="frame-1321315641">
           <div className="frame-1321315642">
             <div className="not-enough-coupon-invite-friends-to-win-lucky-draw-coupons">
-              邀请好友获取抽奖劵
+              抽奖劵不足，邀请好友可获得抽奖劵
             </div>
           </div>
         </div>
@@ -25,7 +25,7 @@ const NotEnoughCouponPopup: React.FC<NotEnoughCouponPopupProps> = ({
             <div className="cancel">取消</div>
           </div>
           <div className="frame-193518" onClick={onInviteFriend}>
-            <div className="invite-friend">获取积分</div>
+            <div className="invite-friend">邀请好友</div>
           </div>
         </div>
       </div>

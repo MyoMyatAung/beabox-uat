@@ -136,7 +136,9 @@ const Routing = () => {
     {
       path: paths.lucky,
       ...withErrorHandling(
+        <RootLayout>
           <Lucky />
+        </RootLayout>
       ),
     },
     {

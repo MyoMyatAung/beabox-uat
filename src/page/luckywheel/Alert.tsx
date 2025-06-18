@@ -1,6 +1,7 @@
-import React, { Fragment } from 'react';
-import { Dialog, Transition } from '@headlessui/react';
-import bridge from '../bridge/Bridge';
+import React, { Fragment } from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import { useNavigate } from "react-router-dom";
+// import bridge from "./bridge/Bridge";
 
 type AlertProps = {
   msg: string;
@@ -10,6 +11,7 @@ type AlertProps = {
   center?: boolean;
   btnText?: string;
   isCopy?: boolean;
+  // eventId: any;
 };
 
 export const Alert: React.FC<AlertProps> = ({
@@ -19,10 +21,13 @@ export const Alert: React.FC<AlertProps> = ({
   navBtn,
   center,
   btnText,
-  isCopy
+  isCopy,
+  // eventId,
 }) => {
+  // const navigate = useNavigate();
   const handleNavTask = () => {
-    bridge.notifyRedEnvelope();
+    // navigate(`/events/lucky-draw/${eventId}`);
+    // bridge.notifyRedEnvelope();
     // Handle navigation or task - placeholder for now
     onClose();
   };
@@ -54,7 +59,13 @@ export const Alert: React.FC<AlertProps> = ({
           <div className="fixed z-30 inset-0 overflow-y-auto">
             <div className="flex min-h-full items-center justify-center p-4">
               <Dialog.Panel className="w-80 max-w-sm rounded bg-white p-6 flex gap-4 flex-col">
-                <Dialog.Title className={center ? "text-base font-medium items-center justify-center flex" : "text-base font-medium"}>
+                <Dialog.Title
+                  className={
+                    center
+                      ? "text-base font-medium items-center justify-center flex"
+                      : "text-base font-medium"
+                  }
+                >
                   {msg}
                   {isCopy && (
                     <button className="text-[#ff6a33] text-sm pt-3 w-full font-medium border-none">
@@ -65,15 +76,24 @@ export const Alert: React.FC<AlertProps> = ({
                 <Dialog.Description className="flex gap-2">
                   {navBtn ? (
                     <>
-                      <button className="text-sm py-3 w-full text-black font-medium rounded border border-black/10" onClick={onClose}>
+                      <button
+                        className="text-sm py-3 w-full text-black font-medium rounded border border-black/10"
+                        onClick={onClose}
+                      >
                         取消
                       </button>
-                      <button className="bg-[#ff6a33] text-sm py-3 w-full text-white font-medium rounded" onClick={handleNavTask}>
-                        {btnText ? btnText : '获取积分'}
+                      <button
+                        className="bg-[#ff6a33] text-sm py-3 w-full text-white font-medium rounded"
+                        onClick={handleNavTask}
+                      >
+                        {btnText ? btnText : "获取积分"}
                       </button>
                     </>
                   ) : (
-                    <button className="bg-[#ff6a33] text-sm py-3 w-full text-white font-medium rounded" onClick={onClose}>
+                    <button
+                      className="bg-[#ff6a33] text-sm py-3 w-full text-white font-medium rounded"
+                      onClick={onClose}
+                    >
                       确定
                     </button>
                   )}
@@ -85,4 +105,4 @@ export const Alert: React.FC<AlertProps> = ({
       </Dialog>
     </Transition>
   );
-}; 
+};

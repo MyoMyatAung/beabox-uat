@@ -4,15 +4,18 @@ import SpinWheelService from "./services/spinWheelService";
 import NotEnoughCouponPopup from "./NotEnoughCouponPopup";
 import SpinResultPopup from "./SpinResultPopup";
 import { Prize, Profile } from "./models";
-// import { bridge, MessageType } from "../bridge/Bridge";
+
 import { GameHead } from "./GameHead";
 import { LuckyWheel } from "@lucky-canvas/react";
 import { useLockFn } from "ahooks";
 import { WHEEL_SEGMENTS } from "./constants/wheelConfig"; // Re-importing original wheel config for base styling
 import NotificationTransition from "./NotificationTransition";
-import { useSelector } from "react-redux";
-import { set } from "react-hook-form";
-
+import { a } from "node_modules/framer-motion/dist/types.d-6pKw1mTI";
+import { useDispatch, useSelector } from "react-redux";
+import { setIsDrawerOpen } from "@/store/slices/profileSlice";
+import { useNavigate } from "react-router-dom";
+import { useGetCurrentEventQuery } from "@/store/api/events/eventApi";
+import AuthDrawer from "@/components/profile/auth/auth-drawer";
 // import { WheelSegment } from "../types"; // Removed explicit import
 
 // Define a local interface for LuckyWheel segments to explicitly include 'color'
@@ -116,7 +119,7 @@ const DecryptedImage: React.FC<{
   );
 };
 
-const LuckySpinPage: React.FC = ({ setShowLuckySpin }: any) => {
+const LuckySpinPage: React.FC = () => {
   const [spinLoading, setSpinLoading] = useState(false);
   const [spinService, setSpinService] = useState<SpinWheelService | null>(null);
   const [spinChances, setSpinChances] = useState<number>(0);
@@ -136,26 +139,27 @@ const LuckySpinPage: React.FC = ({ setShowLuckySpin }: any) => {
   const [decryptedImages, setDecryptedImages] = useState<{
     [key: string]: string;
   }>({});
-  const [accessToken, setAccessToken] = useState<string>("");
+  const user = useSelector((state: any) => state.persist.user);
+  // const [accessToken, setAccessToken] = useState<string>("");
   const [currentEventId, setCurrentEventId] = useState<string>("");
   const [eventDetails, setEventDetails] = useState<any>(null);
+  const dispatch = useDispatch();
+
+  const { data: currentEventData } = useGetCurrentEventQuery("");
+  const eventId = currentEventData?.data?.filter(
+    (x: any) => x.type === "event"
+  )[0]?.id;
+  if (!eventId) return;
 
   const smallWidthRatio = window.innerWidth < 400;
   const [blocks] = useState([{ padding: "0px", background: "#E51D17" }]);
-  const user = useSelector((state: any) => state.persist.user);
-
+  //const isOpen = useSelector((state: any) => state.profile.isDrawerOpen);
   // LuckyWheel prizes will be set dynamically from API, using consistent styling
   // const [prizes] = useState( ... ); // Removed hardcoded prizes
 
   const [lockid, setLockid] = useState<boolean>(false); //防抖
   const [prizeItem, setPrizeItem] = useState<any>(); //中奖物品 (will be replaced by currentPrize)
-
-  useEffect(() => {
-    if (user?.token) {
-      setAccessToken(user?.token || "");
-    }
-  }, [user]);
-
+  const navigate = useNavigate();
   const [buttons] = useState([
     {
       radius: "40%",
@@ -178,20 +182,29 @@ const LuckySpinPage: React.FC = ({ setShowLuckySpin }: any) => {
   // useEffect(() => {
   //   // Get token from localStorage
 
+  //   // Listen for token from Android
+  //   const handleAndroidToken = (event: CustomEvent) => {
+  //     const token = event.detail.token;
+  //     setAccessToken(token);
+  //   };
+
+  //   window.addEventListener(
+  //     "androidTokenReceived",
+  //     handleAndroidToken as EventListener
+  //   );
+
   //   // Still listen for new tokens
   //   bridge.addEventListener(MessageType.ACCESS_TOKEN, (data) => {
   //     if (data.access_token) {
   //       setAccessToken(data.access_token);
+  //     } else {
+  //       localStorage.removeItem("access_token");
   //     }
   //   });
   //   const token = localStorage.getItem("access_token");
   //   if (token) {
   //     setAccessToken(token);
   //   }
-
-  //   const loadTimeout = setTimeout(() => {
-  //     bridge.notifyPageLoaded();
-  //   }, 100);
 
   //   const handleError = (error: ErrorEvent) => {
   //     console.error("Page error:", error);
@@ -207,38 +220,47 @@ const LuckySpinPage: React.FC = ({ setShowLuckySpin }: any) => {
   //   window.addEventListener("unhandledrejection", handleUnhandledRejection);
 
   //   return () => {
-  //     clearTimeout(loadTimeout);
+  //     // clearTimeout(loadTimeout);
   //     window.removeEventListener("error", handleError);
   //     window.removeEventListener(
   //       "unhandledrejection",
   //       handleUnhandledRejection
   //     );
+  //     window.removeEventListener(
+  //       "androidTokenReceived",
+  //       handleAndroidToken as EventListener
+  //     );
   //   };
   // }, []);
 
   // Initialize service when token is available
+
   useEffect(() => {
-    if (accessToken) {
-      const service = new SpinWheelService(accessToken);
+    if (user?.token) {
+      const service = new SpinWheelService(user?.token);
       setSpinService(service);
+      console.log("hello start");
       Promise.all([
         fetchProfile(service),
         fetchPrizes(service),
         fetchCurrentEvent(service),
       ]).finally(() => {
+        console.log("hello finally");
         setIsInitialLoading(false);
       });
     } else {
-      const service = new SpinWheelService('');
+      const service = new SpinWheelService("");
       setSpinService(service);
       Promise.all([
+        // fetchProfile(service),
         fetchPrizes(service),
         fetchCurrentEvent(service),
       ]).finally(() => {
+        console.log("hello finally");
         setIsInitialLoading(false);
       });
     }
-  }, [accessToken]);
+  }, [user?.token]);
 
   const fetchCurrentEvent = async (service: SpinWheelService) => {
     try {
@@ -323,9 +345,9 @@ const LuckySpinPage: React.FC = ({ setShowLuckySpin }: any) => {
               imgs: [
                 {
                   src: imageUrl,
-                  width: "32px",
-                  height: "32px",
-                  top: "45%",
+                  width: "2.8rem",
+                  // height: "auto",
+                  top: "50%",
                 },
               ],
             };
@@ -503,6 +525,11 @@ const LuckySpinPage: React.FC = ({ setShowLuckySpin }: any) => {
   };
 
   const handleSpinStart = useLockFn(async () => {
+    if (!user?.token) {
+      dispatch(setIsDrawerOpen(true));
+      return;
+    }
+
     if (spinChances <= 0) {
       setShowNoCouponPopup(true);
       return;
@@ -555,6 +582,7 @@ const LuckySpinPage: React.FC = ({ setShowLuckySpin }: any) => {
   };
 
   const handleInviteFriend = () => {
+    navigate(`/events/lucky-draw/${eventId}`);
     setShowNoCouponPopup(false);
   };
 
@@ -564,25 +592,18 @@ const LuckySpinPage: React.FC = ({ setShowLuckySpin }: any) => {
   };
 
   const hanldeRedirect = () => {
-    console.log("Redirecting to parent page...");
-    // bridge.sendToParent(MessageType.NAVIGATE_TO, {
-    //   action: "click",
-    //   timestamp: Date.now(),
-    // });
-
-    // Redirect logic can be added here if needed
+    navigate("/wallet/withdraw");
   };
 
   return (
-    <div className="w-full max-w-[440px] min-h-dvh overflow-y-auto relative">
+    <div className="w-full max-w-[440px]  min-h-dvh overflow-y-auto relative">
       <DecryptedImage
         alt=""
         src="/images/bg.webp"
         className="absolute inset-0 w-full h-full object-cover z-0"
       />
-
-      <div className="relative z-10 flex flex-col">
-        <GameHead setShowLuckySpin={setShowLuckySpin} />
+      <div className="relative flex flex-col">
+        <GameHead />
 
         {errorMessage && (
           <div
@@ -616,7 +637,7 @@ const LuckySpinPage: React.FC = ({ setShowLuckySpin }: any) => {
               <DecryptedImage
                 alt=""
                 className={`${smallWidthRatio ? "w-[350px]" : "w-[400px]"}`}
-                src="images/Wheel.png"
+                src="images/Wheel.webp"
               />
               <DecryptedImage
                 className={`absolute ${
@@ -673,19 +694,20 @@ const LuckySpinPage: React.FC = ({ setShowLuckySpin }: any) => {
                 className="h-[60px] spin_button flex justify-center items-center text-center text-[#583000] text-[20px] font-[600] leading-[22px]"
               >
                 {spinLoading ? "加载中.. " : "开始抽奖"}
+                {!user?.token && (
+                  <img src="/images/lock.png" className="w-5" alt="lock" />
+                )}
               </button>
             </div>
           </div>
         )}
       </div>
-
       {showNoCouponPopup && (
         <NotEnoughCouponPopup
           onCancel={handleNoCouponPopupClose}
           onInviteFriend={handleInviteFriend}
         />
       )}
-
       {showSpinResultPopup && currentPrize && (
         <SpinResultPopup
           show={showSpinResultPopup}
@@ -697,7 +719,6 @@ const LuckySpinPage: React.FC = ({ setShowLuckySpin }: any) => {
           onRedirect={hanldeRedirect}
         />
       )}
-
       {msg.show && (
         <div
           className="spin-result-overlay"

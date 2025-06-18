@@ -1,5 +1,5 @@
 import React from "react";
-import { Prize } from "../models";
+import { Prize } from "./models";
 import "./SpinResultPopup.css"; // Import the CSS file
 import { useNavigate } from "react-router-dom";
 
@@ -156,7 +156,7 @@ const SpinResultPopup: React.FC<SpinResultPopupProps> = ({
         <div className="popup-footer">
           <button
             onClick={onClose}
-            className=" spin_button1 text-[#831C00] text-[16px] font-[700] leading-[24px] flex justify-center items-center"
+            className=" spin_button1 h-[50px] text-[#831C00] text-[16px] font-[700] leading-[24px] flex justify-center items-center"
           >
             {popupButtonText}
           </button>

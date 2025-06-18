@@ -192,16 +192,19 @@ import "dayjs/locale/zh-cn";
 import SpinWheelService from "./services/spinWheelService";
 
 import empty from "../../assets/empty.png";
+import { useSelector } from "react-redux";
 
 dayjs.locale("zh-cn");
 dayjs.extend(relativeTime);
 
 type RecordProps = {
   show: boolean;
-  onClose: () => void;
+  onClose: any;
 };
 
 export const Record: FC<RecordProps> = ({ show, onClose }) => {
+  const user = useSelector((state: any) => state.persist.user);
+
   const [fetching, setFetching] = useState(false);
   const [pageConfig, setPageConfig] = useState({
     page: 1,
@@ -213,7 +216,7 @@ export const Record: FC<RecordProps> = ({ show, onClose }) => {
 
   const { data, error, loading, refresh } = useRequest<any, any>(
     () => {
-      const token = localStorage.getItem("access_token");
+      const token = user?.token;
       if (!token) return Promise.reject("No access token");
       const service = new SpinWheelService(token);
       return service.getWinHistory(pageConfig.page);
@@ -232,9 +235,6 @@ export const Record: FC<RecordProps> = ({ show, onClose }) => {
       },
     }
   );
-
-  console.log("Data:", data);
-  console.log(loading, "Loading State");
 
   const fetchMoreData = () => {
     if (dataList.length >= (data?.pagination?.total ?? 0)) return;
@@ -261,9 +261,6 @@ export const Record: FC<RecordProps> = ({ show, onClose }) => {
       );
     }
   }, [data]);
-
-  console.log("Data List:", dataList);
-  console.log();
 
   const handleReload = async () => {
     setInitialLoad(true);
