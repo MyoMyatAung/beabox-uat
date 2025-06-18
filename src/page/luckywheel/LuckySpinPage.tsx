@@ -166,23 +166,22 @@ const LuckySpinPage: React.FC = () => {
   // RTK Query hooks
   const { data: currentEventData } = useGetCurrentEventQuery('');
   const { data: prizeListData } = useGetPrizeListQuery();
-  const { data: profileData } = useGetProfileQuery();
+  const { data: profileData, refetch: refetchProfile } = useGetProfileQuery();
   const [spin] = useSpinMutation();
   const { data: eventDetailsData } = useGetEventDetailsQuery(currentEventId, {
     skip: !currentEventId,
   });
 
-  useEffect(()=>{
-    console.log('prizeListData i=>', prizeListData);
-  },[prizeListData])
+  // Add effect to refetch profile when token changes
+  useEffect(() => {
+    if (user?.token) {
+      refetchProfile();
+    }
+  }, [user?.token, refetchProfile]);
 
   const eventId = currentEventData?.data?.filter(
     (x: { type: string }) => x.type === "event"
   )[0]?.id;
-
-  useEffect(()=>{
-    console.log('eventId is=>', eventId);
-  },[eventId])
 
   const smallWidthRatio = window.innerWidth < 400;
   const [blocks] = useState([{ padding: "0px", background: "#E51D17" }]);
