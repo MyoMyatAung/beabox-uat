@@ -32,11 +32,12 @@ import { createCenterApi } from "./api/createCenterApi";
 import playSlice from "@/page/home/services/playSlice";
 import scrollSlice from "@/page/home/services/scrollSlice";
 import followSlice from "./slices/followSlice";
-import eventSlice from "./slices/eventSlice"
+import eventSlice from "./slices/eventSlice";
 import { eventApi } from "./api/events/eventApi";
 import { eventInvitationApi } from "../page/event/eventApi";
-import spinWheelReducer from './slices/spinWheelSlice';
-import { spinWheelApi } from '../page/luckywheel/services/spinWheelApi';
+import spinWheelReducer from "./slices/spinWheelSlice";
+import { spinWheelApi } from "../page/luckywheel/services/spinWheelApi";
+import showSlice from "@/page/home/services/showSlice";
 
 const sessionStorageWrapper: Storage = {
   getItem: (key: string) => {
@@ -67,7 +68,7 @@ const persistHomeSliceConfig = {
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["persist", "history", "explore", "unlike","event"], // Reducers you want to persist
+  whitelist: ["persist", "history", "explore", "unlike", "event"], // Reducers you want to persist
 };
 
 const rootReducer = combineReducers({
@@ -76,6 +77,7 @@ const rootReducer = combineReducers({
   profile: profileSlice,
   persist: persistSlice,
   playSlice: playSlice,
+  showSlice: showSlice,
   explore: exploreSlice,
   scrollSlice: scrollSlice,
   history: HistorySlice,
@@ -101,7 +103,7 @@ const rootReducer = combineReducers({
   [searchApi.reducerPath]: searchApi.reducer,
   [createCenterApi.reducerPath]: createCenterApi.reducer,
   event: eventSlice,
-  [eventApi.reducerPath] : eventApi.reducer,
+  [eventApi.reducerPath]: eventApi.reducer,
   [eventInvitationApi.reducerPath]: eventInvitationApi.reducer,
   [versionApi.reducerPath]: versionApi.reducer,
   [spinWheelApi.reducerPath]: spinWheelApi.reducer,

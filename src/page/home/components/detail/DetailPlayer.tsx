@@ -29,6 +29,7 @@ interface RootState {
 }
 
 const DetailPlayer = ({
+  isInteractingWithProgressBar,
   setCurrentIndex,
   currentIndex,
   src,
@@ -50,6 +51,7 @@ const DetailPlayer = ({
   video,
   length,
 }: {
+  isInteractingWithProgressBar: any;
   setCurrentIndex: any;
   currentIndex: any;
   src: string;
@@ -843,7 +845,7 @@ const DetailPlayer = ({
       layers: [
         {
           html: `
-            <div class="custom-progress-container">
+            <div class="custom-progress-container" >
               <input type="range" min="0" max="100" step="0.1" class="custom-progress-bar chrome-fix" />
                 <div class="custom-time-display" style="display: none; justify-content: center; position: absolute; width: 100%; left: 0; text-align: center;"></div>
             </div>
@@ -995,6 +997,7 @@ const DetailPlayer = ({
 
             // Mobile touch events
             element.addEventListener("touchstart", (e) => {
+              isInteractingWithProgressBar.current = true;
               if (!artPlayerInstanceRef.current?.playing) {
                 artPlayerInstanceRef.current?.play();
                 artPlayerInstanceRef.current?.pause();
@@ -1062,6 +1065,7 @@ const DetailPlayer = ({
             });
 
             element.addEventListener("touchmove", (e) => {
+              isInteractingWithProgressBar.current = true;
               setShowRotate(true);
               if (
                 !artPlayerInstanceRef.current ||
@@ -1123,6 +1127,7 @@ const DetailPlayer = ({
             });
 
             element.addEventListener("touchend", () => {
+              isInteractingWithProgressBar.current = false;
               if (!artPlayerInstanceRef.current?.playing) {
                 artPlayerInstanceRef.current?.play();
               }

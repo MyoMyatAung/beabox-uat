@@ -40,6 +40,7 @@ import { useLayoutEffect } from "react";
 import Loader from "@/components/shared/loader";
 import { Link } from "react-router-dom";
 import Followers from "./components/Followers";
+import DetailStory from "./components/DetailStory";
 
 const Home = () => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
@@ -54,6 +55,7 @@ const Home = () => {
   // );
   const { page } = useSelector((state: any) => state.pageSlice);
 
+  const { show } = useSelector((state: any) => state.showSlice);
   // const { data, isLoading } = useGetUserShareQuery({
   //   type: "video",
   //   id: post?.post_id,
@@ -360,8 +362,6 @@ const Home = () => {
             const postId = entry.target.getAttribute("data-post-id");
             if (postId && postId !== currentActivePost) {
               dispatch(setCurrentActivePost(postId)); // Update the active post ID in Redux
-              const firstVideoId = videos["follow"]?.[0]?.post_id;
-              setIsFirstVideoActive(postId === firstVideoId);
             }
           }
         });
@@ -462,7 +462,6 @@ const Home = () => {
 
   const [followers, setFollowers] = useState<any[]>([]);
   const [showFollowers, setShowFollowers] = useState(false);
-  const [isFirstVideoActive, setIsFirstVideoActive] = useState(true);
   const { data: myday } = useGetMydayQuery({ page: 1 });
 
   useEffect(() => {
@@ -489,16 +488,25 @@ const Home = () => {
     }
   }, [myday]);
 
-  useEffect(() => {
-    setIsFirstVideoActive(true);
-  }, [currentTab]);
-
   const handleShow = () => {
     setShowFollowers(!showFollowers);
   };
 
+  if (show) {
+    return (
+      <div className="fixed inset-0 top-0 left-0 z-[9999999] flex items-center justify-center">
+        <DetailStory id={show} />
+      </div>
+    );
+  }
+
   return (
-    <div className="flex justify-center items-center">
+    <div
+      style={{
+        display: show ? "none" : "flex",
+      }}
+      className=" justify-center items-center"
+    >
       <div className="max-w-[1024px] home-main w-full">
         <TopNavbar currentTab={currentTab} onTabClick={handleTabClick} />
 
@@ -555,7 +563,7 @@ const Home = () => {
                           </div>
                         )}
 
-                        {!showFollowers && isFirstVideoActive && (
+                        {!showFollowers && (
                           <div className="flex justify-center items-center left-0 right-0 absolute top-24 z-[999999]">
                             <button
                               onClick={handleShow}
@@ -622,6 +630,7 @@ const Home = () => {
                                 abortControllerRef={abortControllerRef}
                                 container={videoContainerRef.current}
                                 status={true}
+                                showFollowers={showFollowers}
                                 countNumber={countNumber}
                                 video={video}
                                 // coin={user?.coins}

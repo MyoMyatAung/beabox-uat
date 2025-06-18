@@ -2,8 +2,9 @@ import { decryptImage } from "@/utils/imageDecrypt";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useDeletePostMutation } from "@/store/api/createCenterApi";
+import { setShow } from "../../services/showSlice";
 
 const DetailNav = ({
   image,
@@ -20,6 +21,7 @@ const DetailNav = ({
   const [showDelete, setShowDelete] = useState(false);
   const user = useSelector((state: any) => state.persist.user);
   const [deletePost] = useDeletePostMutation();
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -60,12 +62,10 @@ const DetailNav = ({
     } catch (error) {
       setIsDecrypting(false);
     }
-
-    console.log("Delete video");
   };
 
   return (
-    <div className="z-[999] videoNavbar">
+    <div className="z-[999999] videoNavbar">
       <div className="w-full flex gap-1 mb-4">
         {Array.from({ length }).map((_, index) => (
           <div
@@ -116,7 +116,19 @@ const DetailNav = ({
             </button>
           )}
 
-          <button className="detail_cross_btn" onClick={() => navigate(-1)}>
+          <button
+            className="detail_cross_btn"
+            onClick={() => {
+              if (location.pathname.includes("/story_detail")) {
+                // If the current path is a detail page, navigate back to the home page
+                navigate(-1);
+              } else {
+                dispatch(setShow(""));
+                console.log("Cross button clicked");
+                // If the current path is not a detail page, navigate back to the previous page
+              }
+            }}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"

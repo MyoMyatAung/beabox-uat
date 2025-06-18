@@ -1,4 +1,5 @@
-import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setShow } from "../services/showSlice";
 
 interface Follower {
   id: string;
@@ -7,24 +8,17 @@ interface Follower {
   decryptedPreview: string;
 }
 
-interface FollowersProps {
-  followers: Follower[];
-}
-
-const Followers = ({ followers }: FollowersProps) => {
-  console.log(followers);
-  const navigate = useNavigate();
+const Followers = ({ followers }: any) => {
+  const dispatch = useDispatch();
   return (
-    <div className="flex items-center gap-4 overflow-x-auto hide-sb mt-20 w-full px-5 mb-3">
+    <div className="flex gap-4 overflow-x-auto hide-sb mt-20 w-full px-5 mb-3">
       {followers.map((follower: Follower) => (
         <div
           key={follower.id}
-          className="flex-shrink-0 flex-grow flex w-[60px] justify-center items-center flex-col p-1 gap-1"
+          className="flex-shrink-0  flex w-[60px] justify-center items-center flex-col p-1 gap-1"
         >
           <div
-            onClick={() => {
-              navigate(`story_detail/${follower?.id}`);
-            }}
+            onClick={() => dispatch(setShow(follower.id))}
             className="w-[57px] h-[57px] rounded-full p-[2px] animate-pulse-slow"
             style={{
               background: !follower?.my_day.watched

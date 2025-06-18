@@ -14,29 +14,25 @@ import { decryptImage } from "@/utils/imageDecrypt";
 import loader from "../vod_loader.gif";
 import LoadingBar from "./detail/LoadingBar";
 import DetailContainer from "./detail/DetailContainer";
-import { skip } from "node:test";
 
 const Detail = () => {
   const { id } = useParams();
-  const { data: myday } = useGetMydayQuery({ page: 1 });
+  //   const { data: myday } = useGetMydayQuery({ page: 1 });
 
   const [watchPost] = useWatchtPostMutation();
 
-  console.log(myday);
+  //   console.log(myday);
 
-  const res = myday?.data?.find((item: any) => item?.id === id);
+  //   const res = myday?.data?.find((item: any) => item?.id === id);
 
   // Get videos for current user
-  const { data: my } = useGetUserMydayQuery(
-    {
-      post_user_id: id,
-    },
-    { skip: res }
-  );
+  const { data: my } = useGetUserMydayQuery({
+    post_user_id: id,
+  });
 
-  console.log("aa", my);
+  //   console.log("aa", my);
 
-  let data = res?.posts ? res?.posts : my?.data;
+  let data = my?.data;
 
   //   if (!res) {
   //   }
@@ -321,6 +317,7 @@ const Detail = () => {
   const video = videos[currentIndex] || null; // Get the current video based on index
 
   const [watchedPosts, setWatchedPosts] = useState<Record<string, boolean>>({});
+  const isInteractingWithProgressBar = useRef(false);
 
   // Modify your watchPost effect like this:
   useEffect(() => {
@@ -388,6 +385,7 @@ const Detail = () => {
             </a>
           ) : (
             <DetailContainer
+              isInteractingWithProgressBar={isInteractingWithProgressBar}
               setIsDecrypting={setIsDecrypting}
               // refetch={refetch}
               length={videos.length}
