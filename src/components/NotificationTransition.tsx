@@ -50,10 +50,10 @@ const NotificationTransition: React.FC<NotificationTransitionProps> = ({
       >
         {notifications.length > 0 && (
           <p>
-            用户：<span className="font-bold text-[16px]">
+            用户：<span className="font-bold text-[12px]">
               {notifications[currentNotification]?.nickname?.substring(0, 5)}
             </span> 成功瓜分红包：
-            <span className="font-bold text-[18px]">
+            <span className="font-bold text-[14px]">
               {notifications[currentNotification]?.amount}
               {notifications[currentNotification]?.currency}
             </span>
