@@ -1,5 +1,5 @@
 export const API_CONFIG = {
-  BASE_URL: "https://dpbi230vdk.ty6ezr9k1v.top:54147/api/v1",
+  BASE_URL: import.meta.env.VITE_API_URL,
   ENDPOINTS: {
     SPIN_WHEEL: {
       PRIZES: "/spin-wheel/prizes",

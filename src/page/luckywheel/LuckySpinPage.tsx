@@ -38,6 +38,7 @@ interface VirtualUserReward {
   nickname: string;
   amount: string;
   currency: string;
+  text: string;
 }
 
 // Update the Event interface to include virtual_user_reward
@@ -172,6 +173,9 @@ const LuckySpinPage: React.FC = () => {
     skip: !currentEventId,
   });
 
+  useEffect(()=>{
+    console.log('eventDetails is=>', eventDetails);
+  },[eventDetails])
   // Add effect to refetch profile when token changes
   useEffect(() => {
     if (user?.token) {
@@ -427,11 +431,7 @@ const LuckySpinPage: React.FC = () => {
             </div>
             <div className="first-text">
               <NotificationTransition
-                notifications={eventDetails?.virtual_user_reward?.map(reward => ({
-                  nickname: reward.nickname,
-                  amount: reward.amount,
-                  currency: reward.currency
-                })) || []}
+                notifications={eventDetails?.virtual_user_reward || []}
               />
             </div>
 
@@ -497,7 +497,7 @@ const LuckySpinPage: React.FC = () => {
               <button
                 onClick={handleSpinStart}
                 disabled={spinLoading || lockid}
-                className="h-[60px] spin_button flex justify-center items-center text-center text-[#583000] text-[20px] font-[600] leading-[22px]"
+                className={`h-[60px] ${(spinLoading || lockid || !user?.token) ? 'spin_button_disable' : 'spin_button'} flex justify-center items-center text-center text-[#583000] text-[20px] font-[600] leading-[22px]`}
               >
                 {spinLoading ? "加载中.. " : "开始抽奖"}
                 {!user?.token && (

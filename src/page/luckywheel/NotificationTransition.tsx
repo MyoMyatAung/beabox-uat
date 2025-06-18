@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from "react";
+import Marquee from "react-fast-marquee";
 
 export interface NotificationItem {
   nickname: string;
   amount: string;
   currency: string;
+  text: string;
 }
 
 interface NotificationTransitionProps {
@@ -12,54 +15,28 @@ interface NotificationTransitionProps {
 }
 
 const NotificationTransition: React.FC<NotificationTransitionProps> = ({
-  notifications = [
-    { nickname: "User1", amount: "100", currency: "¥" },
-    { nickname: "User2", amount: "200", currency: "¥" },
-    { nickname: "User3", amount: "150", currency: "¥" },
-  ],
+  notifications = [],
   interval = 3000,
 }) => {
-  const [currentNotification, setCurrentNotification] = useState(0);
-  const [notificationVisible, setNotificationVisible] = useState(true);
+  const [marqueeData, setMarqueeData] = useState('');
 
   useEffect(() => {
-    if (notifications.length === 0) return;
+    const data = notifications.reduce((a: any, c: any) => {
+      const text = c.text
+        .replace(/name/g, c.nickname)
+        .replace(/prize/g, c.amount);
 
-    const notificationInterval = setInterval(() => {
-      setNotificationVisible(false);
-
-      setTimeout(() => {
-        setCurrentNotification((prev) => (prev + 1) % notifications.length);
-        setNotificationVisible(true);
-      }, 500);
-    }, interval);
-
-    return () => clearInterval(notificationInterval);
-  }, [notifications, interval]);
+      a += "   " + text;
+      return a;
+    }, "");
+    setMarqueeData(data);
+  }, [notifications]);
 
   return (
-    <div className="text-[0.875rem] h-8 overflow-hidden">
-      <div
-        className={`transition-all duration-1000 ${
-          notificationVisible
-            ? "transform translate-y-0 opacity-100"
-            : "transform -translate-y-6 opacity-5"
-        }`}
-      >
-        {notifications.length > 0 && (
-          <p className="text-white text-shadow-notification">
-            用户：
-            <span className="font-bold text-[14px] text-shadow-bold">
-              {notifications[currentNotification]?.nickname?.substring(0, 5)}
-            </span>{" "}
-            成功瓜分红包：
-            <span className="font-bold text-[16px] text-shadow-bold">
-              {notifications[currentNotification]?.amount}
-              {notifications[currentNotification]?.currency}
-            </span>
-          </p>
-        )}
-      </div>
+    <div className="text-[0.875rem] h-10 justify-center content-center overflow-hidden relative text-lg font-bold">
+      <Marquee>
+        {marqueeData}
+      </Marquee>
     </div>
   );
 };

@@ -28,30 +28,22 @@
 }
 
 .spin_button {
-  /* width: 270px !important; */
-  width: 300px;
+  width: 320px;
   background-color: transparent;
   background-image: url("../../assets/bgbutton.png");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  /* border-radius: 100px;
-  border: 6px solid rgba(255, 255, 255, 0.12);
-  background: linear-gradient(180deg, #fff 0%, #ffc989 152.27%);
-  box-shadow: 0px 0px 32px 0px #ff439e,
-    0px 0px 12px 0px rgba(255, 255, 255, 0.5) inset;
-  background: linear-gradient(180deg, #fff 0%, #ffc989 152.27%);
+}
+
+.spin_button_disable {
+  width: 320px;
+  background-color: transparent;
+  background-image: url("../../assets/bgbutton.png");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important; */
-  /* border-radius: 100px;
-  border: 6px solid rgba(255, 255, 255, 0.12);
-  background: linear-gradient(180deg, #fff 0%, #ffc989 152.27%);
-  box-shadow: 0px 0px 32px 0px #ff439e,
-    0px 0px 12px 0px rgba(255, 255, 255, 0.5) inset;
-  backdrop-filter: blur(16px); */
+  opacity: 0.8;
 }
 
 .history_click_htn {
