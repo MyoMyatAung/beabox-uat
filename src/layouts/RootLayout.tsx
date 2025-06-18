@@ -106,22 +106,9 @@ const RootLayout = ({ children }: any) => {
     (state: RootState) => state.event.event_start_time
   );
 
-  const isOpen = useSelector((state: any) => state.profile.isDrawerOpen);
-
-  const [cachedEventDetails, setCachedEventDetails] = useState<{
-    data: EventDetail;
-  } | null>(null);
-  const [isFetchingDetails, setIsFetchingDetails] = useState(false);
-  const { showLuckySpin, openLuckySpin, closeLuckySpin } =
-    useLuckySpinManager();
-  const isFetchingRef = useRef(false);
-
-  console.log("currentEventData is=>", luckySpinWebUrl);
-
   useEffect(() => {
     // dev
-    // const webUrl = "http://192.168.1.163:5001/";
-    const webUrl = 'https://lovely-stroopwafel-626bd1.netlify.app';
+    // const webUrl = "http://localhost:5001";
     // prod
     // const webUrl = currentEventData?.data.filter((x: any) => x.type === 'spin-wheel')[0]?.web_url;
     // setLuckySpinWebUrl(webUrl);
@@ -325,6 +312,15 @@ const RootLayout = ({ children }: any) => {
     currentTab,
   ]);
 
+  // If loading, show loading screen
+  if (isLoading) {
+    return <LoadingScreen onLoadComplete={handleLoadComplete} />;
+  }
+
+  // After loading, show Landing
+  if (showLanding) {
+    return <Landing onComplete={handleLandingComplete} />;
+  }
   const handleAnimationClick = async () => {
     const eventId = currentEventData?.data?.filter(
       (x: any) => x.type === "event"
@@ -361,45 +357,13 @@ const RootLayout = ({ children }: any) => {
     }
   };
 
-  // useEffect(() => {
-  //   if (location.pathname !== "/detail") {
-  //     setShowLuckySpin(false);
-  //     sessionStorage.removeItem("showLuckySpin");
-  //   }
-  // }, [location.pathname]);
-
-  // useEffect(() => {
-  //   const handleBackNavigation = () => {
-  //     // When user goes back, check if we should hide the lucky spin
-  //     if (showLuckySpin) {
-  //       window.history.pushState("", "/");
-  //       window.history.back();
-  //       setShowLuckySpin(false);
-  //       sessionStorage.removeItem("showLuckySpin");
-  //     }
-  //   };
-
-  //   // Add event listener for popstate (triggered by back navigation)
-  //   window.addEventListener("popstate", handleBackNavigation);
-
-  //   // Clean up the event listener when component unmounts
-  //   return () => {
-  //     window.removeEventListener("popstate", handleBackNavigation);
-  //   };
-  // }, [showLuckySpin]);
-
   const handleLuckySpinClick = () => {
     navigate("/lucky");
   };
   
   return (
     <>
-      <div
-        style={{
-          height: "calc(100dvh - 95px);",
-          display: !showLuckySpin ? "block" : "none",
-        }}
-      >
+      <div style={{ height: "calc(100dvh - 95px);" }}>
         {children}
 
         {event && !box && !isOpenNew && !user && (
@@ -457,8 +421,7 @@ const RootLayout = ({ children }: any) => {
         {!showAd &&
           // !showAlert &&
           !isOpen &&
-          (location.pathname === "/" ||
-          location.pathname === "/detail") &&
+          location.pathname === "/" &&
           !event &&
           showAnimation &&
           currentTab === 2 &&
@@ -536,21 +499,6 @@ const RootLayout = ({ children }: any) => {
               </div>
             </>
           )}
-      </div>
-      {isOpen ? <AuthDrawer /> : <></>}
-      <div
-        className="h-dvh w-screen fixed top-0 left-0 z-[999]"
-        style={{ display: showLuckySpin ? "block" : "none" }}
-      >
-        <iframe
-          sandbox="allow-scripts allow-same-origin allow-forms"
-          ref={iframeRef}
-          src={luckySpinWebUrl}
-          className="w-full h-full border-0"
-          style={{ display: showLuckySpin ? "block" : "none" }}
-          title="Spin Game"
-        />
-        {/* {/* {isOpen ? <AuthDrawer /> : <></>} */}
       </div>
     </>
   );
