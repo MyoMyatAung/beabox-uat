@@ -76,7 +76,9 @@ export function BottomNav() {
 
   return (
     <nav
-      style={{ display: hideBar ? "none" : "flex" }}
+      style={{
+        display: hideBar || location.pathname === "/lucky" ? "none" : "flex",
+      }}
       className={`flex items-center justify-around p-4 bg-[#191721] backdrop-blur-sm border-t border-white/10 ${
         bottomLoader && "loading-border"
       } ${needsBottomPadding ? "h-[80px] pb-10" : "h-[76px]"}`}

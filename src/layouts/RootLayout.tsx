@@ -36,7 +36,8 @@ import RegisterDrawer from "@/components/profile/auth/register-drawer";
 import { EventDetail } from "@/@types/lucky_draw";
 import DEventBox from "@/page/event/dragon/DEventBox";
 import { motion, AnimatePresence } from "framer-motion";
-import { useLuckySpinManager } from "./useLuckySpinManager";
+import LuckySpinPage from "@/page/luckywheel/LuckySpinPage";
+import { useGetPrizeListQuery, useGetProfileQuery } from "@/page/luckywheel/services/spinWheelApi";
 
 // Function to check if the app is running in a WebView
 function isWebView() {
@@ -78,9 +79,8 @@ const RootLayout = ({ children }: any) => {
   const currentTab = useSelector((state: any) => state.home.currentTab);
   const hideBar = useSelector((state: RootState) => state.hideBarSlice.hideBar);
   const [showEvent, setShowEvent] = useState(false);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-  // const [showLuckySpin, setShowLuckySpin] = useState(false);
-  const [luckySpinWebUrl, setLuckySpinWebUrl] = useState("");
+  const { data: prizeListData } = useGetPrizeListQuery();
+  const { data: profileData } = useGetProfileQuery();
   const { data: eventData } = useGetUserByReferalQuery(
     { referral_code: referCode }, // or safely cast if you're confident it's a string
     { skip: !referCode }
@@ -124,7 +124,7 @@ const RootLayout = ({ children }: any) => {
     const webUrl = 'https://lovely-stroopwafel-626bd1.netlify.app';
     // prod
     // const webUrl = currentEventData?.data.filter((x: any) => x.type === 'spin-wheel')[0]?.web_url;
-    setLuckySpinWebUrl(webUrl);
+    // setLuckySpinWebUrl(webUrl);
     if (showAd && showAlert && isOpen && !showLanding) {
       dispatch(setAnimation(false));
     } else {
@@ -259,7 +259,48 @@ const RootLayout = ({ children }: any) => {
     }
   }, [event]);
 
-  // Preload the lucky draw component and prefetch event details
+  const isOpen = useSelector((state: any) => state.profile.isDrawerOpen);
+
+  const [cachedEventDetails, setCachedEventDetails] = useState<{
+    data: EventDetail;
+  } | null>(null);
+  const [isFetchingDetails, setIsFetchingDetails] = useState(false);
+  const isFetchingRef = useRef(false);
+
+  // Prefetch event details whenever we have the necessary data
+  useEffect(() => {
+    const prefetchEventDetails = async () => {
+      const eventId = currentEventData?.data?.filter(
+        (x: any) => x.type === "event"
+      )[0]?.id;
+      
+      if (!eventId || isFetchingRef.current) return;
+
+      try {
+        isFetchingRef.current = true;
+        setIsFetchingDetails(true);
+        const eventDetails = await triggerGetEventDetails(eventId).unwrap();
+        setCachedEventDetails(eventDetails);
+        // Pre-dispatch to Redux for immediate availability
+        dispatch(setEventDetail(eventDetails.data));
+        if (eventDetails.data?.event_start_time) {
+          dispatch(setDuration(eventDetails.data.event_start_time));
+        }
+      } catch (error) {
+        console.error("Failed to prefetch event details:", error);
+      } finally {
+        setIsFetchingDetails(false);
+        isFetchingRef.current = false;
+      }
+    };
+
+    // Only prefetch if we're on the home page and have the necessary data
+    if (location.pathname === "/" && currentEventData?.data) {
+      prefetchEventDetails();
+    }
+  }, [currentEventData?.data, location.pathname, dispatch]);
+
+  // Preload the lucky draw component
   useEffect(() => {
     const shouldPreload =
       !showAd &&
@@ -273,30 +314,6 @@ const RootLayout = ({ children }: any) => {
     if (shouldPreload) {
       // Preload the component
       import("@/page/events/Luckydraw");
-
-      // Prefetch event details
-      const prefetchEventDetails = async () => {
-        const eventId = currentEventData?.data?.filter(
-          (x: any) => x.type === "event"
-        )[0]?.id;
-        if (!eventId || isFetchingRef.current) return;
-
-        try {
-          isFetchingRef.current = true;
-          setIsFetchingDetails(true);
-          const eventDetails = await triggerGetEventDetails(eventId).unwrap();
-          console.log("eventDetails is=>", eventDetails);
-          setCachedEventDetails(eventDetails);
-          // Don't dispatch to Redux yet, wait for click
-        } catch (error) {
-          console.error("Failed to prefetch event details:", error);
-        } finally {
-          setIsFetchingDetails(false);
-          isFetchingRef.current = false;
-        }
-      };
-
-      prefetchEventDetails();
     }
   }, [
     showAd,
@@ -306,83 +323,21 @@ const RootLayout = ({ children }: any) => {
     event,
     showAnimation,
     currentTab,
-    currentEventData?.data?.id,
   ]);
 
-  useEffect(() => {
-    const handleMessage = (event: MessageEvent) => {
-      try {
-        if (event?.data?.type === "red_envelope") {
-          // const eventId = currentEventData?.data?.filter(
-          //   (x: any) => x.type === "event"
-          // )[0]?.id;
-
-          // alert(eventId);
-          // navigate(`/events/lucky-draw/${eventId}`);
-          // // handleAnimationClick();
-          // localStorage.setItem("showLuckySpin", "true");
-          return;
-        }
-        if (event?.data?.type === "back_pressed") {
-          closeLuckySpin();
-          // window.history.pushState("", "/");
-          // setShowLuckySpin(false);
-          // sessionStorage.removeItem("showLuckySpin");
-          return;
-        }
-        if (event?.data?.type === "withdraw") {
-          navigate("wallet/withdraw");
-          localStorage.setItem("showLuckySpin", "true");
-          return;
-        }
-        if (event?.data?.type === "login") {
-          console.log("Login message received from iframe");
-          dispatch(setIsDrawerOpen(true));
-          return;
-        }
-        sessionStorage.setItem("showLuckySpin", "false");
-      } catch (error) {
-        console.error("Error handling message from iframe:", error);
-      }
-    };
-
-    window.addEventListener("message", handleMessage);
-    return () => {
-      window.removeEventListener("message", handleMessage);
-    };
-  }, []);
-
-  // useEffect(() => {
-  //   const shouldShowLuckySpin =
-  //     sessionStorage.getItem("showLuckySpin") === "true";
-  //   if (shouldShowLuckySpin) {
-  //     setShowLuckySpin(true);
-  //   }
-  // }, [location.pathname]);
-
   const handleAnimationClick = async () => {
-    // if (!user?.token) {
-    //   dispatch(setIsDrawerOpen(true));
-    //   return;
-    // }
     const eventId = currentEventData?.data?.filter(
       (x: any) => x.type === "event"
     )[0]?.id;
     if (!eventId) return;
 
-    // Immediately use cached data if available
+    // Use cached data if available
     if (cachedEventDetails) {
-      dispatch(setEventDetail(cachedEventDetails.data));
-      if (cachedEventDetails.data?.event_start_time) {
-        dispatch(setDuration(cachedEventDetails.data.event_start_time));
-      }
       navigate(`/events/lucky-draw/${eventId}`);
-
+      
       // Refresh in background
       try {
-        const freshEventDetails = await triggerGetEventDetails(
-          eventId
-        ).unwrap();
+        const freshEventDetails = await triggerGetEventDetails(eventId).unwrap();
         dispatch(setEventDetail(freshEventDetails.data));
         if (freshEventDetails.data?.event_start_time) {
           dispatch(setDuration(freshEventDetails.data.event_start_time));
@@ -434,92 +389,9 @@ const RootLayout = ({ children }: any) => {
   // }, [showLuckySpin]);
 
   const handleLuckySpinClick = () => {
-    // if (!user?.token) {
-    //   dispatch(setPlay(false));
-    //   dispatch(setIsDrawerOpen(true));
-    //   return;
-    // }
-    // dispatch(setPlay(false));
-    // window.history.pushState({ fake: true }, "", "/detail");
-    // setShowLuckySpin(true);
-    // dispatch(setPlay(false));
-    openLuckySpin();
-    // Push a new state to history when opening the lucky spin
-    // window.history.pushState({ showLuckySpin: true }, "", "/detail");
-    // // setShowLuckySpin(true);
-    // sessionStorage.setItem("showLuckySpin", "true");
+    navigate("/lucky");
   };
-
-  // const sendTokenEvent = () => {
-  //   console.log("sendTokenEvent called with user token:", user?.token);
-  //   if (user?.token) {
-  //     console.log("winn");
-  //     const access_token = {
-  //       type: "access_token",
-  //       data: { access_token: user?.token },
-  //     };
-  //     if (iframeRef.current?.contentWindow) {
-  //       iframeRef.current.contentWindow.postMessage(
-  //         access_token,
-  //         luckySpinWebUrl
-  //       );
-  //     }
-  //   }
-  // };
-
-  // Remove the eslint-disable comment and fix the hook
-  useEffect(() => {
-    const sendTokenEvent = () => {
-      if (showLuckySpin) {
-        if (user?.token) {
-          const access_token = {
-            type: "access_token",
-            data: { access_token: user?.token },
-          };
-          if (iframeRef.current?.contentWindow) {
-            iframeRef.current.contentWindow.postMessage(
-              access_token,
-              luckySpinWebUrl
-            );
-          }
-        } else {
-          // Send logout event when token is not present
-          const logoutEvent = {
-            type: "logout",
-            data: {}
-          };
-          if (iframeRef.current?.contentWindow) {
-            iframeRef.current.contentWindow.postMessage(
-              logoutEvent,
-              luckySpinWebUrl
-            );
-          }
-        }
-      }
-    };
-
-    sendTokenEvent();
-  }, [user?.token, showLuckySpin]);
-
-  // // eslint-disable-next-line react-hooks/rules-of-hooks
-  // useEffect(() => {
-  //   sendTokenEvent();
-  // }, [user?.token]);
-
-  // if (showLuckySpin) {
-  //   sendTokenEvent();
-  // }
-
-  // If loading, show loading screen
-  if (isLoading) {
-    return <LoadingScreen onLoadComplete={handleLoadComplete} />;
-  }
-
-  // After loading, show Landing
-  if (showLanding) {
-    return <Landing onComplete={handleLandingComplete} />;
-  }
-
+  
   return (
     <>
       <div
@@ -576,6 +448,8 @@ const RootLayout = ({ children }: any) => {
           )}
 
         <AlertToast />
+
+        {isOpen ? <AuthDrawer /> : <></>}
         <div className="fixed bottom-0 left-0 w-full z-[1600]">
           <BottomNav />
         </div>

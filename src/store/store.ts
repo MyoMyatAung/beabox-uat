@@ -35,6 +35,8 @@ import followSlice from "./slices/followSlice";
 import eventSlice from "./slices/eventSlice"
 import { eventApi } from "./api/events/eventApi";
 import { eventInvitationApi } from "../page/event/eventApi";
+import spinWheelReducer from './slices/spinWheelSlice';
+import { spinWheelApi } from '../page/luckywheel/services/spinWheelApi';
 
 const sessionStorageWrapper: Storage = {
   getItem: (key: string) => {
@@ -102,6 +104,8 @@ const rootReducer = combineReducers({
   [eventApi.reducerPath] : eventApi.reducer,
   [eventInvitationApi.reducerPath]: eventInvitationApi.reducer,
   [versionApi.reducerPath]: versionApi.reducer,
+  [spinWheelApi.reducerPath]: spinWheelApi.reducer,
+  spinWheel: spinWheelReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -119,7 +123,8 @@ export const store: any = configureStore({
       .concat(createCenterApi.middleware)
       .concat(eventApi.middleware)
       .concat(eventInvitationApi.middleware)
-      .concat(versionApi.middleware),
+      .concat(versionApi.middleware)
+      .concat(spinWheelApi.middleware),
 });
 
 export const persistor = persistStore(store);
