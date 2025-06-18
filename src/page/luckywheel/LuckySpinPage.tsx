@@ -1,22 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./LuckySpinPage.css";
-import SpinWheelService from "./services/spinWheelService";
 import NotEnoughCouponPopup from "./NotEnoughCouponPopup";
 import SpinResultPopup from "./SpinResultPopup";
-import { Prize, Profile } from "./models";
-
+import { Prize } from "./models";
 import { GameHead } from "./GameHead";
 import { LuckyWheel } from "@lucky-canvas/react";
 import { useLockFn } from "ahooks";
-import { WHEEL_SEGMENTS } from "./constants/wheelConfig"; // Re-importing original wheel config for base styling
+import { WHEEL_SEGMENTS } from "./constants/wheelConfig";
 import NotificationTransition from "./NotificationTransition";
-import { a } from "node_modules/framer-motion/dist/types.d-6pKw1mTI";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 import { useNavigate } from "react-router-dom";
 import { useGetCurrentEventQuery } from "@/store/api/events/eventApi";
-import AuthDrawer from "@/components/profile/auth/auth-drawer";
-// import { WheelSegment } from "../types"; // Removed explicit import
+import {
+  useGetPrizeListQuery,
+  useSpinMutation,
+  useGetProfileQuery,
+  useGetEventDetailsQuery,
+} from "./services/spinWheelApi";
 
 // Define a local interface for LuckyWheel segments to explicitly include 'color'
 interface LuckyWheelSegment {
@@ -30,6 +31,25 @@ interface LuckyWheelSegment {
     fontWeight: string;
   }[];
   imgs: { src: string; width: string; height: string; top: string }[];
+}
+
+// Create a new interface for virtual user reward
+interface VirtualUserReward {
+  nickname: string;
+  amount: string;
+  currency: string;
+}
+
+// Update the Event interface to include virtual_user_reward
+interface Event {
+  id: string;
+  type: string;
+  name: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  status: string;
+  virtual_user_reward?: VirtualUserReward[];
 }
 
 // Add decryptImage function
@@ -83,7 +103,7 @@ const decryptImage = async (
         const blob = new Blob([bytes], { type: mimeType });
         const blobUrl = URL.createObjectURL(blob);
         return blobUrl;
-      } catch (err) {
+      } catch {
         return decryptedStr;
       }
     }
@@ -121,45 +141,52 @@ const DecryptedImage: React.FC<{
 
 const LuckySpinPage: React.FC = () => {
   const [spinLoading, setSpinLoading] = useState(false);
-  const [spinService, setSpinService] = useState<SpinWheelService | null>(null);
   const [spinChances, setSpinChances] = useState<number>(0);
   const [showNoCouponPopup, setShowNoCouponPopup] = useState<boolean>(false);
-  const [showSpinResultPopup, setShowSpinResultPopup] =
-    useState<boolean>(false);
+  const [showSpinResultPopup, setShowSpinResultPopup] = useState<boolean>(false);
   const [currentPrize, setCurrentPrize] = useState<Prize | null>(null);
   const [popupTitle, setPopupTitle] = useState<string>("");
   const [popupButtonText, setPopupButtonText] = useState<string>("");
   const [popupMessage, setPopupMessage] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [wheelPrizes, setWheelPrizes] = useState<LuckyWheelSegment[]>([]); // Use LuckyWheelSegment type
-  const [msg, setMsg] = useState<any>({
+  const [wheelPrizes, setWheelPrizes] = useState<LuckyWheelSegment[]>([]);
+  const [msg, setMsg] = useState<{ show: boolean; msg: string }>({
     show: false,
     msg: "",
   });
   const [decryptedImages, setDecryptedImages] = useState<{
     [key: string]: string;
   }>({});
-  const user = useSelector((state: any) => state.persist.user);
-  // const [accessToken, setAccessToken] = useState<string>("");
+  const user = useSelector((state: { persist: { user: { token: string } } }) => state.persist.user);
   const [currentEventId, setCurrentEventId] = useState<string>("");
-  const [eventDetails, setEventDetails] = useState<any>(null);
+  const [eventDetails, setEventDetails] = useState<Event | null>(null);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const { data: currentEventData } = useGetCurrentEventQuery("");
+  // RTK Query hooks
+  const { data: currentEventData } = useGetCurrentEventQuery('');
+  const { data: prizeListData } = useGetPrizeListQuery();
+  const { data: profileData } = useGetProfileQuery();
+  const [spin] = useSpinMutation();
+  const { data: eventDetailsData } = useGetEventDetailsQuery(currentEventId, {
+    skip: !currentEventId,
+  });
+
+  useEffect(()=>{
+    console.log('prizeListData i=>', prizeListData);
+  },[prizeListData])
+
   const eventId = currentEventData?.data?.filter(
-    (x: any) => x.type === "event"
+    (x: { type: string }) => x.type === "event"
   )[0]?.id;
-  if (!eventId) return;
+
+  useEffect(()=>{
+    console.log('eventId is=>', eventId);
+  },[eventId])
 
   const smallWidthRatio = window.innerWidth < 400;
   const [blocks] = useState([{ padding: "0px", background: "#E51D17" }]);
-  //const isOpen = useSelector((state: any) => state.profile.isDrawerOpen);
-  // LuckyWheel prizes will be set dynamically from API, using consistent styling
-  // const [prizes] = useState( ... ); // Removed hardcoded prizes
-
-  const [lockid, setLockid] = useState<boolean>(false); //防抖
-  const [prizeItem, setPrizeItem] = useState<any>(); //中奖物品 (will be replaced by currentPrize)
-  const navigate = useNavigate();
+  const [lockid, setLockid] = useState<boolean>(false);
   const [buttons] = useState([
     {
       radius: "40%",
@@ -175,128 +202,75 @@ const LuckySpinPage: React.FC = () => {
     },
   ]);
 
-  const myLucky = useRef<any>("");
-
+  const myLucky = useRef<{ play: () => void; stop: (index: number) => void } | null>(null);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
 
-  // useEffect(() => {
-  //   // Get token from localStorage
-
-  //   // Listen for token from Android
-  //   const handleAndroidToken = (event: CustomEvent) => {
-  //     const token = event.detail.token;
-  //     setAccessToken(token);
-  //   };
-
-  //   window.addEventListener(
-  //     "androidTokenReceived",
-  //     handleAndroidToken as EventListener
-  //   );
-
-  //   // Still listen for new tokens
-  //   bridge.addEventListener(MessageType.ACCESS_TOKEN, (data) => {
-  //     if (data.access_token) {
-  //       setAccessToken(data.access_token);
-  //     } else {
-  //       localStorage.removeItem("access_token");
-  //     }
-  //   });
-  //   const token = localStorage.getItem("access_token");
-  //   if (token) {
-  //     setAccessToken(token);
-  //   }
-
-  //   const handleError = (error: ErrorEvent) => {
-  //     console.error("Page error:", error);
-  //     setErrorMessage(error?.message);
-  //   };
-
-  //   const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
-  //     console.error("Unhandled promise rejection:", event.reason);
-  //     setErrorMessage(event?.reason?.message || String(event?.reason || ""));
-  //   };
-
-  //   window.addEventListener("error", handleError);
-  //   window.addEventListener("unhandledrejection", handleUnhandledRejection);
-
-  //   return () => {
-  //     // clearTimeout(loadTimeout);
-  //     window.removeEventListener("error", handleError);
-  //     window.removeEventListener(
-  //       "unhandledrejection",
-  //       handleUnhandledRejection
-  //     );
-  //     window.removeEventListener(
-  //       "androidTokenReceived",
-  //       handleAndroidToken as EventListener
-  //     );
-  //   };
-  // }, []);
-
-  // Initialize service when token is available
+  useEffect(() => {
+    if (profileData?.data) {
+      setSpinChances(profileData.data.spin_wheel_chance);
+    }
+  }, [profileData]);
 
   useEffect(() => {
-    if (user?.token) {
-      const service = new SpinWheelService(user?.token);
-      setSpinService(service);
-      console.log("hello start");
-      Promise.all([
-        fetchProfile(service),
-        fetchPrizes(service),
-        fetchCurrentEvent(service),
-      ]).finally(() => {
-        console.log("hello finally");
-        setIsInitialLoading(false);
-      });
-    } else {
-      const service = new SpinWheelService("");
-      setSpinService(service);
-      Promise.all([
-        // fetchProfile(service),
-        fetchPrizes(service),
-        fetchCurrentEvent(service),
-      ]).finally(() => {
-        console.log("hello finally");
-        setIsInitialLoading(false);
-      });
+    if (currentEventData?.data) {
+      const spinWheelEvent = currentEventData.data.filter(
+        (x: { type: string }) => x.type === "spin-wheel"
+      )[0];
+      if (spinWheelEvent) {
+        setCurrentEventId(spinWheelEvent.id);
+      }
     }
-  }, [user?.token]);
+  }, [currentEventData]);
 
-  const fetchCurrentEvent = async (service: SpinWheelService) => {
-    try {
-      const response = await service.getCurrentEvent();
-      if (response.status && response.data) {
-        const spinWheelEvent = response.data.filter(
-          (x: any) => x.type === "spin-wheel"
-        )[0];
-        if (spinWheelEvent) {
-          setCurrentEventId(spinWheelEvent.id);
-          // Fetch event details
-          const eventDetailsResponse = await service.getEventDetails(
-            spinWheelEvent.id
-          );
-          if (eventDetailsResponse.status && eventDetailsResponse.data) {
-            setEventDetails(eventDetailsResponse.data);
-          }
+  useEffect(() => {
+    if (eventDetailsData?.data) {
+      setEventDetails(eventDetailsData.data);
+    }
+  }, [eventDetailsData]);
+
+  useEffect(() => {
+    if (prizeListData?.data) {
+      const formattedPrizes: LuckyWheelSegment[] = prizeListData.data.map(
+        (prize: Prize, index: number) => {
+          const segmentIndex = index % WHEEL_SEGMENTS.length;
+          const backgroundColor = WHEEL_SEGMENTS[segmentIndex].color;
+          const imageUrl = prize.image.startsWith("http")
+            ? prize.image
+            : `${prize.image}`;
+
+          return {
+            name: prize.name,
+            background: backgroundColor,
+            fonts: [
+              {
+                text: prize.name,
+                top: "15%",
+                fontSize: "1rem",
+                fontColor: "#FF0000",
+                fontWeight: "800",
+              },
+            ],
+            imgs: [
+              {
+                src: imageUrl,
+                width: "2.8rem",
+                height: "2.8rem",
+                top: "50%",
+              },
+            ],
+          };
         }
-      }
-    } catch (error: any) {
-      console.error("Error fetching current event:", error);
-      setErrorMessage(error?.message || "Failed to fetch current event.");
+      );
+      setWheelPrizes(formattedPrizes);
+      decryptImages(formattedPrizes);
     }
-  };
+  }, [prizeListData]);
 
-  const fetchProfile = async (service: SpinWheelService) => {
-    try {
-      const response = await service.getProfile();
-      if (response.status && response.data) {
-        setSpinChances(response.data.spin_wheel_chance);
-      }
-    } catch (error: any) {
-      console.error("Error fetching profile:", error);
-      setErrorMessage(error?.message || "Failed to fetch profile.");
+  useEffect(() => {
+    if (currentEventData && prizeListData) {
+      setIsInitialLoading(false);
     }
-  };
+  }, [currentEventData, prizeListData]);
 
   // Add function to decrypt images
   const decryptImages = async (prizes: LuckyWheelSegment[]) => {
@@ -317,185 +291,10 @@ const LuckySpinPage: React.FC = () => {
     setDecryptedImages(decryptedUrls);
   };
 
-  const fetchPrizes = async (service: SpinWheelService) => {
-    try {
-      const response = await service.getPrizeList();
-      if (response.status && response.data) {
-        const formattedPrizes: LuckyWheelSegment[] = response.data.map(
-          (prize, index) => {
-            const segmentIndex = index % WHEEL_SEGMENTS.length;
-            const backgroundColor = WHEEL_SEGMENTS[segmentIndex].color;
-            // Ensure the image URL is properly formatted
-            const imageUrl = prize.image.startsWith("http")
-              ? prize.image
-              : `${prize.image}`;
-
-            return {
-              name: prize.name,
-              background: backgroundColor,
-              fonts: [
-                {
-                  text: prize.name,
-                  top: "15%",
-                  fontSize: "1rem",
-                  fontColor: "#FF0000",
-                  fontWeight: "800",
-                },
-              ],
-              imgs: [
-                {
-                  src: imageUrl,
-                  width: "2.8rem",
-                  // height: "auto",
-                  top: "50%",
-                },
-              ],
-            };
-          }
-        );
-
-        // const testFormattedPrices = [
-        //   {
-        //     name: "10元",
-        //     background: "#FFF7DF",
-        //     fonts: [
-        //       {
-        //         text: "10元",
-        //         top: "15%",
-        //         fontSize: "1rem",
-        //         fontColor: "#FF0000",
-        //         fontWeight: "bold",
-        //       },
-        //     ],
-        //     imgs: [
-        //       {
-        //         src: "https://da6de1g7g5kvm.cloudfront.net/resources/d8/d8b66cebe683bfb05603eecc5f0bcefc.txt",
-        //         width: "26px",
-        //         height: "26px",
-        //         top: "45%",
-        //       },
-        //     ],
-        //   },
-        //   {
-        //     name: "苹果 16 Pro Max",
-        //     background: "#FFF7DF",
-        //     fonts: [
-        //       {
-        //         text: "苹果 16 Pro Max",
-        //         top: "15%",
-        //         fontSize: "1rem",
-        //         fontColor: "#FF0000",
-        //         fontWeight: "bold",
-        //       },
-        //     ],
-        //     imgs: [
-        //       {
-        //         src: "https://da6de1g7g5kvm.cloudfront.net/resources/79/7983f063ccd9beb5b57776a9acf397eb.txt",
-        //         width: "54px",
-        //         height: "54px",
-        //         top: "55%",
-        //       },
-        //     ],
-        //   },
-        //   {
-        //     name: "200元",
-        //     background: "#FFF7DF",
-        //     fonts: [
-        //       {
-        //         text: "200元",
-        //         top: "15%",
-        //         fontSize: "1rem",
-        //         fontColor: "#FF0000",
-        //         fontWeight: "bold",
-        //       },
-        //     ],
-        //     imgs: [
-        //       {
-        //         src: "https://da6de1g7g5kvm.cloudfront.net/resources/d8/d8b66cebe683bfb05603eecc5f0bcefc.txt",
-        //         width: "26px",
-        //         height: "26px",
-        //         top: "45%",
-        //       },
-        //     ],
-        //   },
-        //   {
-        //     name: "5元",
-        //     background: "#FFF7DF",
-        //     fonts: [
-        //       {
-        //         text: "5元",
-        //         top: "15%",
-        //         fontSize: "1rem",
-        //         fontColor: "#FF0000",
-        //         fontWeight: "bold",
-        //       },
-        //     ],
-        //     imgs: [
-        //       {
-        //         src: "https://da6de1g7g5kvm.cloudfront.net/resources/d8/d8b66cebe683bfb05603eecc5f0bcefc.txt",
-        //         width: "26px",
-        //         height: "26px",
-        //         top: "45%",
-        //       },
-        //     ],
-        //   },
-        //   {
-        //     name: "电话费",
-        //     background: "#FFF7DF",
-        //     fonts: [
-        //       {
-        //         text: "电话费",
-        //         top: "15%",
-        //         fontSize: "1rem",
-        //         fontColor: "#FF0000",
-        //         fontWeight: "bold",
-        //       },
-        //     ],
-        //     imgs: [
-        //       {
-        //         src: "https://da6de1g7g5kvm.cloudfront.net/resources/da/dabb3a998fc633199b2ca17618b8876b.txt",
-        //         width: "26px",
-        //         height: "26px",
-        //         top: "45%",
-        //       },
-        //     ],
-        //   },
-        //   {
-        //     name: "100元",
-        //     background: "#FFF7DF",
-        //     fonts: [
-        //       {
-        //         text: "100元",
-        //         top: "15%",
-        //         fontSize: "1rem",
-        //         fontColor: "#FF0000",
-        //         fontWeight: "bold",
-        //       },
-        //     ],
-        //     imgs: [
-        //       {
-        //         src: "https://da6de1g7g5kvm.cloudfront.net/resources/d8/d8b66cebe683bfb05603eecc5f0bcefc.txt",
-        //         width: "26px",
-        //         height: "26px",
-        //         top: "45%",
-        //       },
-        //     ],
-        //   },
-        // ];
-        setWheelPrizes(formattedPrizes);
-        await decryptImages(formattedPrizes);
-      }
-    } catch (error: any) {
-      console.error("Error fetching prizes:", error);
-      setErrorMessage(error.message || "Failed to fetch prize list.");
-    }
-  };
-
   const handleEnd = () => {
     setSpinLoading(false);
     setLockid(false);
 
-    // Show popup after wheel stops spinning
     if (currentPrize) {
       switch (currentPrize.type) {
         case "appreciation":
@@ -535,17 +334,19 @@ const LuckySpinPage: React.FC = () => {
       return;
     }
 
-    if (!spinService) return;
+    if (!myLucky.current) {
+      console.error('Lucky wheel reference is not available');
+      return;
+    }
 
     setLockid(true);
-    setPrizeItem(undefined); // Clear old prize item
     setSpinLoading(true);
-    setErrorMessage(null); // Clear previous errors
-    setShowSpinResultPopup(false); // Hide any previous spin result popups
-    setMsg({ show: false, msg: "" }); // Clear any previous general messages
+    setErrorMessage(null);
+    setShowSpinResultPopup(false);
+    setMsg({ show: false, msg: "" });
 
     try {
-      const result = await spinService.spin();
+      const result = await spin().unwrap();
 
       if (result.status && result.data) {
         setCurrentPrize(result.data);
@@ -559,9 +360,9 @@ const LuckySpinPage: React.FC = () => {
           myLucky.current.stop(wonPrizeIndex);
         } else {
           myLucky.current.play();
-          myLucky.current.stop(0); // Fallback to first prize if not found in dynamic list
+          myLucky.current.stop(0);
         }
-        setSpinChances((prev) => prev - 1); // Decrement spin chance on successful spin
+        setSpinChances((prev) => prev - 1);
       } else {
         setErrorMessage(
           result.message || "Spin failed with no specific message."
@@ -569,11 +370,11 @@ const LuckySpinPage: React.FC = () => {
         setLockid(false);
         setSpinLoading(false);
       }
-    } catch (e: any) {
+    } catch (error) {
       setLockid(false);
       setSpinLoading(false);
-      console.error("Error during spin:", e);
-      setErrorMessage(e.message || "An unexpected error occurred during spin.");
+      console.error("Error during spin:", error);
+      setErrorMessage(error instanceof Error ? error.message : "An unexpected error occurred during spin.");
     }
   });
 
@@ -591,12 +392,14 @@ const LuckySpinPage: React.FC = () => {
     setCurrentPrize(null);
   };
 
-  const hanldeRedirect = () => {
+  const handleRedirect = () => {
     navigate("/wallet/withdraw");
   };
 
+  if (!eventId) return null;
+
   return (
-    <div className="w-full max-w-[440px]  min-h-dvh overflow-y-auto relative">
+    <div className="w-full max-w-[440px] min-h-dvh overflow-y-auto relative">
       <DecryptedImage
         alt=""
         src="/images/bg.webp"
@@ -625,12 +428,16 @@ const LuckySpinPage: React.FC = () => {
             </div>
             <div className="first-text">
               <NotificationTransition
-                notifications={eventDetails.virtual_user_reward}
+                notifications={eventDetails?.virtual_user_reward?.map(reward => ({
+                  nickname: reward.nickname,
+                  amount: reward.amount,
+                  currency: reward.currency
+                })) || []}
               />
             </div>
 
             <div
-              className={`relative w-full max-w-[540px]  flex ${
+              className={`relative w-full max-w-[540px] flex ${
                 smallWidthRatio ? "mt-3" : "mt-3"
               } justify-center items-center`}
             >
@@ -642,7 +449,7 @@ const LuckySpinPage: React.FC = () => {
               <DecryptedImage
                 className={`absolute ${
                   smallWidthRatio ? "top-[18px]" : "top-[22px]"
-                }  left-[45.5%] z-10`}
+                } left-[45.5%] z-10`}
                 src="/svgs/indicator.svg"
                 alt=""
               />
@@ -652,7 +459,7 @@ const LuckySpinPage: React.FC = () => {
               ></div>
 
               <div
-                className={`absolute z-[2] flex flex-col justify-center items-center w-full  -mt-[10px]`}
+                className={`absolute z-[2] flex flex-col justify-center items-center w-full -mt-[10px]`}
               >
                 <LuckyWheel
                   ref={myLucky}
@@ -680,9 +487,9 @@ const LuckySpinPage: React.FC = () => {
               </div>
             </div>
 
-            <div className=" flex justify-center items-center gap-2  bg-text-bottom mt-4">
-              <span className=" ">每次抽奖消耗一张券</span>
-              <span className=" flex justify-center items-center">
+            <div className="flex justify-center items-center gap-2 bg-text-bottom mt-4">
+              <span>每次抽奖消耗一张券</span>
+              <span className="flex justify-center items-center">
                 {spinChances} <DecryptedImage src="/images/coupon.png" alt="" />
               </span>
             </div>
@@ -716,7 +523,7 @@ const LuckySpinPage: React.FC = () => {
           popupButtonText={popupButtonText}
           popupMessage={popupMessage}
           onClose={handleSpinResultPopupClose}
-          onRedirect={hanldeRedirect}
+          onRedirect={handleRedirect}
         />
       )}
       {msg.show && (

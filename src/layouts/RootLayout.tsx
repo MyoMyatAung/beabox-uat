@@ -37,6 +37,7 @@ import { EventDetail } from "@/@types/lucky_draw";
 import DEventBox from "@/page/event/dragon/DEventBox";
 import { motion, AnimatePresence } from "framer-motion";
 import LuckySpinPage from "@/page/luckywheel/LuckySpinPage";
+import { useGetPrizeListQuery, useGetProfileQuery } from "@/page/luckywheel/services/spinWheelApi";
 
 // Function to check if the app is running in a WebView
 function isWebView() {
@@ -78,12 +79,8 @@ const RootLayout = ({ children }: any) => {
   const currentTab = useSelector((state: any) => state.home.currentTab);
   const hideBar = useSelector((state: RootState) => state.hideBarSlice.hideBar);
   const [showEvent, setShowEvent] = useState(false);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [showLuckySpin, setShowLuckySpin] = useState(false);
-  const [isIframeLoading, setIsIframeLoading] = useState(true);
-  const [preloadedIframe, setPreloadedIframe] =
-    useState<HTMLIFrameElement | null>(null);
-  const [luckySpinWebUrl, setLuckySpinWebUrl] = useState("");
+  const { data: prizeListData } = useGetPrizeListQuery();
+  const { data: profileData } = useGetProfileQuery();
   const { data: eventData } = useGetUserByReferalQuery(
     { referral_code: referCode }, // or safely cast if you're confident it's a string
     { skip: !referCode }
@@ -257,7 +254,40 @@ const RootLayout = ({ children }: any) => {
   const [isFetchingDetails, setIsFetchingDetails] = useState(false);
   const isFetchingRef = useRef(false);
 
-  // Preload the lucky draw component and prefetch event details
+  // Prefetch event details whenever we have the necessary data
+  useEffect(() => {
+    const prefetchEventDetails = async () => {
+      const eventId = currentEventData?.data?.filter(
+        (x: any) => x.type === "event"
+      )[0]?.id;
+      
+      if (!eventId || isFetchingRef.current) return;
+
+      try {
+        isFetchingRef.current = true;
+        setIsFetchingDetails(true);
+        const eventDetails = await triggerGetEventDetails(eventId).unwrap();
+        setCachedEventDetails(eventDetails);
+        // Pre-dispatch to Redux for immediate availability
+        dispatch(setEventDetail(eventDetails.data));
+        if (eventDetails.data?.event_start_time) {
+          dispatch(setDuration(eventDetails.data.event_start_time));
+        }
+      } catch (error) {
+        console.error("Failed to prefetch event details:", error);
+      } finally {
+        setIsFetchingDetails(false);
+        isFetchingRef.current = false;
+      }
+    };
+
+    // Only prefetch if we're on the home page and have the necessary data
+    if (location.pathname === "/" && currentEventData?.data) {
+      prefetchEventDetails();
+    }
+  }, [currentEventData?.data, location.pathname, dispatch]);
+
+  // Preload the lucky draw component
   useEffect(() => {
     const shouldPreload =
       !showAd &&
@@ -271,30 +301,6 @@ const RootLayout = ({ children }: any) => {
     if (shouldPreload) {
       // Preload the component
       import("@/page/events/Luckydraw");
-
-      // Prefetch event details
-      const prefetchEventDetails = async () => {
-        const eventId = currentEventData?.data?.filter(
-          (x: any) => x.type === "event"
-        )[0]?.id;
-        if (!eventId || isFetchingRef.current) return;
-
-        try {
-          isFetchingRef.current = true;
-          setIsFetchingDetails(true);
-          const eventDetails = await triggerGetEventDetails(eventId).unwrap();
-          console.log("eventDetails is=>", eventDetails);
-          setCachedEventDetails(eventDetails);
-          // Don't dispatch to Redux yet, wait for click
-        } catch (error) {
-          console.error("Failed to prefetch event details:", error);
-        } finally {
-          setIsFetchingDetails(false);
-          isFetchingRef.current = false;
-        }
-      };
-
-      prefetchEventDetails();
     }
   }, [
     showAd,
@@ -304,65 +310,7 @@ const RootLayout = ({ children }: any) => {
     event,
     showAnimation,
     currentTab,
-    currentEventData?.data?.id,
   ]);
-
-  // // Preload iframe content
-  // useEffect(() => {
-  //   const preloadIframe = () => {
-  //     const iframe = document.createElement("iframe");
-  //     iframe.src = luckySpinWebUrl;
-  //     iframe.style.display = "none";
-  //     iframe.onload = () => {
-  //       setPreloadedIframe(iframe);
-  //     };
-  //     document.body.appendChild(iframe);
-  //   };
-
-  //   preloadIframe();
-
-  //   return () => {
-  //     if (preloadedIframe) {
-  //       document.body.removeChild(preloadedIframe);
-  //     }
-  //   };
-  // }, []);
-
-  // useEffect(() => {
-  //   const handleMessage = (event: MessageEvent) => {
-  //     try {
-  //       if (event?.data?.type === "back_pressed") {
-  //         setShowLuckySpin(false);
-  //         localStorage.removeItem("showLuckySpin");
-  //       }
-  //       if (event?.data?.type === "withdraw") {
-  //         navigate("wallet/withdraw");
-  //         localStorage.setItem("showLuckySpin", "true");
-  //       }
-  //       if (event?.data?.type === "red_envelope") {
-  //         // navigate("wallet/withdraw");
-  //         handleAnimationClick();
-  //         localStorage.setItem("showLuckySpin", "true");
-  //       }
-  //     } catch (error) {
-  //       console.error("Error handling message from iframe:", error);
-  //     }
-  //   };
-
-  //   window.addEventListener("message", handleMessage);
-  //   return () => {
-  //     window.removeEventListener("message", handleMessage);
-  //   };
-  // }, []);
-
-  // // Check localStorage on component mount and route changes
-  // useEffect(() => {
-  //   const shouldShowLuckySpin =
-  //     localStorage.getItem("showLuckySpin") === "true";
-  //   if (shouldShowLuckySpin) {
-  //     setShowLuckySpin(true);
-  //   }
-  // }, [location.pathname]);
 
   // If loading, show loading screen
   if (isLoading) {
@@ -374,28 +322,18 @@ const RootLayout = ({ children }: any) => {
     return <Landing onComplete={handleLandingComplete} />;
   }
   const handleAnimationClick = async () => {
-    // if (!user?.token) {
-    //   dispatch(setIsDrawerOpen(true));
-    //   return;
-    // }
     const eventId = currentEventData?.data?.filter(
       (x: any) => x.type === "event"
     )[0]?.id;
     if (!eventId) return;
 
-    // Immediately use cached data if available
+    // Use cached data if available
     if (cachedEventDetails) {
-      dispatch(setEventDetail(cachedEventDetails.data));
-      if (cachedEventDetails.data?.event_start_time) {
-        dispatch(setDuration(cachedEventDetails.data.event_start_time));
-      }
       navigate(`/events/lucky-draw/${eventId}`);
-
+      
       // Refresh in background
       try {
-        const freshEventDetails = await triggerGetEventDetails(
-          eventId
-        ).unwrap();
+        const freshEventDetails = await triggerGetEventDetails(eventId).unwrap();
         dispatch(setEventDetail(freshEventDetails.data));
         if (freshEventDetails.data?.event_start_time) {
           dispatch(setDuration(freshEventDetails.data.event_start_time));
@@ -419,11 +357,10 @@ const RootLayout = ({ children }: any) => {
     }
   };
 
-  console.log(isOpen);
-
   const handleLuckySpinClick = () => {
     navigate("/lucky");
   };
+  
   return (
     <>
       <div style={{ height: "calc(100dvh - 95px);" }}>

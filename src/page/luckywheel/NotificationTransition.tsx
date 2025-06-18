@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-interface NotificationItem {
+export interface NotificationItem {
   nickname: string;
   amount: string;
   currency: string;
