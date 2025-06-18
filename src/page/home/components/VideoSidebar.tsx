@@ -254,7 +254,11 @@ function VideoSidebar({
   }
 
   const handleProfile = (id: any) => {
-    navigate(`/user/${id}`);
+    if (post?.user?.my_day?.uploaded) {
+      navigate(`/story_detail/${id}`);
+    } else {
+      navigate(`/user/${id}`);
+    }
   };
 
   return (
@@ -303,10 +307,30 @@ function VideoSidebar({
             ) : (
               <>
                 {decryptedPhoto ? (
-                  <Avatar className="w-[40.25px] h-[40.25px]">
-                    <AvatarImage src={decryptedPhoto} />
-                    <AvatarFallback>SM</AvatarFallback>
-                  </Avatar>
+                  post.user?.my_day?.uploaded ? (
+                    <div
+                      className="w-[47px] h-[47px] rounded-full p-[2px]"
+                      style={{
+                        background: !post.user?.my_day?.watched
+                          ? "linear-gradient(#16131C 0 0) padding-box, " +
+                            "linear-gradient(90deg, #e8b9ff 0%, #ff94b4 82.89%) border-box"
+                          : "linear-gradient(#16131C 0 0) padding-box, " +
+                            "rgba(255, 255, 255, 0.40) border-box",
+                        border: "2px solid transparent",
+                        padding: "3px",
+                      }}
+                    >
+                      <img
+                        src={decryptedPhoto}
+                        className="w-full h-full rounded-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <Avatar className="w-[40.25px] h-[40.25px]">
+                      <AvatarImage src={decryptedPhoto} />
+                      <AvatarFallback>SM</AvatarFallback>
+                    </Avatar>
+                  )
                 ) : (
                   <Avatar className="w-[40.25px] p-3 bg-[#3a374d] flex justify-center items-center h-[40.25px] ">
                     <svg
@@ -333,6 +357,38 @@ function VideoSidebar({
                   </Avatar>
                 )}
               </>
+              // <>
+              //   {decryptedPhoto ? (
+              //     <Avatar className="w-[40.25px] h-[40.25px]">
+              //       <AvatarImage src={decryptedPhoto} />
+              //       <AvatarFallback>SM</AvatarFallback>
+              //     </Avatar>
+              //   ) : (
+              //     <Avatar className="w-[40.25px] p-3 bg-[#3a374d] flex justify-center items-center h-[40.25px] ">
+              //       <svg
+              //         xmlns="http://www.w3.org/2000/svg"
+              //         width="21"
+              //         height="30"
+              //         viewBox="0 0 21 30"
+              //         fill="none"
+              //       >
+              //         <path
+              //           fill-rule="evenodd"
+              //           clip-rule="evenodd"
+              //           d="M10.3206 17.5712C4.82551 17.5712 0.00585938 20.804 0.00585938 24.4875C0.00585938 29.2271 7.77035 29.2271 10.3206 29.2271C12.8709 29.2271 20.634 29.2271 20.634 24.4566C20.634 20.7885 15.8143 17.5712 10.3206 17.5712Z"
+              //           fill="white"
+              //         />
+              //         <path
+              //           fill-rule="evenodd"
+              //           clip-rule="evenodd"
+              //           d="M10.2666 14.4974H10.3102C14.0948 14.4974 17.1731 11.4191 17.1731 7.63443C17.1731 3.85117 14.0948 0.772888 10.3102 0.772888C6.52559 0.772888 3.4473 3.85117 3.4473 7.63162C3.43467 11.4036 6.49188 14.4834 10.2666 14.4974Z"
+              //           fill="white"
+              //         />
+              //       </svg>
+              //       {/* <AvatarFallback>SM</AvatarFallback> */}
+              //     </Avatar>
+              //   )}
+              // </>
             )}
           </button>
 

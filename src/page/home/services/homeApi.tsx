@@ -241,6 +241,14 @@ export const homeApi = createApi({
     getReports: builder.query({
       query: () => convertToSecureUrl(`report-content/list`),
     }),
+    getMyday: builder.query({
+      query: ({ page }) => convertToSecureUrl(`users/myday?page=${page}`),
+    }),
+    getUserMyday: builder.query({
+      query: ({ post_user_id }) =>
+        convertToSecureUrl(`myday-list?post_user_id=${post_user_id}`),
+    }),
+
     storeReport: builder.mutation<
       void,
       { model_id: any; type: any; report_content: any }
@@ -259,6 +267,8 @@ export const homeApi = createApi({
 });
 
 export const {
+  useGetMydayQuery,
+  useGetUserMydayQuery,
   useGetUserShareQuery,
   useFollowStatusMutation,
   useGetFollowedPostsQuery,

@@ -27,7 +27,7 @@ export const paths = {
   wallet_history: "/wallet/Transition",
   wallet_recharge: "/wallet/recharge",
   wallet_withdraw: "/wallet/withdraw",
-  wallet_income : "/wallet/income",
+  wallet_income: "/wallet/income",
   search: "/search_overlay",
   reports: "/reports/:type/:id",
   search_result: "/search",
@@ -48,5 +48,6 @@ export const paths = {
   tags: "/creator/tags",
   user_feed: "/settings/feed",
   lucky_draw: "/events/lucky-draw/:id",
+  story_detail: "/story_detail/:id",
   getUserProfileId: (id: any) => `/user/${id}`,
 };

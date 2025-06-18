@@ -1116,3 +1116,261 @@ html {
     background: linear-gradient(360deg, #8b5cf6, #ec4899);
   }
 }
+
+.follow_show_btn {
+  border-radius: 100px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(16, 16, 16, 0.6);
+  backdrop-filter: blur(4px);
+  color: var(--White, #fff);
+  text-align: center;
+  font-family: Inter;
+  font-size: 13.354px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 20px; /* 149.764% */
+  letter-spacing: 0.25px;
+}
+
+.myday_name {
+  color: #bbb;
+  text-align: center;
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.myday_img {
+  border-color: var(
+    --Pink-Purple,
+    linear-gradient(90deg, #e8b9ff 0%, #ff94b4 82.89%)
+  );
+}
+
+.follow_bg {
+  background-image: url("../../assets/follow_bg.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.follow_no_p {
+  color: #bbb;
+  text-align: center;
+  font-family: "Helvetica Neue";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  margin-bottom: 20px;
+}
+
+.follow_no_h {
+  color: #fff;
+  text-align: center;
+  font-family: "Helvetica Neue";
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  margin-bottom: 12px;
+}
+
+.follow_re_btn {
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0px 0px 40px 0px rgba(255, 255, 255, 0.2) inset;
+  backdrop-filter: blur(16px);
+  color: #fff;
+  text-align: center;
+  font-family: "Helvetica Neue";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 22px; /* 157.143% */
+  display: flex;
+  width: 120px;
+  height: 44px;
+  padding: 12px 20px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.follow_re_text {
+  color: #888;
+  text-align: center;
+  font-family: "Helvetica Neue";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.myday_container {
+  position: relative;
+  height: 100%;
+  /* height: 100vh; */
+  height: 100dvh;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 1024px;
+  /* Allow both horizontal and vertical touch actions for swipe navigation */
+  touch-action: pan-x pan-y;
+}
+
+.myday_container .video {
+  position: relative;
+  background-color: black;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  /* Allow horizontal swipes while maintaining vertical video navigation */
+  touch-action: pan-x pan-y;
+}
+
+.myday_container.transitioning {
+  transition: transform 0.3s ease-out;
+}
+
+.swipe-indicator {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0.4;
+  transition: opacity 0.3s ease;
+}
+
+.swipe-indicator.left {
+  left: 20px;
+}
+
+.swipe-indicator.right {
+  right: 20px;
+}
+
+.swipe-indicator:hover {
+  opacity: 0.8;
+}
+
+.swipe-arrow {
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: bold;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.detail_nav_name {
+  color: #fff;
+  font-family: "Helvetica Neue";
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 20px; /* 111.111% */
+  letter-spacing: 0.25px;
+}
+
+.detail_cross_btn {
+  border-radius: 1000px;
+  background: rgba(34, 34, 34, 0.5);
+  display: flex;
+  width: 40px;
+  height: 40px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  aspect-ratio: 1/1;
+}
+
+/* In your VideoFeed component's CSS file */
+.video-feed-swiper {
+  height: 100dvh;
+  width: 100vw;
+}
+
+.video-feed-swiper .swiper-slide {
+  height: 100dvh;
+}
+
+/* .video-feed-swiper1 {
+  height: calc(100dvh - 75px) !important;
+  width: 100vw;
+}
+.video-feed-swiper1 .swiper-slide {
+  height: calc(100dvh - 75px) !important;
+} */
+
+.delete_nav {
+  display: inline-flex;
+  padding: 15.088px;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+
+  border-radius: 12px;
+  background: #444;
+}
+
+.delete_nav span {
+  color: #ff5252;
+  leading-trim: both;
+  text-edge: cap;
+  font-variant-numeric: lining-nums proportional-nums;
+  font-feature-settings: "dlig" on;
+  font-family: "Helvetica Neue";
+  font-size: 18.105px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 30.175px; /* 166.667% */
+  letter-spacing: 0.181px;
+}
+
+.myday_container {
+  position: relative;
+  height: 100%;
+  /* height: 100vh; */
+  height: 100dvh;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 1024px;
+  /* Allow both horizontal and vertical touch actions for swipe navigation */
+  touch-action: pan-x pan-y;
+}
+
+.myday_container .video {
+  position: relative;
+  background-color: black;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  /* Allow horizontal swipes while maintaining vertical video navigation */
+  touch-action: pan-x pan-y;
+}
+
+.myday_container.transitioning {
+  transition: transform 0.3s ease-out;
+}
+
+.videoNavbar {
+  width: 100%;
+  position: absolute;
+  top: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+  color: white;
+}
