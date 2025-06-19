@@ -922,3 +922,13 @@ user_feed_ques_tags_btn {
 .art-video-player .art-mask {
   z-index: 20 !important;
 }
+
+.swiper-slide {
+  overflow: visible !important;
+  transform-style: preserve-3d;
+}
+
+.swiper-slide-shadow {
+  background: rgba(0, 0, 0, 0.15) !important;
+  border-radius: 16px;
+}
