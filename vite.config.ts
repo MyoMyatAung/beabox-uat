@@ -38,9 +38,9 @@ export default defineConfig({
     },
   },
   // produciton
-  base: 'https://vfurcsj.jfojf.cn/',
+  // base: 'https://vfurcsj.jfojf.cn/',
   // development
-  // base: '/',
+  base: '/',
   define: {
     global: {},
   },
