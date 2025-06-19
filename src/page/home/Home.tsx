@@ -496,7 +496,7 @@ const Home = () => {
 
   if (show) {
     return (
-      <div className="fixed inset-0 top-0 left-0 z-[9999999] flex items-center justify-center">
+      <div className="fixed inset-0 top-0 left-0 z-[9999] flex items-center justify-center">
         <DetailStory id={show} />
       </div>
     );

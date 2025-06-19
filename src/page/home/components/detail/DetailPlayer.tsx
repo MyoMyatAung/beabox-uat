@@ -1553,7 +1553,7 @@ const DetailPlayer = ({
         //       height: 100%;
         //       background-color: transparent;
         //       display: block;
-  
+
         //     "></div>
         //   `,
         //   style: {
@@ -2647,14 +2647,14 @@ const DetailPlayer = ({
       }
     };
 
-    container.addEventListener('touchstart', handleTouchStart);
-    container.addEventListener('touchend', handleTouchEnd);
-    container.addEventListener('click', handleClick);
+    container.addEventListener("touchstart", handleTouchStart);
+    container.addEventListener("touchend", handleTouchEnd);
+    container.addEventListener("click", handleClick);
 
     return () => {
-      container.removeEventListener('touchstart', handleTouchStart);
-      container.removeEventListener('touchend', handleTouchEnd);
-      container.removeEventListener('click', handleClick);
+      container.removeEventListener("touchstart", handleTouchStart);
+      container.removeEventListener("touchend", handleTouchEnd);
+      container.removeEventListener("click", handleClick);
     };
   }, [currentIndex, length, setCurrentIndex]);
 

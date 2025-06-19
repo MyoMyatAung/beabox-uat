@@ -14,9 +14,9 @@ import LoadingBar from "./detail/LoadingBar";
 import DetailContainer from "./detail/DetailContainer";
 
 // Swiper imports
-import { Swiper, SwiperSlide } from 'swiper/react';
+import { Swiper, SwiperSlide } from "swiper/react";
 // @ts-expect-error: Swiper CSS has no type declarations but is required for styling
-import 'swiper/css';
+import "swiper/css";
 
 interface User {
   id: string;
@@ -45,20 +45,34 @@ const DetailStory = ({ id }: { id: string }) => {
 
   // Get all users with posts
   const usersWithPosts: User[] =
-    ((myday?.data as User[])?.filter((user: User) => Array.isArray(user?.posts) && user?.posts.length > 0) as User[]) || [];
+    ((myday?.data as User[])?.filter(
+      (user: User) => Array.isArray(user?.posts) && user?.posts.length > 0
+    ) as User[]) || [];
 
   // Find initial user index
-  const initialUserIndex = usersWithPosts.findIndex((user: User) => user?.id === id);
+  const initialUserIndex = usersWithPosts.findIndex(
+    (user: User) => user?.id === id
+  );
 
   // For each user, manage their decrypted videos and video index
-  const [decryptedVideosMap, setDecryptedVideosMap] = useState<Record<string, Video[]>>({});
-  const [isDecryptingMap, setIsDecryptingMap] = useState<Record<string, boolean>>({});
-  const [currentVideoIndexMap, setCurrentVideoIndexMap] = useState<Record<string, number>>({});
-  const [watchedPostsMap, setWatchedPostsMap] = useState<Record<string, Record<string, boolean>>>({});
+  const [decryptedVideosMap, setDecryptedVideosMap] = useState<
+    Record<string, Video[]>
+  >({});
+  const [isDecryptingMap, setIsDecryptingMap] = useState<
+    Record<string, boolean>
+  >({});
+  const [currentVideoIndexMap, setCurrentVideoIndexMap] = useState<
+    Record<string, number>
+  >({});
+  const [watchedPostsMap, setWatchedPostsMap] = useState<
+    Record<string, Record<string, boolean>>
+  >({});
   const [heartsMap, setHeartsMap] = useState<Record<string, number[]>>({});
   const [widthMap, setWidthMap] = useState<Record<string, number>>({});
   const [heightMap, setHeightMap] = useState<Record<string, number>>({});
-  const [countNumberMap, setCountNumberMap] = useState<Record<string, number>>({});
+  const [countNumberMap, setCountNumberMap] = useState<Record<string, number>>(
+    {}
+  );
   const [countdownMap, setCountdownMap] = useState<Record<string, number>>({});
 
   const { data: config } = useGetConfigQuery({});
@@ -139,13 +153,19 @@ const DetailStory = ({ id }: { id: string }) => {
   };
 
   // Helper to update per-user state
-  const setUserState = <T,>(setter: React.Dispatch<React.SetStateAction<Record<string, T>>>, userId: string, value: T) => {
+  const setUserState = <T,>(
+    setter: React.Dispatch<React.SetStateAction<Record<string, T>>>,
+    userId: string,
+    value: T
+  ) => {
     setter((prev) => ({ ...prev, [userId]: value }));
   };
 
   // Refs for each user
   const indexRefs = useRef<Record<string, React.MutableRefObject<number>>>({});
-  const abortControllerRefs = useRef<Record<string, React.MutableRefObject<AbortController[]>>>({});
+  const abortControllerRefs = useRef<
+    Record<string, React.MutableRefObject<AbortController[]>>
+  >({});
 
   // Ensure refs exist for each user
   usersWithPosts.forEach((user) => {
@@ -169,18 +189,18 @@ const DetailStory = ({ id }: { id: string }) => {
         onSlideChange={handleSlideChange}
         spaceBetween={0}
         slidesPerView={1}
-        style={{ height: '100%' }}
-        effect={'creative'} // Change effect to creative
+        style={{ height: "100%" }}
+        effect={"creative"} // Change effect to creative
         creativeEffect={{
           prev: {
             shadow: true,
-            translate: ['-20%', 0, -500], // Slide left + depth
-            rotate: [0, 15, -15] // 3D rotation
+            translate: ["-20%", 0, -500], // Slide left + depth
+            rotate: [0, 15, -15], // 3D rotation
           },
           next: {
             shadow: true,
-            translate: ['20%', 0, -500], // Slide right + depth
-            rotate: [0, 15, 15] // 3D rotation
+            translate: ["20%", 0, -500], // Slide right + depth
+            rotate: [0, 15, 15], // 3D rotation
           },
           limitProgress: 3, // Allows slides to move further
           perspective: true,
@@ -198,17 +218,23 @@ const DetailStory = ({ id }: { id: string }) => {
           const countdown = countdownMap[user.id] || 3;
           const indexRef = indexRefs.current[user.id];
           const abortControllerRef = abortControllerRefs.current[user.id];
+          console.log(hearts, "hearts");
+          console.log(heartsMap, "heartsMap");
 
           return (
             <SwiperSlide key={user.id}>
               {isDecrypting ? (
-                <div className="">
+                <div className="flex justify-center items-center h-full">
                   <div style={{ textAlign: "center", padding: "20px" }}>
                     <div>
                       <LoadingBar />
                     </div>
                     <div className="heart">
-                      <img src={loader} className="w-[100px] h-[100px]" alt="Loading" />
+                      <img
+                        src={loader}
+                        className="w-[100px] h-[100px]"
+                        alt="Loading"
+                      />
                     </div>
                   </div>
                 </div>
@@ -233,10 +259,14 @@ const DetailStory = ({ id }: { id: string }) => {
                     ) : (
                       <DetailContainer
                         isInteractingWithProgressBar={undefined}
-                        setIsDecrypting={(val: boolean) => setUserState(setIsDecryptingMap, user.id, val)}
+                        setIsDecrypting={(val: boolean) =>
+                          setUserState(setIsDecryptingMap, user.id, val)
+                        }
                         length={decryptedVideos.length}
                         currentIndex={currentVideoIndex}
-                        setCurrentIndex={(idx: number) => setUserState(setCurrentVideoIndexMap, user.id, idx)}
+                        setCurrentIndex={(idx: number) =>
+                          setUserState(setCurrentVideoIndexMap, user.id, idx)
+                        }
                         videoData={{ current: decryptedVideos }}
                         indexRef={indexRef}
                         abortControllerRef={abortControllerRef}
@@ -244,13 +274,23 @@ const DetailStory = ({ id }: { id: string }) => {
                         status={true}
                         countNumber={countNumber}
                         video={video}
-                        setCountNumber={(val: number) => setUserState(setCountNumberMap, user.id, val)}
+                        setCountNumber={(val: number) =>
+                          setUserState(setCountNumberMap, user.id, val)
+                        }
                         config={config}
                         countdown={countdown}
-                        setWidth={(val: number) => setUserState(setWidthMap, user.id, val)}
-                        setHeight={(val: number) => setUserState(setHeightMap, user.id, val)}
-                        setHearts={(val: number[]) => setUserState(setHeartsMap, user.id, val)}
-                        setCountdown={(val: number) => setUserState(setCountdownMap, user.id, val)}
+                        setWidth={(val: number) =>
+                          setUserState(setWidthMap, user.id, val)
+                        }
+                        setHeight={(val: number) =>
+                          setUserState(setHeightMap, user.id, val)
+                        }
+                        setHearts={(val: any[]) =>
+                          setUserState(setHeartsMap, user.id, val)
+                        }
+                        setCountdown={(val: number) =>
+                          setUserState(setCountdownMap, user.id, val)
+                        }
                         width={width}
                         height={height}
                       />
@@ -258,21 +298,26 @@ const DetailStory = ({ id }: { id: string }) => {
 
                     {video?.type !== "ads" && video?.type !== "ads_virtual" && (
                       <VideoFooter
-                        badge={user?.badge || ''}
-                        id={user?.id || ''}
+                        badge={user?.badge || ""}
+                        id={user?.id || ""}
                         tags={video?.tag || []}
-                        title={video?.title || ''}
-                        username={user?.name || ''}
-                        city={video?.city || ''}
+                        title={video?.title || ""}
+                        username={user?.name || ""}
+                        city={video?.city || ""}
                       />
                     )}
 
-                    {(video?.type === "ads" || video?.type === "ads_virtual") && (
+                    {(video?.type === "ads" ||
+                      video?.type === "ads_virtual") && (
                       <Ads ads={video?.ads_info} type={video?.type} />
                     )}
 
-                    {hearts.map((heartId: number) => (
-                      <HeartCount id={heartId} key={heartId} remove={(id: number) => removeHeart(user.id, id)} />
+                    {hearts?.map((heartId: any) => (
+                      <HeartCount
+                        id={heartId}
+                        key={heartId}
+                        remove={(id: any) => removeHeart(user.id, id)}
+                      />
                     ))}
                   </div>
                 )
