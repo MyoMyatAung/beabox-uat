@@ -2,6 +2,7 @@ import React from "react";
 import { Prize } from "./models";
 import "./SpinResultPopup.css"; // Import the CSS file
 import { useNavigate } from "react-router-dom";
+import fireworkGif from '../../assets/firework.gif';
 
 // Add DecryptedImage component
 const DecryptedImage: React.FC<{
@@ -100,7 +101,7 @@ const SpinResultPopup: React.FC<SpinResultPopupProps> = ({
       <div className="popup">
         {/* Firework GIF at the top */}
         <DecryptedImage
-          src="/images/firework.gif"
+          src={fireworkGif}
           alt="Fireworks"
           className="firework-gif"
         />

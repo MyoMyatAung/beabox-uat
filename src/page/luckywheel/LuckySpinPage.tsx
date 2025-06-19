@@ -18,6 +18,12 @@ import {
   useGetProfileQuery,
   useGetEventDetailsQuery,
 } from "./services/spinWheelApi";
+import centerImg from '../../assets/center.png';
+import bgImg from '../../assets/bg.webp';
+import headImg from '../../assets/head.webp';
+import wheelImg from '../../assets/Wheel.webp';
+import couponImg from '../../assets/coupon.png';
+import lockImg from '../../assets/lock.png';
 
 // Define a local interface for LuckyWheel segments to explicitly include 'color'
 interface LuckyWheelSegment {
@@ -196,7 +202,7 @@ const LuckySpinPage: React.FC = () => {
       pointer: true,
       imgs: [
         {
-          src: "/images/center.png",
+          src: centerImg,
           top: -75,
           width: 150,
           height: 150,
@@ -405,7 +411,7 @@ const LuckySpinPage: React.FC = () => {
     <div className="w-full max-w-[440px] min-h-dvh overflow-y-auto relative">
       <DecryptedImage
         alt=""
-        src="/images/bg.webp"
+        src={bgImg}
         className="absolute inset-0 w-full h-full object-cover z-0"
       />
       <div className="relative flex flex-col">
@@ -427,7 +433,7 @@ const LuckySpinPage: React.FC = () => {
         ) : (
           <div className="flex flex-col items-center px-1 pb-8">
             <div className="p-4 relative flex justify-center">
-              <DecryptedImage alt="" src="/images/head.webp" />
+              <DecryptedImage alt="" src={headImg} />
             </div>
             <div className="first-text">
               <NotificationTransition
@@ -443,7 +449,7 @@ const LuckySpinPage: React.FC = () => {
               <DecryptedImage
                 alt=""
                 className={`${smallWidthRatio ? "w-[350px]" : "w-[400px]"}`}
-                src="images/Wheel.webp"
+                src={wheelImg}
               />
               <DecryptedImage
                 className={`absolute ${
@@ -489,7 +495,7 @@ const LuckySpinPage: React.FC = () => {
             <div className="flex justify-center items-center gap-2 bg-text-bottom mt-4">
               <span>每次抽奖消耗一张券</span>
               <span className="flex justify-center items-center">
-                {spinChances} <DecryptedImage src="/images/coupon.png" alt="" />
+                {spinChances} <DecryptedImage src={couponImg} alt="" />
               </span>
             </div>
 
@@ -501,7 +507,7 @@ const LuckySpinPage: React.FC = () => {
               >
                 {spinLoading ? "加载中.. " : "开始抽奖"}
                 {!user?.token && (
-                  <img src="/images/lock.png" className="w-5" alt="lock" />
+                  <img src={lockImg} className="w-5" alt="lock" />
                 )}
               </button>
             </div>

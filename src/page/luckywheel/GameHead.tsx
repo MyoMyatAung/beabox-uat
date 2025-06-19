@@ -5,6 +5,8 @@ import "./LuckySpinPage.css";
 import "./game.css";
 import { Record } from "./Record";
 import { useBoolean } from "ahooks";
+import penImg from '../../assets/pen.png';
+
 type HeadProps = {
   title?: string;
 };
@@ -22,7 +24,7 @@ export const GameHead = () => {
         </div>
         <div className="flex justify-center items-center pl-14">
           <img src="/svgs/logo.svg" className="h-[2rem]" alt="" />
-          <img src="/images/pen.png" className="h-[1.6rem]" alt="" />
+          <img src={penImg} className="h-[1.6rem]" alt="" />
         </div>
         <div className="frame-1321315592" onClick={toggle}>
           <div className="history">中奖记录</div>

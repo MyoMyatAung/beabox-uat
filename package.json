@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "start": "vite --host 0.0.0.0",
-    "build": "vite build && npx javascript-obfuscator dist/assets --output dist/assets --compact true --self-defending true",
+    "build": "vite build",
     "vercel-build": "npm install zod && vite build",
     "lint": "eslint .",
     "preview": "vite preview"

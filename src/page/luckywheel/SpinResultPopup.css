@@ -48,7 +48,7 @@
 }
 
 .popup {
-  background: url("/images/popupBg.webp") no-repeat center center / contain;
+  background: url("../../assets/popupBg.webp") no-repeat center center / contain;
   border-radius: 15px;
   text-align: center;
   width: 100%;
