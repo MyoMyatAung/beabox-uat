@@ -206,7 +206,7 @@ const DetailStory = ({ id }: { id: string }) => {
           perspective: true,
         }}
       >
-        {usersWithPosts.map((user: User) => {
+        {usersWithPosts?.map((user: User) => {
           const decryptedVideos = decryptedVideosMap[user.id] || [];
           const isDecrypting = isDecryptingMap[user.id] || false;
           const currentVideoIndex = currentVideoIndexMap[user.id] || 0;
@@ -312,7 +312,8 @@ const DetailStory = ({ id }: { id: string }) => {
                       <Ads ads={video?.ads_info} type={video?.type} />
                     )}
 
-                    {hearts?.map((heartId: any) => (
+                    {Array.isArray(hearts) &&
+                     hearts?.map((heartId: any) => (
                       <HeartCount
                         id={heartId}
                         key={heartId}
