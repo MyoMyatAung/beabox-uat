@@ -15,11 +15,11 @@ const Followers = ({ followers }: any) => {
       {followers.map((follower: Follower) => (
         <div
           key={follower.id}
-          className="flex-shrink-0  flex w-[60px] justify-center items-center flex-col p-1 gap-1"
+          className="flex-shrink-0  flex w-[80px] justify-center items-center flex-col p-1 gap-1"
         >
           <div
             onClick={() => dispatch(setShow(follower.id))}
-            className="w-[57px] h-[57px] rounded-full p-[2px] animate-pulse-slow"
+            className="w-[77px] h-[77px] rounded-full p-[2px] animate-pulse-slow"
             style={{
               background: !follower?.my_day.watched
                 ? "linear-gradient(#16131C 0 0) padding-box, " +

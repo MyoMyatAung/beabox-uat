@@ -602,7 +602,7 @@ const Home = () => {
                       ref={videoContainerRef}
                       className={`app__videos pb-[80px]  overflow-hidden 
                                   transition-all duration-300 ease-in-out transform ${
-                                    showFollowers ? "mt-[350px]" : "mt-0"
+                                    showFollowers ? "mt-[370px]" : "mt-0"
                                   }`}
                     >
                       {videos["follow"]?.map((video: any, index: any) => {
