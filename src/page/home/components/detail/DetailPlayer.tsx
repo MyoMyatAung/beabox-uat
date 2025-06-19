@@ -1505,80 +1505,80 @@ const DetailPlayer = ({
           },
         },
         // Add this to your layers array in the Artplayer options
-        {
-          html: `
-          <div  class="black-screen-layer" style="
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 70%;
-            height: 100%;
-            background-color: transparent;
-            display: block;
+        // {
+        //   html: `
+        //   <div  class="black-screen-layer" style="
+        //     position: absolute;
+        //     top: 0;
+        //     right: 0;
+        //     width: 70%;
+        //     height: 100%;
+        //     background-color: transparent;
+        //     display: block;
 
-          "></div>
-        `,
-          style: {
-            position: "absolute",
-            top: "0",
-            right: "0",
-            width: "70%",
-            height: "100%",
-            zIndex: "11",
-            inset: "999",
-          },
+        //   "></div>
+        // `,
+        //   style: {
+        //     position: "absolute",
+        //     top: "0",
+        //     right: "0",
+        //     width: "70%",
+        //     height: "100%",
+        //     zIndex: "11",
+        //     inset: "999",
+        //   },
 
-          mounted: (element: HTMLElement) => {
-            const blackScreenLayer = element.querySelector(
-              ".black-screen-layer"
-            ) as HTMLDivElement;
+        //   mounted: (element: HTMLElement) => {
+        //     const blackScreenLayer = element.querySelector(
+        //       ".black-screen-layer"
+        //     ) as HTMLDivElement;
 
-            if (blackScreenLayer) {
-              blackScreenLayer.onclick = () => {
-                if (length - 1 > currentIndex) {
-                  setCurrentIndex(currentIndex + 1);
-                }
-              };
-            }
-          },
-        },
-        {
-          html: `
-            <div  class="black-screen-layer1" style="
-              position: absolute;
-              top: 0;
-              left: 0;
-              width: 70%;
-              height: 100%;
-              background-color: transparent;
-              display: block;
+        //     if (blackScreenLayer) {
+        //       blackScreenLayer.onclick = () => {
+        //         if (length - 1 > currentIndex) {
+        //           setCurrentIndex(currentIndex + 1);
+        //         }
+        //       };
+        //     }
+        //   },
+        // },
+        // {
+        //   html: `
+        //     <div  class="black-screen-layer1" style="
+        //       position: absolute;
+        //       top: 0;
+        //       left: 0;
+        //       width: 70%;
+        //       height: 100%;
+        //       background-color: transparent;
+        //       display: block;
   
-            "></div>
-          `,
-          style: {
-            position: "absolute",
-            top: "0",
-            left: "0",
-            width: "70%",
-            height: "100%",
-            zIndex: "11",
-            inset: "999",
-          },
+        //     "></div>
+        //   `,
+        //   style: {
+        //     position: "absolute",
+        //     top: "0",
+        //     left: "0",
+        //     width: "70%",
+        //     height: "100%",
+        //     zIndex: "11",
+        //     inset: "999",
+        //   },
 
-          mounted: (element: HTMLElement) => {
-            const blackScreenLayer = element.querySelector(
-              ".black-screen-layer1"
-            ) as HTMLDivElement;
+        //   mounted: (element: HTMLElement) => {
+        //     const blackScreenLayer = element.querySelector(
+        //       ".black-screen-layer1"
+        //     ) as HTMLDivElement;
 
-            if (blackScreenLayer) {
-              blackScreenLayer.onclick = () => {
-                if (currentIndex !== 0) {
-                  setCurrentIndex(currentIndex - 1);
-                }
-              };
-            }
-          },
-        },
+        //     if (blackScreenLayer) {
+        //       blackScreenLayer.onclick = () => {
+        //         if (currentIndex !== 0) {
+        //           setCurrentIndex(currentIndex - 1);
+        //         }
+        //       };
+        //     }
+        //   },
+        // },
         {
           html: `<div class="custom-play-icon" style="z-index: 999;">
                     <img src="${indicator}" width="50" height="50" alt="Play">
@@ -2593,6 +2593,44 @@ const DetailPlayer = ({
   //       : "transparent";
   //   }
   // }, [p_img, isPosterVisible]);
+
+  useEffect(() => {
+    const container = playerContainerRef.current;
+    if (!container) return;
+
+    const handleTouchOrClick = (e: TouchEvent | MouseEvent) => {
+      let clientX: number;
+      if ('touches' in e && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+      } else if ('clientX' in e) {
+        clientX = e.clientX;
+      } else {
+        return;
+      }
+
+      const rect = container.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const width = rect.width;
+
+      if (x < width * 0.2) {
+        // Left 20%: previous
+        if (currentIndex !== 0) setCurrentIndex(currentIndex - 1);
+      } else if (x > width * 0.8) {
+        // Right 20%: next
+        if (currentIndex < length - 1) setCurrentIndex(currentIndex + 1);
+      } else {
+        // Middle: let normal controls work
+      }
+    };
+
+    container.addEventListener('touchstart', handleTouchOrClick);
+    container.addEventListener('click', handleTouchOrClick);
+
+    return () => {
+      container.removeEventListener('touchstart', handleTouchOrClick);
+      container.removeEventListener('click', handleTouchOrClick);
+    };
+  }, [currentIndex, length, setCurrentIndex]);
 
   return (
     <>
