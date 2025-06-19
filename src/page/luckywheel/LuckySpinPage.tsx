@@ -18,12 +18,12 @@ import {
   useGetProfileQuery,
   useGetEventDetailsQuery,
 } from "./services/spinWheelApi";
-import centerImg from 'src/assets/center.png';
-import bgImg from 'src/assets/bg.webp';
-import headImg from 'src/assets/head.webp';
-import wheelImg from 'src/assets/Wheel.webp';
-import couponImg from 'src/assets/coupon.png';
-import lockImg from 'src/assets/lock.png';
+import centerImg from '../../assets/center.png';
+import bgImg from '../../assets/bg.webp';
+import headImg from '../../assets/head.webp';
+import wheelImg from '../../assets/Wheel.webp';
+import couponImg from '../../assets/coupon.png';
+import lockImg from '../../assets/lock.png';
 
 // Define a local interface for LuckyWheel segments to explicitly include 'color'
 interface LuckyWheelSegment {

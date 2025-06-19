@@ -5,7 +5,7 @@ import "./LuckySpinPage.css";
 import "./game.css";
 import { Record } from "./Record";
 import { useBoolean } from "ahooks";
-import penImg from 'src/assets/pen.png';
+import penImg from '../../assets/pen.png';
 
 type HeadProps = {
   title?: string;

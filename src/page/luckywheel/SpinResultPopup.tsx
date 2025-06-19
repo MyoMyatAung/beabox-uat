@@ -2,7 +2,7 @@ import React from "react";
 import { Prize } from "./models";
 import "./SpinResultPopup.css"; // Import the CSS file
 import { useNavigate } from "react-router-dom";
-import fireworkGif from 'src/assets/firework.gif';
+import fireworkGif from '../../assets/firework.gif';
 
 // Add DecryptedImage component
 const DecryptedImage: React.FC<{
