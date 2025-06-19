@@ -41,6 +41,8 @@ import Loader from "@/components/shared/loader";
 import { Link } from "react-router-dom";
 import Followers from "./components/Followers";
 import DetailStory from "./components/DetailStory";
+import follow_title from "../../assets/follow_title.png";
+import follow_img from "../../assets/follow_img.png";
 
 const Home = () => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
@@ -705,12 +707,12 @@ const Home = () => {
                           关注热门账号，观看他们的最新视频
                         </p>
                         <div className="follow_bg h-[300px] flex flex-col items-center w-[240px]">
-                          {/* <img
+                          <img
                             src={follow_title}
                             alt=""
                             className="mt-7 w-[128px]"
                           />
-                          <img src={follow_img} alt="" className="mt-5 px-5" /> */}
+                          <img src={follow_img} alt="" className="mt-5 px-5" />
                           <p className="follow_re_text mt-5">
                             创作者成为闪亮之星，从创作者开始
                           </p>
@@ -813,6 +815,7 @@ const Home = () => {
                               </a>
                             ) : (
                               <VideoContainer
+                                showFollowers={false}
                                 // refetchUser={refetchUser}
                                 videoData={videoData}
                                 indexRef={indexRef}
