@@ -109,6 +109,7 @@ const DetailPlayer = ({
   const watchTimerRef = useRef<NodeJS.Timeout | null>(null); // Reference to store the watch timer
   const [isSpriteLoading, setIsSpriteLoading] = useState(false);
   const blackScreenRef = useRef<HTMLDivElement | null>(null); // Reference to the black screen overlay
+  const touchInfo = useRef<{ x: number; y: number; time: number } | null>(null);
 
   const dispatch = useDispatch();
 
@@ -2598,37 +2599,62 @@ const DetailPlayer = ({
     const container = playerContainerRef.current;
     if (!container) return;
 
-    const handleTouchOrClick = (e: TouchEvent | MouseEvent) => {
-      let clientX: number;
-      if ('touches' in e && e.touches.length > 0) {
-        clientX = e.touches[0].clientX;
-      } else if ('clientX' in e) {
-        clientX = e.clientX;
-      } else {
-        return;
-      }
-
-      const rect = container.getBoundingClientRect();
-      const x = clientX - rect.left;
-      const width = rect.width;
-
-      if (x < width * 0.2) {
-        // Left 20%: previous
-        if (currentIndex !== 0) setCurrentIndex(currentIndex - 1);
-      } else if (x > width * 0.8) {
-        // Right 20%: next
-        if (currentIndex < length - 1) setCurrentIndex(currentIndex + 1);
-      } else {
-        // Middle: let normal controls work
+    // Touch start: record position and time
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 1) {
+        const touch = e.touches[0];
+        touchInfo.current = {
+          x: touch.clientX,
+          y: touch.clientY,
+          time: Date.now(),
+        };
       }
     };
 
-    container.addEventListener('touchstart', handleTouchOrClick);
-    container.addEventListener('click', handleTouchOrClick);
+    // Touch end: check if it's a tap (not a swipe)
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (!touchInfo.current) return;
+      const touch = e.changedTouches[0];
+      const dx = Math.abs(touch.clientX - touchInfo.current.x);
+      const dy = Math.abs(touch.clientY - touchInfo.current.y);
+      const dt = Date.now() - touchInfo.current.time;
+
+      // Only treat as tap if movement is small and quick
+      if (dx < 10 && dy < 10 && dt < 300) {
+        const rect = container.getBoundingClientRect();
+        const x = touch.clientX - rect.left;
+        const width = rect.width;
+
+        if (x < width * 0.2) {
+          if (currentIndex !== 0) setCurrentIndex(currentIndex - 1);
+        } else if (x > width * 0.8) {
+          if (currentIndex < length - 1) setCurrentIndex(currentIndex + 1);
+        }
+      }
+      touchInfo.current = null;
+    };
+
+    // Mouse click: keep as before
+    const handleClick = (e: MouseEvent) => {
+      const rect = container.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const width = rect.width;
+
+      if (x < width * 0.2) {
+        if (currentIndex !== 0) setCurrentIndex(currentIndex - 1);
+      } else if (x > width * 0.8) {
+        if (currentIndex < length - 1) setCurrentIndex(currentIndex + 1);
+      }
+    };
+
+    container.addEventListener('touchstart', handleTouchStart);
+    container.addEventListener('touchend', handleTouchEnd);
+    container.addEventListener('click', handleClick);
 
     return () => {
-      container.removeEventListener('touchstart', handleTouchOrClick);
-      container.removeEventListener('click', handleTouchOrClick);
+      container.removeEventListener('touchstart', handleTouchStart);
+      container.removeEventListener('touchend', handleTouchEnd);
+      container.removeEventListener('click', handleClick);
     };
   }, [currentIndex, length, setCurrentIndex]);
 
