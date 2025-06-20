@@ -28,10 +28,25 @@ const TopNavbar = ({
 
   return (
     <div
-      style={{ display: hideBar ? "none" : "flex" }}
-      className={` ${
-        currentTab === 1 ? "fixed  pt-[20px] pb-2 bg-[#16131C] top-0" : " absolute top-5"
-      } left-0 px-5 right-0 flex justify-between items-center z-[9999] max-w-[480px] mx-auto`}
+      // style={{ display: hideBar ? "none" : "flex" }}
+      className={`
+  transition-all duration-300 ease-in-out transform
+  ${
+    hideBar
+      ? "-translate-y-full opacity-0 pointer-events-none"
+      : "translate-y-0 opacity-100"
+  }
+  ${
+    currentTab === 1
+      ? "fixed pt-[20px] pb-2 bg-[#16131C] top-0"
+      : "absolute top-5"
+  }
+  left-0 px-5 right-0 flex justify-between items-center z-[9999] max-w-[480px] mx-auto
+`}
+
+      // className={` ${
+      //   currentTab === 1 ? "fixed  pt-[20px] pb-2 bg-[#16131C] top-0" : " absolute top-5"
+      // } left-0 px-5 right-0 flex justify-between items-center z-[9999] max-w-[480px] mx-auto`}
     >
       <div
         onClick={

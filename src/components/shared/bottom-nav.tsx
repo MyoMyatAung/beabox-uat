@@ -76,12 +76,27 @@ export function BottomNav() {
 
   return (
     <nav
-      style={{
-        display: hideBar || location.pathname === "/lucky" ? "none" : "flex",
-      }}
-      className={`flex items-center justify-around p-4 bg-[#191721] backdrop-blur-sm border-t border-white/10 ${
-        bottomLoader && "loading-border"
-      } ${needsBottomPadding ? "h-[80px] pb-10" : "h-[76px]"}`}
+      // style={{
+      //   display: hideBar || location.pathname === "/lucky" ? "none" : "flex",
+      // }}
+      // className={`flex items-center justify-around p-4 bg-[#191721] backdrop-blur-sm border-t border-white/10 ${
+      //   bottomLoader && "loading-border"
+      // } ${needsBottomPadding ? "h-[80px] pb-10" : "h-[76px]"}`}
+      className={cn(
+        `fixed bottom-0 left-0 right-0 z-[9999]
+         flex items-center justify-around p-4
+         bg-[#191721] backdrop-blur-sm border-t border-white/10
+         transform transition-all duration-300 ease-in-out
+         will-change-transform opacity-100
+         ${
+           hideBar || pathname === "/lucky"
+             ? "translate-y-10 opacity-0 pointer-events-none"
+             : "translate-y-0 opacity-100"
+         }
+         ${bottomLoader && "loading-border"}
+         ${needsBottomPadding ? "h-[80px] pb-10" : "h-[76px]"}
+        `
+      )}
     >
       {" "}
       {navItems.map((item) => (
