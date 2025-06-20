@@ -24,10 +24,14 @@ const TopNavbar = ({
     { text: "推荐", id: 2 },
   ];
 
+  console.log("current =>", currentTab);
+
   return (
     <div
       style={{ display: hideBar ? "none" : "flex" }}
-      className=" absolute top-5 left-0 px-5 right-0 flex justify-between items-center z-[9999] max-w-[480px] mx-auto"
+      className={` ${
+        currentTab === 1 ? "fixed  pt-[20px] pb-2 bg-[#16131C] top-0" : " absolute top-5"
+      } left-0 px-5 right-0 flex justify-between items-center z-[9999] max-w-[480px] mx-auto`}
     >
       <div
         onClick={
