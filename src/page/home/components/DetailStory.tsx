@@ -17,6 +17,7 @@ import DetailContainer from "./detail/DetailContainer";
 import { Swiper, SwiperSlide } from "swiper/react";
 // @ts-expect-error: Swiper CSS has no type declarations but is required for styling
 import "swiper/css";
+import { EffectCube } from "swiper/modules";
 
 interface User {
   id: string;
@@ -42,6 +43,9 @@ const DetailStory = ({ id }: { id: string }) => {
   const { data: myday } = useGetMydayQuery({ page: 1 });
   const [watchPost] = useWatchtPostMutation();
   const videoContainerRef = useRef<HTMLDivElement>(null);
+  const [isInteractingWithProgressBar, setisInteractingWithProgressBar] =
+    useState(false);
+  const swiperRef = useRef<any>(null);
 
   // Get all users with posts
   const usersWithPosts: User[] =
@@ -177,34 +181,40 @@ const DetailStory = ({ id }: { id: string }) => {
     }
   });
 
+  console.log(isInteractingWithProgressBar);
+
   // Swiper slide change handler
   const handleSlideChange = () => {
     // No-op
   };
 
+  useEffect(() => {
+    if (swiperRef.current) {
+      if (isInteractingWithProgressBar) {
+        swiperRef.current.disable();
+      } else {
+        swiperRef.current.enable();
+      }
+    }
+  }, [isInteractingWithProgressBar]); // This will run when the ref's current value changes
+
   return (
     <div className="myday_container" ref={videoContainerRef}>
       <Swiper
+        onSwiper={(swiper) => (swiperRef.current = swiper)}
         initialSlide={initialUserIndex >= 0 ? initialUserIndex : 0}
         onSlideChange={handleSlideChange}
         spaceBetween={0}
         slidesPerView={1}
-        style={{ height: "100%" }}
-        effect={"creative"} // Change effect to creative
-        creativeEffect={{
-          prev: {
-            shadow: true,
-            translate: ["-20%", 0, -500], // Slide left + depth
-            rotate: [0, 15, -15], // 3D rotation
-          },
-          next: {
-            shadow: true,
-            translate: ["20%", 0, -500], // Slide right + depth
-            rotate: [0, 15, 15], // 3D rotation
-          },
-          limitProgress: 3, // Allows slides to move further
-          perspective: true,
+        effect="cube"
+        modules={[EffectCube]}
+        cubeEffect={{
+          shadow: true,
+          slideShadows: true,
+          shadowOffset: 20,
+          shadowScale: 0.94,
         }}
+        allowTouchMove={!isInteractingWithProgressBar} // Disable touch when interacting
       >
         {usersWithPosts?.map((user: User) => {
           const decryptedVideos = decryptedVideosMap[user.id] || [];
@@ -218,13 +228,11 @@ const DetailStory = ({ id }: { id: string }) => {
           const countdown = countdownMap[user.id] || 3;
           const indexRef = indexRefs.current[user.id];
           const abortControllerRef = abortControllerRefs.current[user.id];
-          console.log(hearts, "hearts");
-          console.log(heartsMap, "heartsMap");
 
           return (
             <SwiperSlide key={user.id}>
               {isDecrypting ? (
-                <div className="flex justify-center items-center h-full">
+                <div className="flex justify-center items-center h-[100dvh]">
                   <div style={{ textAlign: "center", padding: "20px" }}>
                     <div>
                       <LoadingBar />
@@ -258,7 +266,9 @@ const DetailStory = ({ id }: { id: string }) => {
                       </a>
                     ) : (
                       <DetailContainer
-                        isInteractingWithProgressBar={undefined}
+                        setisInteractingWithProgressBar={
+                          setisInteractingWithProgressBar
+                        }
                         setIsDecrypting={(val: boolean) =>
                           setUserState(setIsDecryptingMap, user.id, val)
                         }
@@ -313,13 +323,13 @@ const DetailStory = ({ id }: { id: string }) => {
                     )}
 
                     {Array.isArray(hearts) &&
-                     hearts?.map((heartId: any) => (
-                      <HeartCount
-                        id={heartId}
-                        key={heartId}
-                        remove={(id: any) => removeHeart(user.id, id)}
-                      />
-                    ))}
+                      hearts?.map((heartId: any) => (
+                        <HeartCount
+                          id={heartId}
+                          key={heartId}
+                          remove={(id: any) => removeHeart(user.id, id)}
+                        />
+                      ))}
                   </div>
                 )
               )}

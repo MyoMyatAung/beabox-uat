@@ -29,7 +29,7 @@ interface RootState {
 }
 
 const DetailPlayer = ({
-  isInteractingWithProgressBar,
+  setisInteractingWithProgressBar,
   setCurrentIndex,
   currentIndex,
   src,
@@ -51,7 +51,7 @@ const DetailPlayer = ({
   video,
   length,
 }: {
-  isInteractingWithProgressBar: any;
+  setisInteractingWithProgressBar: any;
   setCurrentIndex: any;
   currentIndex: any;
   src: string;
@@ -998,7 +998,8 @@ const DetailPlayer = ({
 
             // Mobile touch events
             element.addEventListener("touchstart", (e) => {
-              isInteractingWithProgressBar.current = true;
+              setisInteractingWithProgressBar(true);
+
               if (!artPlayerInstanceRef.current?.playing) {
                 artPlayerInstanceRef.current?.play();
                 artPlayerInstanceRef.current?.pause();
@@ -1066,7 +1067,7 @@ const DetailPlayer = ({
             });
 
             element.addEventListener("touchmove", (e) => {
-              isInteractingWithProgressBar.current = true;
+              setisInteractingWithProgressBar(true);
               setShowRotate(true);
               if (
                 !artPlayerInstanceRef.current ||
@@ -1128,7 +1129,7 @@ const DetailPlayer = ({
             });
 
             element.addEventListener("touchend", () => {
-              isInteractingWithProgressBar.current = false;
+              setisInteractingWithProgressBar(false);
               if (!artPlayerInstanceRef.current?.playing) {
                 artPlayerInstanceRef.current?.play();
               }
@@ -2599,43 +2600,45 @@ const DetailPlayer = ({
     const container = playerContainerRef.current;
     if (!container) return;
 
-    // Touch start: record position and time
-    const handleTouchStart = (e: TouchEvent) => {
-      if (e.touches.length === 1) {
-        const touch = e.touches[0];
-        touchInfo.current = {
-          x: touch.clientX,
-          y: touch.clientY,
-          time: Date.now(),
-        };
-      }
-    };
+    // // Touch start: record position and time
+    // const handleTouchStart = (e: TouchEvent) => {
+    //   if (e.touches.length === 1) {
+    //     const touch = e.touches[0];
+    //     touchInfo.current = {
+    //       x: touch.clientX,
+    //       y: touch.clientY,
+    //       time: Date.now(),
+    //     };
+    //   }
+    // };
 
-    // Touch end: check if it's a tap (not a swipe)
-    const handleTouchEnd = (e: TouchEvent) => {
-      if (!touchInfo.current) return;
-      const touch = e.changedTouches[0];
-      const dx = Math.abs(touch.clientX - touchInfo.current.x);
-      const dy = Math.abs(touch.clientY - touchInfo.current.y);
-      const dt = Date.now() - touchInfo.current.time;
+    // // Touch end: check if it's a tap (not a swipe)
+    // const handleTouchEnd = (e: TouchEvent) => {
+    //   console.log("Touch end event triggered");
+    //   if (!touchInfo.current) return;
+    //   const touch = e.changedTouches[0];
+    //   const dx = Math.abs(touch.clientX - touchInfo.current.x);
+    //   const dy = Math.abs(touch.clientY - touchInfo.current.y);
+    //   const dt = Date.now() - touchInfo.current.time;
 
-      // Only treat as tap if movement is small and quick
-      if (dx < 10 && dy < 10 && dt < 300) {
-        const rect = container.getBoundingClientRect();
-        const x = touch.clientX - rect.left;
-        const width = rect.width;
+    //   // Only treat as tap if movement is small and quick
+    //   if (dx < 10 && dy < 10 && dt < 300) {
+    //     const rect = container.getBoundingClientRect();
+    //     const x = touch.clientX - rect.left;
+    //     const width = rect.width;
 
-        if (x < width * 0.2) {
-          if (currentIndex !== 0) setCurrentIndex(currentIndex - 1);
-        } else if (x > width * 0.8) {
-          if (currentIndex < length - 1) setCurrentIndex(currentIndex + 1);
-        }
-      }
-      touchInfo.current = null;
-    };
+    //     if (x < width * 0.2) {
+    //       if (currentIndex !== 0) setCurrentIndex(currentIndex - 1);
+    //     } else if (x > width * 0.8) {
+    //       if (currentIndex < length - 1) setCurrentIndex(currentIndex + 1);
+    //     }
+    //   }
+    //   touchInfo.current = null;
+    // };
 
     // Mouse click: keep as before
     const handleClick = (e: MouseEvent) => {
+      console.log("clcik end event triggered");
       const rect = container.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const width = rect.width;
@@ -2647,13 +2650,13 @@ const DetailPlayer = ({
       }
     };
 
-    container.addEventListener("touchstart", handleTouchStart);
-    container.addEventListener("touchend", handleTouchEnd);
+    // container.addEventListener("touchstart", handleTouchStart);
+    // container.addEventListener("touchend", handleTouchEnd);
     container.addEventListener("click", handleClick);
 
     return () => {
-      container.removeEventListener("touchstart", handleTouchStart);
-      container.removeEventListener("touchend", handleTouchEnd);
+      // container.removeEventListener("touchstart", handleTouchStart);
+      // container.removeEventListener("touchend", handleTouchEnd);
       container.removeEventListener("click", handleClick);
     };
   }, [currentIndex, length, setCurrentIndex]);

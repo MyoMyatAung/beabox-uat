@@ -15,7 +15,7 @@ import DetailNav from "./DetailNav";
 import DetailPlayer from "./DetailPlayer";
 
 const DetailContainer = ({
-  isInteractingWithProgressBar,
+  setisInteractingWithProgressBar,
   length,
   video,
   setWidth,
@@ -39,7 +39,7 @@ const DetailContainer = ({
   // refetch,
   setIsDecrypting,
 }: {
-  isInteractingWithProgressBar: any;
+  setisInteractingWithProgressBar: any;
   length: any;
   video: any;
   setWidth: any;
@@ -399,7 +399,7 @@ const DetailContainer = ({
         />
       )}
       <DetailPlayer
-        isInteractingWithProgressBar={isInteractingWithProgressBar}
+        setisInteractingWithProgressBar={setisInteractingWithProgressBar}
         setCurrentIndex={setCurrentIndex}
         currentIndex={currentIndex}
         video={video}

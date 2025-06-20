@@ -1374,3 +1374,25 @@ html {
   padding-right: 10px;
   color: white;
 }
+
+/* Fix for cube effect dimensions */
+.swiper-cube {
+  overflow: visible !important;
+}
+
+.swiper-cube .swiper-slide {
+  pointer-events: none;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  visibility: hidden;
+  opacity: 0;
+  transform-origin: 0px !important;
+}
+
+.swiper-cube .swiper-slide-active,
+.swiper-cube .swiper-slide-next,
+.swiper-cube .swiper-slide-prev {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}

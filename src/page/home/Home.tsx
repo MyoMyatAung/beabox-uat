@@ -43,7 +43,8 @@ import Followers from "./components/Followers";
 import DetailStory from "./components/DetailStory";
 import follow_title from "../../assets/follow_title.png";
 import follow_img from "../../assets/follow_img.png";
-import follower_login from '../../assets/follower_login.webp';
+import follower_login from "../../assets/follower_login.webp";
+import { combineSlices } from "@reduxjs/toolkit";
 
 const Home = () => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
@@ -466,11 +467,15 @@ const Home = () => {
   const [followers, setFollowers] = useState<any[]>([]);
   const [showFollowers, setShowFollowers] = useState(false);
   const { data: myday } = useGetMydayQuery({ page: 1 });
+  const [scrollDirection, setScrollDirection] = useState<"up" | "down" | null>(
+    null
+  );
+  const [lastScrollTop, setLastScrollTop] = useState(0);
 
+  // Load and decrypt followers
   useEffect(() => {
     if (myday?.data.length > 0) {
       setIsDecrypting(true);
-
       try {
         const decryptAndUpdateVideos = async () => {
           const decryptedVideos = await Promise.all(
@@ -491,8 +496,51 @@ const Home = () => {
     }
   }, [myday]);
 
+  // Scroll handler for showing/hiding followers
+  useEffect(() => {
+    const container = videoContainerRef.current;
+    console.log("container", container);
+    if (!container) return;
+
+    const handleScroll = () => {
+      console.log("scrolling");
+      const scrollTop = container.scrollTop;
+
+      // Determine scroll direction
+      if (scrollTop > lastScrollTop) {
+        setScrollDirection("down");
+      } else if (scrollTop < lastScrollTop) {
+        setScrollDirection("up");
+      }
+      setLastScrollTop(scrollTop);
+
+      // Show followers when scrolling up at the very top
+      if (scrollTop <= 0 && scrollDirection === "up") {
+        console.log("show followers");
+        setShowFollowers(true);
+      }
+
+      // Hide followers when scrolling down past threshold
+      if (scrollTop > 100 && showFollowers) {
+        setShowFollowers(false);
+      }
+    };
+
+    container.addEventListener("scroll", handleScroll);
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [
+    lastScrollTop,
+    scrollDirection,
+    showFollowers,
+    videoContainerRef.current,
+  ]);
+
   const handleShow = () => {
     setShowFollowers(!showFollowers);
+    // if (!showFollowers) {
+    //   // When showing followers, scroll to top
+    //   videoContainerRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+    // }
   };
 
   if (show) {
@@ -603,7 +651,7 @@ const Home = () => {
                       ref={videoContainerRef}
                       className={`app__videos pb-[80px]  overflow-hidden 
                                   transition-all duration-300 ease-in-out transform ${
-                                    showFollowers ? "mt-[370px]" : "mt-0"
+                                    showFollowers ? "mt-[400px]" : "mt-0"
                                   }`}
                     >
                       {videos["follow"]?.map((video: any, index: any) => {
@@ -728,7 +776,11 @@ const Home = () => {
                   <div className="app_home bg-[#16131C]">
                     <div style={{ textAlign: "center", padding: "20px" }}>
                       <div className="text-white flex flex-col justify-center items-center  gap-2">
-                          <img src={follower_login} alt="followerImg" className="max-w-[80%]" />
+                        <img
+                          src={follower_login}
+                          alt="followerImg"
+                          className="max-w-[80%]"
+                        />
                       </div>
                     </div>
                   </div>
