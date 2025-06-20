@@ -38,7 +38,7 @@ export default defineConfig({
     },
   },
   // produciton
-  base: 'https://kbo4emnv.bho1y1.com/',
+  base: 'https://vfurcsj.jfojf.cn/',
   // development
   // base: '/',
   define: {
