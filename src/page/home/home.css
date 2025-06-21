@@ -1210,32 +1210,6 @@ html {
   line-height: normal;
 }
 
-.myday_container {
-  position: relative;
-  height: 100%;
-  /* height: 100vh; */
-  height: 100dvh;
-  border-radius: 20px;
-  width: 100%;
-  max-width: 1024px;
-  /* Allow both horizontal and vertical touch actions for swipe navigation */
-  touch-action: pan-x pan-y;
-}
-
-.myday_container .video {
-  position: relative;
-  background-color: black;
-  width: 100%;
-  height: 100%;
-  height: 100dvh;
-  /* Allow horizontal swipes while maintaining vertical video navigation */
-  touch-action: pan-x pan-y;
-}
-
-.myday_container.transitioning {
-  transition: transform 0.3s ease-out;
-}
-
 .swipe-indicator {
   position: absolute;
   top: 50%;
@@ -1343,12 +1317,10 @@ html {
 .myday_container {
   position: relative;
   height: 100%;
-  /* height: 100vh; */
   height: 100dvh;
   border-radius: 20px;
   width: 100%;
   max-width: 1024px;
-  /* Allow both horizontal and vertical touch actions for swipe navigation */
   touch-action: pan-x pan-y;
 }
 
@@ -1358,7 +1330,6 @@ html {
   width: 100%;
   height: 100%;
   height: 100dvh;
-  /* Allow horizontal swipes while maintaining vertical video navigation */
   touch-action: pan-x pan-y;
 }
 
@@ -1375,24 +1346,25 @@ html {
   color: white;
 }
 
-/* Fix for cube effect dimensions */
-.swiper-cube {
+/* .swiper-cube {
   overflow: visible !important;
+  width: 100vw !important;
 }
 
 .swiper-cube .swiper-slide {
-  pointer-events: none;
-  backface-visibility: hidden;
-  transform-style: preserve-3d;
-  visibility: hidden;
-  opacity: 0;
+  width: 100vw !important;
+  pointer-events: none !important;
+  backface-visibility: hidden !important;
+  transform-style: preserve-3d !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
   transform-origin: 0px !important;
 }
 
 .swiper-cube .swiper-slide-active,
 .swiper-cube .swiper-slide-next,
 .swiper-cube .swiper-slide-prev {
-  visibility: visible;
-  opacity: 1;
-  pointer-events: auto;
-}
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+} */

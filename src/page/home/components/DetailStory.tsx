@@ -15,9 +15,15 @@ import DetailContainer from "./detail/DetailContainer";
 
 // Swiper imports
 import { Swiper, SwiperSlide } from "swiper/react";
+
+import { EffectCube } from "swiper/modules";
 // @ts-expect-error: Swiper CSS has no type declarations but is required for styling
 import "swiper/css";
-import { EffectCube } from "swiper/modules";
+// import "swiper/css/effect-cube";
+import { useDispatch, useSelector } from "react-redux";
+import { setWatchedPost } from "../services/watchSlice";
+import { setCurrentVideoIndex } from "../services/indexSlice";
+import { useVideoIndices } from "./useVideoIndices";
 
 interface User {
   id: string;
@@ -65,12 +71,20 @@ const DetailStory = ({ id }: { id: string }) => {
   const [isDecryptingMap, setIsDecryptingMap] = useState<
     Record<string, boolean>
   >({});
-  const [currentVideoIndexMap, setCurrentVideoIndexMap] = useState<
-    Record<string, number>
-  >({});
-  const [watchedPostsMap, setWatchedPostsMap] = useState<
-    Record<string, Record<string, boolean>>
-  >({});
+  // Get from Redux instead of local state
+
+  const { currentVideoIndexMap, setCurrentIndex } = useVideoIndices();
+  // const [currentVideoIndexMap, setCurrentVideoIndexMap] = useState<
+  //   Record<string, number>
+  // >({});
+  // const [watchedPostsMap, setWatchedPostsMap] = useState<
+  //   Record<string, Record<string, boolean>>
+  // >({});
+  const watchedPostsMap = useSelector(
+    (state: any) => state.watchSlice.watchedPostsMap
+  );
+  const dispatch = useDispatch();
+
   const [heartsMap, setHeartsMap] = useState<Record<string, number[]>>({});
   const [widthMap, setWidthMap] = useState<Record<string, number>>({});
   const [heightMap, setHeightMap] = useState<Record<string, number>>({});
@@ -116,7 +130,31 @@ const DetailStory = ({ id }: { id: string }) => {
         ).then((decrypted) => {
           setDecryptedVideosMap((prev) => ({ ...prev, [user.id]: decrypted }));
           setIsDecryptingMap((prev) => ({ ...prev, [user.id]: false }));
-          setCurrentVideoIndexMap((prev) => ({ ...prev, [user.id]: 0 }));
+
+          // // Find the first unwatched video or default to 0
+          const firstUnwatchedIndex = decrypted.findIndex(
+            (video: any) => !video.is_watched
+          );
+          const newIndex = firstUnwatchedIndex >= 0 ? firstUnwatchedIndex : 0;
+
+          if (currentVideoIndexMap[user.id]) {
+            if (newIndex > currentVideoIndexMap[user.id]) {
+              dispatch(
+                setCurrentVideoIndex({ userId: user.id, index: newIndex })
+              );
+            } else {
+              dispatch(
+                setCurrentVideoIndex({
+                  userId: user.id,
+                  index: currentVideoIndexMap[user.id],
+                })
+              );
+            }
+          } else {
+            dispatch(
+              setCurrentVideoIndex({ userId: user.id, index: newIndex })
+            );
+          }
         });
       }
     });
@@ -129,6 +167,7 @@ const DetailStory = ({ id }: { id: string }) => {
       const decryptedVideos = decryptedVideosMap[user.id] || [];
       const currentVideoIndex = currentVideoIndexMap[user.id] || 0;
       const watchedPosts = watchedPostsMap[user.id] || {};
+
       if (
         decryptedVideos[currentVideoIndex] &&
         !watchedPosts[decryptedVideos[currentVideoIndex].post_id]
@@ -137,10 +176,13 @@ const DetailStory = ({ id }: { id: string }) => {
         watchPost({ post_id: video.post_id })
           .unwrap()
           .then(() => {
-            setWatchedPostsMap((prev) => ({
-              ...prev,
-              [user.id]: { ...prev[user.id], [video.post_id]: true },
-            }));
+            dispatch(
+              setWatchedPost({
+                userId: user.id,
+                postId: video.post_id,
+                watched: true,
+              })
+            );
           })
           .catch(console.error);
       }
@@ -181,8 +223,6 @@ const DetailStory = ({ id }: { id: string }) => {
     }
   });
 
-  console.log(isInteractingWithProgressBar);
-
   // Swiper slide change handler
   const handleSlideChange = () => {
     // No-op
@@ -206,13 +246,21 @@ const DetailStory = ({ id }: { id: string }) => {
         onSlideChange={handleSlideChange}
         spaceBetween={0}
         slidesPerView={1}
-        effect="cube"
-        modules={[EffectCube]}
-        cubeEffect={{
-          shadow: true,
-          slideShadows: true,
-          shadowOffset: 20,
-          shadowScale: 0.94,
+        style={{ height: "100%" }}
+        effect={"creative"} // Change effect to creative
+        creativeEffect={{
+          prev: {
+            shadow: true,
+            translate: ["-20%", 0, -500], // Slide left + depth
+            rotate: [0, 15, -15], // 3D rotation
+          },
+          next: {
+            shadow: true,
+            translate: ["20%", 0, -500], // Slide right + depth
+            rotate: [0, 15, 15], // 3D rotation
+          },
+          limitProgress: 3, // Allows slides to move further
+          perspective: true,
         }}
         allowTouchMove={!isInteractingWithProgressBar} // Disable touch when interacting
       >
@@ -249,7 +297,7 @@ const DetailStory = ({ id }: { id: string }) => {
               ) : (
                 video && (
                   <div
-                    className={`video justify-center items-center overflow-hidden`}
+                    className={`video  overflow-hidden`}
                     data-post-id={video?.post_id}
                   >
                     {video?.file_type !== "video" ? (
@@ -274,8 +322,8 @@ const DetailStory = ({ id }: { id: string }) => {
                         }
                         length={decryptedVideos.length}
                         currentIndex={currentVideoIndex}
-                        setCurrentIndex={(idx: number) =>
-                          setUserState(setCurrentVideoIndexMap, user.id, idx)
+                        setCurrentIndex={(idx: any) =>
+                          setCurrentIndex(user.id, idx)
                         }
                         videoData={{ current: decryptedVideos }}
                         indexRef={indexRef}

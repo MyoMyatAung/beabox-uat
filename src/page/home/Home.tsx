@@ -475,7 +475,7 @@ const Home = () => {
   // Load and decrypt followers
   useEffect(() => {
     if (myday?.data.length > 0) {
-      setIsDecrypting(true);
+      // setIsDecrypting(true);
       try {
         const decryptAndUpdateVideos = async () => {
           const decryptedVideos = await Promise.all(
@@ -485,25 +485,24 @@ const Home = () => {
             }))
           );
           setFollowers(decryptedVideos);
-          setIsDecrypting(false);
+          // setIsDecrypting(false);
         };
         decryptAndUpdateVideos();
       } catch (error) {
-        setIsDecrypting(false);
+        // setIsDecrypting(false);
       }
     } else {
-      setIsDecrypting(false);
+      // setIsDecrypting(false);
     }
   }, [myday]);
 
   // Scroll handler for showing/hiding followers
   useEffect(() => {
     const container = videoContainerRef.current;
-    console.log("container", container);
+
     if (!container) return;
 
     const handleScroll = () => {
-      console.log("scrolling");
       const scrollTop = container.scrollTop;
 
       // Determine scroll direction
@@ -516,7 +515,6 @@ const Home = () => {
 
       // Show followers when scrolling up at the very top
       if (scrollTop <= 0 && scrollDirection === "up") {
-        console.log("show followers");
         setShowFollowers(true);
       }
 
@@ -545,7 +543,7 @@ const Home = () => {
 
   if (show) {
     return (
-      <div className="fixed inset-0 top-0 left-0 z-[9999] flex items-center justify-center">
+      <div className="fixed inset-0 top-0 left-0 z-[9999]">
         <DetailStory id={show} />
       </div>
     );
@@ -773,15 +771,24 @@ const Home = () => {
                     )}
                   </>
                 ) : (
-                  <div className="app_home bg-[#16131C]">
-                    <div style={{ textAlign: "center", padding: "20px" }}>
-                      <div className="text-white flex flex-col justify-center items-center  gap-2">
-                        <img
-                          src={follower_login}
-                          alt="followerImg"
-                          className="max-w-[80%]"
-                        />
-                      </div>
+                  <div className="flex justify-center flex-col items-center h-full">
+                    <h1 className="follow_no_h">热门顶尖创作者</h1>
+                    <p className="follow_no_p">
+                      关注热门账号，观看他们的最新视频
+                    </p>
+                    <div className="follow_bg h-[300px] flex flex-col items-center w-[240px]">
+                      <img
+                        src={follow_title}
+                        alt=""
+                        className="mt-7 w-[128px]"
+                      />
+                      <img src={follow_img} alt="" className="mt-5 px-5" />
+                      <p className="follow_re_text mt-5">
+                        创作者成为闪亮之星，从创作者开始
+                      </p>
+                      <Link to={"/ranking"} className="follow_re_btn mt-5">
+                        查看全部
+                      </Link>
                     </div>
                   </div>
                 ))}

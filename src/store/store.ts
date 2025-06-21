@@ -38,6 +38,8 @@ import { eventInvitationApi } from "../page/event/eventApi";
 import spinWheelReducer from "./slices/spinWheelSlice";
 import { spinWheelApi } from "../page/luckywheel/services/spinWheelApi";
 import showSlice from "@/page/home/services/showSlice";
+import watchSlice from "@/page/home/services/watchSlice";
+import indexSlice from "@/page/home/services/indexSlice";
 
 const sessionStorageWrapper: Storage = {
   getItem: (key: string) => {
@@ -80,6 +82,8 @@ const rootReducer = combineReducers({
   showSlice: showSlice,
   explore: exploreSlice,
   scrollSlice: scrollSlice,
+  indexSlice: indexSlice,
+  watchSlice: watchSlice,
   history: HistorySlice,
   startSlice: startSlice,
   hideBarSlice: hideBarSlice,
