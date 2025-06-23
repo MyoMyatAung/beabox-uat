@@ -246,6 +246,8 @@ const DetailStory = ({ id }: { id: string }) => {
         onSlideChange={handleSlideChange}
         spaceBetween={0}
         slidesPerView={1}
+        touchStartPreventDefault={false}
+        preventInteractionOnTransition={true}
         style={{ height: "100%" }}
         effect={"creative"} // Change effect to creative
         creativeEffect={{
