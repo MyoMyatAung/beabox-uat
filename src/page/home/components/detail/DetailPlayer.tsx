@@ -1510,6 +1510,88 @@ const DetailPlayer = ({
             element.addEventListener("contextmenu", (e) => e.preventDefault());
           },
         },
+        {
+          html: `<div class="left-tap-layer"></div>`,
+          style: {
+            position: "absolute",
+            top: "0",
+            left: "0",
+            width: "40%",
+            height: "100%",
+            zIndex: "20",
+            background: "transparent",
+          },
+          mounted: (element: HTMLElement) => {
+            const handleAction = () => {
+              if (currentIndex !== 0) {
+                setCurrentIndex(currentIndex - 1);
+              } else if (swiperRef.current) {
+                swiperRef.current.slidePrev();
+              }
+            };
+
+            // Add both touch and click events
+            element.addEventListener("click", handleAction);
+          },
+        },
+
+        // Right layer (40% of screen)
+        {
+          html: `<div class="right-tap-layer"></div>`,
+          style: {
+            position: "absolute",
+            top: "0",
+            right: "0",
+            width: "40%",
+            height: "100%",
+            zIndex: "20",
+            background: "transparent",
+          },
+          mounted: (element: HTMLElement) => {
+            const handleAction = () => {
+              if (currentIndex < length - 1) {
+                setCurrentIndex(currentIndex + 1);
+              } else if (swiperRef.current) {
+                swiperRef.current.slideNext();
+              }
+            };
+
+            // Add both touch and click events
+            element.addEventListener("click", handleAction);
+          },
+        },
+
+        {
+          html: `<div class="center-tap-layer"></div>`,
+          style: {
+            position: "absolute",
+            top: "0",
+            left: "40%",
+            width: "20%",
+            height: "100%",
+            zIndex: "20",
+            background: "transparent",
+          },
+          mounted: (element: HTMLElement) => {
+            const handleAction = () => {
+              if (artPlayerInstanceRef.current) {
+                if (artPlayerInstanceRef.current.playing) {
+                  artPlayerInstanceRef.current.pause();
+                  showPlayButton();
+                } else {
+                  hidePlayButton();
+                  setTimeout(() => {
+                    artPlayerInstanceRef.current?.play();
+                  }, 500);
+                }
+              }
+            };
+
+            // Add both touch and click events
+            element.addEventListener("click", handleAction);
+          },
+        },
+
         // Add this to your layers array in the Artplayer options
         // {
         //   html: `
@@ -2604,7 +2686,6 @@ const DetailPlayer = ({
   //   const container = playerContainerRef.current;
   //   if (!container) return;
 
-  //   // Add these helper functions at the top of your component
   //   const getClickZone = (clientX: number, container: HTMLElement) => {
   //     const rect = container.getBoundingClientRect();
   //     const x = clientX - rect.left;
@@ -2616,16 +2697,12 @@ const DetailPlayer = ({
   //     return "middle";
   //   };
 
-  //   // Then modify your handleClick function like this:
   //   const handleClick = (e: MouseEvent) => {
-  //     const container = playerContainerRef.current;
-  //     if (!container) return;
-
+  //     // For desktop browsers
   //     const zone = getClickZone(e.clientX, container);
 
   //     switch (zone) {
   //       case "left":
-  //         // Left zone - previous video or user
   //         if (currentIndex !== 0) {
   //           setCurrentIndex(currentIndex - 1);
   //         } else if (swiperRef.current) {
@@ -2634,7 +2711,6 @@ const DetailPlayer = ({
   //         break;
 
   //       case "right":
-  //         // Right zone - next video or user
   //         if (currentIndex < length - 1) {
   //           setCurrentIndex(currentIndex + 1);
   //         } else if (swiperRef.current) {
@@ -2643,14 +2719,13 @@ const DetailPlayer = ({
   //         break;
 
   //       case "middle":
-  //         // Middle zone - play/pause toggle
   //         if (artPlayerInstanceRef.current) {
   //           if (artPlayerInstanceRef.current.playing) {
   //             artPlayerInstanceRef.current.pause();
   //             showPlayButton();
   //           } else {
   //             hidePlayButton();
-  //             safeFadePosterOut(true);
+  //             // safeFadePosterOut(true);
   //             setTimeout(() => {
   //               artPlayerInstanceRef.current?.play();
   //             }, 500);
@@ -2666,162 +2741,6 @@ const DetailPlayer = ({
   //     container.removeEventListener("click", handleClick);
   //   };
   // }, [currentIndex, length, setCurrentIndex]);
-  useEffect(() => {
-    const container = playerContainerRef.current;
-    if (!container) return;
-
-    let lastTouchTime = 0;
-    let touchStartX = 0;
-    let touchStartY = 0;
-    let touchStartTime = 0;
-    const TOUCH_MOVE_THRESHOLD = 10; // pixels
-    const DOUBLE_TAP_DELAY = 300; // ms
-
-    const getClickZone = (clientX: number, container: HTMLElement) => {
-      const rect = container.getBoundingClientRect();
-      const x = clientX - rect.left;
-      const width = rect.width;
-      const zoneWidth = width / 3; // Divide screen into 3 equal parts
-
-      if (x < zoneWidth) return "left";
-      if (x > width - zoneWidth) return "right";
-      return "middle";
-    };
-
-    const handleSingleTap = (clientX: number) => {
-      const zone = getClickZone(clientX, container);
-
-      switch (zone) {
-        case "left":
-          if (currentIndex !== 0) {
-            setCurrentIndex(currentIndex - 1);
-          } else if (swiperRef.current) {
-            swiperRef.current.slidePrev();
-          }
-          break;
-
-        case "right":
-          if (currentIndex < length - 1) {
-            setCurrentIndex(currentIndex + 1);
-          } else if (swiperRef.current) {
-            swiperRef.current.slideNext();
-          }
-          break;
-
-        case "middle":
-          if (artPlayerInstanceRef.current) {
-            if (artPlayerInstanceRef.current.playing) {
-              artPlayerInstanceRef.current.pause();
-              showPlayButton();
-            } else {
-              hidePlayButton();
-              artPlayerInstanceRef.current?.play();
-              // safeFadePosterOut(true);
-              // setTimeout(() => {}, 500);
-            }
-          }
-          break;
-      }
-    };
-
-    const handleTouchStart = (e: TouchEvent) => {
-      if (e.touches.length === 1) {
-        const touch = e.touches[0];
-        touchStartX = touch.clientX;
-        touchStartY = touch.clientY;
-        touchStartTime = Date.now();
-        handleSingleTap(touch.clientX);
-      }
-    };
-
-    // const handleTouchEnd = (e: TouchEvent) => {
-    //   if (e.changedTouches.length !== 1) return;
-
-    //   const touch = e.changedTouches[0];
-    //   const currentTime = Date.now();
-    //   const dx = Math.abs(touch.clientX - touchStartX);
-    //   const dy = Math.abs(touch.clientY - touchStartY);
-    //   const dt = currentTime - touchStartTime;
-
-    //   // Check if it's a tap (not a swipe)
-    //   if (dx < TOUCH_MOVE_THRESHOLD && dy < TOUCH_MOVE_THRESHOLD && dt < 300) {
-    //     // Check for double tap
-    //     if (currentTime - lastTouchTime < DOUBLE_TAP_DELAY) {
-    //       // Double tap - handle like
-    //       if (user?.token) {
-    //         handleLike();
-    //       } else {
-    //         dispatch(
-    //           showToast({
-    //             message: "登陆后可点赞",
-    //             type: "success",
-    //           })
-    //         );
-    //       }
-    //       lastTouchTime = 0; // Reset to prevent triple-tap detection
-    //     } else {
-    //       // Single tap
-    //       lastTouchTime = currentTime;
-    //       setTimeout(() => {
-    //         // If no double tap occurred within the delay period, handle as single tap
-    //         if (Date.now() - lastTouchTime >= DOUBLE_TAP_DELAY) {
-    //           handleSingleTap(touch.clientX);
-    //         }
-    //       }, DOUBLE_TAP_DELAY + 50);
-    //     }
-    //   }
-    // };
-
-    // const handleClick = (e: MouseEvent) => {
-    //   // For desktop browsers
-    //   const zone = getClickZone(e.clientX, container);
-
-    //   switch (zone) {
-    //     case "left":
-    //       if (currentIndex !== 0) {
-    //         setCurrentIndex(currentIndex - 1);
-    //       } else if (swiperRef.current) {
-    //         swiperRef.current.slidePrev();
-    //       }
-    //       break;
-
-    //     case "right":
-    //       if (currentIndex < length - 1) {
-    //         setCurrentIndex(currentIndex + 1);
-    //       } else if (swiperRef.current) {
-    //         swiperRef.current.slideNext();
-    //       }
-    //       break;
-
-    //     case "middle":
-    //       // if (artPlayerInstanceRef.current) {
-    //       //   if (artPlayerInstanceRef.current.playing) {
-    //       //     artPlayerInstanceRef.current.pause();
-    //       //     showPlayButton();
-    //       //   } else {
-    //       //     hidePlayButton();
-    //       //     safeFadePosterOut(true);
-    //       //     setTimeout(() => {
-    //       //       artPlayerInstanceRef.current?.play();
-    //       //     }, 500);
-    //       //   }
-    //       // }
-    //       break;
-    //   }
-    // };
-
-    container.addEventListener("touchstart", handleTouchStart, {
-      passive: true,
-    });
-    // container.addEventListener("touchend", handleTouchEnd, { passive: true });
-    // container.addEventListener("click", handleClick);
-
-    return () => {
-      container.removeEventListener("touchstart", handleTouchStart);
-      // container.removeEventListener("touchend", handleTouchEnd);
-      // container.removeEventListener("click", handleClick);
-    };
-  }, [currentIndex, length, setCurrentIndex]);
 
   return (
     <>
