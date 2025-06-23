@@ -29,7 +29,7 @@ const DetailContainer = ({
   status,
   width,
   height,
-
+  swiperRef,
   container,
   abortControllerRef,
   indexRef,
@@ -54,6 +54,7 @@ const DetailContainer = ({
   width: any;
   height: any;
   container: any;
+  swiperRef: any;
   abortControllerRef: any;
   indexRef: any;
   videoData: any;
@@ -399,6 +400,7 @@ const DetailContainer = ({
         />
       )}
       <DetailPlayer
+        swiperRef={swiperRef}
         setisInteractingWithProgressBar={setisInteractingWithProgressBar}
         setCurrentIndex={setCurrentIndex}
         currentIndex={currentIndex}

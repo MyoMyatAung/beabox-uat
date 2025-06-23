@@ -314,6 +314,7 @@ const DetailStory = ({ id }: { id: string }) => {
                       </a>
                     ) : (
                       <DetailContainer
+                        swiperRef={swiperRef}
                         setisInteractingWithProgressBar={
                           setisInteractingWithProgressBar
                         }
