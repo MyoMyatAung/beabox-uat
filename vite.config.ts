@@ -38,7 +38,7 @@ export default defineConfig({
     },
   },
   // produciton
-  base: 'https://soonko2.bhp0x0.com/',
+  base: 'https://niormnbv.aaxyd.cn/',
   // development
   // base: '/',
   define: {
