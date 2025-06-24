@@ -219,7 +219,7 @@ const Application: React.FC<any> = () => {
                         className="rounded-md"
                         alt="Header Image"
                         width="100%"
-                        height={44}
+                        height="auto"
                         src={header.image}
                       />
                     </a>
