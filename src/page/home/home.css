@@ -1124,7 +1124,7 @@ html {
   backdrop-filter: blur(4px);
   color: var(--White, #fff);
   text-align: center;
-  font-family: Inter;
+  /* font-family: Inter; */
   font-size: 13.354px;
   font-style: normal;
   font-weight: 700;
