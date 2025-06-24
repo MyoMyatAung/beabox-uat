@@ -238,6 +238,31 @@ const DetailStory = ({ id }: { id: string }) => {
     }
   }, [isInteractingWithProgressBar]); // This will run when the ref's current value changes
 
+  // Modify your decrypted videos update function
+  const updateDecryptedVideo = (
+    userId: string,
+    postId: string,
+    updates: Partial<Video>
+  ) => {
+    console.log(
+      "Updating video for user:",
+      userId,
+      "postId:",
+      postId,
+      "updates:",
+      updates
+    );
+    setDecryptedVideosMap((prev) => {
+      const userVideos = prev[userId] || [];
+      return {
+        ...prev,
+        [userId]: userVideos.map((video) =>
+          video.post_id === postId ? { ...video, ...updates } : video
+        ),
+      };
+    });
+  };
+
   return (
     <div className="myday_container" ref={videoContainerRef}>
       <Swiper
@@ -334,6 +359,9 @@ const DetailStory = ({ id }: { id: string }) => {
                         container={videoContainerRef.current}
                         status={true}
                         countNumber={countNumber}
+                        updateDecryptedVideo={(updates: any) =>
+                          updateDecryptedVideo(user.id, video.post_id, updates)
+                        }
                         video={video}
                         setCountNumber={(val: number) =>
                           setUserState(setCountNumberMap, user.id, val)

@@ -14,6 +14,7 @@ import { decryptImage } from "@/utils/imageDecrypt";
 import loader from "../vod_loader.gif";
 import LoadingBar from "./detail/LoadingBar";
 import DetailContainer from "./detail/DetailContainer";
+import DetailOneContainer from "./detail/DetailOneContainer";
 
 const Detail = () => {
   const { id } = useParams();
@@ -384,14 +385,15 @@ const Detail = () => {
               />
             </a>
           ) : (
-            <DetailContainer
+            <DetailOneContainer
               isInteractingWithProgressBar={isInteractingWithProgressBar}
               setIsDecrypting={setIsDecrypting}
               // refetch={refetch}
               length={videos.length}
               currentIndex={currentIndex}
               setCurrentIndex={setCurrentIndex}
-              videoData={videoData}
+              setVideos={setVideos}
+              videoData={videos}
               indexRef={indexRef}
               abortControllerRef={abortControllerRef}
               container={videoContainerRef.current}

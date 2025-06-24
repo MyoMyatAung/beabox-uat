@@ -15,7 +15,7 @@ import DetailNav from "./DetailNav";
 import DetailPlayer from "./DetailPlayer";
 import { set } from "react-hook-form";
 
-const DetailContainer = ({
+const DetailOneContainer = ({
   setisInteractingWithProgressBar,
   length,
   video,
@@ -35,8 +35,9 @@ const DetailContainer = ({
   abortControllerRef,
   indexRef,
   videoData,
+  setVideos,
   setCurrentIndex,
-  updateDecryptedVideo,
+
   currentIndex,
   // refetch,
   setIsDecrypting,
@@ -55,8 +56,7 @@ const DetailContainer = ({
   status: any;
   width: any;
   height: any;
-  updateDecryptedVideo: any;
-
+  setVideos: any;
   container: any;
   swiperRef: any;
   abortControllerRef: any;
@@ -79,7 +79,7 @@ const DetailContainer = ({
   const dispatch = useDispatch();
 
   const currentVideo =
-    videoData?.current.find((v: any) => v.post_id === video?.post_id) || video;
+    videoData?.find((v: any) => v.post_id === video?.post_id) || video;
 
   const post_id = video?.post_id;
   const [rotateVideoId, setRotateVideoId] = useState<string | null>(null); // For controlling fullscreen per video
@@ -116,10 +116,17 @@ const DetailContainer = ({
         setHearts((prev: any) => [...prev, newId]); // Add the new heart
         setLikeCount(+likeCount + 1);
         if (status) {
-          updateDecryptedVideo({
-            like_count: +currentVideo?.like_count + 1,
-            is_liked: true,
-          });
+          setVideos((prevVideos: any) =>
+            prevVideos.map((v: any) =>
+              v.post_id === video.post_id
+                ? {
+                    ...v,
+                    like_count: +v.like_count + 1,
+                    is_liked: true,
+                  }
+                : v
+            )
+          );
 
           // dispatch(
           //   setVideos({
@@ -154,10 +161,17 @@ const DetailContainer = ({
           } catch (error) {
             setLikeCount(+likeCount - 1);
             if (status) {
-              updateDecryptedVideo({
-                like_count: +currentVideo?.like_count - 1,
-                is_liked: false,
-              });
+              setVideos((prevVideos: any) =>
+                prevVideos.map((v: any) =>
+                  v.post_id === video.post_id
+                    ? {
+                        ...v,
+                        like_count: +v.like_count - 1,
+                        is_liked: false,
+                      }
+                    : v
+                )
+              );
               // dispatch(
               //   setVideos({
               //     ...videos,
@@ -212,10 +226,17 @@ const DetailContainer = ({
 
         setLikeCount(+likeCount - 1);
         if (status) {
-          updateDecryptedVideo({
-            like_count: +currentVideo?.like_count - 1,
-            is_liked: false,
-          });
+          setVideos((prevVideos: any) =>
+            prevVideos.map((v: any) =>
+              v.post_id === video.post_id
+                ? {
+                    ...v,
+                    like_count: +v.like_count - 1,
+                    is_liked: false,
+                  }
+                : v
+            )
+          );
           // updateDecryptedVideo(+currentVideo?.like_count - 1, false);
           // dispatch(
           //   setVideos({
@@ -250,10 +271,17 @@ const DetailContainer = ({
           } catch (error) {
             setLikeCount(+likeCount + 1);
             if (status) {
-              updateDecryptedVideo({
-                like_count: +currentVideo?.like_count + 1,
-                is_liked: true,
-              });
+              setVideos((prevVideos: any) =>
+                prevVideos.map((v: any) =>
+                  v.post_id === video.post_id
+                    ? {
+                        ...v,
+                        like_count: +v.like_count + 1,
+                        is_liked: true,
+                      }
+                    : v
+                )
+              );
               // dispatch(
               //   setVideos({
               //     ...videos,
@@ -530,4 +558,4 @@ const DetailContainer = ({
   );
 };
 
-export default DetailContainer;
+export default DetailOneContainer;

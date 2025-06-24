@@ -806,13 +806,13 @@ const DetailPlayer = ({
                 const currentTime = videoElement.currentTime || 0;
 
                 // If we have at least 2 seconds buffered ahead, start playback
-                if (bufferedEnd - currentTime > 2) {
-                  if (playstart && videoElement.paused) {
-                    videoElement
-                      .play()
-                      .catch((e) => console.log("Playback error:", e));
-                  }
-                }
+                // if (bufferedEnd - currentTime > 2) {
+                //   if (playstart && videoElement.paused) {
+                //     videoElement
+                //       .play()
+                //       .catch((e) => console.log("Playback error:", e));
+                //   }
+                // }
               }
             });
 
@@ -838,9 +838,9 @@ const DetailPlayer = ({
 
             videoElement.addEventListener("canplay", function () {
               if (isActive && playstart) {
-                videoElement.play().catch((error) => {
-                  console.warn("Auto-play prevented:", error);
-                });
+                // videoElement.play().catch((error) => {
+                //   console.warn("Auto-play prevented:", error);
+                // });
               }
             });
           }
@@ -1683,70 +1683,70 @@ const DetailPlayer = ({
           mounted: (element: HTMLElement) => {
             playIconRef.current = element as HTMLDivElement;
 
-            playIconRef?.current?.addEventListener("click", () => {
-              if (artPlayerInstanceRef.current) {
-                // Show loading indicator during play attempt
-                const loadingIndicator =
-                  artPlayerInstanceRef.current?.template?.$loading?.querySelector(
-                    ".video-loading-indicator"
-                  ) as HTMLDivElement;
-                if (loadingIndicator) loadingIndicator.style.display = "block";
+            // playIconRef?.current?.addEventListener("click", () => {
+            //   if (artPlayerInstanceRef.current) {
+            //     // Show loading indicator during play attempt
+            //     const loadingIndicator =
+            //       artPlayerInstanceRef.current?.template?.$loading?.querySelector(
+            //         ".video-loading-indicator"
+            //       ) as HTMLDivElement;
+            //     if (loadingIndicator) loadingIndicator.style.display = "block";
 
-                // Hide play button during play attempt
-                // hidePlayButton();
+            //     // Hide play button during play attempt
+            //     // hidePlayButton();
 
-                // Don't fade out poster immediately - wait until play succeeds
-                artPlayerInstanceRef.current
-                  .play()
-                  .then(() => {
-                    // Play succeeded - hide loading indicator and play button
-                    if (loadingIndicator)
-                      loadingIndicator.style.display = "none";
-                    hidePlayButton();
+            //     // Don't fade out poster immediately - wait until play succeeds
+            //     artPlayerInstanceRef.current
+            //       .play()
+            //       .then(() => {
+            //         // Play succeeded - hide loading indicator and play button
+            //         if (loadingIndicator)
+            //           loadingIndicator.style.display = "none";
+            //         hidePlayButton();
 
-                    // Only fade out poster when we have actual frames
-                    if (
-                      artPlayerInstanceRef.current?.video &&
-                      artPlayerInstanceRef.current.video.readyState >= 3
-                    ) {
-                      setTimeout(() => safeFadePosterOut(true), 100);
-                    } else if (artPlayerInstanceRef.current?.video) {
-                      // If video isn't ready yet, wait for it
-                      const checkReadyState = () => {
-                        if (
-                          artPlayerInstanceRef.current?.video &&
-                          artPlayerInstanceRef.current.video.readyState >= 3
-                        ) {
-                          safeFadePosterOut(true);
-                          artPlayerInstanceRef.current.video.removeEventListener(
-                            "canplay",
-                            checkReadyState
-                          );
-                        }
-                      };
-                      if (artPlayerInstanceRef.current) {
-                        artPlayerInstanceRef.current.video.addEventListener(
-                          "canplay",
-                          checkReadyState
-                        );
-                      }
-                    }
-                  })
-                  .catch((error) => {
-                    console.error("Manual play failed:", error);
+            //         // Only fade out poster when we have actual frames
+            //         if (
+            //           artPlayerInstanceRef.current?.video &&
+            //           artPlayerInstanceRef.current.video.readyState >= 3
+            //         ) {
+            //           setTimeout(() => safeFadePosterOut(true), 100);
+            //         } else if (artPlayerInstanceRef.current?.video) {
+            //           // If video isn't ready yet, wait for it
+            //           const checkReadyState = () => {
+            //             if (
+            //               artPlayerInstanceRef.current?.video &&
+            //               artPlayerInstanceRef.current.video.readyState >= 3
+            //             ) {
+            //               safeFadePosterOut(true);
+            //               artPlayerInstanceRef.current.video.removeEventListener(
+            //                 "canplay",
+            //                 checkReadyState
+            //               );
+            //             }
+            //           };
+            //           if (artPlayerInstanceRef.current) {
+            //             artPlayerInstanceRef.current.video.addEventListener(
+            //               "canplay",
+            //               checkReadyState
+            //             );
+            //           }
+            //         }
+            //       })
+            //       .catch((error) => {
+            //         console.error("Manual play failed:", error);
 
-                    // Play failed - hide loading indicator and show play button again
-                    if (loadingIndicator)
-                      loadingIndicator.style.display = "none";
-                    if (playIconRef.current) {
-                      playIconRef.current.style.display = "block";
-                    }
+            //         // Play failed - hide loading indicator and show play button again
+            //         if (loadingIndicator)
+            //           loadingIndicator.style.display = "none";
+            //         if (playIconRef.current) {
+            //           playIconRef.current.style.display = "block";
+            //         }
 
-                    // Keep poster visible on error
-                    showPoster();
-                  });
-              }
-            });
+            //         // Keep poster visible on error
+            //         showPoster();
+            //       });
+            //   }
+            // });
           },
         },
       ],
