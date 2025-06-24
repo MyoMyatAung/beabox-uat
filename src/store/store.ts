@@ -40,6 +40,7 @@ import { spinWheelApi } from "../page/luckywheel/services/spinWheelApi";
 import showSlice from "@/page/home/services/showSlice";
 import watchSlice from "@/page/home/services/watchSlice";
 import indexSlice from "@/page/home/services/indexSlice";
+import previousUserReducer from "@/page/home/services/previousUserSlice";
 
 const sessionStorageWrapper: Storage = {
   getItem: (key: string) => {
@@ -86,6 +87,8 @@ const rootReducer = combineReducers({
   watchSlice: watchSlice,
   history: HistorySlice,
   startSlice: startSlice,
+  previousUser: previousUserReducer,
+
   hideBarSlice: hideBarSlice,
   follow: followSlice,
   home: persistReducer(persistHomeSliceConfig, homeSlice), // Apply sessionStorage for homeSlice

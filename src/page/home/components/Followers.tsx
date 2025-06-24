@@ -79,7 +79,7 @@ const Followers = ({ followers }: any) => {
           <div className="relative w-[77px] h-[77px]">
             {/* Border element with breathing effect */}
             <div
-              className={`absolute inset-0 rounded-full p-[2px] breathing-border`}
+              className={`absolute inset-0 rounded-full p-[0px] breathing-border`}
               style={{
                 background: !follower?.my_day.watched
                   ? "linear-gradient(#16131C 0 0) padding-box, " +
@@ -87,7 +87,7 @@ const Followers = ({ followers }: any) => {
                   : "linear-gradient(#16131C 0 0) padding-box, " +
                     "rgba(255, 255, 255, 0.40) border-box",
                 border: "4px solid transparent",
-                padding: "3px",
+                padding: "0px",
               }}
             />
             {/* Static image */}
@@ -97,7 +97,7 @@ const Followers = ({ followers }: any) => {
               alt={follower.name}
               className="absolute inset-0 w-full h-full rounded-full object-cover"
               style={{
-                transform: "scale(0.9)", // Adjust this value to control image size within border
+                transform: "scale(0.85)", // Adjust this value to control image size within border
               }}
             />
           </div>

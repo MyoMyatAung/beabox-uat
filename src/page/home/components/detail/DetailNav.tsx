@@ -18,6 +18,8 @@ const DetailNav = ({
   setIsDecrypting,
 }: any) => {
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
+  const { hideBar } = useSelector((state: any) => state.hideBarSlice);
+
   const [showDelete, setShowDelete] = useState(false);
   const user = useSelector((state: any) => state.persist.user);
   const [deletePost] = useDeletePostMutation();
@@ -65,7 +67,12 @@ const DetailNav = ({
   };
 
   return (
-    <div className="z-[999999] videoNavbar">
+    <div
+      className="z-[999999] videoNavbar"
+      style={{
+        display: hideBar ? "none" : "block",
+      }}
+    >
       <div className="w-full flex gap-1 mb-4">
         {Array.from({ length }).map((_, index) => (
           <div

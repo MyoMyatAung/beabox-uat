@@ -1,5 +1,6 @@
 import { useEffect, memo, useRef, useState } from "react";
 import {
+  homeApi,
   useGetConfigQuery,
   useGetFollowedPostsQuery,
   useGetMydayQuery,
@@ -45,6 +46,7 @@ import follow_title from "../../assets/follow_title.webp";
 import follow_img from "../../assets/follow_img.webp";
 import follower_login from "../../assets/follower_login.webp";
 import { combineSlices } from "@reduxjs/toolkit";
+import { setPreviousUser } from "./services/previousUserSlice";
 
 const Home = () => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
@@ -131,6 +133,40 @@ const Home = () => {
     (currentTab === 2 && isForYouFetching);
 
   const isError = ForyouError || followError;
+
+  const user = useSelector((state: any) => state?.persist?.user);
+  const previousUser = useSelector((state: any) => state.previousUser.data);
+  const { data: myday, refetch: refetchMyday } = useGetMydayQuery({ page: 1 });
+
+  // Get both the query hooks and their refetch functions
+
+  // Handle user changes
+  useEffect(() => {
+    if (JSON.stringify(user) !== JSON.stringify(previousUser)) {
+      // Reset all video related states
+      dispatch(setPage(1));
+      dispatch(setCurrentActivePost(null));
+      dispatch(setVideos({ follow: [], foryou: [] }));
+      dispatch(setStart(false));
+      setFollowers([]);
+
+      dispatch(homeApi.util.invalidateTags(["foryou", "follow"])); // Replace with your actual tags
+
+      // Always refetch myday since it's not tab-dependent
+      refetchMyday();
+
+      // Update previous user in Redux
+      dispatch(setPreviousUser(user));
+    }
+  }, [
+    user,
+    previousUser,
+    dispatch,
+    currentTab,
+    followRefetch,
+    forYouRefetch,
+    refetchMyday,
+  ]);
 
   // Add at the top of your Home component
   const decryptionCache = useRef(new Map<string, string>());
@@ -466,7 +502,7 @@ const Home = () => {
 
   const [followers, setFollowers] = useState<any[]>([]);
   const [showFollowers, setShowFollowers] = useState(false);
-  const { data: myday } = useGetMydayQuery({ page: 1 });
+
   const [scrollDirection, setScrollDirection] = useState<"up" | "down" | null>(
     null
   );

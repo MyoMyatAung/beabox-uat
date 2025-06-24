@@ -316,7 +316,7 @@ function VideoSidebar({
                             "linear-gradient(90deg, #e8b9ff 0%, #ff94b4 82.89%) border-box"
                           : "linear-gradient(#16131C 0 0) padding-box, " +
                             "rgba(255, 255, 255, 0.40) border-box",
-                        border: "2px solid transparent",
+                        border: "3px solid transparent",
                         padding: "3px",
                       }}
                     >
