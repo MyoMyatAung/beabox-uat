@@ -41,8 +41,8 @@ import Loader from "@/components/shared/loader";
 import { Link } from "react-router-dom";
 import Followers from "./components/Followers";
 import DetailStory from "./components/DetailStory";
-import follow_title from "../../assets/follow_title.png";
-import follow_img from "../../assets/follow_img.png";
+import follow_title from "../../assets/follow_title.webp";
+import follow_img from "../../assets/follow_img.webp";
 import follower_login from "../../assets/follower_login.webp";
 import { combineSlices } from "@reduxjs/toolkit";
 
