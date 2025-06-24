@@ -56,6 +56,8 @@ const Home = () => {
 
   const { videos } = useSelector((state: any) => state.videoSlice);
   const { start } = useSelector((state: any) => state.startSlice);
+  const { hideBar } = useSelector((state: any) => state.hideBarSlice);
+
   // const { videosToRender } = useSelector(
   //   (state: any) => state.videoRenderSlice
   // );
@@ -640,7 +642,7 @@ const Home = () => {
                   </div>
                 ) : !isError ? (
                   <>
-                    {followers.length > 0 && (
+                    {followers.length > 0 && !hideBar && (
                       <>
                         {showFollowers && (
                           <div className="absolute top-0 left-0 right-0">
