@@ -70,7 +70,7 @@ interface Follower {
 const Followers = ({ followers }: any) => {
   const dispatch = useDispatch();
   return (
-    <div className="gap-4 overflow-x-auto hide-sb mt-20 w-full px-5 mb-3">
+    <div className="flex gap-4 overflow-x-auto hide-sb mt-20 w-full px-5 mb-3">
       {followers.map((follower: Follower) => (
         <div
           key={follower.id}
