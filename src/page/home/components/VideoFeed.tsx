@@ -392,7 +392,11 @@ const VideoFeed = ({
           >
             <div
               className="fixed top-3 left-0  flex gap-2 items-center w-full z-[9999]"
-              style={{ display: hideBar ? "none" : "flex" }}
+              style={{
+                opacity: hideBar ? 0 : 1,
+                transition: "opacity 0.3s ease-in-out",
+                pointerEvents: hideBar ? "none" : "auto",
+              }}
             >
               <button className="p-3" onClick={handleBack}>
                 <svg
@@ -516,7 +520,11 @@ const VideoFeed = ({
             )} */}
                 <div
                   className="absolute bottom-0 add_comment w-full  py-3 z-[999]"
-                  style={{ display: hideBar ? "none" : "block" }}
+                  style={{
+                    opacity: hideBar ? 0 : 1,
+                    transition: "opacity 0.3s ease-in-out",
+                    pointerEvents: hideBar ? "none" : "auto",
+                  }}
                 >
                   <div className="flex items-center feed_add_comment gap-2 px-4">
                     <input

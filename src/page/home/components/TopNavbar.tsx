@@ -26,7 +26,11 @@ const TopNavbar = ({
 
   return (
     <div
-      style={{ display: hideBar ? "none" : "flex" }}
+      style={{
+        opacity: hideBar ? 0 : 1,
+        transition: "opacity 0.3s ease-in-out",
+        pointerEvents: hideBar ? "none" : "auto",
+      }}
       className=" absolute top-5 left-0 px-5 right-0 flex justify-between items-center z-[9999] max-w-[480px] mx-auto"
     >
       <div

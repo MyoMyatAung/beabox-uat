@@ -214,6 +214,7 @@ const DetailPlayer = ({
       // Create object URL
       const url = URL.createObjectURL(blob);
       spriteImageUrlRef.current = url;
+      console.log("Sprite image loaded:", url);
     } catch (error) {
       console.error("Error loading sprite:", error);
     } finally {

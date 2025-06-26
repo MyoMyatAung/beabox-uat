@@ -70,7 +70,9 @@ const DetailNav = ({
     <div
       className="z-[999999] videoNavbar"
       style={{
-        display: hideBar ? "none" : "block",
+        opacity: hideBar ? 0 : 1,
+        transition: "opacity 0.3s ease-in-out",
+        pointerEvents: hideBar ? "none" : "auto",
       }}
     >
       <div className="w-full flex gap-1 mb-4">

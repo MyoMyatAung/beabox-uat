@@ -282,7 +282,11 @@ function VideoSidebarFeed({
     >
       <div
         className="videoSidebar__button "
-        style={{ display: hideBar ? "none" : "block" }}
+        style={{
+          opacity: hideBar ? 0 : 1,
+          transition: "opacity 0.3s ease-in-out",
+          pointerEvents: hideBar ? "none" : "auto",
+        }}
       >
         <div className="flex flex-col items-center relative mb-2">
           <button onClick={() => handleProfile(post?.user?.id)}>
@@ -437,7 +441,11 @@ function VideoSidebarFeed({
 
       <div
         className="videoSidebar__button "
-        style={{ display: hideBar ? "none" : "block" }}
+        style={{
+          opacity: hideBar ? 0 : 1,
+          transition: "opacity 0.3s ease-in-out",
+          pointerEvents: hideBar ? "none" : "auto",
+        }}
       >
         {isLiked ? (
           <button onClick={unLike}>
@@ -475,7 +483,11 @@ function VideoSidebarFeed({
 
       <div
         className="videoSidebar__button "
-        style={{ display: hideBar ? "none" : "block" }}
+        style={{
+          opacity: hideBar ? 0 : 1,
+          transition: "opacity 0.3s ease-in-out",
+          pointerEvents: hideBar ? "none" : "auto",
+        }}
       >
         <button onClick={handleCommentList}>
           <svg
@@ -497,7 +509,11 @@ function VideoSidebarFeed({
       </div>
       <div
         className="videoSidebar__button "
-        style={{ display: hideBar ? "none" : "block" }}
+        style={{
+          opacity: hideBar ? 0 : 1,
+          transition: "opacity 0.3s ease-in-out",
+          pointerEvents: hideBar ? "none" : "auto",
+        }}
       >
         <button onClick={handleShareClick}>
           <svg
@@ -518,7 +534,11 @@ function VideoSidebarFeed({
       </div>
       <div
         className="videoSidebar__button "
-        style={{ display: hideBar ? "none" : "block" }}
+        style={{
+          opacity: hideBar ? 0 : 1,
+          transition: "opacity 0.3s ease-in-out",
+          pointerEvents: hideBar ? "none" : "auto",
+        }}
       >
         <button onClick={handleVoice}>
           {mute ? (
@@ -632,7 +652,13 @@ function VideoSidebarFeed({
         </button>
       </div>
 
-      <div style={{ display: hideBar ? "none" : "block" }}>
+      <div
+        style={{
+          opacity: hideBar ? 0 : 1,
+          transition: "opacity 0.3s ease-in-out",
+          pointerEvents: hideBar ? "none" : "auto",
+        }}
+      >
         <ShareOverlay
           alertVisible={alertVisible}
           setAlertVisible={setAlertVisible}

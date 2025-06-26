@@ -183,7 +183,11 @@ function FeedFooter({
   return (
     <div
       className="videoFooter1 w-full"
-      style={{ display: hideBar ? "none" : "block" }}
+      style={{
+        opacity: hideBar ? 0 : 1,
+        transition: "opacity 0.3s ease-in-out",
+        pointerEvents: hideBar ? "none" : "auto",
+      }}
     >
       <div className="w-full">
         <div className="flex items-center gap-3 mb-2">

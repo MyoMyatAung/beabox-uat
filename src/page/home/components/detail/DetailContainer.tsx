@@ -426,18 +426,17 @@ const DetailContainer = ({
 
   return (
     <>
-      {!hideBar && (
-        <DetailNav
-          setIsDecrypting={setIsDecrypting}
-          // refetch={refetch}
-          post_id={video?.post_id}
-          id={video?.user?.id}
-          image={video?.user?.avatar}
-          name={video?.user?.name}
-          length={length}
-          currentIndex={currentIndex}
-        />
-      )}
+      <DetailNav
+        setIsDecrypting={setIsDecrypting}
+        // refetch={refetch}
+        post_id={video?.post_id}
+        id={video?.user?.id}
+        image={video?.user?.avatar}
+        name={video?.user?.name}
+        length={length}
+        currentIndex={currentIndex}
+      />
+
       <DetailPlayer
         swiperRef={swiperRef}
         setisInteractingWithProgressBar={setisInteractingWithProgressBar}
