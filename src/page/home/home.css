@@ -250,14 +250,14 @@ html {
 
 .videoSidebar {
   position: absolute;
-  bottom: 50px;
+  bottom: 30px;
   right: 10px;
   color: white;
 }
 
 .videoSidebar_exp {
   position: absolute;
-  bottom: 115px;
+  bottom: 100px;
   right: 10px;
   color: white;
 }

@@ -1,9 +1,12 @@
 import { useNavigate } from "react-router-dom";
+import { setShow } from "../../services/showSlice";
+import { useDispatch } from "react-redux";
 
 const LoadingBar = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   return (
-    <div className="z-[999] videoNavbar left-0">
+    <div className="z-[9999999] videoNavbar left-0">
       <div className="w-full flex gap-1 mb-4">
         <div
           className={`h-1 flex-1 rounded-full bg-gray-500 bg-opacity-40
@@ -36,7 +39,19 @@ const LoadingBar = () => {
             </linearGradient>
           </defs>
         </svg>
-        <button className="detail_cross_btn" onClick={() => navigate(-1)}>
+        <button
+          className="detail_cross_btn"
+          onClick={() => {
+            if (location.pathname.includes("/story_detail")) {
+              // If the current path is a detail page, navigate back to the home page
+              navigate(-1);
+            } else {
+              dispatch(setShow(""));
+              console.log("Cross button clicked");
+              // If the current path is not a detail page, navigate back to the previous page
+            }
+          }}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"

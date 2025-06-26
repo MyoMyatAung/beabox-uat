@@ -307,9 +307,9 @@ const DetailStory = ({ id }: { id: string }) => {
           return (
             <SwiperSlide key={user.id}>
               {isDecrypting ? (
-                <div className="flex justify-center items-center h-[100dvh]">
+                <div className="flex justify-center items-center h-[100dvh] ">
                   <div style={{ textAlign: "center", padding: "20px" }}>
-                    <div>
+                    <div className="z-[9999999]">
                       <LoadingBar />
                     </div>
                     <div className="heart">

@@ -351,14 +351,14 @@ const Detail = () => {
       // className={`myday_container ${isTransitioning ? "transitioning" : ""}`}
     >
       {isDecrypting && (
-        <div className="app bg-[#16131C]">
+        <div className="app bg-[#16131C] ">
           <div
             style={{
               textAlign: "center",
               padding: "20px",
             }}
           >
-            <div>
+            <div className="z-[9999999]">
               <LoadingBar />
             </div>
             <div className="heart">

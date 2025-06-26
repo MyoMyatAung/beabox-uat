@@ -131,7 +131,7 @@ const DetailNav = ({
                 navigate(-1);
               } else {
                 dispatch(setShow(""));
-                console.log("Cross button clicked");
+
                 // If the current path is not a detail page, navigate back to the previous page
               }
             }}

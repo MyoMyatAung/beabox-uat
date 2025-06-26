@@ -18,6 +18,8 @@ import LoginDrawer from "@/components/profile/auth/login-drawer";
 import { decryptImage } from "@/utils/imageDecrypt";
 import { setVideosToRender } from "../services/videoRenderSlice";
 import { setDetails } from "@/store/slices/exploreSlice";
+import { sethideBar } from "../services/hideBarSlice";
+import { set } from "react-hook-form";
 
 function VideoSidebar({
   messages,
@@ -267,9 +269,11 @@ function VideoSidebar({
         isHome ? "videoSidebar" : "videoSidebar_exp"
       } z-[999] w-[50px]
 `}
-      style={{ display: hideBar ? "none" : "block" }}
     >
-      <div className="videoSidebar__button ">
+      <div
+        className="videoSidebar__button "
+        style={{ display: hideBar ? "none" : "block" }}
+      >
         <div className="flex flex-col items-center relative mb-2">
           <button onClick={() => handleProfile(post?.user?.id)}>
             {post?.type === "ads" ? (
@@ -421,7 +425,10 @@ function VideoSidebar({
         </div>
       </div>
 
-      <div className="videoSidebar__button ">
+      <div
+        className="videoSidebar__button "
+        style={{ display: hideBar ? "none" : "block" }}
+      >
         {isLiked ? (
           <button onClick={unLike}>
             <svg
@@ -456,7 +463,10 @@ function VideoSidebar({
         <p className="side_text font-cnFont mt-2">{likeCount}</p>
       </div>
 
-      <div className="videoSidebar__button ">
+      <div
+        className="videoSidebar__button "
+        style={{ display: hideBar ? "none" : "block" }}
+      >
         <button onClick={handleCommentList}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -475,7 +485,10 @@ function VideoSidebar({
         </button>
         <p className="side_text font-cnFont mt-2">{messages}</p>
       </div>
-      <div className="videoSidebar__button ">
+      <div
+        className="videoSidebar__button "
+        style={{ display: hideBar ? "none" : "block" }}
+      >
         <button onClick={handleShareClick}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -493,7 +506,10 @@ function VideoSidebar({
           <p className="side_text font-cnFont mt-2">分享</p>
         </button>
       </div>
-      <div className="videoSidebar__button ">
+      <div
+        className="videoSidebar__button "
+        style={{ display: hideBar ? "none" : "block" }}
+      >
         <button onClick={handleVoice}>
           {mute ? (
             <div className="flex flex-col items-center">
@@ -545,28 +561,91 @@ function VideoSidebar({
         </button>
       </div>
 
-      <ShareOverlay
-        alertVisible={alertVisible}
-        setAlertVisible={setAlertVisible}
-        config={config}
-        post={post}
-        status={status}
-      />
+      <div className="videoSidebar__button ">
+        <button onClick={() => dispatch(sethideBar(!hideBar))}>
+          {hideBar ? (
+            <div className="flex flex-col items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="25"
+                height="24"
+                viewBox="0 0 25 24"
+                fill="none"
+              >
+                <path
+                  d="M24.5 24H15.042V21.3525H21.8525V14.542H24.5V24Z"
+                  fill="white"
+                />
+                <path
+                  d="M9.1582 23.2217H6.51074V19.7793L2.40625 23.8838L0.552734 22.0303L4.65723 17.9258H1.21484V15.2783H9.1582V23.2217Z"
+                  fill="white"
+                />
+                <path
+                  d="M9.95801 2.64746H3.14746V9.45801H0.5V0H9.95801V2.64746Z"
+                  fill="white"
+                />
+                <path
+                  d="M24.3838 1.90625L20.2793 6.01074H23.7217V8.65918H15.7783V0.714844H18.4258V4.15723L22.5303 0.0527344L24.3838 1.90625Z"
+                  fill="white"
+                />
+              </svg>
+              <p className="side_text font-cnFont mt-2">退出全屏</p>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="25"
+                height="25"
+                viewBox="0 0 25 25"
+                fill="none"
+              >
+                <path
+                  d="M24.5 24.8066H15.0419V22.159H21.8523V15.3486H24.5V24.8066Z"
+                  fill="white"
+                />
+                <path
+                  d="M9.15849 17.9382L5.05415 22.0423H8.49644V24.6902H0.552874V16.7467H3.20081V20.1889L7.30491 16.0846L9.15849 17.9382Z"
+                  fill="white"
+                />
+                <path
+                  d="M9.95806 3.45433H3.14769V10.2647H0.5V0.806641H9.95806V3.45433Z"
+                  fill="white"
+                />
+                <path
+                  d="M24.3836 8.80308H21.7356V5.36079L17.6315 9.46513L15.778 7.61155L19.8823 3.50745H16.44V0.859515H24.3836V8.80308Z"
+                  fill="white"
+                />
+              </svg>
+              <p className="side_text font-cnFont mt-2">全屏</p>
+            </div>
+          )}
+        </button>
+      </div>
+      <div style={{ display: hideBar ? "none" : "block" }}>
+        <ShareOverlay
+          alertVisible={alertVisible}
+          setAlertVisible={setAlertVisible}
+          config={config}
+          post={post}
+          status={status}
+        />
 
-      <CommentOverlay
-        setCommentCount={setCommentCount}
-        post_id={post_id}
-        commentsVisible={commentsVisible}
-        comments={comments}
-        closeCommentList={closeCommentList}
-        isLoading={isLoading}
-        refetchComments={refetchComments}
-        setComments={setComments}
-        page={page}
-        setPage={setPage}
-        getComments={getComments}
-        comment_count={post?.comment_count}
-      />
+        <CommentOverlay
+          setCommentCount={setCommentCount}
+          post_id={post_id}
+          commentsVisible={commentsVisible}
+          comments={comments}
+          closeCommentList={closeCommentList}
+          isLoading={isLoading}
+          refetchComments={refetchComments}
+          setComments={setComments}
+          page={page}
+          setPage={setPage}
+          getComments={getComments}
+          comment_count={post?.comment_count}
+        />
+      </div>
     </div>
   );
 }
