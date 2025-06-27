@@ -1,3 +1,4 @@
+import { sethideBar } from "@/page/home/services/hideBarSlice";
 import { useGetExploreHeaderQuery } from "@/store/api/explore/exploreApi";
 import { setExpHeader } from "@/store/slices/exploreSlice";
 import React, { useEffect, useRef, useState } from "react";
@@ -8,53 +9,72 @@ interface HeaderProps {
   setActiveTab: (tab: string) => void;
 }
 
-const test = [
-  { id: "1", name: "aa" },
-  { id: "2", name: "bb" },
-  { id: "3", name: "dd" },
-  { id: "4", name: "ww" },
-  { id: "5", name: "cc" },
-  { id: "6", name: "zz" },
-  { id: "7", name: "bb" },
-  { id: "8", name: "mm" },
-  { id: "9", name: "rr" },
-  { id: "10", name: "tt" },
-  { id: "11", name: "uu" },
-  { id: "12", name: "oo" },
-];
-
 const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
   const { exp_header } = useSelector((state: any) => state.explore);
+  const dispatch = useDispatch();
+
+  const [showHeader, setShowHeader] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  const dispatch = useDispatch();
-  const [hd, sethd] = useState<any[]>([]);
   const { data, isLoading } = useGetExploreHeaderQuery("");
+  const [hd, sethd] = useState<any[]>([]);
+
+  // Set tabs
   useEffect(() => {
-    if (data?.data) {
-      const cur = data?.data?.tabs;
-      sethd(cur);
-      if (hd.length > 0) {
-        dispatch(setExpHeader(hd[0]?.name));
-      }
+    if (data?.data?.tabs) {
+      sethd(data.data.tabs);
     }
-  }, [data, hd]);
-  // console.log(hd);
+  }, [data]);
+
+  // Set default tab after tabs are ready
+  useEffect(() => {
+    if (hd.length > 0) {
+      dispatch(setExpHeader(hd[0]?.name));
+    }
+  }, [hd]);
+
+  // Scroll listener
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+
+      if (currentY <= 500) {
+        setShowHeader(true);
+        dispatch(sethideBar(false));
+      } else {
+        if (currentY > lastScrollY) {
+          // scrolling down
+          setShowHeader(false);
+          dispatch(sethideBar(true));
+        } else if (currentY < lastScrollY) {
+          // scrolling up
+          setShowHeader(true);
+          dispatch(sethideBar(false));
+        }
+      }
+
+      setLastScrollY(currentY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   const handleTabsClick = (tab: any, index: number) => {
     if (exp_header === tab.name) {
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
-    dispatch(setExpHeader(tab?.name));
+
+    dispatch(setExpHeader(tab.name));
 
     if (tabRefs.current[index] && scrollContainerRef.current) {
       const tabElement = tabRefs.current[index];
       const container = scrollContainerRef.current;
 
-      // Calculate the center position
       const containerWidth = container.offsetWidth;
       const tabLeft = tabElement.offsetLeft;
       const tabWidth = tabElement.offsetWidth;
@@ -65,15 +85,25 @@ const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
   };
 
   return (
-    <div className="bg-[#16131C] z-[99] py-[5px] sticky top-0 w-screen px-[10px] overscroll-auto">
+    <div
+      className={`
+        bg-[#16131C] sticky top-[60px] z-[99] w-full py-[15px] px-[10px]
+        transition-transform duration-300 ease-in-out will-change-transform
+        ${
+          showHeader
+            ? "translate-y-0 opacity-100"
+            : "-translate-y-full opacity-0"
+        }
+      `}
+    >
       {isLoading ? (
-        <div className=" w-2/3 px-2 bg-white/20 rounded-md h-[50px] animate-pulse"></div>
+        <div className="w-2/3 px-2 bg-white/20 rounded-md h-[50px] animate-pulse"></div>
       ) : (
         <div
           ref={scrollContainerRef}
-          className="flex px-2 gap-[16px] pr-[25px] scrollbar w-screen overflow-x-auto whitespace-nowrap"
+          className="flex px-2 gap-[16px] pr-[25px] scrollbar overflow-x-auto whitespace-nowrap"
         >
-          {hd?.map((tab: any, index) => (
+          {hd.map((tab: any, index) => (
             <div
               key={index}
               ref={(el) => (tabRefs.current[index] = el)}
@@ -83,10 +113,8 @@ const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
                 className={`cursor-pointer transition duration-300 text-[18px] ${
                   exp_header !== tab.name
                     ? "text-white/60 font-[500] leading-[20px]"
-                    : " font-[700] leading-[20px] text-white"
+                    : "font-[700] leading-[20px] text-white"
                 }`}
-                // onClick={() => setActiveTab(tab?.title)}
-                // onClick={() => dispatch(setExpHeader(tab?.name))}
                 onClick={() => handleTabsClick(tab, index)}
               >
                 {tab.name}

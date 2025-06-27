@@ -25,6 +25,8 @@ const TopNavbar = ({
     { text: "推荐", id: 2 },
   ];
 
+  console.log("current =>", currentTab);
+
   return (
     <AnimatePresence>
       {!hideBar && (

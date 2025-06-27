@@ -932,3 +932,8 @@ user_feed_ques_tags_btn {
   background: rgba(0, 0, 0, 0.15) !important;
   border-radius: 16px;
 }
+
+.new_logout_button {
+  border-radius: 20px;
+  background: #323038;
+}

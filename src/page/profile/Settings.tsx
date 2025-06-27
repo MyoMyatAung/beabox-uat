@@ -15,6 +15,9 @@ import ContentVisibility from "@/components/profile/content-visibility";
 import { useEffect, useState } from "react";
 import backButton from "../../assets/backButton.svg";
 import Loader from "@/components/shared/loader";
+import OtherAds from "@/components/profile/other-ads";
+import Poppizza from "../explore/comp/PopApp";
+import logoutIcon from '../../assets/logout.svg'
 
 const Settings = ({
   liked_video_visibility,
@@ -151,6 +154,9 @@ const Settings = ({
           <></>
         )}
 
+        {/* <OtherAds /> */}
+        {/* <Poppizza /> */}
+
         <div className="flex justify-between items-center">
           <p className="flex items-center gap-1 text-[14px]">当前版本</p>
           <p className="flex items-center gap-1 text-[14px]">
@@ -171,16 +177,16 @@ const Settings = ({
       <div className="w-full fixed bottom-0 px-5">
         {user?.token ? (
           <div className="bot w-full py-5">
-            <Button
+            <button
               onClick={async () => {
                 dispatch(logOutUser());
                 await logout("");
                 navigate(paths.profile);
               }}
-              className="w-full rounded-xl bg-[#1C1A22] hover:bg-[#1C1A22]"
+              className="w-full flex justify-center items-center gap-[6px] new_logout_button py-[15px]"
             >
-              退出
-            </Button>
+            <img src={logoutIcon} alt="" />   退出
+            </button>
           </div>
         ) : (
           <></>
