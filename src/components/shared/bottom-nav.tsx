@@ -113,9 +113,11 @@ export function BottomNav() {
       }
       
          ${
-           showHeader
-             ? "-translate-y-0 opacity-100"
-             : "translate-y-full opacity-0"
+           location.pathname === "/"
+             ? showHeader
+               ? "-translate-y-0 opacity-100"
+               : "translate-y-full opacity-0"
+             : ""
          }
       `}
     >
