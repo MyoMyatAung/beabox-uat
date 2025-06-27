@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import header from "../assets/explore/Header.png";
+// import header from "https://zm-cloud.oss-cn-beijing.aliyuncs.com/aisou/61a27f94f64bbd267317.png";
 import { useGetAdsNoticeQuery } from "@/store/api/explore/exploreApi";
 import "../page/explore/explore.css";
 import Notice from "./Notice";
@@ -162,7 +162,7 @@ const PopUp: React.FC<PopUpProps> = ({
       {/* apps */}
       {!showStart && showAppContent && (
         <div className="w-[330px] mb-20 flex flex-col gap-0 justify-center items-center">
-          <img src={header} alt="" />
+          <img src="https://zm-cloud.oss-cn-beijing.aliyuncs.com/aisou/61a27f94f64bbd267317.png" alt="" />
           <div className="initial_popup_ad_box w-full h-[325px] overflow-hidden p-2">
             <div className="h-full overflow-y-auto scrollbar-hide">
               <div className="grid grid-cols-4 gap-2">
