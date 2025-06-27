@@ -52,6 +52,8 @@ const VideoFeed = ({
   const { data: config } = useGetConfigQuery({});
   const user = useSelector((state: any) => state.persist.user);
   const { hideBar } = useSelector((state: any) => state.hideBarSlice);
+  const { hideNew } = useSelector((state: any) => state.hideNewSlice);
+
   // const profile = useSelector((state: any) => state.persist.profileData);
   // const { data: user1, refetch: refetchUser } = useGetMyOwnProfileQuery({});
 
@@ -392,7 +394,7 @@ const VideoFeed = ({
             style={{ pointerEvents: isOpen ? "none" : "auto" }}
           >
             <AnimatePresence>
-              {!hideBar && (
+              {!hideBar && !hideNew && (
                 <motion.div
                   className="fixed top-3 left-0  flex gap-2 items-center w-full z-[9999]"
                   initial={{ y: "-100%", opacity: 0 }} // Starts above (negative Y)
@@ -506,7 +508,7 @@ const VideoFeed = ({
               </div>
             )} */}
                 <AnimatePresence>
-                  {!hideBar && (
+                  {!hideBar && !hideNew && (
                     <motion.div
                       className="  add_comment w-full  py-3 z-[999] fixed bottom-0 left-0"
                       initial={{ y: "100%", opacity: 0 }}

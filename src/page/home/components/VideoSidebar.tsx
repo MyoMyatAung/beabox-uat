@@ -20,6 +20,7 @@ import { setVideosToRender } from "../services/videoRenderSlice";
 import { setDetails } from "@/store/slices/exploreSlice";
 import { sethideBar } from "../services/hideBarSlice";
 import { motion } from "framer-motion";
+import { sethideNew } from "../services/hideNewSlice";
 
 function VideoSidebar({
   messages,
@@ -82,6 +83,7 @@ function VideoSidebar({
   const [page, setPage] = useState(1);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
   const { hideBar } = useSelector((state: any) => state.hideBarSlice);
+  const { hideNew } = useSelector((state: any) => state.hideNewSlice);
   const { videosToRender } = useSelector(
     (state: any) => state.videoRenderSlice
   );
@@ -274,8 +276,8 @@ function VideoSidebar({
         className="videoSidebar__button"
         initial={false} // Disable initial animation
         animate={{
-          x: hideBar ? 50 : 0, // Slide right when hidden
-          opacity: hideBar ? 0 : 1,
+          x: hideNew || hideBar ? 50 : 0, // Slide right when hidden
+          opacity: hideNew || hideBar ? 0 : 1,
         }}
         transition={{
           type: "spring",
@@ -284,7 +286,7 @@ function VideoSidebar({
           opacity: { duration: 0.2 },
         }}
         style={{
-          pointerEvents: hideBar ? "none" : "auto",
+          pointerEvents: hideNew || hideBar ? "none" : "auto",
         }}
       >
         <div className="flex flex-col items-center relative mb-2">
@@ -441,8 +443,8 @@ function VideoSidebar({
         className="videoSidebar__button"
         initial={false} // Disable initial animation
         animate={{
-          x: hideBar ? 50 : 0, // Slide right when hidden
-          opacity: hideBar ? 0 : 1,
+          x: hideNew || hideBar ? 50 : 0, // Slide right when hidden
+          opacity: hideNew || hideBar ? 0 : 1,
         }}
         transition={{
           type: "spring",
@@ -451,7 +453,7 @@ function VideoSidebar({
           opacity: { duration: 0.2 },
         }}
         style={{
-          pointerEvents: hideBar ? "none" : "auto",
+          pointerEvents: hideNew || hideBar ? "none" : "auto",
         }}
       >
         {isLiked ? (
@@ -491,8 +493,8 @@ function VideoSidebar({
         className="videoSidebar__button"
         initial={false} // Disable initial animation
         animate={{
-          x: hideBar ? 50 : 0, // Slide right when hidden
-          opacity: hideBar ? 0 : 1,
+          x: hideNew || hideBar ? 50 : 0, // Slide right when hidden
+          opacity: hideNew || hideBar ? 0 : 1,
         }}
         transition={{
           type: "spring",
@@ -501,7 +503,7 @@ function VideoSidebar({
           opacity: { duration: 0.2 },
         }}
         style={{
-          pointerEvents: hideBar ? "none" : "auto",
+          pointerEvents: hideNew || hideBar ? "none" : "auto",
         }}
       >
         <button onClick={handleCommentList}>
@@ -527,8 +529,8 @@ function VideoSidebar({
         className="videoSidebar__button"
         initial={false} // Disable initial animation
         animate={{
-          x: hideBar ? 50 : 0, // Slide right when hidden
-          opacity: hideBar ? 0 : 1,
+          x: hideNew || hideBar ? 50 : 0, // Slide right when hidden
+          opacity: hideNew || hideBar ? 0 : 1,
         }}
         transition={{
           type: "spring",
@@ -537,7 +539,7 @@ function VideoSidebar({
           opacity: { duration: 0.2 },
         }}
         style={{
-          pointerEvents: hideBar ? "none" : "auto",
+          pointerEvents: hideNew || hideBar ? "none" : "auto",
         }}
       >
         <button onClick={handleShareClick}>
@@ -562,8 +564,8 @@ function VideoSidebar({
         className="videoSidebar__button"
         initial={false} // Disable initial animation
         animate={{
-          x: hideBar ? 50 : 0, // Slide right when hidden
-          opacity: hideBar ? 0 : 1,
+          x: hideNew || hideBar ? 50 : 0, // Slide right when hidden
+          opacity: hideNew || hideBar ? 0 : 1,
         }}
         transition={{
           type: "spring",
@@ -572,7 +574,7 @@ function VideoSidebar({
           opacity: { duration: 0.2 },
         }}
         style={{
-          pointerEvents: hideBar ? "none" : "auto",
+          pointerEvents: hideNew || hideBar ? "none" : "auto",
         }}
       >
         <button onClick={handleVoice}>
@@ -625,10 +627,25 @@ function VideoSidebar({
           )}
         </button>
       </motion.div>
-
-      <div className="videoSidebar__button ">
-        <button onClick={() => dispatch(sethideBar(!hideBar))}>
-          {hideBar ? (
+      <motion.div
+        className="videoSidebar__button"
+        initial={false} // Disable initial animation
+        animate={{
+          x: hideBar ? 50 : 0, // Slide right when hidden
+          opacity: hideBar ? 0 : 1,
+        }}
+        transition={{
+          type: "spring",
+          damping: 20,
+          stiffness: 300,
+          opacity: { duration: 0.2 },
+        }}
+        style={{
+          pointerEvents: hideBar ? "none" : "auto",
+        }}
+      >
+        <button onClick={() => dispatch(sethideNew(!hideNew))}>
+          {hideNew ? (
             <div className="flex flex-col items-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -686,7 +703,8 @@ function VideoSidebar({
             </div>
           )}
         </button>
-      </div>
+      </motion.div>
+
       <div
         style={{
           opacity: hideBar ? 0 : 1,

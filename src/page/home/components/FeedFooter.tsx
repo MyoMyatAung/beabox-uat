@@ -136,6 +136,7 @@ function FeedFooter({
   // const { imgSrc, isLoading: imageLoading } = useCachedImage(
   //   decryptedPhoto || ""
   // );
+  const { hideNew } = useSelector((state: any) => state.hideNewSlice);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -183,7 +184,7 @@ function FeedFooter({
   };
   return (
     <AnimatePresence>
-      {!hideBar && (
+      {!hideBar && !hideNew && (
         <motion.div
           className="videoFooter1 w-full fixed bottom-0 left-0"
           initial={{ y: "100%", opacity: 0 }}

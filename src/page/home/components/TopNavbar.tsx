@@ -16,6 +16,7 @@ const TopNavbar = ({
   const isOpen = useSelector((state: any) => state.profile.isDrawerOpen);
   const user = useSelector((state: any) => state?.persist?.user) || "";
   const { hideBar } = useSelector((state: any) => state.hideBarSlice);
+  const { hideNew } = useSelector((state: any) => state.hideNewSlice);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -29,9 +30,18 @@ const TopNavbar = ({
 
   return (
     <AnimatePresence>
-      {!hideBar && (
+      {!hideBar && !hideNew && (
         <motion.div
-          className="fixed top-5 left-0 px-5 right-0 flex justify-between items-center z-[9999] max-w-[480px] mx-auto"
+          className={`
+ 
+        
+          ${
+            currentTab === 1
+              ? "fixed pt-[20px] pb-2 bg-[#16131C] top-0"
+              : "absolute top-5"
+          }
+          left-0 px-5 right-0 flex justify-between items-center z-[9999] max-w-[480px] mx-auto
+        `}
           initial={{ y: "-100%", opacity: 0 }} // Starts above (negative Y)
           animate={{ y: "0", opacity: 1 }} // Slides down to normal position
           exit={{ y: "-100%", opacity: 0 }} // Exits upward

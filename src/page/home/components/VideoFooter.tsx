@@ -282,6 +282,7 @@ const VideoFooter = React.memo(
     const [isExpanded, setIsExpanded] = useState(false);
     const toggleExpand = () => setIsExpanded(!isExpanded);
     const { hideBar } = useSelector((state: any) => state.hideBarSlice);
+    const { hideNew } = useSelector((state: any) => state.hideNewSlice);
 
     // Ref to store previous badge value
     const prevBadgeRef = useRef<string | null>(null);
@@ -344,7 +345,7 @@ const VideoFooter = React.memo(
 
     return (
       <AnimatePresence>
-        {!hideBar && (
+        {!hideBar && !hideNew && (
           <motion.div
             className="videoFooter w-full fixed bottom-0 left-0"
             initial={{ y: "100%", opacity: 0 }}

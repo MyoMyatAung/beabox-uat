@@ -20,6 +20,7 @@ const DetailNav = ({
 }: any) => {
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
   const { hideBar } = useSelector((state: any) => state.hideBarSlice);
+  const { hideNew } = useSelector((state: any) => state.hideNewSlice);
 
   const [showDelete, setShowDelete] = useState(false);
   const user = useSelector((state: any) => state.persist.user);
@@ -69,7 +70,7 @@ const DetailNav = ({
 
   return (
     <AnimatePresence>
-      {!hideBar && (
+      {!hideBar && !hideNew && (
         <motion.div
           className="z-[999999] videoNavbar"
           initial={{ y: "-100%", opacity: 0 }} // Starts above (negative Y)
