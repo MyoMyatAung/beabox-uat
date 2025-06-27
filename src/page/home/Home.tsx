@@ -47,6 +47,7 @@ import follow_img from "../../assets/follow_img.webp";
 import follower_login from "../../assets/follower_login.webp";
 import { combineSlices } from "@reduxjs/toolkit";
 import { setPreviousUser } from "./services/previousUserSlice";
+import { clearSeenUsers } from "./services/seenUsersSlice";
 
 const Home = () => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
@@ -152,6 +153,7 @@ const Home = () => {
       dispatch(setCurrentActivePost(null));
       dispatch(setVideos({ follow: [], foryou: [] }));
       dispatch(setStart(false));
+      dispatch(clearSeenUsers());
       setFollowers([]);
 
       dispatch(homeApi.util.invalidateTags(["foryou", "follow"])); // Replace with your actual tags

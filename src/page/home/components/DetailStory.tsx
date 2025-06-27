@@ -12,6 +12,7 @@ import { decryptImage } from "@/utils/imageDecrypt";
 import loader from "../vod_loader.gif";
 import LoadingBar from "./detail/LoadingBar";
 import DetailContainer from "./detail/DetailContainer";
+import story from "@/assets/story.json";
 
 // Swiper imports
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -24,6 +25,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setWatchedPost } from "../services/watchSlice";
 import { setCurrentVideoIndex } from "../services/indexSlice";
 import { useVideoIndices } from "./useVideoIndices";
+import StoryAnimation from "./StoryAnimation";
 
 interface User {
   id: string;
@@ -52,6 +54,7 @@ const DetailStory = ({ id }: { id: string }) => {
   const [isInteractingWithProgressBar, setisInteractingWithProgressBar] =
     useState(false);
   const swiperRef = useRef<any>(null);
+  const user = useSelector((state: any) => state?.persist?.user);
 
   // Get all users with posts
   const usersWithPosts: User[] =
@@ -262,6 +265,21 @@ const DetailStory = ({ id }: { id: string }) => {
       };
     });
   };
+  const [showGuide, setShowGuide] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem(`storyGuide_${user?.id}`);
+      return saved !== "false"; // Default to true if not found
+    }
+    return true;
+  });
+
+  const handleKnow = () => {
+    // Store that this user has seen the guide
+    setShowGuide(false);
+    if (typeof window !== "undefined") {
+      localStorage.setItem(`storyGuide_${user?.id}`, "false");
+    }
+  };
 
   return (
     <div className="myday_container" ref={videoContainerRef}>
@@ -323,93 +341,125 @@ const DetailStory = ({ id }: { id: string }) => {
                 </div>
               ) : (
                 video && (
-                  <div
-                    className={`video  overflow-hidden`}
-                    data-post-id={video?.post_id}
-                  >
-                    {video?.file_type !== "video" ? (
-                      <a
-                        href={video?.ads_info?.jump_url}
-                        target="_blank"
-                        className="flex items-center justify-center h-full overflow-hidden"
-                      >
-                        <img
-                          src={video?.files[0]?.resourceURL}
-                          alt=""
-                          className="w-full mx-auto"
+                  <>
+                    {showGuide && (
+                      <div className="absolute px-3 top-0 h-screen left-0 w-full flex flex-col justify-center  z-[9999999] bg-[rgba(0,0,0,0.7)]">
+                        <div className="flex justify-between items-center">
+                          <div className="flex flex-col items-center">
+                            <div className="w-[66px] h-[66px]">
+                              <StoryAnimation animate={story} flip={false} />
+                            </div>
+
+                            <p className="guide_text">点击左侧上一个</p>
+                          </div>
+                          <div className="flex flex-col items-center">
+                            <div className="w-[66px] h-[66px] ">
+                              <StoryAnimation animate={story} flip={true} />
+                            </div>
+                            <p className="guide_text">点击右侧下一个</p>
+                          </div>
+                        </div>
+                        <div className="absolute bottom-[100px] left-0 right-0 flex justify-center items-center">
+                          <button onClick={handleKnow} className="guide_btn">
+                            我知道了
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    <div
+                      className={`video  overflow-hidden`}
+                      data-post-id={video?.post_id}
+                    >
+                      {video?.file_type !== "video" ? (
+                        <a
+                          href={video?.ads_info?.jump_url}
+                          target="_blank"
+                          className="flex items-center justify-center h-full overflow-hidden"
+                        >
+                          <img
+                            src={video?.files[0]?.resourceURL}
+                            alt=""
+                            className="w-full mx-auto"
+                          />
+                        </a>
+                      ) : (
+                        <DetailContainer
+                          swiperRef={swiperRef}
+                          setisInteractingWithProgressBar={
+                            setisInteractingWithProgressBar
+                          }
+                          setIsDecrypting={(val: boolean) =>
+                            setUserState(setIsDecryptingMap, user.id, val)
+                          }
+                          length={decryptedVideos.length}
+                          currentIndex={currentVideoIndex}
+                          setCurrentIndex={(idx: any) =>
+                            setCurrentIndex(user.id, idx)
+                          }
+                          videoData={{ current: decryptedVideos }}
+                          indexRef={indexRef}
+                          abortControllerRef={abortControllerRef}
+                          container={videoContainerRef.current}
+                          status={true}
+                          countNumber={countNumber}
+                          updateDecryptedVideo={(updates: any) =>
+                            updateDecryptedVideo(
+                              user.id,
+                              video.post_id,
+                              updates
+                            )
+                          }
+                          video={video}
+                          setCountNumber={(val: number) =>
+                            setUserState(setCountNumberMap, user.id, val)
+                          }
+                          config={config}
+                          countdown={countdown}
+                          setWidth={(val: number) =>
+                            setUserState(setWidthMap, user.id, val)
+                          }
+                          setHeight={(val: number) =>
+                            setUserState(setHeightMap, user.id, val)
+                          }
+                          setHearts={(val: any[]) =>
+                            setUserState(setHeartsMap, user.id, val)
+                          }
+                          setCountdown={(val: number) =>
+                            setUserState(setCountdownMap, user.id, val)
+                          }
+                          width={width}
+                          height={height}
                         />
-                      </a>
-                    ) : (
-                      <DetailContainer
-                        swiperRef={swiperRef}
-                        setisInteractingWithProgressBar={
-                          setisInteractingWithProgressBar
-                        }
-                        setIsDecrypting={(val: boolean) =>
-                          setUserState(setIsDecryptingMap, user.id, val)
-                        }
-                        length={decryptedVideos.length}
-                        currentIndex={currentVideoIndex}
-                        setCurrentIndex={(idx: any) =>
-                          setCurrentIndex(user.id, idx)
-                        }
-                        videoData={{ current: decryptedVideos }}
-                        indexRef={indexRef}
-                        abortControllerRef={abortControllerRef}
-                        container={videoContainerRef.current}
-                        status={true}
-                        countNumber={countNumber}
-                        updateDecryptedVideo={(updates: any) =>
-                          updateDecryptedVideo(user.id, video.post_id, updates)
-                        }
-                        video={video}
-                        setCountNumber={(val: number) =>
-                          setUserState(setCountNumberMap, user.id, val)
-                        }
-                        config={config}
-                        countdown={countdown}
-                        setWidth={(val: number) =>
-                          setUserState(setWidthMap, user.id, val)
-                        }
-                        setHeight={(val: number) =>
-                          setUserState(setHeightMap, user.id, val)
-                        }
-                        setHearts={(val: any[]) =>
-                          setUserState(setHeartsMap, user.id, val)
-                        }
-                        setCountdown={(val: number) =>
-                          setUserState(setCountdownMap, user.id, val)
-                        }
-                        width={width}
-                        height={height}
-                      />
-                    )}
+                      )}
 
-                    {video?.type !== "ads" && video?.type !== "ads_virtual" && (
-                      <VideoFooter
-                        badge={user?.badge || ""}
-                        id={user?.id || ""}
-                        tags={video?.tag || []}
-                        title={video?.title || ""}
-                        username={user?.name || ""}
-                        city={video?.city || ""}
-                      />
-                    )}
+                      {video?.type !== "ads" &&
+                        video?.type !== "ads_virtual" && (
+                          <VideoFooter
+                            badge={user?.badge || ""}
+                            id={user?.id || ""}
+                            tags={video?.tag || []}
+                            title={video?.title || ""}
+                            username={user?.name || ""}
+                            city={video?.city || ""}
+                          />
+                        )}
 
-                    {(video?.type === "ads" ||
-                      video?.type === "ads_virtual") && (
-                      <Ads ads={video?.ads_info} type={video?.type} />
-                    )}
+                      {(video?.type === "ads" ||
+                        video?.type === "ads_virtual") && (
+                        <Ads ads={video?.ads_info} type={video?.type} />
+                      )}
 
-                    {Array.isArray(hearts) &&
-                      hearts?.map((heartId: any) => (
-                        <HeartCount
-                          id={heartId}
-                          key={heartId}
-                          remove={(id: any) => removeHeart(user.id, id)}
-                        />
-                      ))}
-                  </div>
+                      {Array.isArray(hearts) &&
+                        hearts?.map((heartId: any) => (
+                          <HeartCount
+                            id={heartId}
+                            key={heartId}
+                            remove={(id: any) => removeHeart(user.id, id)}
+                          />
+                        ))}
+                    </div>
+                  </>
                 )
               )}
             </SwiperSlide>

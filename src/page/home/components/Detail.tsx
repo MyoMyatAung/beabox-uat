@@ -15,6 +15,10 @@ import loader from "../vod_loader.gif";
 import LoadingBar from "./detail/LoadingBar";
 import DetailContainer from "./detail/DetailContainer";
 import DetailOneContainer from "./detail/DetailOneContainer";
+import StoryAnimation from "./StoryAnimation";
+import story from "@/assets/story.json";
+import { useDispatch, useSelector } from "react-redux";
+import { addSeenUser } from "../services/seenUsersSlice";
 
 const Detail = () => {
   const { id } = useParams();
@@ -78,6 +82,8 @@ const Detail = () => {
   const [countdown, setCountdown] = useState(3);
   const { data: config } = useGetConfigQuery({});
   const [isDecrypting, setIsDecrypting] = useState(true);
+  const user = useSelector((state: any) => state?.persist?.user);
+  const dispatch = useDispatch();
 
   // // Touch/swipe state for user navigation
   // const swipeThreshold = 80; // minimum distance for swipe
@@ -321,6 +327,25 @@ const Detail = () => {
 
   const [watchedPosts, setWatchedPosts] = useState<Record<string, boolean>>({});
 
+  // Add this import at the top
+
+  // Inside your Detail component:
+
+  const seenUserIds = useSelector((state: any) => state.seenUsers.seenUserIds);
+
+  // Add this effect to check when all videos are watched
+  useEffect(() => {
+    if (videos.length > 0 && id) {
+      const allWatched = videos.every(
+        (video) => video.user?.my_day?.watched || watchedPosts[video.post_id]
+      );
+
+      if (allWatched && !seenUserIds.includes(id)) {
+        dispatch(addSeenUser(id));
+      }
+    }
+  }, [videos, watchedPosts, id, dispatch, seenUserIds]);
+
   // Modify your watchPost effect like this:
   useEffect(() => {
     try {
@@ -337,6 +362,7 @@ const Detail = () => {
             setWatchedPosts((prev) => ({ ...prev, [video.post_id]: true }));
           })
           .catch((error) => {
+            setWatchedPosts((prev) => ({ ...prev, [video.post_id]: true }));
             console.error("Error watching post:", error);
           });
       }
@@ -345,6 +371,21 @@ const Detail = () => {
     }
   }, [video, watchedPosts]);
   const swiperRef = useRef<any>(null);
+  const [showGuide, setShowGuide] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem(`storyGuide_${user?.id}`);
+      return saved !== "false"; // Default to true if not found
+    }
+    return true;
+  });
+
+  const handleKnow = () => {
+    // Store that this user has seen the guide
+    setShowGuide(false);
+    if (typeof window !== "undefined") {
+      localStorage.setItem(`storyGuide_${user?.id}`, "false");
+    }
+  };
 
   return (
     <div
@@ -370,70 +411,98 @@ const Detail = () => {
         </div>
       )}
       {video && (
-        <div
-          className={`video justify-center items-center overflow-hidden`}
-          data-post-id={video?.post_id} // Add post ID to the container
-        >
-          {video?.file_type !== "video" ? (
-            <a
-              href={video?.ads_info?.jump_url}
-              target="_blank"
-              className="flex items-center justify-center h-full overflow-hidden"
-            >
-              <img
-                src={video?.files[0]?.resourceURL}
-                alt=""
-                className="w-full mx-auto"
+        <>
+          {showGuide && (
+            <div className="absolute px-3 top-0 h-screen left-0 w-full flex flex-col justify-center z-[9999999] bg-black opacity-70">
+              <div className="flex justify-between items-center">
+                <div className="flex flex-col items-center">
+                  <div className="w-[66px] h-[66px]">
+                    <StoryAnimation animate={story} flip={false} />
+                  </div>
+
+                  <p className="guide_text">点击左侧上一个</p>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="w-[66px] h-[66px] ">
+                    <StoryAnimation animate={story} flip={true} />
+                  </div>
+                  <p className="guide_text">点击右侧下一个</p>
+                </div>
+              </div>
+              <div className="absolute bottom-[100px] left-0 right-0 flex justify-center items-center">
+                <button onClick={handleKnow} className="guide_btn text-white">
+                  我知道了
+                </button>
+              </div>
+            </div>
+          )}
+          <div
+            className={`video justify-center items-center overflow-hidden`}
+            data-post-id={video?.post_id} // Add post ID to the container
+          >
+            {video?.file_type !== "video" ? (
+              <a
+                href={video?.ads_info?.jump_url}
+                target="_blank"
+                className="flex items-center justify-center h-full overflow-hidden"
+              >
+                <img
+                  src={video?.files[0]?.resourceURL}
+                  alt=""
+                  className="w-full mx-auto"
+                />
+              </a>
+            ) : (
+              <DetailOneContainer
+                setisInteractingWithProgressBar={
+                  setisInteractingWithProgressBar
+                }
+                swiperRef={swiperRef}
+                setIsDecrypting={setIsDecrypting}
+                // refetch={refetch}
+                length={videos.length}
+                currentIndex={currentIndex}
+                setCurrentIndex={setCurrentIndex}
+                setVideos={setVideos}
+                videoData={videos}
+                indexRef={indexRef}
+                abortControllerRef={abortControllerRef}
+                container={videoContainerRef.current}
+                status={true}
+                countNumber={countNumber}
+                video={video}
+                setCountNumber={setCountNumber}
+                config={config}
+                countdown={countdown}
+                setWidth={setWidth}
+                setHeight={setHeight}
+                setHearts={setHearts}
+                setCountdown={setCountdown}
+                width={width}
+                height={height}
               />
-            </a>
-          ) : (
-            <DetailOneContainer
-              setisInteractingWithProgressBar={setisInteractingWithProgressBar}
-              swiperRef={swiperRef}
-              setIsDecrypting={setIsDecrypting}
-              // refetch={refetch}
-              length={videos.length}
-              currentIndex={currentIndex}
-              setCurrentIndex={setCurrentIndex}
-              setVideos={setVideos}
-              videoData={videos}
-              indexRef={indexRef}
-              abortControllerRef={abortControllerRef}
-              container={videoContainerRef.current}
-              status={true}
-              countNumber={countNumber}
-              video={video}
-              setCountNumber={setCountNumber}
-              config={config}
-              countdown={countdown}
-              setWidth={setWidth}
-              setHeight={setHeight}
-              setHearts={setHearts}
-              setCountdown={setCountdown}
-              width={width}
-              height={height}
-            />
-          )}
+            )}
 
-          {video?.type !== "ads" && video?.type !== "ads_virtual" && (
-            <VideoFooter
-              badge={video?.user?.badge}
-              id={video?.user?.id}
-              tags={video?.tag}
-              title={video?.title}
-              username={video?.user?.name}
-              city={video?.city}
-            />
-          )}
+            {video?.type !== "ads" && video?.type !== "ads_virtual" && (
+              <VideoFooter
+                badge={video?.user?.badge}
+                id={video?.user?.id}
+                tags={video?.tag}
+                title={video?.title}
+                username={video?.user?.name}
+                city={video?.city}
+              />
+            )}
 
-          {(video?.type === "ads" || video?.type === "ads_virtual") && (
-            <Ads ads={video?.ads_info} type={video?.type} />
-          )}
+            {(video?.type === "ads" || video?.type === "ads_virtual") && (
+              <Ads ads={video?.ads_info} type={video?.type} />
+            )}
 
-          {hearts.map((id: any) => (
-            <HeartCount id={id} key={id} remove={removeHeart} />
-          ))}
-        </div>
+            {hearts.map((id: any) => (
+              <HeartCount id={id} key={id} remove={removeHeart} />
+            ))}
+          </div>
+        </>
       )}
 
       {/* Visual indicators for available swipe directions with better visibility */}

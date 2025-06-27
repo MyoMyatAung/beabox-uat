@@ -84,6 +84,8 @@ function VideoSidebar({
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
   const { hideBar } = useSelector((state: any) => state.hideBarSlice);
   const { hideNew } = useSelector((state: any) => state.hideNewSlice);
+  const seenUserIds = useSelector((state: any) => state.seenUsers.seenUserIds);
+
   const { videosToRender } = useSelector(
     (state: any) => state.videoRenderSlice
   );
@@ -258,7 +260,13 @@ function VideoSidebar({
   }
 
   const handleProfile = (id: any) => {
-    if (post?.user?.my_day?.uploaded) {
+    const seenUser = seenUserIds.includes(id);
+
+    if (
+      post?.user?.my_day?.uploaded &&
+      !seenUser &&
+      !post?.user?.my_day?.watched
+    ) {
       navigate(`/story_detail/${id}`);
     } else {
       navigate(`/user/${id}`);
@@ -330,11 +338,13 @@ function VideoSidebar({
                     <div
                       className="w-[47px] h-[47px] rounded-full p-[2px]"
                       style={{
-                        background: !post.user?.my_day?.watched
-                          ? "linear-gradient(#16131C 0 0) padding-box, " +
-                            "linear-gradient(90deg, #e8b9ff 0%, #ff94b4 82.89%) border-box"
-                          : "linear-gradient(#16131C 0 0) padding-box, " +
-                            "rgba(255, 255, 255, 0.40) border-box",
+                        background:
+                          !post.user?.my_day?.watched &&
+                          !seenUserIds.includes(post?.user?.id)
+                            ? "linear-gradient(#16131C 0 0) padding-box, " +
+                              "linear-gradient(90deg, #e8b9ff 0%, #ff94b4 82.89%) border-box"
+                            : "linear-gradient(#16131C 0 0) padding-box, " +
+                              "rgba(255, 255, 255, 0.40) border-box",
                         border: "3px solid transparent",
                         padding: "3px",
                       }}
