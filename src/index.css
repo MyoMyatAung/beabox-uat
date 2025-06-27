@@ -922,3 +922,8 @@ user_feed_ques_tags_btn {
 .art-video-player .art-mask {
   z-index: 20 !important;
 }
+
+.new_logout_button {
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.12);
+}
