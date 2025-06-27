@@ -5,7 +5,7 @@ import {
   useGetApplicationAdsQuery,
   useGetExploreHeaderQuery,
 } from "@/store/api/explore/exploreApi";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import useCachedImage from "@/utils/useCachedImage";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 
@@ -44,6 +44,7 @@ const AdItemComponent: React.FC<AdItemProps> = ({ item }) => {
 interface PoppizzaProps {}
 
 const Poppizza: React.FC<PoppizzaProps> = ({}) => {
+  const location = useLocation()
   const [ad, setad] = useState([]);
   const { data, isLoading } = useGetExploreHeaderQuery("");
   // const { data: gg } = useGetApplicationAdsQuery("");
@@ -63,7 +64,7 @@ const Poppizza: React.FC<PoppizzaProps> = ({}) => {
   // console.log(ad)
 
   return (
-    <div className=" pt-[20px] px-[10px]">
+    <div className={` pt-[20px] ${location.pathname === "/settings" ? "" : "px-[10px]"}`}>
       <h1 className=" text-white text-[14px] font-[500] leading-[20px] pb-[12px] px-1">
         {data?.data?.ads?.application.title
           ? data?.data?.ads?.application.title
