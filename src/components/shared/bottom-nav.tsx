@@ -114,9 +114,9 @@ export function BottomNav() {
       
          ${
            location.pathname === "/"
-             ? showHeader
+             ? (showHeader
                ? "-translate-y-0 opacity-100"
-               : "translate-y-full opacity-0"
+               : "translate-y-full opacity-0")
              : ""
          }
       `}
