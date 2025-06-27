@@ -155,7 +155,7 @@ const Settings = ({
         )}
 
         {/* <OtherAds /> */}
-        <Poppizza />
+        {/* <Poppizza /> */}
 
         <div className="flex justify-between items-center">
           <p className="flex items-center gap-1 text-[14px]">当前版本</p>
