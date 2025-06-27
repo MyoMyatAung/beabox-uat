@@ -259,6 +259,8 @@ import { decryptImage } from "@/utils/imageDecrypt";
 import useCachedImage from "@/utils/useCachedImage";
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { motion, AnimatePresence } from "framer-motion";
+
 import { useNavigate } from "react-router-dom";
 
 const VideoFooter = React.memo(
@@ -341,55 +343,61 @@ const VideoFooter = React.memo(
     };
 
     return (
-      <div
-        className="videoFooter w-full"
-        style={{
-          opacity: hideBar ? 0 : 1,
-          transition: "opacity 0.3s ease-in-out",
-          pointerEvents: hideBar ? "none" : "auto",
-        }}
-      >
-        <div className="w-full">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="flex items-center gap-2" onClick={handleProfile}>
-              <span className="footer_head_text font-cnFont">{username}</span>
-
-              {decryptedPhoto && (
-                <img
-                  src={decryptedPhoto || ""}
-                  alt="profile"
-                  className="w-[18px] h-[18px]"
-                />
-              )}
-            </div>
-          </div>
-
-          <div className="relative flex items-end overflow-hidden w-full">
-            <div
-              onClick={shouldExpand ? toggleExpand : undefined}
-              className={`footer_title font-cnFont transition-all w-[80%] flex flex-wrap ${
-                shouldExpand
-                  ? isExpanded
-                    ? "max-h-full"
-                    : "line-clamp-2"
-                  : "max-h-full"
-              }`}
-            >
-              {" "}
-              <div className="mr-0">
-                {title}
-
-                {tags?.map((tag, index) => (
-                  <span
-                    key={index}
-                    className="footer_tag ml-1"
-                    onClick={() => onSearch(tag)}
-                  >
-                    #{tag}
+      <AnimatePresence>
+        {!hideBar && (
+          <motion.div
+            className="videoFooter w-full fixed bottom-0 left-0"
+            initial={{ y: "100%", opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: "100%", opacity: 0 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+          >
+            <div className="w-full">
+              <div className="flex items-center gap-3 mb-2">
+                <div
+                  className="flex items-center gap-2"
+                  onClick={handleProfile}
+                >
+                  <span className="footer_head_text font-cnFont">
+                    {username}
                   </span>
-                ))}
+
+                  {decryptedPhoto && (
+                    <img
+                      src={decryptedPhoto || ""}
+                      alt="profile"
+                      className="w-[18px] h-[18px]"
+                    />
+                  )}
+                </div>
               </div>
-              {/* <span className="mr-2">{title}</span>
+
+              <div className="relative flex items-end overflow-hidden w-full">
+                <div
+                  onClick={shouldExpand ? toggleExpand : undefined}
+                  className={`footer_title font-cnFont transition-all w-[80%] flex flex-wrap ${
+                    shouldExpand
+                      ? isExpanded
+                        ? "max-h-full"
+                        : "line-clamp-2"
+                      : "max-h-full"
+                  }`}
+                >
+                  {" "}
+                  <div className="mr-0">
+                    {title}
+
+                    {tags?.map((tag, index) => (
+                      <span
+                        key={index}
+                        className="footer_tag ml-1"
+                        onClick={() => onSearch(tag)}
+                      >
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                  {/* <span className="mr-2">{title}</span>
               {tags?.map((tag, index) => (
                 <span
                   key={index}
@@ -399,19 +407,21 @@ const VideoFooter = React.memo(
                   #{tag}
                 </span>
               ))} */}
-            </div>
+                </div>
 
-            {shouldExpand && (
-              <button
-                className="more_text font-cnFont inline ml-[0px] text-primary"
-                onClick={toggleExpand}
-              >
-                {isExpanded ? "收起" : "更多"}
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
+                {shouldExpand && (
+                  <button
+                    className="more_text font-cnFont inline ml-[0px] text-primary"
+                    onClick={toggleExpand}
+                  >
+                    {isExpanded ? "收起" : "更多"}
+                  </button>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     );
   }
 );

@@ -21,6 +21,8 @@ const Detail = () => {
   //   const { data: myday } = useGetMydayQuery({ page: 1 });
 
   const [watchPost] = useWatchtPostMutation();
+  const [isInteractingWithProgressBar, setisInteractingWithProgressBar] =
+    useState(false);
 
   //   console.log(myday);
 
@@ -318,7 +320,6 @@ const Detail = () => {
   const video = videos[currentIndex] || null; // Get the current video based on index
 
   const [watchedPosts, setWatchedPosts] = useState<Record<string, boolean>>({});
-  const isInteractingWithProgressBar = useRef(false);
 
   // Modify your watchPost effect like this:
   useEffect(() => {
@@ -343,6 +344,7 @@ const Detail = () => {
       console.error("Error watching post:", error);
     }
   }, [video, watchedPosts]);
+  const swiperRef = useRef<any>(null);
 
   return (
     <div
@@ -386,7 +388,8 @@ const Detail = () => {
             </a>
           ) : (
             <DetailOneContainer
-              isInteractingWithProgressBar={isInteractingWithProgressBar}
+              setisInteractingWithProgressBar={setisInteractingWithProgressBar}
+              swiperRef={swiperRef}
               setIsDecrypting={setIsDecrypting}
               // refetch={refetch}
               length={videos.length}

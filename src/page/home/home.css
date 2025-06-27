@@ -1424,3 +1424,34 @@ html {
   animation: breathe-border 2s ease-in-out infinite;
   /* z-index: 1; */
 }
+
+/* In your CSS file */
+.slide-fade-in {
+  animation: slideFadeIn 0.3s ease-out forwards;
+}
+
+.slide-fade-out {
+  animation: slideFadeOut 0.3s ease-in forwards;
+}
+
+@keyframes slideFadeIn {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideFadeOut {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}

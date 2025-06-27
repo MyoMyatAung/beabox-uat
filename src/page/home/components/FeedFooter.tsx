@@ -109,6 +109,7 @@
 import { setHistoryData } from "@/page/search/slice/HistorySlice";
 import { decryptImage } from "@/utils/imageDecrypt";
 import useCachedImage from "@/utils/useCachedImage";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -181,65 +182,68 @@ function FeedFooter({
     navigate(`/user/${id}`);
   };
   return (
-    <div
-      className="videoFooter1 w-full"
-      style={{
-        opacity: hideBar ? 0 : 1,
-        transition: "opacity 0.3s ease-in-out",
-        pointerEvents: hideBar ? "none" : "auto",
-      }}
-    >
-      <div className="w-full">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="flex items-center gap-2" onClick={handleProfile}>
-            <span className="footer_head_text font-cnFont">{username}</span>
-            {decryptedPhoto && (
-              <img
-                src={decryptedPhoto || ""}
-                alt=""
-                className="w-[18px] h-[18px]"
-              />
-            )}
-          </div>
-        </div>
+    <AnimatePresence>
+      {!hideBar && (
+        <motion.div
+          className="videoFooter1 w-full fixed bottom-0 left-0"
+          initial={{ y: "100%", opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: "100%", opacity: 0 }}
+          transition={{ type: "spring", damping: 25, stiffness: 300 }}
+        >
+          <div className="w-full">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="flex items-center gap-2" onClick={handleProfile}>
+                <span className="footer_head_text font-cnFont">{username}</span>
+                {decryptedPhoto && (
+                  <img
+                    src={decryptedPhoto || ""}
+                    alt=""
+                    className="w-[18px] h-[18px]"
+                  />
+                )}
+              </div>
+            </div>
 
-        <div className="relative flex items-end overflow-hidden w-full">
-          <div
-            onClick={shouldExpand ? toggleExpand : undefined}
-            className={`footer_title font-cnFont transition-all w-[80%] flex flex-wrap ${
-              shouldExpand
-                ? isExpanded
-                  ? "max-h-full"
-                  : "line-clamp-2"
-                : "max-h-full"
-            }`}
-          >
-            <div className="mr-0">
-              {title}
+            <div className="relative flex items-end overflow-hidden w-full">
+              <div
+                onClick={shouldExpand ? toggleExpand : undefined}
+                className={`footer_title font-cnFont transition-all w-[80%] flex flex-wrap ${
+                  shouldExpand
+                    ? isExpanded
+                      ? "max-h-full"
+                      : "line-clamp-2"
+                    : "max-h-full"
+                }`}
+              >
+                <div className="mr-0">
+                  {title}
 
-              {tags?.map((tag, index) => (
-                <span
-                  key={index}
-                  className="footer_tag ml-1"
-                  onClick={() => onSearch(tag)}
+                  {tags?.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="footer_tag ml-1"
+                      onClick={() => onSearch(tag)}
+                    >
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {shouldExpand && (
+                <button
+                  className="more_text font-cnFont inline ml-[0px] text-primary"
+                  onClick={toggleExpand}
                 >
-                  #{tag}
-                </span>
-              ))}
+                  {isExpanded ? "收起" : "更多"}
+                </button>
+              )}
             </div>
           </div>
-
-          {shouldExpand && (
-            <button
-              className="more_text font-cnFont inline ml-[0px] text-primary"
-              onClick={toggleExpand}
-            >
-              {isExpanded ? "收起" : "更多"}
-            </button>
-          )}
-        </div>
-      </div>
-    </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 

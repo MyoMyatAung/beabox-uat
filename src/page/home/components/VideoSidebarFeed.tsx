@@ -18,6 +18,7 @@ import LoginDrawer from "@/components/profile/auth/login-drawer";
 import { decryptImage } from "@/utils/imageDecrypt";
 import { setVideosToRender } from "../services/videoRenderSlice";
 import { sethideBar } from "../services/hideBarSlice";
+import { motion } from "framer-motion";
 
 function VideoSidebarFeed({
   setVideosData,
@@ -280,11 +281,20 @@ function VideoSidebarFeed({
       } z-[999] w-[50px]
 `}
     >
-      <div
-        className="videoSidebar__button "
-        style={{
+      <motion.div
+        className="videoSidebar__button"
+        initial={false} // Disable initial animation
+        animate={{
+          x: hideBar ? 50 : 0, // Slide right when hidden
           opacity: hideBar ? 0 : 1,
-          transition: "opacity 0.3s ease-in-out",
+        }}
+        transition={{
+          type: "spring",
+          damping: 20,
+          stiffness: 300,
+          opacity: { duration: 0.2 },
+        }}
+        style={{
           pointerEvents: hideBar ? "none" : "auto",
         }}
       >
@@ -437,13 +447,21 @@ function VideoSidebarFeed({
             )}
           </button>
         </div>
-      </div>
-
-      <div
-        className="videoSidebar__button "
-        style={{
+      </motion.div>
+      <motion.div
+        className="videoSidebar__button"
+        initial={false} // Disable initial animation
+        animate={{
+          x: hideBar ? 50 : 0, // Slide right when hidden
           opacity: hideBar ? 0 : 1,
-          transition: "opacity 0.3s ease-in-out",
+        }}
+        transition={{
+          type: "spring",
+          damping: 20,
+          stiffness: 300,
+          opacity: { duration: 0.2 },
+        }}
+        style={{
           pointerEvents: hideBar ? "none" : "auto",
         }}
       >
@@ -479,13 +497,22 @@ function VideoSidebarFeed({
           </button>
         )}
         <p className="side_text font-cnFont mt-2">{likeCount}</p>
-      </div>
+      </motion.div>
 
-      <div
-        className="videoSidebar__button "
-        style={{
+      <motion.div
+        className="videoSidebar__button"
+        initial={false} // Disable initial animation
+        animate={{
+          x: hideBar ? 50 : 0, // Slide right when hidden
           opacity: hideBar ? 0 : 1,
-          transition: "opacity 0.3s ease-in-out",
+        }}
+        transition={{
+          type: "spring",
+          damping: 20,
+          stiffness: 300,
+          opacity: { duration: 0.2 },
+        }}
+        style={{
           pointerEvents: hideBar ? "none" : "auto",
         }}
       >
@@ -506,12 +533,22 @@ function VideoSidebarFeed({
           </svg>
         </button>
         <p className="side_text font-cnFont mt-2">{messages}</p>
-      </div>
-      <div
-        className="videoSidebar__button "
-        style={{
+      </motion.div>
+
+      <motion.div
+        className="videoSidebar__button"
+        initial={false} // Disable initial animation
+        animate={{
+          x: hideBar ? 50 : 0, // Slide right when hidden
           opacity: hideBar ? 0 : 1,
-          transition: "opacity 0.3s ease-in-out",
+        }}
+        transition={{
+          type: "spring",
+          damping: 20,
+          stiffness: 300,
+          opacity: { duration: 0.2 },
+        }}
+        style={{
           pointerEvents: hideBar ? "none" : "auto",
         }}
       >
@@ -531,12 +568,22 @@ function VideoSidebarFeed({
 
           <p className="side_text font-cnFont mt-2">分享</p>
         </button>
-      </div>
-      <div
-        className="videoSidebar__button "
-        style={{
+      </motion.div>
+
+      <motion.div
+        className="videoSidebar__button"
+        initial={false} // Disable initial animation
+        animate={{
+          x: hideBar ? 50 : 0, // Slide right when hidden
           opacity: hideBar ? 0 : 1,
-          transition: "opacity 0.3s ease-in-out",
+        }}
+        transition={{
+          type: "spring",
+          damping: 20,
+          stiffness: 300,
+          opacity: { duration: 0.2 },
+        }}
+        style={{
           pointerEvents: hideBar ? "none" : "auto",
         }}
       >
@@ -589,7 +636,8 @@ function VideoSidebarFeed({
             </div>
           )}
         </button>
-      </div>
+      </motion.div>
+
       <div className="videoSidebar__button ">
         <button onClick={() => dispatch(sethideBar(!hideBar))}>
           {hideBar ? (
