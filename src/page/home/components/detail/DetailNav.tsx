@@ -100,7 +100,9 @@ const DetailNav = ({
           <div className="flex items-center justify-between">
             <button
               className="flex items-center gap-2"
-              onClick={() => navigate(`/user/${id}`)}
+              onClick={() => {
+                navigate(`/user/${id}`);
+              }}
             >
               {decryptedPhoto && (
                 <Avatar className="w-[40.25px] h-[40.25px]">

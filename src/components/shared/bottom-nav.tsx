@@ -105,7 +105,10 @@ export function BottomNav() {
   return (
     <nav
       style={{
-        display: location.pathname === "/lucky" || show ? "none" : "flex",
+        display:
+          location.pathname === "/lucky" || (show && location.pathname === "/")
+            ? "none"
+            : "flex",
       }}
       className={`flex items-center justify-around p-4 bg-[#191721] backdrop-blur-sm border-t border-white/10  transition-transform duration-300 ease-in-out will-change-transform
  ${bottomLoader && "loading-border"} ${
@@ -114,9 +117,9 @@ export function BottomNav() {
       
          ${
            location.pathname === "/"
-             ? (showHeader
+             ? showHeader
                ? "-translate-y-0 opacity-100"
-               : "translate-y-full opacity-0")
+               : "translate-y-full opacity-0"
              : ""
          }
       `}

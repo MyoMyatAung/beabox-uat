@@ -26,6 +26,7 @@ import { setWatchedPost } from "../services/watchSlice";
 import { setCurrentVideoIndex } from "../services/indexSlice";
 import { useVideoIndices } from "./useVideoIndices";
 import StoryAnimation from "./StoryAnimation";
+import { addSeenUser } from "../services/seenUsersSlice";
 
 interface User {
   id: string;
@@ -164,12 +165,26 @@ const DetailStory = ({ id }: { id: string }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [usersWithPosts]);
 
+  const seenUserIds = useSelector((state: any) => state.seenUsers.seenUserIds);
+
   // Mark post as watched for a user
   useEffect(() => {
     usersWithPosts.forEach((user) => {
       const decryptedVideos = decryptedVideosMap[user.id] || [];
       const currentVideoIndex = currentVideoIndexMap[user.id] || 0;
       const watchedPosts = watchedPostsMap[user.id] || {};
+
+      if (decryptedVideos.length > 0 && id) {
+        const allWatched = decryptedVideos.every(
+          (decryptedVideos) =>
+            decryptedVideos.user?.my_day?.watched ||
+            watchedPosts[decryptedVideos.post_id]
+        );
+
+        if (allWatched && !seenUserIds.includes(id)) {
+          dispatch(addSeenUser(id));
+        }
+      }
 
       if (
         decryptedVideos[currentVideoIndex] &&
@@ -187,7 +202,15 @@ const DetailStory = ({ id }: { id: string }) => {
               })
             );
           })
-          .catch(console.error);
+          .catch(() => {
+            dispatch(
+              setWatchedPost({
+                userId: user.id,
+                postId: video.post_id,
+                watched: true,
+              })
+            );
+          });
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps

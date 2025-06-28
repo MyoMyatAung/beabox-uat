@@ -1,5 +1,6 @@
 import { Person } from "@/assets/profile";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 interface ProfileAvatarProps {
@@ -24,6 +25,8 @@ const ProfileAvatar = ({
   const circumference = 2 * Math.PI * normalizedRadius;
   const strokeDashoffset = circumference - (progress / 100) * circumference;
   const navigate = useNavigate();
+
+  const seenUserIds = useSelector((state: any) => state.seenUsers.seenUserIds);
 
   const handleRedirect = () => {
     if (myday?.uploaded) {
@@ -84,7 +87,7 @@ const ProfileAvatar = ({
       </svg> */}
       {myday?.uploaded && (
         <>
-          {myday?.watched ? (
+          {myday?.watched || !seenUserIds.includes(id) ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="87"

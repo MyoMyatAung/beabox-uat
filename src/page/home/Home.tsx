@@ -789,28 +789,36 @@ const Home = () => {
                       )}
                     </div>
 
-                    {!followData?.data?.length && (
-                      <div className="flex justify-center flex-col items-center h-full">
-                        <h1 className="follow_no_h">热门顶尖创作者</h1>
-                        <p className="follow_no_p">
-                          关注热门账号，观看他们的最新视频
-                        </p>
-                        <div className="follow_bg h-[300px] flex flex-col items-center w-[240px]">
-                          <img
-                            src={follow_title}
-                            alt=""
-                            className="mt-7 w-[128px]"
-                          />
-                          <img src={follow_img} alt="" className="mt-5 px-5" />
-                          <p className="follow_re_text mt-5">
-                            创作者成为闪亮之星，从创作者开始
+                    {!followData?.data?.length &&
+                      videos["follow"].length === 0 && (
+                        <div className="flex justify-center flex-col items-center h-full">
+                          <h1 className="follow_no_h">热门顶尖创作者</h1>
+                          <p className="follow_no_p">
+                            关注热门账号，观看他们的最新视频
                           </p>
-                          <Link to={"/ranking"} className="follow_re_btn mt-5">
-                            查看全部
-                          </Link>
+                          <div className="follow_bg h-[300px] flex flex-col items-center w-[240px]">
+                            <img
+                              src={follow_title}
+                              alt=""
+                              className="mt-7 w-[128px]"
+                            />
+                            <img
+                              src={follow_img}
+                              alt=""
+                              className="mt-5 px-5"
+                            />
+                            <p className="follow_re_text mt-5">
+                              创作者成为闪亮之星，从创作者开始
+                            </p>
+                            <Link
+                              to={"/ranking"}
+                              className="follow_re_btn mt-5"
+                            >
+                              查看全部
+                            </Link>
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
                   </>
                 ) : (
                   <div className="flex justify-center flex-col items-center h-full">

@@ -57,7 +57,7 @@
 
 // export default Followers;
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setShow } from "../services/showSlice";
 
 interface Follower {
@@ -68,6 +68,9 @@ interface Follower {
 }
 
 const Followers = ({ followers }: any) => {
+  const seenUserIds = useSelector((state: any) => state.seenUsers.seenUserIds);
+  console.log("seenUserIds", seenUserIds);
+
   const dispatch = useDispatch();
   return (
     <div className="flex gap-4 overflow-x-auto hide-sb mt-20 w-full px-5 mb-3">
@@ -81,11 +84,13 @@ const Followers = ({ followers }: any) => {
             <div
               className={`absolute inset-0 rounded-full p-[0px] breathing-border`}
               style={{
-                background: !follower?.my_day.watched
-                  ? "linear-gradient(#16131C 0 0) padding-box, " +
-                    "linear-gradient(90deg, #e8b9ff 0%, #ff94b4 82.89%) border-box"
-                  : "linear-gradient(#16131C 0 0) padding-box, " +
-                    "rgba(255, 255, 255, 0.40) border-box",
+                background:
+                  !follower?.my_day.watched &&
+                  !seenUserIds.includes(follower.id)
+                    ? "linear-gradient(#16131C 0 0) padding-box, " +
+                      "linear-gradient(90deg, #e8b9ff 0%, #ff94b4 82.89%) border-box"
+                    : "linear-gradient(#16131C 0 0) padding-box, " +
+                      "rgba(255, 255, 255, 0.40) border-box",
                 border: "4px solid transparent",
                 padding: "0px",
               }}
