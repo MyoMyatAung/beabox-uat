@@ -4,8 +4,6 @@ import "./devent.css";
 
 import light from "../img/light.json";
 import dragon from "../img/dragon.json";
-
-import card from "../img/red.png";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 import Animation from "../Animation";
 import { useVerifyCaptchaMutation } from "../eventApi";

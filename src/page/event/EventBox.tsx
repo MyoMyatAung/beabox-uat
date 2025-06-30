@@ -5,7 +5,7 @@ import logo from "./img/logoBox.png";
 import light from "./img/light.json";
 
 import btn2 from "./img/btn2.json";
-import card from "./img/red.png";
+import card from "./img/red.webp";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 import Animation from "./Animation";
 import { useVerifyCaptchaMutation } from "./eventApi";

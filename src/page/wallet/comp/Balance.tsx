@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../wallet.css";
 import coin from "../../../assets/wallet/coin.png";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
-import red from "../red.png";
+import red from "../red.webp";
 import {
   useGetMyOwnProfileQuery,
   useGetMyProfileQuery,
