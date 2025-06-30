@@ -18,6 +18,7 @@ import VodDetails from "@/page/explore/comp/VodDetails";
 import Report from "@/page/report/Report";
 import SafeLazyLoad from "@/components/SafeLazyLoad";
 import CreatorNoti from "@/page/profile/noti/CreatorNoti";
+import Detail from "@/page/home/components/Detail";
 
 const Home = lazy(() => import("../page/home/Home"));
 const Lucky = lazy(() => import("../page/luckywheel/LuckySpinPage"));
@@ -301,6 +302,10 @@ const Routing = () => {
     {
       path: paths.user_feed,
       ...withErrorHandling(<UserFeedSet />),
+    },
+    {
+      path: paths.story_detail,
+      ...withErrorHandling(<Detail />),
     },
     {
       path: paths.lucky_draw,

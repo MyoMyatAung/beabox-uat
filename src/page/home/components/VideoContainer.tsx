@@ -791,6 +791,7 @@ import LoginDrawer from "@/components/profile/auth/login-drawer";
 import { showToast } from "../services/errorSlice";
 
 const VideoContainer = ({
+  showFollowers = false,
   video,
   setWidth,
   setHeight,
@@ -808,6 +809,7 @@ const VideoContainer = ({
   indexRef,
   videoData,
 }: {
+  showFollowers: any;
   video: any;
   setWidth: any;
   setHeight: any;
@@ -840,6 +842,7 @@ const VideoContainer = ({
   const post_id = video?.post_id;
   const [rotateVideoId, setRotateVideoId] = useState<string | null>(null); // For controlling fullscreen per video
   const [isOpen, setIsOpen] = useState(false);
+  const hideNew = useSelector((state: any) => state.hideNewSlice.hideNew);
 
   // Add state to track if this video is active
   const [isActive, setIsActive] = useState(false);
@@ -1168,29 +1171,30 @@ const VideoContainer = ({
         isActive={isActive}
         setShowRotate={setShowRotate}
       />
-
-      <VideoSidebar
-        status={status}
-        unLike={unLike}
-        handleLike={handleLike}
-        setLikeCount={setLikeCount}
-        likeCount={likeCount}
-        isLiked={isLiked}
-        setIsLiked={setIsLiked}
-        // likes={video?.like_count}
-        // is_liked={video?.is_liked}
-        setCommentCount={setcommentCount}
-        messages={commentCount}
-        post_id={video?.post_id}
-        setCountNumber={setCountNumber}
-        setCountdown={setCountdown}
-        countNumber={countNumber}
-        countdown={countdown}
-        config={config?.data}
-        image={video?.preview_image}
-        post={video}
-        setHearts={setHearts}
-      />
+      {!showFollowers && (
+        <VideoSidebar
+          status={status}
+          unLike={unLike}
+          handleLike={handleLike}
+          setLikeCount={setLikeCount}
+          likeCount={likeCount}
+          isLiked={isLiked}
+          setIsLiked={setIsLiked}
+          // likes={video?.like_count}
+          // is_liked={video?.is_liked}
+          setCommentCount={setcommentCount}
+          messages={commentCount}
+          post_id={video?.post_id}
+          setCountNumber={setCountNumber}
+          setCountdown={setCountdown}
+          countNumber={countNumber}
+          countdown={countdown}
+          config={config?.data}
+          image={video?.preview_image}
+          post={video}
+          setHearts={setHearts}
+        />
+      )}
 
       {/* Rotate button - only show for non-ads landscape videos */}
       {video?.type !== "ads" &&

@@ -37,7 +37,10 @@ import { EventDetail } from "@/@types/lucky_draw";
 import DEventBox from "@/page/event/dragon/DEventBox";
 import { motion, AnimatePresence } from "framer-motion";
 import LuckySpinPage from "@/page/luckywheel/LuckySpinPage";
-import { useGetPrizeListQuery, useGetProfileQuery } from "@/page/luckywheel/services/spinWheelApi";
+import {
+  useGetPrizeListQuery,
+  useGetProfileQuery,
+} from "@/page/luckywheel/services/spinWheelApi";
 
 // Function to check if the app is running in a WebView
 function isWebView() {
@@ -78,6 +81,7 @@ const RootLayout = ({ children }: any) => {
   const user = useSelector((state: any) => state.persist.user);
   const currentTab = useSelector((state: any) => state.home.currentTab);
   const hideBar = useSelector((state: RootState) => state.hideBarSlice.hideBar);
+  const hideNew = useSelector((state: RootState) => state.hideNewSlice.hideNew);
   const [showEvent, setShowEvent] = useState(false);
   const { data: prizeListData } = useGetPrizeListQuery();
   const { data: profileData } = useGetProfileQuery();
@@ -260,7 +264,7 @@ const RootLayout = ({ children }: any) => {
       const eventId = currentEventData?.data?.filter(
         (x: any) => x.type === "event"
       )[0]?.id;
-      
+
       if (!eventId || isFetchingRef.current) return;
 
       try {
@@ -330,10 +334,12 @@ const RootLayout = ({ children }: any) => {
     // Use cached data if available
     if (cachedEventDetails) {
       navigate(`/events/lucky-draw/${eventId}`);
-      
+
       // Refresh in background
       try {
-        const freshEventDetails = await triggerGetEventDetails(eventId).unwrap();
+        const freshEventDetails = await triggerGetEventDetails(
+          eventId
+        ).unwrap();
         dispatch(setEventDetail(freshEventDetails.data));
         if (freshEventDetails.data?.event_start_time) {
           dispatch(setDuration(freshEventDetails.data.event_start_time));
@@ -360,7 +366,7 @@ const RootLayout = ({ children }: any) => {
   const handleLuckySpinClick = () => {
     navigate("/lucky");
   };
-  
+
   return (
     <>
       <div style={{ height: "calc(100dvh - 95px);" }}>
@@ -426,6 +432,7 @@ const RootLayout = ({ children }: any) => {
           showAnimation &&
           currentTab === 2 &&
           !hideBar &&
+          !hideNew &&
           !userHasClosedAnimation && (
             <>
               <AnimatePresence>

@@ -704,6 +704,7 @@ const VideoContainerFeed = ({
   const [isLiked, setIsLiked] = useState(video?.is_liked);
   const [commentCount, setcommentCount] = useState(video?.comment_count);
   const [showRotate, setShowRotate] = useState(false);
+  const hideNew = useSelector((state: any) => state.hideNewSlice.hideNew);
 
   const user = useSelector((state: any) => state.persist.user);
   const [likePost] = useLikePostMutation();

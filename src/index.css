@@ -672,13 +672,6 @@ input:checked + .slider:before {
   letter-spacing: 0.3px;
 }
 
-.vabg {
-  background-image: url("./assets/createcenter/vaimg.png");
-  background-size: cover; /* Ensures the image covers the div */
-  background-position: center; /* Centers the image */
-  background-repeat: no-repeat; /* Prevents repetition */
-}
-
 .rank1bg {
   width: 100%;
   height: auto; /* Adjust as needed */
@@ -921,6 +914,16 @@ user_feed_ques_tags_btn {
 
 .art-video-player .art-mask {
   z-index: 20 !important;
+}
+
+.swiper-slide {
+  overflow: visible !important;
+  transform-style: preserve-3d;
+}
+
+.swiper-slide-shadow {
+  background: rgba(0, 0, 0, 0.15) !important;
+  border-radius: 16px;
 }
 
 .new_logout_button {

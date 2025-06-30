@@ -4,26 +4,26 @@ import {
   useLikePostMutation,
   useCommentListMutation,
   useFollowStatusMutation,
-} from "../services/homeApi";
+} from "../../services/homeApi";
 
-import CommentOverlay from "./CommentOverlay";
-import ShareOverlay from "./ShareOverlay";
+import CommentOverlay from "../CommentOverlay";
+import ShareOverlay from "../ShareOverlay";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { setVideos } from "../services/videosSlice";
-import { setMute } from "../services/muteSlice";
+import { setVideos } from "../../services/videosSlice";
+import { setMute } from "../../services/muteSlice";
 
 import { setAuthToggle } from "@/store/slices/profileSlice";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
 import { decryptImage } from "@/utils/imageDecrypt";
-import { setVideosToRender } from "../services/videoRenderSlice";
-import { sethideBar } from "../services/hideBarSlice";
+import { setVideosToRender } from "../../services/videoRenderSlice";
+import { setDetails } from "@/store/slices/exploreSlice";
+import Detail from "../Detail";
+import { sethideBar } from "../../services/hideBarSlice";
 import { motion } from "framer-motion";
-import { sethideNew } from "../services/hideNewSlice";
-import { addOnlySeenUser } from "../services/onlyseenUserSlice";
+import { sethideNew } from "../../services/hideNewSlice";
 
-function VideoSidebarFeed({
-  setVideosData,
+function DetailSidebar({
   messages,
   setCommentCount,
   post_id,
@@ -42,9 +42,7 @@ function VideoSidebarFeed({
   handleLike,
   unLike,
   status,
-  setrenderVideos,
 }: {
-  setVideosData: any;
   setCommentCount: any;
   unLike: any;
   setLikeCount: any;
@@ -60,10 +58,10 @@ function VideoSidebarFeed({
   config: any;
   image: any;
   post: any;
+
   handleLike: any;
   setHearts: any;
   status: any;
-  setrenderVideos: any;
 }) {
   const [alertVisible, setAlertVisible] = useState(false);
 
@@ -89,12 +87,10 @@ function VideoSidebarFeed({
   const { videosToRender } = useSelector(
     (state: any) => state.videoRenderSlice
   );
-  const onlyseenUserIds = useSelector(
-    (state: any) => state.onlyseenUser.onlyseenUserIds
-  );
-
   const { hideNew } = useSelector((state: any) => state.hideNewSlice);
+
   const [isOpen, setIsOpen] = useState(false);
+
   const { pathname } = useLocation();
   const isHome = currentTab !== 1 && pathname === "/";
 
@@ -241,20 +237,11 @@ function VideoSidebarFeed({
             )
           )
         );
-        setrenderVideos((prev: any) =>
-          prev.map((video: any) =>
-            video.user.id === post?.user?.id
-              ? { ...video, is_followed: !post?.is_followed }
-              : video
-          )
-        );
-        setVideosData((prev: any) =>
-          prev.map((video: any) =>
-            video.user.id === post?.user?.id
-              ? { ...video, is_followed: !post?.is_followed }
-              : video
-          )
-        );
+        const new_post = { ...post, is_followed: !post?.is_followed };
+
+        if (new_post) {
+          dispatch(setDetails(new_post));
+        }
       } catch (error) {
         console.log(error);
       }
@@ -271,199 +258,8 @@ function VideoSidebarFeed({
     return <LoginDrawer isOpen={isOpen} setIsOpen={setIsOpen} />;
   }
 
-  const handleProfile = (id: any) => {
-    const seenUser = onlyseenUserIds.includes(id);
-
-    if (
-      post?.user?.my_day?.uploaded &&
-      !seenUser &&
-      !post?.user?.my_day?.watched
-    ) {
-      if (!seenUser) {
-        dispatch(addOnlySeenUser(id));
-      }
-      navigate(`/story_detail/${id}`);
-    } else {
-      navigate(`/user/${id}`);
-    }
-  };
-
   return (
-    <div
-      className={`${
-        isHome ? "videoSidebar" : "videoSidebar_exp"
-      } z-[999] w-[50px]
-`}
-    >
-      <motion.div
-        className="videoSidebar__button"
-        initial={false} // Disable initial animation
-        animate={{
-          x: hideNew || hideBar ? 50 : 0, // Slide right when hidden
-          opacity: hideNew || hideBar ? 0 : 1,
-        }}
-        transition={{
-          type: "spring",
-          damping: 20,
-          stiffness: 300,
-          opacity: { duration: 0.2 },
-        }}
-        style={{
-          pointerEvents: hideNew || hideBar ? "none" : "auto",
-        }}
-      >
-        <div className="flex flex-col items-center relative mb-2">
-          <button onClick={() => handleProfile(post?.user?.id)}>
-            {post?.type === "ads" ? (
-              <>
-                {post?.ads_info?.icon ? (
-                  <Avatar className="w-[40.25px] h-[40.25px] ">
-                    <AvatarImage src={post?.ads_info?.icon} />
-                    <AvatarFallback>SM</AvatarFallback>
-                  </Avatar>
-                ) : (
-                  <Avatar className="w-[40.25px] p-3 bg-[#3a374d] flex justify-center items-center h-[40.25px] ">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="21"
-                      height="30"
-                      viewBox="0 0 21 30"
-                      fill="none"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
-                        d="M10.3206 17.5712C4.82551 17.5712 0.00585938 20.804 0.00585938 24.4875C0.00585938 29.2271 7.77035 29.2271 10.3206 29.2271C12.8709 29.2271 20.634 29.2271 20.634 24.4566C20.634 20.7885 15.8143 17.5712 10.3206 17.5712Z"
-                        fill="white"
-                      />
-                      <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
-                        d="M10.2666 14.4974H10.3102C14.0948 14.4974 17.1731 11.4191 17.1731 7.63443C17.1731 3.85117 14.0948 0.772888 10.3102 0.772888C6.52559 0.772888 3.4473 3.85117 3.4473 7.63162C3.43467 11.4036 6.49188 14.4834 10.2666 14.4974Z"
-                        fill="white"
-                      />
-                    </svg>
-                  </Avatar>
-                )}
-              </>
-            ) : (
-              <>
-                {decryptedPhoto ? (
-                  post.user?.my_day?.uploaded ? (
-                    <div
-                      className="w-[47px] h-[47px] rounded-full p-[2px]"
-                      style={{
-                        background:
-                          !post.user?.my_day?.watched &&
-                          !onlyseenUserIds.includes(post?.user?.id)
-                            ? "linear-gradient(#16131C 0 0) padding-box, " +
-                              "linear-gradient(90deg, #e8b9ff 0%, #ff94b4 82.89%) border-box"
-                            : "linear-gradient(#16131C 0 0) padding-box, " +
-                              "rgba(255, 255, 255, 0.40) border-box",
-                        border: "2px solid transparent",
-                        padding: "3px",
-                      }}
-                    >
-                      <img
-                        src={decryptedPhoto}
-                        className="w-full h-full rounded-full object-cover"
-                      />
-                    </div>
-                  ) : (
-                    <Avatar className="w-[40.25px] h-[40.25px]">
-                      <AvatarImage src={decryptedPhoto} />
-                      <AvatarFallback>SM</AvatarFallback>
-                    </Avatar>
-                  )
-                ) : (
-                  <Avatar className="w-[40.25px] p-3 bg-[#3a374d] flex justify-center items-center h-[40.25px] ">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="21"
-                      height="30"
-                      viewBox="0 0 21 30"
-                      fill="none"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
-                        d="M10.3206 17.5712C4.82551 17.5712 0.00585938 20.804 0.00585938 24.4875C0.00585938 29.2271 7.77035 29.2271 10.3206 29.2271C12.8709 29.2271 20.634 29.2271 20.634 24.4566C20.634 20.7885 15.8143 17.5712 10.3206 17.5712Z"
-                        fill="white"
-                      />
-                      <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
-                        d="M10.2666 14.4974H10.3102C14.0948 14.4974 17.1731 11.4191 17.1731 7.63443C17.1731 3.85117 14.0948 0.772888 10.3102 0.772888C6.52559 0.772888 3.4473 3.85117 3.4473 7.63162C3.43467 11.4036 6.49188 14.4834 10.2666 14.4974Z"
-                        fill="white"
-                      />
-                    </svg>
-                    {/* <AvatarFallback>SM</AvatarFallback> */}
-                  </Avatar>
-                )}
-              </>
-              // <>
-              //   {decryptedPhoto ? (
-              //     <Avatar className="w-[40.25px] h-[40.25px]">
-              //       <AvatarImage src={decryptedPhoto} />
-              //       <AvatarFallback>SM</AvatarFallback>
-              //     </Avatar>
-              //   ) : (
-              //     <Avatar className="w-[40.25px] p-3 bg-[#3a374d] flex justify-center items-center h-[40.25px] ">
-              //       <svg
-              //         xmlns="http://www.w3.org/2000/svg"
-              //         width="21"
-              //         height="30"
-              //         viewBox="0 0 21 30"
-              //         fill="none"
-              //       >
-              //         <path
-              //           fill-rule="evenodd"
-              //           clip-rule="evenodd"
-              //           d="M10.3206 17.5712C4.82551 17.5712 0.00585938 20.804 0.00585938 24.4875C0.00585938 29.2271 7.77035 29.2271 10.3206 29.2271C12.8709 29.2271 20.634 29.2271 20.634 24.4566C20.634 20.7885 15.8143 17.5712 10.3206 17.5712Z"
-              //           fill="white"
-              //         />
-              //         <path
-              //           fill-rule="evenodd"
-              //           clip-rule="evenodd"
-              //           d="M10.2666 14.4974H10.3102C14.0948 14.4974 17.1731 11.4191 17.1731 7.63443C17.1731 3.85117 14.0948 0.772888 10.3102 0.772888C6.52559 0.772888 3.4473 3.85117 3.4473 7.63162C3.43467 11.4036 6.49188 14.4834 10.2666 14.4974Z"
-              //           fill="white"
-              //         />
-              //       </svg>
-              //       {/* <AvatarFallback>SM</AvatarFallback> */}
-              //     </Avatar>
-              //   )}
-              // </>
-            )}
-          </button>
-
-          <button
-            className="flex justify-center items-center absolute -bottom-2"
-            onClick={handleFollow}
-          >
-            {post?.is_followed ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="17"
-                height="17"
-                viewBox="0 0 17 17"
-                fill="none"
-              >
-                <circle cx="8.5" cy="8.29657" r="7.875" fill="#F70F2D" />
-                <path
-                  d="M11.6667 6L7.08333 10.5833L5 8.5"
-                  stroke="white"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            ) : (
-              <span className="bg-red-500 py-[1.5px] px-1.5 rounded-full text-xs">
-                +
-              </span>
-            )}
-          </button>
-        </div>
-      </motion.div>
+    <div className={`videoSidebar z-[999] w-[50px]`}>
       <motion.div
         className="videoSidebar__button"
         initial={false} // Disable initial animation
@@ -514,7 +310,6 @@ function VideoSidebarFeed({
         )}
         <p className="side_text font-cnFont mt-2">{likeCount}</p>
       </motion.div>
-
       <motion.div
         className="videoSidebar__button"
         initial={false} // Disable initial animation
@@ -550,7 +345,6 @@ function VideoSidebarFeed({
         </button>
         <p className="side_text font-cnFont mt-2">{messages}</p>
       </motion.div>
-
       <motion.div
         className="videoSidebar__button"
         initial={false} // Disable initial animation
@@ -585,7 +379,6 @@ function VideoSidebarFeed({
           <p className="side_text font-cnFont mt-2">分享</p>
         </button>
       </motion.div>
-
       <motion.div
         className="videoSidebar__button"
         initial={false} // Disable initial animation
@@ -766,4 +559,4 @@ function VideoSidebarFeed({
   );
 }
 
-export default VideoSidebarFeed;
+export default DetailSidebar;
