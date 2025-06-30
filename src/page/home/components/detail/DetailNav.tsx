@@ -1,12 +1,11 @@
 import { decryptImage } from "@/utils/imageDecrypt";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useDeletePostMutation } from "@/store/api/createCenterApi";
 import { setShow } from "../../services/showSlice";
 import { AnimatePresence, motion } from "framer-motion";
-import { time } from "console";
 
 const DetailNav = ({
   time_ago,
@@ -27,7 +26,9 @@ const DetailNav = ({
   const [showDelete, setShowDelete] = useState(false);
   const user = useSelector((state: any) => state.persist.user);
   const [deletePost] = useDeletePostMutation();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch(); 
+  const location = useLocation();
+  const from = location.state?.from;
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -103,8 +104,12 @@ const DetailNav = ({
             <button
               className="flex items-center gap-2"
               onClick={() => {
-                navigate(`/user/${id}`);
-              }}
+                if (from && typeof from === "string" && from.includes("user")) {
+                  navigate(-1);
+                } else {
+                  navigate(`/user/${id}`);
+                }
+              }}  
             >
               {decryptedPhoto && (
                 <Avatar className="w-[40.25px] h-[40.25px]">

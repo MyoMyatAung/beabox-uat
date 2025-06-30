@@ -1,7 +1,7 @@
 import { Person } from "@/assets/profile";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface ProfileAvatarProps {
   progressData?: number;
@@ -25,6 +25,7 @@ const ProfileAvatar = ({
   const circumference = 2 * Math.PI * normalizedRadius;
   const strokeDashoffset = circumference - (progress / 100) * circumference;
   const navigate = useNavigate();
+  const location = useLocation();
 
   const seenUserIds = useSelector((state: any) => state.seenUsers.seenUserIds);
   const onlyseenUserIds = useSelector(
@@ -32,10 +33,8 @@ const ProfileAvatar = ({
   );
 
   const handleRedirect = () => {
-    if (myday?.uploaded) {
-      if (id) {
-        navigate(`/story_detail/${id}`);
-      }
+    if (myday?.uploaded && id) {
+      navigate(`/story_detail/${id}`, { state: { from: location.pathname } });
     }
   };
 
