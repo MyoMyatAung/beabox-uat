@@ -672,13 +672,6 @@ input:checked + .slider:before {
   letter-spacing: 0.3px;
 }
 
-.vabg {
-  background-image: url("./assets/createcenter/vaimg.png");
-  background-size: cover; /* Ensures the image covers the div */
-  background-position: center; /* Centers the image */
-  background-repeat: no-repeat; /* Prevents repetition */
-}
-
 .rank1bg {
   width: 100%;
   height: auto; /* Adjust as needed */
