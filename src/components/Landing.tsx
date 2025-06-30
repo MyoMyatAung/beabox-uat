@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPanding } from "../store/slices/ModelSlice";
 import "../page/search/search.css";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
-import Splash from '../assets/splashScreen.png';
+import Splash from '../assets/splashScreen.webp';
 interface AdImage {
   image: string;
   jump_url?: string;

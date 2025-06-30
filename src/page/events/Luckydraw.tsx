@@ -11,11 +11,10 @@ import InviteCard from "./InviteCard";
 import Rule from "./Rule";
 import eventPage from "@/assets/eventpage.jpg";
 import eventTitle from "@/assets/eventTitle.png";
-import Pricebg from "@/assets/prizeBg.png";
-import Paper from "@/assets/Paper.png";
+import Pricebg from "@/assets/prizeBg.webp";
+import Paper from "@/assets/Paper.webp";
 import { EventDetail } from "@/@types/lucky_draw";
 import DrawTime from "@/assets/draw_time.png";
-import { timeFormatter, formatDateTime } from "@/lib/utils";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "@/components/shared/loader";
 import {
@@ -30,8 +29,6 @@ import {
 } from "@/store/slices/eventSlice";
 import { showToast } from "../home/services/errorSlice";
 import { RootState } from "@/store/store";
-import { startTimer, stopTimer } from "./timer";
-import { Link } from "react-router-dom";
 import { paths } from "@/routes/paths";
 import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 import AuthDrawer from "@/components/profile/auth/auth-drawer";
