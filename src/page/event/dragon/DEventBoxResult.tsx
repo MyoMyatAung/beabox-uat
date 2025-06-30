@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../event.css";
 
 import light from "../img/light.json";
-import card from "../img/dargon1.json";
+import card from "../img/dragon.json";
 import suprise from "../img/suprise.json";
 
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
@@ -72,9 +72,9 @@ const DEventResultBox: React.FC<EventBoxProps> = ({
           {!close ? (
             <div className="flex flex-col gap-[10px] justify-center items-center">
               <div className="flex flex-col justify-between items-center event_bo">
-                <div className="absolute z-[-2] top-[150px]">
+                {/* <div className="absolute z-[-2] top-[150px]">
                   <Animation animate={light} />
-                </div>
+                </div> */}
 
                 {/* <img className=" absolute z-[-1]" src={bg} alt="" /> */}
                 <div className=" absolute z-[-1] mt-[-220px]">
