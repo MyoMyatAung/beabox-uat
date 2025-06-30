@@ -428,6 +428,7 @@ const DetailContainer = ({
   return (
     <>
       <DetailNav
+        time_ago={video?.time_ago}
         setIsDecrypting={setIsDecrypting}
         // refetch={refetch}
         post_id={video?.post_id}
@@ -490,8 +491,7 @@ const DetailContainer = ({
       {/* Rotate button - only show for non-ads landscape videos */}
       {video?.type !== "ads" &&
         video?.files[0].width > video?.files[0].height &&
-        !showRotate &&
-        !hideNew && (
+        !showRotate && (
           <button
             onClick={() => handleFullscreen(video)}
             className="absolute left-[37%] top-[70%] bottom-0 right-0 w-[120px] bg-[#101010] h-[35px] rounded-md flex justify-center items-center z-[99] text-center text-white"

@@ -687,7 +687,7 @@ function VideoSidebar({
                   fill="white"
                 />
               </svg>
-              <p className="side_text font-cnFont mt-2">退出全屏</p>
+              <p className="side_text font-cnFont mt-2">退出清屏</p>
             </div>
           ) : (
             <div className="flex flex-col items-center">
@@ -715,7 +715,7 @@ function VideoSidebar({
                   fill="white"
                 />
               </svg>
-              <p className="side_text font-cnFont mt-2">全屏</p>
+              <p className="side_text font-cnFont mt-2">清屏</p>
             </div>
           )}
         </button>

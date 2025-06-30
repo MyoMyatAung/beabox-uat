@@ -1135,7 +1135,7 @@ html {
 .myday_name {
   color: #bbb;
   text-align: center;
-  font-family: Inter;
+  /* font-family: Inter; */
   font-size: 14px;
   font-style: normal;
   font-weight: 500;
@@ -1255,6 +1255,16 @@ html {
   font-style: normal;
   font-weight: 800;
   line-height: 20px; /* 111.111% */
+  letter-spacing: 0.25px;
+}
+
+.detail_time_ago {
+  color: #fff;
+  font-family: "Helvetica Neue";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 20px; /* 125% */
   letter-spacing: 0.25px;
 }
 
