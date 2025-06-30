@@ -20,6 +20,7 @@ import { setVideosToRender } from "../services/videoRenderSlice";
 import { sethideBar } from "../services/hideBarSlice";
 import { motion } from "framer-motion";
 import { sethideNew } from "../services/hideNewSlice";
+import { addOnlySeenUser } from "../services/onlyseenUserSlice";
 
 function VideoSidebarFeed({
   setVideosData,
@@ -88,10 +89,12 @@ function VideoSidebarFeed({
   const { videosToRender } = useSelector(
     (state: any) => state.videoRenderSlice
   );
+  const onlyseenUserIds = useSelector(
+    (state: any) => state.onlyseenUser.onlyseenUserIds
+  );
 
   const { hideNew } = useSelector((state: any) => state.hideNewSlice);
   const [isOpen, setIsOpen] = useState(false);
-  const seenUserIds = useSelector((state: any) => state.seenUsers.seenUserIds);
   const { pathname } = useLocation();
   const isHome = currentTab !== 1 && pathname === "/";
 
@@ -269,13 +272,16 @@ function VideoSidebarFeed({
   }
 
   const handleProfile = (id: any) => {
-    const seenUser = seenUserIds.includes(id);
+    const seenUser = onlyseenUserIds.includes(id);
 
     if (
       post?.user?.my_day?.uploaded &&
       !seenUser &&
       !post?.user?.my_day?.watched
     ) {
+      if (!seenUser) {
+        dispatch(addOnlySeenUser(id));
+      }
       navigate(`/story_detail/${id}`);
     } else {
       navigate(`/user/${id}`);
@@ -349,7 +355,7 @@ function VideoSidebarFeed({
                       style={{
                         background:
                           !post.user?.my_day?.watched &&
-                          !seenUserIds.includes(post?.user?.id)
+                          !onlyseenUserIds.includes(post?.user?.id)
                             ? "linear-gradient(#16131C 0 0) padding-box, " +
                               "linear-gradient(90deg, #e8b9ff 0%, #ff94b4 82.89%) border-box"
                             : "linear-gradient(#16131C 0 0) padding-box, " +

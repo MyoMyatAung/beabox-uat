@@ -27,6 +27,9 @@ const ProfileAvatar = ({
   const navigate = useNavigate();
 
   const seenUserIds = useSelector((state: any) => state.seenUsers.seenUserIds);
+  const onlyseenUserIds = useSelector(
+    (state: any) => state.onlyseenUser.onlyseenUserIds
+  );
 
   const handleRedirect = () => {
     if (myday?.uploaded) {
@@ -87,7 +90,9 @@ const ProfileAvatar = ({
       </svg> */}
       {myday?.uploaded && (
         <>
-          {myday?.watched || !seenUserIds.includes(id) ? (
+          {myday?.watched ||
+          !seenUserIds.includes(id) ||
+          !onlyseenUserIds.includes(id) ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="87"

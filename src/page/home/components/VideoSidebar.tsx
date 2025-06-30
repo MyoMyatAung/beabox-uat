@@ -21,6 +21,7 @@ import { setDetails } from "@/store/slices/exploreSlice";
 import { sethideBar } from "../services/hideBarSlice";
 import { motion } from "framer-motion";
 import { sethideNew } from "../services/hideNewSlice";
+import { addOnlySeenUser } from "../services/onlyseenUserSlice";
 
 function VideoSidebar({
   messages,
@@ -84,7 +85,9 @@ function VideoSidebar({
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
   const { hideBar } = useSelector((state: any) => state.hideBarSlice);
   const { hideNew } = useSelector((state: any) => state.hideNewSlice);
-  const seenUserIds = useSelector((state: any) => state.seenUsers.seenUserIds);
+  const onlyseenUserIds = useSelector(
+    (state: any) => state.onlyseenUser.onlyseenUserIds
+  );
 
   const { videosToRender } = useSelector(
     (state: any) => state.videoRenderSlice
@@ -260,13 +263,16 @@ function VideoSidebar({
   }
 
   const handleProfile = (id: any) => {
-    const seenUser = seenUserIds.includes(id);
+    const seenUser = onlyseenUserIds.includes(id);
 
     if (
       post?.user?.my_day?.uploaded &&
       !seenUser &&
       !post?.user?.my_day?.watched
     ) {
+      if (!seenUser) {
+        dispatch(addOnlySeenUser(id));
+      }
       navigate(`/story_detail/${id}`);
     } else {
       navigate(`/user/${id}`);
@@ -340,7 +346,7 @@ function VideoSidebar({
                       style={{
                         background:
                           !post.user?.my_day?.watched &&
-                          !seenUserIds.includes(post?.user?.id)
+                          !onlyseenUserIds.includes(post?.user?.id)
                             ? "linear-gradient(#16131C 0 0) padding-box, " +
                               "linear-gradient(90deg, #e8b9ff 0%, #ff94b4 82.89%) border-box"
                             : "linear-gradient(#16131C 0 0) padding-box, " +
