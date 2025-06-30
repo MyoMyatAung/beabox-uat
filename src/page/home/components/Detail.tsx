@@ -413,8 +413,8 @@ const Detail = () => {
       {video && (
         <>
           {showGuide && (
-            <div className="absolute px-3 top-0 h-screen left-0 w-full flex flex-col justify-center z-[9999999] bg-black opacity-70">
-              <div className="flex justify-between items-center">
+            <div className="absolute px-3 top-0 h-screen left-0 w-full flex gap-[100px] flex-col justify-center  z-[9999999] bg-[rgba(0,0,0,0.7)]">
+              <div className="flex justify-between items-center mt-[100px]">
                 <div className="flex flex-col items-center">
                   <div className="w-[66px] h-[66px]">
                     <StoryAnimation animate={story} flip={false} />
@@ -429,8 +429,8 @@ const Detail = () => {
                   <p className="guide_text">点击右侧下一个</p>
                 </div>
               </div>
-              <div className="absolute bottom-[100px] left-0 right-0 flex justify-center items-center">
-                <button onClick={handleKnow} className="guide_btn text-white">
+              <div className=" flex justify-center items-center">
+                <button onClick={handleKnow} className="guide_btn">
                   我知道了
                 </button>
               </div>

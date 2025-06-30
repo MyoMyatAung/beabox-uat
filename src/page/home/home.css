@@ -1475,7 +1475,10 @@ html {
   align-items: center;
   gap: 10px;
   border-radius: 32px;
-  background: rgba(255, 255, 255, 0.5);
+  background: var(
+    --Purple-Linear,
+    linear-gradient(325deg, #cd3eff 43.64%, #ffb2e0 100%)
+  );
   color: #fff;
   opacity: 1;
   text-align: center;
