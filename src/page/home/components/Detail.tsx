@@ -429,7 +429,7 @@ const Detail = () => {
                   <p className="guide_text">点击右侧下一个</p>
                 </div>
               </div>
-              <div className=" flex justify-center items-center">
+              <div className="mt-[2rem] flex justify-center items-center">
                 <button onClick={handleKnow} className="guide_btn">
                   我知道了
                 </button>
