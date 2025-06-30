@@ -6,8 +6,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useDeletePostMutation } from "@/store/api/createCenterApi";
 import { setShow } from "../../services/showSlice";
 import { AnimatePresence, motion } from "framer-motion";
+import { time } from "console";
 
 const DetailNav = ({
+  time_ago,
   image,
   name,
   length,
@@ -110,8 +112,10 @@ const DetailNav = ({
                   <AvatarFallback>SM</AvatarFallback>
                 </Avatar>
               )}
-
-              <h1 className="detail_nav_name">{name}</h1>
+              <div className="flex flex-col justify-start items-start">
+                <h1 className="detail_nav_name">{name}</h1>
+                {time_ago && <p className="detail_time_ago">{time_ago}</p>}
+              </div>
             </button>
             <div className="flex items-center gap-2">
               {user?.id === id && (

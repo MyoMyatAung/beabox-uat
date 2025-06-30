@@ -314,8 +314,8 @@ function DetailSidebar({
         className="videoSidebar__button"
         initial={false} // Disable initial animation
         animate={{
-          x: hideBar ? 50 : 0, // Slide right when hidden
-          opacity: hideBar ? 0 : 1,
+          x: hideNew || hideBar ? 50 : 0, // Slide right when hidden
+          opacity: hideNew || hideBar ? 0 : 1,
         }}
         transition={{
           type: "spring",
@@ -491,7 +491,7 @@ function DetailSidebar({
                   fill="white"
                 />
               </svg>
-              <p className="side_text font-cnFont mt-2">退出全屏</p>
+              <p className="side_text font-cnFont mt-2">退出清屏</p>
             </div>
           ) : (
             <div className="flex flex-col items-center">
@@ -519,7 +519,7 @@ function DetailSidebar({
                   fill="white"
                 />
               </svg>
-              <p className="side_text font-cnFont mt-2">全屏</p>
+              <p className="side_text font-cnFont mt-2">清屏</p>
             </div>
           )}
         </button>
