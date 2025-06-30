@@ -103,7 +103,7 @@ const DetailNav = ({
             <button
               className="flex items-center gap-2"
               onClick={() => {
-                navigate(`/user/${id}`, { replace: true });
+                navigate(`/user/${id}`);
               }}
             >
               {decryptedPhoto && (

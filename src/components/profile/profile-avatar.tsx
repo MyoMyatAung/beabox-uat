@@ -34,7 +34,7 @@ const ProfileAvatar = ({
   const handleRedirect = () => {
     if (myday?.uploaded) {
       if (id) {
-        navigate(`/story_detail/${id}`, { replace: true });
+        navigate(`/story_detail/${id}`);
       }
     }
   };
