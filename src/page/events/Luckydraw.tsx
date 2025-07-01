@@ -33,6 +33,7 @@ import { paths } from "@/routes/paths";
 import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 import AuthDrawer from "@/components/profile/auth/auth-drawer";
 import copy from "copy-to-clipboard";
+import {formatDateTime} from '@/lib/utils'
 
 const Luckydraw = () => {
   const navigate = useNavigate();
