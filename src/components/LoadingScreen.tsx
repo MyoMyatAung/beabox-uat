@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setApplicationData, setisLoading } from "@/store/slices/exploreSlice";
-import { setPlay } from "@/page/home/services/playSlice";
 import { useGetAdsPopUpQuery } from "@/utils/helperService";
 import { useGetAdsNoticeQuery } from "@/store/api/explore/exploreApi";
 import { useGetApplicationAdsQuery } from "@/store/api/explore/exploreApi";
 import { useGetConfigQuery } from "@/page/home/services/homeApi";
 import splashVideo from "@/assets/splash.mp4";
-import logo from "@/assets/b_logo.webp";
 import Lottie from "lottie-react";
 import loadingAnimation from "@/lotties/Slogan.json";
+import LineErrorUI from "./LineErrorUI";
+import { useGetInviteQuery } from "@/store/api/wallet/walletApi";
 
 // Types for our data
 interface AdImage {
@@ -43,6 +43,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
   const [minTimeElapsed, setMinTimeElapsed] = useState(false);
   const [currentQuote, setCurrentQuote] = useState("");
   const [contentVisible, setContentVisible] = useState(false);
+  const [hasTimedOut, setHasTimedOut] = useState(false);
 
   // Quotes collection
   const quotes = [
@@ -86,6 +87,8 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
   const { data: applicationAdsData, isLoading: applicationAdsLoading } =
     useGetApplicationAdsQuery("");
   const { data: configData, isLoading: configLoading } = useGetConfigQuery({});
+  const { data: config } = useGetInviteQuery("");
+  const tgLink = config?.data.support_telegram_link;
 
   // Choose a single random quote when component mounts
   useEffect(() => {
@@ -240,6 +243,27 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
       onLoadComplete();
     }
   }, [allDataLoaded, minTimeElapsed, dispatch, onLoadComplete]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setHasTimedOut(true);
+    }, 60000);
+
+    if (allDataLoaded) {
+      clearTimeout(timeout);
+    }
+
+    return () => clearTimeout(timeout);
+  }, [allDataLoaded]);
+
+  if (hasTimedOut) {
+    return (
+      <LineErrorUI
+        onRetry={() => window.location.reload()}
+        onContact={() => window.open(tgLink, '_blank')}
+      />
+    );
+  }
 
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center z-[9999] font-['Noto_Sans_SC',sans-serif]">
