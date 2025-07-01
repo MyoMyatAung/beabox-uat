@@ -34,9 +34,10 @@ import { useGetUserByReferalQuery } from "@/page/event/eventApi";
 import EventBox from "@/page/event/EventBox";
 import RegisterDrawer from "@/components/profile/auth/register-drawer";
 import { EventDetail } from "@/@types/lucky_draw";
-import DEventBox from "@/page/event/dragon/DEventBox";
+// import DEventBox from "@/page/event/dragon/DEventBox";
+import DEventBox from "@/page/event/EventBox";
+
 import { motion, AnimatePresence } from "framer-motion";
-import LuckySpinPage from "@/page/luckywheel/LuckySpinPage";
 import {
   useGetPrizeListQuery,
   useGetProfileQuery,
