@@ -1,16 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 
 import "./event.css";
-import logo from "./img/logoBox.png";
-import light from "./img/light.json";
-
-import btn2 from "./img/btn2.json";
-import card from "./img/red.png";
+import card from "./img/red.webp";
+import header from "./img/redHeader.webp";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
-import Animation from "./Animation";
 import { useVerifyCaptchaMutation } from "./eventApi";
 import EventResultBox from "./EventResultBox";
-import AnimationCard from "./AnimationCard";
 import { getDeviceInfo } from "@/lib/deviceInfo";
 
 declare global {
@@ -190,14 +185,14 @@ const EventBox: React.FC<EventBoxProps> = ({
     <div className="dheight bg-black/80 w-screen flex justify-center items-center fixed top-0 z-[9999]">
       {!shownextBox && (
         <div className="flex flex-col  gap-[0px] justify-center items-center">
-          <div className="absolute z-[-2] top-[150px]">
-            <Animation animate={light} />
-          </div>
           <div className="flex flex-col justify-between items-center  event_bo">
             <div className="absolute z-[-1] mt-[-20px]">
               <img src={card} alt="" className="w-[293.33px] h-[445px]" />
             </div>
-            <div className="w-[400px] h-full pt-[90px] flex flex-col justify-between  items-center media-w1">
+            <div className="flex flex-col justify-center items-center gap-3">
+              <img src={header} className="w-[270px]" alt="" />
+            </div>
+            <div className="w-[400px] h-full pt-[20px] flex flex-col justify-between  items-center media-w1">
               <div className="flex flex-col justify-center items-center px-[30px] mt-20">
                 <AsyncDecryptedImage
                   imageUrl={eventData.data.avatar}

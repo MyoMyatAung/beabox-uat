@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 import { VitePWA } from "vite-plugin-pwa";
-
+import { visualizer } from 'rollup-plugin-visualizer';
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
@@ -52,6 +52,16 @@ export default defineConfig({
         drop_console: true,
         drop_debugger: true,
       },
+    },
+    rollupOptions: {
+      plugins: [
+        visualizer({
+          filename: 'bundle-report.html',
+          open: true,
+          gzipSize: true,
+          brotliSize: true,
+        }),
+      ],
     },
   },
 });

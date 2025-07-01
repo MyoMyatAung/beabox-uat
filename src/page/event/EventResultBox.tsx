@@ -1,21 +1,12 @@
 import React, { useEffect, useState } from "react";
 import "./event.css";
-import logo from "./img/logoBox.png";
-import light from "./img/light.json";
-import card from "./img/red2.json";
+import card from "./img/red.webp";
 import suprise from "./img/suprise.json";
-//import bg from "./img/bg.png";
-
-import btn1 from "./img/btn1.json";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
-import Animation from "./Animation";
-import AuthDrawer from "@/components/profile/auth/auth-drawer";
-import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 import { useDispatch } from "react-redux";
-import LoginDrawer from "@/components/profile/auth/login-drawer";
-import RegisterDrawer from "@/components/profile/auth/register-drawer";
 import { setPlay } from "../home/services/playSlice";
 import AnimationCard from "./AnimationCard";
+import header from "./img/redHeader.webp";
 // import AnimationCard from "./AnimationCard";
 
 interface EventBoxProps {
@@ -77,21 +68,27 @@ const EventResultBox: React.FC<EventBoxProps> = ({
             <div className="flex flex-col gap-[10px] justify-center items-center">
               <div className="flex flex-col justify-between items-center event_bo">
                 <div className="absolute z-[-2] top-[150px]">
-                  <Animation animate={light} />
+                  {/* <Animation animate={light} /> */}
                 </div>
                 {/* <img className=" absolute z-[-1]" src={bg} alt="" /> */}
                 <div className=" absolute z-[-1]">
-                  <AnimationCard animate={card} />
+                  {/* <AnimationCard animate={card} /> */}
 
-                  {/* <img src={bg} alt="" /> */}
-                </div>
+                  <img src={card} alt="" className="w-[293.33px] h-[445px]" />
+                  </div>
                 {newData?.register_bonus && (
                   <div className="absolute z-[-1]">
                     <AnimationCard animate={suprise} />
                   </div>
                 )}
 
-                <div className=" w-[400px] h-full pt-[150px] pb-[30px] flex flex-col justify-between items-center media-w">
+                <div className=" w-[400px] h-full pt-[60px] pb-[30px] flex flex-col justify-between items-center media-w">
+
+                {!newData?.register_bonus && <div
+                    className={`flex flex-col justify-center items-center gap-3`}
+                  >
+                    <img src={header} className={`w-[270px] -mt-8`} alt="" />
+                  </div>}
                   <div
                     className={`flex flex-col justify-center items-center gap-3
                       ${
@@ -109,7 +106,7 @@ const EventResultBox: React.FC<EventBoxProps> = ({
                   </div>
 
                   {/* <img className=" w-[210px] h-[70pxx]" src={logo} alt="" /> */}
-                  <div className=" flex flex-col justify-center items-center mt-16">
+                  <div className={`flex flex-col justify-center items-center ${newData?.register_bonus ? 'mt-16' : 'mt-10'}`}>
                     <AsyncDecryptedImage
                       imageUrl={eventData.data.avatar}
                       className="w-[58px] h-[58px] rounded-full object-cover object-center"
