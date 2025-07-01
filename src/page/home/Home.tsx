@@ -1,7 +1,9 @@
 import { useEffect, memo, useRef, useState } from "react";
 import {
+  homeApi,
   useGetConfigQuery,
   useGetFollowedPostsQuery,
+  useGetMydayQuery,
   useGetPostsQuery,
   useGetUserShareQuery,
 } from "./services/homeApi";
@@ -37,6 +39,15 @@ import CountdownCircle from "./components/CountdownCircle";
 import { decryptImage } from "@/utils/imageDecrypt";
 import { useLayoutEffect } from "react";
 import Loader from "@/components/shared/loader";
+import { Link } from "react-router-dom";
+import Followers from "./components/Followers";
+import DetailStory from "./components/DetailStory";
+import follow_title from "../../assets/follow_title.webp";
+import follow_img from "../../assets/follow_img.webp";
+import follower_login from "../../assets/follower_login.webp";
+import { combineSlices } from "@reduxjs/toolkit";
+import { setPreviousUser } from "./services/previousUserSlice";
+import { clearSeenUsers } from "./services/seenUsersSlice";
 
 const Home = () => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
@@ -46,11 +57,16 @@ const Home = () => {
 
   const { videos } = useSelector((state: any) => state.videoSlice);
   const { start } = useSelector((state: any) => state.startSlice);
+  const { hideBar } = useSelector((state: any) => state.hideBarSlice);
+
+  const { hideNew } = useSelector((state: any) => state.hideNewSlice);
+
   // const { videosToRender } = useSelector(
   //   (state: any) => state.videoRenderSlice
   // );
   const { page } = useSelector((state: any) => state.pageSlice);
 
+  const { show } = useSelector((state: any) => state.showSlice);
   // const { data, isLoading } = useGetUserShareQuery({
   //   type: "video",
   //   id: post?.post_id,
@@ -123,6 +139,41 @@ const Home = () => {
 
   const isError = ForyouError || followError;
 
+  const user = useSelector((state: any) => state?.persist?.user);
+  const previousUser = useSelector((state: any) => state.previousUser.data);
+  const { data: myday, refetch: refetchMyday } = useGetMydayQuery({ page: 1 });
+
+  // Get both the query hooks and their refetch functions
+
+  // Handle user changes
+  useEffect(() => {
+    if (JSON.stringify(user) !== JSON.stringify(previousUser)) {
+      // Reset all video related states
+      dispatch(setPage(1));
+      dispatch(setCurrentActivePost(null));
+      dispatch(setVideos({ follow: [], foryou: [] }));
+      dispatch(setStart(false));
+      dispatch(clearSeenUsers());
+      setFollowers([]);
+
+      dispatch(homeApi.util.invalidateTags(["foryou", "follow"])); // Replace with your actual tags
+
+      // Always refetch myday since it's not tab-dependent
+      refetchMyday();
+
+      // Update previous user in Redux
+      dispatch(setPreviousUser(user));
+    }
+  }, [
+    user,
+    previousUser,
+    dispatch,
+    currentTab,
+    followRefetch,
+    forYouRefetch,
+    refetchMyday,
+  ]);
+
   // Add at the top of your Home component
   const decryptionCache = useRef(new Map<string, string>());
 
@@ -161,13 +212,17 @@ const Home = () => {
       const videoKey =
         currentTab === 0 ? "follow" : currentTab === 2 ? "foryou" : "";
 
-      // Filter out posts with duplicate `post_id`
-      const filteredData = currentData?.data?.filter(
-        (newPost: any) =>
-          !videos[videoKey]?.some(
-            (video: any) => video?.post_id === newPost?.post_id
-          )
-      );
+      let filteredData = currentData?.data || [];
+
+      if (page !== 1) {
+        // Filter out posts with duplicate `post_id`
+        filteredData = currentData?.data?.filter(
+          (newPost: any) =>
+            !videos[videoKey]?.some(
+              (video: any) => video?.post_id === newPost?.post_id
+            )
+        );
+      }
 
       if (page === 1) {
         setIsDecrypting(true);
@@ -451,8 +506,98 @@ const Home = () => {
   //   };
   // }, []);
 
+  const [followers, setFollowers] = useState<any[]>([]);
+  const [showFollowers, setShowFollowers] = useState(false);
+
+  const [scrollDirection, setScrollDirection] = useState<"up" | "down" | null>(
+    null
+  );
+  const [lastScrollTop, setLastScrollTop] = useState(0);
+
+  // Load and decrypt followers
+  useEffect(() => {
+    if (myday?.data.length > 0) {
+      // setIsDecrypting(true);
+      try {
+        const decryptAndUpdateVideos = async () => {
+          const decryptedVideos = await Promise.all(
+            myday?.data.map(async (video: any) => ({
+              ...video,
+              decryptedPreview: await decryptThumbnail(video.avatar),
+            }))
+          );
+          setFollowers(decryptedVideos);
+          // setIsDecrypting(false);
+        };
+        decryptAndUpdateVideos();
+      } catch (error) {
+        // setIsDecrypting(false);
+      }
+    } else {
+      // setIsDecrypting(false);
+    }
+  }, [myday]);
+
+  // Scroll handler for showing/hiding followers
+  useEffect(() => {
+    const container = videoContainerRef.current;
+
+    if (!container) return;
+
+    const handleScroll = () => {
+      const scrollTop = container.scrollTop;
+
+      // Determine scroll direction
+      if (scrollTop > lastScrollTop) {
+        setScrollDirection("down");
+      } else if (scrollTop < lastScrollTop) {
+        setScrollDirection("up");
+      }
+      setLastScrollTop(scrollTop);
+
+      // Show followers when scrolling up at the very top
+      if (scrollTop <= 0 && scrollDirection === "up") {
+        setShowFollowers(true);
+      }
+
+      // Hide followers when scrolling down past threshold
+      if (scrollTop > 100 && showFollowers) {
+        setShowFollowers(false);
+      }
+    };
+
+    container.addEventListener("scroll", handleScroll);
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [
+    lastScrollTop,
+    scrollDirection,
+    showFollowers,
+    videoContainerRef.current,
+  ]);
+
+  const handleShow = () => {
+    setShowFollowers(!showFollowers);
+    // if (!showFollowers) {
+    //   // When showing followers, scroll to top
+    //   videoContainerRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+    // }
+  };
+
+  if (show) {
+    return (
+      <div className="fixed inset-0 top-0 left-0 z-[9999]">
+        <DetailStory id={show} />
+      </div>
+    );
+  }
+
   return (
-    <div className="flex justify-center items-center">
+    <div
+      style={{
+        display: show ? "none" : "flex",
+      }}
+      className=" justify-center items-center"
+    >
       <div className="max-w-[1024px] home-main w-full">
         <TopNavbar currentTab={currentTab} onTabClick={handleTabClick} />
 
@@ -501,9 +646,53 @@ const Home = () => {
                   </div>
                 ) : !isError ? (
                   <>
+                    {followers.length > 0 && !hideBar && !hideNew && (
+                      <>
+                        {showFollowers && (
+                          <div className="absolute top-0 left-0 right-0">
+                            <Followers followers={followers} />
+                          </div>
+                        )}
+
+                        {!showFollowers && (
+                          <div className="flex justify-center items-center left-0 right-0 absolute top-24 z-[999999]">
+                            <button
+                              onClick={handleShow}
+                              className=" text-white flex justify-center items-center gap-2 px-4 py-2 rounded-lg shadow-lg  follow_show_btn"
+                            >
+                              {followers.length} 位关注的作者有更新
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="13"
+                                height="8"
+                                viewBox="0 0 13 8"
+                                fill="none"
+                              >
+                                <path
+                                  d="M12.2652 7.72535C12.3396 7.63887 12.3987 7.53613 12.439 7.42303C12.4793 7.30992 12.5 7.18866 12.5 7.06621C12.5 6.94375 12.4793 6.82249 12.439 6.70939C12.3987 6.59628 12.3396 6.49354 12.2652 6.40706L6.95093 0.217811C6.89177 0.148766 6.82149 0.0939881 6.74413 0.0566131C6.66677 0.0192382 6.58384 0 6.50008 0C6.41633 0 6.3334 0.0192382 6.25604 0.0566131C6.17868 0.0939881 6.1084 0.148766 6.04924 0.217811L0.735014 6.40706C0.42166 6.77201 0.42166 7.3604 0.735014 7.72535C1.04837 8.0903 1.55357 8.0903 1.86693 7.72535L6.50328 2.33303L11.1396 7.7328C11.4466 8.0903 11.9582 8.0903 12.2652 7.72535Z"
+                                  fill="white"
+                                />
+                              </svg>
+                            </button>
+                          </div>
+                        )}
+
+                        {showFollowers && (
+                          <div
+                            onTouchStart={() => setShowFollowers(false)}
+                            onClick={() => setShowFollowers(false)}
+                            className="absolute inset-0 top-[160px] left-0 right-0 z-[999] bg-transparent"
+                          ></div>
+                        )}
+                      </>
+                    )}
+
                     <div
                       ref={videoContainerRef}
-                      className={`app__videos pb-[80px] `}
+                      className={`app__videos pb-[80px]  overflow-hidden 
+                                  transition-all duration-300 ease-in-out transform ${
+                                    showFollowers ? "mt-[400px]" : "mt-0"
+                                  }`}
                     >
                       {videos["follow"]?.map((video: any, index: any) => {
                         return (
@@ -532,6 +721,7 @@ const Home = () => {
                                 abortControllerRef={abortControllerRef}
                                 container={videoContainerRef.current}
                                 status={true}
+                                showFollowers={showFollowers}
                                 countNumber={countNumber}
                                 video={video}
                                 // coin={user?.coins}
@@ -599,84 +789,56 @@ const Home = () => {
                       )}
                     </div>
 
-                    {!followData?.data?.length && (
-                      <div className="app_home bg-[#16131C]">
-                        <div style={{ textAlign: "center", padding: "20px" }}>
-                          <div className="text-white flex flex-col justify-center items-center  gap-2">
-                            <div>
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="33"
-                                height="33"
-                                viewBox="0 0 33 33"
-                                fill="none"
-                              >
-                                <path
-                                  d="M24.4993 28.7502C24.4993 25.9212 23.3755 23.2081 21.3752 21.2077C19.3748 19.2073 16.6617 18.0835 13.8327 18.0835C11.0037 18.0835 8.2906 19.2073 6.29021 21.2077C4.28982 23.2081 3.16602 25.9212 3.16602 28.7502"
-                                  stroke="#888888"
-                                  stroke-width="2"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                                <path
-                                  d="M13.8327 18.0833C17.5146 18.0833 20.4993 15.0986 20.4993 11.4167C20.4993 7.73477 17.5146 4.75 13.8327 4.75C10.1508 4.75 7.16602 7.73477 7.16602 11.4167C7.16602 15.0986 10.1508 18.0833 13.8327 18.0833Z"
-                                  stroke="#888888"
-                                  stroke-width="2"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                                <path
-                                  d="M29.8337 27.4164C29.8337 22.9231 27.1671 18.7498 24.5004 16.7498C25.3769 16.0921 26.0779 15.2286 26.5411 14.2355C27.0044 13.2424 27.2157 12.1504 27.1564 11.0562C27.0971 9.96195 26.7689 8.89922 26.201 7.96204C25.6331 7.02486 24.8429 6.24212 23.9004 5.68311"
-                                  stroke="#888888"
-                                  stroke-width="2"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                              </svg>
-                            </div>
-                            <div className="follow-error">关注您喜欢的作者</div>
+                    {!followData?.data?.length &&
+                      videos["follow"].length === 0 && (
+                        <div className="flex justify-center flex-col items-center h-full">
+                          <h1 className="follow_no_h">热门顶尖创作者</h1>
+                          <p className="follow_no_p">
+                            关注热门账号，观看他们的最新视频
+                          </p>
+                          <div className="follow_bg h-[300px] flex flex-col items-center w-[240px]">
+                            <img
+                              src={follow_title}
+                              alt=""
+                              className="mt-7 w-[128px]"
+                            />
+                            <img
+                              src={follow_img}
+                              alt=""
+                              className="mt-5 px-5"
+                            />
+                            <p className="follow_re_text mt-5">
+                              创作者成为闪亮之星，从创作者开始
+                            </p>
+                            <Link
+                              to={"/ranking"}
+                              className="follow_re_btn mt-5"
+                            >
+                              查看全部
+                            </Link>
                           </div>
                         </div>
-                      </div>
-                    )}
+                      )}
                   </>
                 ) : (
-                  <div className="app_home bg-[#16131C]">
-                    <div style={{ textAlign: "center", padding: "20px" }}>
-                      <div className="text-white flex flex-col justify-center items-center  gap-2">
-                        <div>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="33"
-                            height="33"
-                            viewBox="0 0 33 33"
-                            fill="none"
-                          >
-                            <path
-                              d="M24.4993 28.7502C24.4993 25.9212 23.3755 23.2081 21.3752 21.2077C19.3748 19.2073 16.6617 18.0835 13.8327 18.0835C11.0037 18.0835 8.2906 19.2073 6.29021 21.2077C4.28982 23.2081 3.16602 25.9212 3.16602 28.7502"
-                              stroke="#888888"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                            <path
-                              d="M13.8327 18.0833C17.5146 18.0833 20.4993 15.0986 20.4993 11.4167C20.4993 7.73477 17.5146 4.75 13.8327 4.75C10.1508 4.75 7.16602 7.73477 7.16602 11.4167C7.16602 15.0986 10.1508 18.0833 13.8327 18.0833Z"
-                              stroke="#888888"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                            <path
-                              d="M29.8337 27.4164C29.8337 22.9231 27.1671 18.7498 24.5004 16.7498C25.3769 16.0921 26.0779 15.2286 26.5411 14.2355C27.0044 13.2424 27.2157 12.1504 27.1564 11.0562C27.0971 9.96195 26.7689 8.89922 26.201 7.96204C25.6331 7.02486 24.8429 6.24212 23.9004 5.68311"
-                              stroke="#888888"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                          </svg>
-                        </div>
-                        <div className="follow-error">关注您喜欢的作者</div>
-                      </div>
+                  <div className="flex justify-center flex-col items-center h-full">
+                    <h1 className="follow_no_h">热门顶尖创作者</h1>
+                    <p className="follow_no_p">
+                      关注热门账号，观看他们的最新视频
+                    </p>
+                    <div className="follow_bg h-[300px] flex flex-col items-center w-[240px]">
+                      <img
+                        src={follow_title}
+                        alt=""
+                        className="mt-7 w-[128px]"
+                      />
+                      <img src={follow_img} alt="" className="mt-5 px-5" />
+                      <p className="follow_re_text mt-5">
+                        创作者成为闪亮之星，从创作者开始
+                      </p>
+                      <Link to={"/ranking"} className="follow_re_btn mt-5">
+                        查看全部
+                      </Link>
                     </div>
                   </div>
                 ))}
@@ -732,6 +894,7 @@ const Home = () => {
                               </a>
                             ) : (
                               <VideoContainer
+                                showFollowers={false}
                                 // refetchUser={refetchUser}
                                 videoData={videoData}
                                 indexRef={indexRef}

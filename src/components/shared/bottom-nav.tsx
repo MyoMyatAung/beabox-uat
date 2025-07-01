@@ -54,6 +54,7 @@ const isIOSWebViewOrWebClip = () => {
 };
 
 export function BottomNav() {
+  const { show } = useSelector((state: any) => state.showSlice);
   const { pathname } = useLocation();
   const { bottomLoader } = useSelector((state: any) => state.loaderSlice);
   const [needsBottomPadding, setNeedsBottomPadding] = useState(false);
@@ -61,6 +62,9 @@ export function BottomNav() {
   const user = useSelector((state: any) => state.persist.user);
   const dispatch = useDispatch();
   const { hideBar } = useSelector((state: any) => state.hideBarSlice);
+
+  const [showHeader, setShowHeader] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   useEffect(() => {
     setNeedsBottomPadding(isIOSWebViewOrWebClip());
@@ -74,14 +78,51 @@ export function BottomNav() {
     navigate(route);
   };
 
+  // Scroll listener
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+
+      if (currentY <= 500) {
+        setShowHeader(true);
+      } else {
+        if (currentY > lastScrollY) {
+          // scrolling down
+          setShowHeader(false);
+        } else if (currentY < lastScrollY) {
+          // scrolling up
+          setShowHeader(true);
+        }
+      }
+
+      setLastScrollY(currentY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
+
   return (
     <nav
       style={{
-        display: hideBar || location.pathname === "/lucky" ? "none" : "flex",
+        display:
+          location.pathname === "/lucky" || (show && location.pathname === "/")
+            ? "none"
+            : "flex",
       }}
-      className={`flex items-center justify-around p-4 bg-[#191721] backdrop-blur-sm border-t border-white/10 ${
-        bottomLoader && "loading-border"
-      } ${needsBottomPadding ? "h-[80px] pb-10" : "h-[76px]"}`}
+      className={`flex items-center justify-around p-4 bg-[#191721] backdrop-blur-sm border-t border-white/10  transition-transform duration-300 ease-in-out will-change-transform
+ ${bottomLoader && "loading-border"} ${
+        needsBottomPadding ? "h-[80px] pb-10" : "h-[76px]"
+      }
+      
+         ${
+           location.pathname === "/"
+             ? showHeader
+               ? "-translate-y-0 opacity-100"
+               : "translate-y-full opacity-0"
+             : ""
+         }
+      `}
     >
       {" "}
       {navItems.map((item) => (

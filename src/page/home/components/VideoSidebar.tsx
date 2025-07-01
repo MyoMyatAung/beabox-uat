@@ -18,6 +18,10 @@ import LoginDrawer from "@/components/profile/auth/login-drawer";
 import { decryptImage } from "@/utils/imageDecrypt";
 import { setVideosToRender } from "../services/videoRenderSlice";
 import { setDetails } from "@/store/slices/exploreSlice";
+import { sethideBar } from "../services/hideBarSlice";
+import { motion } from "framer-motion";
+import { sethideNew } from "../services/hideNewSlice";
+import { addOnlySeenUser } from "../services/onlyseenUserSlice";
 
 function VideoSidebar({
   messages,
@@ -80,6 +84,11 @@ function VideoSidebar({
   const [page, setPage] = useState(1);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
   const { hideBar } = useSelector((state: any) => state.hideBarSlice);
+  const { hideNew } = useSelector((state: any) => state.hideNewSlice);
+  const onlyseenUserIds = useSelector(
+    (state: any) => state.onlyseenUser.onlyseenUserIds
+  );
+
   const { videosToRender } = useSelector(
     (state: any) => state.videoRenderSlice
   );
@@ -254,7 +263,20 @@ function VideoSidebar({
   }
 
   const handleProfile = (id: any) => {
-    navigate(`/user/${id}`);
+    const seenUser = onlyseenUserIds.includes(id);
+
+    if (
+      post?.user?.my_day?.uploaded &&
+      !seenUser &&
+      !post?.user?.my_day?.watched
+    ) {
+      if (!seenUser) {
+        dispatch(addOnlySeenUser(id));
+      }
+      navigate(`/story_detail/${id}`);
+    } else {
+      navigate(`/user/${id}`);
+    }
   };
 
   return (
@@ -263,9 +285,24 @@ function VideoSidebar({
         isHome ? "videoSidebar" : "videoSidebar_exp"
       } z-[999] w-[50px]
 `}
-      style={{ display: hideBar ? "none" : "block" }}
     >
-      <div className="videoSidebar__button ">
+      <motion.div
+        className="videoSidebar__button"
+        initial={false} // Disable initial animation
+        animate={{
+          x: hideNew || hideBar ? 50 : 0, // Slide right when hidden
+          opacity: hideNew || hideBar ? 0 : 1,
+        }}
+        transition={{
+          type: "spring",
+          damping: 20,
+          stiffness: 300,
+          opacity: { duration: 0.2 },
+        }}
+        style={{
+          pointerEvents: hideNew || hideBar ? "none" : "auto",
+        }}
+      >
         <div className="flex flex-col items-center relative mb-2">
           <button onClick={() => handleProfile(post?.user?.id)}>
             {post?.type === "ads" ? (
@@ -303,10 +340,32 @@ function VideoSidebar({
             ) : (
               <>
                 {decryptedPhoto ? (
-                  <Avatar className="w-[40.25px] h-[40.25px]">
-                    <AvatarImage src={decryptedPhoto} />
-                    <AvatarFallback>SM</AvatarFallback>
-                  </Avatar>
+                  post.user?.my_day?.uploaded ? (
+                    <div
+                      className="w-[47px] h-[47px] rounded-full p-[2px]"
+                      style={{
+                        background:
+                          !post.user?.my_day?.watched &&
+                          !onlyseenUserIds.includes(post?.user?.id)
+                            ? "linear-gradient(#16131C 0 0) padding-box, " +
+                              "linear-gradient(90deg, #e8b9ff 0%, #ff94b4 82.89%) border-box"
+                            : "linear-gradient(#16131C 0 0) padding-box, " +
+                              "rgba(255, 255, 255, 0.40) border-box",
+                        border: "3px solid transparent",
+                        padding: "3px",
+                      }}
+                    >
+                      <img
+                        src={decryptedPhoto}
+                        className="w-full h-full rounded-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <Avatar className="w-[40.25px] h-[40.25px]">
+                      <AvatarImage src={decryptedPhoto} />
+                      <AvatarFallback>SM</AvatarFallback>
+                    </Avatar>
+                  )
                 ) : (
                   <Avatar className="w-[40.25px] p-3 bg-[#3a374d] flex justify-center items-center h-[40.25px] ">
                     <svg
@@ -333,6 +392,38 @@ function VideoSidebar({
                   </Avatar>
                 )}
               </>
+              // <>
+              //   {decryptedPhoto ? (
+              //     <Avatar className="w-[40.25px] h-[40.25px]">
+              //       <AvatarImage src={decryptedPhoto} />
+              //       <AvatarFallback>SM</AvatarFallback>
+              //     </Avatar>
+              //   ) : (
+              //     <Avatar className="w-[40.25px] p-3 bg-[#3a374d] flex justify-center items-center h-[40.25px] ">
+              //       <svg
+              //         xmlns="http://www.w3.org/2000/svg"
+              //         width="21"
+              //         height="30"
+              //         viewBox="0 0 21 30"
+              //         fill="none"
+              //       >
+              //         <path
+              //           fill-rule="evenodd"
+              //           clip-rule="evenodd"
+              //           d="M10.3206 17.5712C4.82551 17.5712 0.00585938 20.804 0.00585938 24.4875C0.00585938 29.2271 7.77035 29.2271 10.3206 29.2271C12.8709 29.2271 20.634 29.2271 20.634 24.4566C20.634 20.7885 15.8143 17.5712 10.3206 17.5712Z"
+              //           fill="white"
+              //         />
+              //         <path
+              //           fill-rule="evenodd"
+              //           clip-rule="evenodd"
+              //           d="M10.2666 14.4974H10.3102C14.0948 14.4974 17.1731 11.4191 17.1731 7.63443C17.1731 3.85117 14.0948 0.772888 10.3102 0.772888C6.52559 0.772888 3.4473 3.85117 3.4473 7.63162C3.43467 11.4036 6.49188 14.4834 10.2666 14.4974Z"
+              //           fill="white"
+              //         />
+              //       </svg>
+              //       {/* <AvatarFallback>SM</AvatarFallback> */}
+              //     </Avatar>
+              //   )}
+              // </>
             )}
           </button>
 
@@ -363,9 +454,24 @@ function VideoSidebar({
             )}
           </button>
         </div>
-      </div>
-
-      <div className="videoSidebar__button ">
+      </motion.div>
+      <motion.div
+        className="videoSidebar__button"
+        initial={false} // Disable initial animation
+        animate={{
+          x: hideNew || hideBar ? 50 : 0, // Slide right when hidden
+          opacity: hideNew || hideBar ? 0 : 1,
+        }}
+        transition={{
+          type: "spring",
+          damping: 20,
+          stiffness: 300,
+          opacity: { duration: 0.2 },
+        }}
+        style={{
+          pointerEvents: hideNew || hideBar ? "none" : "auto",
+        }}
+      >
         {isLiked ? (
           <button onClick={unLike}>
             <svg
@@ -398,9 +504,24 @@ function VideoSidebar({
           </button>
         )}
         <p className="side_text font-cnFont mt-2">{likeCount}</p>
-      </div>
-
-      <div className="videoSidebar__button ">
+      </motion.div>
+      <motion.div
+        className="videoSidebar__button"
+        initial={false} // Disable initial animation
+        animate={{
+          x: hideNew || hideBar ? 50 : 0, // Slide right when hidden
+          opacity: hideNew || hideBar ? 0 : 1,
+        }}
+        transition={{
+          type: "spring",
+          damping: 20,
+          stiffness: 300,
+          opacity: { duration: 0.2 },
+        }}
+        style={{
+          pointerEvents: hideNew || hideBar ? "none" : "auto",
+        }}
+      >
         <button onClick={handleCommentList}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -418,8 +539,25 @@ function VideoSidebar({
           </svg>
         </button>
         <p className="side_text font-cnFont mt-2">{messages}</p>
-      </div>
-      <div className="videoSidebar__button ">
+      </motion.div>
+
+      <motion.div
+        className="videoSidebar__button"
+        initial={false} // Disable initial animation
+        animate={{
+          x: hideNew || hideBar ? 50 : 0, // Slide right when hidden
+          opacity: hideNew || hideBar ? 0 : 1,
+        }}
+        transition={{
+          type: "spring",
+          damping: 20,
+          stiffness: 300,
+          opacity: { duration: 0.2 },
+        }}
+        style={{
+          pointerEvents: hideNew || hideBar ? "none" : "auto",
+        }}
+      >
         <button onClick={handleShareClick}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -436,8 +574,25 @@ function VideoSidebar({
 
           <p className="side_text font-cnFont mt-2">分享</p>
         </button>
-      </div>
-      <div className="videoSidebar__button ">
+      </motion.div>
+
+      <motion.div
+        className="videoSidebar__button"
+        initial={false} // Disable initial animation
+        animate={{
+          x: hideNew || hideBar ? 50 : 0, // Slide right when hidden
+          opacity: hideNew || hideBar ? 0 : 1,
+        }}
+        transition={{
+          type: "spring",
+          damping: 20,
+          stiffness: 300,
+          opacity: { duration: 0.2 },
+        }}
+        style={{
+          pointerEvents: hideNew || hideBar ? "none" : "auto",
+        }}
+      >
         <button onClick={handleVoice}>
           {mute ? (
             <div className="flex flex-col items-center">
@@ -487,30 +642,115 @@ function VideoSidebar({
             </div>
           )}
         </button>
+      </motion.div>
+      <motion.div
+        className="videoSidebar__button"
+        initial={false} // Disable initial animation
+        animate={{
+          x: hideBar ? 50 : 0, // Slide right when hidden
+          opacity: hideBar ? 0 : 1,
+        }}
+        transition={{
+          type: "spring",
+          damping: 20,
+          stiffness: 300,
+          opacity: { duration: 0.2 },
+        }}
+        style={{
+          pointerEvents: hideBar ? "none" : "auto",
+        }}
+      >
+        <button onClick={() => dispatch(sethideNew(!hideNew))}>
+          {hideNew ? (
+            <div className="flex flex-col items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="25"
+                height="24"
+                viewBox="0 0 25 24"
+                fill="none"
+              >
+                <path
+                  d="M24.5 24H15.042V21.3525H21.8525V14.542H24.5V24Z"
+                  fill="white"
+                />
+                <path
+                  d="M9.1582 23.2217H6.51074V19.7793L2.40625 23.8838L0.552734 22.0303L4.65723 17.9258H1.21484V15.2783H9.1582V23.2217Z"
+                  fill="white"
+                />
+                <path
+                  d="M9.95801 2.64746H3.14746V9.45801H0.5V0H9.95801V2.64746Z"
+                  fill="white"
+                />
+                <path
+                  d="M24.3838 1.90625L20.2793 6.01074H23.7217V8.65918H15.7783V0.714844H18.4258V4.15723L22.5303 0.0527344L24.3838 1.90625Z"
+                  fill="white"
+                />
+              </svg>
+              <p className="side_text font-cnFont mt-2">退出清屏</p>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="25"
+                height="25"
+                viewBox="0 0 25 25"
+                fill="none"
+              >
+                <path
+                  d="M24.5 24.8066H15.0419V22.159H21.8523V15.3486H24.5V24.8066Z"
+                  fill="white"
+                />
+                <path
+                  d="M9.15849 17.9382L5.05415 22.0423H8.49644V24.6902H0.552874V16.7467H3.20081V20.1889L7.30491 16.0846L9.15849 17.9382Z"
+                  fill="white"
+                />
+                <path
+                  d="M9.95806 3.45433H3.14769V10.2647H0.5V0.806641H9.95806V3.45433Z"
+                  fill="white"
+                />
+                <path
+                  d="M24.3836 8.80308H21.7356V5.36079L17.6315 9.46513L15.778 7.61155L19.8823 3.50745H16.44V0.859515H24.3836V8.80308Z"
+                  fill="white"
+                />
+              </svg>
+              <p className="side_text font-cnFont mt-2">清屏</p>
+            </div>
+          )}
+        </button>
+      </motion.div>
+
+      <div
+        style={{
+          opacity: hideBar ? 0 : 1,
+          transition: "opacity 0.3s ease-in-out",
+          pointerEvents: hideBar ? "none" : "auto",
+        }}
+      >
+        <ShareOverlay
+          alertVisible={alertVisible}
+          setAlertVisible={setAlertVisible}
+          config={config}
+          post={post}
+          status={status}
+        />
+
+        <CommentOverlay
+          setCommentCount={setCommentCount}
+          post_id={post_id}
+          commentsVisible={commentsVisible}
+          comments={comments}
+          closeCommentList={closeCommentList}
+          isLoading={isLoading}
+          refetchComments={refetchComments}
+          setComments={setComments}
+          page={page}
+          setPage={setPage}
+          getComments={getComments}
+          comment_count={post?.comment_count}
+        />
       </div>
-
-      <ShareOverlay
-        alertVisible={alertVisible}
-        setAlertVisible={setAlertVisible}
-        config={config}
-        post={post}
-        status={status}
-      />
-
-      <CommentOverlay
-        setCommentCount={setCommentCount}
-        post_id={post_id}
-        commentsVisible={commentsVisible}
-        comments={comments}
-        closeCommentList={closeCommentList}
-        isLoading={isLoading}
-        refetchComments={refetchComments}
-        setComments={setComments}
-        page={page}
-        setPage={setPage}
-        getComments={getComments}
-        comment_count={post?.comment_count}
-      />
     </div>
   );
 }

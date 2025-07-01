@@ -4616,6 +4616,7 @@ const Player = ({
       // Reset watch time tracking when switching videos
       watchedTimeRef.current = 0;
       apiCalledRef.current = false;
+      spriteImageUrlRef.current = null; // Reset sprite URL when inactive
 
       // Cleanup when inactive
       if (artPlayerInstanceRef.current) {
@@ -4772,6 +4773,7 @@ const Player = ({
       // Reset API called flag to ensure proper tracking for next mount
       apiCalledRef.current = false;
       watchedTimeRef.current = 0;
+      spriteImageUrlRef.current = null; // Reset sprite URL on unmount
 
       // Save position before unmounting
       if (artPlayerInstanceRef.current) {

@@ -32,11 +32,18 @@ import { createCenterApi } from "./api/createCenterApi";
 import playSlice from "@/page/home/services/playSlice";
 import scrollSlice from "@/page/home/services/scrollSlice";
 import followSlice from "./slices/followSlice";
-import eventSlice from "./slices/eventSlice"
+import eventSlice from "./slices/eventSlice";
 import { eventApi } from "./api/events/eventApi";
 import { eventInvitationApi } from "../page/event/eventApi";
-import spinWheelReducer from './slices/spinWheelSlice';
-import { spinWheelApi } from '../page/luckywheel/services/spinWheelApi';
+import spinWheelReducer from "./slices/spinWheelSlice";
+import { spinWheelApi } from "../page/luckywheel/services/spinWheelApi";
+import showSlice from "@/page/home/services/showSlice";
+import watchSlice from "@/page/home/services/watchSlice";
+import indexSlice from "@/page/home/services/indexSlice";
+import previousUserReducer from "@/page/home/services/previousUserSlice";
+import hideNewSlice from "@/page/home/services/hideNewSlice";
+import seenUsersSlice from "@/page/home/services/seenUsersSlice";
+import onlyseenUserSlice from "@/page/home/services/onlyseenUserSlice";
 
 const sessionStorageWrapper: Storage = {
   getItem: (key: string) => {
@@ -67,7 +74,7 @@ const persistHomeSliceConfig = {
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["persist", "history", "explore", "unlike","event"], // Reducers you want to persist
+  whitelist: ["persist", "history", "explore", "unlike", "event"], // Reducers you want to persist
 };
 
 const rootReducer = combineReducers({
@@ -76,11 +83,19 @@ const rootReducer = combineReducers({
   profile: profileSlice,
   persist: persistSlice,
   playSlice: playSlice,
+  showSlice: showSlice,
   explore: exploreSlice,
   scrollSlice: scrollSlice,
+  indexSlice: indexSlice,
+  watchSlice: watchSlice,
   history: HistorySlice,
+  seenUsers: seenUsersSlice,
+  onlyseenUser: onlyseenUserSlice,
   startSlice: startSlice,
+  previousUser: previousUserReducer,
+
   hideBarSlice: hideBarSlice,
+  hideNewSlice: hideNewSlice,
   follow: followSlice,
   home: persistReducer(persistHomeSliceConfig, homeSlice), // Apply sessionStorage for homeSlice
   model: ModelSlice,
@@ -101,7 +116,7 @@ const rootReducer = combineReducers({
   [searchApi.reducerPath]: searchApi.reducer,
   [createCenterApi.reducerPath]: createCenterApi.reducer,
   event: eventSlice,
-  [eventApi.reducerPath] : eventApi.reducer,
+  [eventApi.reducerPath]: eventApi.reducer,
   [eventInvitationApi.reducerPath]: eventInvitationApi.reducer,
   [versionApi.reducerPath]: versionApi.reducer,
   [spinWheelApi.reducerPath]: spinWheelApi.reducer,

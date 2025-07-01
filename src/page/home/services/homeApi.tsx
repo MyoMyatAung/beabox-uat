@@ -69,15 +69,19 @@ export const homeApi = createApi({
       }
     },
   }),
+  tagTypes: ["foryou", "follow"], // 👈 Define a tag type
+
   endpoints: (builder) => ({
     getPosts: builder.query({
       query: ({ page }) =>
         convertToSecureUrl(`posts/list?pageSize=10&page=${page}`),
+      providesTags: ["foryou"], // 👈 Assign the tag to this query
     }),
 
     getFollowedPosts: builder.query({
       query: ({ page }) =>
         convertToSecureUrl(`posts/following?pageSize=10&page=${page}`),
+      providesTags: ["follow"], // 👈 Assign the tag to this query
     }),
 
     getConfig: builder.query({
@@ -241,6 +245,14 @@ export const homeApi = createApi({
     getReports: builder.query({
       query: () => convertToSecureUrl(`report-content/list`),
     }),
+    getMyday: builder.query({
+      query: ({ page }) => convertToSecureUrl(`users/myday?page=${page}`),
+    }),
+    getUserMyday: builder.query({
+      query: ({ post_user_id }) =>
+        convertToSecureUrl(`myday-list?post_user_id=${post_user_id}`),
+    }),
+
     storeReport: builder.mutation<
       void,
       { model_id: any; type: any; report_content: any }
@@ -259,6 +271,8 @@ export const homeApi = createApi({
 });
 
 export const {
+  useGetMydayQuery,
+  useGetUserMydayQuery,
   useGetUserShareQuery,
   useFollowStatusMutation,
   useGetFollowedPostsQuery,
