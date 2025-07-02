@@ -168,6 +168,7 @@ const Home = () => {
       dispatch(setPage(1));
       dispatch(setPage1(1));
       dispatch(setCurrentActivePost(null));
+      dispatch(setCurrentActivePost1(null));
       dispatch(setVideos({ follow: [], foryou: [] }));
       dispatch(setStart(false));
       dispatch(clearSeenUsers());
