@@ -48,6 +48,7 @@ import follower_login from "../../assets/follower_login.webp";
 import { combineSlices } from "@reduxjs/toolkit";
 import { setPreviousUser } from "./services/previousUserSlice";
 import { clearSeenUsers } from "./services/seenUsersSlice";
+import { setHasDecryptedInitialData } from "./services/decryptionSlice";
 
 const Home = () => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
@@ -142,12 +143,18 @@ const Home = () => {
   const user = useSelector((state: any) => state?.persist?.user);
   const previousUser = useSelector((state: any) => state.previousUser.data);
   const { data: myday, refetch: refetchMyday } = useGetMydayQuery({ page: 1 });
+  const { hasDecryptedInitialData } = useSelector(
+    (state: any) => state.decryption
+  );
 
   // Get both the query hooks and their refetch functions
 
   // Handle user changes
   useEffect(() => {
     if (JSON.stringify(user) !== JSON.stringify(previousUser)) {
+      if (hasDecryptedInitialData) {
+        dispatch(setHasDecryptedInitialData(false));
+      }
       // Reset all video related states
       dispatch(setPage(1));
       dispatch(setCurrentActivePost(null));
@@ -224,7 +231,7 @@ const Home = () => {
         );
       }
 
-      if (page === 1) {
+      if (page === 1 && !hasDecryptedInitialData) {
         setIsDecrypting(true);
       }
 
@@ -255,6 +262,9 @@ const Home = () => {
                 })
               );
             }
+            if (!hasDecryptedInitialData) {
+              dispatch(setHasDecryptedInitialData(true));
+            }
             setIsDecrypting(false);
           };
           decryptAndUpdateVideos();
@@ -262,6 +272,7 @@ const Home = () => {
         } finally {
         }
       } else {
+        dispatch(setHasDecryptedInitialData(true));
         setIsDecrypting(false);
       }
     }
@@ -360,6 +371,9 @@ const Home = () => {
   }, [refresh]);
 
   const handleTabClick = (tab: number) => {
+    if (hasDecryptedInitialData) {
+      dispatch(setHasDecryptedInitialData(false));
+    }
     dispatch(setPage(1));
     dispatch(setCurrentActivePost(null));
     dispatch(
@@ -517,7 +531,6 @@ const Home = () => {
   // Load and decrypt followers
   useEffect(() => {
     if (myday?.data.length > 0) {
-      // setIsDecrypting(true);
       try {
         const decryptAndUpdateVideos = async () => {
           const decryptedVideos = await Promise.all(
@@ -527,14 +540,10 @@ const Home = () => {
             }))
           );
           setFollowers(decryptedVideos);
-          // setIsDecrypting(false);
         };
         decryptAndUpdateVideos();
-      } catch (error) {
-        // setIsDecrypting(false);
-      }
+      } catch (error) {}
     } else {
-      // setIsDecrypting(false);
     }
   }, [myday]);
 
@@ -590,6 +599,8 @@ const Home = () => {
       </div>
     );
   }
+
+  console.log(isDecrypting, "isDecrypting");
 
   return (
     <div
