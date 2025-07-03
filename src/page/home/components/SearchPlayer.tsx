@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import Artplayer from "artplayer";
 import Hls from "hls.js"; // Import HLS.js for handling m3u8 streams
 import lozad from "lozad"; // Import lozad library for lazy loading
-import indicator from "../indicator.png";
+import indicator from "@/assets/indicator.webp";
 import vod_loader from "../vod_loader.gif";
 import { useSelector } from "react-redux";
 

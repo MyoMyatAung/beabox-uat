@@ -18,7 +18,7 @@ import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder";
 import { paths } from "@/routes/paths";
 import Artplayer from "artplayer";
 import Hls from "hls.js";
-import indicator from "../../home/indicator.png";
+import indicator from "@/assets/indicator.webp";
 import vod_loader from "../../home/vod_loader.gif";
 
 // import ImageWithPlaceholder from "../comp/imgPlaceholder";
