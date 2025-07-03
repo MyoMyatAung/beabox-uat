@@ -21,8 +21,10 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentTab } from "./services/homeSlice";
 import { setCurrentActivePost } from "./services/activeSlice";
+import { setCurrentActivePost1 } from "./services/activeSlice1";
 import { setVideos } from "./services/videosSlice";
 import { setPage } from "./services/pageSlice";
+import { setPage1 } from "./services/pageSlice1";
 import HeartCount from "./components/Heart";
 import VideoContainer from "./components/VideoContainer";
 import Ads from "./components/Ads";
@@ -48,12 +50,16 @@ import follower_login from "../../assets/follower_login.webp";
 import { combineSlices } from "@reduxjs/toolkit";
 import { setPreviousUser } from "./services/previousUserSlice";
 import { clearSeenUsers } from "./services/seenUsersSlice";
+import { setHasDecryptedInitialData } from "./services/decryptionSlice";
 
 const Home = () => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
   // const [videos, setVideos] = useState<any[]>([]);
   //const [page, setPage] = useState(1);
   const { currentActivePost } = useSelector((state: any) => state.activeslice);
+  const { currentActivePost1 } = useSelector(
+    (state: any) => state.activeslice1
+  );
 
   const { videos } = useSelector((state: any) => state.videoSlice);
   const { start } = useSelector((state: any) => state.startSlice);
@@ -65,6 +71,7 @@ const Home = () => {
   //   (state: any) => state.videoRenderSlice
   // );
   const { page } = useSelector((state: any) => state.pageSlice);
+  const { page1 } = useSelector((state: any) => state.pageSlice1);
 
   const { show } = useSelector((state: any) => state.showSlice);
   // const { data, isLoading } = useGetUserShareQuery({
@@ -84,6 +91,7 @@ const Home = () => {
   const [countNumber, setCountNumber] = useState(0); // New state for counting clicks
   const [topmovies, setTopMovies] = useState(false);
   const currentTab = useSelector((state: any) => state.home.currentTab);
+  const currentPost = currentTab === 0 ? currentActivePost1 : currentActivePost;
   //const user = useSelector((state: any) => state?.persist?.profileData);
   const [refresh, setRefresh] = useState(false);
   const dispatch = useDispatch();
@@ -116,7 +124,7 @@ const Home = () => {
     isError: followError,
   } = useGetFollowedPostsQuery(
     {
-      page,
+      page: page1,
     },
     { skip: currentTab !== 0 }
   );
@@ -139,18 +147,28 @@ const Home = () => {
 
   const isError = ForyouError || followError;
 
+  const currentPage = currentTab === 0 ? page1 : page;
+
   const user = useSelector((state: any) => state?.persist?.user);
   const previousUser = useSelector((state: any) => state.previousUser.data);
   const { data: myday, refetch: refetchMyday } = useGetMydayQuery({ page: 1 });
+  const { hasDecryptedInitialData } = useSelector(
+    (state: any) => state.decryption
+  );
 
   // Get both the query hooks and their refetch functions
 
   // Handle user changes
   useEffect(() => {
     if (JSON.stringify(user) !== JSON.stringify(previousUser)) {
+      if (hasDecryptedInitialData) {
+        dispatch(setHasDecryptedInitialData(false));
+      }
       // Reset all video related states
       dispatch(setPage(1));
+      dispatch(setPage1(1));
       dispatch(setCurrentActivePost(null));
+      dispatch(setCurrentActivePost1(null));
       dispatch(setVideos({ follow: [], foryou: [] }));
       dispatch(setStart(false));
       dispatch(clearSeenUsers());
@@ -214,7 +232,7 @@ const Home = () => {
 
       let filteredData = currentData?.data || [];
 
-      if (page !== 1) {
+      if (currentPage !== 1) {
         // Filter out posts with duplicate `post_id`
         filteredData = currentData?.data?.filter(
           (newPost: any) =>
@@ -224,7 +242,7 @@ const Home = () => {
         );
       }
 
-      if (page === 1) {
+      if (currentPage === 1 && !hasDecryptedInitialData) {
         setIsDecrypting(true);
       }
 
@@ -238,7 +256,7 @@ const Home = () => {
               }))
             );
 
-            if (page === 1) {
+            if (currentPage === 1) {
               // Replace videos for the current tab
               dispatch(
                 setVideos({
@@ -255,6 +273,9 @@ const Home = () => {
                 })
               );
             }
+            if (!hasDecryptedInitialData) {
+              dispatch(setHasDecryptedInitialData(true));
+            }
             setIsDecrypting(false);
           };
           decryptAndUpdateVideos();
@@ -262,18 +283,19 @@ const Home = () => {
         } finally {
         }
       } else {
+        dispatch(setHasDecryptedInitialData(true));
         setIsDecrypting(false);
       }
     }
-  }, [followData, forYouData, currentTab, page]);
+  }, [followData, forYouData, currentTab, currentPage]);
 
   useEffect(() => {
     const container = videoContainerRef.current;
 
-    if (container && currentActivePost) {
+    if (container && currentPost) {
       // Ensure currentActivePost is a string and trim spaces
       const activeElement = container.querySelector(
-        `[data-post-id="${currentActivePost.trim()}"]`
+        `[data-post-id="${currentPost.trim()}"]`
       );
 
       if (activeElement) {
@@ -282,7 +304,7 @@ const Home = () => {
         console.warn("Element with data-post-id not found!");
       }
     }
-  }, []); // Add currentActivePost as a dependency
+  }, [currentTab]); // Add currentActivePost as a dependency
 
   useLayoutEffect(() => {
     const container = videoContainerRef.current;
@@ -293,7 +315,11 @@ const Home = () => {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            dispatch(setPage(page + 1)); // Load more videos
+            if (currentTab === 2) {
+              dispatch(setPage(page + 1)); // Load more videosdispatch(setPage(page + 1)); // Load more videos
+            } else if (currentTab === 0) {
+              dispatch(setPage1(page1 + 1)); // Load more videos for follow tab
+            }
           }
         });
       },
@@ -360,14 +386,22 @@ const Home = () => {
   }, [refresh]);
 
   const handleTabClick = (tab: number) => {
-    dispatch(setPage(1));
-    dispatch(setCurrentActivePost(null));
-    dispatch(
-      setVideos({
-        follow: [],
-        foryou: [],
-      })
-    );
+    const videoKey = tab === 0 ? "follow" : tab === 2 ? "foryou" : "";
+    const video = videos[videoKey] || [];
+
+    if (video?.length === 0) {
+      if (hasDecryptedInitialData) {
+        dispatch(setHasDecryptedInitialData(false));
+      }
+    }
+    // dispatch(setPage(1));
+    // dispatch(setCurrentActivePost(null));
+    // dispatch(
+    //   setVideos({
+    //     follow: [],
+    //     foryou: [],
+    //   })
+    // );
     if (currentTab !== tab) {
       dispatch(setCurrentTab(tab));
 
@@ -382,14 +416,17 @@ const Home = () => {
       //   swiperRef.current.slideTo(tab); // Change the Swiper index to match the clicked tab
       // }
     } else {
-      // const videoKey =
-      //   currentTab === 2 ? "foryou" : currentTab === 0 ? "follow" : "";
-      // dispatch(
-      //   setVideos({
-      //     ...videos,
-      //     [videoKey]: [], // Append to the current tab
-      //   })
-      // );
+      if (hasDecryptedInitialData) {
+        dispatch(setHasDecryptedInitialData(false));
+      }
+      const videoKey =
+        currentTab === 2 ? "foryou" : currentTab === 0 ? "follow" : "";
+      dispatch(
+        setVideos({
+          ...videos,
+          [videoKey]: [], // Append to the current tab
+        })
+      );
       dispatch(setStart(false));
 
       setRefresh(true);
@@ -406,8 +443,12 @@ const Home = () => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const postId = entry.target.getAttribute("data-post-id");
-            if (postId && postId !== currentActivePost) {
-              dispatch(setCurrentActivePost(postId)); // Update the active post ID in Redux
+            if (postId && postId !== currentPost) {
+              if (currentTab === 2) {
+                dispatch(setCurrentActivePost(postId));
+              } else if (currentTab === 0) {
+                dispatch(setCurrentActivePost1(postId)); // Update the active post ID in Redux
+              }
             }
           }
         });
@@ -429,10 +470,19 @@ const Home = () => {
   }, [videos[currentTab === 2 ? "foryou" : "follow"], currentTab, dispatch]);
 
   const handleRefresh = () => {
+    if (hasDecryptedInitialData) {
+      dispatch(setHasDecryptedInitialData(false));
+    }
     const videoKey =
       currentTab === 2 ? "foryou" : currentTab === 0 ? "follow" : "";
-    dispatch(setPage(1));
-    dispatch(setCurrentActivePost(null));
+    if (videoKey == "follow") {
+      dispatch(setPage1(1));
+      dispatch(setCurrentActivePost1(null));
+    } else if (videoKey == "foryou") {
+      dispatch(setPage(1));
+      dispatch(setCurrentActivePost(null));
+    }
+
     dispatch(setStart(false));
 
     dispatch(
@@ -464,10 +514,10 @@ const Home = () => {
     if (!lastVideo) return;
 
     const lastPostId = lastVideo.getAttribute("data-post-id");
-    if (lastPostId === currentActivePost) {
+    if (lastPostId === currentPost) {
       setIsLastVideoVisible(true);
     }
-  }, [currentActivePost]);
+  }, [currentPost]);
 
   // const [isDraging, setIsDraging] = useState(false);
   // const scrollTimeoutRef = useRef<NodeJS.Timeout>();
@@ -517,7 +567,6 @@ const Home = () => {
   // Load and decrypt followers
   useEffect(() => {
     if (myday?.data.length > 0) {
-      // setIsDecrypting(true);
       try {
         const decryptAndUpdateVideos = async () => {
           const decryptedVideos = await Promise.all(
@@ -527,14 +576,10 @@ const Home = () => {
             }))
           );
           setFollowers(decryptedVideos);
-          // setIsDecrypting(false);
         };
         decryptAndUpdateVideos();
-      } catch (error) {
-        // setIsDecrypting(false);
-      }
+      } catch (error) {}
     } else {
-      // setIsDecrypting(false);
     }
   }, [myday]);
 

@@ -44,6 +44,9 @@ import previousUserReducer from "@/page/home/services/previousUserSlice";
 import hideNewSlice from "@/page/home/services/hideNewSlice";
 import seenUsersSlice from "@/page/home/services/seenUsersSlice";
 import onlyseenUserSlice from "@/page/home/services/onlyseenUserSlice";
+import decryptionSlice from "@/page/home/services/decryptionSlice";
+import pageSlice1 from "@/page/home/services/pageSlice1";
+import activeSlice1 from "@/page/home/services/activeSlice1";
 
 const sessionStorageWrapper: Storage = {
   getItem: (key: string) => {
@@ -93,6 +96,7 @@ const rootReducer = combineReducers({
   onlyseenUser: onlyseenUserSlice,
   startSlice: startSlice,
   previousUser: previousUserReducer,
+  decryption: decryptionSlice,
 
   hideBarSlice: hideBarSlice,
   hideNewSlice: hideNewSlice,
@@ -104,8 +108,10 @@ const rootReducer = combineReducers({
   unlike: unlikeSlice,
   errorslice: errorSlice,
   activeslice: activeSlice,
+  activeslice1: activeSlice1,
   videoSlice: videoSlice,
   pageSlice: pageSlice,
+  pageSlice1: pageSlice1,
   muteSlice: muteSlice,
   loaderSlice: loaderSlice,
   createCenter: createCenterSlice,
