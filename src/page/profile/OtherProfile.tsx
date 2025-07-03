@@ -1,4 +1,4 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useGetUserProfileQuery } from "@/store/api/profileApi";
 import { useGetUserShareQuery } from "@/page/home/services/homeApi";
 import { ChevronLeft, Copy, Flag } from "lucide-react";
@@ -279,6 +279,21 @@ const OtherProfile = () => {
     );
   }
 
+  const location = useLocation();
+
+  const goBack = () => {
+    if (
+      location.state &&
+      location.state.from &&
+      typeof location.state.from === "string" &&
+      location.state.from.includes("story_detail")
+    ) {
+      navigate("/");
+    } else {
+      navigate(-1);
+    }
+  };
+
   return (
     <div className="h-screen flex flex-col hide-sb max-w-[480px] mx-auto">
       {showHeader ? (
@@ -347,7 +362,8 @@ const OtherProfile = () => {
           />
         </div>
         <div className="z-[1900] relative px-3 w-full flex gap-3 my-3 justify-between items-center">
-          <ChevronLeft onClick={() => navigate(-1)} />
+          <ChevronLeft onClick={() => goBack()} />
+
           <div className="flex gap-3 z-[1500] items-center">
             <SearchVideo id={userData?.data?.id} />
 
