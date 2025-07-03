@@ -107,7 +107,9 @@ const DetailNav = ({
                 if (from && typeof from === "string" && from.includes("user")) {
                   navigate(-1);
                 } else {
-                  navigate(`/user/${id}`);
+                  navigate(`/user/${id}`, {
+                    state: { from: location.pathname },
+                  });
                   setTimeout(() => {
                     dispatch(setShow(""));
                   }, 300);
