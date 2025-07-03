@@ -26,7 +26,7 @@ const DetailNav = ({
   const [showDelete, setShowDelete] = useState(false);
   const user = useSelector((state: any) => state.persist.user);
   const [deletePost] = useDeletePostMutation();
-  const dispatch = useDispatch(); 
+  const dispatch = useDispatch();
   const location = useLocation();
   const from = location.state?.from;
 
@@ -108,8 +108,11 @@ const DetailNav = ({
                   navigate(-1);
                 } else {
                   navigate(`/user/${id}`);
+                  setTimeout(() => {
+                    dispatch(setShow(""));
+                  }, 300);
                 }
-              }}  
+              }}
             >
               {decryptedPhoto && (
                 <Avatar className="w-[40.25px] h-[40.25px]">
