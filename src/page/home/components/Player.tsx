@@ -4044,7 +4044,7 @@ const Player = ({
         //   },
         // },
         {
-          html: `<div class="custom-play-icon" style="z-index: 999;">
+          html: `<div class="custom-play-icon" style="z-index: 999999;">
                     <img src="${indicator}" width="50" height="50" alt="Play">
                  </div>`,
           style: {
@@ -4052,7 +4052,7 @@ const Player = ({
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            zIndex: "999",
+            zIndex: "999999",
             display: "none",
           },
           mounted: (element: HTMLElement) => {
@@ -4409,7 +4409,7 @@ const Player = ({
           artPlayerInstanceRef.current.currentTime < 0.5
         )
       ) {
-        // showPlayButton();
+        showPlayButton();
       } else {
         hidePlayButton();
       }
