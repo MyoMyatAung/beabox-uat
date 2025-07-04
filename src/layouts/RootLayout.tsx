@@ -510,7 +510,7 @@ const RootLayout = ({ children }: any) => {
             </>
           )}
       </div>
-      <ApplicationPreloader />
+      {/* <ApplicationPreloader /> */}
     </>
   );
 };

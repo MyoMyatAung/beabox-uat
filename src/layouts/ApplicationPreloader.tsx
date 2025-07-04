@@ -20,6 +20,8 @@ const ApplicationPreloader = () => {
       ]
     : [];
 
+  console.log("All Image URLs:", allImageUrls);
+
   useImagePreloader(allImageUrls);
 
   return null;

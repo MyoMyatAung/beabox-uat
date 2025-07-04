@@ -8,6 +8,9 @@ const useImagePreloader = (imageUrls: string[]) => {
     imageUrls.forEach((url) => {
       const img = new Image();
       img.src = url;
+      img.onload = () => {
+        console.log(`Image preloaded: ${url}`);
+      };
     });
   }, [imageUrls]);
 };
