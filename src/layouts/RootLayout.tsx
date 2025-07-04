@@ -42,6 +42,8 @@ import {
   useGetPrizeListQuery,
   useGetProfileQuery,
 } from "@/page/luckywheel/services/spinWheelApi";
+import useImagePreloader from "./useImagePreloader";
+import ApplicationPreloader from "./ApplicationPreloader";
 
 // Function to check if the app is running in a WebView
 function isWebView() {
@@ -508,6 +510,7 @@ const RootLayout = ({ children }: any) => {
             </>
           )}
       </div>
+      <ApplicationPreloader />
     </>
   );
 };
