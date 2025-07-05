@@ -43,16 +43,16 @@ const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
 
       if (currentY <= 500) {
         setShowHeader(true);
-        dispatch(sethideBar(false));
+        // dispatch(sethideBar(false));
       } else {
         if (currentY > lastScrollY) {
           // scrolling down
           setShowHeader(false);
-          dispatch(sethideBar(true));
+          // dispatch(sethideBar(true));
         } else if (currentY < lastScrollY) {
           // scrolling up
           setShowHeader(true);
-          dispatch(sethideBar(false));
+          // dispatch(sethideBar(false));
         }
       }
 
