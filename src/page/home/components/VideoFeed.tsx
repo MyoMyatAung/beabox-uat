@@ -510,7 +510,7 @@ const VideoFeed = ({
                 <AnimatePresence>
                   {!hideBar && !hideNew && (
                     <motion.div
-                      className="  add_comment w-full  py-3 z-[999] fixed bottom-0 left-0"
+                      className="  add_comment w-full  py-3 z-[9999999] fixed bottom-0 left-0"
                       initial={{ y: "100%", opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
                       exit={{ y: "100%", opacity: 0 }}
