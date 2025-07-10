@@ -46,6 +46,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
     useWallUploadImageMutation();
   // console.log(" this is mf", data);
   const rule = config?.data?.withdraw_rule;
+  const minWithdrawAmount = config?.data?.withdraw_minimum_amount;
   // console.log(rule);
 
   const toBase64 = (file: File): Promise<string> =>
@@ -92,6 +93,8 @@ const WithDetails: React.FC<WithDetailsProps> = ({
   const isFormValid =
     // Ensure balance is greater than or equal to amount
     amount <= data.data?.total_income &&
+    // Ensure amount meets minimum withdrawal requirement
+    Number(amount) >= (minWithdrawAmount || 0) &&
     images.length !== 0 &&
     amount !== "" && // Ensure amount is not empty
     selectedPayment !== "" &&
@@ -149,8 +152,18 @@ const WithDetails: React.FC<WithDetailsProps> = ({
 
   const submitHandler = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
+    console.log(isFormValid);
+    // if (!isFormValid) return;
 
-    if (!isFormValid) return;
+    if (Number(amount) < (minWithdrawAmount || 0)) {
+      dispatch(
+        showToast({
+          message: `最低提现金额为${minWithdrawAmount}元`,
+          type: "error",
+        })
+      );
+      return;
+    }
 
     if (amount >= data.data?.total_income) {
       console.log(data.data?.total_income, amount);
@@ -234,7 +247,6 @@ const WithDetails: React.FC<WithDetailsProps> = ({
       document.body.style.overflow = ""; // Cleanup
     };
   }, [isLoading, uploadLoading]);
-  const minWithdrawAmount = config?.data?.withdraw_minimum_amount;
 
   return (
     <div>
@@ -345,9 +357,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
           className={`rounded-[16px] flex justify-center items-center ${
             isLoading ? " opacity-40" : " opacity-100 py-[12px] px-[16px]"
           }  text-white text-[14px] font-[600] leading-[22px] w-full ${
-            isFormValid
-              ? "with_new_btn"
-              : "bg-white/10"
+            isFormValid ? "with_new_btn" : "bg-white/10"
           }`}
           //   disabled={!isFormValid}
         >
