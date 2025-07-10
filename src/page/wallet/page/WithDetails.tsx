@@ -234,6 +234,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
       document.body.style.overflow = ""; // Cleanup
     };
   }, [isLoading, uploadLoading]);
+  const minWithdrawAmount = config?.data?.withdraw_minimum_amount;
 
   return (
     <div>
@@ -264,7 +265,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
             //     ? dollar_withdraw_rate.min_coins
             //     : "100"
             // } 的倍数 )`}
-            placeholder="最低提现金额为50元"
+            placeholder={`最低提现金额为${minWithdrawAmount}元`}
             className="withdraw_input bg-transparent focus:outline-none pt-[10px] pb-[10px] w-full text-white text-[16px] font-[400] leading-[20px]"
             type="number"
           />
