@@ -87,7 +87,7 @@ const Balance: React.FC<BalanceProps> = () => {
             作品收益 :{" "}
             {/* main */}
             <span className=" text-[#CD3EFF]">
-              {data?.data?.income_coins ? data?.data?.main_income : "0"}
+              {data?.data?.main_income ? data?.data?.main_income : "0"}
             </span>{" "}
             ¥
           </h1>

@@ -97,7 +97,7 @@ const Withdraw: React.FC<WithdrawProps> = ({}) => {
             ) : (
               <div className="">
                 <WithDetails
-                  balance={data?.data?.income_coins}
+                  balance={data?.data?.main_income}
                   refetch={refetch}
                   setActiveTab={setActiveTab}
                   data={data}
