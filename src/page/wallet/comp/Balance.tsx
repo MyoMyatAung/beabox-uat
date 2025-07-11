@@ -35,6 +35,7 @@ const Balance: React.FC<BalanceProps> = () => {
   });
   // console.log(data);
   const navigate = useNavigate();
+  // console.log(" income", data);
   useEffect(() => {
     setBalance(data?.data?.total_income || "0");
   }, [data]);
@@ -84,8 +85,9 @@ const Balance: React.FC<BalanceProps> = () => {
           {/* work */}
           <h1 className=" text-white text-[14px] font-[700] leading-[22px]">
             作品收益 :{" "}
+            {/* main */}
             <span className=" text-[#CD3EFF]">
-              {data?.data?.income_coins ? data?.data?.income_coins : "0"}
+              {data?.data?.income_coins ? data?.data?.main_income : "0"}
             </span>{" "}
             ¥
           </h1>
