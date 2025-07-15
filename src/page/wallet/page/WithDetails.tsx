@@ -165,7 +165,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
       return;
     }
 
-    if (amount >= data.data?.total_income) {
+    if (amount > data.data?.total_income) {
       console.log(data.data?.total_income, amount);
       dispatch(
         showToast({
