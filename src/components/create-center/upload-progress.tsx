@@ -1,6 +1,6 @@
 import { paths } from "@/routes/paths";
 import { useGetConfigQuery } from "@/store/api/createCenterApi";
-import { useGetPostsQuery } from "@/store/api/profileApi";
+import { useGetPostsQuery } from "@/store/api/createCenterApi";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
