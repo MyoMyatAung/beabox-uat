@@ -21,7 +21,8 @@ import { ReceiptEuroIcon } from "lucide-react";
 
 const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   // console.log(editPost?.files[0]?.image_url, "editpost");
-  // const { data: configData } = useGetConfigQuery({});
+  const { data: configData } = useGetConfigQuery({});
+  const maxVideoSize = configData?.data?.max_upload_size;
   const [showAlert, setShowAlert] = useState(false);
   const dispatch = useDispatch();
   const domain = editPost?.files[0]?.image_url;
@@ -239,8 +240,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   }, [editPost, domain]);
 
   // Handle video file drop
-  const onDrop = useCallback(
-    async (acceptedFiles: File[]) => {
+  const onVideoDrop = useCallback(
+    async (acceptedFiles: File[], maxVideoSize: number) => {
       const videoFile = acceptedFiles.find((file) =>
         file.type.startsWith("video/")
       );
@@ -250,9 +251,9 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
         return;
       }
 
-      // Add size validation here (100MB limit)
-      const maxSize = 100 * 1024 * 1024; // 100MB in bytes
-      if (videoFile.size > maxSize) {
+      // Add size validation here (MB limit from BE config)
+      const maxSizeInBytes = maxVideoSize  * 1024 * 1024; // MB in bytes
+      if (videoFile.size > maxSizeInBytes) {
         setShowAlert(true);
         setTimeout(() => setShowAlert(false), 3000);
         return;
@@ -263,9 +264,9 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
         return;
       }
 
-      // Check file size - 100MB limit (100 * 1024 * 1024 bytes)
-      if (videoFile.size > 100 * 1024 * 1024) {
-        showToastWithLogo("视频大小不能超过100MB。");
+      // Check file size - MB limit from BE config (MB * 1024 * 1024 bytes)
+      if (videoFile.size > maxSizeInBytes) {
+        showToastWithLogo(`视频大小不能超过${maxVideoSize}MB。`);
         return;
       }
 
@@ -550,7 +551,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   // Dropzone for video upload
   const { getRootProps, getInputProps, open } = useDropzone({
     accept: { "video/*": [] },
-    onDrop,
+    onDrop: (acceptedFiles: File[]) => onVideoDrop(acceptedFiles, maxVideoSize),
     noClick: true, // Disable click behavior to fix iOS issues
   });
 
@@ -846,7 +847,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
         <div className="absolute bottom-[20%] w-full flex justify-center items-center">
           <div className="bg-[#191721] flex gap-1 rounded-lg px-4 py-2">
             <img src={logo} className="w-5" alt="" />
-            <p className="text-[14px]">视频文件大小不能超过100MB。</p>
+            <p className="text-[14px]">视频文件大小不能超过{maxVideoSize}MB。</p>
           </div>
         </div>
       ) : (
@@ -1044,8 +1045,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
             )}
           </div>
           <p className="text-[14px] text-[#888] text-center pt-2">
-            视频大小不得超过 <br /> 100MB
-            {/* Video size must not exceed 100MB */}
+            视频大小不得超过 <br /> {maxVideoSize}MB
+            {/* Video size must not exceed MB from BE config */}
           </p>
         </div>
         <div className="flex flex-col justify-center items-center">
