@@ -262,6 +262,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { useNavigate } from "react-router-dom";
+import { isIOSDevice } from "@/lib/deviceInfo";
 
 const VideoFooter = React.memo(
   ({
@@ -271,6 +272,7 @@ const VideoFooter = React.memo(
     city,
     username,
     badge,
+    checkBottomSpacing = false,
   }: {
     id: any;
     title: string;
@@ -278,6 +280,7 @@ const VideoFooter = React.memo(
     city: string;
     username: string;
     badge: string;
+    checkBottomSpacing: boolean;
   }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const toggleExpand = () => setIsExpanded(!isExpanded);
@@ -348,6 +351,9 @@ const VideoFooter = React.memo(
         {!hideBar && !hideNew && (
           <motion.div
             className="videoFooter w-full fixed bottom-0 left-0"
+            style={{
+              bottom: isIOSDevice() && checkBottomSpacing ? "60px" : "30px",
+            }}
             initial={{ y: "100%", opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: "100%", opacity: 0 }}

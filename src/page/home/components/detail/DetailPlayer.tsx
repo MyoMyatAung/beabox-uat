@@ -6,6 +6,7 @@ import vod_loader from "../../vod_loader.gif";
 import { useDispatch, useSelector } from "react-redux";
 import { useWatchtPostMutation } from "../../services/homeApi";
 import { showToast } from "../../services/errorSlice";
+import { isIOSDevice } from "@/lib/deviceInfo";
 
 import { sethideBar } from "../../services/hideBarSlice";
 import forward from "../../Fastforward.gif";
@@ -2943,6 +2944,12 @@ const DetailPlayer = ({
     };
   }, [currentIndex, length, setCurrentIndex]);
 
+  useEffect(() => {
+    if (isIOSDevice()) {
+      document.body.classList.add("ios-device");
+    }
+  }, []);
+
   return (
     <>
       <div
@@ -2961,7 +2968,9 @@ const DetailPlayer = ({
       ></div>
       <div
         ref={playerContainerRef}
-        className={`video_player w-full ${p_img ? "poster_change" : ""}`}
+        className={`video_player detail_video_player w-full ${
+          p_img ? "poster_change" : ""
+        }`}
         style={{ minHeight: "200px" }} // Add minimum height to prevent collapse
       ></div>
     </>

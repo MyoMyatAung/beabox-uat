@@ -43,14 +43,20 @@ const RedBox: React.FC<RedBoxProps> = ({
     //   return;
     // }
 
-    const eventId = currentEventData?.data?.id;
+    const eventId = Array.isArray(currentEventData?.data)
+      ? currentEventData?.data?.find((x: any) => x.type === "event")?.id
+      : currentEventData?.data?.id;
+
     if (!eventId) {
       navigate("/wallet/invite");
+      return;
     }
     // Only fetch event details if duration is 0
     // if (currentDuration <= 0) {
     try {
-      const eventDetails = await triggerGetEventDetails(eventId);
+      const eventDetailsRes = await triggerGetEventDetails(eventId);
+      const eventDetails = eventDetailsRes.data;
+
       if (eventDetails?.unwrap) {
         const unwrappedDetails = eventDetails.unwrap();
         dispatch(setEventDetail(unwrappedDetails.data));
@@ -79,191 +85,198 @@ const RedBox: React.FC<RedBoxProps> = ({
       username: "sampleUser",
       email: "user@example.com",
       balance: 1000,
-      level: 5
+      level: 5,
     };
 
     // Send message after iframe loads
     setTimeout(() => {
       if (iframeRef.current?.contentWindow) {
-        iframeRef.current.contentWindow.postMessage(userInfo, 'http://localhost:5001');
+        iframeRef.current.contentWindow.postMessage(
+          userInfo,
+          "http://localhost:5001"
+        );
       }
     }, 1000);
   };
 
   return (
     <>
-        <div className="h-screen bg-black/60 w-screen flex flex-col gap-[20px] justify-center items-center fixed top-0 left-0 z-[9999]">
-          <div
-            ref={boxRef}
-            className="w-[340px] red_popup_box flex flex-col gap-0 justify-center items-center p-[16px]"
-          >
-            {/* header */}
-            <div className=" flex w-full justify-between items-center py-[16px]">
-              <div className=""></div>
-              <h1 className="red_popup_box_head">我要赚钱</h1>
-              <div onClick={() => setShowBox(false)} className="">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="12"
-                  height="13"
-                  viewBox="0 0 12 13"
-                  fill="none"
-                >
-                  <path
-                    d="M6 5.16688L10.6669 0.5L12 1.83312L7.33312 6.5L12 11.1669L10.6669 12.5L6 7.83312L1.33312 12.5L0 11.1669L4.66688 6.5L0 1.83312L1.33312 0.5L6 5.16688Z"
-                    fill="white"
-                    fill-opacity="0.6"
-                  />
-                </svg>
-              </div>
+      <div className="h-screen bg-black/60 w-screen flex flex-col gap-[20px] justify-center items-center fixed top-0 left-0 z-[9999]">
+        <div
+          ref={boxRef}
+          className="w-[340px] red_popup_box flex flex-col gap-0 justify-center items-center p-[16px]"
+        >
+          {/* header */}
+          <div className=" flex w-full justify-between items-center py-[16px]">
+            <div className=""></div>
+            <h1 className="red_popup_box_head">我要赚钱</h1>
+            <div onClick={() => setShowBox(false)} className="">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="12"
+                height="13"
+                viewBox="0 0 12 13"
+                fill="none"
+              >
+                <path
+                  d="M6 5.16688L10.6669 0.5L12 1.83312L7.33312 6.5L12 11.1669L10.6669 12.5L6 7.83312L1.33312 12.5L0 11.1669L4.66688 6.5L0 1.83312L1.33312 0.5L6 5.16688Z"
+                  fill="white"
+                  fill-opacity="0.6"
+                />
+              </svg>
             </div>
-            <p className=" text-white text-[16px] pb-4 font-[500]">
-              继续赚取奖励，您可以上传作品或邀请朋友！
-            </p>
-            <div className=" flex flex-col justify-center items-center gap-[12px] w-full">
-              {/* invite */}
-              <div
-                // onClick={() => navigate("/wallet/invite")}
-                onClick={() => handleAnimationClick()}
-                className=" w-full flex justify-between items-center p-[16px] red_popup_box_list"
-              >
-                {/* content */}
-                <div className=" flex gap-[12px] justify-center items-center">
-                  {/* <img className=" w-[36px] h-[36px]" src={invite} alt="" /> */}
-                  <svg
-                    width="36"
-                    height="37"
-                    viewBox="0 0 36 37"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <rect
-                      y="0.5"
-                      width="36"
-                      height="36"
-                      rx="18"
-                      fill="url(#paint0_linear_3565_9772)"
-                      fill-opacity="0.32"
-                    />
-                    <g clip-path="url(#clip0_3565_9772)">
-                      <path
-                        d="M16.7813 20.5616C20.0248 20.5616 22.7629 21.0953 22.7629 23.1564C22.7629 25.2176 20.0072 25.7335 16.7813 25.7335C13.5379 25.7335 10.7998 25.199 10.7998 23.1387C10.7998 21.0775 13.5547 20.5616 16.7813 20.5616ZM24.3571 14.568C24.7529 14.568 25.0741 14.8945 25.0741 15.295V16.2331H26.0336C26.4286 16.2331 26.7506 16.5597 26.7506 16.9602C26.7506 17.3607 26.4286 17.6872 26.0336 17.6872H25.0741V18.6261C25.0741 19.0266 24.7529 19.3532 24.3571 19.3532C23.9622 19.3532 23.6402 19.0266 23.6402 18.6261V17.6872H22.6823C22.2865 17.6872 21.9653 17.3607 21.9653 16.9602C21.9653 16.5597 22.2865 16.2331 22.6823 16.2331H23.6402V15.295C23.6402 14.8945 23.9622 14.568 24.3571 14.568ZM16.7813 10.5803C18.9782 10.5803 20.7392 12.3641 20.7392 14.5894C20.7392 16.8147 18.9782 18.5985 16.7813 18.5985C14.5845 18.5985 12.8235 16.8147 12.8235 14.5894C12.8235 12.3641 14.5845 10.5803 16.7813 10.5803Z"
-                        fill="#F8E4FF"
-                      />
-                    </g>
-                    <defs>
-                      <linearGradient
-                        id="paint0_linear_3565_9772"
-                        x1="18"
-                        y1="0.5"
-                        x2="18"
-                        y2="36.5"
-                        gradientUnits="userSpaceOnUse"
-                      >
-                        <stop stop-color="#E28EFF" />
-                        <stop offset="1" stop-color="#633672" />
-                      </linearGradient>
-                      <clipPath id="clip0_3565_9772">
-                        <rect
-                          width="17.28"
-                          height="17.28"
-                          fill="white"
-                          transform="translate(9.35986 9.85992)"
-                        />
-                      </clipPath>
-                    </defs>
-                  </svg>
-
-                  <div className=" flex flex-col gap-[8px]">
-                    <span className=" text-white text-[14px] font-[500]">
-                      邀请好友{" "}
-                      <span className="recommand_span px-[6px] py-[1px]">推荐</span>{" "}
-                    </span>
-                    <span className=" text-white/80 text-[14px]">
-                      邀请好友，瓜分百万现金红包
-                    </span>
-                  </div>
-                </div>
-                {/* icon */}
+          </div>
+          <p className=" text-white text-[16px] pb-4 font-[500]">
+            继续赚取奖励，您可以上传作品或邀请朋友！
+          </p>
+          <div className=" flex flex-col justify-center items-center gap-[12px] w-full">
+            {/* invite */}
+            <div
+              // onClick={() => navigate("/wallet/invite")}
+              onClick={() => handleAnimationClick()}
+              className=" w-full flex justify-between items-center p-[16px] red_popup_box_list"
+            >
+              {/* content */}
+              <div className=" flex gap-[12px] justify-center items-center">
+                {/* <img className=" w-[36px] h-[36px]" src={invite} alt="" /> */}
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="8"
-                  height="15"
-                  viewBox="0 0 8 15"
+                  width="36"
+                  height="37"
+                  viewBox="0 0 36 37"
                   fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path
-                    d="M5.09133 7.49999L0 2.40866L1.45437 0.954285L8.00008 7.49999L1.45437 14.0457L0 12.5913L5.09133 7.49999Z"
-                    fill="white"
-                    fill-opacity="0.7"
-                  />
-                </svg>
-              </div>
-              {/* upload */}
-              <div
-                onClick={() => navigate("/creator/upload/video")}
-                className=" w-full flex justify-between items-center p-[16px] red_popup_box_list"
-              >
-                {/* content */}
-                <div className=" flex gap-[12px] justify-center items-center">
-                  {/* <img className=" w-[36px] h-[36px]" src={invite} alt="" /> */}
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
+                  <rect
+                    y="0.5"
                     width="36"
-                    height="37"
-                    viewBox="0 0 36 37"
-                    fill="none"
-                  >
+                    height="36"
+                    rx="18"
+                    fill="url(#paint0_linear_3565_9772)"
+                    fill-opacity="0.32"
+                  />
+                  <g clip-path="url(#clip0_3565_9772)">
                     <path
-                      d="M36 18.5087C36 28.4247 27.9209 36.5 18 36.5C8.07915 36.5 0 28.4247 0 18.5087C0 8.57525 8.07915 0.5 18 0.5C27.9209 0.5 36 8.57525 36 18.5087Z"
-                      fill="url(#paint0_linear_3565_9788)"
-                      fill-opacity="0.32"
-                    />
-                    <path
-                      d="M13.8604 14.7325C13.803 14.6751 13.7575 14.6071 13.7264 14.5322C13.6954 14.4572 13.6794 14.3769 13.6794 14.2958C13.6794 14.2147 13.6954 14.1344 13.7264 14.0595C13.7575 13.9846 13.803 13.9165 13.8604 13.8592L17.5632 10.1563C17.6206 10.099 17.6886 10.0534 17.7635 10.0224C17.8385 9.99133 17.9188 9.97534 17.9999 9.97534C18.081 9.97534 18.1613 9.99133 18.2362 10.0224C18.3111 10.0534 18.3792 10.099 18.4365 10.1563L22.1393 13.8592C22.2552 13.975 22.3202 14.1321 22.3202 14.2958C22.3202 14.4596 22.2552 14.6167 22.1393 14.7325C22.0235 14.8483 21.8665 14.9133 21.7027 14.9133C21.539 14.9133 21.3819 14.8483 21.2661 14.7325L18.617 12.0826V18.6158C18.617 18.7795 18.552 18.9365 18.4362 19.0522C18.3205 19.168 18.1635 19.233 17.9999 19.233C17.8362 19.233 17.6792 19.168 17.5635 19.0522C17.4477 18.9365 17.3827 18.7795 17.3827 18.6158V12.0826L14.7336 14.7325C14.6763 14.7898 14.6083 14.8354 14.5333 14.8664C14.4584 14.8975 14.3781 14.9135 14.297 14.9135C14.2159 14.9135 14.1356 14.8975 14.0607 14.8664C13.9858 14.8354 13.9177 14.7898 13.8604 14.7325ZM26.6399 19.233V24.1701C26.6399 24.4975 26.5098 24.8114 26.2783 25.0429C26.0469 25.2744 25.7329 25.4044 25.4056 25.4044H10.5941C10.2668 25.4044 9.95285 25.2744 9.72138 25.0429C9.4899 24.8114 9.35986 24.4975 9.35986 24.1701V19.233C9.35986 18.9056 9.4899 18.5917 9.72138 18.3602C9.95285 18.1287 10.2668 17.9987 10.5941 17.9987H15.8399C15.9217 17.9987 16.0002 18.0312 16.0581 18.0891C16.1159 18.1469 16.1484 18.2254 16.1484 18.3073V18.5742C16.1484 19.6117 16.997 20.4865 18.0353 20.4673C18.5202 20.458 18.9821 20.2588 19.3216 19.9126C19.6612 19.5664 19.8514 19.1008 19.8513 18.6158V18.3073C19.8513 18.2254 19.8838 18.1469 19.9417 18.0891C19.9995 18.0312 20.078 17.9987 20.1599 17.9987H25.4056C25.7329 17.9987 26.0469 18.1287 26.2783 18.3602C26.5098 18.5917 26.6399 18.9056 26.6399 19.233ZM23.5541 21.7015C23.5541 21.5185 23.4999 21.3395 23.3981 21.1872C23.2964 21.035 23.1518 20.9164 22.9827 20.8463C22.8135 20.7762 22.6274 20.7579 22.4478 20.7936C22.2683 20.8293 22.1033 20.9175 21.9739 21.047C21.8444 21.1764 21.7562 21.3414 21.7205 21.5209C21.6848 21.7005 21.7031 21.8866 21.7732 22.0558C21.8433 22.2249 21.9619 22.3695 22.1141 22.4712C22.2664 22.573 22.4453 22.6273 22.6284 22.6273C22.8739 22.6273 23.1094 22.5297 23.283 22.3561C23.4566 22.1825 23.5541 21.9471 23.5541 21.7015Z"
+                      d="M16.7813 20.5616C20.0248 20.5616 22.7629 21.0953 22.7629 23.1564C22.7629 25.2176 20.0072 25.7335 16.7813 25.7335C13.5379 25.7335 10.7998 25.199 10.7998 23.1387C10.7998 21.0775 13.5547 20.5616 16.7813 20.5616ZM24.3571 14.568C24.7529 14.568 25.0741 14.8945 25.0741 15.295V16.2331H26.0336C26.4286 16.2331 26.7506 16.5597 26.7506 16.9602C26.7506 17.3607 26.4286 17.6872 26.0336 17.6872H25.0741V18.6261C25.0741 19.0266 24.7529 19.3532 24.3571 19.3532C23.9622 19.3532 23.6402 19.0266 23.6402 18.6261V17.6872H22.6823C22.2865 17.6872 21.9653 17.3607 21.9653 16.9602C21.9653 16.5597 22.2865 16.2331 22.6823 16.2331H23.6402V15.295C23.6402 14.8945 23.9622 14.568 24.3571 14.568ZM16.7813 10.5803C18.9782 10.5803 20.7392 12.3641 20.7392 14.5894C20.7392 16.8147 18.9782 18.5985 16.7813 18.5985C14.5845 18.5985 12.8235 16.8147 12.8235 14.5894C12.8235 12.3641 14.5845 10.5803 16.7813 10.5803Z"
                       fill="#F8E4FF"
                     />
-                    <defs>
-                      <linearGradient
-                        id="paint0_linear_3565_9788"
-                        x1="18"
-                        y1="0.5"
-                        x2="18"
-                        y2="36.5"
-                        gradientUnits="userSpaceOnUse"
-                      >
-                        <stop stop-color="#E28EFF" />
-                        <stop offset="1" stop-color="#633672" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
-                  <div className=" flex flex-col gap-[8px]">
-                    <span className=" text-white text-[14px] font-[500]">
-                      上传作品{" "}
-                      <span className="recommand_span px-[6px] py-[1px]">推荐</span>{" "}
-                    </span>
-                    <span className=" text-white/80 text-[14px]">
-                      发布您的视频，持续获得收益
-                    </span>
-                  </div>
+                  </g>
+                  <defs>
+                    <linearGradient
+                      id="paint0_linear_3565_9772"
+                      x1="18"
+                      y1="0.5"
+                      x2="18"
+                      y2="36.5"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <stop stop-color="#E28EFF" />
+                      <stop offset="1" stop-color="#633672" />
+                    </linearGradient>
+                    <clipPath id="clip0_3565_9772">
+                      <rect
+                        width="17.28"
+                        height="17.28"
+                        fill="white"
+                        transform="translate(9.35986 9.85992)"
+                      />
+                    </clipPath>
+                  </defs>
+                </svg>
+
+                <div className=" flex flex-col gap-[8px]">
+                  <span className=" text-white text-[14px] font-[500]">
+                    邀请好友{" "}
+                    <span className="recommand_span px-[6px] py-[1px]">
+                      推荐
+                    </span>{" "}
+                  </span>
+                  <span className=" text-white/80 text-[14px]">
+                    邀请好友，瓜分百万现金红包
+                  </span>
                 </div>
-                {/* icon */}
+              </div>
+              {/* icon */}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="8"
+                height="15"
+                viewBox="0 0 8 15"
+                fill="none"
+              >
+                <path
+                  d="M5.09133 7.49999L0 2.40866L1.45437 0.954285L8.00008 7.49999L1.45437 14.0457L0 12.5913L5.09133 7.49999Z"
+                  fill="white"
+                  fill-opacity="0.7"
+                />
+              </svg>
+            </div>
+            {/* upload */}
+            <div
+              onClick={() => navigate("/creator/upload/video")}
+              className=" w-full flex justify-between items-center p-[16px] red_popup_box_list"
+            >
+              {/* content */}
+              <div className=" flex gap-[12px] justify-center items-center">
+                {/* <img className=" w-[36px] h-[36px]" src={invite} alt="" /> */}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="8"
-                  height="15"
-                  viewBox="0 0 8 15"
+                  width="36"
+                  height="37"
+                  viewBox="0 0 36 37"
                   fill="none"
                 >
                   <path
-                    d="M5.09133 7.49999L0 2.40866L1.45437 0.954285L8.00008 7.49999L1.45437 14.0457L0 12.5913L5.09133 7.49999Z"
-                    fill="white"
-                    fill-opacity="0.7"
+                    d="M36 18.5087C36 28.4247 27.9209 36.5 18 36.5C8.07915 36.5 0 28.4247 0 18.5087C0 8.57525 8.07915 0.5 18 0.5C27.9209 0.5 36 8.57525 36 18.5087Z"
+                    fill="url(#paint0_linear_3565_9788)"
+                    fill-opacity="0.32"
                   />
+                  <path
+                    d="M13.8604 14.7325C13.803 14.6751 13.7575 14.6071 13.7264 14.5322C13.6954 14.4572 13.6794 14.3769 13.6794 14.2958C13.6794 14.2147 13.6954 14.1344 13.7264 14.0595C13.7575 13.9846 13.803 13.9165 13.8604 13.8592L17.5632 10.1563C17.6206 10.099 17.6886 10.0534 17.7635 10.0224C17.8385 9.99133 17.9188 9.97534 17.9999 9.97534C18.081 9.97534 18.1613 9.99133 18.2362 10.0224C18.3111 10.0534 18.3792 10.099 18.4365 10.1563L22.1393 13.8592C22.2552 13.975 22.3202 14.1321 22.3202 14.2958C22.3202 14.4596 22.2552 14.6167 22.1393 14.7325C22.0235 14.8483 21.8665 14.9133 21.7027 14.9133C21.539 14.9133 21.3819 14.8483 21.2661 14.7325L18.617 12.0826V18.6158C18.617 18.7795 18.552 18.9365 18.4362 19.0522C18.3205 19.168 18.1635 19.233 17.9999 19.233C17.8362 19.233 17.6792 19.168 17.5635 19.0522C17.4477 18.9365 17.3827 18.7795 17.3827 18.6158V12.0826L14.7336 14.7325C14.6763 14.7898 14.6083 14.8354 14.5333 14.8664C14.4584 14.8975 14.3781 14.9135 14.297 14.9135C14.2159 14.9135 14.1356 14.8975 14.0607 14.8664C13.9858 14.8354 13.9177 14.7898 13.8604 14.7325ZM26.6399 19.233V24.1701C26.6399 24.4975 26.5098 24.8114 26.2783 25.0429C26.0469 25.2744 25.7329 25.4044 25.4056 25.4044H10.5941C10.2668 25.4044 9.95285 25.2744 9.72138 25.0429C9.4899 24.8114 9.35986 24.4975 9.35986 24.1701V19.233C9.35986 18.9056 9.4899 18.5917 9.72138 18.3602C9.95285 18.1287 10.2668 17.9987 10.5941 17.9987H15.8399C15.9217 17.9987 16.0002 18.0312 16.0581 18.0891C16.1159 18.1469 16.1484 18.2254 16.1484 18.3073V18.5742C16.1484 19.6117 16.997 20.4865 18.0353 20.4673C18.5202 20.458 18.9821 20.2588 19.3216 19.9126C19.6612 19.5664 19.8514 19.1008 19.8513 18.6158V18.3073C19.8513 18.2254 19.8838 18.1469 19.9417 18.0891C19.9995 18.0312 20.078 17.9987 20.1599 17.9987H25.4056C25.7329 17.9987 26.0469 18.1287 26.2783 18.3602C26.5098 18.5917 26.6399 18.9056 26.6399 19.233ZM23.5541 21.7015C23.5541 21.5185 23.4999 21.3395 23.3981 21.1872C23.2964 21.035 23.1518 20.9164 22.9827 20.8463C22.8135 20.7762 22.6274 20.7579 22.4478 20.7936C22.2683 20.8293 22.1033 20.9175 21.9739 21.047C21.8444 21.1764 21.7562 21.3414 21.7205 21.5209C21.6848 21.7005 21.7031 21.8866 21.7732 22.0558C21.8433 22.2249 21.9619 22.3695 22.1141 22.4712C22.2664 22.573 22.4453 22.6273 22.6284 22.6273C22.8739 22.6273 23.1094 22.5297 23.283 22.3561C23.4566 22.1825 23.5541 21.9471 23.5541 21.7015Z"
+                    fill="#F8E4FF"
+                  />
+                  <defs>
+                    <linearGradient
+                      id="paint0_linear_3565_9788"
+                      x1="18"
+                      y1="0.5"
+                      x2="18"
+                      y2="36.5"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <stop stop-color="#E28EFF" />
+                      <stop offset="1" stop-color="#633672" />
+                    </linearGradient>
+                  </defs>
                 </svg>
+                <div className=" flex flex-col gap-[8px]">
+                  <span className=" text-white text-[14px] font-[500]">
+                    上传作品{" "}
+                    <span className="recommand_span px-[6px] py-[1px]">
+                      推荐
+                    </span>{" "}
+                  </span>
+                  <span className=" text-white/80 text-[14px]">
+                    发布您的视频，持续获得收益
+                  </span>
+                </div>
               </div>
-              {/* spin */}
-              {/* <div 
+              {/* icon */}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="8"
+                height="15"
+                viewBox="0 0 8 15"
+                fill="none"
+              >
+                <path
+                  d="M5.09133 7.49999L0 2.40866L1.45437 0.954285L8.00008 7.49999L1.45437 14.0457L0 12.5913L5.09133 7.49999Z"
+                  fill="white"
+                  fill-opacity="0.7"
+                />
+              </svg>
+            </div>
+            {/* spin */}
+            {/* <div 
                 onClick={handleSpinClick}
                 className=" w-full flex justify-between items-center p-[16px] red_popup_box_list"
               >
@@ -322,9 +335,9 @@ const RedBox: React.FC<RedBoxProps> = ({
                   />
                 </svg>
               </div> */}
-            </div>
           </div>
         </div>
+      </div>
     </>
   );
 };
