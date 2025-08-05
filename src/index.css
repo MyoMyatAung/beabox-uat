@@ -930,3 +930,11 @@ user_feed_ques_tags_btn {
   border-radius: 20px;
   background: #323038;
 }
+
+.ios-device
+  .detail_video_player
+  > .art-video-player
+  > .art-layers
+  > .art-layer-layer0 {
+  bottom: 30px !important;
+}

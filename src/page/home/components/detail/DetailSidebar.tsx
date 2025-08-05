@@ -22,6 +22,7 @@ import Detail from "../Detail";
 import { sethideBar } from "../../services/hideBarSlice";
 import { motion } from "framer-motion";
 import { sethideNew } from "../../services/hideNewSlice";
+import { isIOSDevice } from "@/lib/deviceInfo";
 
 function DetailSidebar({
   messages,
@@ -259,7 +260,12 @@ function DetailSidebar({
   }
 
   return (
-    <div className={`videoSidebar z-[999] w-[50px]`}>
+    <div
+      className={`videoSidebar z-[999] w-[50px]`}
+      style={{
+        bottom: isIOSDevice() ? "60px" : "30px",
+      }}
+    >
       <motion.div
         className="videoSidebar__button"
         initial={false} // Disable initial animation

@@ -491,6 +491,7 @@ const Detail = () => {
                 title={video?.title}
                 username={video?.user?.name}
                 city={video?.city}
+                checkBottomSpacing={true}
               />
             )}
 

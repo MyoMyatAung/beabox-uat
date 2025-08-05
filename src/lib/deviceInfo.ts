@@ -320,3 +320,8 @@ export const isMobileWebView = (): boolean => {
  * @returns Promise that resolves to true if update is needed
  */
 // This function is now replaced by RTK Query in versionApi.ts 
+
+// Check if device is iOS
+export const isIOSDevice = (): boolean => {
+  return /iPhone|iPad|iPod/.test(navigator.userAgent);
+};
