@@ -25,7 +25,6 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   const maxVideoSize = configData?.data?.max_upload_size;
   const [showAlert, setShowAlert] = useState(false);
   const dispatch = useDispatch();
-  const domain = editPost?.files[0]?.image_url;
   const { data } = useGetS3Query({});
   const [files, setFiles] = useState(editPost?.files || []);
   const [thumbnail, setThumbnail] = useState(editPost?.preview_image || null);
@@ -33,16 +32,19 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   const [uploadPercentage, setUploadPercentage] = useState(0);
   const [uploadComplete, setUploadComplete] = useState(false);
   const [agree, setAgree] = useState(editPost ? true : false);
+
   // console.log(editPost, "ed post");
+  const finalEditPost = editPost?.files?.length > 0 ? editPost?.files[0] : editPost;
+  const domain = finalEditPost?.image_url;
   const [videoDuration, setVideoDuration] = useState(
-    editPost?.files?.length > 0 ? editPost?.files[0].duration : editPost?.duration || 0
+    finalEditPost?.duration || 0
   );
   const resData = data?.data;
-  const [videoWidth, setVideoWidth] = useState(editPost?.files[0].width || 0);
+  const [videoWidth, setVideoWidth] = useState(finalEditPost?.width || 0);
   const [videoHeight, setVideoHeight] = useState(
-    editPost?.files[0].height || 0
+    finalEditPost?.height || 0
   );
-  const videoUrlRef = useRef(editPost?.files[0].resourceURL || null);
+  const videoUrlRef = useRef(finalEditPost?.resourceURL || null);
   // console.log(videoUrlRef, "ref");
   const [uploadedSize, setUploadedSize] = useState(0); // Added
   const roundToOneDecimal = (size: number): number => {
@@ -50,7 +52,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   };
 
   const [totalSize, setTotalSize] = useState(
-    editPost?.files[0]?.size
+    finalEditPost?.size
       ? roundToOneDecimal(editPost.files[0].size / (1000 * 1000))
       : 0
   ); // Round to match OS display
@@ -193,7 +195,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   // In useEffect, add this for edit mode
   useEffect(() => {
     // For edited videos, always capture the first frame as poster for better cross-browser compatibility
-    if (editPost?.files[0]?.resourceURL) {
+    if (finalEditPost?.resourceURL) {
       const videoUrl = `${domain}/${editPost.files[0].resourceURL}`;
 
       // More reliable browser detection
