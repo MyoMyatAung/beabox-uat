@@ -35,7 +35,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   const [agree, setAgree] = useState(editPost ? true : false);
   // console.log(editPost, "ed post");
   const [videoDuration, setVideoDuration] = useState(
-    editPost?.files[0] ? editPost?.files[0].duration : editPost?.duration || 0
+    editPost?.files?.length > 0 ? editPost?.files[0].duration : editPost?.duration || 0
   );
   const resData = data?.data;
   const [videoWidth, setVideoWidth] = useState(editPost?.files[0].width || 0);
