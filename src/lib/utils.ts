@@ -69,3 +69,16 @@ export function isWebView() {
     (window as any).webkit.messageHandlers.jsBridge
   );
 }
+
+export const getStatusLabel = (status: string): string => {
+  const statusMap: Record<string, string> = {
+    approved: "已批准",
+    pending: "待处理",
+    rejected: "已拒绝",
+    success: "成功",
+    failed: "失败",
+    declined: "已拒绝"
+  };
+
+  return statusMap[status.toLowerCase()] || status;
+};
