@@ -1,3 +1,4 @@
+import { getStatusLabel } from "@/lib/utils";
 import { useGetConfigQuery } from "@/store/api/createCenterApi";
 import { useEffect } from "react";
 
@@ -33,7 +34,7 @@ const Info = ({ status, reason }: any) => {
           }}
           className={`text-[18px] capitalize font-semibold`}
         >
-          {status} -
+          {getStatusLabel(status)} - {" "}
         </span>
         <span
           style={{
