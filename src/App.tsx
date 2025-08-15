@@ -51,7 +51,7 @@ const App = () => {
       const needsUpdate = versionData?.data?.update_status;
       if (needsUpdate) {
         if (isWebClip()) {
-          window.location.reload();
+          // window.location.reload();
         }
       }
     }
