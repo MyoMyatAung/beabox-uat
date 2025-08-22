@@ -19,6 +19,7 @@ import Report from "@/page/report/Report";
 import SafeLazyLoad from "@/components/SafeLazyLoad";
 import CreatorNoti from "@/page/profile/noti/CreatorNoti";
 import Detail from "@/page/home/components/Detail";
+import Download from "@/page/download/Download";
 
 const Home = lazy(() => import("../page/home/Home"));
 const Lucky = lazy(() => import("../page/luckywheel/LuckySpinPage"));
@@ -311,6 +312,10 @@ const Routing = () => {
       path: paths.lucky_draw,
       ...withErrorHandling(<LuckyDraw />),
     },
+    {
+      path: paths.download,
+      ...withErrorHandling(<Download />),
+    }
   ];
 
   const router = createBrowserRouter(routes);

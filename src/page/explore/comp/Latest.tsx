@@ -339,6 +339,8 @@ const Latest: React.FC<LatestPorp> = ({
     }
   }, [waterfall]);
 
+  console.log("Waterfall :", waterfall);
+
   return (
     <>
       {isLoading ? (

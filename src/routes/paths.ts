@@ -50,4 +50,5 @@ export const paths = {
   lucky_draw: "/events/lucky-draw/:id",
   story_detail: "/story_detail/:id",
   getUserProfileId: (id: any) => `/user/${id}`,
+  download: "/download",
 };
