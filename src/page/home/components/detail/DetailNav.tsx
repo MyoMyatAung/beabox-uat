@@ -1,11 +1,12 @@
 import { decryptImage } from "@/utils/imageDecrypt";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useDeletePostMutation } from "@/store/api/createCenterApi";
 import { setShow } from "../../services/showSlice";
 import { AnimatePresence, motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 const DetailNav = ({
   time_ago,
@@ -22,6 +23,7 @@ const DetailNav = ({
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
   const { hideBar } = useSelector((state: any) => state.hideBarSlice);
   const { hideNew } = useSelector((state: any) => state.hideNewSlice);
+  const progressBarRef = useRef<HTMLDivElement>(null);
 
   const [showDelete, setShowDelete] = useState(false);
   const user = useSelector((state: any) => state.persist.user);
@@ -57,6 +59,28 @@ const DetailNav = ({
     loadAndDecryptPhoto();
   }, [image]);
 
+  useEffect(() => {
+    if (progressBarRef.current && length > 0) {
+      const container = progressBarRef.current;
+      const containerWidth = container.offsetWidth;
+      const totalWidth = container.scrollWidth;
+
+      if (totalWidth > containerWidth) {
+        const dotWidth = totalWidth / length;
+        const targetPosition =
+          currentIndex * dotWidth - containerWidth / 2 + dotWidth / 2;
+
+        container.scrollTo({
+          left: Math.max(
+            0,
+            Math.min(targetPosition, totalWidth - containerWidth)
+          ),
+          behavior: "smooth",
+        });
+      }
+    }
+  }, [currentIndex, length]);
+
   const handleDelete = () => {
     setIsDecrypting(true);
     try {
@@ -85,11 +109,17 @@ const DetailNav = ({
             stiffness: 300,
           }}
         >
-          <div className="w-full flex gap-1 mb-4">
+          <div
+            ref={progressBarRef}
+            className={cn("w-full flex mb-4 overflow-x-auto scrollbar-hide", {
+              "gap-1": length < 50,
+              "gap-0.5": length >= 50,
+            })}
+          >
             {Array.from({ length }).map((_, index) => (
               <div
                 key={index}
-                className={`h-1 flex-1 rounded-full ${
+                className={`h-1 flex-1 rounded-full min-w-[10px] ${
                   index === currentIndex
                     ? "bg-white"
                     : "bg-gray-500 bg-opacity-40"
