@@ -92,7 +92,7 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
             <div
                 key={index}
                 className={`w-10 h-10 sm:w-12 sm:h-12 bg-[#16131C] rounded-full flex items-center justify-center text-white font-semibold text-lg
-          ${error ? "text-[#F70F2D]" : "text-white"}`}
+          ${error ? "!text-[#F70F2D]" : "text-white"}`}
             >
                 {index < pin.length ? (
                     pin[index]
@@ -195,7 +195,7 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
                         Locked. Too many wrong attempts.
                     </p>
                 )}
-                <p className="text-white/80 text-center text-sm sm:text-base pt-[50px] pb-[30px] font-normal">
+                <p className="text-white/80 text-center text-sm sm:text-base pt-[50px] pb-[50px] font-normal">
                     {wrongAttempts >= 3
                         ? "Access Locked"
                         : "Please Enter Your Pin"}
@@ -241,7 +241,7 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
 // Demo wrapper
 const PinEntry: React.FC = () => {
     return (
-        <div className="w-full min-h-screen flex flex-col items-center bg-[#16131C]">
+        <div className="w-full min-h-screen bg-[#16131C]">
             <div className="space-y-6">
                 <PinEntryBox
                     onPinComplete={(pin) => {
