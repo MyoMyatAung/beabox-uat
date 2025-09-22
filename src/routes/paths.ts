@@ -7,6 +7,7 @@ export const paths = {
   question: "/security/question",
   answer: "/security/answer",
   manage: "/security/manage",
+  pinEntry: "/security/pin-entry",
   settings: "/settings",
   privacy_settings: "/settings/privacy",
   profileDetail: "/profile-detail",

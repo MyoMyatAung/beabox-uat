@@ -54,6 +54,7 @@ const CheckAnswer = lazy(
 );
 const Answer = lazy(() => import("../page/profile/security/Answer"));
 const Manage = lazy(() => import("../page/profile/security/Manage"));
+const PinEntry = lazy(() => import("../page/profile/security/PinEntry"));
 const AddBio = lazy(() => import("../components/profile/add-bio"));
 const ForgotPassword = lazy(
   () => import("../components/profile/auth/forgot-password")
@@ -125,6 +126,10 @@ const Routing = () => {
     {
       path: paths.manage,
       ...withErrorHandling(<Manage />),
+    },
+    {
+      path: paths.pinEntry,
+      ...withErrorHandling(<PinEntry />),
     },
     {
       path: paths.home,
