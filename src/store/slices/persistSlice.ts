@@ -1,3 +1,4 @@
+import { encodePassword } from "@/lib/utils";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
@@ -19,6 +20,9 @@ const initialState: any = {
   sanswer: "",
   defaultTab: "upload",
   defaultTab2: "video",
+  isEnabledDualPassword: false,
+  decoyPassword: null,
+  masterPassword: null,
 };
 
 export const persistSlice = createSlice({
@@ -85,6 +89,18 @@ export const persistSlice = createSlice({
     setForgotToken: (state, { payload }) => {
       state.forgotToken = payload;
     },
+    setIsEnabledDualPassword: (state, { payload }) => {
+      state.isEnabledDualPassword = payload;
+    },
+    setPassword: (state, { payload }) => {
+      const { type, password } = payload;
+      const encodedPassword = encodePassword(password);
+      if (type === "decoy") {
+        state.decoyPassword = encodedPassword;
+      } else if (type === "master") {
+        state.masterPassword = encodedPassword;
+      }
+    },
   },
 });
 
@@ -107,6 +123,8 @@ export const {
   setRegion,
   setCover,
   setSAnswer,
+  setIsEnabledDualPassword,
+  setPassword,
 } = persistSlice.actions;
 
 export default persistSlice.reducer;

@@ -37,6 +37,15 @@ const OtherProfile = lazy(() => import("../page/profile/OtherProfile"));
 const ProfileDetail = lazy(() => import("../page/profile/ProfileDetail"));
 const Settings = lazy(() => import("../page/profile/Settings"));
 const PrivacySettings = lazy(() => import("../page/profile/PrivacySettings"));
+const DualAccessPassword = lazy(
+  () => import("../page/profile/security/DualAccessPassword")
+);
+const MasterPassword = lazy(
+  () => import("../page/profile/security/MasterPassword")
+);
+const DecoyPassword = lazy(
+  () => import("../page/profile/security/DecoyPassword")
+);
 const Noti = lazy(() => import("../page/profile/noti/Noti"));
 const NotiDetail = lazy(() => import("../page/profile/noti/NotiDetail"));
 const SystemNoti = lazy(() => import("../page/profile/noti/SystemNoti"));
@@ -198,6 +207,18 @@ const Routing = () => {
     {
       path: paths.privacy_settings,
       ...withErrorHandling(<PrivacySettings />),
+    },
+    {
+      path: paths.dual_access_password,
+      ...withErrorHandling(<DualAccessPassword />),
+    },
+    {
+      path: paths.master_password,
+      ...withErrorHandling(<MasterPassword />),
+    },
+    {
+      path: paths.decoy_password,
+      ...withErrorHandling(<DecoyPassword />),
     },
     {
       path: paths.noti,

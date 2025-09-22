@@ -1,7 +1,7 @@
 import { paths } from "@/routes/paths";
 // import { FaAngleLeft } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ChevronRightIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import EditLanguage from "@/components/profile/edit-language";
 import { logOutUser } from "@/store/slices/persistSlice";
@@ -17,7 +17,7 @@ import backButton from "../../assets/backButton.svg";
 import Loader from "@/components/shared/loader";
 import OtherAds from "@/components/profile/other-ads";
 import Poppizza from "../explore/comp/PopApp";
-import logoutIcon from '../../assets/logout.svg'
+import logoutIcon from "../../assets/logout.svg";
 
 const Settings = ({
   liked_video_visibility,
@@ -96,17 +96,39 @@ const Settings = ({
 
         {user?.token ? (
           <>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-5">
               <h1 className="text-[16px] text-[#888]">账户安全</h1>
               <ChangePassword />
-              <div className="mt-5">
+              <div>
                 <EditSecurity />
               </div>
+              <div className="border-b border-white/10"></div>
             </div>
           </>
         ) : (
           <></>
         )}
+
+        <Link
+          to={paths.dual_access_password}
+          className="flex justify-between items-start"
+        >
+          <div className="w-[70%] ">
+            <p className="flex items-center gap-1 text-[14px]">
+              Dual Access Password
+            </p>
+            <p className="text-[10px] text-[#888888] w-full mt-1">
+              Set up two different passwords. One opens a decoy home page, the
+              other opens the real app.
+            </p>
+          </div>
+          <div className=" flex-1">
+            <p className="flex items-center justify-end gap-1 text-[14px] capitalize text-[#888888]">
+              Set up
+              <ChevronRightIcon size={15} />
+            </p>
+          </div>
+        </Link>
 
         {user?.token ? (
           <>
@@ -185,7 +207,7 @@ const Settings = ({
               }}
               className="w-full flex justify-center items-center gap-[6px] new_logout_button py-[15px]"
             >
-            <img src={logoutIcon} alt="" />   退出
+              <img src={logoutIcon} alt="" /> 退出
             </button>
           </div>
         ) : (
