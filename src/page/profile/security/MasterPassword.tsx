@@ -1,5 +1,5 @@
 import { paths } from "@/routes/paths";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import backButton from "../../../assets/backButton.svg";
 import { useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
@@ -32,6 +32,9 @@ import { Button } from "@/components/ui/button";
 
 function MasterPassword() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const setupType = searchParams.get("type") ?? "setup";
   const encodedMasterPassword = useSelector(
     (state: { persist: { masterPassword: string | null } }) =>
       state.persist.masterPassword
@@ -83,12 +86,17 @@ function MasterPassword() {
       dispatch(setPassword({ type: "master", password: data.masterPassword }));
       dispatch(
         showToast({
-          message: "Master password saved successfully!",
+          message: "Saved master password!",
           type: "success",
         })
       );
       setShowChangeDialog(false);
       form.reset();
+      navigate(paths.dual_access_password);
+      // want to enable dual access password as default
+      // if (setupType === "setup") {
+      //   dispatch(setIsEnabledDualPassword(true));
+      // }
     } catch (error) {
       dispatch(
         showToast({ message: "Failed to save master password", type: "error" })
@@ -101,15 +109,31 @@ function MasterPassword() {
     dispatch(setPassword({ type: "master", password: "" }));
     dispatch(
       showToast({
-        message: "Master password removed successfully!",
-        type: "success",
+        message: "Removed master password",
+        type: "error",
       })
     );
     setShowRemoveDialog(false);
     form.reset();
+    navigate(paths.dual_access_password);
   }
 
-  console.log("savedMasterPassword", savedMasterPassword);
+  function handleSubmit(data: z.infer<typeof MasterPasswordFormData>) {
+    if (setupType === "setup") handlePasswordChange(data);
+    else setShowChangeDialog(true);
+  }
+
+  const copies = {
+    title:
+      setupType === "setup"
+        ? "Set up master password"
+        : "Manage master password",
+    description:
+      setupType === "setup"
+        ? "Create a password to open real version of the application. Create a 6-digit PIN. Numbers only."
+        : "Manage the password to open real version of the application. Create a 6-digit PIN. Numbers only.",
+    confirmBtnLabel: setupType === "setup" ? "Confirm" : "Save",
+  };
 
   return (
     <>
@@ -118,22 +142,14 @@ function MasterPassword() {
           <Link to={paths.dual_access_password}>
             <img src={backButton} alt="" />
           </Link>
-          <p className="text-[16px]">Manage master password</p>
+          <p className="text-[16px]">{copies.title}</p>
           <div></div>
         </div>
 
         <div className="flex flex-col my-5">
-          <p className="text-sm">
-            Manage the password to open real version of the application for
-            extra privacy. Create a 6-digit PIN. Numbers only.
-          </p>
+          <p className="text-sm">{copies.description}</p>
           <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(() => {
-                setShowChangeDialog(true);
-              })}
-              className="mt-8"
-            >
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="mt-8">
               <div className="space-y-12">
                 <FormField
                   control={form.control}
@@ -273,18 +289,19 @@ function MasterPassword() {
                     }
                   )}
                 >
-                  <p>Save</p>
+                  <p>{copies.confirmBtnLabel}</p>
                 </button>
-                <button
-                  type="button"
-                  className="text-[16px] font-semibold bg-[#FFFFFF0A] text-white disabled:text-[#444444] w-full rounded-[16px] py-3"
-                  disabled={!savedMasterPassword}
-                  onClick={() => {
-                    setShowRemoveDialog(true);
-                  }}
-                >
-                  <p>Remove</p>
-                </button>
+                {!!savedMasterPassword && (
+                  <button
+                    type="button"
+                    className="text-[16px] font-semibold bg-[#FFFFFF0A] text-white disabled:text-[#444444] w-full rounded-[16px] py-3"
+                    onClick={() => {
+                      setShowRemoveDialog(true);
+                    }}
+                  >
+                    <p>Remove</p>
+                  </button>
+                )}
               </div>
             </form>
           </Form>

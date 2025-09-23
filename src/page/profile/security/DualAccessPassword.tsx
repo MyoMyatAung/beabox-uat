@@ -6,6 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { useSelector, useDispatch } from "react-redux";
 import { decodePassword } from "@/lib/utils";
 import { setIsEnabledDualPassword } from "@/store/slices/persistSlice";
+import { showToast } from "@/page/home/services/errorSlice";
 
 function DualAccessPassword() {
   const dispatch = useDispatch();
@@ -44,7 +45,19 @@ function DualAccessPassword() {
       </div>
 
       <div className="flex flex-col my-5">
-        <div className="flex justify-between items-start">
+        <div
+          className="flex justify-between items-start"
+          onClick={() => {
+            if (!savedDecoyPassword || !savedMasterPassword) {
+              dispatch(
+                showToast({
+                  message: "Set two passwords to use this feature",
+                  type: "error",
+                })
+              );
+            }
+          }}
+        >
           <div className="w-[70%] ">
             <p className="flex items-center gap-1 text-[14px]">
               Enable Dual Password
@@ -65,7 +78,9 @@ function DualAccessPassword() {
         <div className="border-b border-white/10 my-5"></div>
 
         <Link
-          to={paths.decoy_password}
+          to={`${paths.decoy_password}?type=${
+            savedDecoyPassword ? "manage" : "setup"
+          }`}
           className="flex justify-between items-start"
         >
           <div className="w-[70%] ">
@@ -78,7 +93,7 @@ function DualAccessPassword() {
           </div>
           <div className=" flex-1">
             <p className="flex items-center justify-end gap-1 text-[14px] capitalize text-[#888888]">
-              Manage
+              {savedDecoyPassword ? "Manage" : "Set up"}
               <ChevronRightIcon size={15} />
             </p>
           </div>
@@ -87,7 +102,9 @@ function DualAccessPassword() {
         <div className="border-b border-white/10 my-5"></div>
 
         <Link
-          to={paths.master_password}
+          to={`${paths.master_password}?type=${
+            savedMasterPassword ? "manage" : "setup"
+          }`}
           className="flex justify-between items-start"
         >
           <div className="w-[70%] ">
@@ -100,7 +117,7 @@ function DualAccessPassword() {
           </div>
           <div className=" flex-1">
             <p className="flex items-center justify-end gap-1 text-[14px] capitalize text-[#888888]">
-              Manage
+              {savedMasterPassword ? "Manage" : "Set up"}
               <ChevronRightIcon size={15} />
             </p>
           </div>

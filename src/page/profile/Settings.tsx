@@ -82,7 +82,17 @@ const Settings = ({
       setDevice("other");
     }
   }, []);
+
+  const decoyPassword = useSelector(
+    (state: any) => state.persist.decoyPassword
+  );
+  const masterPassword = useSelector(
+    (state: any) => state.persist.masterPassword
+  );
+  const isBothPasswordSet = !!decoyPassword && !!masterPassword;
+
   if (isLoading) return <Loader />;
+
   return (
     <div className="w-full h-screen no-scrollbar px-5 flex flex-col items-center relative bg-[#16131C]">
       <div className="top flex flex-col gap-5 w-full">
@@ -110,7 +120,11 @@ const Settings = ({
         )}
 
         <Link
-          to={paths.dual_access_password}
+          to={
+            isBothPasswordSet
+              ? paths.dual_access_password
+              : `${paths.decoy_password}?type=setup`
+          }
           className="flex justify-between items-start"
         >
           <div className="w-[70%] ">
@@ -124,7 +138,7 @@ const Settings = ({
           </div>
           <div className=" flex-1">
             <p className="flex items-center justify-end gap-1 text-[14px] capitalize text-[#888888]">
-              Set up
+              {isBothPasswordSet ? "Manage" : "Set up"}
               <ChevronRightIcon size={15} />
             </p>
           </div>

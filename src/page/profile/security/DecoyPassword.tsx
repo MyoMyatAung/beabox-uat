@@ -1,5 +1,5 @@
 import { paths } from "@/routes/paths";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import backButton from "../../../assets/backButton.svg";
 import { useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
@@ -31,11 +31,19 @@ import {
 import { Button } from "@/components/ui/button";
 
 function DecoyPassword() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [searchParams] = useSearchParams();
+  const setupType = searchParams.get("type") ?? "setup";
   const encodedDecoyPassword = useSelector(
     (state: { persist: { decoyPassword: string | null } }) =>
       state.persist.decoyPassword
   );
+  const encodedMasterPassword = useSelector(
+    (state: { persist: { masterPassword: string | null } }) =>
+      state.persist.masterPassword
+  );
+  const isBothPasswordNotSet = !encodedDecoyPassword && !encodedMasterPassword;
 
   // Decode the password when retrieving it
   const savedDecoyPassword = encodedDecoyPassword
@@ -83,12 +91,17 @@ function DecoyPassword() {
       dispatch(setPassword({ type: "decoy", password: data.decoyPassword }));
       dispatch(
         showToast({
-          message: "Decoy password saved successfully!",
+          message: "Save decoy password!",
           type: "success",
         })
       );
       setShowChangeDialog(false);
       form.reset();
+      if (isBothPasswordNotSet) {
+        navigate(`${paths.master_password}?type=setup`);
+      } else {
+        navigate(paths.dual_access_password);
+      }
     } catch (error) {
       dispatch(
         showToast({ message: "Failed to save decoy password", type: "error" })
@@ -101,39 +114,49 @@ function DecoyPassword() {
     dispatch(setPassword({ type: "decoy", password: "" }));
     dispatch(
       showToast({
-        message: "Decoy password removed successfully!",
+        message: "Removed decoy password",
         type: "success",
       })
     );
     setShowRemoveDialog(false);
     form.reset();
+    navigate(paths.dual_access_password);
   }
 
-  console.log("savedDecoyPassword", savedDecoyPassword);
+  function handleSubmit(data: z.infer<typeof DecoyPasswordFormData>) {
+    if (setupType === "setup") handlePasswordChange(data);
+    else setShowChangeDialog(true);
+  }
+
+  const copies = {
+    title:
+      setupType === "setup" ? "Set up decoy password" : "Manage decoy password",
+    description:
+      setupType === "setup"
+        ? "Create a password to open decoy version of the application for extra privacy. Create a 6-digit PIN. Numbers only."
+        : "Manage the password to open decoy version of the application for extra privacy. Create a 6-digit PIN. Numbers only.",
+    confirmBtnLabel: setupType === "setup" ? "Confirm" : "Save",
+  };
 
   return (
     <>
       <div className="w-full h-screen px-5 flex flex-col items-center bg-[#16131C]">
         <div className="flex justify-between items-center py-5 w-full">
-          <Link to={paths.dual_access_password}>
+          <Link
+            to={
+              isBothPasswordNotSet ? paths.settings : paths.dual_access_password
+            }
+          >
             <img src={backButton} alt="" />
           </Link>
-          <p className="text-[16px]">Manage decoy password</p>
+          <p className="text-[16px]">{copies.title}</p>
           <div></div>
         </div>
 
         <div className="flex flex-col my-5">
-          <p className="text-sm">
-            Manage the password to open decoy version of the application for
-            extra privacy. Create a 6-digit PIN. Numbers only.
-          </p>
+          <p className="text-sm">{copies.description}</p>
           <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(() => {
-                setShowChangeDialog(true);
-              })}
-              className="mt-8"
-            >
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="mt-8">
               <div className="space-y-12">
                 <FormField
                   control={form.control}
@@ -271,18 +294,19 @@ function DecoyPassword() {
                     }
                   )}
                 >
-                  <p>Save</p>
+                  <p>{copies.confirmBtnLabel}</p>
                 </button>
-                <button
-                  type="button"
-                  className="text-[16px] font-semibold bg-[#FFFFFF0A] text-white disabled:text-[#444444] w-full rounded-[16px] py-3"
-                  disabled={!savedDecoyPassword}
-                  onClick={() => {
-                    setShowRemoveDialog(true);
-                  }}
-                >
-                  <p>Remove</p>
-                </button>
+                {!!savedDecoyPassword && (
+                  <button
+                    type="button"
+                    className="text-[16px] font-semibold bg-[#FFFFFF0A] text-white disabled:text-[#444444] w-full rounded-[16px] py-3"
+                    onClick={() => {
+                      setShowRemoveDialog(true);
+                    }}
+                  >
+                    <p>Remove</p>
+                  </button>
+                )}
               </div>
             </form>
           </Form>
