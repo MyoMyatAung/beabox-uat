@@ -44,6 +44,7 @@ import {
 } from "@/page/luckywheel/services/spinWheelApi";
 import useImagePreloader from "./useImagePreloader";
 import ApplicationPreloader from "./ApplicationPreloader";
+import PasswordSetUpPopUp from "./PasswordSetUpPopUp";
 
 // Function to check if the app is running in a WebView
 function isWebView() {
@@ -510,6 +511,7 @@ const RootLayout = ({ children }: any) => {
             </>
           )}
       </div>
+      <PasswordSetUpPopUp />
       {/* <ApplicationPreloader /> */}
     </>
   );

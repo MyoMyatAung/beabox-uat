@@ -51,24 +51,9 @@ import { combineSlices } from "@reduxjs/toolkit";
 import { setPreviousUser } from "./services/previousUserSlice";
 import { clearSeenUsers } from "./services/seenUsersSlice";
 import { setHasDecryptedInitialData } from "./services/decryptionSlice";
-import { useNavigate } from "react-router-dom";
-import { setIsEnabledDualPassword } from "@/store/slices/persistSlice";
-import PasswordSetUpPopUp from "@/layouts/PasswordSetUpPopUp";
 
 const Home = () => {
-  const navigate = useNavigate();
-  const isDualPasswordEnabled = useSelector(
-        (state: any) => state.persist.isEnabledDualPassword
-  );
-
-    const dispatch = useDispatch();
-
-    if (isDualPasswordEnabled) {
-        navigate("/security/pin-entry");
-    } else {
-        dispatch(setIsEnabledDualPassword(false));
-        return <PasswordSetUpPopUp />;
-    }
+  const dispatch = useDispatch();
 
   const videoContainerRef = useRef<HTMLDivElement>(null);
   // const [videos, setVideos] = useState<any[]>([]);
