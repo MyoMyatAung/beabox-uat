@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import ImgPasswordSetup from "@/assets/img-password-setup.png";
+import { useNavigate } from "react-router-dom";
 const PasswordSetUpPopUp = () => {
+    const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(true);
     return (
         <>
@@ -52,7 +54,10 @@ const PasswordSetUpPopUp = () => {
                                     </div>
                                 </div>
 
-                                <button className="w-full max-w-[250px]  bg-[linear-gradient(324.57deg,#CD3EFF_43.64%,#FFB2E0_100%)] text-white font-medium py-2.5 rounded-2xl hover:from-pink-600 hover:to-purple-700">
+                                <button
+                                    onClick={() => navigate("/settings")}
+                                    className="w-full max-w-[250px]  bg-[linear-gradient(324.57deg,#CD3EFF_43.64%,#FFB2E0_100%)] text-white font-medium py-2.5 rounded-2xl hover:from-pink-600 hover:to-purple-700"
+                                >
                                     Set up now!
                                 </button>
                             </div>

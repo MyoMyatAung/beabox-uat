@@ -62,13 +62,12 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
     const savedDecoyPassword = encodedDecoyPassword
         ? decodePassword(encodedDecoyPassword)
         : null;
-
     const validatePin = (entered: string) => {
         if (savedMasterPassword && entered === savedMasterPassword) {
             setError(false);
             setWrongAttempts(0);
             onPinComplete?.(entered, "master");
-            navigate("/home");
+            navigate("/");
         } else if (savedDecoyPassword && entered === savedDecoyPassword) {
             setError(false);
             setWrongAttempts(0);
