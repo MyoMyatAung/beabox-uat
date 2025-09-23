@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Minus, Delete, ShieldAlert } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import PasswordSetUpPopUp from "@/layouts/PasswordSetUpPopUp";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -37,6 +39,8 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
         localStorage.setItem("wrongAttempts", wrongAttempts.toString());
     }, [wrongAttempts]);
 
+    const navigate = useNavigate();
+
     const validatePin = (entered: string) => {
         if (entered === "123456") {
             onPinComplete?.(entered);
@@ -49,7 +53,7 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
             setWrongAttempts(newAttempts);
 
             if (newAttempts >= 3) {
-                alert("Too many wrong attempts. Please try again later.");
+                navigate("/login");
             }
         }
     };
@@ -109,7 +113,7 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
             variant="ghost"
             size="lg"
             disabled={wrongAttempts >= 3}
-            className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-[#1E1A26] text-white text-2xl font-bold hover:bg-white/10 active:bg-white/20"
+            className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#1E1A26] text-white text-2xl font-bold hover:bg-white/10 active:bg-white/20 px-0"
             onClick={() => handleNumberPress(num)}
         >
             {num}
@@ -117,10 +121,10 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
     );
 
     return (
-        <div className="w-full min-h-screen max-w-sm mx-auto bg-[linear-gradient(324.57deg,#CD3EFF_43.64%,#FFB2E0_100%)] overflow-hidden shadow-2xl flex flex-col">
+        <div className="w-full min-h-screen mx-auto bg-[linear-gradient(324.57deg,#CD3EFF_43.64%,#FFB2E0_100%)] overflow-hidden shadow-2xl flex flex-col">
             {/* Header */}
-            <div className="px-4 sm:px-6 py-6 mb-6">
-                <h1 className="text-white text-lg sm:text-xl font-bold text-center mb-6">
+            <div className="px-4 sm:px-6 py-[5%] mb-[5%]">
+                <h1 className="text-white text-lg  font-bold text-center mb-6">
                     Enter Your Pin
                 </h1>
 
@@ -135,22 +139,22 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
                 <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <AlertDialogTrigger asChild>
                         <span
-                            className="font-medium border-b-2 border-white pb-0.5 cursor-pointer"
+                            className="font-medium border-b-2 border-white pb-0.5 cursor-pointer text-base"
                             onClick={() => setIsDialogOpen(true)}
                         >
                             Forget password?
                         </span>
                     </AlertDialogTrigger>
 
-                    <AlertDialogContent className="bg-[#16131C] border-0 text-white max-w-[320px] mx-auto rounded-2xl px-0 py-0 ">
+                    <AlertDialogContent className="bg-[#16131C] border-0 text-white sm:max-w-[320px] max-w-[300px] mx-auto rounded-2xl px-0 py-0 ">
                         <AlertDialogHeader className="text-center space-y-2 px-6 py-5">
                             <AlertDialogTitle>
                                 <div className="w-8 h-8 flex items-center justify-center mx-auto">
                                     <ShieldAlert className="w-8 h-8 text-[#CD3EFF]" />
                                 </div>
                             </AlertDialogTitle>
-                            <AlertDialogDescription className="text-white text-base font-medium">
-                                <p className="text-gray-300 text-base font-normal leading-relaxed">
+                            <AlertDialogDescription className="text-white text-base font-medium text-center">
+                                <p className="text-gray-300 text-base font-normal leading-relaxed text-center">
                                     Forget password? You need to clean up app
                                     data to restore password
                                 </p>
@@ -158,7 +162,7 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
                             </AlertDialogDescription>
                         </AlertDialogHeader>
 
-                        <AlertDialogFooter className="flex !items-center !justify-between !p-0 border-t-[1px] border-gray-500">
+                        <AlertDialogFooter className="flex !items-center !justify-between !p-0 border-t-[1px] border-gray-500 !flex-row">
                             <AlertDialogCancel
                                 onClick={() => setIsDialogOpen(false)}
                                 className="!w-50% !bg-transparent !mx-auto  text-base !border-none  text-white hover:text-white-300 hover:bg-transparent font-medium px-5 py-7 focus:outline-none focus-visible:ring-0 focus-visible:shadow-none focus-visible:ring-transparent focus-visible:ring-offset-0"
@@ -183,42 +187,36 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
             </div>
 
             {/* Number Pad */}
-            <div className="bg-[#16131C] px-4 sm:px-[70px] rounded-t-[32px] sm:rounded-t-[48px] flex-grow relative pb-6">
+            <div className="bg-[#16131C] rounded-t-[32px] sm:rounded-t-[48px] flex-grow relative pb-6 flex flex-col items-center">
                 {/* Error Message */}
                 {error && wrongAttempts < 3 && (
-                    <p className="text-[#F70F2D] text-center font-normal absolute top-[20px] left-0 right-0">
+                    <p className="text-[#F70F2D] text-base text-center font-normal absolute top-[6%] left-0 right-0">
                         Wrong PIN
                     </p>
                 )}
-                {wrongAttempts >= 3 && (
-                    <p className="text-[#F70F2D] text-center font-normal absolute top-[20px] left-0 right-0">
-                        Locked. Too many wrong attempts.
-                    </p>
-                )}
-                <p className="text-white/80 text-center text-sm sm:text-base pt-[50px] pb-[50px] font-normal">
-                    {wrongAttempts >= 3
-                        ? "Access Locked"
-                        : "Please Enter Your Pin"}
+
+                <p className="text-white/80 text-center text-base pt-[20%] pb-[20%] md:pt-[5%] md:pb-[5%] font-normal">
+                    Please Enter Your Pin
                 </p>
 
                 {/* Number Grid */}
-                <div className="grid grid-cols-3 gap-x-4 sm:gap-x-8 gap-y-3 mb-3">
+                <div className="grid grid-cols-3 gap-x-6 sm:gap-x-10 gap-y-4 mb-6 justify-items-center w-full max-w-[350px]">
                     {["1", "2", "3"].map(renderNumberButton)}
                     {["4", "5", "6"].map(renderNumberButton)}
                     {["7", "8", "9"].map(renderNumberButton)}
                 </div>
 
                 {/* Bottom Row */}
-                <div className="grid grid-cols-3 gap-x-4 sm:gap-x-8 items-center">
+                <div className="grid grid-cols-3 gap-x-6 sm:gap-x-10 items-center justify-items-center w-full max-w-[350px]">
                     <div
-                        className={`w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center bg-[#1E1A26] rounded-full text-white text-lg font-bold ${
+                        className={`w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center bg-[#1E1A26] rounded-full text-white text-lg font-bold ${
                             wrongAttempts < 3
                                 ? "hover:bg-white/10 active:bg-white/20 cursor-pointer"
                                 : "opacity-50 cursor-not-allowed"
                         }`}
                         onClick={handleDelete}
                     >
-                        <Delete className="w-5 h-5 sm:w-6 sm:h-6" />
+                        <Delete size={32} className="hover:text-black/80" />
                     </div>
 
                     {renderNumberButton("0")}
@@ -227,7 +225,7 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
                         variant="ghost"
                         size="lg"
                         disabled={wrongAttempts >= 3}
-                        className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-[#1E1A26] text-white text-sm sm:text-base font-bold hover:bg-white/10 active:bg-white/20"
+                        className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#1E1A26] text-white text-sm sm:text-base font-bold hover:bg-white/10 active:bg-white/20 px-0"
                         onClick={handleDone}
                     >
                         Done
@@ -241,15 +239,18 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
 // Demo wrapper
 const PinEntry: React.FC = () => {
     return (
-        <div className="w-full min-h-screen bg-[#16131C]">
-            <div className="space-y-6">
-                <PinEntryBox
-                    onPinComplete={(pin) => {
-                        alert(`PIN Successful: ${pin}`);
-                    }}
-                />
+        <>
+            <div className="w-full min-h-screen bg-[#16131C] overflow-hidden">
+                <div className="space-y-6">
+                    <PinEntryBox
+                        onPinComplete={(pin) => {
+                            console.log(pin);
+                        }}
+                    />
+                </div>
             </div>
-        </div>
+            <PasswordSetUpPopUp />
+        </>
     );
 };
 
