@@ -76,11 +76,11 @@ const Withdraw: React.FC<WithdrawProps> = ({}) => {
         {activeTab === 1 ? (
           <div className="">
             <BalNew
-              balance={data?.data?.main_income}
+              balance={data?.data?.total_income}
               title="可提取金额"
               amountText={"总余额"}
               btnText={"钱包提款"}
-              amount={data?.data?.other_income}
+              amount={data?.data?.total_income}
               to={paths.wallet_recharge}
               amountType={"¥"}
             />
