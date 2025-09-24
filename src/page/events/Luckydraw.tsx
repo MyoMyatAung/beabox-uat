@@ -33,7 +33,7 @@ import { paths } from "@/routes/paths";
 import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 import AuthDrawer from "@/components/profile/auth/auth-drawer";
 import copy from "copy-to-clipboard";
-import {formatDateTime} from '@/lib/utils'
+import { formatDateTime } from "@/lib/utils";
 
 const Luckydraw = () => {
   const navigate = useNavigate();
@@ -51,7 +51,7 @@ const Luckydraw = () => {
   const [firstLoad, setFirstLoad] = useState(true);
   const user = useSelector((state: any) => state.persist.user);
   const isOpen = useSelector((state: any) => state.profile.isDrawerOpen);
-  const [prizeDigit, setPrizeDigit] = useState<number[]>([0,0,0,0,0,0]);
+  const [prizeDigit, setPrizeDigit] = useState<number[]>([0, 0, 0, 0, 0, 0]);
   const [isAnimating, setIsAnimating] = useState(false);
   const { data, refetch: refetchUserShareInfo } = useGetUserShareInfoQuery({});
   const [currentNotification, setCurrentNotification] = useState(0);
@@ -72,10 +72,13 @@ const Luckydraw = () => {
   useEffect(() => {
     if (eventDetailsData) {
       setStats(eventDetailsData);
-      console.log('eventDetailsData', eventDetailsData);
-      
+      console.log("eventDetailsData", eventDetailsData);
+
       // Set notification data from virtual_user_reward
-      if (eventDetailsData.virtual_user_reward && Array.isArray(eventDetailsData.virtual_user_reward)) {
+      if (
+        eventDetailsData.virtual_user_reward &&
+        Array.isArray(eventDetailsData.virtual_user_reward)
+      ) {
         setNotificationData(eventDetailsData.virtual_user_reward);
       }
     }
@@ -117,65 +120,66 @@ const Luckydraw = () => {
       console.error("Failed to fetch event details:", error);
     }
   };
-  
+
   // Animate counter from 0 to final value
   useEffect(() => {
     if (!stats?.remaining_amount) return;
-    
+
     const maxLimit = parseInt(stats.remaining_amount);
     if (isNaN(maxLimit)) return;
 
     setIsAnimating(true);
-    
+
     // Start from 0
     setPrizeDigit([0, 0, 0, 0, 0, 0]);
-    
+
     // Calculate how many steps to animate (use smaller number for smoother animation)
     const animationSteps = Math.min(maxLimit, 50);
     const stepValue = Math.max(1, Math.floor(maxLimit / animationSteps));
     let currentValue = 0;
-    
+
     const animationInterval = setInterval(() => {
       currentValue = Math.min(currentValue + stepValue, maxLimit);
-      
+
       // Convert to 6-digit array
-      const digits = currentValue.toString().padStart(6, '0').split('').map(Number);
+      const digits = currentValue
+        .toString()
+        .padStart(6, "0")
+        .split("")
+        .map(Number);
       setPrizeDigit(digits);
-      
+
       if (currentValue >= maxLimit) {
         clearInterval(animationInterval);
         setIsAnimating(false);
       }
     }, 48); // Update every 50ms for smooth animation
-    
+
     return () => clearInterval(animationInterval);
   }, [stats?.remaining_amount]);
 
   // Notification rotation effect
   useEffect(() => {
     if (notificationData.length === 0) return;
-    
+
     const notificationInterval = setInterval(() => {
       setNotificationVisible(false);
-      
+
       setTimeout(() => {
-        setCurrentNotification((prev) => 
-          (prev + 1) % notificationData.length
-        );
+        setCurrentNotification((prev) => (prev + 1) % notificationData.length);
         setNotificationVisible(true);
       }, 500);
     }, 3000);
-    
+
     return () => clearInterval(notificationInterval);
   }, [notificationData]);
-
 
   useEffect(() => {
     if (user?.token) {
       refetchUserShareInfo();
     }
   }, [user?.token]);
-  
+
   if (!stats) {
     return <Loader />;
   }
@@ -184,7 +188,6 @@ const Luckydraw = () => {
   const remainingTime = formatDateTime(currentDuration, timeZone);
 
   // const remainingTime = time.startsWith("00:") ? time.slice(3) : time;
-
 
   const handleCopyClick = async () => {
     if (!user?.token) {
@@ -245,6 +248,15 @@ const Luckydraw = () => {
     navigate(paths.wallet_withdraw);
   };
 
+  const handleBackClick = () => {
+    // Check if there's history to go back to
+    if (window.history.length > 1) {
+      navigate(-1); // Go back to previous page
+    } else {
+      navigate("/"); // Navigate to home if no history
+    }
+  };
+
   return (
     <div className="relative max-w-[480px] min-h-screen bg-no-repeat items-center mx-auto">
       <div
@@ -259,7 +271,7 @@ const Luckydraw = () => {
           <img
             src={backButton}
             alt=""
-            onClick={() => navigate("/")}
+            onClick={handleBackClick}
             className="mt-2 w-5 h-5"
           />
           <div className="absolute left-1/2 transform -translate-x-1/2 mt-5">
@@ -326,15 +338,24 @@ const Luckydraw = () => {
             <div className="text-sm mb-7 h-8 overflow-hidden">
               <div
                 className={`transition-all duration-1000 ${
-                  notificationVisible 
-                    ? "transform translate-y-0 opacity-100" 
+                  notificationVisible
+                    ? "transform translate-y-0 opacity-100"
                     : "transform -translate-y-6 opacity-5"
                 }`}
               >
                 {notificationData.length > 0 && (
                   <p>
-                    用户：<span className="font-bold text-[16px]">{notificationData[currentNotification]?.nickname?.substring(0, 5)}</span> 成功瓜分红包：
-                    <span className="font-bold text-[18px]">{notificationData[currentNotification]?.amount}{notificationData[currentNotification]?.currency}</span>
+                    用户：
+                    <span className="font-bold text-[16px]">
+                      {notificationData[
+                        currentNotification
+                      ]?.nickname?.substring(0, 5)}
+                    </span>{" "}
+                    成功瓜分红包：
+                    <span className="font-bold text-[18px]">
+                      {notificationData[currentNotification]?.amount}
+                      {notificationData[currentNotification]?.currency}
+                    </span>
                   </p>
                 )}
               </div>
