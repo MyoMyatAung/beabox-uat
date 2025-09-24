@@ -49,6 +49,10 @@ function DecoyPassword() {
   const savedDecoyPassword = encodedDecoyPassword
     ? decodePassword(encodedDecoyPassword)
     : null;
+  const savedMasterPassword = encodedMasterPassword
+    ? decodePassword(encodedMasterPassword)
+    : null;
+
   const DecoyPasswordFormData = z
     .object({
       decoyPassword: z
@@ -88,6 +92,17 @@ function DecoyPassword() {
 
   function handlePasswordChange(data: z.infer<typeof DecoyPasswordFormData>) {
     try {
+      if (data.decoyPassword === savedMasterPassword) {
+        dispatch(
+          showToast({
+            message: "Decoy password cannot be the same as master password",
+            type: "error",
+          })
+        );
+        setShowChangeDialog(false);
+        form.reset();
+        return;
+      }
       dispatch(setPassword({ type: "decoy", password: data.decoyPassword }));
       dispatch(
         showToast({

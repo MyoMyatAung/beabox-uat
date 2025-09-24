@@ -35,15 +35,23 @@ function MasterPassword() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const setupType = searchParams.get("type") ?? "setup";
+  const encodedDecoyPassword = useSelector(
+    (state: { persist: { decoyPassword: string | null } }) =>
+      state.persist.decoyPassword
+  );
   const encodedMasterPassword = useSelector(
     (state: { persist: { masterPassword: string | null } }) =>
       state.persist.masterPassword
   );
 
   // Decode the password when retrieving it
+  const savedDecoyPassword = encodedDecoyPassword
+    ? decodePassword(encodedDecoyPassword)
+    : null;
   const savedMasterPassword = encodedMasterPassword
     ? decodePassword(encodedMasterPassword)
     : null;
+
   const MasterPasswordFormData = z
     .object({
       masterPassword: z
@@ -83,6 +91,17 @@ function MasterPassword() {
 
   function handlePasswordChange(data: z.infer<typeof MasterPasswordFormData>) {
     try {
+      if (data.masterPassword === savedDecoyPassword) {
+        dispatch(
+          showToast({
+            message: "Master password cannot be the same as decoy password",
+            type: "error",
+          })
+        );
+        setShowChangeDialog(false);
+        form.reset();
+        return;
+      }
       dispatch(setPassword({ type: "master", password: data.masterPassword }));
       dispatch(
         showToast({
