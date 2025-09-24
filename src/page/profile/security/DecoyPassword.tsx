@@ -57,13 +57,13 @@ function DecoyPassword() {
     .object({
       decoyPassword: z
         .string()
-        .regex(/^\d{6}$/, "Use exactly 6 digits—no letters or symbols."),
+        .regex(/^\d{6}$/, "使用正好 6 位数字 — — 没有字母或符号。"),
       decoyPasswordConfirm: z
         .string()
-        .regex(/^\d{6}$/, "Use exactly 6 digits—no letters or symbols."),
+        .regex(/^\d{6}$/, "使用正好 6 位数字 — — 没有字母或符号。"),
     })
     .refine((data) => data.decoyPassword === data.decoyPasswordConfirm, {
-      message: "Passwords don't match",
+      message: "密码不匹配",
       path: ["decoyPasswordConfirm"],
     });
 
@@ -95,7 +95,7 @@ function DecoyPassword() {
       if (data.decoyPassword === savedMasterPassword) {
         dispatch(
           showToast({
-            message: "Decoy password cannot be the same as master password",
+            message: "诱饵密码不能与主密码相同",
             type: "error",
           })
         );
@@ -106,7 +106,7 @@ function DecoyPassword() {
       dispatch(setPassword({ type: "decoy", password: data.decoyPassword }));
       dispatch(
         showToast({
-          message: "Save decoy password!",
+          message: "已保存诱饵密码！",
           type: "success",
         })
       );
@@ -118,9 +118,7 @@ function DecoyPassword() {
         navigate(paths.dual_access_password);
       }
     } catch (error) {
-      dispatch(
-        showToast({ message: "Failed to save decoy password", type: "error" })
-      );
+      dispatch(showToast({ message: "诱饵密码保存失败！", type: "error" }));
     }
   }
 
@@ -129,7 +127,7 @@ function DecoyPassword() {
     dispatch(setPassword({ type: "decoy", password: "" }));
     dispatch(
       showToast({
-        message: "Removed decoy password",
+        message: "删除诱饵密码！",
         type: "success",
       })
     );
@@ -144,13 +142,12 @@ function DecoyPassword() {
   }
 
   const copies = {
-    title:
-      setupType === "setup" ? "Set up decoy password" : "Manage decoy password",
+    title: setupType === "setup" ? "设置诱饵密码" : "管理诱饵密码",
     description:
       setupType === "setup"
-        ? "Create a password to open decoy version of the application for extra privacy. Create a 6-digit PIN. Numbers only."
-        : "Manage the password to open decoy version of the application for extra privacy. Create a 6-digit PIN. Numbers only.",
-    confirmBtnLabel: setupType === "setup" ? "Confirm" : "Save",
+        ? "创建密码以打开应用程序的诱饵版本，从而增强隐私。请创建一个 6 位 PIN 码。仅限数字。"
+        : "管理密码以打开应用程序的诱饵版本，从而获得更高的隐私性。创建一个 6 位 PIN 码。仅限数字。",
+    confirmBtnLabel: setupType === "setup" ? "确认" : "节省",
   };
 
   return (
@@ -181,12 +178,12 @@ function DecoyPassword() {
                       <FormControl>
                         <>
                           <label htmlFor="" className="text-[14px] text-[#888]">
-                            Decoy Password
+                            诱饵密码
                           </label>
                           <div className="relative">
                             <input
                               className="w-full bg-transparent border-0 border-b py-3 outline-0 border-[#888] outline-none"
-                              placeholder="Enter your decoy password"
+                              placeholder="输入您的诱饵密码"
                               type={
                                 showPassword.decoyPassword ? "text" : "password"
                               }
@@ -226,7 +223,7 @@ function DecoyPassword() {
                         <FormMessage />
                       ) : (
                         <p className="text-sm text-[#888] mt-2">
-                          Use exactly 6 digits—no letters or symbols.
+                          使用正好 6 位数字 — — 没有字母或符号。
                         </p>
                       )}
                     </FormItem>
@@ -240,12 +237,12 @@ function DecoyPassword() {
                       <FormControl>
                         <>
                           <label htmlFor="" className="text-[14px] text-[#888]">
-                            Confirm Decoy Password
+                            确认诱饵密码
                           </label>
                           <div className="relative">
                             <input
                               className="w-full bg-transparent border-0 border-b py-3 outline-0 border-[#888] outline-none"
-                              placeholder="Confirm your decoy password"
+                              placeholder="确认您的诱饵密码"
                               type={
                                 showPassword.decoyPasswordConfirm
                                   ? "text"
@@ -319,7 +316,7 @@ function DecoyPassword() {
                       setShowRemoveDialog(true);
                     }}
                   >
-                    <p>Remove</p>
+                    <p>消除</p>
                   </button>
                 )}
               </div>
@@ -371,8 +368,8 @@ function DecoyPassword() {
             </DialogHeader>
             <div className="text-center">
               <p className="text-[#BBBBBB] mx-6 mb-8">
-                Are you sure you want to change the password to open the decoy
-                version of the application for extra privacy
+                您确定要更改密码以打开诱饵版本吗？
+                该应用程序旨在提供额外的隐私保护
               </p>
               <div className="grid grid-cols-2 border-t border-white/10 divide-x divide-white/10">
                 <Button
@@ -380,14 +377,14 @@ function DecoyPassword() {
                   className="text-white hover:text-white !bg-transparent h-14 text-base"
                   onClick={() => setShowChangeDialog(false)}
                 >
-                  Cancel
+                  取消
                 </Button>
                 <Button
                   variant={"ghost"}
                   className="text-[#CD3EFF] hover:text-[#CD3EFF] !bg-transparent h-14 text-base"
                   onClick={() => handlePasswordChange(form.getValues())}
                 >
-                  Change
+                  改变
                 </Button>
               </div>
             </div>
@@ -438,8 +435,7 @@ function DecoyPassword() {
             </DialogHeader>
             <div className="text-center">
               <p className="text-[#BBBBBB] mx-6 mb-8">
-                Are you sure you want to remove the password to open the decoy
-                version of the application for extra privacy
+                您确定要移除密码来打开诱饵版本吗？ 该应用程序旨在保护您的隐私
               </p>
               <div className="grid grid-cols-2 border-t border-white/10 divide-x divide-white/10">
                 <Button
@@ -447,14 +443,14 @@ function DecoyPassword() {
                   className="text-white hover:text-white !bg-transparent h-14 text-base"
                   onClick={() => setShowRemoveDialog(false)}
                 >
-                  Cancel
+                  取消
                 </Button>
                 <Button
                   variant={"ghost"}
                   className="text-[#EE3E4C] hover:text-[#EE3E4C] !bg-transparent h-14 text-base"
                   onClick={() => handlePasswordRemove()}
                 >
-                  Remove
+                  消除
                 </Button>
               </div>
             </div>

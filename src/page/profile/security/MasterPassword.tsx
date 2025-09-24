@@ -56,13 +56,13 @@ function MasterPassword() {
     .object({
       masterPassword: z
         .string()
-        .regex(/^\d{6}$/, "Use exactly 6 digits—no letters or symbols."),
+        .regex(/^\d{6}$/, "使用正好 6 位数字 — — 没有字母或符号。"),
       masterPasswordConfirm: z
         .string()
-        .regex(/^\d{6}$/, "Use exactly 6 digits—no letters or symbols."),
+        .regex(/^\d{6}$/, "使用正好 6 位数字 — — 没有字母或符号。"),
     })
     .refine((data) => data.masterPassword === data.masterPasswordConfirm, {
-      message: "Passwords don't match",
+      message: "密码不匹配",
       path: ["masterPasswordConfirm"],
     });
 
@@ -94,7 +94,7 @@ function MasterPassword() {
       if (data.masterPassword === savedDecoyPassword) {
         dispatch(
           showToast({
-            message: "Master password cannot be the same as decoy password",
+            message: "主密码不能与诱饵密码相同",
             type: "error",
           })
         );
@@ -105,7 +105,7 @@ function MasterPassword() {
       dispatch(setPassword({ type: "master", password: data.masterPassword }));
       dispatch(
         showToast({
-          message: "Saved master password!",
+          message: "已保存主密码！",
           type: "success",
         })
       );
@@ -117,9 +117,7 @@ function MasterPassword() {
       //   dispatch(setIsEnabledDualPassword(true));
       // }
     } catch (error) {
-      dispatch(
-        showToast({ message: "Failed to save master password", type: "error" })
-      );
+      dispatch(showToast({ message: "保存主密码失败！", type: "error" }));
     }
   }
 
@@ -128,7 +126,7 @@ function MasterPassword() {
     dispatch(setPassword({ type: "master", password: "" }));
     dispatch(
       showToast({
-        message: "Removed master password",
+        message: "已删除主密码！",
         type: "error",
       })
     );
@@ -143,15 +141,12 @@ function MasterPassword() {
   }
 
   const copies = {
-    title:
-      setupType === "setup"
-        ? "Set up master password"
-        : "Manage master password",
+    title: setupType === "setup" ? "设置主密码" : "管理主密码",
     description:
       setupType === "setup"
-        ? "Create a password to open real version of the application. Create a 6-digit PIN. Numbers only."
-        : "Manage the password to open real version of the application. Create a 6-digit PIN. Numbers only.",
-    confirmBtnLabel: setupType === "setup" ? "Confirm" : "Save",
+        ? "创建密码以打开应用程序的实际版本。请创建一个 6 位 PIN 码。仅限数字。"
+        : "管理打开应用程序真实版本的密码。创建一个 6 位 PIN 码。仅限数字。",
+    confirmBtnLabel: setupType === "setup" ? "确认" : "节省",
   };
 
   return (
@@ -178,12 +173,12 @@ function MasterPassword() {
                       <FormControl>
                         <>
                           <label htmlFor="" className="text-[14px] text-[#888]">
-                            Master Password
+                            主密码
                           </label>
                           <div className="relative">
                             <input
                               className="w-full bg-transparent border-0 border-b py-3 outline-0 border-[#888] outline-none"
-                              placeholder="Enter your master password"
+                              placeholder="输入您的主密码"
                               type={
                                 showPassword.masterPassword
                                   ? "text"
@@ -225,7 +220,7 @@ function MasterPassword() {
                         <FormMessage />
                       ) : (
                         <p className="text-sm text-[#888] mt-2">
-                          Use exactly 6 digits—no letters or symbols.
+                          使用正好 6 位数字 — — 没有字母或符号。
                         </p>
                       )}
                     </FormItem>
@@ -239,12 +234,12 @@ function MasterPassword() {
                       <FormControl>
                         <>
                           <label htmlFor="" className="text-[14px] text-[#888]">
-                            Confirm Master Password
+                            确认主密码
                           </label>
                           <div className="relative">
                             <input
                               className="w-full bg-transparent border-0 border-b py-3 outline-0 border-[#888] outline-none"
-                              placeholder="Confirm your master password"
+                              placeholder="确认您的主密码"
                               type={
                                 showPassword.masterPasswordConfirm
                                   ? "text"
@@ -318,7 +313,7 @@ function MasterPassword() {
                       setShowRemoveDialog(true);
                     }}
                   >
-                    <p>Remove</p>
+                    <p>消除</p>
                   </button>
                 )}
               </div>
@@ -370,8 +365,7 @@ function MasterPassword() {
             </DialogHeader>
             <div className="text-center">
               <p className="text-[#BBBBBB] mx-6 mb-8">
-                Are you sure you want to change the password to open the real
-                version of the application
+                您确定要更改密码以打开应用程序的正式版本吗？
               </p>
               <div className="grid grid-cols-2 border-t border-white/10 divide-x divide-white/10">
                 <Button
@@ -379,14 +373,14 @@ function MasterPassword() {
                   className="text-white hover:text-white !bg-transparent h-14 text-base"
                   onClick={() => setShowChangeDialog(false)}
                 >
-                  Cancel
+                  取消
                 </Button>
                 <Button
                   variant={"ghost"}
                   className="text-[#CD3EFF] hover:text-[#CD3EFF] !bg-transparent h-14 text-base"
                   onClick={() => handlePasswordChange(form.getValues())}
                 >
-                  Change
+                  改变
                 </Button>
               </div>
             </div>
@@ -437,8 +431,7 @@ function MasterPassword() {
             </DialogHeader>
             <div className="text-center">
               <p className="text-[#BBBBBB] mx-6 mb-8">
-                Are you sure you want to remove the password to open the real
-                version of the application
+                您确定要移除密码以打开应用程序的正式版本吗？
               </p>
               <div className="grid grid-cols-2 border-t border-white/10 divide-x divide-white/10">
                 <Button
@@ -446,14 +439,14 @@ function MasterPassword() {
                   className="text-white hover:text-white !bg-transparent h-14 text-base"
                   onClick={() => setShowRemoveDialog(false)}
                 >
-                  Cancel
+                  取消
                 </Button>
                 <Button
                   variant={"ghost"}
                   className="text-[#EE3E4C] hover:text-[#EE3E4C] !bg-transparent h-14 text-base"
                   onClick={() => handlePasswordRemove()}
                 >
-                  Remove
+                  消除
                 </Button>
               </div>
             </div>

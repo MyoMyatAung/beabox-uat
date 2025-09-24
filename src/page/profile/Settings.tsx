@@ -128,12 +128,9 @@ const Settings = ({
           className="flex justify-between items-start"
         >
           <div className="w-[70%] ">
-            <p className="flex items-center gap-1 text-[14px]">
-              Dual Access Password
-            </p>
+            <p className="flex items-center gap-1 text-[14px]">双密码访问</p>
             <p className="text-[10px] text-[#888888] w-full mt-1">
-              Set up two different passwords. One opens a decoy home page, the
-              other opens the real app.
+              设置两个不同的密码。一个打开伪装首页，另一个打开真实应用。
             </p>
           </div>
           <div className=" flex-1">

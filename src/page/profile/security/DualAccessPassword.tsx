@@ -5,7 +5,10 @@ import { ChevronRightIcon } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { useSelector, useDispatch } from "react-redux";
 import { decodePassword } from "@/lib/utils";
-import { setIsEnabledDualPassword } from "@/store/slices/persistSlice";
+import {
+  setIsEnabledDualPassword,
+  setIsPasswordCorrect,
+} from "@/store/slices/persistSlice";
 import { showToast } from "@/page/home/services/errorSlice";
 
 function DualAccessPassword() {
@@ -31,6 +34,7 @@ function DualAccessPassword() {
 
   function handleEnableDualPassword(e: boolean) {
     dispatch(setIsEnabledDualPassword(e));
+    dispatch(setIsPasswordCorrect(false));
   }
 
   return (
@@ -40,18 +44,18 @@ function DualAccessPassword() {
           {/* <FaAngleLeft size={22} /> */}
           <img src={backButton} alt="" />
         </Link>
-        <p className="text-[16px]">Dual Access Password</p>
+        <p className="text-[16px]">双密码访问</p>
         <div></div>
       </div>
 
-      <div className="flex flex-col my-5">
+      <div className="flex flex-col my-5 w-full">
         <div
           className="flex justify-between items-start"
           onClick={() => {
             if (!savedDecoyPassword || !savedMasterPassword) {
               dispatch(
                 showToast({
-                  message: "Set two passwords to use this feature",
+                  message: "设置两个密码以使用此功能",
                   type: "error",
                 })
               );
@@ -59,11 +63,9 @@ function DualAccessPassword() {
           }}
         >
           <div className="w-[70%] ">
-            <p className="flex items-center gap-1 text-[14px]">
-              Enable Dual Password
-            </p>
+            <p className="flex items-center gap-1 text-[14px]">启用双重密码</p>
             <p className="text-[10px] text-[#888888] w-full mt-1">
-              Protect your privicy with a dual access system
+              使用双重访问系统保护您的隐私
             </p>
           </div>
           <div className="flex-1 flex justify-end">
@@ -84,16 +86,14 @@ function DualAccessPassword() {
           className="flex justify-between items-start"
         >
           <div className="w-[70%] ">
-            <p className="flex items-center gap-1 text-[14px]">
-              Manage Decoy Password
-            </p>
+            <p className="flex items-center gap-1 text-[14px]">管理诱饵密码</p>
             <p className="text-[10px] text-[#888888] w-full mt-1">
-              Manage the password to open the decoy version of the application
+              管理打开诱饵版应用程序的密码
             </p>
           </div>
           <div className=" flex-1">
             <p className="flex items-center justify-end gap-1 text-[14px] capitalize text-[#888888]">
-              {savedDecoyPassword ? "Manage" : "Set up"}
+              {savedDecoyPassword ? "管理" : "设置"}
               <ChevronRightIcon size={15} />
             </p>
           </div>
@@ -108,16 +108,14 @@ function DualAccessPassword() {
           className="flex justify-between items-start"
         >
           <div className="w-[70%] ">
-            <p className="flex items-center gap-1 text-[14px]">
-              Manage Master Password
-            </p>
+            <p className="flex items-center gap-1 text-[14px]">管理主密码</p>
             <p className="text-[10px] text-[#888888] w-full mt-1">
-              Manage the password to open the real version of the application
+              管理打开应用程序真实版本的密码
             </p>
           </div>
           <div className=" flex-1">
             <p className="flex items-center justify-end gap-1 text-[14px] capitalize text-[#888888]">
-              {savedMasterPassword ? "Manage" : "Set up"}
+              {savedMasterPassword ? "管理" : "设置"}
               <ChevronRightIcon size={15} />
             </p>
           </div>
