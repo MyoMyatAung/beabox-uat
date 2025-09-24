@@ -135,7 +135,7 @@ const Settings = ({
           </div>
           <div className=" flex-1">
             <p className="flex items-center justify-end gap-1 text-[14px] capitalize text-[#888888]">
-              {isBothPasswordNotSet ? "Set up" : "Manage"}
+              {isBothPasswordNotSet ? "设置" : "管理"}
               <ChevronRightIcon size={15} />
             </p>
           </div>
