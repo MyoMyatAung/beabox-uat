@@ -384,10 +384,14 @@ const RootLayout = ({ children }: any) => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (isEnabledDualPassword && !isPasswordCorrect) {
+    if (
+      isEnabledDualPassword &&
+      !isPasswordCorrect &&
+      location.pathname !== "/pin-entry"
+    ) {
       navigate("/pin-entry");
     }
-  }, [isEnabledDualPassword, isPasswordCorrect, navigate]);
+  }, [isEnabledDualPassword, isPasswordCorrect, navigate, location.pathname]);
 
   return (
     <>
