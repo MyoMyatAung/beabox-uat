@@ -465,6 +465,7 @@ const DetailStory = ({ id }: { id: string }) => {
                             title={video?.title || ""}
                             username={user?.name || ""}
                             city={video?.city || ""}
+                            checkBottomSpacing={true}
                           />
                         )}
 

@@ -151,7 +151,8 @@ const Ranking = () => {
         const rect = headerRef.current.getBoundingClientRect();
         // Trigger when the element's top is out of the viewport
         if (rect.top <= 0) {
-          setShowHeader(true);
+          // setShowHeader(true);
+          setShowHeader(false);
         } else {
           setShowHeader(false);
         }
@@ -262,106 +263,104 @@ const Ranking = () => {
           <Top3 rankingData={rankingList} refetch={refetch} />
         </div>
         <div ref={headerRef} className="w-full"></div>
-
-        {/* Ads Section - Only in normal view, not sticky */}
-        <div className="pt-[20px] px-[10px]">
-          {/* <h1 className="text-white text-[14px] font-[500] leading-[20px] pb-[12px] px-1">
+        <div className="bg-[#191721] z-50 sticky top-0">
+          {/* Ads Section - Only in normal view, not sticky */}
+          <div className="pt-[20px] px-[10px]">
+            {/* <h1 className="text-white text-[14px] font-[500] leading-[20px] pb-[12px] px-1">
             {exploreData?.data?.ads?.application?.title || ""}
           </h1> */}
-          {exploreLoading ? (
-            <div className="grid grid-cols-6 gap-[20px]">
-              {[...Array(12)].map((_, index) => (
-                <div key={index} className="w-[56px] h-[53px] rounded-md bg-white/20 animate-pulse"></div>
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-6 gap-[5px]">
-              {ads?.map((app: any) => (
-                <a
-                  key={app.id}
-                  href={app.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex flex-col justify-center items-center gap-[4px]"
-                >
-                  <img
-                    className="min-w-[56px] min-h-[56px] rounded-[6px] border-[#222]"
-                    src={app.image}
-                    alt={app.title}
-                  />
-                  <h1 className="text-white ad_update text-[14px] font-[400]">
-                    {app.title}
-                  </h1>
-                </a>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div
-          className={`w-full sticky top-0 ${
-            showHeader ? "ccbg2 z-50 pb-1" : ""
-          }`}
-        >
-          {showHeader ? (
-            <div className="pt-5 z-50 animate-fade-in">
-              <h1 className="text-[18px] text-center">排行榜</h1>
-            </div>
-          ) : (
-            <></>
-          )}
-          
-          <div className="flex items-center gap-4 px-2">
-            {configData?.data?.creator_center_ranking_filter?.map(
-              (tag: any) => (
-                <div
-                  className="flex flex-col justify-center items-center gap-3"
-                  key={tag?.title}
-                >
-                  <div className="w-[58px] h-[3px] rounded-[1px] bg-transparent"></div>
-                  <button
-                    onClick={() => {
-                      setSelectedType(tag);
-                      setSelectedRange({
-                        value: "today",
-                        title: "今日",
-                      });
-                    }}
-                    className={`text-[14px] ${
-                      selectedType?.keyword == tag?.keyword
-                        ? "text-white"
-                        : "text-[#999]"
-                    }`}
+            {exploreLoading ? (
+              <div className="grid grid-cols-6 gap-[20px]">
+                {[...Array(12)].map((_, index) => (
+                  <div key={index} className="w-[56px] h-[53px] rounded-md bg-white/20 animate-pulse"></div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-6 gap-[5px]">
+                {ads?.map((app: any) => (
+                  <a
+                    key={app.id}
+                    href={app.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex flex-col justify-center items-center gap-[4px]"
                   >
-                    {tag?.title}
-                  </button>
-                  <div
-                    className={`w-[58px] h-[3px] rounded-[1px] ${
-                      selectedType?.keyword == tag?.keyword
-                        ? "bg-[#CD3EFF]"
-                        : "bg-transparent"
-                    } `}
-                  ></div>
-                </div>
-              )
+                    <img
+                      className="min-w-[56px] min-h-[56px] rounded-[6px] border-[#222]"
+                      src={app.image}
+                      alt={app.title}
+                    />
+                    <h1 className="text-white ad_update text-[14px] font-[400]">
+                      {app.title}
+                    </h1>
+                  </a>
+                ))}
+              </div>
             )}
           </div>
-          <div className="w-full h-[1px] bg-[#FFFFFF05]"></div>
-          <div className="flex my-3 px-2 items-center gap-2 top-0">
-            {ranges?.map((range: any) => (
-              <button
-                onClick={() => setSelectedRange(range)}
-                className={`text-[14px] ${
-                  selectedRange?.value == range?.value
-                    ? "text-white bg-[#FFFFFF1F]"
-                    : "text-[#999] bg-[#FFFFFF05]"
-                } px-5 py-1 text-center rounded-full`}
-              >
-                {range?.title}
-              </button>
-            ))}
+
+          <div
+            className={`w-full ${showHeader ? "ccbg2 z-50 pb-1" : ""
+              }`}
+          >
+            {showHeader ? (
+              <div className="pt-5 z-50 animate-fade-in">
+                <h1 className="text-[18px] text-center">排行榜</h1>
+              </div>
+            ) : (
+              <></>
+            )}
+
+            <div className="flex items-center gap-4 px-2">
+              {configData?.data?.creator_center_ranking_filter?.map(
+                (tag: any) => (
+                  <div
+                    className="flex flex-col justify-center items-center gap-3"
+                    key={tag?.title}
+                  >
+                    <div className="w-[58px] h-[3px] rounded-[1px] bg-transparent"></div>
+                    <button
+                      onClick={() => {
+                        setSelectedType(tag);
+                        setSelectedRange({
+                          value: "today",
+                          title: "今日",
+                        });
+                      }}
+                      className={`text-[14px] ${selectedType?.keyword == tag?.keyword
+                          ? "text-white"
+                          : "text-[#999]"
+                        }`}
+                    >
+                      {tag?.title}
+                    </button>
+                    <div
+                      className={`w-[58px] h-[3px] rounded-[1px] ${selectedType?.keyword == tag?.keyword
+                          ? "bg-[#CD3EFF]"
+                          : "bg-transparent"
+                        } `}
+                    ></div>
+                  </div>
+                )
+              )}
+            </div>
+            <div className="w-full h-[1px] bg-[#FFFFFF05]"></div>
+            <div className="flex my-3 px-2 items-center gap-2 top-0">
+              {ranges?.map((range: any) => (
+                <button
+                  onClick={() => setSelectedRange(range)}
+                  className={`text-[14px] ${selectedRange?.value == range?.value
+                      ? "text-white bg-[#FFFFFF1F]"
+                      : "text-[#999] bg-[#FFFFFF05]"
+                    } px-5 py-1 text-center rounded-full`}
+                >
+                  {range?.title}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
+
         <div className="px-5 py-5 space-y-4 sticky">
           {isFetching && page == 1 ? (
             <div className="flex w-full items-center justify-center pt-[100px]">
@@ -390,7 +389,7 @@ const Ranking = () => {
         )}
         {user?.token ? <MyRankCard myrank={data?.data?.my_rank} /> : <></>}
       </div>
-      <div className="py-32"></div>
+      <div className="py-8"></div>
     </div>
   );
 };

@@ -1,4 +1,13 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+// this is using @tanstack/react-virtual
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useMemo,
+  useCallback,
+} from "react";
+import { useVirtualizer, defaultRangeExtractor } from "@tanstack/react-virtual";
 import { useGetConfigQuery, usePostCommentMutation } from "../services/homeApi";
 // import Player from "./Player";
 // import VideoSidebar from "./VideoSidebar";
@@ -8,7 +17,7 @@ import FeedFooter from "./FeedFooter";
 import { useNavigate } from "react-router-dom";
 // import SearchPlayer from "./SearchPlayer";
 import HeartCount from "./Heart";
-import VideoContainer from "./VideoContainer";
+// import VideoContainer from "./VideoContainer";
 // import { setVideos } from "../services/videosSlice";
 import { showToast } from "../services/errorSlice";
 import Ads from "./Ads";
@@ -16,15 +25,15 @@ import loader from "../vod_loader.gif";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
 import sc from "../../../assets/explore/sc.svg";
 import VideoContainerFeed from "./VideoContainerFeed";
-import ShowHeartCom from "./ShowHeartCom";
-import CountdownCircle from "./CountdownCircle";
-import { useGetMyOwnProfileQuery } from "@/store/api/profileApi";
+// import ShowHeartCom from "./ShowHeartCom";
+// import CountdownCircle from "./CountdownCircle";
+// import { useGetMyOwnProfileQuery } from "@/store/api/profileApi";
 import { getDeviceInfo } from "@/lib/deviceInfo";
 import { decryptImage } from "@/utils/imageDecrypt";
 import PreventSwipeBack from "@/components/shared/PreventSwipeBack";
 import { AnimatePresence, motion } from "framer-motion";
 
-const VideoFeed = ({
+const VideoFeedVirtual = ({
   videos,
   currentActiveId,
   setShowVideoFeed,
@@ -41,7 +50,7 @@ const VideoFeed = ({
   setVideos: any;
   search: any;
 }) => {
-  const videoContainerRef = useRef<HTMLDivElement>(null);
+  const parentRef = useRef<HTMLDivElement>(null);
   const [content, setContent] = useState("");
   const [currentActivePost, setCurrentActivePost] =
     useState<any>(currentActiveId); // Active post ID
@@ -54,15 +63,6 @@ const VideoFeed = ({
   const { hideBar } = useSelector((state: any) => state.hideBarSlice);
   const { hideNew } = useSelector((state: any) => state.hideNewSlice);
 
-  // const profile = useSelector((state: any) => state.persist.profileData);
-  // const { data: user1, refetch: refetchUser } = useGetMyOwnProfileQuery({});
-
-  // const { data: user1, refetch: refetchUser } = useGetMyOwnProfileQuery("", {
-  //   skip: !user,
-  // });
-
-  // const profile = user1?.data;
-
   const [postComment] = usePostCommentMutation();
 
   const navigate = useNavigate();
@@ -72,16 +72,187 @@ const VideoFeed = ({
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const [videosToRender, setVideosToRender] = useState<any[]>([]); // Store videos to render
-  const [videosPerLoad, setVideosPerLoad] = useState(3); // Number of videos to initially render
-  const [start, setStart] = useState(false);
   const abortControllerRef = useRef<AbortController[]>([]); // Array to store AbortControllers
   const videoData = useRef<any[]>([]); // Array to store AbortControllers
   const indexRef = useRef(0); // Track the current active video index
-  const [showHeart, setShowHeart] = useState(false);
   const [isDecrypting, setIsDecrypting] = useState(true);
+
+  // Map video id -> index for fast lookup
+  const indexById = useMemo(() => {
+    const map = new Map<string, number>();
+    videosToRender.forEach((video, i) => map.set(video.post_id, i));
+    return map;
+  }, [videosToRender]);
+
+  // Get start index ONLY when videos are fully loaded
+  const startIndex = useMemo(() => {
+    if (!currentActiveId || !videosToRender.length || isDecrypting) return 0;
+    const index = indexById.get(currentActiveId) ?? 0;
+    return Math.max(0, Math.min(index, videosToRender.length - 1));
+  }, [currentActiveId, indexById, videosToRender.length, isDecrypting]);
+
+  const didJumpRef = useRef(false);
+  const isVideosReady = !isDecrypting && videosToRender.length > 0;
+  const [isPositioning, setIsPositioning] = useState(false);
+  const [hasPositioned, setHasPositioned] = useState(false);
+
+  // Show loading while deciding which video to play
+  const isDecidingVideo = isVideosReady && !hasPositioned;
+
+  // Custom range extractor for first-paint readiness
+  const rangeExtractor = useCallback(
+    (range: any) => {
+      const base = defaultRangeExtractor(range);
+
+      // On first paint, ensure ±5 items around startIndex are rendered
+      if (
+        !didJumpRef.current &&
+        isVideosReady &&
+        startIndex != null &&
+        startIndex > 0
+      ) {
+        const pad = 5; // render ±5 around the target item on first paint
+        const extraStart = Math.max(0, startIndex - pad);
+        const extraEnd = Math.min(videosToRender.length - 1, startIndex + pad);
+        const extra = Array.from(
+          { length: extraEnd - extraStart + 1 },
+          (_, i) => extraStart + i
+        );
+        return Array.from(new Set([...base, ...extra])).sort((a, b) => a - b);
+      }
+
+      return base;
+    },
+    [startIndex, videosToRender.length, isVideosReady]
+  );
+
+  // Calculate initial offset ONLY when videos are ready
+  const initialOffset = useMemo(() => {
+    if (isVideosReady && startIndex > 0) {
+      return startIndex * window.innerHeight;
+    }
+    return 0;
+  }, [startIndex, isVideosReady]);
+
+  const virtualizer = useVirtualizer({
+    count: videosToRender.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => window.innerHeight, // Each video is roughly screen height
+    overscan: 5, // Render 5 items before/after visible area for smoother scrolling
+    getItemKey: (index) => videosToRender[index]?.post_id ?? index,
+    rangeExtractor,
+    scrollMargin: 0,
+    horizontal: false,
+    // Pre-position to the target video for instant jump ONLY when ready
+    ...(initialOffset > 0 ? { initialOffset } : {}),
+  });
+
+  // Handle scrolling to target video ONLY when videos are fully ready
+  useLayoutEffect(() => {
+    if (!isVideosReady) return;
+
+    // Use scrollToIndex for precise positioning
+    if (
+      !didJumpRef.current &&
+      startIndex >= 0 &&
+      startIndex < videosToRender.length
+    ) {
+      console.log(
+        `🎯 Scrolling to video at index ${startIndex} for currentActiveId: ${currentActiveId}`
+      );
+      console.log(`📊 Total videos: ${videosToRender.length}`);
+      console.log(`🎬 Target video:`, videosToRender[startIndex]);
+
+      // Show loading only if we need to jump (not first video)
+      if (startIndex > 0) {
+        setIsPositioning(true);
+      }
+
+      // Small delay to ensure DOM is ready
+      const timeoutId = setTimeout(() => {
+        // Ensure the parent container is scrollable
+        if (parentRef.current) {
+          parentRef.current.style.overflow = "auto";
+          parentRef.current.style.height = "100vh";
+        }
+
+        virtualizer.scrollToIndex(startIndex, {
+          align: "start",
+          behavior: "auto",
+        });
+        didJumpRef.current = true;
+        setHasPositioned(true);
+
+        // Force a measure to ensure virtualizer knows the correct positions
+        virtualizer.measure();
+
+        // Hide loading after positioning is complete
+        if (startIndex > 0) {
+          setTimeout(() => {
+            setIsPositioning(false);
+          }, 200);
+        }
+      }, 100);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [startIndex, isVideosReady, virtualizer, videosToRender.length]);
+
+  // Reset state when currentActiveId changes
+  useEffect(() => {
+    if (currentActiveId) {
+      // Reset all positioning state
+      didJumpRef.current = false;
+      setIsPositioning(false);
+      setHasPositioned(false);
+
+      // Force the virtualizer to recalculate
+      virtualizer.measure();
+    }
+  }, [currentActiveId]);
   const removeHeart = (id: number) => {
     setHearts((prev) => prev.filter((heartId) => heartId !== id)); // Remove the heart by ID
   };
+
+  // Infinite loading logic - trigger when near the end
+  useEffect(() => {
+    const virtualItems = virtualizer.getVirtualItems();
+    if (!virtualItems.length) return;
+
+    const lastItem = virtualItems[virtualItems.length - 1];
+    if (lastItem && lastItem.index >= videosToRender.length - 4) {
+      // Load more when 4 items from the end
+      setPage((prev: any) => prev + 1);
+    }
+  }, [virtualizer.getVirtualItems(), videosToRender.length, setPage]);
+
+  // Track currently active video based on scroll position
+  useEffect(() => {
+    const virtualItems = virtualizer.getVirtualItems();
+    if (!virtualItems.length) return;
+
+    // Find the video that's most visible (closest to center of viewport)
+    const viewportCenter =
+      (virtualizer.scrollElement?.scrollTop || 0) + window.innerHeight / 2;
+    let closestVideo = virtualItems[0];
+    let closestDistance = Math.abs(
+      closestVideo.start + closestVideo.size / 2 - viewportCenter
+    );
+
+    virtualItems.forEach((item) => {
+      const itemCenter = item.start + item.size / 2;
+      const distance = Math.abs(itemCenter - viewportCenter);
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestVideo = item;
+      }
+    });
+
+    const activeVideo = videosToRender[closestVideo.index];
+    if (activeVideo && activeVideo.post_id !== currentActivePost) {
+      setCurrentActivePost(activeVideo.post_id);
+    }
+  }, [virtualizer.getVirtualItems(), videosToRender, currentActivePost]);
 
   // Add at the top of your Home component
   const decryptionCache = useRef(new Map<string, string>());
@@ -128,7 +299,7 @@ const VideoFeed = ({
         };
 
         run();
-      } catch (error) { }
+      } catch (error) {}
 
       // setVideosToRender(firstThreeVideos);
     }
@@ -156,109 +327,6 @@ const VideoFeed = ({
       window.removeEventListener("popstate", handlePopState);
     };
   }, []);
-
-  useEffect(() => {
-    if (!currentActiveId) return;
-
-    const observer = new MutationObserver((mutations, obs) => {
-      const container = videoContainerRef.current;
-      if (container) {
-        const activeElement = container.querySelector(
-          `[data-post-id="${currentActiveId}"]`
-        );
-
-        if (activeElement) {
-          activeElement.scrollIntoView({ block: "center" });
-          obs.disconnect(); // Stop observing once we've found and scrolled to the element
-        }
-      }
-    });
-
-    // Start observing the document with the configured parameters
-    observer.observe(document, {
-      childList: true,
-      subtree: true,
-    });
-
-    return () => observer.disconnect();
-  }, [currentActiveId]); // Add videosToRender as dependency
-
-  // Scroll to the first current post when the component is mounted
-  // useEffect(() => {
-  //   const container = videoContainerRef.current;
-  //   console.log(container);
-  //   if (container && currentActiveId) {
-  //     const activeElement = container.querySelector(
-  //       `[data-post-id="${currentActiveId}"]`
-  //     );
-
-  //     console.log(activeElement);
-  //     if (activeElement) {
-  //       activeElement.scrollIntoView({ block: "center" });
-  //     }
-  //   }
-  // }, [currentActiveId]);
-
-  useLayoutEffect(() => {
-    const container = videoContainerRef.current;
-
-    if (!container) return; // Ensure the container is available before proceeding.
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setPage((prev: any) => prev + 1); // Load more videos
-          }
-        });
-      },
-      {
-        rootMargin: "100px", // Trigger the observer when 100px from the bottom
-        threshold: 0.5, // 50% visibility of the last video
-      }
-    );
-
-    // Ensure videos are available
-    if (videos.length > 1) {
-      const secondLastVideo = container.children[container.children.length - 5];
-      if (secondLastVideo) {
-        observer.observe(secondLastVideo);
-      }
-    }
-
-    // Cleanup observer on component unmount or when dependencies change
-    return () => {
-      observer.disconnect();
-    };
-  }, [currentActivePost]); // Dependencies (excluding videoContainerRef.current as it's stable)
-
-  useEffect(() => {
-    const container = videoContainerRef.current;
-    if (!container || videos.length === 0) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const postId = entry.target.getAttribute("data-post-id");
-            if (postId) {
-              setCurrentActivePost(postId);
-            }
-          }
-        });
-      },
-      {
-        threshold: 0.5,
-      }
-    );
-
-    // Observe only the videos in view
-    Array.from(container.children).forEach((child) => {
-      observer.observe(child);
-    });
-
-    return () => observer.disconnect();
-  }, [videosToRender]);
 
   useEffect(() => {
     if (currentActivePost) {
@@ -294,15 +362,16 @@ const VideoFeed = ({
         setContent("");
         dispatch(
           showToast({
-            message: response?.message,
+            message:
+              (response as any)?.message || "Comment posted successfully",
             type: "success",
           })
         );
-      } catch (error) {
+      } catch (error: any) {
         dispatch(
           showToast({
-            message: error?.data?.message,
-            type: "success",
+            message: error?.data?.message || "Failed to post comment",
+            type: "error",
           })
         );
         console.error("Failed to post reply:", error);
@@ -311,23 +380,6 @@ const VideoFeed = ({
       setIsOpen(true);
     }
   };
-
-  const [isLastVideoVisible, setIsLastVideoVisible] = useState(false);
-
-  // Add this effect to track last video visibility
-  useEffect(() => {
-    const container = videoContainerRef.current;
-    if (!container) return;
-
-    const lastVideo = container.querySelector(`.video1:last-child`);
-
-    if (!lastVideo) return;
-
-    const lastPostId = lastVideo.getAttribute("data-post-id");
-    if (lastPostId === currentActivePost) {
-      setIsLastVideoVisible(true);
-    }
-  }, [currentActivePost]);
 
   const handleSearch = () => {
     navigate("/search_overlay");
@@ -389,10 +441,32 @@ const VideoFeed = ({
           </div>
         ) : (
           <>
+            {(isPositioning || isDecidingVideo) && (
+              <div className="app bg-[#16131C] absolute inset-0 z-[10000]">
+                <div
+                  style={{
+                    textAlign: "center",
+                    padding: "20px",
+                  }}
+                >
+                  <div className="heart">
+                    <img
+                      src={loader}
+                      className="w-[100px] h-[100px]"
+                      alt="Loading"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
             <div
-              ref={videoContainerRef}
+              ref={parentRef}
               className={`app__videos ${isOpen ? "opacity-50" : ""}`}
-              style={{ pointerEvents: isOpen ? "none" : "auto" }}
+              style={{
+                pointerEvents: isOpen ? "none" : "auto",
+                height: "100vh",
+                overflow: "auto",
+              }}
             >
               <AnimatePresence>
                 {!hideBar && !hideNew && (
@@ -435,126 +509,131 @@ const VideoFeed = ({
                 )}
               </AnimatePresence>
 
-              {videosToRender.map((video: any, index: number) => (<div
-                key={index}
-                className="video1 pb-[70px]"
-                data-post-id={video.post_id} // Add post ID to the container
+              <div
+                style={{
+                  height: virtualizer.getTotalSize(),
+                  width: "100%",
+                  position: "relative",
+                }}
               >
-                {video?.file_type !== "video" ? (
-                  <a href={video?.ads_info?.jump_url} target="_blank">
-                    <img
-                      src={video?.files[0]?.resourceURL}
-                      alt=""
-                      className="h-full w-full"
-                    />
-                  </a>
-                ) : (
-                  <VideoContainerFeed
-                    // refetchUser={refetchUser}
-                    setVideosData={setVideos}
-                    setrenderVideos={setVideosToRender}
-                    videoData={videoData}
-                    indexRef={indexRef}
-                    abortControllerRef={abortControllerRef}
-                    container={videoContainerRef.current}
-                    width={width}
-                    height={height}
-                    status={false}
-                    countNumber={countNumber}
-                    video={video}
-                    setCountNumber={setCountNumber}
-                    config={config}
-                    countdown={countdown}
-                    setWidth={setWidth}
-                    setHeight={setHeight}
-                    setHearts={setHearts}
-                    setCountdown={setCountdown}
-                  // setShowHeart={setShowHeart}
-                  // coin={profile?.coins}
-                  />
-                )}
-
-                {video?.type !== "ads" && video?.type !== "ads_virtual" && (
-                  <FeedFooter
-                    badge={video?.user?.badge}
-                    id={video?.user?.id}
-                    tags={video?.tag}
-                    title={video?.title}
-                    username={video?.user?.name}
-                    city={video?.city}
-                  />
-                )}
-
-                {(video?.type === "ads" || video?.type === "ads_virtual") && (
-                  <Ads ads={video?.ads_info} type={video?.type} />
-                )}
-
-                {hearts.map((id: any) => (
-                  <HeartCount id={id} key={id} remove={removeHeart} />
-                ))}
-
-                {/*
-            {showHeart && (
-              <ShowHeartCom
-                countNumber={countNumber}
-                nickname={profile?.nickname}
-                photo={profile?.profile_photo}
-              />
-            )}
-
-            {showHeart && (
-              <div className="absolute bottom-[350px] right-[70px] transform z-[999]">
-                <CountdownCircle countNumber={countNumber} />
-              </div>
-            )} */}
-                <AnimatePresence>
-                  {!hideBar && !hideNew && (
-                    <motion.div
-                      className="  add_comment w-full  py-3 z-[9999999] fixed bottom-0 left-0"
-                      initial={{ y: "100%", opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      exit={{ y: "100%", opacity: 0 }}
-                      transition={{
-                        type: "spring",
-                        damping: 25,
-                        stiffness: 300,
+                {virtualizer.getVirtualItems().map((virtualItem) => {
+                  const video = videosToRender[virtualItem.index];
+                  return (
+                    <div
+                      key={virtualItem.key}
+                      data-index={virtualItem.index}
+                      data-post-id={video?.post_id}
+                      ref={virtualizer.measureElement}
+                      className="video1 pb-[70px]"
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        transform: `translateY(${virtualItem.start}px)`,
                       }}
                     >
-                      <div className="flex items-center feed_add_comment gap-2 px-4">
-                        <input
-                          type="text"
-                          className="w-full p-[6px] bg-transparent border-none outline-none"
-                          value={content}
-                          onChange={(e) => setContent(e.target.value)}
-                          placeholder="我来说两句～"
+                      {video?.file_type !== "video" ? (
+                        <a href={video?.ads_info?.jump_url} target="_blank">
+                          <img
+                            src={video?.files[0]?.resourceURL}
+                            alt=""
+                            className="h-full w-full"
+                          />
+                        </a>
+                      ) : (
+                        <VideoContainerFeed
+                          // refetchUser={refetchUser}
+                          setVideosData={setVideos}
+                          setrenderVideos={setVideosToRender}
+                          videoData={videoData}
+                          indexRef={indexRef}
+                          abortControllerRef={abortControllerRef}
+                          container={parentRef.current}
+                          width={width}
+                          height={height}
+                          status={false}
+                          countNumber={countNumber}
+                          video={video}
+                          setCountNumber={setCountNumber}
+                          config={config}
+                          countdown={countdown}
+                          setWidth={setWidth}
+                          setHeight={setHeight}
+                          setHearts={setHearts}
+                          setCountdown={setCountdown}
+                          // setShowHeart={setShowHeart}
+                          // coin={profile?.coins}
                         />
-                        <button
-                          className="p-3"
-                          onClick={() => handleComment(video?.post_id)}
+                      )}
+
+                      {video?.type !== "ads" &&
+                        video?.type !== "ads_virtual" && (
+                          <FeedFooter
+                            badge={video?.user?.badge}
+                            id={video?.user?.id}
+                            tags={video?.tag}
+                            title={video?.title}
+                            username={video?.user?.name}
+                            city={video?.city}
+                          />
+                        )}
+
+                      {(video?.type === "ads" ||
+                        video?.type === "ads_virtual") && (
+                        <Ads ads={video?.ads_info} type={video?.type} />
+                      )}
+
+                      {hearts.map((id: any) => (
+                        <HeartCount id={id} key={id} remove={removeHeart} />
+                      ))}
+                    </div>
+                  );
+                })}
+              </div>
+
+              <AnimatePresence>
+                {!hideBar && !hideNew && (
+                  <motion.div
+                    className="add_comment w-full py-3 z-[9999999] fixed bottom-0 left-0"
+                    initial={{ y: "100%", opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: "100%", opacity: 0 }}
+                    transition={{
+                      type: "spring",
+                      damping: 25,
+                      stiffness: 300,
+                    }}
+                  >
+                    <div className="flex items-center feed_add_comment gap-2 px-4">
+                      <input
+                        type="text"
+                        className="w-full p-[6px] bg-transparent border-none outline-none"
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                        placeholder="我来说两句～"
+                      />
+                      <button
+                        className="p-3"
+                        onClick={() => handleComment(currentActivePost)}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="22"
+                          viewBox="0 0 24 22"
+                          fill="none"
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="22"
-                            viewBox="0 0 24 22"
-                            fill="none"
-                          >
-                            <path
-                              d="M12.2705 11.7305L3.00345 12.6274L0.56437 20.427C0.468914 20.7295 0.496117 21.0574 0.640043 21.3401C0.783968 21.6227 1.03349 21.8374 1.33422 21.9378C1.63518 22.0382 1.96335 22.0164 2.24826 21.8772L22.5589 12.0422C22.8198 11.9151 23.0233 11.6943 23.1289 11.424C23.2345 11.1537 23.2345 10.8535 23.1289 10.5832C23.0233 10.3129 22.8198 10.0921 22.5589 9.96495L2.26219 0.123036C1.97731 -0.0164383 1.64889 -0.038204 1.34796 0.0622005C1.04724 0.162848 0.797965 0.377508 0.65378 0.659921C0.509855 0.94258 0.482651 1.2705 0.578108 1.57295L3.01719 9.37255L12.2672 10.2695C12.6408 10.3066 12.9257 10.6209 12.9257 10.9963C12.9257 11.3719 12.6408 11.6862 12.2672 11.7231L12.2705 11.7305Z"
-                              fill="white"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>))}
-              {isLastVideoVisible && (
-                <div className="flex justify-center items-center p-3 w-full">
-                  <img src={loader} className="w-[80px] h-[80px]" alt="Loading" />
-                </div>
-              )}
+                          <path
+                            d="M12.2705 11.7305L3.00345 12.6274L0.56437 20.427C0.468914 20.7295 0.496117 21.0574 0.640043 21.3401C0.783968 21.6227 1.03349 21.8374 1.33422 21.9378C1.63518 22.0382 1.96335 22.0164 2.24826 21.8772L22.5589 12.0422C22.8198 11.9151 23.0233 11.6943 23.1289 11.424C23.2345 11.1537 23.2345 10.8535 23.1289 10.5832C23.0233 10.3129 22.8198 10.0921 22.5589 9.96495L2.26219 0.123036C1.97731 -0.0164383 1.64889 -0.038204 1.34796 0.0622005C1.04724 0.162848 0.797965 0.377508 0.65378 0.659921C0.509855 0.94258 0.482651 1.2705 0.578108 1.57295L3.01719 9.37255L12.2672 10.2695C12.6408 10.3066 12.9257 10.6209 12.9257 10.9963C12.9257 11.3719 12.6408 11.6862 12.2672 11.7231L12.2705 11.7305Z"
+                            fill="white"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </>
         )}
@@ -565,7 +644,7 @@ const VideoFeed = ({
   );
 };
 
-export default React.memo(VideoFeed);
+export default React.memo(VideoFeedVirtual);
 
 // import { useEffect, useRef, useState } from "react";
 // import { useGetConfigQuery, usePostCommentMutation } from "../services/homeApi";

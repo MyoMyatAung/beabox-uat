@@ -15,6 +15,7 @@ import { useLocation, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setExpHeader } from "@/store/slices/exploreSlice";
 import VideoFeed from "../home/components/VideoFeed";
+import VideoFeedVirtual from "../home/components/VideoFeedVirtual";
 
 const Explore = () => {
   const [activeTab, setActiveTab] = useState("Recommend");
@@ -97,7 +98,7 @@ const Explore = () => {
     <>
       {showVideoFeed && selectedMovieId && (
         <div className="z-[999999] h-screen fixed top-0 overflow-y-scroll left-0 w-full">
-          <VideoFeed
+          <VideoFeedVirtual
             search={false}
             setPage={setPage}
             setVideos={setList}
