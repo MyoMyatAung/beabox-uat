@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import { paths } from "./paths";
 import RootLayout from "@/layouts/RootLayout";
+import DualPasswordGuard from "@/components/DualPasswordGuard";
 import More from "@/page/explore/comp/More";
 import Wallet from "@/page/wallet/Wallet";
 import Invite from "@/page/wallet/comp/Invite";
@@ -75,9 +76,20 @@ const LuckyDraw = lazy(() => import("../page/events/Luckydraw"));
 
 const Routing = () => {
   // Create a wrapper component that includes SafeLazyLoad for error handling
-  const withErrorHandling = (Component: ReactNode) => {
+  const withErrorHandling = (
+    Component: ReactNode,
+    skipPasswordGuard = false
+  ) => {
+    const wrappedComponent = skipPasswordGuard ? (
+      <SafeLazyLoad>{Component}</SafeLazyLoad>
+    ) : (
+      <DualPasswordGuard>
+        <SafeLazyLoad>{Component}</SafeLazyLoad>
+      </DualPasswordGuard>
+    );
+
     return {
-      element: <SafeLazyLoad>{Component}</SafeLazyLoad>,
+      element: wrappedComponent,
       // On route error, navigate to home page
       errorElement: <Navigate to="/" replace />,
     };
@@ -138,7 +150,7 @@ const Routing = () => {
     },
     {
       path: paths.pinEntry,
-      ...withErrorHandling(<PinEntry />),
+      ...withErrorHandling(<PinEntry />, true),
     },
     {
       path: paths.home,

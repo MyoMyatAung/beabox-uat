@@ -45,7 +45,6 @@ import {
 import useImagePreloader from "./useImagePreloader";
 import ApplicationPreloader from "./ApplicationPreloader";
 import PasswordSetUpPopUp from "./PasswordSetUpPopUp";
-import { checkPasswordExpiration } from "@/store/slices/persistSlice";
 
 // Function to check if the app is running in a WebView
 function isWebView() {
@@ -371,27 +370,6 @@ const RootLayout = ({ children }: any) => {
   const handleLuckySpinClick = () => {
     navigate("/lucky");
   };
-
-  const isEnabledDualPassword = useSelector(
-    (state: any) => state.persist.isEnabledDualPassword
-  );
-  const isPasswordCorrect = useSelector(
-    (state: any) => state.persist.isPasswordCorrect
-  );
-
-  useEffect(() => {
-    dispatch(checkPasswordExpiration());
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (
-      isEnabledDualPassword &&
-      !isPasswordCorrect &&
-      location.pathname !== "/pin-entry"
-    ) {
-      navigate("/pin-entry");
-    }
-  }, [isEnabledDualPassword, isPasswordCorrect, navigate, location.pathname]);
 
   return (
     <>
