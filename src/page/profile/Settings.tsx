@@ -89,7 +89,7 @@ const Settings = ({
   const masterPassword = useSelector(
     (state: any) => state.persist.masterPassword
   );
-  const isBothPasswordSet = !!decoyPassword && !!masterPassword;
+  const isBothPasswordNotSet = !decoyPassword && !masterPassword;
 
   if (isLoading) return <Loader />;
 
@@ -121,9 +121,9 @@ const Settings = ({
 
         <Link
           to={
-            isBothPasswordSet
-              ? paths.dual_access_password
-              : `${paths.decoy_password}?type=setup`
+            isBothPasswordNotSet
+              ? `${paths.decoy_password}?type=setup`
+              : paths.dual_access_password
           }
           className="flex justify-between items-start"
         >
@@ -138,7 +138,7 @@ const Settings = ({
           </div>
           <div className=" flex-1">
             <p className="flex items-center justify-end gap-1 text-[14px] capitalize text-[#888888]">
-              {isBothPasswordSet ? "Manage" : "Set up"}
+              {isBothPasswordNotSet ? "Set up" : "Manage"}
               <ChevronRightIcon size={15} />
             </p>
           </div>
