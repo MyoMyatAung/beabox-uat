@@ -36,6 +36,9 @@ const ProfileAvatar = ({
     if (myday?.uploaded && id) {
       navigate(`/story_detail/${id}`, { state: { from: location.pathname } });
     }
+    if (location.pathname === "/profile") {
+      navigate("/profile-detail");
+    }
   };
 
   return (
