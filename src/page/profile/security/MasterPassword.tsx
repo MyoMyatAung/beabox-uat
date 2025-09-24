@@ -325,7 +325,10 @@ function MasterPassword() {
       <Dialog open={showChangeDialog} onOpenChange={setShowChangeDialog}>
         <DialogPortal>
           <DialogOverlay className="bg-black/60" />
-          <DialogContent className="bg-[#16131C] overflow-hidden max-w-[320px] border-0 rounded-[16px] p-0">
+          <DialogContent
+            showX={false}
+            className="bg-[#16131C] overflow-hidden max-w-[320px] border-0 rounded-[16px] p-0"
+          >
             <DialogHeader className="px-6 pt-6">
               <DialogTitle className="text-white text-[16px] text-center">
                 <div className="flex justify-center">
@@ -391,7 +394,10 @@ function MasterPassword() {
       <Dialog open={showRemoveDialog} onOpenChange={setShowRemoveDialog}>
         <DialogPortal>
           <DialogOverlay className="bg-black/60" />
-          <DialogContent className="bg-[#16131C] overflow-hidden max-w-[320px] border-0 rounded-[16px] p-0">
+          <DialogContent
+            showX={false}
+            className="bg-[#16131C] overflow-hidden max-w-[320px] border-0 rounded-[16px] p-0"
+          >
             <DialogHeader className="px-6 pt-6">
               <DialogTitle className="text-white text-[16px] text-center">
                 <div className="flex justify-center">
