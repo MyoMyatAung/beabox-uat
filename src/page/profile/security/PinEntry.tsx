@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Button } from "@/components/ui/button";
 import { Minus, Delete, ShieldAlert } from "lucide-react";
 import { decodePassword } from "@/lib/utils";
-
+import { showToast } from "@/page/home/services/errorSlice";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -96,19 +96,24 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
             setWrongAttempts(0);
             onPinComplete?.(entered, "decoy");
             onPinComplete?.(entered, "decoy");
-            window.location.href = "https://www.google.com";
+            window.location.href = "https://x.com";
         } else {
             setError(true);
             const newAttempts = wrongAttempts + 1;
             setWrongAttempts(newAttempts);
 
             if (newAttempts >= 3) {
-                alert(
-                    "You have entered the wrong PIN 3 times. Please reset your PIN."
+                dispatch(
+                    showToast({
+                        type: "error",
+                        message: "尝试次数过多。由于安全原因，您正在被重定向。",
+                    })
                 );
-                // Optionally, navigate to a different page or take other actions
-                // For example:
-                // navigate("/profile/security/pin-locked");
+
+                // wait a bit so the toast is visible before redirect
+                setTimeout(() => {
+                    window.location.href = "https://www.google.com";
+                }, 2000);
             }
         }
     };
