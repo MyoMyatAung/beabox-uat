@@ -185,7 +185,7 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
         <div className="w-full min-h-screen mx-auto bg-[linear-gradient(324.57deg,#CD3EFF_43.64%,#FFB2E0_100%)] overflow-hidden shadow-2xl flex flex-col">
             <div className="px-4 sm:px-6 py-[5%] mb-[5%] md:py-[3%] md:mb-[3%]">
                 <h1 className="text-white text-lg font-bold text-center mb-6">
-                    输入您的 PIN 码
+                    输入您的密码
                 </h1>
                 <div className="flex justify-center space-x-2 sm:space-x-3">
                     {renderPinDots()}
@@ -240,11 +240,11 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
             <div className="bg-[#16131C] rounded-t-[32px] sm:rounded-t-[48px] flex-grow relative pb-6 flex flex-col items-center">
                 {error && wrongAttempts < 3 && (
                     <p className="text-[#F70F2D] text-base text-center font-normal absolute top-5 md:top-[1.25%] left-0 right-0">
-                        PIN 码错误
+                        密码错误
                     </p>
                 )}
                 <p className="text-white/80 text-center text-base pt-[52px] pb-[52px] md:pt-[3%] md:pb-[3%] font-normal">
-                    请输入您的 PIN 码
+                    请输入您的密码
                 </p>
 
                 <div className="grid grid-cols-3 gap-x-7.5 sm:gap-x-10 gap-y-4 mb-6 justify-items-center w-full max-w-[310px]">
@@ -272,7 +272,7 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
                         className="w-16 h-16 rounded-full bg-[#1E1A26] text-white text-sm sm:text-base font-bold hover:bg-white/10 active:bg-white/20 px-0"
                         onClick={handleDone}
                     >
-                        Done
+                        完成
                     </Button>
                 </div>
             </div>
