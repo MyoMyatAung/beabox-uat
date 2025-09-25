@@ -33,8 +33,9 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
     const dispatch = useDispatch();
     const [pin, setPin] = useState<string>("");
     const [error, setError] = useState(false);
+    const [lastIndex, setLastIndex] = useState<number | null>(null);
 
-    // Load wrong attempts from localStorage
+    // wrong attempts
     const [wrongAttempts, setWrongAttempts] = useState<number>(() => {
         const stored = localStorage.getItem("wrongAttempts");
         return stored ? parseInt(stored, 10) : 0;
@@ -42,14 +43,13 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-    // Save wrongAttempts to localStorage
     useEffect(() => {
         localStorage.setItem("wrongAttempts", wrongAttempts.toString());
     }, [wrongAttempts]);
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (wrongAttempts >= 3) return; // block input after 3 attempts
+            if (wrongAttempts >= 3) return;
 
             if (e.key >= "0" && e.key <= "9") {
                 handleNumberPress(e.key);
@@ -66,7 +66,7 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
         };
     }, [pin, wrongAttempts]);
 
-    // Get passwords from Redux store
+    // Redux passwords
     const encodedMasterPassword = useSelector(
         (state: { persist: { masterPassword: string | null } }) =>
             state.persist.masterPassword
@@ -83,25 +83,26 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
     const savedDecoyPassword = encodedDecoyPassword
         ? decodePassword(encodedDecoyPassword)
         : null;
+
     const validatePin = (entered: string) => {
         if (savedMasterPassword && entered === savedMasterPassword) {
             setError(false);
             setWrongAttempts(0);
             onPinComplete?.(entered, "master");
-            // Use Redux action instead of localStorage
             dispatch(setIsPasswordCorrect(true));
+            setTimeout(() => setPin(""), 500);
             navigate("/");
         } else if (savedDecoyPassword && entered === savedDecoyPassword) {
             setError(false);
             setWrongAttempts(0);
             onPinComplete?.(entered, "decoy");
-            onPinComplete?.(entered, "decoy");
+            setTimeout(() => setPin(""), 500);
             window.location.href = "https://x.com";
         } else {
             setError(true);
             const newAttempts = wrongAttempts + 1;
             setWrongAttempts(newAttempts);
-
+            setTimeout(() => setPin(""), 500);
             if (newAttempts >= 3) {
                 dispatch(
                     showToast({
@@ -109,8 +110,6 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
                         message: "尝试次数过多。由于安全原因，您正在被重定向。",
                     })
                 );
-
-                // wait a bit so the toast is visible before redirect
                 setTimeout(() => {
                     window.location.href = "https://www.google.com";
                 }, 2000);
@@ -124,7 +123,9 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
         if (error) {
             setPin(num);
             setError(false);
+            setLastIndex(0);
             onPinChange?.(num);
+            setTimeout(() => setLastIndex(null), 500);
             return;
         }
 
@@ -132,6 +133,12 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
             const newPin = pin + num;
             setPin(newPin);
             onPinChange?.(newPin);
+            const newIndex = newPin.length - 1;
+            setLastIndex(newIndex);
+
+            setTimeout(() => {
+                setLastIndex(null);
+            }, 500);
 
             if (newPin.length === maxLength) {
                 validatePin(newPin);
@@ -142,6 +149,7 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
     const handleDelete = () => {
         if (wrongAttempts >= 3) return;
         setPin(pin.slice(0, -1));
+        setLastIndex(null);
     };
 
     const handleDone = () => {
@@ -152,20 +160,29 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
     };
 
     const renderPinDots = () => {
-        return Array.from({ length: maxLength }, (_, index) => (
-            <div
-                key={index}
-                className={`w-10 h-10 sm:w-12 sm:h-12 bg-[#16131C] rounded-full flex items-center justify-center text-white font-semibold text-lg ${
-                    error ? "!text-[#F70F2D]" : "text-white"
-                }`}
-            >
-                {index < pin.length ? (
-                    pin[index]
-                ) : (
-                    <Minus className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
-                )}
-            </div>
-        ));
+        return Array.from({ length: maxLength }, (_, index) => {
+            const isFilled = index < pin.length;
+            const shouldShowDigit = index === lastIndex;
+
+            return (
+                <div
+                    key={index}
+                    className={`w-10 h-10 sm:w-12 sm:h-12 bg-[#16131C] rounded-full flex items-center justify-center text-white font-semibold text-lg ${
+                        error ? "!text-[#F70F2D]" : "text-white"
+                    }`}
+                >
+                    {isFilled ? (
+                        shouldShowDigit ? (
+                            pin[index]
+                        ) : (
+                            "•"
+                        )
+                    ) : (
+                        <Minus className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
+                    )}
+                </div>
+            );
+        });
     };
 
     const renderNumberButton = (num: string) => (
