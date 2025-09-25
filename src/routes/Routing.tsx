@@ -20,6 +20,7 @@ import Report from "@/page/report/Report";
 import SafeLazyLoad from "@/components/SafeLazyLoad";
 import CreatorNoti from "@/page/profile/noti/CreatorNoti";
 import Detail from "@/page/home/components/Detail";
+import { isIOSSafariBrowser } from "@/lib/deviceInfo";
 
 const Home = lazy(() => import("../page/home/Home"));
 const Lucky = lazy(() => import("../page/luckywheel/LuckySpinPage"));
@@ -148,10 +149,14 @@ const Routing = () => {
       path: paths.manage,
       ...withErrorHandling(<Manage />),
     },
-    {
-      path: paths.pinEntry,
-      ...withErrorHandling(<PinEntry />, true),
-    },
+    ...(!isIOSSafariBrowser()
+      ? [
+          {
+            path: paths.pinEntry,
+            ...withErrorHandling(<PinEntry />, true),
+          },
+        ]
+      : []),
     {
       path: paths.home,
       ...withErrorHandling(
@@ -220,18 +225,23 @@ const Routing = () => {
       path: paths.privacy_settings,
       ...withErrorHandling(<PrivacySettings />),
     },
-    {
-      path: paths.dual_access_password,
-      ...withErrorHandling(<DualAccessPassword />),
-    },
-    {
-      path: paths.master_password,
-      ...withErrorHandling(<MasterPassword />),
-    },
-    {
-      path: paths.decoy_password,
-      ...withErrorHandling(<DecoyPassword />),
-    },
+    // Password routes only available for iOS app users (not Safari browser)
+    ...(!isIOSSafariBrowser()
+      ? [
+          {
+            path: paths.dual_access_password,
+            ...withErrorHandling(<DualAccessPassword />),
+          },
+          {
+            path: paths.master_password,
+            ...withErrorHandling(<MasterPassword />),
+          },
+          {
+            path: paths.decoy_password,
+            ...withErrorHandling(<DecoyPassword />),
+          },
+        ]
+      : []),
     {
       path: paths.noti,
       ...withErrorHandling(<Noti />),

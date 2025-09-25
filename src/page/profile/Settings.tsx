@@ -18,6 +18,7 @@ import Loader from "@/components/shared/loader";
 import OtherAds from "@/components/profile/other-ads";
 import Poppizza from "../explore/comp/PopApp";
 import logoutIcon from "../../assets/logout.svg";
+import { isIOSSafariBrowser } from "@/lib/deviceInfo";
 
 const Settings = ({
   liked_video_visibility,
@@ -119,27 +120,29 @@ const Settings = ({
           <></>
         )}
 
-        <Link
-          to={
-            isBothPasswordNotSet
-              ? `${paths.decoy_password}?type=setup`
-              : paths.dual_access_password
-          }
-          className="flex justify-between items-start"
-        >
-          <div className="w-[70%] ">
-            <p className="flex items-center gap-1 text-[14px]">双密码访问</p>
-            <p className="text-[10px] text-[#888888] w-full mt-1">
-              设置两个不同的密码。一个打开伪装首页，另一个打开真实应用。
-            </p>
-          </div>
-          <div className=" flex-1">
-            <p className="flex items-center justify-end gap-1 text-[14px] capitalize text-[#888888]">
-              {isBothPasswordNotSet ? "设置" : "管理"}
-              <ChevronRightIcon size={15} />
-            </p>
-          </div>
-        </Link>
+        {!isIOSSafariBrowser() && (
+          <Link
+            to={
+              isBothPasswordNotSet
+                ? `${paths.decoy_password}?type=setup`
+                : paths.dual_access_password
+            }
+            className="flex justify-between items-start"
+          >
+            <div className="w-[70%] ">
+              <p className="flex items-center gap-1 text-[14px]">双密码访问</p>
+              <p className="text-[10px] text-[#888888] w-full mt-1">
+                设置两个不同的密码。一个打开伪装首页，另一个打开真实应用。
+              </p>
+            </div>
+            <div className=" flex-1">
+              <p className="flex items-center justify-end gap-1 text-[14px] capitalize text-[#888888]">
+                {isBothPasswordNotSet ? "设置" : "管理"}
+                <ChevronRightIcon size={15} />
+              </p>
+            </div>
+          </Link>
+        )}
 
         {user?.token ? (
           <>

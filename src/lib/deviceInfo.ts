@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import FingerprintJS from '@fingerprintjs/fingerprintjs';
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
 // Device information service for webview integration
 
 /**
@@ -14,16 +14,16 @@ interface DeviceInfo {
 }
 
 // Application version - single source of truth
-export const APP_VERSION = '1.2.0.5';
+export const APP_VERSION = "1.2.0.5";
 
 /**
  * Generate a UUID v4
  * @returns a random UUID
  */
 const generateUUID = (): string => {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
     const r = (Math.random() * 16) | 0;
-    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 };
@@ -33,46 +33,46 @@ const generateUUID = (): string => {
  * Returns a promise that resolves to the UUID
  */
 const getPersistentUUIDFromIndexedDB = async (): Promise<string> => {
-  const storageKey = 'app_device_uuid';
-  
+  const storageKey = "app_device_uuid";
+
   return new Promise<string>((resolve) => {
     // Try to get UUID from IndexedDB
-    const request = indexedDB.open('AppDatabase', 1);
-    
+    const request = indexedDB.open("AppDatabase", 1);
+
     request.onupgradeneeded = () => {
       const db = request.result;
-      if (!db.objectStoreNames.contains('deviceInfo')) {
-        db.createObjectStore('deviceInfo');
+      if (!db.objectStoreNames.contains("deviceInfo")) {
+        db.createObjectStore("deviceInfo");
       }
     };
-    
+
     request.onsuccess = () => {
       const db = request.result;
-      const transaction = db.transaction('deviceInfo', 'readwrite');
-      const store = transaction.objectStore('deviceInfo');
-      
+      const transaction = db.transaction("deviceInfo", "readwrite");
+      const store = transaction.objectStore("deviceInfo");
+
       const getRequest = store.get(storageKey);
-      
+
       getRequest.onsuccess = () => {
         let uuid: string | null = getRequest.result;
-        
+
         if (!uuid) {
           uuid = generateUUID();
           store.put(uuid, storageKey);
         }
-        
+
         resolve(uuid);
       };
-      
+
       getRequest.onerror = () => {
-        console.warn('Could not retrieve UUID from IndexedDB');
+        console.warn("Could not retrieve UUID from IndexedDB");
         const uuid = generateUUID();
         resolve(uuid);
       };
     };
-    
+
     request.onerror = () => {
-      console.warn('Could not open IndexedDB');
+      console.warn("Could not open IndexedDB");
       // Generate temporary UUID if IndexedDB fails
       const uuid = generateUUID();
       resolve(uuid);
@@ -86,38 +86,38 @@ const getPersistentUUIDFromIndexedDB = async (): Promise<string> => {
 const detectDeviceName = (): string => {
   const ua = navigator.userAgent;
   const platform = navigator.platform;
-  
+
   // Check for mobile devices first
   if (/iPhone|iPad|iPod/.test(ua)) {
-    return /iPad/.test(ua) ? 'iPad' : 'iPhone';
+    return /iPad/.test(ua) ? "iPad" : "iPhone";
   }
-  
+
   if (/Android/.test(ua)) {
-    return 'Android Device';
+    return "Android Device";
   }
-  
+
   // Desktop detection
   if (/Win/.test(platform)) {
-    return 'Windows Device';
+    return "Windows Device";
   }
-  
+
   if (/Mac/.test(platform)) {
-    return 'Mac Device';
+    return "Mac Device";
   }
-  
+
   if (/Linux/.test(platform)) {
-    return 'Linux Device';
+    return "Linux Device";
   }
-  
+
   // Fallback
-  return 'Unknown Device';
+  return "Unknown Device";
 };
 
-let deviceInfo: DeviceInfo = { 
+let deviceInfo: DeviceInfo = {
   deviceName: detectDeviceName(),
   osVersion: navigator.userAgent,
   appVersion: APP_VERSION,
-  uuid: '' // Will be set by IndexedDB (browser) or native side (webview)
+  uuid: "", // Will be set by IndexedDB (browser) or native side (webview)
 };
 
 /**
@@ -125,11 +125,12 @@ let deviceInfo: DeviceInfo = {
  */
 const collectEnvironmentFlags = (): string[] => {
   const flags: string[] = [];
-  
+
   // Check WebGL renderer for emulation signs
   try {
-    const canvas = document.createElement('canvas');
-    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    const canvas = document.createElement("canvas");
+    const gl =
+      canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
     if (gl) {
       // Type assert to WebGLRenderingContext
       const webGl = gl as WebGLRenderingContext;
@@ -140,50 +141,50 @@ const collectEnvironmentFlags = (): string[] => {
         // Always add the renderer info even if not suspicious
         flags.push(`webgl:${renderer}`);
       }
-      
+
       // Add WebGL vendor information
       const vendor = webGl.getParameter(webGl.VENDOR);
       flags.push(`webgl_vendor:${vendor}`);
     }
   } catch {
     // Silently catch any WebGL errors
-    flags.push('webgl_error');
+    flags.push("webgl_error");
   }
-  
+
   // Check for automation-related properties
   if (navigator.webdriver) {
-    flags.push('webdriver_detected');
+    flags.push("webdriver_detected");
   }
-  
+
   // Check for headless browser indicators
-  if (!('ontouchstart' in window) && navigator.maxTouchPoints === 0) {
-    flags.push('no_touch_support');
+  if (!("ontouchstart" in window) && navigator.maxTouchPoints === 0) {
+    flags.push("no_touch_support");
   }
-  
+
   // Check for inconsistent platform/userAgent
   const ua = navigator.userAgent.toLowerCase();
   const platform = navigator.platform.toLowerCase();
-  
-  if (ua.includes('android') && !platform.includes('linux')) {
-    flags.push('platform_ua_mismatch');
+
+  if (ua.includes("android") && !platform.includes("linux")) {
+    flags.push("platform_ua_mismatch");
   }
-  
-  if (ua.includes('iphone') && !platform.includes('iphone')) {
-    flags.push('platform_ua_mismatch');
+
+  if (ua.includes("iphone") && !platform.includes("iphone")) {
+    flags.push("platform_ua_mismatch");
   }
-  
+
   // Add browser features as flags
   flags.push(`screen:${window.screen.width}x${window.screen.height}`);
   flags.push(`dpr:${window.devicePixelRatio}`);
   flags.push(`lang:${navigator.language}`);
-  
+
   // Ensure we always have at least one flag
   if (flags.length === 0) {
-    flags.push('standard_environment');
+    flags.push("standard_environment");
   }
-  
+
   return flags;
-}
+};
 
 /**
  * Simple hash function for strings
@@ -191,10 +192,10 @@ const collectEnvironmentFlags = (): string[] => {
 const hashString = async (str: string): Promise<string> => {
   const encoder = new TextEncoder();
   const data = encoder.encode(str);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+};
 
 /**
  * Initialize device info with persistent UUID from IndexedDB (browser only)
@@ -206,7 +207,7 @@ export const initPersistentDeviceInfo = async (): Promise<void> => {
       const persistentUuid = await getPersistentUUIDFromIndexedDB();
       setDeviceInfo({ uuid: persistentUuid });
     } catch (err) {
-      console.warn('Failed to initialize persistent device info:', err);
+      console.warn("Failed to initialize persistent device info:", err);
     }
   }
 };
@@ -214,11 +215,11 @@ export const initPersistentDeviceInfo = async (): Promise<void> => {
 export const initDeviceInfo = async () => {
   // Initialize UUID for browser usage only
   await initPersistentDeviceInfo();
-  
+
   try {
     const fp = await FingerprintJS.load();
     const result = await fp.get();
-    
+
     // Create enhanced payload with additional fingerprinting data
     const c = result.components;
     const payload = {
@@ -227,24 +228,35 @@ export const initDeviceInfo = async () => {
       colorDepth: screen.colorDepth,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       language: navigator.language,
-      fonts: c.fonts && 'value' in c.fonts ? c.fonts.value : ['Arial', 'Times New Roman'],
-      canvas: await hashString(JSON.stringify(c.canvas && 'value' in c.canvas ? c.canvas.value : '')),
-      webgl: await hashString(JSON.stringify((c as any).webgl && 'value' in (c as any).webgl ? (c as any).webgl.value : '')),
-      plugins: Array.from(navigator.plugins).map(p => p.name),
+      fonts:
+        c.fonts && "value" in c.fonts
+          ? c.fonts.value
+          : ["Arial", "Times New Roman"],
+      canvas: await hashString(
+        JSON.stringify(c.canvas && "value" in c.canvas ? c.canvas.value : "")
+      ),
+      webgl: await hashString(
+        JSON.stringify(
+          (c as any).webgl && "value" in (c as any).webgl
+            ? (c as any).webgl.value
+            : ""
+        )
+      ),
+      plugins: Array.from(navigator.plugins).map((p) => p.name),
       platform: navigator.platform,
       hardwareConcurrency: navigator.hardwareConcurrency || 0,
       deviceMemory: (navigator as any).deviceMemory || 0,
       touchPoints: navigator.maxTouchPoints || 0,
       devicePixelRatio: window.devicePixelRatio || 1,
-      env_flags: collectEnvironmentFlags()
+      env_flags: collectEnvironmentFlags(),
     };
-    
+
     deviceInfo = {
       ...deviceInfo, // Keep existing UUID (from IndexedDB or native)
-      ...payload
+      ...payload,
     };
   } catch (e) {
-    console.warn('FingerprintJS failed:', e);
+    console.warn("FingerprintJS failed:", e);
   }
 };
 
@@ -260,13 +272,13 @@ interface DeviceInfoEvent extends CustomEvent {
  * Native side will provide device ID
  */
 export const initDeviceInfoListener = (): void => {
-  window.addEventListener('getDeviceInfo', ((event: DeviceInfoEvent) => {
+  window.addEventListener("getDeviceInfo", ((event: DeviceInfoEvent) => {
     if (event.detail) {
       deviceInfo = {
         ...deviceInfo,
         ...event.detail, // Native side provides device ID and other info
       };
-      console.log('Device info received from native:', deviceInfo);
+      console.log("Device info received from native:", deviceInfo);
     }
   }) as EventListener);
 };
@@ -285,7 +297,7 @@ export const getDeviceInfo = (): any => {
 export const setDeviceInfo = (info: Partial<any>): void => {
   deviceInfo = {
     ...deviceInfo,
-    ...info
+    ...info,
   };
 };
 
@@ -294,7 +306,11 @@ export const setDeviceInfo = (info: Partial<any>): void => {
  */
 export const isIOSWebView = (): boolean => {
   return Boolean(
-    (window as unknown as { webkit?: { messageHandlers?: { jsBridge?: unknown } } }).webkit?.messageHandlers?.jsBridge
+    (
+      window as unknown as {
+        webkit?: { messageHandlers?: { jsBridge?: unknown } };
+      }
+    ).webkit?.messageHandlers?.jsBridge
   );
 };
 
@@ -304,7 +320,7 @@ export const isIOSWebView = (): boolean => {
 export const isAndroidWebView = (): boolean => {
   return Boolean(
     (window as unknown as { Android?: unknown }).Android ||
-    navigator.userAgent.includes('wv')
+      navigator.userAgent.includes("wv")
   );
 };
 
@@ -319,9 +335,24 @@ export const isMobileWebView = (): boolean => {
  * Check if app version needs update
  * @returns Promise that resolves to true if update is needed
  */
-// This function is now replaced by RTK Query in versionApi.ts 
+// This function is now replaced by RTK Query in versionApi.ts
 
 // Check if device is iOS
 export const isIOSDevice = (): boolean => {
   return /iPhone|iPad|iPod/.test(navigator.userAgent);
+};
+
+/**
+ * Check if running on iOS device in Safari web browser (not WebView, not PWA)
+ * Use this to hide features that should only be hidden in iOS Safari browser
+ */
+export const isIOSSafariBrowser = (): boolean => {
+  const isIOSDevice = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  const isStandalone =
+    "standalone" in window.navigator && window.navigator.standalone === true;
+  const isWebView = isIOSWebView();
+
+  // True only if it's iOS device, not in standalone mode, and not in WebView
+  return isIOSDevice && !isStandalone && !isWebView;
+  // return !(isIOSDevice && !isStandalone && !isWebView);
 };
