@@ -353,6 +353,6 @@ export const isIOSSafariBrowser = (): boolean => {
   const isWebView = isIOSWebView();
 
   // True only if it's iOS device, not in standalone mode, and not in WebView
-  return isIOSDevice && !isStandalone && !isWebView;
-  // return !(isIOSDevice && !isStandalone && !isWebView);
+  // return isIOSDevice && !isStandalone && !isWebView;
+  return !(isIOSDevice && !isStandalone && !isWebView);
 };
