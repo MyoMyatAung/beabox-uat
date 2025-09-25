@@ -190,7 +190,6 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
             key={num}
             variant="ghost"
             size="lg"
-            disabled={wrongAttempts >= 3}
             className="w-16 h-16 rounded-full bg-[#1E1A26] text-white text-2xl font-bold hover:bg-white/10 active:bg-white/20 px-0"
             onClick={() => handleNumberPress(num)}
         >
