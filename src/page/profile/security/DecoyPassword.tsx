@@ -70,8 +70,8 @@ function DecoyPassword() {
   const form = useForm<z.infer<typeof DecoyPasswordFormData>>({
     resolver: zodResolver(DecoyPasswordFormData),
     defaultValues: {
-      decoyPassword: "",
-      decoyPasswordConfirm: "",
+      decoyPassword: savedDecoyPassword ?? "",
+      decoyPasswordConfirm: savedDecoyPassword ?? "",
     },
   });
 
@@ -112,6 +112,9 @@ function DecoyPassword() {
       );
       setShowChangeDialog(false);
       form.reset();
+      if (encodedMasterPassword && data.decoyPassword) {
+        dispatch(setIsEnabledDualPassword(true));
+      }
       if (isBothPasswordNotSet) {
         navigate(`${paths.master_password}?type=setup`);
       } else {
@@ -150,6 +153,8 @@ function DecoyPassword() {
     confirmBtnLabel: setupType === "setup" ? "确认" : "节省",
   };
 
+  const isBtnDisabled = form.formState.isSubmitting || !form.formState.isDirty;
+
   return (
     <>
       <div className="w-full h-screen px-5 flex flex-col items-center bg-[#16131C]">
@@ -185,7 +190,10 @@ function DecoyPassword() {
                               className="w-full bg-transparent border-0 border-b py-3 outline-0 border-[#888] outline-none"
                               placeholder="输入您的诱饵密码"
                               type={
-                                showPassword.decoyPassword ? "text" : "password"
+                                showPassword.decoyPassword ||
+                                !!savedDecoyPassword
+                                  ? "text"
+                                  : "password"
                               }
                               minLength={6}
                               maxLength={6}
@@ -200,7 +208,8 @@ function DecoyPassword() {
                               {...field}
                             />
                             <div className="absolute right-0 bottom-3">
-                              {showPassword.decoyPassword ? (
+                              {showPassword.decoyPassword ||
+                              !!savedDecoyPassword ? (
                                 <EyeIcon
                                   onClick={() =>
                                     showPasswordHandler("decoyPassword")
@@ -244,7 +253,8 @@ function DecoyPassword() {
                               className="w-full bg-transparent border-0 border-b py-3 outline-0 border-[#888] outline-none"
                               placeholder="确认您的诱饵密码"
                               type={
-                                showPassword.decoyPasswordConfirm
+                                showPassword.decoyPasswordConfirm ||
+                                !!savedDecoyPassword
                                   ? "text"
                                   : "password"
                               }
@@ -261,7 +271,8 @@ function DecoyPassword() {
                               {...field}
                             />
                             <div className="absolute right-0 bottom-3">
-                              {showPassword.decoyPasswordConfirm ? (
+                              {showPassword.decoyPasswordConfirm ||
+                              !!savedDecoyPassword ? (
                                 <EyeIcon
                                   onClick={() =>
                                     showPasswordHandler("decoyPasswordConfirm")
@@ -288,21 +299,13 @@ function DecoyPassword() {
               <div className="mt-[60px] space-y-3">
                 <button
                   type="submit"
-                  disabled={
-                    form.formState.errors.decoyPassword ||
-                    form.formState.errors.decoyPasswordConfirm
-                      ? true
-                      : false
-                  }
+                  disabled={isBtnDisabled}
                   className={cn(
                     "text-[16px] font-semibold w-full rounded-[16px] py-3",
                     {
                       "bg-gradient-to-b from-[#FFB2E0] to-[#CD3EFF] text-white":
-                        !form.formState.errors.decoyPassword &&
-                        !form.formState.errors.decoyPasswordConfirm,
-                      "bg-[#FFFFFF0A] text-[#444444]":
-                        form.formState.errors.decoyPassword ||
-                        form.formState.errors.decoyPasswordConfirm,
+                        !isBtnDisabled,
+                      "bg-[#FFFFFF0A] text-[#444444]": isBtnDisabled,
                     }
                   )}
                 >

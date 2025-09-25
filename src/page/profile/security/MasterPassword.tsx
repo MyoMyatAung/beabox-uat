@@ -69,8 +69,8 @@ function MasterPassword() {
   const form = useForm<z.infer<typeof MasterPasswordFormData>>({
     resolver: zodResolver(MasterPasswordFormData),
     defaultValues: {
-      masterPassword: "",
-      masterPasswordConfirm: "",
+      masterPassword: savedMasterPassword ?? "",
+      masterPasswordConfirm: savedMasterPassword ?? "",
     },
   });
 
@@ -111,11 +111,10 @@ function MasterPassword() {
       );
       setShowChangeDialog(false);
       form.reset();
+      if (encodedDecoyPassword && data.masterPassword) {
+        dispatch(setIsEnabledDualPassword(true));
+      }
       navigate(paths.dual_access_password);
-      // want to enable dual access password as default
-      // if (setupType === "setup") {
-      //   dispatch(setIsEnabledDualPassword(true));
-      // }
     } catch (error) {
       dispatch(showToast({ message: "保存主密码失败！", type: "error" }));
     }
@@ -149,6 +148,8 @@ function MasterPassword() {
     confirmBtnLabel: setupType === "setup" ? "确认" : "节省",
   };
 
+  const isBtnDisabled = form.formState.isSubmitting || !form.formState.isDirty;
+
   return (
     <>
       <div className="w-full h-screen px-5 flex flex-col items-center bg-[#16131C]">
@@ -180,7 +181,8 @@ function MasterPassword() {
                               className="w-full bg-transparent border-0 border-b py-3 outline-0 border-[#888] outline-none"
                               placeholder="输入您的主密码"
                               type={
-                                showPassword.masterPassword
+                                showPassword.masterPassword ||
+                                !!savedMasterPassword
                                   ? "text"
                                   : "password"
                               }
@@ -197,7 +199,8 @@ function MasterPassword() {
                               {...field}
                             />
                             <div className="absolute right-0 bottom-3">
-                              {showPassword.masterPassword ? (
+                              {showPassword.masterPassword ||
+                              !!savedMasterPassword ? (
                                 <EyeIcon
                                   onClick={() =>
                                     showPasswordHandler("masterPassword")
@@ -241,7 +244,8 @@ function MasterPassword() {
                               className="w-full bg-transparent border-0 border-b py-3 outline-0 border-[#888] outline-none"
                               placeholder="确认您的主密码"
                               type={
-                                showPassword.masterPasswordConfirm
+                                showPassword.masterPasswordConfirm ||
+                                !!savedMasterPassword
                                   ? "text"
                                   : "password"
                               }
@@ -258,7 +262,8 @@ function MasterPassword() {
                               {...field}
                             />
                             <div className="absolute right-0 bottom-3">
-                              {showPassword.masterPasswordConfirm ? (
+                              {showPassword.masterPasswordConfirm ||
+                              !!savedMasterPassword ? (
                                 <EyeIcon
                                   onClick={() =>
                                     showPasswordHandler("masterPasswordConfirm")
@@ -285,21 +290,13 @@ function MasterPassword() {
               <div className="mt-[60px] space-y-3">
                 <button
                   type="submit"
-                  disabled={
-                    form.formState.errors.masterPassword ||
-                    form.formState.errors.masterPasswordConfirm
-                      ? true
-                      : false
-                  }
+                  disabled={isBtnDisabled}
                   className={cn(
                     "text-[16px] font-semibold w-full rounded-[16px] py-3",
                     {
                       "bg-gradient-to-b from-[#FFB2E0] to-[#CD3EFF] text-white":
-                        !form.formState.errors.masterPassword &&
-                        !form.formState.errors.masterPasswordConfirm,
-                      "bg-[#FFFFFF0A] text-[#444444]":
-                        form.formState.errors.masterPassword ||
-                        form.formState.errors.masterPasswordConfirm,
+                        !isBtnDisabled,
+                      "bg-[#FFFFFF0A] text-[#444444]": isBtnDisabled,
                     }
                   )}
                 >
