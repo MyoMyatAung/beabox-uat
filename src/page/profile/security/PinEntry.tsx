@@ -70,7 +70,6 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
     if (wrongAttempts >= 3) {
       setWrongAttempts(0);
       localStorage.setItem("wrongAttempts", "0");
-      console.log(wrongAttempts);
     }
   }, []);
 
@@ -120,6 +119,8 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
         );
         setTimeout(() => {
           window.location.href = "https://www.google.com";
+          setWrongAttempts(0);
+          localStorage.setItem("wrongAttempts", "0");
         }, 2000);
       }
     }
