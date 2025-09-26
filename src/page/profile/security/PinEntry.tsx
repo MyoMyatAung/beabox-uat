@@ -66,6 +66,13 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
         };
     }, [pin, wrongAttempts]);
 
+    useEffect(() => {
+        if (wrongAttempts >= 3) {
+            setWrongAttempts(0);
+            localStorage.setItem("wrongAttempts", "0");
+        }
+    }, []);
+
     // Redux passwords
     const encodedMasterPassword = useSelector(
         (state: { persist: { masterPassword: string | null } }) =>
