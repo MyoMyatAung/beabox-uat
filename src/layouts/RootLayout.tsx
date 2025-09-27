@@ -45,7 +45,8 @@ import {
 import useImagePreloader from "./useImagePreloader";
 import ApplicationPreloader from "./ApplicationPreloader";
 import PasswordSetUpPopUp from "./PasswordSetUpPopUp";
-
+import AnnouncementsPopUp from "./AnnouncementsPopUp"; 
+    
 // Function to check if the app is running in a WebView
 function isWebView() {
   return (
@@ -511,7 +512,14 @@ const RootLayout = ({ children }: any) => {
             </>
           )}
 
-        {!showAd && location.pathname === "/" && <PasswordSetUpPopUp />}
+
+        {!showAd && location.pathname === "/" && (
+            <>
+                <PasswordSetUpPopUp />
+                <AnnouncementsPopUp />
+            </>
+        )}  
+               
       </div>
 
       {/* <ApplicationPreloader /> */}

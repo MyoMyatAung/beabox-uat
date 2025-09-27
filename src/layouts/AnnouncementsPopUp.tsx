@@ -1,0 +1,112 @@
+import { X } from "lucide-react";
+import ImgAnnouncement from "@/assets/img-announcement.png";
+import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+
+const AnnouncementsPopUp = () => {
+    const navigate = useNavigate();
+    const [isOpen, setIsOpen] = useState(false);
+
+    useEffect(() => {
+        const hasSeenPopup = localStorage.getItem("hasSeenAnnounencePopup");
+
+        if (!hasSeenPopup) {
+            setIsOpen(true);
+        }
+    }, []);
+
+    const handleClose = () => {
+        localStorage.setItem("hasSeenAnnounencePopup", "true");
+        setIsOpen(false);
+    };
+
+    const handleViewDetails = () => {
+        localStorage.setItem("hasSeenAnnounencePopup", "true");
+        setIsOpen(false);
+        navigate("/notifications");
+    };
+
+    return (
+        <>
+            {isOpen && (
+                <div className="top-0 left-0 h-screen bg-black/80 w-screen flex flex-col gap-4 justify-center items-center fixed z-[9999]">
+                    <div className="w-full max-w-[390px] bg-opacity-50 flex flex-col gap-5 items-center justify-center p-4 z-50">
+                        <div>
+                            <div
+                                className="text-left w-full h-[150px] relative bg-contain bg-center bg-no-repeat"
+                                style={{
+                                    backgroundImage: `url(${ImgAnnouncement})`,
+                                }}
+                            >
+                                <div className="absolute bottom-[25%] left-5 w-[80%]">
+                                    <h2 className="text-white text-[26px]/[32px] font-semibold">
+                                        官方公告
+                                    </h2>
+                                </div>
+                            </div>
+                            <div className="bg-[#161619] rounded-b-3xl px-3 py-6 w-full text-center ">
+                                <div className="w-full max-h-[286px] overflow-y-auto px-3 ">
+                                    <h3 className="text-white text-base font-semibold text-left mb-4">
+                                        BeaBox 周年庆
+                                    </h3>
+
+                                    <div className="space-y-3 mb-5 mx-1">
+                                        <div className="flex items-start space-x-2">
+                                            <div className="w-1 h-1 bg-white rounded-full mt-2.5 flex-shrink-0"></div>
+                                            <p className="text-white/80 text-sm leading-relaxed text-left">
+                                                上传您自己的内容即可获得现金奖励
+                                            </p>
+                                        </div>
+
+                                        <div className="flex items-start space-x-2">
+                                            <div className="w-1 h-1 bg-white rounded-full mt-2.5 flex-shrink-0"></div>
+                                            <p className="text-white/80 text-sm leading-relaxed text-left">
+                                                联系在线客服报告问题并领取即时奖励！
+                                            </p>
+                                        </div>
+
+                                        <div className="flex items-start space-x-2">
+                                            <div className="w-1 h-1 bg-white rounded-full mt-2.5 flex-shrink-0"></div>
+                                            <p className="text-white/80 text-sm leading-relaxed text-left">
+                                                保存、赚取并兑换积分，即可获得精彩的应用内奖励。
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="mb-5">
+                                        <h4 className="text-white text-base font-semibold text-left mb-3">
+                                            版本更新信息
+                                        </h4>
+
+                                        <div className="flex items-start space-x-2 mx-1">
+                                            <div className="w-1 h-1 bg-white rounded-full mt-2.5 flex-shrink-0"></div>
+                                            <p className="text-white/80 text-sm leading-relaxed text-left">
+                                                优化了应用启动速度，并缩短了视频加载时间。
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={handleViewDetails}
+                                    className="w-full max-w-[250px] bg-[linear-gradient(324.57deg,#CD3EFF_43.64%,#FFB2E0_100%)] text-white font-medium py-2.5 rounded-2xl hover:from-pink-600 hover:to-purple-700"
+                                >
+                                    查看详情
+                                </button>
+                            </div>
+                        </div>
+                        <div className="flex justify-center">
+                            <button
+                                onClick={handleClose}
+                                className="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-white hover:bg-opacity-50 transition-colors"
+                            >
+                                <X size={24} />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
+    );
+};
+
+export default AnnouncementsPopUp;
