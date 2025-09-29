@@ -72,7 +72,7 @@ const Register = () => {
       // dispatch(setRegisterUser(registerData?.data));
       dispatch(setUser(registerData?.data));
       setShow验证码(false);
-      dispatch(setIsDrawerOpen(false));
+      // dispatch(setIsDrawerOpen(false));
       navigate(paths.profile);
       // setShowSecurity(true);
     } else {
@@ -110,7 +110,7 @@ const Register = () => {
                   <FormControl>
                     <>
                       <label htmlFor="" className="text-[14px] text-[#888]">
-                      用户名
+                        用户名
                       </label>
                       <div className="relative">
                         <input
