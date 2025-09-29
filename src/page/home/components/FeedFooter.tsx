@@ -132,6 +132,7 @@ function FeedFooter({
   const [isExpanded, setIsExpanded] = useState(false);
   const toggleExpand = () => setIsExpanded(!isExpanded);
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
+  const [isReady, setIsReady] = useState(false);
   const { hideBar } = useSelector((state: any) => state.hideBarSlice);
   // const { imgSrc, isLoading: imageLoading } = useCachedImage(
   //   decryptedPhoto || ""
@@ -145,6 +146,14 @@ function FeedFooter({
   const titleLength = title.replace(/\s/g, "").length;
   const shouldExpand =
     titleLength > 40 || (tags?.length > 5 && titleLength > 10);
+
+  useEffect(() => {
+    // Small delay to ensure proper positioning on first render
+    const timer = setTimeout(() => {
+      setIsReady(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const loadAndDecryptPhoto = async () => {

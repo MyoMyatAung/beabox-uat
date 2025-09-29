@@ -15,6 +15,7 @@ import { useLocation, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setExpHeader } from "@/store/slices/exploreSlice";
 import VideoFeed from "../home/components/VideoFeed";
+import VideoFeedVirtual from "../home/components/VideoFeedVirtual";
 
 const Explore = () => {
   const [activeTab, setActiveTab] = useState("Recommend");
