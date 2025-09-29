@@ -46,11 +46,10 @@ const AnnouncementsPopUp = () => {
                             </div>
                             <div className="bg-[#161619] rounded-b-3xl px-3 py-6 w-full text-center ">
                                 <div className="w-full max-h-[286px] overflow-y-auto px-3 ">
-                                    <h3 className="text-white text-base font-semibold text-left mb-4">
-                                        BeaBox 周年庆
-                                    </h3>
-
                                     <div className="space-y-3 mb-5 mx-1">
+                                        <h3 className="text-white text-base font-semibold text-left mb-4">
+                                            BeaBox 周年庆
+                                        </h3>
                                         <div className="flex items-start space-x-2">
                                             <div className="w-1 h-1 bg-white rounded-full mt-2.5 flex-shrink-0"></div>
                                             <p className="text-white/80 text-sm leading-relaxed text-left">
@@ -73,15 +72,33 @@ const AnnouncementsPopUp = () => {
                                         </div>
                                     </div>
 
-                                    <div className="mb-5">
-                                        <h4 className="text-white text-base font-semibold text-left mb-3">
+                                    <div className="space-y-3 mb-5">
+                                        <h3 className="text-white text-base font-semibold text-left mb-4">
                                             版本更新信息
-                                        </h4>
+                                        </h3>
 
                                         <div className="flex items-start space-x-2 mx-1">
                                             <div className="w-1 h-1 bg-white rounded-full mt-2.5 flex-shrink-0"></div>
                                             <p className="text-white/80 text-sm leading-relaxed text-left">
-                                                优化了应用启动速度，并缩短了视频加载时间。
+                                                优化了应用启动速度，并缩短了视频加载时间
+                                            </p>
+                                        </div>
+                                        <div className="flex items-start space-x-2 mx-1">
+                                            <div className="w-1 h-1 bg-white rounded-full mt-2.5 flex-shrink-0"></div>
+                                            <p className="text-white/80 text-sm leading-relaxed text-left">
+                                                提升视频播放稳定性，滚动更流畅
+                                            </p>
+                                        </div>
+                                        <div className="flex items-start space-x-2 mx-1">
+                                            <div className="w-1 h-1 bg-white rounded-full mt-2.5 flex-shrink-0"></div>
+                                            <p className="text-white/80 text-sm leading-relaxed text-left">
+                                                增强安全性和隐私保护
+                                            </p>
+                                        </div>
+                                        <div className="flex items-start space-x-2 mx-1">
+                                            <div className="w-1 h-1 bg-white rounded-full mt-2.5 flex-shrink-0"></div>
+                                            <p className="text-white/80 text-sm leading-relaxed text-left">
+                                                修复小错误，提升整体性能
                                             </p>
                                         </div>
                                     </div>
