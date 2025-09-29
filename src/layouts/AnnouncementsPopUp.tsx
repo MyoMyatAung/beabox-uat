@@ -8,49 +8,58 @@ type AnnouncementSection = {
   items: string[];
 };
 
-function parseAnnouncement(announcement: string | undefined): AnnouncementSection[] {
+function parseAnnouncement(
+  announcement: string | undefined
+): AnnouncementSection[] {
   if (!announcement) return [];
   return announcement
     .split("###")
     .filter(Boolean) // remove empty parts
-    .map(block => {
+    .map((block) => {
       const [titleLine, ...rest] = block.trim().split("<br/>");
       const title = titleLine.trim();
       const items = rest
-        .filter(line => line.trim().startsWith("-"))
-        .map(line => line.replace(/^-/, "").trim());
+        .filter((line) => line.trim().startsWith("-"))
+        .map((line) => line.replace(/^-/, "").trim());
       return { title, items };
     });
 }
 
-
-const AnnouncementsPopUp = ({ config }: { config: { data?: { noti_announcement?: string } } }) => {
+const AnnouncementsPopUp = ({
+  showAnnouncementsPopUp,
+  setShowAnnouncementsPopUp,
+  config,
+}: {
+  showAnnouncementsPopUp: boolean;
+  setShowAnnouncementsPopUp: (show: boolean) => void;
+  config: { data?: { noti_announcement?: string } };
+}) => {
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    const hasSeenPopup = localStorage.getItem("hasSeenAnnounencePopup");
-    if (!hasSeenPopup) setIsOpen(true);
+    const hasSeenPopup = Boolean(
+      localStorage.getItem("hasSeenAnnounencePopup")
+    );
+    if (!hasSeenPopup) setShowAnnouncementsPopUp(true);
   }, []);
 
   const handleClose = () => {
     localStorage.setItem("hasSeenAnnounencePopup", "true");
-    setIsOpen(false);
+    setShowAnnouncementsPopUp(false);
   };
 
   const handleViewDetails = () => {
     localStorage.setItem("hasSeenAnnounencePopup", "true");
-    setIsOpen(false);
+    setShowAnnouncementsPopUp(false);
     navigate("/notifications");
   };
 
   const announcement = config?.data?.noti_announcement;
-  console.log(announcement);
   const parsed = parseAnnouncement(announcement);
 
   return (
     <>
-      {isOpen && parsed.length > 0 && (
+      {showAnnouncementsPopUp && parsed.length > 0 && (
         <div className="top-0 left-0 h-screen bg-black/80 w-screen flex flex-col gap-4 justify-center items-center fixed z-[9999]">
           <div className="w-full max-w-[390px] bg-opacity-50 flex flex-col gap-5 items-center justify-center p-4 z-50">
             <div>
@@ -67,7 +76,7 @@ const AnnouncementsPopUp = ({ config }: { config: { data?: { noti_announcement?:
               </div>
 
               {/* Content box */}
-              <div className="bg-[#161619] rounded-b-3xl px-3 py-6 w-full text-center">
+              <div className="bg-[#161619] rounded-b-3xl px-3 py-2 w-full text-center">
                 <div className="w-full max-h-[286px] overflow-y-auto px-3">
                   {parsed.map((section, idx) => (
                     <div key={idx} className="space-y-3 mb-5 mx-1">
@@ -87,12 +96,14 @@ const AnnouncementsPopUp = ({ config }: { config: { data?: { noti_announcement?:
                 </div>
 
                 {/* Action button */}
-                <button
-                  onClick={handleViewDetails}
-                  className="w-full max-w-[250px] bg-[linear-gradient(324.57deg,#CD3EFF_43.64%,#FFB2E0_100%)] text-white font-medium py-2.5 rounded-2xl hover:from-pink-600 hover:to-purple-700"
-                >
-                  查看详情
-                </button>
+                <div className="py-4">
+                  <button
+                    onClick={handleViewDetails}
+                    className="w-full max-w-[250px] bg-[linear-gradient(324.57deg,#CD3EFF_43.64%,#FFB2E0_100%)] text-white font-medium py-2.5 rounded-2xl hover:from-pink-600 hover:to-purple-700"
+                  >
+                    查看详情
+                  </button>
+                </div>
               </div>
             </div>
 
