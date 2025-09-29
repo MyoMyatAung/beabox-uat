@@ -98,7 +98,7 @@ const Explore = () => {
     <>
       {showVideoFeed && selectedMovieId && (
         <div className="z-[999999] h-screen fixed top-0 overflow-y-scroll left-0 w-full">
-          <VideoFeedVirtual
+          <VideoFeed
             search={false}
             setPage={setPage}
             setVideos={setList}
