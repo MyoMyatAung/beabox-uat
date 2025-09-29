@@ -516,7 +516,7 @@ const RootLayout = ({ children }: any) => {
         {!showAd && location.pathname === "/" && (
             <>
                 <PasswordSetUpPopUp />
-                <AnnouncementsPopUp />
+                <AnnouncementsPopUp  config= {config} />
             </>
         )}  
                
