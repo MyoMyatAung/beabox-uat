@@ -14,13 +14,18 @@ function parseAnnouncement(
   if (!announcement) return [];
   return announcement
     .split("###")
-    .filter(Boolean) // remove empty parts
+    .filter(Boolean)
     .map((block) => {
-      const [titleLine, ...rest] = block.trim().split("<br/>");
-      const title = titleLine.trim();
-      const items = rest
+      const trimmedBlock = block.trim();
+      const lines = trimmedBlock.split("<br/>");
+      const title = lines[0]?.trim() || "";
+
+      const items = lines
+        .slice(1)
+        .filter((line) => line.trim())
         .filter((line) => line.trim().startsWith("-"))
-        .map((line) => line.replace(/^-/, "").trim());
+        .map((line) => line.replace(/^-\s*/, "").trim());
+
       return { title, items };
     });
 }
@@ -83,14 +88,18 @@ const AnnouncementsPopUp = ({
                       <h3 className="text-white text-base font-semibold text-left mb-4">
                         {section.title}
                       </h3>
-                      {section.items.map((item, i) => (
-                        <div key={i} className="flex items-start space-x-2">
-                          <div className="w-1 h-1 bg-white rounded-full mt-2.5 flex-shrink-0"></div>
-                          <p className="text-white/80 text-sm leading-relaxed text-left">
-                            {item}
-                          </p>
-                        </div>
-                      ))}
+                      {section.items.length > 0 && (
+                        <ul className="space-y-2">
+                          {section.items.map((item, i) => (
+                            <li key={i} className="flex items-start space-x-2">
+                              <div className="w-1 h-1 bg-white rounded-full mt-2.5 flex-shrink-0"></div>
+                              <span className="text-white/80 text-sm leading-relaxed text-left">
+                                {item}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
                   ))}
                 </div>
