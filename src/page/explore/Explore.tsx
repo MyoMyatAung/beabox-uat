@@ -142,7 +142,7 @@ const Explore = () => {
                   <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 max-w-full h-[312px]"></div>
                 </div>
               </div>
-            ) : (
+            ) : (!showVideoFeed) && (
               <Swiper
                 className=""
                 allowTouchMove={false}

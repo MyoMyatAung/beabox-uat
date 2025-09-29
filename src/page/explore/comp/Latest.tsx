@@ -55,6 +55,8 @@ const Latest: React.FC<LatestPorp> = ({
 
   const videoPlayerRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const artPlayerInstances = useRef<{ [key: string]: Artplayer | null }>({});
+  const cardRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+  const [visibleCards, setVisibleCards] = useState<Set<string>>(new Set());
   const longPressTimer = useRef<NodeJS.Timeout | null>(null);
   const loadingTimerRef = useRef<NodeJS.Timeout>();
 
@@ -75,7 +77,6 @@ const Latest: React.FC<LatestPorp> = ({
       }
 
       player.destroy();
-      console.log('Cleaned up');
       delete artPlayerInstances.current[postId];
     }
 
@@ -144,8 +145,6 @@ const Latest: React.FC<LatestPorp> = ({
     if (playingVideos[card.post_id]) return;
     if (!card?.preview?.url) return;
 
-    console.log("Touch start on card:", card.post_id);
-
     if (activeLongPressCard) {
       cleanupPlayer(activeLongPressCard.post_id);
     }
@@ -194,7 +193,7 @@ const Latest: React.FC<LatestPorp> = ({
       theme: "#d53ff0",
       moreVideoAttr: {
         playsInline: true,
-        preload: "auto" as const,
+        preload: "none" as const,
       },
       type: isM3u8 ? "m3u8" : "auto",
       customType: {
@@ -330,7 +329,6 @@ const Latest: React.FC<LatestPorp> = ({
     if (waterfall.length > 0 && waterfall.length <= 10) {
       const firstVideo = waterfall[0];
       if (firstVideo?.preview?.url) {
-        console.log("Initializing player for first video");
         // Small timeout to ensure DOM is ready
         setTimeout(() => {
           handleLongPress(firstVideo);
@@ -339,6 +337,41 @@ const Latest: React.FC<LatestPorp> = ({
     }
   }, [waterfall]);
 
+  // IntersectionObserver: lazy load images & cleanup players when leaving viewport
+  useEffect(() => {
+    const root = contentRef.current || null;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        setVisibleCards((prev) => {
+          const next = new Set(prev);
+          entries.forEach((entry) => {
+            const id = (entry.target as HTMLElement).dataset.postid;
+            if (!id) return;
+            if (entry.isIntersecting) {
+              next.add(id);
+            } else {
+              next.delete(id);
+              // if a player exists for this id, destroy it to free memory
+              if (artPlayerInstances.current[id]) {
+                cleanupPlayer(id);
+              }
+            }
+          });
+          return next;
+        });
+      },
+      { root, rootMargin: "300px", threshold: 0.1 }
+    );
+
+    // observe all card refs
+    Object.values(cardRefs.current).forEach((el) => {
+      if (el) observer.observe(el);
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [waterfall]);
   return (
     <>
       {isLoading ? (
@@ -358,6 +391,8 @@ const Latest: React.FC<LatestPorp> = ({
               {waterfall?.map((card: any, index: number) => (
                 <div
                   key={index}
+                  ref={(el) => (cardRefs.current[card.post_id] = el)}
+                  data-postid={card.post_id}
                   className="chinese_photo h-[325px] max-w-full pb-[12px]"
                 >
                   <div className="w-full h-[2px] relative">
@@ -394,7 +429,7 @@ const Latest: React.FC<LatestPorp> = ({
 
                     {/* Image */}
                     <ImageWithPlaceholder
-                      src={card?.preview_image}
+                      src={visibleCards.has(card.post_id) ? card?.preview_image : ""}
                       alt={card.title || "Video"}
                       className="object-cover h-full w-full rounded-none"
                       style={{
