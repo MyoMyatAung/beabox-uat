@@ -120,7 +120,7 @@ const Settings = ({
           <></>
         )}
 
-        {!isIOSSafariBrowser() && (
+        {isIOSSafariBrowser() && (
           <Link
             to={
               isBothPasswordNotSet

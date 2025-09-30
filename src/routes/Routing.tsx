@@ -150,7 +150,7 @@ const Routing = () => {
       path: paths.manage,
       ...withErrorHandling(<Manage />),
     },
-    ...(!isIOSSafariBrowser()
+    ...(isIOSSafariBrowser()
       ? [
           {
             path: paths.pinEntry,
@@ -227,7 +227,7 @@ const Routing = () => {
       ...withErrorHandling(<PrivacySettings />),
     },
     // Password routes only available for iOS app users (not Safari browser)
-    ...(!isIOSSafariBrowser()
+    ...(isIOSSafariBrowser()
       ? [
           {
             path: paths.dual_access_password,
@@ -363,7 +363,7 @@ const Routing = () => {
     {
       path: paths.download,
       ...withErrorHandling(<Download />),
-    }
+    },
   ];
 
   const router = createBrowserRouter(routes);
