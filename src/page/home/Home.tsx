@@ -149,6 +149,8 @@ const Home = () => {
 
   const isError = ForyouError || followError;
 
+  console.log('HOME.TSX', isError, ForyouError, followError);
+
   const currentPage = currentTab === 0 ? page1 : page;
 
   const user = useSelector((state: any) => state?.persist?.user);

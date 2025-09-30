@@ -45,6 +45,7 @@ import {
 import useImagePreloader from "./useImagePreloader";
 import ApplicationPreloader from "./ApplicationPreloader";
 import PasswordSetUpPopUp from "./PasswordSetUpPopUp";
+import AnnouncementsPopUp from "./AnnouncementsPopUp";
 
 // Function to check if the app is running in a WebView
 function isWebView() {
@@ -58,6 +59,9 @@ function isWebView() {
 const RootLayout = ({ children }: any) => {
   const [showAd, setShowAd] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [showPasswordSetUpPopUp, setShowPasswordSetUpPopUp] = useState(false);
+  const [showAnnouncementsPopUp, setShowAnnouncementsPopUp] = useState(false);
+
   const [isBrowser, setIsBrowser] = useState(false);
   const [deviceType, setDeviceType] = useState<"IOS" | "Android" | "">("");
   const [jumpUrl, setJumpUrl] = useState("");
@@ -511,7 +515,19 @@ const RootLayout = ({ children }: any) => {
             </>
           )}
 
-        {location.pathname === "/" && <PasswordSetUpPopUp />}
+        {!showAd && !showAnnouncementsPopUp && location.pathname === "/" && (
+          <PasswordSetUpPopUp
+            showPasswordSetUpPopUp={showPasswordSetUpPopUp}
+            setShowPasswordSetUpPopUp={setShowPasswordSetUpPopUp}
+          />
+        )}
+        {!showAd && location.pathname === "/" && (
+          <AnnouncementsPopUp
+            showAnnouncementsPopUp={showAnnouncementsPopUp}
+            setShowAnnouncementsPopUp={setShowAnnouncementsPopUp}
+            config={config}
+          />
+        )}
       </div>
 
       {/* <ApplicationPreloader /> */}

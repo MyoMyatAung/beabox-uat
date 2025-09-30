@@ -4,7 +4,7 @@ import backButton from "../../../assets/backButton.svg";
 import { ChevronRightIcon } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { useSelector, useDispatch } from "react-redux";
-import { decodePassword } from "@/lib/utils";
+import { cn, decodePassword } from "@/lib/utils";
 import {
   setIsEnabledDualPassword,
   setIsPasswordCorrect,
@@ -49,19 +49,7 @@ function DualAccessPassword() {
       </div>
 
       <div className="flex flex-col my-5 w-full">
-        <div
-          className="flex justify-between items-start"
-          onClick={() => {
-            if (!savedDecoyPassword || !savedMasterPassword) {
-              dispatch(
-                showToast({
-                  message: "设置两个密码以使用此功能",
-                  type: "error",
-                })
-              );
-            }
-          }}
-        >
+        <div className="flex justify-between items-start">
           <div className="w-[70%] ">
             <p className="flex items-center gap-1 text-[14px]">启用双重密码</p>
             <p className="text-[10px] text-[#888888] w-full mt-1">
@@ -70,9 +58,22 @@ function DualAccessPassword() {
           </div>
           <div className="flex-1 flex justify-end">
             <Switch
-              disabled={!savedDecoyPassword || !savedMasterPassword}
               checked={isEnabledDualPassword}
-              onCheckedChange={(e) => handleEnableDualPassword(e)}
+              onCheckedChange={(e) => {
+                if (!savedDecoyPassword || !savedMasterPassword) {
+                  dispatch(
+                    showToast({
+                      message: "设置两个密码以使用此功能",
+                      type: "error",
+                    })
+                  );
+                  return;
+                }
+                handleEnableDualPassword(e);
+              }}
+              className={cn("", {
+                "opacity-50": !savedDecoyPassword || !savedMasterPassword,
+              })}
             />
           </div>
         </div>

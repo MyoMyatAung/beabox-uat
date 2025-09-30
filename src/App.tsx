@@ -185,10 +185,6 @@ const App = () => {
     }
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("wrongAttempts", "0");
-  }, []);
-
   return (
     <>
       {!showInAppBrowserAlert && (

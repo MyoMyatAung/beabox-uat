@@ -153,7 +153,11 @@ function DecoyPassword() {
     confirmBtnLabel: setupType === "setup" ? "确认" : "节省",
   };
 
-  const isBtnDisabled = form.formState.isSubmitting || !form.formState.isDirty;
+  const isBtnDisabled =
+    form.formState.isSubmitting ||
+    form.watch("decoyPassword").length <= 0 ||
+    form.watch("decoyPasswordConfirm").length <= 0 ||
+    !form.formState.isValid;
 
   return (
     <>
@@ -374,8 +378,7 @@ function DecoyPassword() {
             </DialogHeader>
             <div className="text-center">
               <p className="text-[#BBBBBB] mx-6 mb-8">
-                您确定要更改密码以打开诱饵版本吗？
-                该应用程序旨在提供额外的隐私保护
+                您确定要更改诱饵密码来打开应用程序的诱饵版本以获得更隐私的体验吗？
               </p>
               <div className="grid grid-cols-2 border-t border-white/10 divide-x divide-white/10">
                 <Button
@@ -444,7 +447,7 @@ function DecoyPassword() {
             </DialogHeader>
             <div className="text-center">
               <p className="text-[#BBBBBB] mx-6 mb-8">
-                您确定要移除密码来打开诱饵版本吗？ 该应用程序旨在保护您的隐私
+                您的密码还未保存，确定要离开吗？
               </p>
               <div className="grid grid-cols-2 border-t border-white/10 divide-x divide-white/10">
                 <Button

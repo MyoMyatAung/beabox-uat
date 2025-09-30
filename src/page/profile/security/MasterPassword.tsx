@@ -148,7 +148,11 @@ function MasterPassword() {
     confirmBtnLabel: setupType === "setup" ? "确认" : "节省",
   };
 
-  const isBtnDisabled = form.formState.isSubmitting || !form.formState.isDirty;
+  const isBtnDisabled =
+    form.formState.isSubmitting ||
+    form.watch("masterPassword").length <= 0 ||
+    form.watch("masterPasswordConfirm").length <= 0 ||
+    !form.formState.isValid;
 
   return (
     <>
@@ -365,7 +369,7 @@ function MasterPassword() {
             </DialogHeader>
             <div className="text-center">
               <p className="text-[#BBBBBB] mx-6 mb-8">
-                您确定要更改密码以打开应用程序的正式版本吗？
+                您确定要更改主密码以打开应用程序的真实版本吗？
               </p>
               <div className="grid grid-cols-2 border-t border-white/10 divide-x divide-white/10">
                 <Button
@@ -434,7 +438,7 @@ function MasterPassword() {
             </DialogHeader>
             <div className="text-center">
               <p className="text-[#BBBBBB] mx-6 mb-8">
-                您确定要移除密码以打开应用程序的正式版本吗？
+                您的密码还未保存，确定要离开吗？
               </p>
               <div className="grid grid-cols-2 border-t border-white/10 divide-x divide-white/10">
                 <Button

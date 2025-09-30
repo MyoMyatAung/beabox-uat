@@ -35,11 +35,7 @@ const Profile = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const bellHandeler = () => {
-    if (user) {
-      navigate(paths.noti);
-    } else {
-      dispatch(setIsDrawerOpen(true));
-    }
+    navigate(paths.noti);
   };
 
   useEffect(() => {

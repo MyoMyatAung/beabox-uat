@@ -129,21 +129,8 @@ const VideoFeed = ({
 
         run();
       } catch (error) { }
-
-      // setVideosToRender(firstThreeVideos);
     }
   }, [videos, currentActiveId]); // Add currentActiveId as a dependency
-
-  // useEffect(() => {
-  //   if (!start) {
-  //     const initialVideos = videos.slice(0, videosPerLoad) || [];
-
-  //     if (initialVideos.length > 1) {
-  //       setVideosToRender(initialVideos);
-  //       setStart(true);
-  //     }
-  //   }
-  // }, [videos]); // Runs only once on mount
 
   useEffect(() => {
     const handlePopState = () => {
@@ -448,8 +435,8 @@ const VideoFeed = ({
                       className="h-full w-full"
                     />
                   </a>
-                ) : (
-                  <VideoContainerFeed
+                ) :
+                  video.post_id === currentActivePost ? (<VideoContainerFeed
                     // refetchUser={refetchUser}
                     setVideosData={setVideos}
                     setrenderVideos={setVideosToRender}
@@ -471,8 +458,10 @@ const VideoFeed = ({
                     setCountdown={setCountdown}
                   // setShowHeart={setShowHeart}
                   // coin={profile?.coins}
-                  />
-                )}
+                  />) : <>
+                    <img src={video.decryptedPreview} alt={video.title} />
+                  </>
+                }
 
                 {video?.type !== "ads" && video?.type !== "ads_virtual" && (
                   <FeedFooter
