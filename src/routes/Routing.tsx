@@ -20,7 +20,7 @@ import Report from "@/page/report/Report";
 import SafeLazyLoad from "@/components/SafeLazyLoad";
 import CreatorNoti from "@/page/profile/noti/CreatorNoti";
 import Detail from "@/page/home/components/Detail";
-import { isIOSSafariBrowser } from "@/lib/deviceInfo";
+import { isIOSWebView } from "@/lib/deviceInfo";
 import Download from "@/page/download/Download";
 
 const Home = lazy(() => import("../page/home/Home"));
@@ -150,7 +150,7 @@ const Routing = () => {
       path: paths.manage,
       ...withErrorHandling(<Manage />),
     },
-    ...(isIOSSafariBrowser()
+    ...(isIOSWebView()
       ? [
           {
             path: paths.pinEntry,
@@ -227,7 +227,7 @@ const Routing = () => {
       ...withErrorHandling(<PrivacySettings />),
     },
     // Password routes only available for iOS app users (not Safari browser)
-    ...(isIOSSafariBrowser()
+    ...(isIOSWebView()
       ? [
           {
             path: paths.dual_access_password,

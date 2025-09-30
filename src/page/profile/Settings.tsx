@@ -18,7 +18,7 @@ import Loader from "@/components/shared/loader";
 import OtherAds from "@/components/profile/other-ads";
 import Poppizza from "../explore/comp/PopApp";
 import logoutIcon from "../../assets/logout.svg";
-import { isIOSSafariBrowser } from "@/lib/deviceInfo";
+import { isIOSWebView } from "@/lib/deviceInfo";
 
 const Settings = ({
   liked_video_visibility,
@@ -120,7 +120,7 @@ const Settings = ({
           <></>
         )}
 
-        {isIOSSafariBrowser() && (
+        {isIOSWebView() && (
           <Link
             to={
               isBothPasswordNotSet
