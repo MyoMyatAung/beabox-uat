@@ -134,7 +134,7 @@ const RedBox: React.FC<RedBoxProps> = ({
             <div
               // onClick={() => navigate("/wallet/invite")}
               onClick={() => handleAnimationClick()}
-              className=" w-full flex justify-between items-center p-[16px] red_popup_box_list"
+              className=" w-full flex justify-between items-center p-[16px] red_popup_box_list cursor-pointer"
             >
               {/* content */}
               <div className=" flex gap-[12px] justify-center items-center">
@@ -213,7 +213,7 @@ const RedBox: React.FC<RedBoxProps> = ({
             {/* upload */}
             <div
               onClick={() => navigate("/creator/upload/video")}
-              className=" w-full flex justify-between items-center p-[16px] red_popup_box_list"
+              className=" w-full flex justify-between items-center p-[16px] red_popup_box_list cursor-pointer"
             >
               {/* content */}
               <div className=" flex gap-[12px] justify-center items-center">
