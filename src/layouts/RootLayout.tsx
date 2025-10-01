@@ -46,6 +46,7 @@ import useImagePreloader from "./useImagePreloader";
 import ApplicationPreloader from "./ApplicationPreloader";
 import PasswordSetUpPopUp from "./PasswordSetUpPopUp";
 import AnnouncementsPopUp from "./AnnouncementsPopUp";
+import { isIOSWebView } from "@/lib/deviceInfo";
 
 // Function to check if the app is running in a WebView
 function isWebView() {
@@ -515,12 +516,15 @@ const RootLayout = ({ children }: any) => {
             </>
           )}
 
-        {!showAd && !showAnnouncementsPopUp && location.pathname === "/" && (
-          <PasswordSetUpPopUp
-            showPasswordSetUpPopUp={showPasswordSetUpPopUp}
-            setShowPasswordSetUpPopUp={setShowPasswordSetUpPopUp}
-          />
-        )}
+        {!showAd &&
+          !showAnnouncementsPopUp &&
+          isIOSWebView() &&
+          location.pathname === "/" && (
+            <PasswordSetUpPopUp
+              showPasswordSetUpPopUp={showPasswordSetUpPopUp}
+              setShowPasswordSetUpPopUp={setShowPasswordSetUpPopUp}
+            />
+          )}
         {!showAd && location.pathname === "/" && (
           <AnnouncementsPopUp
             showAnnouncementsPopUp={showAnnouncementsPopUp}

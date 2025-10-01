@@ -5,10 +5,7 @@ import { ChevronRightIcon } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { useSelector, useDispatch } from "react-redux";
 import { cn, decodePassword } from "@/lib/utils";
-import {
-  setIsEnabledDualPassword,
-  setIsPasswordCorrect,
-} from "@/store/slices/persistSlice";
+import { setIsEnabledDualPassword } from "@/store/slices/persistSlice";
 import { showToast } from "@/page/home/services/errorSlice";
 
 function DualAccessPassword() {
@@ -34,7 +31,6 @@ function DualAccessPassword() {
 
   function handleEnableDualPassword(e: boolean) {
     dispatch(setIsEnabledDualPassword(e));
-    dispatch(setIsPasswordCorrect(false));
   }
 
   return (

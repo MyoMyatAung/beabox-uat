@@ -17,6 +17,7 @@ import { cn, decodePassword } from "@/lib/utils";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setIsEnabledDualPassword,
+  setIsPasswordCorrect,
   setPassword,
 } from "@/store/slices/persistSlice";
 import { showToast } from "@/page/home/services/errorSlice";
@@ -113,8 +114,10 @@ function MasterPassword() {
       form.reset();
       if (encodedDecoyPassword && data.masterPassword) {
         dispatch(setIsEnabledDualPassword(true));
+        dispatch(setIsPasswordCorrect(true));
       }
-      navigate(paths.dual_access_password);
+      if (setupType === "setup") navigate(paths.home);
+      else navigate(paths.dual_access_password);
     } catch (error) {
       dispatch(showToast({ message: "保存主密码失败！", type: "error" }));
     }

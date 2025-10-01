@@ -74,6 +74,13 @@ const persistHomeSliceConfig = {
   storage: sessionStorageWrapper, // Use sessionStorage instead of default localStorage
 };
 
+// Add this config for persistSlice
+const persistSliceConfig = {
+  key: "persist",
+  storage,
+  blacklist: ["isPasswordCorrect", "passwordExpirationTime"], // Reset on app start
+};
+
 const persistConfig = {
   key: "root",
   storage,
@@ -84,7 +91,7 @@ const rootReducer = combineReducers({
   count: counterSlice,
   [homeApi.reducerPath]: homeApi.reducer,
   profile: profileSlice,
-  persist: persistSlice,
+  persist: persistReducer(persistSliceConfig, persistSlice), // Apply blacklist
   playSlice: playSlice,
   showSlice: showSlice,
   explore: exploreSlice,

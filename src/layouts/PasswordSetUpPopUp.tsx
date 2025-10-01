@@ -35,7 +35,7 @@ const PasswordSetUpPopUp = ({
   const handleSetup = () => {
     localStorage.setItem("hasSeenPasswordSetupPopup", "true");
     setShowPasswordSetUpPopUp(false);
-    navigate("/settings");
+    navigate("/security/decoy-password?type=setup");
   };
 
   if (isEnabledDualPassword) return null;
