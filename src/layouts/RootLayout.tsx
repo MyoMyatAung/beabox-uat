@@ -7,7 +7,10 @@ import { useSelector, useDispatch } from "react-redux";
 import AuthDrawer from "@/components/profile/auth/auth-drawer";
 import AlertToast from "@/components/shared/alert-toast";
 import AlertRedirect from "./AlertRedirect";
-import { useGetConfigQuery } from "@/page/home/services/homeApi";
+import {
+    useGetConfigQuery,
+    useGetNotificationsQuery,
+} from "@/page/home/services/homeApi";
 import LoadingScreen from "@/components/LoadingScreen";
 import Landing from "@/components/Landing";
 import { setPlay } from "@/page/home/services/playSlice";
@@ -98,6 +101,18 @@ const RootLayout = ({ children }: any) => {
         { referral_code: referCode }, // or safely cast if you're confident it's a string
         { skip: !referCode }
     );
+    const { data: notiMessage } = useGetNotificationsQuery(
+        {},
+        {
+            skip: location.pathname !== "/",
+        }
+    );
+
+    useEffect(() => {
+        if (location.pathname === "/") {
+            console.log("notifications data:", notiMessage);
+        }
+    }, [location.pathname, notiMessage]);
 
     useEffect(() => {
         if (eventData?.data?.event?.status && !box && !user) {
@@ -539,7 +554,9 @@ const RootLayout = ({ children }: any) => {
                         setShowPasswordSetUpPopUp={setShowPasswordSetUpPopUp}
                     />
                 )}
-                {!showAd && location.pathname === "/" && <NotiPopUp />}
+                {!showAd && location.pathname === "/" && (
+                    <NotiPopUp notiMessage={notiMessage?.data} />
+                )}
             </div>
 
             {/* <ApplicationPreloader /> */}

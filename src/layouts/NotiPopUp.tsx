@@ -6,14 +6,14 @@ import BellIcon from "@/assets/icons/icon-bell.svg";
 import WalletIcon from "@/assets/icons/icon-wallet.svg";
 import TrophyIcon from "@/assets/icons/icon-trophy.svg";
 
+// --- Types ---
 interface Notification {
     id: string;
-    type: "balance" | "milestone" | "system";
+    type: string;
     title: string;
     message: string;
     timestamp: number;
     icon: string;
-    wrapperClass: string;
 }
 
 interface NotiStorage {
@@ -21,46 +21,16 @@ interface NotiStorage {
     shownIds: string[];
 }
 
+interface NotiPopUpProps {
+    notiMessage?: Notification | Notification[] | null; // accept single or multiple
+}
+
+// --- Storage Helpers ---
 const STORAGE_KEY = "notipopup_data";
-// const COOLDOWN_MINUTES = 1;
-// const COOLDOWN_MS = COOLDOWN_MINUTES * 60 * 1000;
-// 4 hours cooldown
-const COOLDOWN_MS = 4 * 60 * 60 * 1000;
+//const COOLDOWN_MS = 4 * 60 * 60 * 1000; // 4 hours
 
-const NOTIFICATION_ROUTE = "/notifications";
-
-const MOCK_NOTIFICATIONS: Notification[] = [
-    {
-        id: "1",
-        type: "balance",
-        title: "Balance Alert",
-        message:
-            "Withdraw Notice: You've successfully added 20 coins to your wallet. Check your balance now!",
-        timestamp: Date.now(),
-        icon: WalletIcon,
-        wrapperClass: "rounded-full flex-shrink-0 bg-orange-500",
-    },
-    {
-        id: "2",
-        type: "milestone",
-        title: "Creator Milestones Alert",
-        message:
-            "Your content has surpassed 1,000 views! Keep it up — more people are following you.",
-        timestamp: Date.now(),
-        icon: TrophyIcon,
-        wrapperClass: "rounded-full flex-shrink-0 bg-purple-500",
-    },
-    {
-        id: "3",
-        type: "system",
-        title: "System Notification",
-        message:
-            "Exciting Features Available Now!: Discover the latest updates to enhance your experience.",
-        timestamp: Date.now(),
-        icon: BellIcon,
-        wrapperClass: "rounded-full flex-shrink-0 bg-red-500",
-    },
-];
+// test 3min
+const COOLDOWN_MS = 1 * 60 * 1000; // 3 minutes
 
 const getStorage = (): NotiStorage => {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -76,18 +46,7 @@ const getStorage = (): NotiStorage => {
 const saveStorage = (data: NotiStorage) => {
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    } catch (error) {
-        // Handle potential storage errors
-    }
-};
-
-const shouldShowNotification = (id: string, cooldown: number): boolean => {
-    const { lastShown, shownIds } = getStorage();
-
-    if (Date.now() - lastShown < cooldown) return false;
-    if (shownIds.includes(id)) return false;
-
-    return true;
+    } catch {}
 };
 
 const markNotificationAsShown = (id: string) => {
@@ -100,7 +59,6 @@ const markNotificationAsShown = (id: string) => {
 };
 
 // --- Notification Item Component ---
-
 const NotificationItem: React.FC<{
     notification: Notification;
     onClose: () => void;
@@ -110,7 +68,7 @@ const NotificationItem: React.FC<{
     ({ notification, onClose, onDetailClick, autoCloseMs = 5000 }) => {
         const [isVisible, setIsVisible] = useState(false);
 
-        // Fade in immediately
+        // Fade in
         useEffect(() => {
             const showTimer = setTimeout(() => setIsVisible(true), 100);
             return () => clearTimeout(showTimer);
@@ -121,7 +79,7 @@ const NotificationItem: React.FC<{
             if (!isVisible) return;
             const closeTimer = setTimeout(() => {
                 setIsVisible(false);
-                const timer = setTimeout(onClose, 300); // wait for fade-out
+                const timer = setTimeout(onClose, 300); // fade-out
                 return () => clearTimeout(timer);
             }, autoCloseMs);
             return () => clearTimeout(closeTimer);
@@ -151,7 +109,7 @@ const NotificationItem: React.FC<{
             >
                 <div className="bg-[#191721] rounded-3xl shadow-2xl p-5 border border-gray-900">
                     <div className="flex items-start gap-2.5">
-                        <div className={notification.wrapperClass}>
+                        <div>
                             <img
                                 src={notification.icon}
                                 alt={`${notification.type} icon`}
@@ -190,24 +148,52 @@ const NotificationItem: React.FC<{
     }
 );
 
-const NotiPopUp: React.FC = () => {
+// --- Main Popup Component ---
+const NotiPopUp: React.FC<NotiPopUpProps> = ({ notiMessage }) => {
     const [notification, setNotification] = useState<Notification | null>(null);
     const navigate = useNavigate();
 
-    const fetchNotification =
-        useCallback(async (): Promise<Notification | null> => {
-            const randomIndex = Math.floor(
-                Math.random() * MOCK_NOTIFICATIONS.length
-            );
-            return MOCK_NOTIFICATIONS[randomIndex];
-        }, []);
+    // Map API notification to UI format
+    const mapApiToNotification = useCallback(
+        (apiNoti: any): Notification => ({
+            id: apiNoti.id,
+            type: apiNoti.type,
+            title: apiNoti.title,
+            message: apiNoti.message,
+            timestamp: Date.now(),
+            icon:
+                apiNoti.type === "balance_alert"
+                    ? WalletIcon
+                    : apiNoti.type === "creator"
+                    ? TrophyIcon
+                    : BellIcon,
+        }),
+        []
+    );
 
-    const loadNotification = useCallback(async () => {
-        const noti = await fetchNotification();
-        if (noti && shouldShowNotification(noti.id, COOLDOWN_MS)) {
-            setNotification(noti);
+    // Load API notification
+    useEffect(() => {
+        if (!notiMessage) return;
+
+        const notiArray = Array.isArray(notiMessage)
+            ? notiMessage
+            : [notiMessage];
+        const firstNoti = notiArray[0];
+        if (!firstNoti) return;
+
+        const mapped = mapApiToNotification(firstNoti);
+
+        const storage = getStorage();
+
+        // only show if id is new and cooldown passed
+        const isNewId = !storage.shownIds.includes(mapped.id);
+        const isCooldownPassed = Date.now() - storage.lastShown >= COOLDOWN_MS;
+
+        if (isNewId && isCooldownPassed) {
+            setNotification(mapped);
+            markNotificationAsShown(mapped.id);
         }
-    }, [fetchNotification]);
+    }, [notiMessage, mapApiToNotification]);
 
     const handleClose = useCallback(() => {
         if (notification) markNotificationAsShown(notification.id);
@@ -218,14 +204,10 @@ const NotiPopUp: React.FC = () => {
         (id: string) => {
             markNotificationAsShown(id);
             setNotification(null);
-            navigate(NOTIFICATION_ROUTE);
+            navigate("/notifications");
         },
         [navigate]
     );
-
-    useEffect(() => {
-        loadNotification();
-    }, [loadNotification]);
 
     return (
         <>
@@ -234,7 +216,7 @@ const NotiPopUp: React.FC = () => {
                     notification={notification}
                     onClose={handleClose}
                     onDetailClick={handleDetailClick}
-                    autoCloseMs={5000} // auto-close after 5s
+                    autoCloseMs={5000}
                 />
             )}
         </>
