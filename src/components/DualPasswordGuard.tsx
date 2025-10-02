@@ -1,7 +1,7 @@
 import { useEffect, ReactNode } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
-import { checkPasswordExpiration } from "@/store/slices/persistSlice";
+import { checkPasswordExpiration } from "@/store/slices/sessionSlice";
 
 interface DualPasswordGuardProps {
   children: ReactNode;

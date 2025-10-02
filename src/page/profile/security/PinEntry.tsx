@@ -16,7 +16,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { setIsPasswordCorrect } from "@/store/slices/persistSlice";
+import { setIsPasswordCorrect } from "@/store/slices/sessionSlice";
 
 interface PinEntryProps {
   onPinComplete?: (pin: string, type: "master" | "decoy") => void;

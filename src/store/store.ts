@@ -7,6 +7,7 @@ import { Storage } from "redux-persist";
 import { profileApi } from "./api/profileApi";
 import { authApi } from "./api/authApi";
 import persistSlice from "./slices/persistSlice";
+import sessionSlice from "./slices/sessionSlice";
 import { walletApi } from "./api/wallet/walletApi";
 import { exploreApi } from "./api/explore/exploreApi";
 import { homeApi } from "../page/home/services/homeApi";
@@ -74,24 +75,29 @@ const persistHomeSliceConfig = {
   storage: sessionStorageWrapper, // Use sessionStorage instead of default localStorage
 };
 
+const sessionSliceConfig = {
+  key: "session",
+  storage: sessionStorageWrapper,
+};
+
 // Add this config for persistSlice
 const persistSliceConfig = {
   key: "persist",
   storage,
-  blacklist: ["isPasswordCorrect", "passwordExpirationTime"], // Reset on app start
 };
 
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["persist", "history", "explore", "unlike", "event"], // Reducers you want to persist
+  whitelist: ["persist", "session", "history", "explore", "unlike", "event"], // Reducers you want to persist
 };
 
 const rootReducer = combineReducers({
   count: counterSlice,
   [homeApi.reducerPath]: homeApi.reducer,
   profile: profileSlice,
-  persist: persistReducer(persistSliceConfig, persistSlice), // Apply blacklist
+  persist: persistReducer(persistSliceConfig, persistSlice),
+  session: persistReducer(sessionSliceConfig, sessionSlice),
   playSlice: playSlice,
   showSlice: showSlice,
   explore: exploreSlice,

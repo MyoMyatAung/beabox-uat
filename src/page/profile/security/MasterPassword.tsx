@@ -17,9 +17,9 @@ import { cn, decodePassword } from "@/lib/utils";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setIsEnabledDualPassword,
-  setIsPasswordCorrect,
   setPassword,
 } from "@/store/slices/persistSlice";
+import { setIsPasswordCorrect } from "@/store/slices/sessionSlice";
 import { showToast } from "@/page/home/services/errorSlice";
 import {
   Dialog,

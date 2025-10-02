@@ -21,8 +21,6 @@ const initialState: any = {
   defaultTab: "upload",
   defaultTab2: "video",
   isEnabledDualPassword: false,
-  isPasswordCorrect: false,
-  passwordExpirationTime: null,
   decoyPassword: null,
   masterPassword: null,
 };
@@ -94,14 +92,6 @@ export const persistSlice = createSlice({
     setIsEnabledDualPassword: (state, { payload }) => {
       state.isEnabledDualPassword = payload;
     },
-    setIsPasswordCorrect: (state, { payload }) => {
-      state.isPasswordCorrect = payload;
-      if (payload) {
-        state.passwordExpirationTime = Date.now() + 24 * 60 * 60 * 1000;
-      } else {
-        state.passwordExpirationTime = null;
-      }
-    },
     setPassword: (state, { payload }) => {
       const { type, password } = payload;
       const encodedPassword = encodePassword(password);
@@ -109,16 +99,6 @@ export const persistSlice = createSlice({
         state.decoyPassword = encodedPassword;
       } else if (type === "master") {
         state.masterPassword = encodedPassword;
-      }
-    },
-    // Add new action to check and reset expired password
-    checkPasswordExpiration: (state) => {
-      if (state.isPasswordCorrect && state.passwordExpirationTime) {
-        const currentTime = Date.now();
-        if (currentTime >= state.passwordExpirationTime) {
-          state.isPasswordCorrect = false;
-          state.passwordExpirationTime = null;
-        }
       }
     },
   },
@@ -144,8 +124,6 @@ export const {
   setCover,
   setSAnswer,
   setIsEnabledDualPassword,
-  setIsPasswordCorrect,
-  checkPasswordExpiration,
   setPassword,
 } = persistSlice.actions;
 
