@@ -21,6 +21,7 @@ import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 import BadgeImg from "@/components/shared/badge-img";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 import OtherAds from "@/components/profile/other-ads";
+import NotiButton from "./component/NotiButton";
 
 const Profile = () => {
   const headerRef = useRef(null);
@@ -189,12 +190,7 @@ const Profile = () => {
             <div></div>
           )}
           <div className="z-[1900] flex gap-3 items-center">
-            <div
-              onClick={bellHandeler}
-              className="z-[1900] bg-[#FFFFFF12] w-10 h-10 rounded-full flex items-center justify-center"
-            >
-              <Bell />
-            </div>
+            <NotiButton />
             <SettingBtn setShow={setShow} />
           </div>
         </div>

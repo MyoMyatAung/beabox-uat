@@ -1,19 +1,30 @@
 import { paths } from "@/routes/paths";
 import backButton from "../../../assets/backButton.svg";
 import { Link } from "react-router-dom";
-import OtherNoti from "@/components/profile/noti/other-noti";
-import { useGetNotiQuery } from "@/store/api/profileApi";
-import { dateForamtter } from "@/lib/utils";
-import Loader from "@/components/shared/loader";
 import Divider from "@/components/shared/divider";
 import System from "@/assets/profile/system1.png";
 import Balance from "@/assets/profile/balance1.png";
 import Creator from "@/assets/profile/Wallet.png";
-import { useSelector } from "react-redux";
+import NotiTypeItem from "../component/NotiTypeItem";
+import { NOTIFICATION_CONFIG } from "@/constants/noti-constant";
 import { useEffect } from "react";
-import BalanceNotiLink from "@/components/profile/noti/balance-noti-link";
+import { useSelector } from "react-redux";
 
 const Noti = () => {
+  const notiData = JSON.parse(
+    localStorage.getItem(NOTIFICATION_CONFIG.STORAGE_KEY) || "{}"
+  );
+  const user = useSelector((state: any) => state.persist.user);
+
+  useEffect(() => {
+    console.log("SET NOTI DATA");
+    if (!user?.token) {
+      localStorage.setItem(
+        NOTIFICATION_CONFIG.STORAGE_KEY,
+        JSON.stringify({ ...notiData, isReadForUnauthenticated: true })
+      );
+    }
+  }, [notiData, user?.token]);
   return (
     <div className="w-full h-screen bg-[#16131C] px-5 flex flex-col items-center justify-between no-scrollbar">
       <div className="w-full">
@@ -25,59 +36,29 @@ const Noti = () => {
           <div className="px-3"></div>
         </div>
         <div className="space-y-4 pb-10">
-          <Link
-            to={`/notifications/system`}
-            className="flex items-center gap-4"
-          >
-            <img src={System} className="w-10 h-10 mt-1" alt="" />
-            <div className="w-full">
-              <div className="flex items-center text-[14px] justify-between font-bold">
-                <p>系统通知</p>
-              </div>
-              <div className="flex items-end justify-between">
-                <p className="text-[12px] w-[80%] text-[#888]">
-                  在此查看您的系统通知
-                </p>
-                <p className="text-[10px] text-[#888]"></p>
-              </div>
-            </div>
-          </Link>
+          <NotiTypeItem
+            title="系统通知"
+            message="在此查看您的系统通知"
+            src={System}
+            type="system"
+            path="system"
+          />
           <Divider show={true} />
-          <Link
-            to={`/notifications/balance`}
-            className="flex items-center gap-4"
-          >
-            <img src={Balance} className="w-10 h-10 mt-1" alt="" />
-            <div className="w-full">
-              <div className="flex items-center text-[14px] justify-between font-bold">
-                <p>余额提醒</p>
-              </div>
-              <div className="flex items-end justify-between">
-                <p className="text-[12px] w-[80%] text-[#888]">
-                  在此查看您的余额提醒
-                </p>
-                <p className="text-[10px] text-[#888]"></p>
-              </div>
-            </div>
-          </Link>
+          <NotiTypeItem
+            title="余额提醒"
+            message="在此查看您的余额提醒"
+            src={Balance}
+            type="balance_alert"
+            path="balance"
+          />
           <Divider show={true} />
-          <Link
-            to={`/notifications/creator`}
-            className="flex items-center gap-4"
-          >
-            <img src={Creator} className="w-10 h-10 mt-1" alt="" />
-            <div className="w-full">
-              <div className="flex items-center text-[14px] justify-between font-bold">
-                <p>创作者里程碑提醒</p>
-              </div>
-              <div className="flex items-end justify-between">
-                <p className="text-[12px] w-[80%] text-[#888]">
-                  在此查看您作为创作者的成就
-                </p>
-                <p className="text-[10px] text-[#888]"></p>
-              </div>
-            </div>
-          </Link>
+          <NotiTypeItem
+            title="创作者里程碑提醒"
+            message="在此查看您作为创作者的成就"
+            src={Creator}
+            type="creator"
+            path="creator"
+          />
           {/* <BalanceNotiLink /> */}
           {/* <SystemNotiLink />
           <BalanceNotiLink />

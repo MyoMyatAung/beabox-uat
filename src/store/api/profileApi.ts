@@ -36,6 +36,7 @@ export const profileApi = createApi({
       }
     },
   }),
+  tagTypes: ["NOTI_LIST"],
   endpoints: (builder) => ({
     getMyProfile: builder.query<any, string>({
       query: () => ({
@@ -254,6 +255,17 @@ export const profileApi = createApi({
         ),
         method: "GET",
       }),
+      providesTags: ["NOTI_LIST"],
+    }),
+    readNoti: builder.mutation<any, any>({
+      query: ({ id }: any) => ({
+        url: convertToSecureUrl(`/notification/read`),
+        method: "Post",
+        body: convertToSecurePayload({ notification_id: id }),
+      }),
+      invalidatesTags: (result, error, args) => [
+        { type: "NOTI_LIST", id: args.id },
+      ],
     }),
     settingUpload: builder.mutation<any, any>({
       query: ({ filedata, filePath }: any) => ({
@@ -475,4 +487,5 @@ export const {
   useGetWatchHistoryQuery,
   useGetMyOwnProfileQuery,
   usePostPersonalizationMutation,
+  useReadNotiMutation,
 } = profileApi;
