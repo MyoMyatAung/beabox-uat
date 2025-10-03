@@ -40,7 +40,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
   const [imagesLoaded, setImagesLoaded] = useState(0);
   const [totalImages, setTotalImages] = useState(0);
   const [allDataLoaded, setAllDataLoaded] = useState(false);
-  const [minTimeElapsed, setMinTimeElapsed] = useState(false);
+  const [progressComplete, setProgressComplete] = useState(false);
   const [currentQuote, setCurrentQuote] = useState("");
   const [contentVisible, setContentVisible] = useState(false);
   const [hasTimedOut, setHasTimedOut] = useState(false);
@@ -94,25 +94,53 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
   useEffect(() => {
     const randomIndex = Math.floor(Math.random() * quotes.length);
     setCurrentQuote(quotes[randomIndex]);
-    // No interval for quote rotation anymore
   }, []);
 
-  // Set a minimum display time of 3 seconds
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setMinTimeElapsed(true);
-    }, 3000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Show content after 2 second delay
+  // Show content after 1.5 second delay
   useEffect(() => {
     const timer = setTimeout(() => {
       setContentVisible(true);
     }, 1500);
 
     return () => clearTimeout(timer);
+  }, []);
+
+  // Time-based progress bar - fills up in 5 seconds with random increments
+  useEffect(() => {
+    const duration = 5000; // 5 seconds
+    const startTime = Date.now();
+
+    const progressInterval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const baseProgress = (elapsed / duration) * 100;
+
+      // Add random variation but ensure we stay close to the base progress
+      const randomOffset = Math.random() * 6 - 3;
+      let newProgress = Math.min(baseProgress + randomOffset, 100);
+
+      // Ensure progress always moves forward (never decreases)
+      setProgress((prev) => {
+        const finalProgress = Math.max(prev, Math.min(newProgress, 100));
+
+        if (finalProgress >= 100) {
+          clearInterval(progressInterval);
+          setProgressComplete(true);
+          return 100;
+        }
+        return finalProgress;
+      });
+    }, Math.random() * 100 + 50); // Random interval between 50-150ms
+
+    // Ensure we reach 100% after 5 seconds
+    const finalTimeout = setTimeout(() => {
+      setProgress(100);
+      setProgressComplete(true);
+    }, duration);
+
+    return () => {
+      clearInterval(progressInterval);
+      clearTimeout(finalTimeout);
+    };
   }, []);
 
   // Process and preload images when data is available
@@ -124,11 +152,8 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
       applicationAdsLoading ||
       configLoading
     ) {
-      setProgress(25); // Set to 25% when APIs are still loading
       return;
     }
-
-    setProgress(50); // Set to 50% when APIs finish loading
 
     // Save application ads data to Redux
     if (applicationAdsData?.data) {
@@ -189,30 +214,16 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
       imagesToLoad.forEach((imageUrl) => {
         const img = new Image();
         img.onload = () => {
-          setImagesLoaded((prev) => {
-            const newCount = prev + 1;
-            // Update progress based on loaded images (from 50% to 100%)
-            const newProgress =
-              50 + Math.floor((newCount / imagesToLoad.length) * 50);
-            setProgress(newProgress);
-            return newCount;
-          });
+          setImagesLoaded((prev) => prev + 1);
         };
         img.onerror = () => {
           // Count failed loads too, so we don't stall on 404 images
-          setImagesLoaded((prev) => {
-            const newCount = prev + 1;
-            const newProgress =
-              50 + Math.floor((newCount / imagesToLoad.length) * 50);
-            setProgress(newProgress);
-            return newCount;
-          });
+          setImagesLoaded((prev) => prev + 1);
         };
         img.src = imageUrl;
       });
     } else {
       // No images to load
-      setProgress(100);
       setAllDataLoaded(true);
     }
   }, [
@@ -229,21 +240,22 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
 
   // Check if everything is loaded
   useEffect(() => {
-    if (totalImages > 0 && imagesLoaded >= totalImages) {
-      setAllDataLoaded(true);
-    }
+    // if (totalImages > 0 && imagesLoaded >= totalImages) {
+    setAllDataLoaded(true);
+    // }
   }, [imagesLoaded, totalImages]);
 
-  // Complete loading when both data is loaded and minimum time has elapsed
+  // Complete loading when both progress is complete and all data is loaded
   useEffect(() => {
-    if (allDataLoaded && minTimeElapsed) {
+    if (allDataLoaded && progressComplete) {
       // Store that the user has seen the popup for this session
       sessionStorage.setItem("hasSeenAdPopUp", "true");
       // Notify parent component that loading is complete
       onLoadComplete();
     }
-  }, [allDataLoaded, minTimeElapsed, dispatch, onLoadComplete]);
+  }, [allDataLoaded, progressComplete, onLoadComplete]);
 
+  // Timeout handler
   useEffect(() => {
     const timeout = setTimeout(() => {
       setHasTimedOut(true);
@@ -260,7 +272,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
     return (
       <LineErrorUI
         onRetry={() => window.location.reload()}
-        onContact={() => window.open(tgLink, '_blank')}
+        onContact={() => window.open(tgLink, "_blank")}
       />
     );
   }
@@ -302,48 +314,55 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
         {/* Content Container */}
         <div className="relative z-10 flex flex-col items-center justify-center h-full">
           {/* Logo */}
-          {/* <img
-            className="w-[140px] mb-3 animate-[slideDown_1s_ease_forwards]"
-            src={logo}
-            alt="App Logo"
-          /> */}
           <Lottie
             className="-mt-[50px]"
             animationData={loadingAnimation}
-            loop={false} // Play only once
-            autoplay={true} // Start playing automatically
+            loop={false}
+            autoplay={true}
           />
 
           {/* Quote Container */}
           <div className="w-full flex flex-col items-center justify-center -mt-[120px]">
-          <div className={`text-center px-6 mb-6 ${contentVisible ? 'stepped-fade-in' : 'opacity-0'}`}>
-            <p className="my-1.5 text-lg leading-normal text-white text-opacity-95">
-              真正的享受，来自于克制后的自由，
-            </p>
-            <p className="my-1.5 text-lg leading-normal text-white text-opacity-95">
-              {currentQuote}
-            </p>
-          </div>
-
-          {/* Progress Bar */}
-          <div className={`w-4/5 text-center ${contentVisible ? 'stepped-fade-in' : 'opacity-0'}`}>
-            <div className="w-full h-1.5 bg-white bg-opacity-15 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-[#de62f5] to-[#a848ec] transition-all duration-300"
-                style={{ width: `${progress}%` }}
-              ></div>
+            <div
+              className={`text-center px-6 mb-6 ${
+                contentVisible ? "stepped-fade-in" : "opacity-0"
+              }`}
+            >
+              <p className="my-1.5 text-lg leading-normal text-white text-opacity-95">
+                真正的享受，来自于克制后的自由，
+              </p>
+              <p className="my-1.5 text-lg leading-normal text-white text-opacity-95">
+                {currentQuote}
+              </p>
             </div>
-            <div className="mt-2 text-sm text-white text-opacity-80">
-              正在为您加载最优线路{" "}
-              <span className="text-[#de62f5] font-bold ml-1">{progress}%</span>
-            </div>
-          </div>
 
-          {/* Footer Text */}
-          <div className={`absolute bottom-4 w-full text-center text-xs text-white text-opacity-60 px-4`}>
-            本软件不适合未成年人使用，如果您未满18岁请立刻离开。
-            <br />© 笔盒@2025 ｜ 联系邮箱：zhaohui@beabox.net
-          </div>
+            {/* Progress Bar */}
+            <div
+              className={`w-4/5 text-center ${
+                contentVisible ? "stepped-fade-in" : "opacity-0"
+              }`}
+            >
+              <div className="w-full h-1.5 bg-white bg-opacity-15 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-[#de62f5] to-[#a848ec] transition-all duration-300"
+                  style={{ width: `${progress}%` }}
+                ></div>
+              </div>
+              <div className="mt-2 text-sm text-white text-opacity-80">
+                正在为您加载最优线路{" "}
+                <span className="text-[#de62f5] font-bold ml-1">
+                  {Math.floor(progress)}%
+                </span>
+              </div>
+            </div>
+
+            {/* Footer Text */}
+            <div
+              className={`absolute bottom-4 w-full text-center text-xs text-white text-opacity-60 px-4`}
+            >
+              本软件不适合未成年人使用，如果您未满18岁请立刻离开。
+              <br />© 笔盒@2025 ｜ 联系邮箱：zhaohui@beabox.net
+            </div>
           </div>
         </div>
       </div>

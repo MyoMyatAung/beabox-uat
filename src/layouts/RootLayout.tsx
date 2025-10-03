@@ -38,10 +38,6 @@ import { EventDetail } from "@/@types/lucky_draw";
 import DEventBox from "@/page/event/EventBox";
 
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  useGetPrizeListQuery,
-  useGetProfileQuery,
-} from "@/page/luckywheel/services/spinWheelApi";
 import useImagePreloader from "./useImagePreloader";
 import ApplicationPreloader from "./ApplicationPreloader";
 
@@ -86,8 +82,6 @@ const RootLayout = ({ children }: any) => {
   const hideBar = useSelector((state: RootState) => state.hideBarSlice.hideBar);
   const hideNew = useSelector((state: RootState) => state.hideNewSlice.hideNew);
   const [showEvent, setShowEvent] = useState(false);
-  const { data: prizeListData } = useGetPrizeListQuery();
-  const { data: profileData } = useGetProfileQuery();
   const { data: eventData } = useGetUserByReferalQuery(
     { referral_code: referCode }, // or safely cast if you're confident it's a string
     { skip: !referCode }

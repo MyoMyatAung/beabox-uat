@@ -117,6 +117,8 @@ const Home = () => {
   // const user = profile?.data;
 
   // Fetch data based on the current tab
+  const user = useSelector((state: any) => state?.persist?.user);
+  const previousUser = useSelector((state: any) => state.previousUser.data);
   const {
     data: followData,
     isFetching: isFollowFetching,
@@ -126,7 +128,7 @@ const Home = () => {
     {
       page: page1,
     },
-    { skip: currentTab !== 0 }
+    { skip: !user?.token || currentTab !== 0 }
   );
 
   const {
@@ -149,9 +151,10 @@ const Home = () => {
 
   const currentPage = currentTab === 0 ? page1 : page;
 
-  const user = useSelector((state: any) => state?.persist?.user);
-  const previousUser = useSelector((state: any) => state.previousUser.data);
-  const { data: myday, refetch: refetchMyday } = useGetMydayQuery({ page: 1 });
+  const { data: myday, refetch: refetchMyday } = useGetMydayQuery(
+    { page: 1 },
+    { skip: !user?.token || currentTab !== 2 }
+  );
   const { hasDecryptedInitialData } = useSelector(
     (state: any) => state.decryption
   );
@@ -176,8 +179,10 @@ const Home = () => {
 
       dispatch(homeApi.util.invalidateTags(["foryou", "follow"])); // Replace with your actual tags
 
-      // Always refetch myday since it's not tab-dependent
-      refetchMyday();
+      // Only refetch myday if user has token
+      if (user?.token && currentTab === 2) {
+        refetchMyday();
+      }
 
       // Update previous user in Redux
       dispatch(setPreviousUser(user));
