@@ -16,7 +16,7 @@ const DualPasswordGuard = ({ children }: DualPasswordGuardProps) => {
     (state: any) => state.persist.isEnabledDualPassword
   );
   const isPasswordCorrect = useSelector(
-    (state: any) => state.persist.isPasswordCorrect
+    (state: any) => state.session.isPasswordCorrect
   );
 
   useEffect(() => {
