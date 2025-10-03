@@ -14,7 +14,7 @@ const NotiTypeItem = ({ title, message, src, type, path }: Props) => {
 
   const isNotiRead =
     !isLoading && data?.data.length > 0
-      ? data.data.some((noti: any) => !noti.is_read)
+      ? data.data.every((noti: any) => noti.is_read)
       : true;
 
   return (
@@ -31,7 +31,7 @@ const NotiTypeItem = ({ title, message, src, type, path }: Props) => {
           </div>
         </div>
       </div>
-      {isNotiRead && (
+      {!isNotiRead && (
         <div className="w-2 h-2 rounded-full bg-[#FF0004] mt-2"></div>
       )}
     </Link>
