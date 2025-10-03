@@ -11,17 +11,7 @@ import { useNavigate } from "react-router-dom";
 import BellIcon from "@/assets/icons/icon-bell.svg";
 import WalletIcon from "@/assets/icons/icon-wallet.svg";
 import TrophyIcon from "@/assets/icons/icon-trophy.svg";
-
-// --- Constants ---
-const NOTIFICATION_CONFIG = {
-  FADE_IN_DELAY: 100,
-  FADE_OUT_DURATION: 300,
-  AUTO_CLOSE_DELAY: 5000,
-  COOLDOWN_MS: 5 * 1000, // 5 seconds for testing
-  STORAGE_KEY: "notipopup_data",
-  Z_INDEX: 99999,
-  MAX_SHOWN_IDS: 50, // Prevent localStorage from growing too large
-} as const;
+import { NOTIFICATION_CONFIG } from "@/constants/noti-constant";
 
 // --- Types ---
 interface Notification {
@@ -36,6 +26,7 @@ interface Notification {
 interface NotiStorage {
   lastShown: number;
   shownIds: string[];
+  isReadForUnauthenticated: boolean;
 }
 
 interface NotiPopUpProps {
@@ -53,7 +44,7 @@ interface ApiNotification {
 const getStorage = (): NotiStorage => {
   try {
     const raw = localStorage.getItem(NOTIFICATION_CONFIG.STORAGE_KEY);
-    const defaultData: NotiStorage = { lastShown: 0, shownIds: [] };
+    const defaultData: NotiStorage = { lastShown: 0, shownIds: [], isReadForUnauthenticated: false };
 
     if (!raw) return defaultData;
 
@@ -73,7 +64,7 @@ const getStorage = (): NotiStorage => {
     return parsed;
   } catch (error) {
     console.warn("Failed to parse notification storage:", error);
-    return { lastShown: 0, shownIds: [] };
+    return { lastShown: 0, shownIds: [], isReadForUnauthenticated: false };
   }
 };
 
@@ -99,6 +90,7 @@ const markNotificationAsShown = (id: string): void => {
   const newData: NotiStorage = {
     lastShown: Date.now(),
     shownIds: Array.from(new Set([...storage.shownIds, id])),
+    isReadForUnauthenticated: false,
   };
   saveStorage(newData);
 };
@@ -354,7 +346,7 @@ const NotiPopUp: React.FC<NotiPopUpProps> = ({ notiMessage }) => {
   }, []);
 
   const handleDetailClick = useCallback(
-    (id: string) => {
+    () => {
       setNotification(null);
       navigate("/notifications");
     },
