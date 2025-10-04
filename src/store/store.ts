@@ -89,7 +89,7 @@ const persistSliceConfig = {
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["persist", "session", "history", "explore", "unlike", "event"], // Reducers you want to persist
+  whitelist: ["persist", "history", "explore", "unlike", "event"], // Reducers you want to persist
 };
 
 const rootReducer = combineReducers({
