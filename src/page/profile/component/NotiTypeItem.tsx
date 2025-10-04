@@ -1,4 +1,6 @@
+import { NOTIFICATION_CONFIG } from "@/constants/noti-constant";
 import { useGetNotiQuery } from "@/store/api/profileApi";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 type Props = {
@@ -11,11 +13,26 @@ type Props = {
 
 const NotiTypeItem = ({ title, message, src, type, path }: Props) => {
   const { data, isLoading } = useGetNotiQuery(type);
+  const notiData = JSON.parse(
+    localStorage.getItem(NOTIFICATION_CONFIG.STORAGE_KEY) || "{}"
+  );
+  const user = useSelector((state: any) => state.persist.user);
 
-  const isNotiRead =
-    !isLoading && data?.data.length > 0
-      ? data.data.every((noti: any) => noti.is_read)
-      : true;
+  let isNotiRead = true;
+  if (!user?.token) {
+    if (type === "system") {
+      isNotiRead = notiData?.isReadForUnauthenticatedSystem;
+    } else if (type === "creator") {
+      isNotiRead = notiData?.isReadForUnauthenticatedCreator;
+    } else if (type === "balance_alert") {
+      isNotiRead = notiData?.isReadForUnauthenticatedBalance;
+    }
+  } else {
+    isNotiRead =
+      !isLoading && data?.data.length > 0
+        ? data.data.every((noti: any) => noti.is_read)
+        : true;
+  }
 
   return (
     <Link to={`/notifications/${path}`} className="flex justify-between">

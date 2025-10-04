@@ -263,9 +263,7 @@ export const profileApi = createApi({
         method: "Post",
         body: convertToSecurePayload({ notification_id: id }),
       }),
-      invalidatesTags: (result, error, args) => [
-        { type: "NOTI_LIST", id: args.id },
-      ],
+      invalidatesTags: ["NOTI_LIST"],
     }),
     settingUpload: builder.mutation<any, any>({
       query: ({ filedata, filePath }: any) => ({

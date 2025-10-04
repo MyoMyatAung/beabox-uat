@@ -144,7 +144,7 @@ export function BottomNav() {
           item={item}
           handleRoute={handleRoute}
           pathname={pathname}
-          isShowRedDot={user?.token ? !(isSystemNotiRead && isCreatorNotiRead && isBalanceAlertNotiRead) : !notiData?.isReadForUnauthenticated}
+          isShowRedDot={user?.token ? !(isSystemNotiRead && isCreatorNotiRead && isBalanceAlertNotiRead) : !notiData?.isReadForUnauthenticatedSystem || !notiData?.isReadForUnauthenticatedCreator || !notiData?.isReadForUnauthenticatedBalance}
         />
       ))}
     </nav>
