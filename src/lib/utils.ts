@@ -77,8 +77,17 @@ export const getStatusLabel = (status: string): string => {
     rejected: "已拒绝",
     success: "成功",
     failed: "失败",
-    declined: "已拒绝"
+    declined: "已拒绝",
   };
 
   return statusMap[status.toLowerCase()] || status;
+};
+
+// Simple encoding/decoding functions
+export const encodePassword = (password: string): string => {
+  return btoa(password); // Base64 encode
+};
+
+export const decodePassword = (encodedPassword: string): string => {
+  return atob(encodedPassword); // Base64 decode
 };

@@ -14,6 +14,9 @@ import selectedrank from "@/assets/icons/selecteRank.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { setIsDrawerOpen } from "@/store/slices/profileSlice";
+import BottomNavItem from "./bottom-nav-item";
+import { useGetNotiQuery } from "@/store/api/profileApi";
+import { NOTIFICATION_CONFIG } from "@/constants/noti-constant";
 
 const navItems = [
   { name: "首页", selectedIcon: Home1SVG, icon: HomeSVG, href: "/" },
@@ -65,6 +68,16 @@ export function BottomNav() {
 
   const [showHeader, setShowHeader] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+
+  const notiData = JSON.parse(localStorage.getItem(NOTIFICATION_CONFIG.STORAGE_KEY) || "{}");
+
+  const { data: systemNoti, isLoading: isSystemNotiLoading } = useGetNotiQuery("system");
+  const { data: creatorNoti, isLoading: isCreatorNotiLoading } = useGetNotiQuery("creator");
+  const { data: balanceAlertNoti, isLoading: isBalanceAlertNotiLoading } = useGetNotiQuery("balance_alert");
+    
+  const isSystemNotiRead = !isSystemNotiLoading && systemNoti.data.length > 0 ? systemNoti.data.every((noti: any) => noti.is_read) : true;
+  const isCreatorNotiRead = !isCreatorNotiLoading && creatorNoti.data.length > 0 ? creatorNoti.data.every((noti: any) => noti.is_read) : true;
+  const isBalanceAlertNotiRead = !isBalanceAlertNotiLoading && balanceAlertNoti.data.length > 0 ? balanceAlertNoti.data.every((noti: any) => noti.is_read) : true;
 
   useEffect(() => {
     setNeedsBottomPadding(isIOSWebViewOrWebClip());
@@ -126,21 +139,13 @@ export function BottomNav() {
     >
       {" "}
       {navItems.map((item) => (
-        <div
+        <BottomNavItem
           key={item.name}
-          onClick={() => handleRoute(item.href)}
-          // to={item.href}
-          className={cn(
-            "flex flex-col items-center gap-1",
-            pathname === item.href ? "text-white" : "text-white/60"
-          )}
-        >
-          <img
-            src={pathname === item.href ? item?.selectedIcon : item?.icon}
-            alt=""
-          />
-          <span className="text-[10px]">{item.name}</span>
-        </div>
+          item={item}
+          handleRoute={handleRoute}
+          pathname={pathname}
+          isShowRedDot={user?.token ? !(isSystemNotiRead && isCreatorNotiRead && isBalanceAlertNotiRead) : !notiData?.isReadForUnauthenticatedSystem || !notiData?.isReadForUnauthenticatedCreator || !notiData?.isReadForUnauthenticatedBalance}
+        />
       ))}
     </nav>
   );

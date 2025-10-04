@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import { paths } from "./paths";
 import RootLayout from "@/layouts/RootLayout";
+import DualPasswordGuard from "@/components/DualPasswordGuard";
 import More from "@/page/explore/comp/More";
 import Wallet from "@/page/wallet/Wallet";
 import Invite from "@/page/wallet/comp/Invite";
@@ -19,6 +20,8 @@ import Report from "@/page/report/Report";
 import SafeLazyLoad from "@/components/SafeLazyLoad";
 import CreatorNoti from "@/page/profile/noti/CreatorNoti";
 import Detail from "@/page/home/components/Detail";
+import { isIOSWebView } from "@/lib/deviceInfo";
+import Download from "@/page/download/Download";
 
 const Home = lazy(() => import("../page/home/Home"));
 const Lucky = lazy(() => import("../page/luckywheel/LuckySpinPage"));
@@ -37,6 +40,15 @@ const OtherProfile = lazy(() => import("../page/profile/OtherProfile"));
 const ProfileDetail = lazy(() => import("../page/profile/ProfileDetail"));
 const Settings = lazy(() => import("../page/profile/Settings"));
 const PrivacySettings = lazy(() => import("../page/profile/PrivacySettings"));
+const DualAccessPassword = lazy(
+  () => import("../page/profile/security/DualAccessPassword")
+);
+const MasterPassword = lazy(
+  () => import("../page/profile/security/MasterPassword")
+);
+const DecoyPassword = lazy(
+  () => import("../page/profile/security/DecoyPassword")
+);
 const Noti = lazy(() => import("../page/profile/noti/Noti"));
 const NotiDetail = lazy(() => import("../page/profile/noti/NotiDetail"));
 const SystemNoti = lazy(() => import("../page/profile/noti/SystemNoti"));
@@ -54,6 +66,7 @@ const CheckAnswer = lazy(
 );
 const Answer = lazy(() => import("../page/profile/security/Answer"));
 const Manage = lazy(() => import("../page/profile/security/Manage"));
+const PinEntry = lazy(() => import("../page/profile/security/PinEntry"));
 const AddBio = lazy(() => import("../components/profile/add-bio"));
 const ForgotPassword = lazy(
   () => import("../components/profile/auth/forgot-password")
@@ -65,9 +78,20 @@ const LuckyDraw = lazy(() => import("../page/events/Luckydraw"));
 
 const Routing = () => {
   // Create a wrapper component that includes SafeLazyLoad for error handling
-  const withErrorHandling = (Component: ReactNode) => {
+  const withErrorHandling = (
+    Component: ReactNode,
+    skipPasswordGuard = false
+  ) => {
+    const wrappedComponent = skipPasswordGuard ? (
+      <SafeLazyLoad>{Component}</SafeLazyLoad>
+    ) : (
+      <DualPasswordGuard>
+        <SafeLazyLoad>{Component}</SafeLazyLoad>
+      </DualPasswordGuard>
+    );
+
     return {
-      element: <SafeLazyLoad>{Component}</SafeLazyLoad>,
+      element: wrappedComponent,
       // On route error, navigate to home page
       errorElement: <Navigate to="/" replace />,
     };
@@ -126,6 +150,14 @@ const Routing = () => {
       path: paths.manage,
       ...withErrorHandling(<Manage />),
     },
+    ...(isIOSWebView()
+      ? [
+          {
+            path: paths.pinEntry,
+            ...withErrorHandling(<PinEntry />, true),
+          },
+        ]
+      : []),
     {
       path: paths.home,
       ...withErrorHandling(
@@ -194,6 +226,23 @@ const Routing = () => {
       path: paths.privacy_settings,
       ...withErrorHandling(<PrivacySettings />),
     },
+    // Password routes only available for iOS app users (not Safari browser)
+    ...(isIOSWebView()
+      ? [
+          {
+            path: paths.dual_access_password,
+            ...withErrorHandling(<DualAccessPassword />),
+          },
+          {
+            path: paths.master_password,
+            ...withErrorHandling(<MasterPassword />),
+          },
+          {
+            path: paths.decoy_password,
+            ...withErrorHandling(<DecoyPassword />),
+          },
+        ]
+      : []),
     {
       path: paths.noti,
       ...withErrorHandling(<Noti />),
@@ -310,6 +359,10 @@ const Routing = () => {
     {
       path: paths.lucky_draw,
       ...withErrorHandling(<LuckyDraw />),
+    },
+    {
+      path: paths.download,
+      ...withErrorHandling(<Download />),
     },
   ];
 

@@ -53,6 +53,8 @@ import { clearSeenUsers } from "./services/seenUsersSlice";
 import { setHasDecryptedInitialData } from "./services/decryptionSlice";
 
 const Home = () => {
+  const dispatch = useDispatch();
+
   const videoContainerRef = useRef<HTMLDivElement>(null);
   // const [videos, setVideos] = useState<any[]>([]);
   //const [page, setPage] = useState(1);
@@ -94,7 +96,7 @@ const Home = () => {
   const currentPost = currentTab === 0 ? currentActivePost1 : currentActivePost;
   //const user = useSelector((state: any) => state?.persist?.profileData);
   const [refresh, setRefresh] = useState(false);
-  const dispatch = useDispatch();
+  //const dispatch = useDispatch();
   const [hearts, setHearts] = useState<number[]>([]); // Manage heart IDs
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
@@ -146,6 +148,8 @@ const Home = () => {
     (currentTab === 2 && isForYouFetching);
 
   const isError = ForyouError || followError;
+
+  console.log('HOME.TSX', isError, ForyouError, followError);
 
   const currentPage = currentTab === 0 ? page1 : page;
 

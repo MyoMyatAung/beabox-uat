@@ -1,16 +1,19 @@
-import { paths } from "@/routes/paths";
 import backButton from "../../../assets/backButton.svg";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import System from "@/assets/profile/system1.png";
 import Balance from "@/assets/profile/balance1.png";
 import Creator from "@/assets/profile/Wallet.png";
-
-import { dateForamtter } from "@/lib/utils";
+import { useReadNotiMutation } from "@/store/api/profileApi";
+import { useEffect } from "react";
 
 const NotiDetail = () => {
   const state = useLocation();
   console.log(state.state);
   const navigate = useNavigate();
+  const [readNoti] = useReadNotiMutation();
+  useEffect(() => {
+    readNoti({ id: state.state.data.id });
+  }, [readNoti, state.state.data.id]);
   return (
     <div className="w-full h-screen bg-[#16131C] px-5 flex flex-col items-center justify-between no-scrollbar">
       <div className="w-full">
@@ -20,7 +23,7 @@ const NotiDetail = () => {
             <img src={backButton} alt="" />
           </div>
           <p className="text-[16px] font-bold">详情</p>
-<div className="px-2"></div>
+          <div className="px-2"></div>
         </div>
 
         <div className="space-y-6">

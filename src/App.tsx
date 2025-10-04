@@ -14,6 +14,7 @@ import {
 } from "./lib/deviceInfo";
 import { useCheckAppVersionQuery } from "./store/api/versionApi";
 import guide from "./assets/guide.webp";
+import { resetPasswordState } from "./page/home/services/passwordSlice";
 
 const App = () => {
   const { panding } = useSelector((state: any) => state.model);
@@ -45,6 +46,7 @@ const App = () => {
       "standalone" in window.navigator && window.navigator.standalone === true
     );
   };
+
   // Handle version check result
   useEffect(() => {
     if (versionCheckSuccess && versionData) {
@@ -184,6 +186,29 @@ const App = () => {
       setShowInAppBrowserAlert(true);
     }
   }, []);
+
+  // Add lifecycle listeners to reset password state when app closes
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      // Reset password state when browser/tab closes
+      dispatch(resetPasswordState());
+    };
+
+    const handlePageHide = () => {
+      // Reset password state on page hide (better for iOS WebView)
+      dispatch(resetPasswordState());
+    };
+
+    // Add event listeners
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("pagehide", handlePageHide);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("pagehide", handlePageHide);
+    };
+  }, [dispatch]);
 
   return (
     <>
