@@ -7,7 +7,6 @@ import { Storage } from "redux-persist";
 import { profileApi } from "./api/profileApi";
 import { authApi } from "./api/authApi";
 import persistSlice from "./slices/persistSlice";
-import sessionSlice from "./slices/sessionSlice";
 import { walletApi } from "./api/wallet/walletApi";
 import { exploreApi } from "./api/explore/exploreApi";
 import { homeApi } from "../page/home/services/homeApi";
@@ -48,6 +47,7 @@ import onlyseenUserSlice from "@/page/home/services/onlyseenUserSlice";
 import decryptionSlice from "@/page/home/services/decryptionSlice";
 import pageSlice1 from "@/page/home/services/pageSlice1";
 import activeSlice1 from "@/page/home/services/activeSlice1";
+import passwordSlice from "@/page/home/services/passwordSlice";
 
 const sessionStorageWrapper: Storage = {
   getItem: (key: string) => {
@@ -86,7 +86,7 @@ const rootReducer = combineReducers({
   [homeApi.reducerPath]: homeApi.reducer,
   profile: profileSlice,
   persist: persistSlice,
-  session: sessionSlice,
+  passwordSlice: passwordSlice,
   playSlice: playSlice,
   showSlice: showSlice,
   explore: exploreSlice,

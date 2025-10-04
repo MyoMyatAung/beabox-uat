@@ -19,7 +19,6 @@ import {
   setIsEnabledDualPassword,
   setPassword,
 } from "@/store/slices/persistSlice";
-import { setIsPasswordCorrect } from "@/store/slices/sessionSlice";
 import { showToast } from "@/page/home/services/errorSlice";
 import {
   Dialog,
@@ -30,6 +29,7 @@ import {
   DialogPortal,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { setIsPasswordCorrect } from "@/page/home/services/passwordSlice";
 
 function MasterPassword() {
   const dispatch = useDispatch();

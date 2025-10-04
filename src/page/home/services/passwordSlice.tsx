@@ -5,8 +5,8 @@ const initialState = {
   passwordExpirationTime: null as number | null,
 };
 
-export const sessionSlice = createSlice({
-  name: "session",
+export const passwordSlice = createSlice({
+  name: "passwordSlice",
   initialState,
   reducers: {
     setIsPasswordCorrect: (state, { payload }) => {
@@ -37,5 +37,5 @@ export const {
   setIsPasswordCorrect,
   checkPasswordExpiration,
   resetPasswordState,
-} = sessionSlice.actions;
-export default sessionSlice.reducer;
+} = passwordSlice.actions;
+export default passwordSlice.reducer;

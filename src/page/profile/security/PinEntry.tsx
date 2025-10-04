@@ -16,8 +16,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { setIsPasswordCorrect } from "@/store/slices/sessionSlice";
 import { isIOSWebView } from "@/lib/deviceInfo";
+import { setIsPasswordCorrect } from "@/page/home/services/passwordSlice";
 
 interface PinEntryProps {
   onPinComplete?: (pin: string, type: "master" | "decoy") => void;

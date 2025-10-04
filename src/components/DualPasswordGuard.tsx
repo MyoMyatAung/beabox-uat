@@ -1,7 +1,7 @@
+import { checkPasswordExpiration } from "@/page/home/services/passwordSlice";
 import { useEffect, ReactNode } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
-import { checkPasswordExpiration } from "@/store/slices/sessionSlice";
 
 interface DualPasswordGuardProps {
   children: ReactNode;
@@ -12,11 +12,10 @@ const DualPasswordGuard = ({ children }: DualPasswordGuardProps) => {
   const location = useLocation();
   const dispatch = useDispatch();
 
-  const isEnabledDualPassword = useSelector(
-    (state: any) => state.persist.isEnabledDualPassword
-  );
-  const isPasswordCorrect = useSelector(
-    (state: any) => state.session.isPasswordCorrect
+  const { isEnabledDualPassword } = useSelector((state: any) => state.persist);
+
+  const { isPasswordCorrect } = useSelector(
+    (state: any) => state.passwordSlice
   );
 
   useEffect(() => {

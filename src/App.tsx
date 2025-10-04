@@ -14,7 +14,6 @@ import {
 } from "./lib/deviceInfo";
 import { useCheckAppVersionQuery } from "./store/api/versionApi";
 import guide from "./assets/guide.webp";
-import { resetPasswordState } from "./store/slices/sessionSlice";
 
 const App = () => {
   const { panding } = useSelector((state: any) => state.model);
@@ -46,32 +45,6 @@ const App = () => {
       "standalone" in window.navigator && window.navigator.standalone === true
     );
   };
-
-  // Handle app lifecycle events for password state reset
-  useEffect(() => {
-    const handleAppClose = () => {
-      dispatch(resetPasswordState());
-    };
-
-    // Listen for app close/refresh events
-    window.addEventListener("beforeunload", handleAppClose);
-    window.addEventListener("unload", handleAppClose);
-
-    // For iOS WebView, also listen to pagehide event
-    window.addEventListener("pagehide", (event) => {
-      const pageEvent = event as PageTransitionEvent;
-      if (!pageEvent.persisted) {
-        // Page is being unloaded (close/refresh), not just cached
-        handleAppClose();
-      }
-    });
-
-    return () => {
-      window.removeEventListener("beforeunload", handleAppClose);
-      window.removeEventListener("unload", handleAppClose);
-      window.removeEventListener("pagehide", handleAppClose);
-    };
-  }, [dispatch]);
 
   // Handle version check result
   useEffect(() => {
