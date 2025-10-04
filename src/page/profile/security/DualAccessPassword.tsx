@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { cn, decodePassword } from "@/lib/utils";
 import { setIsEnabledDualPassword } from "@/store/slices/persistSlice";
 import { showToast } from "@/page/home/services/errorSlice";
+import { setIsPasswordCorrect } from "@/page/home/services/passwordSlice";
 
 function DualAccessPassword() {
   const dispatch = useDispatch();
@@ -31,6 +32,7 @@ function DualAccessPassword() {
 
   function handleEnableDualPassword(e: boolean) {
     dispatch(setIsEnabledDualPassword(e));
+    if (e) dispatch(setIsPasswordCorrect(e));
   }
 
   return (
