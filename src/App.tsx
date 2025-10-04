@@ -14,6 +14,7 @@ import {
 } from "./lib/deviceInfo";
 import { useCheckAppVersionQuery } from "./store/api/versionApi";
 import guide from "./assets/guide.webp";
+import { resetPasswordState } from "./page/home/services/passwordSlice";
 
 const App = () => {
   const { panding } = useSelector((state: any) => state.model);
@@ -185,6 +186,38 @@ const App = () => {
       setShowInAppBrowserAlert(true);
     }
   }, []);
+
+  // Add lifecycle listeners to reset password state when app closes
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      // Reset password state when browser/tab closes
+      dispatch(resetPasswordState());
+    };
+
+    const handleVisibilityChange = () => {
+      // Reset password state when app goes to background (mobile)
+      if (document.visibilityState === "hidden") {
+        dispatch(resetPasswordState());
+      }
+    };
+
+    const handlePageHide = () => {
+      // Reset password state on page hide (better for iOS)
+      dispatch(resetPasswordState());
+    };
+
+    // Add event listeners
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("pagehide", handlePageHide);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("pagehide", handlePageHide);
+    };
+  }, [dispatch]);
 
   return (
     <>

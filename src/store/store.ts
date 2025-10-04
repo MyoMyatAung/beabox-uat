@@ -75,6 +75,12 @@ const persistHomeSliceConfig = {
   storage: sessionStorageWrapper, // Use sessionStorage instead of default localStorage
 };
 
+// Add persist config for passwordSlice with sessionStorage
+const persistPasswordSliceConfig = {
+  key: "passwordSlice",
+  storage: sessionStorageWrapper, // Use sessionStorage to auto-clear on browser close
+};
+
 const persistConfig = {
   key: "root",
   storage,
@@ -86,7 +92,7 @@ const rootReducer = combineReducers({
   [homeApi.reducerPath]: homeApi.reducer,
   profile: profileSlice,
   persist: persistSlice,
-  passwordSlice: passwordSlice,
+  passwordSlice: persistReducer(persistPasswordSliceConfig, passwordSlice), // Apply sessionStorage for passwordSlice
   playSlice: playSlice,
   showSlice: showSlice,
   explore: exploreSlice,
