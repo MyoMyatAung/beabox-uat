@@ -15,7 +15,6 @@ import { useLocation, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setExpHeader } from "@/store/slices/exploreSlice";
 import VideoFeed from "../home/components/VideoFeed";
-import VideoFeedVirtual from "../home/components/VideoFeedVirtual";
 
 const Explore = () => {
   const [activeTab, setActiveTab] = useState("Recommend");
@@ -142,7 +141,7 @@ const Explore = () => {
                   <div className="rounded-lg shadow-lg bg-white/20 animate-pulse mb-4 max-w-full h-[312px]"></div>
                 </div>
               </div>
-            ) : (!showVideoFeed) && (
+            ) : (
               <Swiper
                 className=""
                 allowTouchMove={false}
