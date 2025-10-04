@@ -120,7 +120,7 @@ const Settings = ({
           <></>
         )}
 
-        {isIOSWebView() && (
+        {!isIOSWebView() && (
           <Link
             to={
               isBothPasswordNotSet

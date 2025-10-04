@@ -150,7 +150,7 @@ const Routing = () => {
       path: paths.manage,
       ...withErrorHandling(<Manage />),
     },
-    ...(isIOSWebView()
+    ...(!isIOSWebView()
       ? [
           {
             path: paths.pinEntry,
@@ -227,7 +227,7 @@ const Routing = () => {
       ...withErrorHandling(<PrivacySettings />),
     },
     // Password routes only available for iOS app users (not Safari browser)
-    ...(isIOSWebView()
+    ...(!isIOSWebView()
       ? [
           {
             path: paths.dual_access_password,

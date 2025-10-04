@@ -26,9 +26,16 @@ export const sessionSlice = createSlice({
         }
       }
     },
+    resetPasswordState: (state) => {
+      state.isPasswordCorrect = false;
+      state.passwordExpirationTime = null;
+    },
   },
 });
 
-export const { setIsPasswordCorrect, checkPasswordExpiration } =
-  sessionSlice.actions;
+export const {
+  setIsPasswordCorrect,
+  checkPasswordExpiration,
+  resetPasswordState,
+} = sessionSlice.actions;
 export default sessionSlice.reducer;
