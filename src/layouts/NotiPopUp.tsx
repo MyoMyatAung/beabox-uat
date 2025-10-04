@@ -26,7 +26,9 @@ interface Notification {
 interface NotiStorage {
   lastShown: number;
   shownIds: string[];
-  isReadForUnauthenticated: boolean;
+  isReadForUnauthenticatedSystem: boolean;
+  isReadForUnauthenticatedCreator: boolean;
+  isReadForUnauthenticatedBalance: boolean;
 }
 
 interface NotiPopUpProps {
@@ -44,7 +46,13 @@ interface ApiNotification {
 const getStorage = (): NotiStorage => {
   try {
     const raw = localStorage.getItem(NOTIFICATION_CONFIG.STORAGE_KEY);
-    const defaultData: NotiStorage = { lastShown: 0, shownIds: [], isReadForUnauthenticated: false };
+    const defaultData: NotiStorage = {
+      lastShown: 0,
+      shownIds: [],
+      isReadForUnauthenticatedSystem: false,
+      isReadForUnauthenticatedCreator: false,
+      isReadForUnauthenticatedBalance: false,
+    };
 
     if (!raw) return defaultData;
 
@@ -64,7 +72,13 @@ const getStorage = (): NotiStorage => {
     return parsed;
   } catch (error) {
     console.warn("Failed to parse notification storage:", error);
-    return { lastShown: 0, shownIds: [], isReadForUnauthenticated: false };
+    return {
+      lastShown: 0,
+      shownIds: [],
+      isReadForUnauthenticatedSystem: false,
+      isReadForUnauthenticatedCreator: false,
+      isReadForUnauthenticatedBalance: false,
+    };
   }
 };
 
@@ -90,7 +104,9 @@ const markNotificationAsShown = (id: string): void => {
   const newData: NotiStorage = {
     lastShown: Date.now(),
     shownIds: Array.from(new Set([...storage.shownIds, id])),
-    isReadForUnauthenticated: false,
+    isReadForUnauthenticatedSystem: false,
+    isReadForUnauthenticatedCreator: false,
+    isReadForUnauthenticatedBalance: false,
   };
   saveStorage(newData);
 };
@@ -249,7 +265,7 @@ const NotificationItem: React.FC<{
                 className="bg-gradient-to-b from-[rgba(163,133,255,0.12)] to-[rgba(255,255,255,0.12)] border border-[#F0C3FF]/40 text-[#F0C3FF] px-3 py-1 rounded-full text-xs transition-colors hover:from-[rgba(163,133,255,0.2)] hover:to-[rgba(255,255,255,0.2)] focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
                 disabled={isClosing}
               >
-                Details
+                查看详情
               </button>
             </div>
           </div>
@@ -266,7 +282,6 @@ const NotiPopUp: React.FC<NotiPopUpProps> = ({ notiMessage }) => {
   const [notification, setNotification] = useState<Notification | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const navigate = useNavigate();
-
   // Map API notification to UI format with validation
   const mapApiToNotification = useCallback(
     (apiNoti: ApiNotification): Notification => {
@@ -345,13 +360,10 @@ const NotiPopUp: React.FC<NotiPopUpProps> = ({ notiMessage }) => {
     setNotification(null);
   }, []);
 
-  const handleDetailClick = useCallback(
-    () => {
-      setNotification(null);
-      navigate("/notifications");
-    },
-    [navigate]
-  );
+  const handleDetailClick = useCallback(() => {
+    setNotification(null);
+    navigate("/notifications");
+  }, [navigate]);
 
   // Don't render if no notification or still processing
   if (!notification || isProcessing) {

@@ -19,7 +19,7 @@ const NotiButton = () => {
   const isBalanceAlertNotiRead = !isBalanceAlertNotiLoading && balanceAlertNoti.data.length > 0 ? balanceAlertNoti.data.every((noti: any) => noti.is_read) : true;
   const isAllNotiRead = isSystemNotiRead && isCreatorNotiRead && isBalanceAlertNotiRead;
 
-  const isShowRedDot = user?.token ? !isAllNotiRead : !notiData?.isReadForUnauthenticated;
+  const isShowRedDot = user?.token ? !isAllNotiRead : !notiData?.isReadForUnauthenticatedSystem || !notiData?.isReadForUnauthenticatedCreator || !notiData?.isReadForUnauthenticatedBalance;
 
   const bellHandeler = () => {
     navigate(paths.noti);

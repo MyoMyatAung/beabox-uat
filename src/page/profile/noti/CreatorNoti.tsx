@@ -7,6 +7,7 @@ import { useGetNotiQuery } from "@/store/api/profileApi";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import Loader from "@/components/shared/loader";
+import { NOTIFICATION_CONFIG } from "@/constants/noti-constant";
 const formatdate = (data: any) => {
   const date = new Date(data);
   const formattedDate = date
@@ -45,9 +46,18 @@ const CreatorNoti = () => {
   const today = getTodayDate();
 
   const user = useSelector((state: any) => state.persist.user);
+  const notiData = JSON.parse(
+    localStorage.getItem(NOTIFICATION_CONFIG.STORAGE_KEY) || "{}"
+  );
   useEffect(() => {
     if (user) refetch();
-  }, [user, refetch]);
+    if (!user?.token) {
+      localStorage.setItem(
+        NOTIFICATION_CONFIG.STORAGE_KEY,
+        JSON.stringify({ ...notiData, isReadForUnauthenticatedCreator: true })
+      );
+    }
+  }, [user, refetch, notiData]);
 
   if (isLoading) return <Loader />;
   return (
