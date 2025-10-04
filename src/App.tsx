@@ -194,27 +194,18 @@ const App = () => {
       dispatch(resetPasswordState());
     };
 
-    const handleVisibilityChange = () => {
-      // Reset password state when app goes to background (mobile)
-      if (document.visibilityState === "hidden") {
-        dispatch(resetPasswordState());
-      }
-    };
-
     const handlePageHide = () => {
-      // Reset password state on page hide (better for iOS)
+      // Reset password state on page hide (better for iOS WebView)
       dispatch(resetPasswordState());
     };
 
     // Add event listeners
     window.addEventListener("beforeunload", handleBeforeUnload);
-    window.addEventListener("visibilitychange", handleVisibilityChange);
     window.addEventListener("pagehide", handlePageHide);
 
     // Cleanup
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
-      window.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("pagehide", handlePageHide);
     };
   }, [dispatch]);
