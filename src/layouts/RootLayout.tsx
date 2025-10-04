@@ -7,7 +7,10 @@ import { useSelector, useDispatch } from "react-redux";
 import AuthDrawer from "@/components/profile/auth/auth-drawer";
 import AlertToast from "@/components/shared/alert-toast";
 import AlertRedirect from "./AlertRedirect";
-import { useGetConfigQuery } from "@/page/home/services/homeApi";
+import {
+  useGetConfigQuery,
+  useGetNotificationsQuery,
+} from "@/page/home/services/homeApi";
 import LoadingScreen from "@/components/LoadingScreen";
 import Landing from "@/components/Landing";
 import { setPlay } from "@/page/home/services/playSlice";
@@ -44,7 +47,10 @@ import {
 } from "@/page/luckywheel/services/spinWheelApi";
 import useImagePreloader from "./useImagePreloader";
 import ApplicationPreloader from "./ApplicationPreloader";
-
+import PasswordSetUpPopUp from "./PasswordSetUpPopUp";
+import AnnouncementsPopUp from "./AnnouncementsPopUp";
+import { isIOSWebView } from "@/lib/deviceInfo";
+import NotiPopUp from "./NotiPopUp";
 // Function to check if the app is running in a WebView
 function isWebView() {
   return (
@@ -57,6 +63,7 @@ function isWebView() {
 const RootLayout = ({ children }: any) => {
   const [showAd, setShowAd] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [showPasswordSetUpPopUp, setShowPasswordSetUpPopUp] = useState(false);
   const [isBrowser, setIsBrowser] = useState(false);
   const [deviceType, setDeviceType] = useState<"IOS" | "Android" | "">("");
   const [jumpUrl, setJumpUrl] = useState("");
@@ -92,6 +99,18 @@ const RootLayout = ({ children }: any) => {
     { referral_code: referCode }, // or safely cast if you're confident it's a string
     { skip: !referCode }
   );
+  const { data: notiMessage } = useGetNotificationsQuery(
+    {},
+    {
+      skip: location.pathname !== "/",
+    }
+  );
+
+  useEffect(() => {
+    if (location.pathname === "/") {
+      console.log("notifications data:", notiMessage);
+    }
+  }, [location.pathname, notiMessage]);
 
   useEffect(() => {
     if (eventData?.data?.event?.status && !box && !user) {
@@ -509,7 +528,18 @@ const RootLayout = ({ children }: any) => {
               </div>
             </>
           )}
+
+        {!showAd && isIOSWebView() && location.pathname === "/" && (
+          <PasswordSetUpPopUp
+            showPasswordSetUpPopUp={showPasswordSetUpPopUp}
+            setShowPasswordSetUpPopUp={setShowPasswordSetUpPopUp}
+          />
+        )}
+        {!showAd && !showPasswordSetUpPopUp && location.pathname === "/" && (
+          <NotiPopUp notiMessage={notiMessage?.data} />
+        )}
       </div>
+
       {/* <ApplicationPreloader /> */}
     </>
   );

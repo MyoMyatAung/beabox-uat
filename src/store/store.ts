@@ -47,6 +47,7 @@ import onlyseenUserSlice from "@/page/home/services/onlyseenUserSlice";
 import decryptionSlice from "@/page/home/services/decryptionSlice";
 import pageSlice1 from "@/page/home/services/pageSlice1";
 import activeSlice1 from "@/page/home/services/activeSlice1";
+import passwordSlice from "@/page/home/services/passwordSlice";
 
 const sessionStorageWrapper: Storage = {
   getItem: (key: string) => {
@@ -74,6 +75,12 @@ const persistHomeSliceConfig = {
   storage: sessionStorageWrapper, // Use sessionStorage instead of default localStorage
 };
 
+// Add persist config for passwordSlice with sessionStorage
+const persistPasswordSliceConfig = {
+  key: "passwordSlice",
+  storage: sessionStorageWrapper, // Use sessionStorage to auto-clear on browser close
+};
+
 const persistConfig = {
   key: "root",
   storage,
@@ -85,6 +92,7 @@ const rootReducer = combineReducers({
   [homeApi.reducerPath]: homeApi.reducer,
   profile: profileSlice,
   persist: persistSlice,
+  passwordSlice: persistReducer(persistPasswordSliceConfig, passwordSlice), // Apply sessionStorage for passwordSlice
   playSlice: playSlice,
   showSlice: showSlice,
   explore: exploreSlice,

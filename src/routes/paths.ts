@@ -7,8 +7,12 @@ export const paths = {
   question: "/security/question",
   answer: "/security/answer",
   manage: "/security/manage",
+  pinEntry: "/pin-entry",
   settings: "/settings",
   privacy_settings: "/settings/privacy",
+  dual_access_password: "/security/dual-access-password",
+  master_password: "/security/master-password",
+  decoy_password: "/security/decoy-password",
   profileDetail: "/profile-detail",
   application: "/application",
   login: "/login",
@@ -50,4 +54,5 @@ export const paths = {
   lucky_draw: "/events/lucky-draw/:id",
   story_detail: "/story_detail/:id",
   getUserProfileId: (id: any) => `/user/${id}`,
+  download: "/download",
 };

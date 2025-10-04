@@ -42,12 +42,15 @@ const ChangePassword = () => {
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <div className="text-[14px] flex items-center justify-between">
-          <h1>更改密码</h1>
-          <p className="flex items-center gap-1 text-[#888]">
-            <FaAngleRight />
-          </p>
-        </div>
+        <>
+          <div className="text-[14px] flex items-center justify-between">
+            <h1>更改密码</h1>
+            <p className="flex items-center gap-1 text-[#888]">
+              <FaAngleRight />
+            </p>
+          </div>
+          <div className="border-b border-white/10"></div>
+        </>
       </DrawerTrigger>
       <DrawerContent className="border-0">
         {isLoading ? <Loader /> : <></>}

@@ -1,7 +1,7 @@
 import { paths } from "@/routes/paths";
 // import { FaAngleLeft } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ChevronRightIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import EditLanguage from "@/components/profile/edit-language";
 import { logOutUser } from "@/store/slices/persistSlice";
@@ -17,7 +17,8 @@ import backButton from "../../assets/backButton.svg";
 import Loader from "@/components/shared/loader";
 import OtherAds from "@/components/profile/other-ads";
 import Poppizza from "../explore/comp/PopApp";
-import logoutIcon from '../../assets/logout.svg'
+import logoutIcon from "../../assets/logout.svg";
+import { isIOSWebView } from "@/lib/deviceInfo";
 
 const Settings = ({
   liked_video_visibility,
@@ -82,7 +83,17 @@ const Settings = ({
       setDevice("other");
     }
   }, []);
+
+  const decoyPassword = useSelector(
+    (state: any) => state.persist.decoyPassword
+  );
+  const masterPassword = useSelector(
+    (state: any) => state.persist.masterPassword
+  );
+  const isBothPasswordNotSet = !decoyPassword && !masterPassword;
+
   if (isLoading) return <Loader />;
+
   return (
     <div className="w-full h-screen no-scrollbar px-5 flex flex-col items-center relative bg-[#16131C]">
       <div className="top flex flex-col gap-5 w-full">
@@ -96,16 +107,41 @@ const Settings = ({
 
         {user?.token ? (
           <>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-5">
               <h1 className="text-[16px] text-[#888]">账户安全</h1>
               <ChangePassword />
-              <div className="mt-5">
+              <div>
                 <EditSecurity />
               </div>
+              <div className="border-b border-white/10"></div>
             </div>
           </>
         ) : (
           <></>
+        )}
+
+        {isIOSWebView() && (
+          <Link
+            to={
+              isBothPasswordNotSet
+                ? `${paths.decoy_password}?type=setup`
+                : paths.dual_access_password
+            }
+            className="flex justify-between items-start"
+          >
+            <div className="w-[70%] ">
+              <p className="flex items-center gap-1 text-[14px]">双密码访问</p>
+              <p className="text-[10px] text-[#888888] w-full mt-1">
+                设置两个不同的密码。一个打开伪装首页，另一个打开真实应用。
+              </p>
+            </div>
+            <div className=" flex-1">
+              <p className="flex items-center justify-end gap-1 text-[14px] capitalize text-[#888888]">
+                {isBothPasswordNotSet ? "设置" : "管理"}
+                <ChevronRightIcon size={15} />
+              </p>
+            </div>
+          </Link>
         )}
 
         {user?.token ? (
@@ -160,7 +196,7 @@ const Settings = ({
         <div className="flex justify-between items-center">
           <p className="flex items-center gap-1 text-[14px]">当前版本</p>
           <p className="flex items-center gap-1 text-[14px]">
-            V 1.2.0.7 <ChevronRight size={15} className="text-[#777777]" />
+            V 1.2.0.8 <ChevronRight size={15} className="text-[#777777]" />
           </p>
         </div>
 
@@ -185,7 +221,7 @@ const Settings = ({
               }}
               className="w-full flex justify-center items-center gap-[6px] new_logout_button py-[15px]"
             >
-            <img src={logoutIcon} alt="" />   退出
+              <img src={logoutIcon} alt="" /> 退出
             </button>
           </div>
         ) : (
