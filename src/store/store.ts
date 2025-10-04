@@ -97,7 +97,7 @@ const rootReducer = combineReducers({
   [homeApi.reducerPath]: homeApi.reducer,
   profile: profileSlice,
   persist: persistReducer(persistSliceConfig, persistSlice),
-  session: sessionSlice, // Remove persistReducer wrapper
+  session: persistReducer(sessionSliceConfig, sessionSlice),
   playSlice: playSlice,
   showSlice: showSlice,
   explore: exploreSlice,

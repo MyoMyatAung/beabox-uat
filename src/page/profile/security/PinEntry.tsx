@@ -17,6 +17,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { setIsPasswordCorrect } from "@/store/slices/sessionSlice";
+import { isIOSWebView } from "@/lib/deviceInfo";
 
 interface PinEntryProps {
   onPinComplete?: (pin: string, type: "master" | "decoy") => void;
@@ -91,6 +92,23 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
     ? decodePassword(encodedDecoyPassword)
     : null;
 
+  // Function to close the app
+  const closeApp = () => {
+    const sendEventToNative = (name: string, value?: any) => {
+      if (isIOSWebView()) {
+        (window as any).webkit.messageHandlers.jsBridge.postMessage({
+          eventName: name,
+          value: value,
+        });
+      }
+    };
+    if (isIOSWebView()) {
+      sendEventToNative("closeApp");
+    } else {
+      window.close();
+    }
+  };
+
   const validatePin = (entered: string) => {
     if (savedMasterPassword && entered === savedMasterPassword) {
       setError(false);
@@ -99,12 +117,12 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
       dispatch(setIsPasswordCorrect(true));
       setTimeout(() => setPin(""), 500);
       navigate("/");
-    } else if (savedDecoyPassword && entered === savedDecoyPassword) {
-      setError(false);
-      setWrongAttempts(0);
-      onPinComplete?.(entered, "decoy");
-      setTimeout(() => setPin(""), 500);
-      window.location.href = "https://x.com";
+      // } else if (savedDecoyPassword && entered === savedDecoyPassword) {
+      //   setError(false);
+      //   setWrongAttempts(0);
+      //   onPinComplete?.(entered, "decoy");
+      //   setTimeout(() => setPin(""), 500);
+      //   window.location.href = "https://x.com";
     } else {
       setError(true);
       const newAttempts = wrongAttempts + 1;
@@ -118,7 +136,7 @@ const PinEntryBox: React.FC<PinEntryProps> = ({
           })
         );
         setTimeout(() => {
-          window.location.href = "https://www.google.com";
+          closeApp();
           setWrongAttempts(0);
           localStorage.setItem("wrongAttempts", "0");
         }, 2000);
