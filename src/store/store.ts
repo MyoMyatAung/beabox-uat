@@ -75,17 +75,6 @@ const persistHomeSliceConfig = {
   storage: sessionStorageWrapper, // Use sessionStorage instead of default localStorage
 };
 
-const sessionSliceConfig = {
-  key: "session",
-  storage: sessionStorageWrapper,
-};
-
-// Add this config for persistSlice
-const persistSliceConfig = {
-  key: "persist",
-  storage,
-};
-
 const persistConfig = {
   key: "root",
   storage,
@@ -96,8 +85,8 @@ const rootReducer = combineReducers({
   count: counterSlice,
   [homeApi.reducerPath]: homeApi.reducer,
   profile: profileSlice,
-  persist: persistReducer(persistSliceConfig, persistSlice),
-  session: persistReducer(sessionSliceConfig, sessionSlice),
+  persist: persistSlice,
+  session: sessionSlice,
   playSlice: playSlice,
   showSlice: showSlice,
   explore: exploreSlice,
