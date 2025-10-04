@@ -341,18 +341,3 @@ export const isMobileWebView = (): boolean => {
 export const isIOSDevice = (): boolean => {
   return /iPhone|iPad|iPod/.test(navigator.userAgent);
 };
-
-/**
- * Check if running on iOS device in Safari web browser (not WebView, not PWA)
- * Use this to hide features that should only be hidden in iOS Safari browser
- */
-export const isIOSSafariBrowser = (): boolean => {
-  const isIOSDevice = /iPhone|iPad|iPod/.test(navigator.userAgent);
-  const isStandalone =
-    "standalone" in window.navigator && window.navigator.standalone === true;
-  const isWebView = isIOSWebView();
-
-  // True only if it's iOS device, not in standalone mode, and not in WebView
-  return isIOSDevice && !isStandalone && !isWebView;
-  // return !(isIOSDevice && !isStandalone && !isWebView);
-};
