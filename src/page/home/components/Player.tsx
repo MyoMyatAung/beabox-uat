@@ -5049,6 +5049,7 @@ const Player = ({
     }
   };
   const [isPosterVisible, setIsPosterVisible] = useState(true);
+  const hideNew = useSelector((state: any) => state.hideNewSlice.hideNew);
 
   // useEffect(() => {
   //   if (blackScreenRef.current) {
@@ -5078,7 +5079,9 @@ const Player = ({
       ></div>
       <div
         ref={playerContainerRef}
-        className={`video_player w-full ${p_img ? "poster_change" : ""}`}
+        className={`video_player w-full ${hideNew ? "immersive_video" : ""} ${
+          p_img ? "poster_change" : ""
+        }`}
         style={{ minHeight: "200px" }} // Add minimum height to prevent collapse
       ></div>
     </>
