@@ -63,6 +63,9 @@ function isWebView() {
 }
 
 const RootLayout = ({ children }: any) => {
+  const [showImmersiveGuide, setShowImmersiveGuide] = useState(false);
+  const [immersiveGuideTimeout, setImmersiveGuideTimeout] =
+    useState<NodeJS.Timeout | null>(null);
   const [showAd, setShowAd] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [showPasswordSetUpPopUp, setShowPasswordSetUpPopUp] = useState(false);
@@ -90,9 +93,6 @@ const RootLayout = ({ children }: any) => {
   const [isOpenNew, setIsOpenNew] = useState(false);
   const [code, setCode] = useState("");
   const [newData, setnewData] = useState(null);
-  const [showImmersiveGuide, setShowImmersiveGuide] = useState(false);
-  const [immersiveGuideTimeout, setImmersiveGuideTimeout] =
-    useState<NodeJS.Timeout | null>(null);
   const user = useSelector((state: any) => state.persist.user);
   const currentTab = useSelector((state: any) => state.home.currentTab);
   const hideBar = useSelector((state: RootState) => state.hideBarSlice.hideBar);
@@ -417,11 +417,19 @@ const RootLayout = ({ children }: any) => {
 
   const handleCloseAlertRedirect = (show: boolean) => {
     setShowAlert(show);
+    setShowDialog(false);
     console.log("Alert closed, showAlert:", show);
     if (!isBrowser) {
       setShowImmersiveGuide(true);
     }
   };
+
+  console.log(
+    "showImmersiveGuide showDialog isNotFirstTime:",
+    showImmersiveGuide,
+    showDialog,
+    isNotFirstTime
+  );
 
   return (
     <>

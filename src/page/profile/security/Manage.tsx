@@ -33,7 +33,6 @@ const Manage = () => {
   const navigate = useNavigate();
   const registerUser = useSelector((state: any) => state.persist.registerUser);
 
-
   const onSubmitHandler = async (e: any) => {
     e.preventDefault();
     const { data } = await storeSecurityQues({
@@ -135,7 +134,7 @@ const Manage = () => {
             </p>
             <>
               <SubmitButton
-                text={isLoading1 ? <SmallLoader /> : "节省"}
+                text={isLoading1 ? <SmallLoader /> : "保存"}
                 isLoading={isLoading1}
                 condition={ans.length > 1 && ques?.length > 1}
               />
@@ -143,7 +142,7 @@ const Manage = () => {
                 onClick={removeHandler}
                 className="w-full rounded-xl bg-[#FFFFFF0A] hover:bg-[#FFFFFF0A] mt-5"
               >
-                {isLoading2 ? <SmallLoader /> : "消除"}
+                {isLoading2 ? <SmallLoader /> : "重置"}
                 {/* Remove */}
               </Button>
             </>
