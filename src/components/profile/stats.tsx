@@ -124,7 +124,7 @@ const Stats = ({ followers, followings, likes, nickname }: any) => {
                   <FaAngleLeft size={22} />
                 </button>
               </DrawerClose>
-              <p className="z-[1900] text-[18px] -ml-[22px]">{nickname}124</p>
+              <p className="z-[1900] text-[18px] -ml-[22px]">{nickname}</p>
               <div></div>
             </div>
             <div className="">
