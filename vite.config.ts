@@ -38,7 +38,7 @@ export default defineConfig({
     },
   },
   // produciton
-  // base: "https://bapst0vi.aaxyd.cn/",
+  base: "https://bapst0vi.aaxyd.cn/",
   // development
   // base: "/",
   define: {
