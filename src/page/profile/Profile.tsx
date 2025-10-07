@@ -29,7 +29,7 @@ const Profile = () => {
   const user = useSelector((state: any) => state?.persist?.user) || "";
   const isDrawerOpen = useSelector((state: any) => state.profile.isDrawerOpen);
   const { data, isLoading, refetch } = useGetMyOwnProfileQuery("", {
-    skip: !user,
+    skip: !user?.token,
   });
   const [show, setShow] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
@@ -81,10 +81,10 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    if (user) refetch();
+    if (!!user?.token) refetch();
   }, []);
   useEffect(() => {
-    if (user) refetch();
+    if (!!user?.token) refetch();
   }, [user, data]);
 
   useEffect(() => {

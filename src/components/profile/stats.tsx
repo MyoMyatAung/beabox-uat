@@ -29,12 +29,20 @@ const Stats = ({ followers, followings, likes, nickname }: any) => {
   const user = useSelector((state: any) => state?.persist?.user);
 
   const user_code = useSelector((state: any) => state.persist?.user?.id);
+  const defaultFollowTab = useSelector(
+    (state: any) => state.profile.defaultFollowTab
+  );
 
-  const { data, isLoading, isFetching, refetch } = useGetFollowingListQuery({
-    user_id: user_code,
-    // search: searchTerm,
-    page: 1,
-  });
+  const { data, isLoading, isFetching, refetch } = useGetFollowingListQuery(
+    {
+      user_id: user_code,
+      // search: searchTerm,
+      page: 1,
+    },
+    {
+      skip: !user?.token || defaultFollowTab !== "following",
+    }
+  );
 
   useEffect(() => {
     // setVh(isMobile ? "95vh" : "100vh");
@@ -42,8 +50,10 @@ const Stats = ({ followers, followings, likes, nickname }: any) => {
   }, []);
 
   useEffect(() => {
-    refetch();
-  }, [isOpen, refetch]);
+    if (!!user?.token && defaultFollowTab === "following") {
+      refetch();
+    }
+  }, [isOpen, refetch, defaultFollowTab]);
 
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
