@@ -29,6 +29,9 @@ const Stats = ({ followers, followings, likes, nickname }: any) => {
   const user = useSelector((state: any) => state?.persist?.user);
 
   const user_code = useSelector((state: any) => state.persist?.user?.id);
+  const defaultFollowTab = useSelector(
+    (state: any) => state.profile.defaultFollowTab
+  );
 
   const { data, isLoading, isFetching, refetch } = useGetFollowingListQuery(
     {
@@ -37,7 +40,7 @@ const Stats = ({ followers, followings, likes, nickname }: any) => {
       page: 1,
     },
     {
-      skip: !user?.token,
+      skip: !user?.token || defaultFollowTab !== "following",
     }
   );
 
@@ -47,10 +50,10 @@ const Stats = ({ followers, followings, likes, nickname }: any) => {
   }, []);
 
   useEffect(() => {
-    if (!!user?.token) {
+    if (!!user?.token && defaultFollowTab === "following") {
       refetch();
     }
-  }, [isOpen, refetch]);
+  }, [isOpen, refetch, defaultFollowTab]);
 
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
@@ -121,7 +124,7 @@ const Stats = ({ followers, followings, likes, nickname }: any) => {
                   <FaAngleLeft size={22} />
                 </button>
               </DrawerClose>
-              <p className="z-[1900] text-[18px] -ml-[22px]">{nickname}</p>
+              <p className="z-[1900] text-[18px] -ml-[22px]">{nickname}124</p>
               <div></div>
             </div>
             <div className="">

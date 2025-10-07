@@ -153,7 +153,7 @@ const Home = () => {
 
   const { data: myday, refetch: refetchMyday } = useGetMydayQuery(
     { page: 1 },
-    { skip: !user?.token || currentTab !== 2 }
+    { skip: !user?.token || currentTab !== 0 }
   );
   const { hasDecryptedInitialData } = useSelector(
     (state: any) => state.decryption
@@ -180,7 +180,7 @@ const Home = () => {
       dispatch(homeApi.util.invalidateTags(["foryou", "follow"])); // Replace with your actual tags
 
       // Only refetch myday if user has token
-      if (user?.token && currentTab === 2) {
+      if (user?.token && currentTab === 0) {
         refetchMyday();
       }
 
