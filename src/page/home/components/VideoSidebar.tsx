@@ -22,6 +22,7 @@ import { sethideBar } from "../services/hideBarSlice";
 import { motion } from "framer-motion";
 import { sethideNew } from "../services/hideNewSlice";
 import { addOnlySeenUser } from "../services/onlyseenUserSlice";
+import { setFirstTimeUser } from "@/store/slices/appSlice";
 
 function VideoSidebar({
   messages,
@@ -64,9 +65,7 @@ function VideoSidebar({
   status: any;
 }) {
   const [alertVisible, setAlertVisible] = useState(false);
-  const [isNotFirstTimeUser, setIsNotFirstTimeUser] = useState(
-    localStorage.getItem("isNotFirstTimeUser") === "true"
-  );
+  const { isFirstTimeUser } = useSelector((state: any) => state.app);
 
   const currentTab = useSelector((state: any) => state.home.currentTab);
 
@@ -286,9 +285,8 @@ function VideoSidebar({
     if (!hideNew) {
       dispatch(sethideNew(true));
       // If this is a first-time user clicking "清屏", mark them as not first time
-      if (!isNotFirstTimeUser) {
-        localStorage.setItem("isNotFirstTimeUser", "true");
-        setIsNotFirstTimeUser(true);
+      if (isFirstTimeUser) {
+        dispatch(setFirstTimeUser(false));
       }
     } else {
       dispatch(sethideNew(false));
@@ -302,7 +300,7 @@ function VideoSidebar({
       } z-[99999] w-[50px]
 `}
     >
-      <div className={`${!isNotFirstTimeUser && "opacity-[0.1]"}`}>
+      <div className={`${isFirstTimeUser && "opacity-[0.1]"}`}>
         <motion.div
           className="videoSidebar__button"
           initial={false} // Disable initial animation

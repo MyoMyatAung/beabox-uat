@@ -63,9 +63,6 @@ function isWebView() {
 }
 
 const RootLayout = ({ children }: any) => {
-  const [showImmersiveGuide, setShowImmersiveGuide] = useState(false);
-  const [immersiveGuideTimeout, setImmersiveGuideTimeout] =
-    useState<NodeJS.Timeout | null>(null);
   const [showAd, setShowAd] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [showPasswordSetUpPopUp, setShowPasswordSetUpPopUp] = useState(false);
@@ -84,7 +81,6 @@ const RootLayout = ({ children }: any) => {
 
   const [event, setEvent] = useState(false);
   const [shownextBox, setshownextBox] = useState(false);
-  const isNotFirstTime = localStorage.getItem("isNotFirstTimeUser");
 
   const [userPers, setUserPers] = useState(false);
   const [searchParams] = useSearchParams();
@@ -97,6 +93,7 @@ const RootLayout = ({ children }: any) => {
   const currentTab = useSelector((state: any) => state.home.currentTab);
   const hideBar = useSelector((state: RootState) => state.hideBarSlice.hideBar);
   const hideNew = useSelector((state: RootState) => state.hideNewSlice.hideNew);
+  const { isFirstTimeUser } = useSelector((state: any) => state.app);
   const [showEvent, setShowEvent] = useState(false);
   const { data: prizeListData } = useGetPrizeListQuery();
   const { data: profileData } = useGetProfileQuery();
@@ -174,28 +171,19 @@ const RootLayout = ({ children }: any) => {
     userHasClosedAnimation,
   ]);
 
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (immersiveGuideTimeout) {
-        clearTimeout(immersiveGuideTimeout);
-      }
-    };
-  }, [immersiveGuideTimeout]);
-
   useEffect(() => {
     // If the user is first time user, the hideNew must be true
-    if (!isNotFirstTime) {
+    if (isFirstTimeUser) {
       dispatch(sethideNew(true));
     }
-  }, [dispatch, isNotFirstTime]);
+  }, [dispatch, isFirstTimeUser]);
 
   // Check if ads have already been seen in this session
   useEffect(() => {
     const hasSeenAdPopUp = sessionStorage.getItem("hasSeenAdPopUp");
     const hasSeenLanding = sessionStorage.getItem("hasSeenLanding");
 
-    if (hasSeenAdPopUp && hasSeenLanding && isNotFirstTime) {
+    if (hasSeenAdPopUp && hasSeenLanding && isFirstTimeUser) {
       // User has already seen ads in this session, skip loading and ads
       dispatch(setPlay(true));
       sendNativeEvent("beabox_home_started");
@@ -276,12 +264,6 @@ const RootLayout = ({ children }: any) => {
   // Handle when all ads are completed
   const handleAdComplete = () => {
     setShowAd(false);
-
-    // Show immersive guide for first-time users after PopUp
-    if (!isNotFirstTime && isBrowser) {
-      console.log("Showing immersive guide for first-time user", isBrowser);
-      setShowImmersiveGuide(true);
-    }
 
     if ((jumpUrl && showDialog) || event) {
       dispatch(setPlay(false));
@@ -415,22 +397,6 @@ const RootLayout = ({ children }: any) => {
     navigate("/lucky");
   };
 
-  const handleCloseAlertRedirect = (show: boolean) => {
-    setShowAlert(show);
-    setShowDialog(false);
-    console.log("Alert closed, showAlert:", show);
-    if (!isBrowser) {
-      setShowImmersiveGuide(true);
-    }
-  };
-
-  console.log(
-    "showImmersiveGuide showDialog isNotFirstTime:",
-    showImmersiveGuide,
-    showDialog,
-    isNotFirstTime
-  );
-
   return (
     <>
       <div style={{ height: "calc(100dvh - 95px);" }}>
@@ -476,16 +442,12 @@ const RootLayout = ({ children }: any) => {
           !event && (
             <AlertRedirect
               event={event}
-              setShowAlert={handleCloseAlertRedirect}
+              setShowAlert={setShowAlert}
               app_download_link={jumpUrl}
             />
           )}
 
         <AlertToast />
-        {/* Show immersive guide for first-time users */}
-        {showImmersiveGuide && !showDialog && !isNotFirstTime && (
-          <ImmersiveUserGuide />
-        )}
 
         {isOpen ? <AuthDrawer /> : <></>}
         {!hideNew && (

@@ -1,11 +1,15 @@
 import HandPointer from "@/assets/handpointer.gif";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { sethideNew } from "@/page/home/services/hideNewSlice";
+import { setFirstTimeUser } from "@/store/slices/appSlice";
 
 const ImmersiveUserGuide = () => {
   const hideNew = useSelector((state: any) => state.hideNewSlice.hideNew);
   const [showGuide, setShowGuide] = useState(true);
+  const dispatch = useDispatch();
+  const { isFirstTimeUser } = useSelector((state: any) => state.app);
 
   // If hideNew changed, set showGuide to false for 1s and then true again
   useEffect(() => {
@@ -21,9 +25,21 @@ const ImmersiveUserGuide = () => {
 
   if (!showGuide) return <></>;
 
+  const handleFullScreen = () => {
+    if (!hideNew) {
+      dispatch(sethideNew(true));
+      // If this is a first-time user clicking "清屏", mark them as not first time
+      if (isFirstTimeUser) {
+        dispatch(setFirstTimeUser(false));
+      }
+    } else {
+      dispatch(sethideNew(false));
+    }
+  };
+
   return (
     <motion.div
-      className="h-screen bg-black/80 w-screen flex flex-col gap-[20px] fixed top-0 z-[9999]"
+      className="h-full bg-black/80 w-screen flex flex-col gap-[20px] absolute top-0 z-[99998]"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -31,11 +47,12 @@ const ImmersiveUserGuide = () => {
     >
       <motion.div
         className={`flex gap-2 items-center absolute ${
-          hideNew ? "bottom-[30px]" : "bottom-[110px]"
-        } right-[50px]`}
+          hideNew ? "bottom-[30px] right-[40px]" : "bottom-[110px] right-[40px]"
+        } cursor-pointer`}
         initial={{ x: 50, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.5 }}
+        onClick={handleFullScreen}
       >
         <span className="text-xl text-white">点击关闭沉浸模式</span>
         <img
