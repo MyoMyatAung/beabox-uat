@@ -51,7 +51,6 @@ import { combineSlices } from "@reduxjs/toolkit";
 import { setPreviousUser } from "./services/previousUserSlice";
 import { clearSeenUsers } from "./services/seenUsersSlice";
 import { setHasDecryptedInitialData } from "./services/decryptionSlice";
-import ImmersiveUserGuide from "@/components/ImmersiveUserGuide";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -94,7 +93,6 @@ const Home = () => {
   const [countNumber, setCountNumber] = useState(0); // New state for counting clicks
   const [topmovies, setTopMovies] = useState(false);
   const currentTab = useSelector((state: any) => state.home.currentTab);
-  const { isFirstTimeUser } = useSelector((state: any) => state.app);
   const currentPost = currentTab === 0 ? currentActivePost1 : currentActivePost;
   //const user = useSelector((state: any) => state?.persist?.profileData);
   const [refresh, setRefresh] = useState(false);
@@ -651,7 +649,6 @@ const Home = () => {
     >
       <div className="max-w-[1024px] home-main w-full">
         <TopNavbar currentTab={currentTab} onTabClick={handleTabClick} />
-        {isFirstTimeUser && <ImmersiveUserGuide />}
         <div className="app_home bg-[#16131C]">
           {isDecrypting && (
             <div className="app_home bg-[#16131C]">

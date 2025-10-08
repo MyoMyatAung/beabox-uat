@@ -449,6 +449,8 @@ const RootLayout = ({ children }: any) => {
 
         <AlertToast />
 
+        {isFirstTimeUser && !showAd && !showAlert && <ImmersiveUserGuide />}
+
         {isOpen ? <AuthDrawer /> : <></>}
         {!hideNew && (
           <div className="fixed bottom-0 left-0 w-full z-[1600]">
