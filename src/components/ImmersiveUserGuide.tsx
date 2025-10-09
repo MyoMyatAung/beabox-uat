@@ -276,7 +276,7 @@ const ImmersiveUserGuide = () => {
             transition={{ delay: 0.2, duration: 0.5 }}
             onClick={handleFullScreen}
           >
-            <span className="text-xl text-white">点击关闭沉浸模式</span>
+            <span className="text-xl text-white">{hideNew? "点击关闭沉浸模式" : "点击开启沉浸模式"}</span>
             <img
               src={HandPointer}
               className="w-16 h-16 ml-2 inline-block transform -scale-x-100"
