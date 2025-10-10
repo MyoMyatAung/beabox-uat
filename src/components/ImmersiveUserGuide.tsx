@@ -1,4 +1,6 @@
 import HandPointer from "@/assets/handpointer.gif";
+import ArrowUp from "@/assets/arrow_up.png";
+import ArrowDown from "@/assets/arrow_down.png";
 import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -40,27 +42,15 @@ const ImmersiveUserGuide = () => {
   };
 
   return (
-    <div className="h-full bg-black/80 w-screen flex flex-col gap-[20px] absolute top-0 z-[99998]">
-      {/* <motion.div
-        className={`flex gap-2 items-center absolute ${
-          hideNew ? "bottom-[30px] right-[40px]" : "bottom-[110px] right-[40px]"
-        } cursor-pointer`}
-        initial={{ x: 50, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        transition={{ delay: 0.2, duration: 0.5 }}
-        onClick={handleFullScreen}
-      >
-        <span className="text-xl text-white">点击关闭沉浸模式</span>
-        <img
-          src={HandPointer}
-          className="w-16 h-16 ml-2 inline-block transform -scale-x-100"
-          alt="Hand pointer"
-        />
-      </motion.div> */}
+    <div className="h-full bg-black/80 w-screen flex flex-col justify-center items-center gap-[20px] absolute top-0 z-[99998]">
+      <div className="text-white text-xl flex flex-col items-center justify-center gap-2">
+        <img src={ArrowUp} className="inline-block" />
+        <span>向上或向下滑动以切换视频</span>
+        <img src={ArrowDown} className="inline-block" />
+      </div>
       <div
-        className={`absolute ${
-          hideNew ? "bottom-[30px]" : "bottom-[105px]"
-        } right-[10px] text-white`}
+        className={`absolute ${hideNew ? "bottom-[30px]" : "bottom-[105px]"
+          } right-[10px] text-white`}
       >
         <div
           style={{
@@ -276,7 +266,7 @@ const ImmersiveUserGuide = () => {
             transition={{ delay: 0.2, duration: 0.5 }}
             onClick={handleFullScreen}
           >
-            <span className="text-xl text-white">{hideNew? "点击关闭沉浸模式" : "点击开启沉浸模式"}</span>
+            <span className="text-xl text-white">{hideNew ? "点击关闭沉浸模式" : "点击开启沉浸模式"}</span>
             <img
               src={HandPointer}
               className="w-16 h-16 ml-2 inline-block transform -scale-x-100"
