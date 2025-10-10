@@ -1541,6 +1541,5 @@ html {
       rgba(0,0,0,0.35) 75%,
       rgba(0,0,0,0.75) 100%
     );
-    mix-blend-mode: multiply;
     transition: opacity 0.4s ease;
   }
