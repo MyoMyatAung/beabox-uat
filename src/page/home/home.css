@@ -1501,15 +1501,11 @@ html {
 }
 
 .immersive_video {
-  position: relative;
-  overflow: hidden;
   border-radius: 18px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.45);
 }
 
 .immersive_video video {
-    width: 400px;
-    height: auto;
     display: block;
     filter:
       brightness(1.12)

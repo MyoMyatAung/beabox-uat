@@ -5053,6 +5053,9 @@ const Player = ({
   if(hideNew){
     artPlayerInstanceRef.current?.template.$danmuku.classList.add("beauty-layer");
     artPlayerInstanceRef.current?.template.$layer.classList.add("vignette-layer");
+  } else {
+    artPlayerInstanceRef.current?.template.$danmuku.classList.remove("beauty-layer");
+    artPlayerInstanceRef.current?.template.$layer.classList.remove("vignette-layer");
   }
 
   // useEffect(() => {
