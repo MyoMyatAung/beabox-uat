@@ -4501,7 +4501,6 @@ const Player = ({
   artPlayerInstanceRef.current?.on("pause", () => {
     cleanupWatchTimer();
   });
-
   // Add a function to safely fade out the poster only when video is confirmed playing
   const safeFadePosterOut = (force = false) => {
     setIsPosterVisible(false);
@@ -5051,6 +5050,11 @@ const Player = ({
   const [isPosterVisible, setIsPosterVisible] = useState(true);
   const hideNew = useSelector((state: any) => state.hideNewSlice.hideNew);
 
+  if(hideNew){
+    artPlayerInstanceRef.current?.template.$danmuku.classList.add("beauty-layer");
+    artPlayerInstanceRef.current?.template.$layer.classList.add("vignette-layer");
+  }
+
   // useEffect(() => {
   //   if (blackScreenRef.current) {
   //     const shouldShow = p_img && isPosterVisible;
@@ -5079,11 +5083,12 @@ const Player = ({
       ></div>
       <div
         ref={playerContainerRef}
-        className={`video_player w-full ${hideNew ? "immersive_video" : ""} ${
-          p_img ? "poster_change" : ""
-        }`}
+        className={`video_player w-full ${hideNew ? "immersive_video" : ""} ${p_img ? "poster_change" : ""
+          }`}
         style={{ minHeight: "200px" }} // Add minimum height to prevent collapse
-      ></div>
+      >
+
+      </div>
     </>
   );
 };

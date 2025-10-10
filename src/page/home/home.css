@@ -1501,12 +1501,50 @@ html {
 }
 
 .immersive_video {
-  filter: brightness(0.97) contrast(1.25) saturate(1.18) hue-rotate(-1deg) drop-shadow(0 0 20px rgba(0, 0, 0, 0.65));
-  transition: filter 0.3s ease;
-  background-color: #111111;
-  box-shadow: 
-    0px 0px 250px 0px rgba(0, 0, 0, 1),
-    0px 0px 120px 0px rgba(0, 0, 0, 1),
-    0px 0px 80px 0px rgba(0, 0, 0, 1),
-    inset 0px 0px 48px 0px rgba(0, 0, 0, 1);
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
 }
+
+.immersive_video video {
+    width: 400px;
+    height: auto;
+    display: block;
+    filter:
+      brightness(1.12)
+      contrast(1.25)
+      saturate(1.22)
+      hue-rotate(-6deg); /* 明显一点的偏粉色调 */
+    transition: filter 0.3s ease;
+ }
+
+  .beauty-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      circle at 50% 45%,
+      rgba(255, 170, 190, 0.65),  /* 更浓粉，中心更亮 */
+      rgba(255, 210, 220, 0.35) 60%,
+      rgba(255, 240, 240, 0.15) 80%,
+      transparent 100%
+    );
+    mix-blend-mode: overlay; /* 比 soft-light 更显色 */
+    opacity: 1;
+    transition: opacity 0.4s ease;
+  }
+
+  .vignette-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      circle at 50% 45%,
+      rgba(0,0,0,0) 40%,
+      rgba(0,0,0,0.35) 75%,
+      rgba(0,0,0,0.75) 100%
+    );
+    mix-blend-mode: multiply;
+    transition: opacity 0.4s ease;
+  }
