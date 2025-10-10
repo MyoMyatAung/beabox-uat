@@ -43,11 +43,13 @@ const ImmersiveUserGuide = () => {
 
   return (
     <div className="h-full bg-black/80 w-screen flex flex-col justify-center items-center gap-[20px] absolute top-0 z-[99998]">
-      <div className="text-white text-xl flex flex-col items-center justify-center gap-2">
+      {
+        !hideNew && <div className="text-white text-xl flex flex-col items-center justify-center gap-2">
         <img src={ArrowUp} className="inline-block" />
         <span>向上或向下滑动以切换视频</span>
         <img src={ArrowDown} className="inline-block" />
       </div>
+      }
       <div
         className={`absolute ${hideNew ? "bottom-[30px]" : "bottom-[105px]"
           } right-[10px] text-white`}
