@@ -1145,6 +1145,8 @@ const VideoContainer = ({
     }
   }, [video?.decryptedPreview]);
 
+  const { isFirstTimeUser } = useSelector((state: any) => state.app);
+
   if (isOpen) {
     return <LoginDrawer isOpen={isOpen} setIsOpen={setIsOpen} />;
   }
@@ -1171,7 +1173,7 @@ const VideoContainer = ({
         isActive={isActive}
         setShowRotate={setShowRotate}
       />
-      {!showFollowers && (
+      {!showFollowers && !isFirstTimeUser && (
         <VideoSidebar
           status={status}
           unLike={unLike}

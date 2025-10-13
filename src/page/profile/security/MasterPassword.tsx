@@ -148,7 +148,7 @@ function MasterPassword() {
       setupType === "setup"
         ? "创建密码以打开应用程序的实际版本。请创建一个 6 位 PIN 码。仅限数字。"
         : "管理打开应用程序真实版本的密码。创建一个 6 位 PIN 码。仅限数字。",
-    confirmBtnLabel: setupType === "setup" ? "确认" : "节省",
+    confirmBtnLabel: setupType === "setup" ? "确认" : "保存",
   };
 
   const isBtnDisabled =
@@ -317,7 +317,7 @@ function MasterPassword() {
                       setShowRemoveDialog(true);
                     }}
                   >
-                    <p>消除</p>
+                    <p>重置</p>
                   </button>
                 )}
               </div>
@@ -387,7 +387,7 @@ function MasterPassword() {
                   className="text-[#CD3EFF] hover:text-[#CD3EFF] !bg-transparent h-14 text-base"
                   onClick={() => handlePasswordChange(form.getValues())}
                 >
-                  改变
+                  确认
                 </Button>
               </div>
             </div>
@@ -456,7 +456,7 @@ function MasterPassword() {
                   className="text-[#EE3E4C] hover:text-[#EE3E4C] !bg-transparent h-14 text-base"
                   onClick={() => handlePasswordRemove()}
                 >
-                  消除
+                  重置
                 </Button>
               </div>
             </div>

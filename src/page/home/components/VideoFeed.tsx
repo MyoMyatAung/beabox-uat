@@ -437,7 +437,7 @@ const VideoFeed = ({
             {videosToRender.map((video: any, index: any) => (
               <div
                 key={index}
-                className="video1 pb-[70px]"
+                className={`video1 ${!hideNew ? "pb-[70px]" : ""}`}
                 data-post-id={video.post_id} // Add post ID to the container
               >
                 {video?.file_type !== "video" ? (

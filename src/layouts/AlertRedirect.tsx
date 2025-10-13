@@ -4,7 +4,7 @@ import logo from "../assets/alertlogo.webp";
 import closeIcon from "../assets/close.png";
 import { useDispatch } from "react-redux";
 import { setPlay } from "@/page/home/services/playSlice";
-import guide from '../assets/guide.webp';
+import guide from "../assets/guide.webp";
 const imageToBlob = (url: string, callback: (blobUrl: string) => void) => {
   fetch(url)
     .then((response) => response.blob())
@@ -26,12 +26,12 @@ const isWebClip = (): boolean => {
 const detectInAppBrowser = () => {
   const ua = navigator.userAgent.toLowerCase();
   return {
-    inWeChat: ua.indexOf('micromessenger') !== -1,
-    inAlipay: ua.indexOf('alipayclient') !== -1,
-    inWeibo: ua.indexOf('weibo') !== -1,
-    inQQ: ua.indexOf('qq/') !== -1,
-    inDouyin: ua.includes('douyin'),
-    inToutiao: ua.includes('newsarticle')
+    inWeChat: ua.indexOf("micromessenger") !== -1,
+    inAlipay: ua.indexOf("alipayclient") !== -1,
+    inWeibo: ua.indexOf("weibo") !== -1,
+    inQQ: ua.indexOf("qq/") !== -1,
+    inDouyin: ua.includes("douyin"),
+    inToutiao: ua.includes("newsarticle"),
   };
 };
 
@@ -85,11 +85,16 @@ const AlertRedirect: React.FC<AlertRedirectProps> = ({
 
   const handleDownloadClick = (e: React.MouseEvent) => {
     const browserInfo = detectInAppBrowser();
-    if (browserInfo.inWeChat || browserInfo.inAlipay || browserInfo.inWeibo || browserInfo.inQQ) {
+    if (
+      browserInfo.inWeChat ||
+      browserInfo.inAlipay ||
+      browserInfo.inWeibo ||
+      browserInfo.inQQ
+    ) {
       e.preventDefault();
       setShowInAppBrowserAlert(true);
     } else {
-      window.open(app_download_link, '_blank');
+      window.open(app_download_link, "_blank");
     }
   };
 
@@ -126,7 +131,7 @@ const AlertRedirect: React.FC<AlertRedirectProps> = ({
   // }, [setShowAlert]);
 
   return (
-    <div className=" bg-black/80 w-screen flex flex-col gap-[20px] justify-center items-center fixed top-0 z-[9999] alert-height">
+    <div className=" bg-black/80 w-screen flex flex-col gap-[20px] justify-center items-center fixed top-0 z-[999999] alert-height">
       <div className="absolute bottom-0 w-full bg-alert p-5" ref={alertRef}>
         {isWebClip() ? (
           <div className="flex justify-between items-center">
@@ -141,11 +146,7 @@ const AlertRedirect: React.FC<AlertRedirectProps> = ({
         <div className="flex flex-col mt-8 gap-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <img
-                src={logo}
-                alt=""
-                className="w-[50px] h-[50px]"
-              />
+              <img src={logo} alt="" className="w-[50px] h-[50px]" />
               <div>
                 <h1 className="alert-body-title">笔盒APP</h1>
                 <p className="alert-body-text">更多原创精品内容尽在笔盒</p>
@@ -164,18 +165,18 @@ const AlertRedirect: React.FC<AlertRedirectProps> = ({
           </div>
           {showInAppBrowserAlert && (
             <div className="fixed w-full h-screen bg-white z-[3000] top-0 left-0">
-            <div className="w-full z-[1300] absolute h-full flex justify-center items-center">
-              <div className="text-[14px] bg-white rounded-lg text-center relative max-w-md w-full">
-                <div className="relative w-full">
-                  <img
-                    src={guide}
-                    alt=""
-                    className="w-full h-dvh object-contain"
-                  />
+              <div className="w-full z-[1300] absolute h-full flex justify-center items-center">
+                <div className="text-[14px] bg-white rounded-lg text-center relative max-w-md w-full">
+                  <div className="relative w-full">
+                    <img
+                      src={guide}
+                      alt=""
+                      className="w-full h-dvh object-contain"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
           )}
           {/* Only show browser option if not used as a web clip */}
           {!isWebClip() && (

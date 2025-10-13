@@ -37,7 +37,7 @@ const DeleteDetailPopUp = ({ setShow, id, refetch, seteditPost }: any) => {
             onClick={() => handleDelete()}
             className="flex-1 text-[17px] text-[#C23033]"
           >
-            消除
+            重置
           </button>
         </div>
       </div>

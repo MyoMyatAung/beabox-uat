@@ -2,6 +2,7 @@ import { persistStore, persistReducer } from "redux-persist";
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import storage from "redux-persist/lib/storage";
 import counterSlice from "./slices/counterSlice";
+import appSlice from "./slices/appSlice";
 import profileSlice from "./slices/profileSlice";
 import { Storage } from "redux-persist";
 import { profileApi } from "./api/profileApi";
@@ -84,10 +85,11 @@ const persistPasswordSliceConfig = {
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["persist", "history", "explore", "unlike", "event"], // Reducers you want to persist
+  whitelist: ["persist", "history", "explore", "unlike", "event", "app"], // Reducers you want to persist
 };
 
 const rootReducer = combineReducers({
+  app: appSlice,
   count: counterSlice,
   [homeApi.reducerPath]: homeApi.reducer,
   profile: profileSlice,
