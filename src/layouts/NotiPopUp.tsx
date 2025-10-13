@@ -113,11 +113,15 @@ const markNotificationAsShown = (id: string): void => {
 
 const shouldShowNotification = (id: string): boolean => {
   const storage = getStorage();
-  const isNewId = !storage.shownIds.includes(id);
+  // const isNewId = !storage.shownIds.includes(id); --- IGNORE ---
+  // Show notifications on every app open (don't block by previously shown IDs).
+  // Still respect cooldown to avoid rapid repeats during the same session.
+  // --- IGNORE ---
+  //
   const isCooldownPassed =
     Date.now() - storage.lastShown >= NOTIFICATION_CONFIG.COOLDOWN_MS;
 
-  return isNewId && isCooldownPassed;
+  return isCooldownPassed;
 };
 
 // --- Notification Item Component ---

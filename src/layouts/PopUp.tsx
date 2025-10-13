@@ -113,117 +113,120 @@ const PopUp: React.FC<PopUpProps> = ({
 
   return (
     <>
-    {(currentImage || showAppContent) &&
-    <div className="h-screen bg-black/80 w-screen flex flex-col gap-[20px] justify-center items-center fixed top-0 z-[9999]">
-      {/* Start Image */}
-      {showStart && currentImage && (
-        <div className="w-[330px] flex flex-col gap-0 justify-center items-center">
-          <a
-            className="flex justify-center items-center index_start_popup_img"
-            target="_blank"
-            href={currentImage.jump_url}
-          >
-            <img
-              className="w-[260px] h-[390px] object-cover"
-              src={currentImage.image}
-              alt=""
-            />
-          </a>
-          <div
-            onClick={handleClose}
-            className="initial_popup_ad_box_close p-[9px] mt-4"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="23"
-              viewBox="0 0 24 23"
-              fill="none"
-            >
-              <path
-                d="M17.75 5.75L6.25 17.25"
-                stroke="white"
-                strokeWidth="1.49593"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M6.25 5.75L17.75 17.25"
-                stroke="white"
-                strokeWidth="1.49593"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </div>
-        </div>
-      )}
-
-      {/* apps */}
-      {!showStart && showAppContent && (
-        <div className="w-[330px] mb-20 flex flex-col gap-0 justify-center items-center">
-          <img src="https://zm-cloud.oss-cn-beijing.aliyuncs.com/aisou/61a27f94f64bbd267317.png" alt="" />
-          <div className="initial_popup_ad_box w-full h-[325px] overflow-hidden p-2">
-            <div className="h-full overflow-y-auto scrollbar-hide">
-              <div className="grid grid-cols-4 gap-2">
-                {ad?.map((app) => (
-                  <a
-                    key={app.id}
-                    href={app.url}
-                    target="_blank"
-                    className="flex flex-col justify-center items-center"
-                  >
-                    <div className="w-full aspect-square">
-                      <ImageWithSkeleton
-                        src={app?.image}
-                        alt="Ad"
-                        className="w-full h-full object-cover rounded-lg border border-[#222]"
-                        rounded={true}
-                      />
-                    </div>
-                    <h1 className="text-white text-[14px] mt-1 truncate w-full text-center">
-                      {app.title}
-                    </h1>
-                  </a>
-                ))}
+      {(currentImage || showAppContent) && (
+        <div className="h-screen bg-black/80 w-screen flex flex-col gap-[20px] justify-center items-center fixed top-0 z-[999999]">
+          {/* Start Image */}
+          {showStart && currentImage && (
+            <div className="w-[330px] flex flex-col gap-0 justify-center items-center">
+              <a
+                className="flex justify-center items-center index_start_popup_img"
+                target="_blank"
+                href={currentImage.jump_url}
+              >
+                <img
+                  className="w-[260px] h-[390px] object-cover"
+                  src={currentImage.image}
+                  alt=""
+                />
+              </a>
+              <div
+                onClick={handleClose}
+                className="initial_popup_ad_box_close p-[9px] mt-4"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="23"
+                  viewBox="0 0 24 23"
+                  fill="none"
+                >
+                  <path
+                    d="M17.75 5.75L6.25 17.25"
+                    stroke="white"
+                    strokeWidth="1.49593"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M6.25 5.75L17.75 17.25"
+                    stroke="white"
+                    strokeWidth="1.49593"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
               </div>
             </div>
-          </div>
-          <div
-            onClick={handleAppClose}
-            className="initial_popup_ad_box_close p-[9px] mt-4"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="23"
-              viewBox="0 0 24 23"
-              fill="none"
-            >
-              <path
-                d="M17.75 5.75L6.25 17.25"
-                stroke="white"
-                strokeWidth="1.49593"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+          )}
+
+          {/* apps */}
+          {!showStart && showAppContent && (
+            <div className="w-[330px] mb-20 flex flex-col gap-0 justify-center items-center">
+              <img
+                src="https://zm-cloud.oss-cn-beijing.aliyuncs.com/aisou/61a27f94f64bbd267317.png"
+                alt=""
               />
-              <path
-                d="M6.25 5.75L17.75 17.25"
-                stroke="white"
-                strokeWidth="1.49593"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </div>
+              <div className="initial_popup_ad_box w-full h-[325px] overflow-hidden p-2">
+                <div className="h-full overflow-y-auto scrollbar-hide">
+                  <div className="grid grid-cols-4 gap-2">
+                    {ad?.map((app) => (
+                      <a
+                        key={app.id}
+                        href={app.url}
+                        target="_blank"
+                        className="flex flex-col justify-center items-center"
+                      >
+                        <div className="w-full aspect-square">
+                          <ImageWithSkeleton
+                            src={app?.image}
+                            alt="Ad"
+                            className="w-full h-full object-cover rounded-lg border border-[#222]"
+                            rounded={true}
+                          />
+                        </div>
+                        <h1 className="text-white text-[14px] mt-1 truncate w-full text-center">
+                          {app.title}
+                        </h1>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div
+                onClick={handleAppClose}
+                className="initial_popup_ad_box_close p-[9px] mt-4"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="23"
+                  viewBox="0 0 24 23"
+                  fill="none"
+                >
+                  <path
+                    d="M17.75 5.75L6.25 17.25"
+                    stroke="white"
+                    strokeWidth="1.49593"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M6.25 5.75L17.75 17.25"
+                    stroke="white"
+                    strokeWidth="1.49593"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+            </div>
+          )}
+
+          {!showStart && !showAppContent && showNotice && NotList && (
+            <Notice handleNoticeClose={handleNoticeClose} notice={NotList} />
+          )}
         </div>
       )}
-
-      {!showStart && !showAppContent && showNotice && NotList && (
-        <Notice handleNoticeClose={handleNoticeClose} notice={NotList} />
-      )}
-    </div>
-    }
     </>
   );
 };

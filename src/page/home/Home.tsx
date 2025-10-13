@@ -151,7 +151,7 @@ const Home = () => {
 
   const isError = ForyouError || followError;
 
-  console.log('HOME.TSX', isError, ForyouError, followError);
+  console.log("HOME.TSX", isError, ForyouError, followError);
 
   const currentPage = currentTab === 0 ? page1 : page;
 
@@ -654,7 +654,6 @@ const Home = () => {
     >
       <div className="max-w-[1024px] home-main w-full">
         <TopNavbar currentTab={currentTab} onTabClick={handleTabClick} />
-
         <div className="app_home bg-[#16131C]">
           {isDecrypting && (
             <div className="app_home bg-[#16131C]">
@@ -743,7 +742,9 @@ const Home = () => {
 
                     <div
                       ref={videoContainerRef}
-                      className={`app__videos pb-[80px]  overflow-hidden 
+                      className={`app__videos ${
+                        !hideNew ? "pb-[80px]" : ""
+                      }  overflow-hidden 
                                   transition-all duration-300 ease-in-out transform ${
                                     showFollowers ? "mt-[400px]" : "mt-0"
                                   }`}
@@ -925,7 +926,7 @@ const Home = () => {
                   <>
                     <div
                       ref={videoContainerRef}
-                      className={`app__videos pb-[80px]`}
+                      className={`app__videos ${!hideNew ? "pb-[80px]" : ""}`}
                     >
                       {videos["foryou"]?.map((video: any, index: any) => {
                         return (

@@ -47,6 +47,8 @@ import PasswordSetUpPopUp from "./PasswordSetUpPopUp";
 import AnnouncementsPopUp from "./AnnouncementsPopUp";
 import { isIOSWebView } from "@/lib/deviceInfo";
 import NotiPopUp from "./NotiPopUp";
+import { sethideNew } from "@/page/home/services/hideNewSlice";
+import ImmersiveUserGuide from "@/components/ImmersiveUserGuide";
 // Function to check if the app is running in a WebView
 function isWebView() {
   return (
@@ -73,7 +75,6 @@ const RootLayout = ({ children }: any) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const isFirstTime = localStorage.getItem("isFirstTimeUser");
   const [event, setEvent] = useState(false);
   const [shownextBox, setshownextBox] = useState(false);
 
@@ -88,6 +89,7 @@ const RootLayout = ({ children }: any) => {
   const currentTab = useSelector((state: any) => state.home.currentTab);
   const hideBar = useSelector((state: RootState) => state.hideBarSlice.hideBar);
   const hideNew = useSelector((state: RootState) => state.hideNewSlice.hideNew);
+  const { isFirstTimeUser } = useSelector((state: any) => state.app);
   const [showEvent, setShowEvent] = useState(false);
   const { data: eventData } = useGetUserByReferalQuery(
     { referral_code: referCode }, // or safely cast if you're confident it's a string
@@ -163,12 +165,19 @@ const RootLayout = ({ children }: any) => {
     userHasClosedAnimation,
   ]);
 
+  useEffect(() => {
+    // If the user is first time user, the hideNew must be true
+    if (isFirstTimeUser) {
+      dispatch(sethideNew(true));
+    }
+  }, [dispatch, isFirstTimeUser]);
+
   // Check if ads have already been seen in this session
   useEffect(() => {
     const hasSeenAdPopUp = sessionStorage.getItem("hasSeenAdPopUp");
     const hasSeenLanding = sessionStorage.getItem("hasSeenLanding");
 
-    if (hasSeenAdPopUp && hasSeenLanding) {
+    if (hasSeenAdPopUp && hasSeenLanding && isFirstTimeUser) {
       // User has already seen ads in this session, skip loading and ads
       dispatch(setPlay(true));
       sendNativeEvent("beabox_home_started");
@@ -249,7 +258,6 @@ const RootLayout = ({ children }: any) => {
   // Handle when all ads are completed
   const handleAdComplete = () => {
     setShowAd(false);
-    // Ensure video plays after ads are completed
 
     if ((jumpUrl && showDialog) || event) {
       dispatch(setPlay(false));
@@ -435,10 +443,14 @@ const RootLayout = ({ children }: any) => {
 
         <AlertToast />
 
+        {isFirstTimeUser && !showAd && !showAlert && <ImmersiveUserGuide />}
+
         {isOpen ? <AuthDrawer /> : <></>}
-        <div className="fixed bottom-0 left-0 w-full z-[1600]">
-          <BottomNav />
-        </div>
+        {!hideNew && (
+          <div className="fixed bottom-0 left-0 w-full z-[1600]">
+            <BottomNav />
+          </div>
+        )}
 
         {!showAd &&
           // !showAlert &&

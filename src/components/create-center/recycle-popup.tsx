@@ -28,7 +28,7 @@ const RecyclePopup = ({
             }
             className="flex-1 text-[17px] text-[#C23033]"
           >
-            {action == "delete" ? "消除" : "恢复"}
+            {action == "delete" ? "重置" : "恢复"}
           </button>
         </div>
       </div>

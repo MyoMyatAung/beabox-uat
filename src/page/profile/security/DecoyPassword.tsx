@@ -150,7 +150,7 @@ function DecoyPassword() {
       setupType === "setup"
         ? "创建密码以打开应用程序的诱饵版本，从而增强隐私。请创建一个 6 位 PIN 码。仅限数字。"
         : "管理密码以打开应用程序的诱饵版本，从而获得更高的隐私性。创建一个 6 位 PIN 码。仅限数字。",
-    confirmBtnLabel: setupType === "setup" ? "确认" : "节省",
+    confirmBtnLabel: setupType === "setup" ? "确认" : "保存",
   };
 
   const isBtnDisabled =
@@ -323,7 +323,7 @@ function DecoyPassword() {
                       setShowRemoveDialog(true);
                     }}
                   >
-                    <p>消除</p>
+                    <p>重置</p>
                   </button>
                 )}
               </div>
@@ -393,7 +393,7 @@ function DecoyPassword() {
                   className="text-[#CD3EFF] hover:text-[#CD3EFF] !bg-transparent h-14 text-base"
                   onClick={() => handlePasswordChange(form.getValues())}
                 >
-                  改变
+                  确认
                 </Button>
               </div>
             </div>
@@ -462,7 +462,7 @@ function DecoyPassword() {
                   className="text-[#EE3E4C] hover:text-[#EE3E4C] !bg-transparent h-14 text-base"
                   onClick={() => handlePasswordRemove()}
                 >
-                  消除
+                  重置
                 </Button>
               </div>
             </div>
