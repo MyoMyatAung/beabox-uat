@@ -42,7 +42,7 @@ const ImmersiveUserGuide = () => {
   };
 
   return (
-    <div className="h-full bg-black/80 w-screen flex flex-col justify-center items-center gap-[20px] absolute top-0 z-[99998]">
+    <div className="h-full bg-black/80 w-screen flex flex-col justify-center items-center gap-[20px] absolute top-0 z-[9998]">
       {
         !hideNew && <div className="text-white text-xl flex flex-col items-center justify-center gap-2">
         <img src={ArrowUp} className="inline-block" />
