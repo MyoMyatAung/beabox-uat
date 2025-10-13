@@ -1507,11 +1507,11 @@ html {
 
 .immersive_video video {
     display: block;
-    filter:
+    /* filter:
       brightness(1.12)
       contrast(1.25)
       saturate(1.22)
-      hue-rotate(-6deg); /* 明显一点的偏粉色调 */
+      hue-rotate(-6deg); 明显一点的偏粉色调 */
     transition: filter 0.3s ease;
  }
 
