@@ -13,6 +13,31 @@ import { useSelector } from "react-redux";
 dayjs.locale("zh-cn");
 dayjs.extend(relativeTime);
 
+// Helper to parse various timestamp formats returned from backend
+// - ISO strings (e.g. 2025-08-05T14:27:49.000000Z)
+// - numeric milliseconds
+// - numeric seconds
+const parseTime = (t: string | number | undefined) => {
+  if (t === undefined || t === null) return dayjs();
+
+  // if it's a number already
+  if (typeof t === "number") {
+    const abs = Math.abs(t);
+    // heuristic: >= 13 digits -> milliseconds, else seconds
+    return String(abs).length >= 13 ? dayjs(t) : dayjs.unix(t);
+  }
+
+  // try numeric string
+  const n = Number(t);
+  if (!Number.isNaN(n)) {
+    const abs = Math.abs(n);
+    return String(abs).length >= 13 ? dayjs(n) : dayjs.unix(n);
+  }
+
+  // fallback: let dayjs parse the string (ISO will parse correctly)
+  return dayjs(String(t));
+};
+
 type RecordProps = {
   show: boolean;
   onClose: any;
@@ -118,7 +143,10 @@ export const Record: FC<RecordProps> = ({ show, onClose }) => {
         </div>
       );
     }
-
+    console.log(
+      'Spin wheel record dataList:',
+      dataList.map((i) => parseTime(i.created_at).fromNow())
+    );
     return (
       <div className="h-[280px] overflow-y-auto" id={`scrollableDiv-record`}>
         <InfiniteScroll
@@ -146,7 +174,7 @@ export const Record: FC<RecordProps> = ({ show, onClose }) => {
               </div>
               <div className="self-stretch flex-col justify-center items-end gap-1 inline-flex">
                 <div className="text-center text-black text-opacity-80 text-xs font-normal leading-[14.40px]">
-                  {dayjs.unix(item.create_time).fromNow()}
+                  {parseTime(item.created_at).fromNow()}
                 </div>
                 <div className="text-center text-black text-opacity-40 text-xs font-normal leading-[14.40px]">
                   消耗积分：{item.points_used}
