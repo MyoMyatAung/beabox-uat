@@ -443,7 +443,7 @@ const RootLayout = ({ children }: any) => {
 
         <AlertToast />
 
-        {isFirstTimeUser && !showAd && !showAlert && <ImmersiveUserGuide />}
+        {isFirstTimeUser && !showAd && (!showAlert || !showDialog) && <ImmersiveUserGuide />}
 
         {isOpen ? <AuthDrawer /> : <></>}
         {!hideNew && (
