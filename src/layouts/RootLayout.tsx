@@ -177,7 +177,7 @@ const RootLayout = ({ children }: any) => {
     const hasSeenAdPopUp = sessionStorage.getItem("hasSeenAdPopUp");
     const hasSeenLanding = sessionStorage.getItem("hasSeenLanding");
 
-    if (hasSeenAdPopUp && hasSeenLanding && isFirstTimeUser) {
+    if (hasSeenAdPopUp && hasSeenLanding) {
       // User has already seen ads in this session, skip loading and ads
       dispatch(setPlay(true));
       sendNativeEvent("beabox_home_started");
