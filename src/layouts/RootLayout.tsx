@@ -443,7 +443,9 @@ const RootLayout = ({ children }: any) => {
 
         <AlertToast />
 
-        {isFirstTimeUser && !showAd && (!showAlert || !showDialog) && <ImmersiveUserGuide />}
+        {isFirstTimeUser && !showAd && (!showAlert || !showDialog) && (
+          <ImmersiveUserGuide />
+        )}
 
         {isOpen ? <AuthDrawer /> : <></>}
         {!hideNew && (
@@ -541,7 +543,7 @@ const RootLayout = ({ children }: any) => {
             setShowPasswordSetUpPopUp={setShowPasswordSetUpPopUp}
           />
         )}
-        {!showAd && !showPasswordSetUpPopUp && location.pathname === "/" && (
+        {!showAd && !showPasswordSetUpPopUp && (
           <NotiPopUp notiMessage={notiMessage?.data} />
         )}
       </div>
