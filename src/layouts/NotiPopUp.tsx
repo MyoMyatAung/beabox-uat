@@ -104,9 +104,9 @@ const markNotificationAsShown = (id: string): void => {
   const newData: NotiStorage = {
     lastShown: Date.now(),
     shownIds: Array.from(new Set([...storage.shownIds, id])),
-    isReadForUnauthenticatedSystem: false,
-    isReadForUnauthenticatedCreator: false,
-    isReadForUnauthenticatedBalance: false,
+    isReadForUnauthenticatedSystem: storage.isReadForUnauthenticatedSystem,
+    isReadForUnauthenticatedCreator: storage.isReadForUnauthenticatedCreator,
+    isReadForUnauthenticatedBalance: storage.isReadForUnauthenticatedBalance,
   };
   saveStorage(newData);
 };
@@ -118,10 +118,14 @@ const shouldShowNotification = (id: string): boolean => {
   // Still respect cooldown to avoid rapid repeats during the same session.
   // --- IGNORE ---
   //
-  const isCooldownPassed =
-    Date.now() - storage.lastShown >= NOTIFICATION_CONFIG.COOLDOWN_MS;
-
-  return isCooldownPassed;
+  // const isCooldownPassed =
+  //   Date.now() - storage.lastShown >= NOTIFICATION_CONFIG.COOLDOWN_MS;
+  // return isCooldownPassed;
+  return (
+    !storage.isReadForUnauthenticatedSystem ||
+    !storage.isReadForUnauthenticatedCreator ||
+    !storage.isReadForUnauthenticatedBalance
+  );
 };
 
 // --- Notification Item Component ---
@@ -150,10 +154,9 @@ const NotificationItem: React.FC<{
 
     // Fade in effect
     useEffect(() => {
-      const showTimer = setTimeout(
-        () => setIsVisible(true),
-        NOTIFICATION_CONFIG.FADE_IN_DELAY
-      );
+      const showTimer = setTimeout(() => {
+        setIsVisible(true);
+      }, NOTIFICATION_CONFIG.FADE_IN_DELAY);
       timersRef.current.push(showTimer);
 
       return () => clearTimeout(showTimer);
@@ -368,6 +371,25 @@ const NotiPopUp: React.FC<NotiPopUpProps> = ({ notiMessage }) => {
     setNotification(null);
     navigate("/notifications");
   }, [navigate]);
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      const storage = getStorage();
+      const newData: NotiStorage = {
+        lastShown: Date.now(),
+        shownIds: storage.shownIds,
+        isReadForUnauthenticatedSystem: false,
+        isReadForUnauthenticatedCreator: false,
+        isReadForUnauthenticatedBalance: false,
+      };
+      saveStorage(newData);
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   // Don't render if no notification or still processing
   if (!notification || isProcessing) {

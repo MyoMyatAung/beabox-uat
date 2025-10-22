@@ -517,7 +517,8 @@ const DetailOneContainer = ({
       />
 
       {/* Rotate button - only show for non-ads landscape videos */}
-      {video?.type !== "ads" &&
+      {/* Currently commented out because no need this button in story feature */}
+      {/* {video?.type !== "ads" &&
         video?.files[0].width > video?.files[0].height &&
         !showRotate && (
           <button
@@ -554,7 +555,7 @@ const DetailOneContainer = ({
               <span>全屏</span>
             </div>
           </button>
-        )}
+        )} */}
     </>
   );
 };
