@@ -6,12 +6,13 @@ import React, {
   useRef,
 } from "react";
 import { X } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import BellIcon from "@/assets/icons/icon-bell.svg";
 import WalletIcon from "@/assets/icons/icon-wallet.svg";
 import TrophyIcon from "@/assets/icons/icon-trophy.svg";
 import { NOTIFICATION_CONFIG } from "@/constants/noti-constant";
+import { useSelector } from "react-redux";
 
 // --- Types ---
 interface Notification {
@@ -26,6 +27,7 @@ interface Notification {
 interface NotiStorage {
   lastShown: number;
   shownIds: string[];
+  isReadForAuthenticatedUser: boolean;
   isReadForUnauthenticatedSystem: boolean;
   isReadForUnauthenticatedCreator: boolean;
   isReadForUnauthenticatedBalance: boolean;
@@ -49,6 +51,7 @@ const getStorage = (): NotiStorage => {
     const defaultData: NotiStorage = {
       lastShown: 0,
       shownIds: [],
+      isReadForAuthenticatedUser: false,
       isReadForUnauthenticatedSystem: false,
       isReadForUnauthenticatedCreator: false,
       isReadForUnauthenticatedBalance: false,
@@ -75,6 +78,7 @@ const getStorage = (): NotiStorage => {
     return {
       lastShown: 0,
       shownIds: [],
+      isReadForAuthenticatedUser: false,
       isReadForUnauthenticatedSystem: false,
       isReadForUnauthenticatedCreator: false,
       isReadForUnauthenticatedBalance: false,
@@ -104,6 +108,7 @@ const markNotificationAsShown = (id: string): void => {
   const newData: NotiStorage = {
     lastShown: Date.now(),
     shownIds: Array.from(new Set([...storage.shownIds, id])),
+    isReadForAuthenticatedUser: storage.isReadForAuthenticatedUser,
     isReadForUnauthenticatedSystem: storage.isReadForUnauthenticatedSystem,
     isReadForUnauthenticatedCreator: storage.isReadForUnauthenticatedCreator,
     isReadForUnauthenticatedBalance: storage.isReadForUnauthenticatedBalance,
@@ -111,7 +116,7 @@ const markNotificationAsShown = (id: string): void => {
   saveStorage(newData);
 };
 
-const shouldShowNotification = (id: string): boolean => {
+const shouldShowNotification = (id: string, user?: any): boolean => {
   const storage = getStorage();
   // const isNewId = !storage.shownIds.includes(id); --- IGNORE ---
   // Show notifications on every app open (don't block by previously shown IDs).
@@ -121,6 +126,10 @@ const shouldShowNotification = (id: string): boolean => {
   // const isCooldownPassed =
   //   Date.now() - storage.lastShown >= NOTIFICATION_CONFIG.COOLDOWN_MS;
   // return isCooldownPassed;
+  if (user.token) {
+    return storage.isReadForAuthenticatedUser;
+  }
+
   return (
     !storage.isReadForUnauthenticatedSystem ||
     !storage.isReadForUnauthenticatedCreator ||
@@ -286,6 +295,8 @@ NotificationItem.displayName = "NotificationItem";
 
 // --- Main Popup Component ---
 const NotiPopUp: React.FC<NotiPopUpProps> = ({ notiMessage }) => {
+  const location = useLocation();
+  const user = useSelector((state: any) => state.persist.user);
   const [notification, setNotification] = useState<Notification | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const navigate = useNavigate();
@@ -338,7 +349,7 @@ const NotiPopUp: React.FC<NotiPopUpProps> = ({ notiMessage }) => {
       const mapped = mapApiToNotification(firstNoti);
 
       // Check if we should show this notification
-      if (shouldShowNotification(mapped.id)) {
+      if (shouldShowNotification(mapped.id, user)) {
         setNotification(mapped);
         markNotificationAsShown(mapped.id);
       }
@@ -373,11 +384,29 @@ const NotiPopUp: React.FC<NotiPopUpProps> = ({ notiMessage }) => {
   }, [navigate]);
 
   useEffect(() => {
+    const storage = getStorage();
+    if (user?.token && location.pathname === "/") {
+      const newData: NotiStorage = {
+        lastShown: Date.now(),
+        shownIds: storage.shownIds,
+        isReadForAuthenticatedUser: true,
+        isReadForUnauthenticatedSystem: storage.isReadForUnauthenticatedSystem,
+        isReadForUnauthenticatedCreator:
+          storage.isReadForUnauthenticatedCreator,
+        isReadForUnauthenticatedBalance:
+          storage.isReadForUnauthenticatedBalance,
+      };
+      saveStorage(newData);
+    }
+  }, [location.pathname, user?.token]);
+
+  useEffect(() => {
     const handleBeforeUnload = () => {
       const storage = getStorage();
       const newData: NotiStorage = {
         lastShown: Date.now(),
         shownIds: storage.shownIds,
+        isReadForAuthenticatedUser: false,
         isReadForUnauthenticatedSystem: false,
         isReadForUnauthenticatedCreator: false,
         isReadForUnauthenticatedBalance: false,
