@@ -54,7 +54,6 @@ const decryptImage = async (
 };
 
 const RankingCard = ({ data, refetch }: { data: any; refetch: any }) => {
-  const user = useSelector((state: any) => state?.persist?.user);
   // console.log(data?.is_followed);
   const followStatus =
     useSelector((state: any) => state.follow.status) ?? data?.is_followed;
@@ -62,9 +61,6 @@ const RankingCard = ({ data, refetch }: { data: any; refetch: any }) => {
   const [decryptedPhoto, setDecryptedPhoto] = useState("");
   const me = useSelector((state: any) => state?.persist?.user?.id);
   const isFollowed = followStatus[data?.id] ?? data?.is_followed;
-  function formatToK(number: any) {
-    return (number / 1000).toFixed(2) + "k";
-  }
   useEffect(() => {
     const loadAndDecryptPhoto = async () => {
       if (!data?.photo) {
@@ -142,13 +138,23 @@ const RankingCard = ({ data, refetch }: { data: any; refetch: any }) => {
 
 export const RankingCardVideo = ({
   data,
-  refetch,
+  onVideoClick,
 }: {
   data: any;
   refetch: any;
+  onVideoClick?: (videoId: string) => void;
 }) => {
+  const handleClick = () => {
+    if (onVideoClick && data?.post_id) {
+      onVideoClick(data.post_id);
+    }
+  };
+
   return (
-    <div className="w-full flex justify-between items-center py-1 gap-x-2">
+    <div 
+      className="w-full flex justify-between items-center py-1 gap-x-2 cursor-pointer"
+      onClick={handleClick}
+    >
       <div className="bg-gray-200 aspect-square w-20 rounded-[6px] flex-shrink-0">
         <ImageWithPlaceholder1
           src={data?.preview_image}

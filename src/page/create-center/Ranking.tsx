@@ -22,6 +22,7 @@ import RankingLoadMore from "@/components/shared/ranking-load-more";
 import { cn } from "@/lib/utils";
 import Top3Video from "@/components/ranking/top3-video";
 import OtherRankVideo from "@/components/ranking/other-rank-video";
+import VideoRankFeed from "@/components/ranking/video-rank-feed";
 
 const ranges = [
   { value: "today", title: "今日" },
@@ -46,6 +47,16 @@ const Ranking = () => {
   const [cachedDownloadLink, setCachedDownloadLink] = useState(null);
   const [shareInfo] = useShareInfoMutation();
   const [ads, setAds] = useState<any>([]);
+  
+  // Video feed states
+  const [showVideoFeed, setShowVideoFeed] = useState(false);
+  const [currentActiveVideoId, setCurrentActiveVideoId] = useState<string | null>(null);
+  
+  // Handle video card click to open feed
+  const handleVideoCardClick = (videoId: string) => {
+    setCurrentActiveVideoId(videoId);
+    setShowVideoFeed(true);
+  };
 
   const {
     data: userData,
@@ -402,7 +413,7 @@ const Ranking = () => {
             <Top3 rankingData={rankingList} refetch={refetch} />
           )}
           {selectedTab === "video" && (
-            <Top3Video rankingData={videoRankingList} />
+            <Top3Video rankingData={videoRankingList} onVideoClick={handleVideoCardClick} />
           )}
         </div>
         <div ref={headerRef} className="w-full"></div>
@@ -573,6 +584,7 @@ const Ranking = () => {
                 <OtherRankVideo
                   data={videoRankingList}
                   refetch={videoRefetch}
+                  onVideoClick={handleVideoCardClick}
                 />
               ) : (
                 <div className="w-full flex justify-center items-center my-20">
@@ -600,6 +612,21 @@ const Ranking = () => {
         <div className="h-[68px]"></div>
       </div>
       <div className="py-8"></div>
+      
+      {/* Video Feed Modal */}
+      {showVideoFeed && (
+        <div className="fixed inset-0 z-[10000] bg-black">
+          <VideoRankFeed
+            videos={videoRankingList}
+            currentActiveId={currentActiveVideoId}
+            setShowVideoFeed={setShowVideoFeed}
+            query="视频排行榜"
+            setVideos={setVideoRankingList}
+            setPage={setVideoPage}
+            search={false}
+          />
+        </div>
+      )}
     </div>
   );
 };

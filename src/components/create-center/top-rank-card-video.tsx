@@ -6,17 +6,24 @@ import AvatarImage from "../avatar/avatar-image";
 import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder";
 import ImageWithPlaceholder1 from "@/page/explore/comp/ImgPlaceHolder1";
 
-function TopRankCardVideo({ data, rank }: { data: any; rank: any }) {
+function TopRankCardVideo({ data, rank, onVideoClick }: { data: any; rank: any; onVideoClick?: (videoId: string) => void }) {
+  const handleClick = () => {
+    if (onVideoClick && data?.post_id) {
+      onVideoClick(data.post_id);
+    }
+  };
+
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center z-50 rounded-[8px] relative w-[110px] h-[160px] overflow-hidden",
+        "flex flex-col items-center justify-center z-50 rounded-[8px] relative w-[110px] h-[160px] overflow-hidden cursor-pointer",
         {
           rank1: rank == 1,
           rank2: rank == 2,
           rank3: rank == 3,
         }
       )}
+      onClick={handleClick}
     >
       <ImageWithPlaceholder1
         src={data?.preview_image}
