@@ -4,9 +4,10 @@ import Loader from "@/components/shared/loader";
 import {
   useGetConfigQuery,
   useGetTopCreatorQuery,
+  useGetTopVideoQuery,
 } from "@/store/api/createCenterApi";
 import { useGetExploreHeaderQuery } from "@/store/api/explore/exploreApi";
-import { UsersRound } from "lucide-react";
+import { UsersRound, ImagePlayIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import {
@@ -18,6 +19,9 @@ import loader from "@/page/home/vod_loader.gif";
 import OtherRank from "@/components/ranking/other-rank";
 import { useGetUserShareQuery } from "../home/services/homeApi";
 import RankingLoadMore from "@/components/shared/ranking-load-more";
+import { cn } from "@/lib/utils";
+import Top3Video from "@/components/ranking/top3-video";
+import OtherRankVideo from "@/components/ranking/other-rank-video";
 
 const ranges = [
   { value: "today", title: "今日" },
@@ -29,9 +33,13 @@ const ranges = [
 const Ranking = () => {
   const user = useSelector((state: any) => state?.persist?.user);
   const id = user?.id;
+  const [selectedTab, setSelectedTab] = useState<string>("video");
   const [rankingList, setRankingList] = useState<any>([]);
+  const [videoRankingList, setVideoRankingList] = useState<any>([]);
   const [totalData, setTotalData] = useState<number>(0);
+  const [totalVideoData, setTotalVideoData] = useState<number>(0);
   const [hasMore, setHasMore] = useState(true);
+  const [hasMoreVideo, setHasMoreVideo] = useState(true);
   const [showHeader, setShowHeader] = useState(false);
   const headerRef = useRef<any>(null);
   const [isCopied2, setIsCopied2] = useState(false);
@@ -54,7 +62,8 @@ const Ranking = () => {
     qr_code: 0,
   });
 
-  const { data: exploreData, isLoading: exploreLoading } = useGetExploreHeaderQuery("");
+  const { data: exploreData, isLoading: exploreLoading } =
+    useGetExploreHeaderQuery("");
 
   useEffect(() => {
     if (shareData?.data?.link) {
@@ -126,25 +135,63 @@ const Ranking = () => {
   };
 
   const [page, setPage] = useState(1);
+  const [videoPage, setVideoPage] = useState(1);
   const [selectedRange, setSelectedRange] = useState({
     value: "today",
     title: "今日",
   });
   const [selectedType, setSelectedType] = useState<any>({});
+  const [selectedVideoTag, setSelectedVideoTag] = useState<string>("");
   const { data: configData, isLoading: loading1 } = useGetConfigQuery({});
-  const { data, isLoading, refetch, isFetching } = useGetTopCreatorQuery({
-    page,
-    type: selectedRange?.value,
-    tag: selectedType?.keyword,
-    token: user?.token,
-  });
+  const {
+    data: creatorData,
+    isLoading: isCreatorLoading,
+    refetch,
+    isFetching,
+  } = useGetTopCreatorQuery(
+    {
+      page,
+      type: selectedRange?.value,
+      tag: selectedType?.keyword,
+      token: user?.token,
+    },
+    {
+      skip: selectedTab !== "author",
+    }
+  );
+  const {
+    data: videoData,
+    isLoading: isVideoLoading,
+    refetch: videoRefetch,
+    isFetching: isVideoFetching,
+  } = useGetTopVideoQuery(
+    {
+      page: videoPage,
+      rank: selectedType?.keyword,
+      tag: selectedVideoTag,
+      type: selectedRange?.value,
+      token: user?.token,
+    },
+    {
+      skip:
+        selectedTab !== "video" ||
+        !selectedType.keyword ||
+        !selectedVideoTag ||
+        !selectedRange.value,
+    }
+  );
+
   useEffect(() => {
-    if (
-      configData?.status &&
-      configData?.data?.creator_center_ranking_filter?.length
-    )
-      setSelectedType(configData?.data?.creator_center_ranking_filter[0]);
+    if (configData?.status) {
+      if (configData?.data?.creator_center_ranking_filter?.length)
+        setSelectedType(configData?.data?.creator_center_ranking_filter[0]);
+      if (configData?.data?.top_video_tags) {
+        const tags = configData?.data?.top_video_tags.split(",");
+        setSelectedVideoTag(tags?.[0] || "");
+      }
+    }
   }, [configData]);
+
   useEffect(() => {
     const handleScroll = () => {
       if (headerRef.current) {
@@ -178,33 +225,75 @@ const Ranking = () => {
   };
 
   useEffect(() => {
-    setPage(1); // Reset pagination
-    setRankingList([]); // Clear existing ranking data
-    setHasMore(true); // Reset infinite scroll
-  }, [selectedRange, selectedType]);
+    if (
+      totalVideoData <= videoRankingList.length ||
+      videoRankingList.length < 20
+    ) {
+      setHasMoreVideo(false);
+    } else {
+      setHasMoreVideo(true);
+    }
+  }, [totalVideoData, videoRankingList]);
+
+  const fetchMoreVideoData = () => {
+    if (hasMoreVideo && !isVideoFetching) {
+      // Prevent duplicate requests
+      setVideoPage((prev) => prev + 1);
+    }
+  };
 
   useEffect(() => {
-    if (data?.data?.list) {
+    setPage(1); // Reset pagination
+    setVideoPage(1);
+    setRankingList([]); // Clear existing ranking data
+    setVideoRankingList([]); // Clear existing video ranking data
+    setHasMore(true); // Reset infinite scroll
+    setHasMoreVideo(true); // Reset video infinite scroll
+  }, [selectedRange, selectedType, selectedVideoTag]);
+
+  useEffect(() => {
+    if (creatorData?.data?.list) {
       if (page === 1) {
         // Replace the list when page is 1 (new filter or initial load)
-        setRankingList(data.data.list);
+        setRankingList(creatorData.data.list);
       } else {
         // Filter out duplicates before adding new data
-        const newItems = data.data.list.filter(
+        const newItems = creatorData.data.list.filter(
           (newItem: any) =>
             !rankingList.some((item: any) => item.id === newItem.id)
         );
         setRankingList((prev: any) => [...prev, ...newItems]);
       }
-      setTotalData(data?.pagination?.total);
+      setTotalData(creatorData?.pagination?.total);
     }
-  }, [data]);
+  }, [creatorData]);
+
+  useEffect(() => {
+    if (videoData?.data) {
+      if (videoPage === 1) {
+        // Replace the list when page is 1 (new filter or initial load)
+        setVideoRankingList(videoData.data);
+      } else {
+        // Filter out duplicates before adding new data
+        setVideoRankingList((prev: any) => {
+          const newItems = videoData.data.filter(
+            (newItem: any) =>
+              !prev.some((item: any) => item.post_id === newItem.post_id)
+          );
+          return [...prev, ...newItems];
+        });
+      }
+      setTotalVideoData(videoData?.pagination?.total);
+    }
+  }, [videoData]);
 
   useEffect(() => {
     return () => {
       // Reset state when component unmounts
       setRankingList([]);
+      setVideoRankingList([]);
       setPage(1);
+      setVideoPage(1);
     };
   }, []);
 
@@ -212,8 +301,10 @@ const Ranking = () => {
     // Reset page and refetch when token changes
     if (user?.token) {
       setPage(1);
+      setVideoPage(1);
       setRankingList([]);
-      refetch();
+      setVideoRankingList([]);
+      // refetch();
     }
   }, [user?.token, refetch]);
 
@@ -221,7 +312,14 @@ const Ranking = () => {
     if (page == 6) setHasMore(false);
   }, [page]);
 
-  if (loading1 && isLoading && page === 1) return <Loader />;
+  if (
+    loading1 &&
+    isCreatorLoading &&
+    isVideoLoading &&
+    page === 1 &&
+    videoPage === 1
+  )
+    return <Loader />;
 
   return (
     <div className="">
@@ -242,7 +340,47 @@ const Ranking = () => {
       <div className="relative z-50">
         <div className="pt-5 z-50 flex justify-between items-center">
           <h1 className="text-[18px] opacity-0 text-center">排行榜</h1>
-          <h1 className="text-[18px] text-center">排行榜</h1>
+          <div className="flex items-start gap-x-6 h-11">
+            {[
+              {
+                key: "video",
+                label: "内容热榜",
+                defaultColor: "text-gray-200",
+              },
+              {
+                key: "author",
+                label: "作者热榜",
+                defaultColor: "text-gray-300",
+              },
+            ].map((tab) => (
+              <div
+                key={tab.key}
+                className="flex flex-col gap-y-2 items-center cursor-pointer"
+                onClick={() => setSelectedTab(tab.key)}
+              >
+                <h1
+                  className={cn(
+                    "text-center text-xl transition-all duration-300 ease-in-out",
+                    tab.defaultColor,
+                    {
+                      "text-white font-bold text-2xl": selectedTab === tab.key,
+                    }
+                  )}
+                >
+                  {tab.label}
+                </h1>
+                <div
+                  className={cn(
+                    "h-[3px] w-7 bg-white rounded-full transition-all duration-300 ease-in-out",
+                    {
+                      "opacity-100 scale-100": tab.key === selectedTab,
+                      "opacity-0 scale-75": tab.key !== selectedTab,
+                    }
+                  )}
+                />
+              </div>
+            ))}
+          </div>
           <div onClick={() => handleCopy2()} className="new_share_button mr-3">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -259,8 +397,13 @@ const Ranking = () => {
             </svg>
           </div>
         </div>
-        <div className={`pb-5}`}>
-          <Top3 rankingData={rankingList} refetch={refetch} />
+        <div className={`pb-5`}>
+          {selectedTab === "author" && (
+            <Top3 rankingData={rankingList} refetch={refetch} />
+          )}
+          {selectedTab === "video" && (
+            <Top3Video rankingData={videoRankingList} />
+          )}
         </div>
         <div ref={headerRef} className="w-full"></div>
         <div className="bg-[#191721] z-50 sticky top-0">
@@ -272,7 +415,10 @@ const Ranking = () => {
             {exploreLoading ? (
               <div className="grid grid-cols-6 gap-[20px]">
                 {[...Array(12)].map((_, index) => (
-                  <div key={index} className="w-[56px] h-[53px] rounded-md bg-white/20 animate-pulse"></div>
+                  <div
+                    key={index}
+                    className="w-[56px] h-[53px] rounded-md bg-white/20 animate-pulse"
+                  ></div>
                 ))}
               </div>
             ) : (
@@ -299,10 +445,7 @@ const Ranking = () => {
             )}
           </div>
 
-          <div
-            className={`w-full ${showHeader ? "ccbg2 z-50 pb-1" : ""
-              }`}
-          >
+          <div className={`w-full pb-1 ${showHeader ? "ccbg2 z-50" : ""}`}>
             {showHeader ? (
               <div className="pt-5 z-50 animate-fade-in">
                 <h1 className="text-[18px] text-center">排行榜</h1>
@@ -313,46 +456,67 @@ const Ranking = () => {
 
             <div className="flex items-center gap-4 px-2">
               {configData?.data?.creator_center_ranking_filter?.map(
-                (tag: any) => (
+                (rank: any) => (
                   <div
                     className="flex flex-col justify-center items-center gap-3"
-                    key={tag?.title}
+                    key={rank?.title}
                   >
                     <div className="w-[58px] h-[3px] rounded-[1px] bg-transparent"></div>
                     <button
                       onClick={() => {
-                        setSelectedType(tag);
+                        setSelectedType(rank);
                         setSelectedRange({
                           value: "today",
                           title: "今日",
                         });
                       }}
-                      className={`text-[14px] ${selectedType?.keyword == tag?.keyword
+                      className={`text-[14px] ${
+                        selectedType?.keyword == rank?.keyword
                           ? "text-white"
                           : "text-[#999]"
-                        }`}
+                      }`}
                     >
-                      {tag?.title}
+                      {rank?.title}
                     </button>
                     <div
-                      className={`w-[58px] h-[3px] rounded-[1px] ${selectedType?.keyword == tag?.keyword
+                      className={`w-[58px] h-[3px] rounded-[1px] ${
+                        selectedType?.keyword == rank?.keyword
                           ? "bg-[#CD3EFF]"
                           : "bg-transparent"
-                        } `}
+                      } `}
                     ></div>
                   </div>
                 )
               )}
             </div>
             <div className="w-full h-[1px] bg-[#FFFFFF05]"></div>
+            {selectedTab === "video" && (
+              <div className="flex my-3 px-2 items-center gap-2 top-0">
+                {configData?.data?.top_video_tags
+                  .split(",")
+                  ?.map((tag: any) => (
+                    <button
+                      onClick={() => setSelectedVideoTag(tag)}
+                      className={`text-[14px] ${
+                        selectedVideoTag == tag
+                          ? "text-white bg-[#CD3EFF]"
+                          : "text-[#999] bg-[#FFFFFF05]"
+                      } px-5 py-1 text-center rounded-full`}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+              </div>
+            )}
             <div className="flex my-3 px-2 items-center gap-2 top-0">
               {ranges?.map((range: any) => (
                 <button
                   onClick={() => setSelectedRange(range)}
-                  className={`text-[14px] ${selectedRange?.value == range?.value
-                      ? "text-white bg-[#FFFFFF1F]"
+                  className={`text-[14px] ${
+                    selectedRange?.value == range?.value
+                      ? "text-white bg-[#CD3EFF]"
                       : "text-[#999] bg-[#FFFFFF05]"
-                    } px-5 py-1 text-center rounded-full`}
+                  } px-5 py-1 text-center rounded-full`}
                 >
                   {range?.title}
                 </button>
@@ -361,33 +525,79 @@ const Ranking = () => {
           </div>
         </div>
 
-        <div className="px-5 py-5 space-y-4 sticky">
-          {isFetching && page == 1 ? (
-            <div className="flex w-full items-center justify-center pt-[100px]">
-              <img src={loader} alt="" className="w-12" />
+        {selectedTab === "author" && (
+          <>
+            <div className="px-5 py-5 space-y-4 sticky">
+              {isFetching && page == 1 ? (
+                <div className="flex w-full items-center justify-center my-20">
+                  <img src={loader} alt="" className="w-12" />
+                </div>
+              ) : rankingList?.length > 3 ? (
+                <OtherRank data={rankingList} refetch={refetch} />
+              ) : (
+                <div className="w-full flex justify-center items-center my-20">
+                  <div className="flex flex-col justify-center items-center gap-3">
+                    <UsersRound className="text-[#888888]" />
+                    <p className="text-[14px] text-[#888888]">
+                      当前没有创作者展示
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
-          ) : rankingList?.length > 3 ? (
-            <OtherRank data={rankingList} refetch={refetch} />
-          ) : (
-            <div className="w-full flex justify-center items-center mt-[100px]">
-              <div className="flex flex-col justify-center items-center gap-3">
-                <UsersRound className="text-[#888888]" />
-                <p className="text-[14px] text-[#888888]">当前没有创作者展示</p>
-              </div>
-            </div>
-          )}
-        </div>
-        {page !== 6 ? (
-          <RankingLoadMore
-            userFetching={userFetching}
-            data={rankingList}
-            fetchData={fetchMoreData}
-            hasMore={hasMore}
-          />
-        ) : (
-          <></>
+            {page !== 6 ? (
+              <RankingLoadMore
+                userFetching={userFetching}
+                data={rankingList}
+                fetchData={fetchMoreData}
+                hasMore={hasMore}
+              />
+            ) : (
+              <></>
+            )}
+            {user?.token ? (
+              <MyRankCard myrank={creatorData?.data?.my_rank} />
+            ) : (
+              <></>
+            )}
+          </>
         )}
-        {user?.token ? <MyRankCard myrank={data?.data?.my_rank} /> : <></>}
+        {selectedTab === "video" && (
+          <>
+            <div className="px-5 py-5 space-y-4 sticky">
+              {isVideoFetching && videoPage == 1 ? (
+                <div className="flex w-full items-center justify-center my-20">
+                  <img src={loader} alt="" className="w-12" />
+                </div>
+              ) : videoRankingList?.length > 3 ? (
+                <OtherRankVideo
+                  data={videoRankingList}
+                  refetch={videoRefetch}
+                />
+              ) : (
+                <div className="w-full flex justify-center items-center my-20">
+                  <div className="flex flex-col justify-center items-center gap-3">
+                    <ImagePlayIcon className="text-[#888888]" />
+                    <p className="text-[14px] text-[#888888]">
+                      目前没有显示内容
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+            {videoPage !== 6 ? (
+              <RankingLoadMore
+                userFetching={isVideoFetching}
+                data={videoRankingList}
+                fetchData={fetchMoreVideoData}
+                hasMore={hasMoreVideo}
+              />
+            ) : (
+              <></>
+            )}
+          </>
+        )}
+        <div className="h-[68px]"></div>
       </div>
       <div className="py-8"></div>
     </div>
