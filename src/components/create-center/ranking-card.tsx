@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import FollowBtn from "../profile/follow-btn";
 import davatar from "@/assets/davatar.png";
-import ImageWithPlaceholder1 from "@/page/explore/comp/ImgPlaceHolder1";
+import ImageWithPlaceholder from "./img-with-placeholder";
 
 const decryptImage = async (
   arrayBuffer: any,
@@ -151,17 +151,18 @@ export const RankingCardVideo = ({
   };
 
   return (
-    <div 
+    <div
       className="w-full flex justify-between items-center py-1 gap-x-2 cursor-pointer"
       onClick={handleClick}
     >
-      <div className="bg-gray-200 aspect-square w-20 rounded-[6px] flex-shrink-0">
-        <ImageWithPlaceholder1
+      <div className="aspect-square w-20 h-20 rounded-[6px] flex-shrink-0">
+        <ImageWithPlaceholder
           src={data?.preview_image}
-          width={""}
-          height={""}
           alt={data?.title || "Video"}
-          className={`w-full relative aspect-square rounded-[6px] object-cover`}
+          width="100%"
+          height="100%"
+          className="rounded-[6px]"
+          useBlurBackground={true}
         />
       </div>
       <div className="flex flex-col w-full">
@@ -177,7 +178,22 @@ export const RankingCardVideo = ({
             />
             <p className="text-xs font-medium">{data?.user?.name}</p>
           </div>
-          <p className="text-xs">{data?.like_count} likes</p>
+          <div className="flex items-center gap-x-1">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="13"
+              height="12"
+              viewBox="0 0 13 12"
+              fill="none"
+            >
+              <path
+                d="M8.56675 1.13281C7.53401 1.13281 6.6298 1.57692 6.06616 2.32759C5.50253 1.57692 4.59832 1.13281 3.56557 1.13281C2.74349 1.13374 1.95535 1.46072 1.37405 2.04202C0.792751 2.62332 0.46577 3.41146 0.464844 4.23354C0.464844 7.73437 5.65557 10.568 5.87662 10.6851C5.93488 10.7164 6.00001 10.7328 6.06616 10.7328C6.13232 10.7328 6.19745 10.7164 6.25571 10.6851C6.47676 10.568 11.6675 7.73437 11.6675 4.23354C11.6666 3.41146 11.3396 2.62332 10.7583 2.04202C10.177 1.46072 9.38883 1.13374 8.56675 1.13281Z"
+                stroke="#BBBBBB"
+                strokeWidth="0.8"
+              />
+            </svg>
+            <p className="text-xs">{data?.like_count} likes</p>
+          </div>
         </div>
       </div>
     </div>

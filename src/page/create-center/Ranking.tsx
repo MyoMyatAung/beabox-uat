@@ -44,14 +44,21 @@ const Ranking = () => {
   const [showHeader, setShowHeader] = useState(false);
   const headerRef = useRef<any>(null);
   const [isCopied2, setIsCopied2] = useState(false);
+
+  // Scroll refs for scroll-to-top functionality
+  const otherRankRef = useRef<HTMLDivElement>(null);
+  const otherRankVideoRef = useRef<HTMLDivElement>(null);
+  const pageContainerRef = useRef<HTMLDivElement>(null);
   const [cachedDownloadLink, setCachedDownloadLink] = useState(null);
   const [shareInfo] = useShareInfoMutation();
   const [ads, setAds] = useState<any>([]);
-  
+
   // Video feed states
   const [showVideoFeed, setShowVideoFeed] = useState(false);
-  const [currentActiveVideoId, setCurrentActiveVideoId] = useState<string | null>(null);
-  
+  const [currentActiveVideoId, setCurrentActiveVideoId] = useState<
+    string | null
+  >(null);
+
   // Handle video card click to open feed
   const handleVideoCardClick = (videoId: string) => {
     setCurrentActiveVideoId(videoId);
@@ -260,6 +267,24 @@ const Ranking = () => {
     setVideoRankingList([]); // Clear existing video ranking data
     setHasMore(true); // Reset infinite scroll
     setHasMoreVideo(true); // Reset video infinite scroll
+
+    // Instantly scroll to top for immediate user feedback
+    // Use instant scrolling for the most responsive user experience
+    window.scrollTo({ top: 0, behavior: "instant" });
+
+    // Also scroll page container if it exists
+    if (pageContainerRef.current) {
+      pageContainerRef.current.scrollTo({ top: 0, behavior: "instant" });
+    }
+
+    // Reset ranking section scroll positions immediately
+    if (otherRankRef.current) {
+      otherRankRef.current.scrollTo({ top: 0, behavior: "instant" });
+    }
+
+    if (otherRankVideoRef.current) {
+      otherRankVideoRef.current.scrollTo({ top: 0, behavior: "instant" });
+    }
   }, [selectedRange, selectedType, selectedVideoTag]);
 
   useEffect(() => {
@@ -333,7 +358,7 @@ const Ranking = () => {
     return <Loader />;
 
   return (
-    <div className="">
+    <div ref={pageContainerRef} className="">
       <div className="ccbg fixed top-0 left-0 "></div>
       {isCopied2 ? (
         <div className="fixed w-full h-screen bg-[#000000CC]  z-[3000] top-0 left-0">
@@ -413,7 +438,10 @@ const Ranking = () => {
             <Top3 rankingData={rankingList} refetch={refetch} />
           )}
           {selectedTab === "video" && (
-            <Top3Video rankingData={videoRankingList} onVideoClick={handleVideoCardClick} />
+            <Top3Video
+              rankingData={videoRankingList}
+              onVideoClick={handleVideoCardClick}
+            />
           )}
         </div>
         <div ref={headerRef} className="w-full"></div>
@@ -538,7 +566,7 @@ const Ranking = () => {
 
         {selectedTab === "author" && (
           <>
-            <div className="px-5 py-5 space-y-4 sticky">
+            <div ref={otherRankRef} className="px-5 py-5 space-y-4 sticky">
               {isFetching && page == 1 ? (
                 <div className="flex w-full items-center justify-center my-20">
                   <img src={loader} alt="" className="w-12" />
@@ -575,7 +603,7 @@ const Ranking = () => {
         )}
         {selectedTab === "video" && (
           <>
-            <div className="px-5 py-5 space-y-4 sticky">
+            <div ref={otherRankVideoRef} className="px-5 py-5 space-y-4 sticky">
               {isVideoFetching && videoPage == 1 ? (
                 <div className="flex w-full items-center justify-center my-20">
                   <img src={loader} alt="" className="w-12" />
@@ -612,7 +640,7 @@ const Ranking = () => {
         <div className="h-[68px]"></div>
       </div>
       <div className="py-8"></div>
-      
+
       {/* Video Feed Modal */}
       {showVideoFeed && (
         <div className="fixed inset-0 z-[10000] bg-black">
