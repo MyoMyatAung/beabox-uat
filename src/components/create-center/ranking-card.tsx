@@ -151,11 +151,11 @@ export const RankingCardVideo = ({
   };
 
   return (
-    <div
-      className="w-full flex justify-between items-center py-1 gap-x-2 cursor-pointer"
-      onClick={handleClick}
-    >
-      <div className="aspect-square w-20 h-20 rounded-[6px] flex-shrink-0">
+    <div className="w-full flex justify-between items-center py-1 gap-x-2 cursor-pointer">
+      <div
+        className="aspect-square w-20 h-20 rounded-[6px] flex-shrink-0"
+        onClick={handleClick}
+      >
         <ImageWithPlaceholder
           src={data?.preview_image}
           alt={data?.title || "Video"}
@@ -166,7 +166,9 @@ export const RankingCardVideo = ({
         />
       </div>
       <div className="flex flex-col w-full">
-        <p className="line-clamp-2">{data?.title}</p>
+        <p className="line-clamp-2" onClick={handleClick}>
+          {data?.title}
+        </p>
         <div className="flex justify-between items-center mt-2">
           <div className="flex items-center gap-x-1">
             <AvatarImage2
@@ -176,7 +178,9 @@ export const RankingCardVideo = ({
               className="w-5 h-5 rounded-full bg-red-500"
               alt=""
             />
-            <p className="text-xs font-medium">{data?.user?.name}</p>
+            <Link to={paths.getUserProfileId(data?.user?.id)}>
+              <p className="text-xs font-medium">{data?.user?.name}</p>
+            </Link>
           </div>
           <div className="flex items-center gap-x-1">
             <svg
