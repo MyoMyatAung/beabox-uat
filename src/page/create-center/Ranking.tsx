@@ -571,11 +571,11 @@ const Ranking = () => {
             )}
           </div>
           {selectedTab === "video" && (
-            <div className="flex px-2 items-center gap-2 top-0">
+            <div className="flex px-2 items-center gap-2 top-0 overflow-x-scroll scrollbar-hide">
               {configData?.data?.top_video_tags.split(",")?.map((tag: any) => (
                 <button
                   onClick={() => setSelectedVideoTag(tag)}
-                  className={`text-[14px] ${
+                  className={`text-[14px] whitespace-nowrap flex flex-shrink-0 ${
                     selectedVideoTag == tag
                       ? "text-white bg-[#CD3EFF]"
                       : "text-[#999] bg-[#FFFFFF05]"
@@ -586,11 +586,11 @@ const Ranking = () => {
               ))}
             </div>
           )}
-          <div className="flex px-2 items-center gap-2 top-0">
+          <div className="flex px-2 items-center gap-2 top-0 overflow-x-scroll scrollbar-hide">
             {ranges?.map((range: any) => (
               <button
                 onClick={() => setSelectedRange(range)}
-                className={`text-[14px] ${
+                className={`text-[14px] whitespace-nowrap flex flex-shrink-0 ${
                   selectedRange?.value == range?.value
                     ? "text-white bg-[#CD3EFF]"
                     : "text-[#999] bg-[#FFFFFF05]"
@@ -679,7 +679,7 @@ const Ranking = () => {
           )}
           <div className="h-[68px]"></div>
         </motion.div>
-        
+
         {/* MyRankCard outside parallax motion for stability */}
         {selectedTab === "author" && user?.token && (
           <MyRankCard myrank={creatorData?.data?.my_rank} />
