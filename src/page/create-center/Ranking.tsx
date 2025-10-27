@@ -10,6 +10,7 @@ import { useGetExploreHeaderQuery } from "@/store/api/explore/exploreApi";
 import { UsersRound, ImagePlayIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { useSelector } from "react-redux";
 import {
   useGetUserProfileQuery,
@@ -44,13 +45,27 @@ const Ranking = () => {
   const [hasMore, setHasMore] = useState(true);
   const [hasMoreVideo, setHasMoreVideo] = useState(true);
   const [showHeader, setShowHeader] = useState(false);
+  const [isFilterSticky, setIsFilterSticky] = useState(false);
   const headerRef = useRef<any>(null);
+  const filterRef = useRef<HTMLDivElement>(null);
   const [isCopied2, setIsCopied2] = useState(false);
 
-  // Scroll refs for scroll-to-top functionality
   const otherRankRef = useRef<HTMLDivElement>(null);
   const otherRankVideoRef = useRef<HTMLDivElement>(null);
   const pageContainerRef = useRef<HTMLDivElement>(null);
+
+  const top3SectionRef = useRef<HTMLDivElement>(null);
+  const adsSectionRef = useRef<HTMLDivElement>(null);
+
+  const { scrollY } = useScroll();
+
+  const top3Y = useTransform(scrollY, [0, 1500], [0, 350]);
+  const adsY = useTransform(scrollY, [0, 1500], [0, 350]);
+
+  const top3Opacity = useTransform(scrollY, [100, 400], [1, 0]);
+  const adsOpacity = useTransform(scrollY, [150, 450], [1, 0]);
+
+  const stickyBottomY = useTransform(scrollY, [800, 2500], [0, -200]);
   const [cachedDownloadLink, setCachedDownloadLink] = useState(null);
   const [shareInfo] = useShareInfoMutation();
   const [ads, setAds] = useState<any>([]);
@@ -230,6 +245,15 @@ const Ranking = () => {
           setShowHeader(false);
         }
       }
+
+      if (filterRef.current) {
+        const filterRect = filterRef.current.getBoundingClientRect();
+        if (filterRect.top <= 100) {
+          setIsFilterSticky(true);
+        } else {
+          setIsFilterSticky(false);
+        }
+      }
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -356,9 +380,9 @@ const Ranking = () => {
         className={cn(
           "w-full h-full bg-cover bg-no-repeat fixed top-0 left-0 z-20",
           {
-            "!h-[234px] bg-[url('./assets/createcenter/ccbg-video.png')]":
+            "!h-[214px] bg-[url('./assets/createcenter/ccbg-video.png')]":
               selectedTab === "video",
-            "!h-[193px] bg-[url('./assets/createcenter/ccbg-author.png')]":
+            "!h-[173px] bg-[url('./assets/createcenter/ccbg-author.png')]":
               selectedTab === "author",
           }
         )}
@@ -436,7 +460,14 @@ const Ranking = () => {
             </svg>
           </div>
         </div>
-        <div className="pb-5 z-20 relative">
+        <motion.div
+          ref={top3SectionRef}
+          className="pb-5 z-20 relative"
+          style={{
+            y: top3Y,
+            opacity: top3Opacity,
+          }}
+        >
           {selectedTab === "author" && (
             <Top3 rankingData={rankingList} refetch={refetch} />
           )}
@@ -446,9 +477,15 @@ const Ranking = () => {
               onVideoClick={handleVideoCardClick}
             />
           )}
-        </div>
-        <div ref={headerRef} className="w-full"></div>
-        <div className="z-20 relative">
+        </motion.div>
+        <motion.div
+          ref={adsSectionRef}
+          className="z-20 relative"
+          style={{
+            y: adsY,
+            opacity: adsOpacity,
+          }}
+        >
           {/* Ads Section - Only in normal view, not sticky */}
           <div className="py-[20px] px-[10px]">
             {/* <h1 className="text-white text-[14px] font-[500] leading-[20px] pb-[12px] px-1">
@@ -486,158 +523,167 @@ const Ranking = () => {
               </div>
             )}
           </div>
-        </div>
+        </motion.div>
 
-        <div className="z-30 sticky top-[84px]">
-          <div className={`w-full pb-1`}>
-            <div className="flex items-center gap-4 px-2">
-              {configData?.data?.creator_center_ranking_filter?.map(
-                (rank: any) => (
-                  <div
-                    className="flex flex-col justify-center items-center gap-3"
-                    key={rank?.title}
+        <div
+          ref={filterRef}
+          className={cn(
+            "z-30 sticky top-[64px] w-full pb-3 transition-colors duration-300 space-y-3",
+            {
+              "bg-transparent": isFilterSticky,
+              "bg-[#191721]": !isFilterSticky,
+            }
+          )}
+        >
+          <div className="flex items-center gap-4 px-2">
+            {configData?.data?.creator_center_ranking_filter?.map(
+              (rank: any) => (
+                <div
+                  className="flex flex-col justify-center items-center gap-3"
+                  key={rank?.title}
+                >
+                  <div className="w-[58px] h-[3px] rounded-[1px] bg-transparent"></div>
+                  <button
+                    onClick={() => {
+                      setSelectedType(rank);
+                      setSelectedRange({
+                        value: "today",
+                        title: "今日",
+                      });
+                    }}
+                    className={`text-[14px] ${
+                      selectedType?.keyword == rank?.keyword
+                        ? "text-white"
+                        : "text-[#999]"
+                    }`}
                   >
-                    <div className="w-[58px] h-[3px] rounded-[1px] bg-transparent"></div>
-                    <button
-                      onClick={() => {
-                        setSelectedType(rank);
-                        setSelectedRange({
-                          value: "today",
-                          title: "今日",
-                        });
-                      }}
-                      className={`text-[14px] ${
-                        selectedType?.keyword == rank?.keyword
-                          ? "text-white"
-                          : "text-[#999]"
-                      }`}
-                    >
-                      {rank?.title}
-                    </button>
-                    <div
-                      className={`w-[58px] h-[3px] rounded-[1px] ${
-                        selectedType?.keyword == rank?.keyword
-                          ? "bg-[#CD3EFF]"
-                          : "bg-transparent"
-                      } `}
-                    ></div>
-                  </div>
-                )
-              )}
-            </div>
-            <div className="w-full h-[1px] bg-[#FFFFFF05]"></div>
-            {selectedTab === "video" && (
-              <div className="flex my-3 px-2 items-center gap-2 top-0">
-                {configData?.data?.top_video_tags
-                  .split(",")
-                  ?.map((tag: any) => (
-                    <button
-                      onClick={() => setSelectedVideoTag(tag)}
-                      className={`text-[14px] ${
-                        selectedVideoTag == tag
-                          ? "text-white bg-[#CD3EFF]"
-                          : "text-[#999] bg-[#FFFFFF05]"
-                      } px-5 py-1 text-center rounded-full`}
-                    >
-                      {tag}
-                    </button>
-                  ))}
-              </div>
+                    {rank?.title}
+                  </button>
+                  <div
+                    className={`w-[58px] h-[3px] rounded-[1px] ${
+                      selectedType?.keyword == rank?.keyword
+                        ? "bg-[#CD3EFF]"
+                        : "bg-transparent"
+                    } `}
+                  ></div>
+                </div>
+              )
             )}
-            <div className="flex my-3 px-2 items-center gap-2 top-0">
-              {ranges?.map((range: any) => (
+          </div>
+          {selectedTab === "video" && (
+            <div className="flex px-2 items-center gap-2 top-0">
+              {configData?.data?.top_video_tags.split(",")?.map((tag: any) => (
                 <button
-                  onClick={() => setSelectedRange(range)}
+                  onClick={() => setSelectedVideoTag(tag)}
                   className={`text-[14px] ${
-                    selectedRange?.value == range?.value
+                    selectedVideoTag == tag
                       ? "text-white bg-[#CD3EFF]"
                       : "text-[#999] bg-[#FFFFFF05]"
                   } px-5 py-1 text-center rounded-full`}
                 >
-                  {range?.title}
+                  {tag}
                 </button>
               ))}
             </div>
+          )}
+          <div className="flex px-2 items-center gap-2 top-0">
+            {ranges?.map((range: any) => (
+              <button
+                onClick={() => setSelectedRange(range)}
+                className={`text-[14px] ${
+                  selectedRange?.value == range?.value
+                    ? "text-white bg-[#CD3EFF]"
+                    : "text-[#999] bg-[#FFFFFF05]"
+                } px-5 py-1 text-center rounded-full`}
+              >
+                {range?.title}
+              </button>
+            ))}
           </div>
         </div>
 
-        {selectedTab === "author" && (
-          <>
-            <div ref={otherRankRef} className="z-10 px-5 py-5 space-y-4 sticky">
-              {isFetching && page == 1 ? (
-                <div className="flex w-full items-center justify-center my-20">
-                  <img src={loader} alt="" className="w-12" />
-                </div>
-              ) : rankingList?.length > 3 ? (
-                <OtherRank data={rankingList} refetch={refetch} />
-              ) : (
-                <div className="w-full flex justify-center items-center my-20">
-                  <div className="flex flex-col justify-center items-center gap-3">
-                    <UsersRound className="text-[#888888]" />
-                    <p className="text-[14px] text-[#888888]">
-                      当前没有创作者展示
-                    </p>
+        <motion.div style={{ y: stickyBottomY }} className="relative">
+          {selectedTab === "author" && (
+            <>
+              <div
+                ref={otherRankRef}
+                className="z-10 px-5 py-5 space-y-4 sticky"
+              >
+                {isFetching && page == 1 ? (
+                  <div className="flex w-full items-center justify-center my-20">
+                    <img src={loader} alt="" className="w-12" />
                   </div>
-                </div>
-              )}
-            </div>
-            {page !== 6 ? (
-              <RankingLoadMore
-                userFetching={userFetching}
-                data={rankingList}
-                fetchData={fetchMoreData}
-                hasMore={hasMore}
-              />
-            ) : (
-              <></>
-            )}
-            {user?.token ? (
-              <MyRankCard myrank={creatorData?.data?.my_rank} />
-            ) : (
-              <></>
-            )}
-          </>
-        )}
-        {selectedTab === "video" && (
-          <>
-            <div
-              ref={otherRankVideoRef}
-              className="z-10 px-5 py-5 space-y-4 sticky"
-            >
-              {isVideoFetching && videoPage == 1 ? (
-                <div className="flex w-full items-center justify-center my-20">
-                  <img src={loader} alt="" className="w-12" />
-                </div>
-              ) : videoRankingList?.length > 3 ? (
-                <OtherRankVideo
-                  data={videoRankingList}
-                  refetch={videoRefetch}
-                  onVideoClick={handleVideoCardClick}
+                ) : rankingList?.length > 3 ? (
+                  <OtherRank data={rankingList} refetch={refetch} />
+                ) : (
+                  <div className="w-full flex justify-center items-center my-20">
+                    <div className="flex flex-col justify-center items-center gap-3">
+                      <UsersRound className="text-[#888888]" />
+                      <p className="text-[14px] text-[#888888]">
+                        当前没有创作者展示
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+              {page !== 6 ? (
+                <RankingLoadMore
+                  userFetching={userFetching}
+                  data={rankingList}
+                  fetchData={fetchMoreData}
+                  hasMore={hasMore}
                 />
               ) : (
-                <div className="w-full flex justify-center items-center my-20">
-                  <div className="flex flex-col justify-center items-center gap-3">
-                    <ImagePlayIcon className="text-[#888888]" />
-                    <p className="text-[14px] text-[#888888]">
-                      目前没有显示内容
-                    </p>
-                  </div>
-                </div>
+                <></>
               )}
-            </div>
-            {videoPage !== 6 ? (
-              <RankingLoadMore
-                userFetching={isVideoFetching}
-                data={videoRankingList}
-                fetchData={fetchMoreVideoData}
-                hasMore={hasMoreVideo}
-              />
-            ) : (
-              <></>
-            )}
-          </>
-        )}
-        <div className="h-[68px]"></div>
+              {user?.token ? (
+                <MyRankCard myrank={creatorData?.data?.my_rank} />
+              ) : (
+                <></>
+              )}
+            </>
+          )}
+          {selectedTab === "video" && (
+            <>
+              <div
+                ref={otherRankVideoRef}
+                className="z-10 px-5 py-5 space-y-4 sticky"
+              >
+                {isVideoFetching && videoPage == 1 ? (
+                  <div className="flex w-full items-center justify-center my-20">
+                    <img src={loader} alt="" className="w-12" />
+                  </div>
+                ) : videoRankingList?.length > 3 ? (
+                  <OtherRankVideo
+                    data={videoRankingList}
+                    refetch={videoRefetch}
+                    onVideoClick={handleVideoCardClick}
+                  />
+                ) : (
+                  <div className="w-full flex justify-center items-center my-20">
+                    <div className="flex flex-col justify-center items-center gap-3">
+                      <ImagePlayIcon className="text-[#888888]" />
+                      <p className="text-[14px] text-[#888888]">
+                        目前没有显示内容
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+              {videoPage !== 6 ? (
+                <RankingLoadMore
+                  userFetching={isVideoFetching}
+                  data={videoRankingList}
+                  fetchData={fetchMoreVideoData}
+                  hasMore={hasMoreVideo}
+                />
+              ) : (
+                <></>
+              )}
+            </>
+          )}
+          <div className="h-[68px]"></div>
+        </motion.div>
       </div>
       <div className="py-8"></div>
 
