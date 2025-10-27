@@ -9,6 +9,7 @@ import {
 import { useGetExploreHeaderQuery } from "@/store/api/explore/exploreApi";
 import { UsersRound, ImagePlayIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
   useGetUserProfileQuery,
@@ -34,7 +35,8 @@ const ranges = [
 const Ranking = () => {
   const user = useSelector((state: any) => state?.persist?.user);
   const id = user?.id;
-  const [selectedTab, setSelectedTab] = useState<string>("video");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedTab = searchParams.get("tab") || "video";
   const [rankingList, setRankingList] = useState<any>([]);
   const [videoRankingList, setVideoRankingList] = useState<any>([]);
   const [totalData, setTotalData] = useState<number>(0);
@@ -63,6 +65,13 @@ const Ranking = () => {
   const handleVideoCardClick = (videoId: string) => {
     setCurrentActiveVideoId(videoId);
     setShowVideoFeed(true);
+  };
+
+  // Handle tab change with URL sync
+  const handleTabChange = (tab: string) => {
+    setSearchParams({ tab });
+    // Scroll to top when switching tabs for better UX
+    window.scrollTo({ top: 0, behavior: "instant" });
   };
 
   const {
@@ -214,10 +223,9 @@ const Ranking = () => {
     const handleScroll = () => {
       if (headerRef.current) {
         const rect = headerRef.current.getBoundingClientRect();
-        // Trigger when the element's top is out of the viewport
+        // Show header when the element's top is out of the viewport
         if (rect.top <= 0) {
-          // setShowHeader(true);
-          setShowHeader(false);
+          setShowHeader(true);
         } else {
           setShowHeader(false);
         }
@@ -268,23 +276,8 @@ const Ranking = () => {
     setHasMore(true); // Reset infinite scroll
     setHasMoreVideo(true); // Reset video infinite scroll
 
-    // Instantly scroll to top for immediate user feedback
-    // Use instant scrolling for the most responsive user experience
+    // Scroll to top when filters change for better UX
     window.scrollTo({ top: 0, behavior: "instant" });
-
-    // Also scroll page container if it exists
-    if (pageContainerRef.current) {
-      pageContainerRef.current.scrollTo({ top: 0, behavior: "instant" });
-    }
-
-    // Reset ranking section scroll positions immediately
-    if (otherRankRef.current) {
-      otherRankRef.current.scrollTo({ top: 0, behavior: "instant" });
-    }
-
-    if (otherRankVideoRef.current) {
-      otherRankVideoRef.current.scrollTo({ top: 0, behavior: "instant" });
-    }
   }, [selectedRange, selectedType, selectedVideoTag]);
 
   useEffect(() => {
@@ -359,7 +352,17 @@ const Ranking = () => {
 
   return (
     <div ref={pageContainerRef} className="">
-      <div className="ccbg fixed top-0 left-0 "></div>
+      <div
+        className={cn(
+          "w-full h-full bg-cover bg-no-repeat fixed top-0 left-0 z-20",
+          {
+            "!h-[234px] bg-[url('./assets/createcenter/ccbg-video.png')]":
+              selectedTab === "video",
+            "!h-[193px] bg-[url('./assets/createcenter/ccbg-author.png')]":
+              selectedTab === "author",
+          }
+        )}
+      ></div>
       {isCopied2 ? (
         <div className="fixed w-full h-screen bg-[#000000CC]  z-[3000] top-0 left-0">
           <div className="w-full z-[1300] absolute top-[80vh] flex justify-center">
@@ -373,8 +376,8 @@ const Ranking = () => {
       ) : (
         ""
       )}
-      <div className="relative z-50">
-        <div className="pt-5 z-50 flex justify-between items-center">
+      <div className="relative">
+        <div className="pt-5 z-30 flex justify-between items-center sticky top-0">
           <h1 className="text-[18px] opacity-0 text-center">排行榜</h1>
           <div className="flex items-start gap-x-6 h-11">
             {[
@@ -392,7 +395,7 @@ const Ranking = () => {
               <div
                 key={tab.key}
                 className="flex flex-col gap-y-2 items-center cursor-pointer"
-                onClick={() => setSelectedTab(tab.key)}
+                onClick={() => handleTabChange(tab.key)}
               >
                 <h1
                   className={cn(
@@ -433,7 +436,7 @@ const Ranking = () => {
             </svg>
           </div>
         </div>
-        <div className={`pb-5`}>
+        <div className="pb-5 z-20 relative">
           {selectedTab === "author" && (
             <Top3 rankingData={rankingList} refetch={refetch} />
           )}
@@ -445,9 +448,9 @@ const Ranking = () => {
           )}
         </div>
         <div ref={headerRef} className="w-full"></div>
-        <div className="bg-[#191721] z-50 sticky top-0">
+        <div className="z-20 relative">
           {/* Ads Section - Only in normal view, not sticky */}
-          <div className="pt-[20px] px-[10px]">
+          <div className="py-[20px] px-[10px]">
             {/* <h1 className="text-white text-[14px] font-[500] leading-[20px] pb-[12px] px-1">
             {exploreData?.data?.ads?.application?.title || ""}
           </h1> */}
@@ -483,16 +486,10 @@ const Ranking = () => {
               </div>
             )}
           </div>
+        </div>
 
-          <div className={`w-full pb-1 ${showHeader ? "ccbg2 z-50" : ""}`}>
-            {showHeader ? (
-              <div className="pt-5 z-50 animate-fade-in">
-                <h1 className="text-[18px] text-center">排行榜</h1>
-              </div>
-            ) : (
-              <></>
-            )}
-
+        <div className="z-30 sticky top-[84px]">
+          <div className={`w-full pb-1`}>
             <div className="flex items-center gap-4 px-2">
               {configData?.data?.creator_center_ranking_filter?.map(
                 (rank: any) => (
@@ -566,7 +563,7 @@ const Ranking = () => {
 
         {selectedTab === "author" && (
           <>
-            <div ref={otherRankRef} className="px-5 py-5 space-y-4 sticky">
+            <div ref={otherRankRef} className="z-10 px-5 py-5 space-y-4 sticky">
               {isFetching && page == 1 ? (
                 <div className="flex w-full items-center justify-center my-20">
                   <img src={loader} alt="" className="w-12" />
@@ -603,7 +600,10 @@ const Ranking = () => {
         )}
         {selectedTab === "video" && (
           <>
-            <div ref={otherRankVideoRef} className="px-5 py-5 space-y-4 sticky">
+            <div
+              ref={otherRankVideoRef}
+              className="z-10 px-5 py-5 space-y-4 sticky"
+            >
               {isVideoFetching && videoPage == 1 ? (
                 <div className="flex w-full items-center justify-center my-20">
                   <img src={loader} alt="" className="w-12" />

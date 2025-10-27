@@ -282,6 +282,23 @@ const OtherProfile = () => {
   const location = useLocation();
 
   const goBack = () => {
+    // Check for new route and searchQuery parameters
+    const searchParams = new URLSearchParams(location.search);
+    const route = searchParams.get('route');
+    const searchQuery = searchParams.get('searchQuery');
+    
+    if (route && searchQuery) {
+      try {
+        const parsedQuery = JSON.parse(decodeURIComponent(searchQuery));
+        const queryString = new URLSearchParams(parsedQuery).toString();
+        navigate(`/${route}?${queryString}`);
+        return;
+      } catch (error) {
+        console.error('Error parsing searchQuery:', error);
+      }
+    }
+    
+    // Fallback to original logic
     if (
       location.state &&
       location.state.from &&

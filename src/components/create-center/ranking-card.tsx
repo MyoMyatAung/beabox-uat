@@ -170,18 +170,26 @@ export const RankingCardVideo = ({
           {data?.title}
         </p>
         <div className="flex justify-between items-center mt-2">
-          <div className="flex items-center gap-x-1">
-            <AvatarImage2
-              src={data?.user?.avatar}
-              width={""}
-              height={""}
-              className="w-5 h-5 rounded-full bg-red-500"
-              alt=""
-            />
-            <Link to={paths.getUserProfileId(data?.user?.id)}>
+          <Link
+            to={`${paths.getUserProfileId(
+              data?.user?.id
+            )}?route=ranking&searchQuery=${encodeURIComponent(
+              JSON.stringify({
+                tab: "author",
+              })
+            )}`}
+          >
+            <div className="flex items-center gap-x-1">
+              <AvatarImage2
+                src={data?.user?.avatar}
+                width={""}
+                height={""}
+                className="w-5 h-5 rounded-full bg-red-500"
+                alt=""
+              />
               <p className="text-xs font-medium">{data?.user?.name}</p>
-            </Link>
-          </div>
+            </div>
+          </Link>
           <div className="flex items-center gap-x-1">
             <svg
               xmlns="http://www.w3.org/2000/svg"
