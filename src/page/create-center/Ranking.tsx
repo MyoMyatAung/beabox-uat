@@ -636,11 +636,6 @@ const Ranking = () => {
               ) : (
                 <></>
               )}
-              {user?.token ? (
-                <MyRankCard myrank={creatorData?.data?.my_rank} />
-              ) : (
-                <></>
-              )}
             </>
           )}
           {selectedTab === "video" && (
@@ -684,6 +679,11 @@ const Ranking = () => {
           )}
           <div className="h-[68px]"></div>
         </motion.div>
+        
+        {/* MyRankCard outside parallax motion for stability */}
+        {selectedTab === "author" && user?.token && (
+          <MyRankCard myrank={creatorData?.data?.my_rank} />
+        )}
       </div>
       <div className="py-8"></div>
 
