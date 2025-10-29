@@ -622,7 +622,7 @@ const Ranking = () => {
               <>
                 <button
                   onClick={() => setIsTagsExpanded(!isTagsExpanded)}
-                  className="flex-shrink-0 relative z-[1] bg-[#242129] flex items-center justify-center size-7 rounded-full"
+                  className="flex-shrink-0 relative z-[1] bg-[#242129] flex items-center justify-center size-8 rounded-full"
                 >
                   <svg
                     width="19"
@@ -642,7 +642,7 @@ const Ranking = () => {
                 </button>
                 {!isTagsExpanded && (
                   <div
-                    className="absolute bottom-0 right-0 w-20 h-7"
+                    className="absolute bottom-0 right-0 w-20 h-8 pointer-events-none"
                     style={{
                       background: isFilterSticky
                         ? "transparent"
