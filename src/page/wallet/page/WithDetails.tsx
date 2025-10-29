@@ -47,7 +47,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
   // console.log(" this is mf", data);
   const rule = config?.data?.withdraw_rule;
   const minWithdrawAmount = config?.data?.withdraw_minimum_amount;
-  // console.log(rule);
+  const withdrawFee = config?.data?.withdraw_fee;
 
   const toBase64 = (file: File): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -88,6 +88,31 @@ const WithDetails: React.FC<WithDetailsProps> = ({
       const rate = dollar_withdraw_rate.dollars / dollar_withdraw_rate.coins;
       setExpectedAmount(numericValue * rate);
     }
+  };
+
+  // Calculate withdrawal amounts
+  const calculateWithdrawalAmounts = () => {
+    if (!amount || !withdrawFee) {
+      return {
+        serviceFeeAmount: 0,
+        amountToReceive: 0,
+      };
+    }
+
+    const numericAmount = Number(amount);
+    const feePercentage = Number(withdrawFee) / 100;
+    const serviceFeeAmount = numericAmount * feePercentage;
+    const amountToReceive = numericAmount - serviceFeeAmount;
+
+    return {
+      serviceFeeAmount,
+      amountToReceive,
+    };
+  };
+
+  const { amountToReceive } = calculateWithdrawalAmounts() || {
+    serviceFeeAmount: 0,
+    amountToReceive: 0,
   };
 
   const isFormValid =
@@ -281,6 +306,21 @@ const WithDetails: React.FC<WithDetailsProps> = ({
             className="withdraw_input bg-transparent focus:outline-none pt-[10px] pb-[10px] w-full text-white text-[16px] font-[400] leading-[20px]"
             type="number"
           />
+
+          <p className="py-[5px] text-[#777] font-[300] text-[14px]">
+            For every 100¥ withdrawn, {withdrawFee ?? 0}% will be deducted as a
+            service fee
+          </p>
+          <p className="text-sm">
+            You Will Receive ={" "}
+            <span className="text-[#CD3EFF]">{amountToReceive.toFixed(2)}</span>
+            ¥
+          </p>
+          <p className="text-sm mt-1">
+            Service Fee ={" "}
+            <span className="text-[#CD3EFF]">{withdrawFee ?? 0}%</span>
+          </p>
+
           <p className="py-[5px] hidden text-[#777] font-[300] text-[14px]">
             {dollar_withdraw_rate?.coins ? dollar_withdraw_rate?.coins : "100"}{" "}
             硬币 ={" "}

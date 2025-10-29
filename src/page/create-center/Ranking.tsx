@@ -46,6 +46,7 @@ const Ranking = () => {
   const [hasMoreVideo, setHasMoreVideo] = useState(true);
   const [showHeader, setShowHeader] = useState(false);
   const [isFilterSticky, setIsFilterSticky] = useState(false);
+  const titleTabsRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<any>(null);
   const filterRef = useRef<HTMLDivElement>(null);
   const [isCopied2, setIsCopied2] = useState(false);
@@ -184,6 +185,25 @@ const Ranking = () => {
   });
   const [selectedType, setSelectedType] = useState<any>({});
   const [selectedVideoTag, setSelectedVideoTag] = useState<string>("");
+  const [isTagsExpanded, setIsTagsExpanded] = useState(false);
+  const [combinedHeight, setCombinedHeight] = useState<number>(0);
+
+  // Calculate combined height and update state
+  const updateCombinedHeight = () => {
+    if (titleTabsRef.current && filterRef.current) {
+      const titleTabsHeight = titleTabsRef.current.offsetHeight;
+      const filterHeight = filterRef.current.offsetHeight;
+      setCombinedHeight(titleTabsHeight + filterHeight);
+    }
+  };
+
+  // Update height when isTagsExpanded changes
+  useEffect(() => {
+    // Use setTimeout to ensure DOM has updated
+    const timeoutId = setTimeout(updateCombinedHeight, 0);
+    return () => clearTimeout(timeoutId);
+  }, [isTagsExpanded, selectedTab]);
+
   const { data: configData, isLoading: loading1 } = useGetConfigQuery({});
   const {
     data: creatorData,
@@ -380,12 +400,13 @@ const Ranking = () => {
         className={cn(
           "w-full h-full bg-cover bg-no-repeat fixed top-0 left-0 z-20",
           {
-            "!h-[214px] bg-[url('./assets/createcenter/ccbg-video.png')]":
+            "min-h-[214px] bg-[url('./assets/createcenter/ccbg-video.png')]":
               selectedTab === "video",
-            "!h-[173px] bg-[url('./assets/createcenter/ccbg-author.png')]":
+            "min-h-[173px] bg-[url('./assets/createcenter/ccbg-author.png')]":
               selectedTab === "author",
           }
         )}
+        style={{ height: `${combinedHeight}px` }}
       ></div>
       {isCopied2 ? (
         <div className="fixed w-full h-screen bg-[#000000CC]  z-[3000] top-0 left-0">
@@ -401,7 +422,10 @@ const Ranking = () => {
         ""
       )}
       <div className="relative">
-        <div className="pt-5 z-30 flex justify-between items-center sticky top-0">
+        <div
+          ref={titleTabsRef}
+          className="pt-5 z-30 flex justify-between items-center sticky top-0"
+        >
           <h1 className="text-[18px] opacity-0 text-center">排行榜</h1>
           <div className="flex items-start gap-x-6 h-11">
             {[
@@ -531,7 +555,7 @@ const Ranking = () => {
             "z-30 sticky top-[64px] w-full pb-3 transition-colors duration-300 space-y-3",
             {
               "bg-transparent": isFilterSticky,
-              "bg-[#191721]": !isFilterSticky,
+              "bg-[#16131C]": !isFilterSticky,
             }
           )}
         >
@@ -571,19 +595,75 @@ const Ranking = () => {
             )}
           </div>
           {selectedTab === "video" && (
-            <div className="flex px-2 items-center gap-2 top-0 overflow-x-scroll scrollbar-hide">
-              {configData?.data?.top_video_tags.split(",")?.map((tag: any) => (
-                <button
-                  onClick={() => setSelectedVideoTag(tag)}
-                  className={`text-[14px] whitespace-nowrap flex flex-shrink-0 ${
-                    selectedVideoTag == tag
-                      ? "text-white bg-[#CD3EFF]"
-                      : "text-[#999] bg-[#FFFFFF05]"
-                  } px-5 py-1 text-center rounded-full`}
+            <div className="relative flex items-end justify-between pr-2 gap-x-2">
+              <div
+                className={`px-2 gap-2 ${
+                  isTagsExpanded
+                    ? "flex flex-wrap"
+                    : "flex items-center overflow-x-scroll scrollbar-hide"
+                }`}
+              >
+                {configData?.data?.top_video_tags
+                  .split(",")
+                  ?.map((tag: any, index: number) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedVideoTag(tag)}
+                      className={`text-[14px] whitespace-nowrap flex-shrink-0 ${
+                        selectedVideoTag == tag
+                          ? "text-white bg-[#CD3EFF]"
+                          : "text-[#999] bg-[#FFFFFF05]"
+                      } px-5 py-1 text-center rounded-full`}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                {configData?.data?.top_video_tags
+                  .split(",")
+                  ?.map((tag: any, index: number) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedVideoTag(tag)}
+                      className={`text-[14px] whitespace-nowrap flex-shrink-0 ${
+                        selectedVideoTag == tag
+                          ? "text-white bg-[#CD3EFF]"
+                          : "text-[#999] bg-[#FFFFFF05]"
+                      } px-5 py-1 text-center rounded-full`}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+              </div>
+              <button
+                onClick={() => setIsTagsExpanded(!isTagsExpanded)}
+                className="flex-shrink-0 relative z-[1] bg-[#242129] flex items-center justify-center size-7 rounded-full"
+              >
+                <svg
+                  width="19"
+                  height="19"
+                  viewBox="0 0 19 19"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className={`transition-transform duration-200 ${
+                    isTagsExpanded ? "rotate-180" : ""
+                  }`}
                 >
-                  {tag}
-                </button>
-              ))}
+                  <path
+                    d="M9.24665 10.1584L5.39665 6.30835L4.29687 7.40813L9.24665 12.3579L14.1964 7.40813L13.0967 6.30835L9.24665 10.1584Z"
+                    fill="white"
+                  />
+                </svg>
+              </button>
+              {!isTagsExpanded && (
+                <div
+                  className="absolute bottom-0 right-0 w-20 h-7"
+                  style={{
+                    background: isFilterSticky
+                      ? "transparent"
+                      : "linear-gradient(270deg, #16131C 21.43%, rgba(22, 19, 28, 0.8) 61.97%, rgba(22, 19, 28, 0) 100%)",
+                  }}
+                ></div>
+              )}
             </div>
           )}
           <div className="flex px-2 items-center gap-2 top-0 overflow-x-scroll scrollbar-hide">
