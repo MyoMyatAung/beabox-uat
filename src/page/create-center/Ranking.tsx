@@ -618,52 +618,39 @@ const Ranking = () => {
                       {tag}
                     </button>
                   ))}
-                {configData?.data?.top_video_tags
-                  .split(",")
-                  ?.map((tag: any, index: number) => (
-                    <button
-                      key={index}
-                      onClick={() => setSelectedVideoTag(tag)}
-                      className={`text-[14px] whitespace-nowrap flex-shrink-0 ${
-                        selectedVideoTag == tag
-                          ? "text-white bg-[#CD3EFF]"
-                          : "text-[#999] bg-[#FFFFFF05]"
-                      } px-5 py-1 text-center rounded-full`}
-                    >
-                      {tag}
-                    </button>
-                  ))}
               </div>
-              <button
-                onClick={() => setIsTagsExpanded(!isTagsExpanded)}
-                className="flex-shrink-0 relative z-[1] bg-[#242129] flex items-center justify-center size-7 rounded-full"
-              >
-                <svg
-                  width="19"
-                  height="19"
-                  viewBox="0 0 19 19"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className={`transition-transform duration-200 ${
-                    isTagsExpanded ? "rotate-180" : ""
-                  }`}
+              <>
+                <button
+                  onClick={() => setIsTagsExpanded(!isTagsExpanded)}
+                  className="flex-shrink-0 relative z-[1] bg-[#242129] flex items-center justify-center size-7 rounded-full"
                 >
-                  <path
-                    d="M9.24665 10.1584L5.39665 6.30835L4.29687 7.40813L9.24665 12.3579L14.1964 7.40813L13.0967 6.30835L9.24665 10.1584Z"
-                    fill="white"
-                  />
-                </svg>
-              </button>
-              {!isTagsExpanded && (
-                <div
-                  className="absolute bottom-0 right-0 w-20 h-7"
-                  style={{
-                    background: isFilterSticky
-                      ? "transparent"
-                      : "linear-gradient(270deg, #16131C 21.43%, rgba(22, 19, 28, 0.8) 61.97%, rgba(22, 19, 28, 0) 100%)",
-                  }}
-                ></div>
-              )}
+                  <svg
+                    width="19"
+                    height="19"
+                    viewBox="0 0 19 19"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className={`transition-transform duration-200 ${
+                      isTagsExpanded ? "rotate-180" : ""
+                    }`}
+                  >
+                    <path
+                      d="M9.24665 10.1584L5.39665 6.30835L4.29687 7.40813L9.24665 12.3579L14.1964 7.40813L13.0967 6.30835L9.24665 10.1584Z"
+                      fill="white"
+                    />
+                  </svg>
+                </button>
+                {!isTagsExpanded && (
+                  <div
+                    className="absolute bottom-0 right-0 w-20 h-7"
+                    style={{
+                      background: isFilterSticky
+                        ? "transparent"
+                        : "linear-gradient(270deg, #16131C 21.43%, rgba(22, 19, 28, 0.8) 61.97%, rgba(22, 19, 28, 0) 100%)",
+                    }}
+                  ></div>
+                )}
+              </>
             </div>
           )}
           <div className="flex px-2 items-center gap-2 top-0 overflow-x-scroll scrollbar-hide">

@@ -21,7 +21,7 @@ import { NOTIFICATION_CONFIG } from "@/constants/noti-constant";
 const navItems = [
   { name: "首页", selectedIcon: Home1SVG, icon: HomeSVG, href: "/" },
   {
-    name: "靠谱",
+    name: "应用推荐",
     selectedIcon: App1SVG,
     icon: AppSVG,
     href: "/application",

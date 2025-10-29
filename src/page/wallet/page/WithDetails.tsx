@@ -13,6 +13,7 @@ import loader from "../../home/vod_loader.gif";
 import Upload from "../comp/Upload";
 import { useDispatch } from "react-redux";
 import { showToast } from "@/page/home/services/errorSlice";
+import { cn } from "@/lib/utils";
 
 interface WithDetailsProps {
   payment: any;
@@ -66,6 +67,15 @@ const WithDetails: React.FC<WithDetailsProps> = ({
   const dispatch = useDispatch();
   // console.log(images);
 
+  // Set default payment method when component mounts or payment data changes
+  useEffect(() => {
+    if (payment && payment.length > 0 && !selectedPaymentID) {
+      const defaultPayment = payment[0];
+      setSelectedPaymentID(defaultPayment);
+      setSelectedPayment(defaultPayment.id || "");
+    }
+  }, [payment, selectedPaymentID]);
+
   const handlePaymentChange = (paymentID: any) => {
     setSelectedPaymentID(paymentID);
     setSelectedPayment(paymentID?.id || "");
@@ -81,8 +91,13 @@ const WithDetails: React.FC<WithDetailsProps> = ({
       return;
     }
 
-    const numericValue: any = Number(value);
-    setAmount(numericValue);
+    // Only allow whole numbers (no decimals)
+    const numericValue = parseInt(value, 10);
+    if (isNaN(numericValue) || numericValue < 0) {
+      return;
+    }
+
+    setAmount(numericValue.toString());
 
     if (dollar_withdraw_rate?.coins && dollar_withdraw_rate?.dollars) {
       const rate = dollar_withdraw_rate.dollars / dollar_withdraw_rate.coins;
@@ -101,7 +116,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
 
     const numericAmount = Number(amount);
     const feePercentage = Number(withdrawFee) / 100;
-    const serviceFeeAmount = numericAmount * feePercentage;
+    const serviceFeeAmount = Math.floor(numericAmount * feePercentage);
     const amountToReceive = numericAmount - serviceFeeAmount;
 
     return {
@@ -110,10 +125,11 @@ const WithDetails: React.FC<WithDetailsProps> = ({
     };
   };
 
-  const { amountToReceive } = calculateWithdrawalAmounts() || {
-    serviceFeeAmount: 0,
-    amountToReceive: 0,
-  };
+  const { serviceFeeAmount, amountToReceive } =
+    calculateWithdrawalAmounts() || {
+      serviceFeeAmount: 0,
+      amountToReceive: 0,
+    };
 
   const isFormValid =
     // Ensure balance is greater than or equal to amount
@@ -305,20 +321,46 @@ const WithDetails: React.FC<WithDetailsProps> = ({
             placeholder={`最低提现金额为${minWithdrawAmount}元`}
             className="withdraw_input bg-transparent focus:outline-none pt-[10px] pb-[10px] w-full text-white text-[16px] font-[400] leading-[20px]"
             type="number"
+            step="1"
+            min="0"
+            pattern="[0-9]*"
           />
 
           <p className="py-[5px] text-[#777] font-[300] text-[14px]">
-            For every 100¥ withdrawn, {withdrawFee ?? 0}% will be deducted as a
+            For every withdrawl, {withdrawFee ?? 0}% will be deducted as a
             service fee
           </p>
-          <p className="text-sm">
+          <p
+            className={cn("text-sm mt-2", {
+              "text-[#777]": Number(amount) <= 0,
+            })}
+          >
             You Will Receive ={" "}
-            <span className="text-[#CD3EFF]">{amountToReceive.toFixed(2)}</span>
-            ¥
+            {Number(amount) > 0 ? (
+              <>
+                <span className="text-[#CD3EFF]">
+                  {amountToReceive.toFixed(2)}
+                </span>
+                ¥
+              </>
+            ) : (
+              "---"
+            )}
           </p>
-          <p className="text-sm mt-1">
+          <p
+            className={cn("text-sm mt-1", {
+              "text-[#777]": Number(amount) <= 0,
+            })}
+          >
             Service Fee ={" "}
-            <span className="text-[#CD3EFF]">{withdrawFee ?? 0}%</span>
+            {Number(amount) > 0 ? (
+              <>
+                <span className="text-[#CD3EFF]">{serviceFeeAmount}</span>¥ (
+                {withdrawFee ?? 0}%)
+              </>
+            ) : (
+              "0%"
+            )}
           </p>
 
           <p className="py-[5px] hidden text-[#777] font-[300] text-[14px]">
