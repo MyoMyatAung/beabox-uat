@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import BalNew from "./BalNew";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import loader from "../../home/vod_loader.gif";
 import {
   useGetCoinListQuery,
@@ -38,7 +38,11 @@ const Withdraw: React.FC<WithdrawProps> = ({}) => {
       <div className="p-[20px]  w-screen xl:w-[800px]">
         {/* header */}
         <div className="grid grid-cols-4 items-center">
-          <ChevronLeft onClick={() => navigate(-1)} />
+          <Link to={paths.profile}>
+            <ChevronLeft
+            // onClick={() => navigate(-1)}
+            />
+          </Link>
           <div className="col-span-3 flex gap-[32px]">
             <div
               className="flex flex-col justify-center items-center gap-[5px] cursor-pointer"

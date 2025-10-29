@@ -21,6 +21,9 @@ const CreateCenter = () => {
       <TopNav
         styles={"ml-4"}
         center={"创作者中心"}
+        left={() => {
+          navigate(paths.profile);
+        }}
         right={
           <div
             onClick={
