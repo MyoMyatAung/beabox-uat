@@ -66,6 +66,15 @@ const WithDetails: React.FC<WithDetailsProps> = ({
   const dispatch = useDispatch();
   // console.log(images);
 
+  // Set default payment method when component mounts or payment data changes
+  useEffect(() => {
+    if (payment && payment.length > 0 && !selectedPaymentID) {
+      const defaultPayment = payment[0];
+      setSelectedPaymentID(defaultPayment);
+      setSelectedPayment(defaultPayment.id || "");
+    }
+  }, [payment, selectedPaymentID]);
+
   const handlePaymentChange = (paymentID: any) => {
     setSelectedPaymentID(paymentID);
     setSelectedPayment(paymentID?.id || "");
