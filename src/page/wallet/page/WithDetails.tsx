@@ -326,12 +326,12 @@ const WithDetails: React.FC<WithDetailsProps> = ({
             pattern="[0-9]*"
           />
 
-          <p className="py-[5px] text-[#777] font-[300] text-[14px]">
+          <p className="hidden py-[5px] text-[#777] font-[300] text-[14px]">
             For every withdrawl, {withdrawFee ?? 0}% will be deducted as a
             service fee
           </p>
           <p
-            className={cn("text-sm mt-2", {
+            className={cn("hidden text-sm mt-2", {
               "text-[#777]": Number(amount) <= 0,
             })}
           >
@@ -348,7 +348,7 @@ const WithDetails: React.FC<WithDetailsProps> = ({
             )}
           </p>
           <p
-            className={cn("text-sm mt-1", {
+            className={cn("hidden text-sm mt-1", {
               "text-[#777]": Number(amount) <= 0,
             })}
           >
