@@ -395,7 +395,10 @@ const Ranking = () => {
     return <Loader />;
 
   return (
-    <div ref={pageContainerRef} className="">
+    <div
+      ref={pageContainerRef}
+      className="h-screen flex flex-col  hide-sb  max-w-[480px] mx-auto"
+    >
       <div
         className={cn(
           "w-full h-full bg-cover bg-no-repeat fixed top-0 left-0 z-20",
