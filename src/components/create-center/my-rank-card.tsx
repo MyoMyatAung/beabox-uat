@@ -10,7 +10,7 @@ const MyRankCard = ({ myrank }: any) => {
   });
   // console.log(data?.data);
   return (
-    <div className="w-full h-[68px] bgbg py-3 fixed bottom-[75px] flex items-center justify-between px-5">
+    <div className="w-full h-[68px] bgbg py-3 fixed bottom-[75px] flex items-center justify-between px-5 z-10">
       <div className="w-full h-[68px] fixed bottom-[75px] left-0 overflow-hidden bgbg2"></div>
       <div className="flex gap-3 items-center">
         <p className="text-[16px] font-semibold">{myrank}</p>

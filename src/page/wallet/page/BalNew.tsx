@@ -47,7 +47,7 @@ const BalNew: React.FC<BalNewProps> = ({
           </div>
           <div className="">
             <h1 className=" text-white text-[14px] font-[700] leading-[22px]">
-              {amountText} : <span className=" text-[#DA72FF]">{amount}</span>{" "}
+              {amountText} : <span className=" text-[#CD3EFF]">{amount}</span>{" "}
               {amountType}
             </h1>
           </div>

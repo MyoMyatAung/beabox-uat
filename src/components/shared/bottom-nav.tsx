@@ -33,7 +33,7 @@ const navItems = [
     href: "/creator/upload/video",
   },
   {
-    name: "名人堂",
+    name: "排行榜",
     selectedIcon: selectedrank,
     icon: ranksvg,
     href: "/ranking",
@@ -69,15 +69,29 @@ export function BottomNav() {
   const [showHeader, setShowHeader] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
-  const notiData = JSON.parse(localStorage.getItem(NOTIFICATION_CONFIG.STORAGE_KEY) || "{}");
+  const notiData = JSON.parse(
+    localStorage.getItem(NOTIFICATION_CONFIG.STORAGE_KEY) || "{}"
+  );
 
-  const { data: systemNoti, isLoading: isSystemNotiLoading } = useGetNotiQuery("system");
-  const { data: creatorNoti, isLoading: isCreatorNotiLoading } = useGetNotiQuery("creator");
-  const { data: balanceAlertNoti, isLoading: isBalanceAlertNotiLoading } = useGetNotiQuery("balance_alert");
-    
-  const isSystemNotiRead = !isSystemNotiLoading && systemNoti.data.length > 0 ? systemNoti.data.every((noti: any) => noti.is_read) : true;
-  const isCreatorNotiRead = !isCreatorNotiLoading && creatorNoti.data.length > 0 ? creatorNoti.data.every((noti: any) => noti.is_read) : true;
-  const isBalanceAlertNotiRead = !isBalanceAlertNotiLoading && balanceAlertNoti.data.length > 0 ? balanceAlertNoti.data.every((noti: any) => noti.is_read) : true;
+  const { data: systemNoti, isLoading: isSystemNotiLoading } =
+    useGetNotiQuery("system");
+  const { data: creatorNoti, isLoading: isCreatorNotiLoading } =
+    useGetNotiQuery("creator");
+  const { data: balanceAlertNoti, isLoading: isBalanceAlertNotiLoading } =
+    useGetNotiQuery("balance_alert");
+
+  const isSystemNotiRead =
+    !isSystemNotiLoading && systemNoti.data.length > 0
+      ? systemNoti.data.every((noti: any) => noti.is_read)
+      : true;
+  const isCreatorNotiRead =
+    !isCreatorNotiLoading && creatorNoti.data.length > 0
+      ? creatorNoti.data.every((noti: any) => noti.is_read)
+      : true;
+  const isBalanceAlertNotiRead =
+    !isBalanceAlertNotiLoading && balanceAlertNoti.data.length > 0
+      ? balanceAlertNoti.data.every((noti: any) => noti.is_read)
+      : true;
 
   useEffect(() => {
     setNeedsBottomPadding(isIOSWebViewOrWebClip());
@@ -144,7 +158,17 @@ export function BottomNav() {
           item={item}
           handleRoute={handleRoute}
           pathname={pathname}
-          isShowRedDot={user?.token ? !(isSystemNotiRead && isCreatorNotiRead && isBalanceAlertNotiRead) : !notiData?.isReadForUnauthenticatedSystem || !notiData?.isReadForUnauthenticatedCreator || !notiData?.isReadForUnauthenticatedBalance}
+          isShowRedDot={
+            user?.token
+              ? !(
+                  isSystemNotiRead &&
+                  isCreatorNotiRead &&
+                  isBalanceAlertNotiRead
+                )
+              : !notiData?.isReadForUnauthenticatedSystem ||
+                !notiData?.isReadForUnauthenticatedCreator ||
+                !notiData?.isReadForUnauthenticatedBalance
+          }
         />
       ))}
     </nav>

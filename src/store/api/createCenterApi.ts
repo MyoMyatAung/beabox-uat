@@ -12,7 +12,7 @@ export const createCenterApi = createApi({
       const state = getState() as any;
       const accessToken = state.persist?.user?.token;
       const deviceInfo = getDeviceInfo();
-      
+
       headers.set("encrypt", "true");
       headers.set("Accept-Language", "cn");
       headers.set("X-Client-Version", "2002");
@@ -42,6 +42,14 @@ export const createCenterApi = createApi({
         convertToSecureUrl(
           `/top/creator/dashboard?ranking=${tag}&page=${page}&type=${type}`
         ),
+    }),
+    getTopVideo: builder.query({
+      query: ({ rank, page, tag, type }) => {
+        console.log(rank, page, tag, type);
+        return convertToSecureUrl(
+          `/top/video/dashboard?ranking=${rank}&page=${page}&tag=${tag}&type=${type}`
+        );
+      },
     }),
     getMyPostStatusCount: builder.query({
       query: () => convertToSecureUrl(`/my/post/status/count`),
@@ -154,6 +162,7 @@ export const {
   useGetPostsQuery,
   useCreatePostsMutation,
   useGetTopCreatorQuery,
+  useGetTopVideoQuery,
   useGetMyPostStatusCountQuery,
   useGetPostListQuery,
   useGetMyOwnProfileQuery,
