@@ -352,7 +352,7 @@ const VideoFooter = React.memo(
           <motion.div
             className="videoFooter w-full fixed bottom-0 left-0"
             style={{
-              bottom: isIOSDevice() && checkBottomSpacing ? "60px" : "30px",
+              bottom: isIOSDevice() && checkBottomSpacing ? "60px" : "46px",
             }}
             initial={{ y: "100%", opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}

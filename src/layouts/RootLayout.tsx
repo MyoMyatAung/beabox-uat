@@ -470,7 +470,7 @@ const RootLayout = ({ children }: any) => {
                   <>
                     <motion.div
                       key="countdown"
-                      className="fixed bottom-[22rem] left-2 z-[9999] rounded-full p-2"
+                      className="fixed bottom-[calc(22rem+16px)] left-2 z-[9999] rounded-full p-2"
                       initial={{ y: 100, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
                       exit={{ y: 100, opacity: 0 }}
@@ -491,7 +491,7 @@ const RootLayout = ({ children }: any) => {
 
                     <motion.div
                       key="luckySpin"
-                      className="fixed bottom-[19rem] left-4 z-[9999] rounded-full p-2"
+                      className="fixed bottom-[calc(19rem+16px)] left-4 z-[9999] rounded-full p-2"
                       initial={{ y: 100, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
                       exit={{ y: 100, opacity: 0 }}
@@ -514,7 +514,7 @@ const RootLayout = ({ children }: any) => {
                   </>
                 )}
               </AnimatePresence>
-              <div className="fixed bottom-[12rem] left-1 z-[9999] rounded-full p-2">
+              <div className="fixed bottom-[calc(12rem+16px)] left-1 z-[9999] rounded-full p-2">
                 <div className="relative">
                   <button
                     className="absolute top-1 right-2 bg-red rounded-full w-5 h-5 flex items-center justify-center text-black z-[10000]"

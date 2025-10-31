@@ -51,6 +51,7 @@ import { combineSlices } from "@reduxjs/toolkit";
 import { setPreviousUser } from "./services/previousUserSlice";
 import { clearSeenUsers } from "./services/seenUsersSlice";
 import { setHasDecryptedInitialData } from "./services/decryptionSlice";
+import { cn } from "@/lib/utils";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -742,12 +743,14 @@ const Home = () => {
 
                     <div
                       ref={videoContainerRef}
-                      className={`app__videos ${
-                        !hideNew ? "pb-[80px]" : ""
-                      }  overflow-hidden 
-                                  transition-all duration-300 ease-in-out transform ${
-                                    showFollowers ? "mt-[400px]" : "mt-0"
-                                  }`}
+                      className={cn(
+                        "app__videos overflow-hidden transition-all duration-300 ease-in-out transform",
+                        !hideNew && "pb-[80px]",
+                        showFollowers ? "mt-[400px]" : "mt-0",
+                        videos["follow"].length < 1 &&
+                          !isLastVideoVisible &&
+                          "hidden"
+                      )}
                     >
                       {videos["follow"]?.map((video: any, index: any) => {
                         return (
