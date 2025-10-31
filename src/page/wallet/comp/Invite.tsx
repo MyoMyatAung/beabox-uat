@@ -17,9 +17,12 @@ import { QRCodeCanvas } from "qrcode.react";
 import ImageWithPlaceholder from "@/page/explore/comp/imgPlaceHolder";
 import copy from "copy-to-clipboard";
 import ImageWithPlaceholder1 from "@/page/explore/comp/ImgPlaceHolder1";
+import { useNavigate } from "react-router-dom";
+import { paths } from "@/routes/paths";
 interface InviteProps {}
 
 const Invite: React.FC<InviteProps> = ({}) => {
+  const navigate = useNavigate();
   const { data } = useGetConfigQuery("");
   const { data: ppdaata } = useGetMyProfileQuery("");
   const { data: ownData } = useGetMyOwnProfileQuery("");
@@ -168,7 +171,13 @@ const Invite: React.FC<InviteProps> = ({}) => {
   return (
     <div className=" flex justify-center items-center">
       <div className="w-screen xl:w-[800px]">
-        <Header lv={false} title="我要分享" />
+        <Header
+          lv={false}
+          title="我要分享"
+          onBackClick={() => {
+            navigate(paths.profile);
+          }}
+        />
         {copied && (
           <div className="absolute flex justify-center items-cente w-full h-ful ">
             <p className="text-[#fff] text-[14px] font-[400] leading-[14px] text-center px-[20px] py-[12px] copy_btn">

@@ -5050,12 +5050,16 @@ const Player = ({
   const [isPosterVisible, setIsPosterVisible] = useState(true);
   const hideNew = useSelector((state: any) => state.hideNewSlice.hideNew);
 
-  if(hideNew){
+  if (hideNew) {
     // artPlayerInstanceRef.current?.template.$danmuku.classList.add("beauty-layer");
-    artPlayerInstanceRef.current?.template.$layer.classList.add("vignette-layer");
+    artPlayerInstanceRef.current?.template.$layer.classList.add(
+      "vignette-layer"
+    );
   } else {
     // artPlayerInstanceRef.current?.template.$danmuku.classList.remove("beauty-layer");
-    artPlayerInstanceRef.current?.template.$layer.classList.remove("vignette-layer");
+    artPlayerInstanceRef.current?.template.$layer.classList.remove(
+      "vignette-layer"
+    );
   }
 
   // useEffect(() => {
@@ -5086,12 +5090,11 @@ const Player = ({
       ></div>
       <div
         ref={playerContainerRef}
-        className={`video_player w-full ${hideNew ? "immersive_video" : ""} ${p_img ? "poster_change" : ""
-          }`}
+        className={`video_player w-full ${hideNew ? "immersive_video" : ""} ${
+          p_img ? "poster_change" : ""
+        }`}
         style={{ minHeight: "200px" }} // Add minimum height to prevent collapse
-      >
-
-      </div>
+      ></div>
     </>
   );
 };

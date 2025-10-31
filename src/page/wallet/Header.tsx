@@ -7,9 +7,10 @@ import { useGetMyProfileQuery } from "@/store/api/profileApi";
 interface HeaderProps {
   title: string;
   lv: boolean;
+  onBackClick?: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ title, lv }) => {
+const Header: React.FC<HeaderProps> = ({ title, lv, onBackClick }) => {
   const [pic, setPic] = useState("");
   const { data } = useGetMyProfileQuery("");
 
@@ -24,7 +25,13 @@ const Header: React.FC<HeaderProps> = ({ title, lv }) => {
       <div className=" fixed left-0 flex w-full justify-center items-center  py-[14px] bg-[#201c25]">
         <ChevronLeft
           className=" absolute left-[10px] z-[11]"
-          onClick={() => navigate(-1)}
+          onClick={() => {
+            if (onBackClick) {
+              onBackClick();
+            } else {
+              navigate(-1);
+            }
+          }}
         />
         <h1
           className={` ${
