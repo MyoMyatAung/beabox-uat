@@ -1,54 +1,70 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { BottomNav } from "@/components/shared/bottom-nav";
-import PopUp from "./PopUp";
 import { useEffect, useState, useRef } from "react";
-import { useGetApplicationAdsQuery } from "@/store/api/explore/exploreApi";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import AuthDrawer from "@/components/profile/auth/auth-drawer";
-import AlertToast from "@/components/shared/alert-toast";
-import AlertRedirect from "./AlertRedirect";
-import {
-  useGetConfigQuery,
-  useGetNotificationsQuery,
-} from "@/page/home/services/homeApi";
-import LoadingScreen from "@/components/LoadingScreen";
-import Landing from "@/components/Landing";
-import { setPlay } from "@/page/home/services/playSlice";
-import UserFeed from "@/components/UserFeed";
-import AnimationLoader from "@/components/shared/animation-loader";
-import countdownAnimation from "@/lotties/Animation.json";
-import luckySpinAnimation from "@/lotties/SpinWheel.json";
-import fabAnimation from "@/lotties/Welfare.json";
-import {
-  useGetCurrentEventQuery,
-  useLazyGetEventDetailsQuery,
-} from "@/store/api/events/eventApi";
-import CloseSvg from "@/assets/icons/Close.svg";
 import { RootState } from "@/store/store";
-import { useNavigate, useLocation } from "react-router-dom";
-import { setIsDrawerOpen } from "@/store/slices/profileSlice";
+import { setPlay } from "@/page/home/services/playSlice";
+import { sethideNew } from "@/page/home/services/hideNewSlice";
 import {
   setEventDetail,
   setAnimation,
   setDuration,
 } from "@/store/slices/eventSlice";
-import { useSearchParams } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { useGetApplicationAdsQuery } from "@/store/api/explore/exploreApi";
+import {
+  useGetConfigQuery,
+  useGetNotificationsQuery,
+} from "@/page/home/services/homeApi";
+import {
+  useGetCurrentEventQuery,
+  useLazyGetEventDetailsQuery,
+} from "@/store/api/events/eventApi";
 import { useGetUserByReferalQuery } from "@/page/event/eventApi";
-import EventBox from "@/page/event/EventBox";
+import { BottomNav } from "@/components/shared/bottom-nav";
+import AuthDrawer from "@/components/profile/auth/auth-drawer";
 import RegisterDrawer from "@/components/profile/auth/register-drawer";
-import { EventDetail } from "@/@types/lucky_draw";
-// import DEventBox from "@/page/event/dragon/DEventBox";
+import AlertToast from "@/components/shared/alert-toast";
+import AnimationLoader from "@/components/shared/animation-loader";
+import LoadingScreen from "@/components/LoadingScreen";
+import Landing from "@/components/Landing";
+import ImmersiveUserGuide from "@/components/ImmersiveUserGuide";
+import PopUp from "./PopUp";
+import AlertRedirect from "./AlertRedirect";
+import PasswordSetUpPopUp from "./PasswordSetUpPopUp";
+import NotiPopUp from "./NotiPopUp";
 import DEventBox from "@/page/event/EventBox";
 
-import { motion, AnimatePresence } from "framer-motion";
-import useImagePreloader from "./useImagePreloader";
-import ApplicationPreloader from "./ApplicationPreloader";
-import PasswordSetUpPopUp from "./PasswordSetUpPopUp";
-import AnnouncementsPopUp from "./AnnouncementsPopUp";
+import countdownAnimation from "@/lotties/Animation.json";
+import luckySpinAnimation from "@/lotties/SpinWheel.json";
+import fabAnimation from "@/lotties/Welfare.json";
+import CloseSvg from "@/assets/icons/Close.svg";
 import { isIOSWebView } from "@/lib/deviceInfo";
-import NotiPopUp from "./NotiPopUp";
-import { sethideNew } from "@/page/home/services/hideNewSlice";
-import ImmersiveUserGuide from "@/components/ImmersiveUserGuide";
+import { EventDetail } from "@/@types/lucky_draw";
+
+const APP_CONFIG = {
+  ANIMATION_DELAY: 5000,
+  SPLASH_DELAY: 1000,
+  ANIMATION_SIZES: {
+    COUNTDOWN: { width: 110 },
+    LUCKY_SPIN: { width: 85, height: 100 },
+    FAB: { width: 100, height: 100 },
+  },
+  ANIMATION_POSITIONS: {
+    COUNTDOWN: "bottom-[calc(22rem+16px)] left-2",
+    LUCKY_SPIN: "bottom-[calc(19rem+16px)] left-4",
+    FAB: "bottom-[calc(12rem+16px)] left-1",
+  },
+  SPRING_CONFIG: {
+    type: "spring",
+    damping: 20,
+    stiffness: 300,
+  },
+} as const;
+
+// =============================================================================
+// UTILITY FUNCTIONS
+// =============================================================================
+
 // Function to check if the app is running in a WebView
 function isWebView() {
   return (
@@ -58,151 +74,144 @@ function isWebView() {
   );
 }
 
+function sendNativeEvent(message: string) {
+  if (isWebView()) {
+    (window as any).webkit.messageHandlers.jsBridge.postMessage(message);
+  }
+}
+
+// =============================================================================
+// MAIN COMPONENT
+// =============================================================================
+
 const RootLayout = ({ children }: any) => {
-  const [showAd, setShowAd] = useState(false);
-  const [showAlert, setShowAlert] = useState(false);
-  const [showPasswordSetUpPopUp, setShowPasswordSetUpPopUp] = useState(false);
-  const [isBrowser, setIsBrowser] = useState(false);
-  const [deviceType, setDeviceType] = useState<"IOS" | "Android" | "">("");
-  const [jumpUrl, setJumpUrl] = useState("");
-  const [showDialog, setShowDialog] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [showLanding, setShowLanding] = useState(false);
-  const [userHasClosedAnimation, setUserHasClosedAnimation] = useState(
-    sessionStorage.getItem("animationClosed") === "true"
-  );
+  // =============================================================================
+  // ROUTING AND NAVIGATION
+  // =============================================================================
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-
-  const [event, setEvent] = useState(false);
-  const [shownextBox, setshownextBox] = useState(false);
-
-  const [userPers, setUserPers] = useState(false);
   const [searchParams] = useSearchParams();
   const referCode = searchParams.get("refer");
+
+  // =============================================================================
+  // DEVICE AND BROWSER DETECTION STATE
+  // =============================================================================
+  const [isBrowser, setIsBrowser] = useState(false);
+  const [deviceType, setDeviceType] = useState<"IOS" | "Android" | "">("");
+
+  // =============================================================================
+  // APP FLOW AND LOADING STATE
+  // =============================================================================
+  const [isLoading, setIsLoading] = useState(false);
+  const [showLanding, setShowLanding] = useState(false);
+  const [removeSplashScreen, setRemoveSplashScreen] = useState(false);
+
+  // =============================================================================
+  // AD AND POPUP STATE
+  // =============================================================================
+  const [showAd, setShowAd] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
+  const [jumpUrl, setJumpUrl] = useState("");
+  const [showPasswordSetUpPopUp, setShowPasswordSetUpPopUp] = useState(false);
+
+  // =============================================================================
+  // EVENT AND ANIMATION STATE
+  // =============================================================================
+  const [event, setEvent] = useState(false);
+  const [showEvent, setShowEvent] = useState(false);
+  const [shownextBox, setshownextBox] = useState(false);
+  const [userHasClosedAnimation, setUserHasClosedAnimation] = useState(
+    sessionStorage.getItem("animationClosed") === "true"
+  );
+
+  // =============================================================================
+  // USER GUIDE STATE
+  // =============================================================================
+  const [showUserGuide, setShowUserGuide] = useState(false);
+
+  // =============================================================================
+  // REGISTRATION AND AUTH STATE
+  // =============================================================================
   const [box, setBox] = useState(false);
   const [isOpenNew, setIsOpenNew] = useState(false);
   const [code, setCode] = useState("");
   const [newData, setnewData] = useState(null);
+
+  // =============================================================================
+  // REDUX STATE SELECTORS
+  // =============================================================================
   const user = useSelector((state: any) => state.persist.user);
   const currentTab = useSelector((state: any) => state.home.currentTab);
   const hideBar = useSelector((state: RootState) => state.hideBarSlice.hideBar);
   const hideNew = useSelector((state: RootState) => state.hideNewSlice.hideNew);
-  const { isFirstTimeUser } = useSelector((state: any) => state.app);
-  const [showEvent, setShowEvent] = useState(false);
+  const isOpen = useSelector((state: any) => state.profile.isDrawerOpen);
+  const showAnimation = useSelector(
+    (state: RootState) => state.event.isShowAnimation
+  );
+  // =============================================================================
+  // API QUERIES
+  // =============================================================================
   const { data: eventData } = useGetUserByReferalQuery(
-    { referral_code: referCode }, // or safely cast if you're confident it's a string
+    { referral_code: referCode },
     { skip: !referCode }
   );
   const { data: notiMessage } = useGetNotificationsQuery(
     {},
-    {
-      skip: location.pathname !== "/",
-    }
+    { skip: location.pathname !== "/" }
   );
-
-  useEffect(() => {
-    if (location.pathname === "/") {
-      console.log("notifications data:", notiMessage);
-    }
-  }, [location.pathname, notiMessage]);
-
-  useEffect(() => {
-    if (eventData?.data?.event?.status && !box && !user) {
-      setEvent(eventData?.data?.event?.status);
-    }
-  }, [eventData, event]);
-
   const { data: config } = useGetConfigQuery({});
+  const { data: currentEventData } = useGetCurrentEventQuery("");
+  const [triggerGetEventDetails] = useLazyGetEventDetailsQuery();
 
   // Skip the API query since LoadingScreen handles it
   useGetApplicationAdsQuery("", { skip: true });
 
-  const { data: currentEventData } = useGetCurrentEventQuery("");
-  const [triggerGetEventDetails] = useLazyGetEventDetailsQuery();
-  const showAnimation = useSelector(
-    (state: RootState) => state.event.isShowAnimation
+  // =============================================================================
+  // EVENT CACHING STATE
+  // =============================================================================
+  const [cachedEventDetails, setCachedEventDetails] = useState<{
+    data: EventDetail;
+  } | null>(null);
+  const [, setIsFetchingDetails] = useState(false);
+  const isFetchingRef = useRef(false);
+  const shouldSkipAnimationRef = useRef(
+    false
+    // sessionStorage.getItem("hasSeenLanding") === "true"
   );
-  const currentDuration = useSelector(
-    (state: RootState) => state.event.event_start_time
-  );
 
-  useEffect(() => {
-    // dev
-    // const webUrl = "http://localhost:5001";
-    // prod
-    // const webUrl = currentEventData?.data.filter((x: any) => x.type === 'spin-wheel')[0]?.web_url;
-    // setLuckySpinWebUrl(webUrl);
-    if (showAd && showAlert && isOpen && !showLanding) {
-      dispatch(setAnimation(false));
-    } else {
-      if (currentEventData?.data && !userHasClosedAnimation) {
-        if (
-          currentEventData?.status === true &&
-          !showAd &&
-          // !showAlert &&
-          !isOpen
-        ) {
-          const timeout = setTimeout(() => {
-            dispatch(setAnimation(true));
-          }, 5000);
-          return () => clearTimeout(timeout);
-        } else {
-          dispatch(setAnimation(false));
-        }
-      }
-      if (userHasClosedAnimation) {
-        dispatch(setAnimation(false));
-      }
-    }
-  }, [
-    currentEventData?.status,
-    dispatch,
-    showAd,
-    showLanding,
-    showAlert,
-    userHasClosedAnimation,
-  ]);
+  // =============================================================================
+  // EFFECT HOOKS - INITIALIZATION AND SESSION MANAGEMENT
+  // =============================================================================
 
+  // Initialize app based on session state
   useEffect(() => {
-    // If the user is first time user, the hideNew must be true
-    if (isFirstTimeUser) {
-      dispatch(sethideNew(true));
-    }
-  }, [dispatch, isFirstTimeUser]);
-
-  // Check if ads have already been seen in this session
-  useEffect(() => {
+    // This would only be need if want to skip initial loading and ads
     const hasSeenAdPopUp = sessionStorage.getItem("hasSeenAdPopUp");
     const hasSeenLanding = sessionStorage.getItem("hasSeenLanding");
 
-    if (hasSeenAdPopUp && hasSeenLanding) {
-      // User has already seen ads in this session, skip loading and ads
-      dispatch(setPlay(true));
-      sendNativeEvent("beabox_home_started");
-    } else {
-      // User hasn't seen ads in this session, show loading screen
-      setIsLoading(true);
-      sendNativeEvent("beabox_ads_started");
-    }
+    setIsLoading(true);
+    sendNativeEvent("beabox_ads_started");
+    // if (hasSeenAdPopUp && hasSeenLanding) {
+    //   dispatch(setPlay(true));
+    //   sendNativeEvent("beabox_home_started");
+    // } else {
+    //   setIsLoading(true);
+    //   sendNativeEvent("beabox_ads_started");
+    // }
   }, [dispatch]);
 
-  // Native event sending function
-  const sendNativeEvent = (message: string) => {
-    if (isWebView()) {
-      (window as any).webkit.messageHandlers.jsBridge.postMessage(message);
-    }
-  };
+  // =============================================================================
+  // EFFECT HOOKS - DEVICE DETECTION AND CONFIG
+  // =============================================================================
 
-  // Detect device type and browser
+  // Detect device type and browser environment
   useEffect(() => {
     const userAgent = navigator.userAgent.toLowerCase();
 
-    // Set isBrowser based on WebView detection
     setIsBrowser(!isWebView());
 
-    // Determine device type
     if (
       userAgent.includes("iphone") ||
       userAgent.includes("ipad") ||
@@ -214,7 +223,7 @@ const RootLayout = ({ children }: any) => {
     }
   }, []);
 
-  // Set the jumpUrl based on deviceType when config is loaded
+  // Configure app dialog based on device type
   useEffect(() => {
     if (config?.data?.dialog_config && deviceType) {
       const dialogConfigItem = config.data.dialog_config.find(
@@ -226,7 +235,6 @@ const RootLayout = ({ children }: any) => {
           setJumpUrl(dialogConfigItem.jump_url);
         }
 
-        // Set showDialog based on dialogConfigItem.show_dialog
         const shouldShowDialog =
           dialogConfigItem.show_dialog === 1 ||
           dialogConfigItem.show_dialog === true ||
@@ -237,25 +245,74 @@ const RootLayout = ({ children }: any) => {
     }
   }, [config, deviceType]);
 
-  // Handle when loading screen completes
+  // =============================================================================
+  // EFFECT HOOKS - EVENT MANAGEMENT
+  // =============================================================================
+
+  // Handle event status from referral data
+  useEffect(() => {
+    if (eventData?.data?.event?.status && !box && !user) {
+      setEvent(eventData?.data?.event?.status);
+    }
+  }, [eventData, event, box, user]);
+
+  // Control play state based on event
+  useEffect(() => {
+    if (event) {
+      dispatch(setPlay(false));
+    }
+  }, [event, dispatch]);
+
+  // Control animation display logic
+  useEffect(() => {
+    if (showAd && showAlert && isOpen && !showLanding) {
+      dispatch(setAnimation(false));
+    } else {
+      if (currentEventData?.data && !userHasClosedAnimation) {
+        if (currentEventData?.status === true && !showAd && !isOpen) {
+          const timeout = setTimeout(() => {
+            dispatch(setAnimation(true));
+          }, APP_CONFIG.ANIMATION_DELAY);
+          return () => clearTimeout(timeout);
+        } else {
+          dispatch(setAnimation(false));
+        }
+      }
+      if (userHasClosedAnimation) {
+        dispatch(setAnimation(false));
+      }
+    }
+  }, [
+    currentEventData?.status,
+    currentEventData?.data,
+    dispatch,
+    showAd,
+    showLanding,
+    showAlert,
+    isOpen,
+    userHasClosedAnimation,
+  ]);
+
+  // =============================================================================
+  // HANDLER FUNCTIONS
+  // =============================================================================
+
   const handleLoadComplete = () => {
     setIsLoading(false);
-    setShowLanding(true); // Show Landing screen after loading
-    // Mark that landing screen has been shown in this session
+    setShowLanding(true);
     sessionStorage.setItem("hasSeenLanding", "true");
   };
 
-  // Handle when Landing screen completes
   const handleLandingComplete = () => {
     setShowLanding(false);
-    // if (!isFirstTime) {
-    //   setUserPers(true);
-    // }
+    setTimeout(() => {
+      setRemoveSplashScreen(true);
 
-    setShowAd(true); // Show PopUp after Landing
+      // Show ImmersiveUserGuide on every app mount, then ads
+      setShowUserGuide(true);
+    }, 1000);
   };
 
-  // Handle when all ads are completed
   const handleAdComplete = () => {
     setShowAd(false);
 
@@ -268,98 +325,16 @@ const RootLayout = ({ children }: any) => {
     sendNativeEvent("beabox_home_started");
   };
 
-  useEffect(() => {
-    if (event) {
-      dispatch(setPlay(false));
-    }
-  }, [event]);
-
-  const isOpen = useSelector((state: any) => state.profile.isDrawerOpen);
-
-  const [cachedEventDetails, setCachedEventDetails] = useState<{
-    data: EventDetail;
-  } | null>(null);
-  const [isFetchingDetails, setIsFetchingDetails] = useState(false);
-  const isFetchingRef = useRef(false);
-
-  // Prefetch event details whenever we have the necessary data
-  useEffect(() => {
-    const prefetchEventDetails = async () => {
-      const eventId = currentEventData?.data?.filter(
-        (x: any) => x.type === "event"
-      )[0]?.id;
-
-      if (!eventId || isFetchingRef.current) return;
-
-      try {
-        isFetchingRef.current = true;
-        setIsFetchingDetails(true);
-        const eventDetails = await triggerGetEventDetails(eventId).unwrap();
-        setCachedEventDetails(eventDetails);
-        // Pre-dispatch to Redux for immediate availability
-        dispatch(setEventDetail(eventDetails.data));
-        if (eventDetails.data?.event_start_time) {
-          dispatch(setDuration(eventDetails.data.event_start_time));
-        }
-      } catch (error) {
-        console.error("Failed to prefetch event details:", error);
-      } finally {
-        setIsFetchingDetails(false);
-        isFetchingRef.current = false;
-      }
-    };
-
-    // Only prefetch if we're on the home page and have the necessary data
-    if (location.pathname === "/" && currentEventData?.data) {
-      prefetchEventDetails();
-    }
-  }, [currentEventData?.data, location.pathname, dispatch]);
-
-  // Preload the lucky draw component
-  useEffect(() => {
-    const shouldPreload =
-      !showAd &&
-      !showAlert &&
-      !isOpen &&
-      location.pathname === "/" &&
-      !event &&
-      showAnimation &&
-      currentTab === 2;
-
-    if (shouldPreload) {
-      // Preload the component
-      import("@/page/events/Luckydraw");
-    }
-  }, [
-    showAd,
-    showAlert,
-    isOpen,
-    location.pathname,
-    event,
-    showAnimation,
-    currentTab,
-  ]);
-
-  // If loading, show loading screen
-  if (isLoading) {
-    return <LoadingScreen onLoadComplete={handleLoadComplete} />;
-  }
-
-  // After loading, show Landing
-  if (showLanding) {
-    return <Landing onComplete={handleLandingComplete} />;
-  }
+  // Event animation handlers
   const handleAnimationClick = async () => {
     const eventId = currentEventData?.data?.filter(
       (x: any) => x.type === "event"
     )[0]?.id;
     if (!eventId) return;
 
-    // Use cached data if available
     if (cachedEventDetails) {
       navigate(`/events/lucky-draw/${eventId}`);
 
-      // Refresh in background
       try {
         const freshEventDetails = await triggerGetEventDetails(
           eventId
@@ -374,7 +349,6 @@ const RootLayout = ({ children }: any) => {
       return;
     }
 
-    // If no cached data, fetch synchronously
     try {
       const eventDetails = await triggerGetEventDetails(eventId).unwrap();
       dispatch(setEventDetail(eventDetails.data));
@@ -391,164 +365,325 @@ const RootLayout = ({ children }: any) => {
     navigate("/lucky");
   };
 
+  // =============================================================================
+  // EFFECT HOOKS - PERFORMANCE OPTIMIZATION
+  // =============================================================================
+
+  // Prefetch event details for better UX
+  useEffect(() => {
+    const prefetchEventDetails = async () => {
+      const eventId = currentEventData?.data?.filter(
+        (x: any) => x.type === "event"
+      )[0]?.id;
+      if (!eventId || isFetchingRef.current) return;
+
+      try {
+        isFetchingRef.current = true;
+        setIsFetchingDetails(true);
+        const eventDetails = await triggerGetEventDetails(eventId).unwrap();
+        setCachedEventDetails(eventDetails);
+        dispatch(setEventDetail(eventDetails.data));
+        if (eventDetails.data?.event_start_time) {
+          dispatch(setDuration(eventDetails.data.event_start_time));
+        }
+      } catch (error) {
+        console.error("Failed to prefetch event details:", error);
+      } finally {
+        setIsFetchingDetails(false);
+        isFetchingRef.current = false;
+      }
+    };
+
+    if (location.pathname === "/" && currentEventData?.data) {
+      prefetchEventDetails();
+    }
+  }, [
+    currentEventData?.data,
+    location.pathname,
+    dispatch,
+    triggerGetEventDetails,
+  ]);
+
+  // Preload lucky draw component for better performance
+  useEffect(() => {
+    const shouldPreload =
+      !showAd &&
+      !showAlert &&
+      !isOpen &&
+      location.pathname === "/" &&
+      !event &&
+      showAnimation &&
+      currentTab === 2;
+
+    if (shouldPreload) {
+      import("@/page/events/Luckydraw");
+    }
+  }, [
+    showAd,
+    showAlert,
+    isOpen,
+    location.pathname,
+    event,
+    showAnimation,
+    currentTab,
+  ]);
+
+  // Debug: Log notifications when on home page
+  useEffect(() => {
+    if (location.pathname === "/") {
+      console.log("notifications data:", notiMessage);
+    }
+  }, [location.pathname, notiMessage]);
+
+  // =============================================================================
+  // RENDER LOGIC
+  // =============================================================================
+
   return (
     <>
-      <div style={{ height: "calc(100dvh - 95px);" }}>
-        {children}
-
-        {event && !box && !isOpenNew && !user && (
-          <DEventBox
-            setshownextBox={setshownextBox}
-            shownextBox={shownextBox}
-            eventData={eventData}
-            setBox={setBox}
-            referCode={referCode}
-            isOpen={isOpenNew}
-            setIsOpen={setIsOpenNew}
-            setCode={setCode}
-            newData={newData}
-            setnewData={setnewData}
-            setEvent={setEvent}
+      <AnimatePresence>
+        {isLoading && (
+          <LoadingScreen
+            key="loading-screen"
+            onLoadComplete={handleLoadComplete}
           />
         )}
-        {isOpenNew && (
-          <RegisterDrawer
-            isOpen={isOpenNew}
-            setIsOpen={setIsOpenNew}
-            code={referCode}
-            geetest_id={code}
-          />
-        )}
+      </AnimatePresence>
+      {!isLoading && (
+        <>
+          <motion.div
+            className="fixed inset-0 z-50"
+            style={{ height: "calc(100dvh - 95px);" }}
+            initial={
+              shouldSkipAnimationRef.current
+                ? { clipPath: "inset(0% 0 0% 0)", translateY: "0" }
+                : { clipPath: "inset(50% 0 50% 0)", translateY: "-14px" }
+            }
+            animate={{
+              clipPath: !showLanding
+                ? "inset(0% 0 0% 0)"
+                : "inset(50% 0 50% 0)",
+              translateY: !showLanding ? "0" : "-14px",
+            }}
+            transition={
+              shouldSkipAnimationRef.current
+                ? { duration: 0 }
+                : { duration: 1, ease: "easeOut", delay: 0.5 }
+            }
+          >
+            {children}
 
-        {showAd && !event && (
-          <PopUp
-            setShowAd={setShowAd}
-            setShowAlert={setShowAlert}
-            isBrowser={isBrowser}
-            onComplete={handleAdComplete}
-          />
-        )}
-        {!showAd &&
-          showAlert &&
-          isBrowser &&
-          jumpUrl &&
-          showDialog &&
-          !event && (
-            <AlertRedirect
-              event={event}
-              setShowAlert={setShowAlert}
-              app_download_link={jumpUrl}
-            />
-          )}
+            {/* =================================================================== */}
+            {/* EVENT AND REGISTRATION COMPONENTS */}
+            {/* =================================================================== */}
 
-        <AlertToast />
+            {event && !box && !isOpenNew && !user && (
+              <DEventBox
+                setshownextBox={setshownextBox}
+                shownextBox={shownextBox}
+                eventData={eventData}
+                setBox={setBox}
+                referCode={referCode}
+                isOpen={isOpenNew}
+                setIsOpen={setIsOpenNew}
+                setCode={setCode}
+                newData={newData}
+                setnewData={setnewData}
+                setEvent={setEvent}
+              />
+            )}
 
-        {isFirstTimeUser && !showAd && (!showAlert || !showDialog) && (
-          <ImmersiveUserGuide />
-        )}
+            {isOpenNew && (
+              <RegisterDrawer
+                isOpen={isOpenNew}
+                setIsOpen={setIsOpenNew}
+                code={referCode}
+                geetest_id={code}
+              />
+            )}
 
-        {isOpen ? <AuthDrawer /> : <></>}
-        {!hideNew && (
-          <div className="fixed bottom-0 left-0 w-full z-[1600]">
-            <BottomNav />
-          </div>
-        )}
+            {/* =================================================================== */}
+            {/* USER GUIDE - PRIORITY 5 */}
+            {/* =================================================================== */}
 
-        {!showAd &&
-          // !showAlert &&
-          !isOpen &&
-          location.pathname === "/" &&
-          !event &&
-          showAnimation &&
-          currentTab === 2 &&
-          !hideBar &&
-          !hideNew &&
-          !userHasClosedAnimation && (
-            <>
-              <AnimatePresence>
-                {showEvent && (
-                  <>
-                    <motion.div
-                      key="countdown"
-                      className="fixed bottom-[calc(22rem+16px)] left-2 z-[9999] rounded-full p-2"
-                      initial={{ y: 100, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      exit={{ y: 100, opacity: 0 }}
-                      transition={{
-                        type: "spring",
-                        damping: 20,
-                        stiffness: 300,
-                      }}
-                    >
-                      <div className="relative">
-                        <AnimationLoader
-                          animationData={countdownAnimation}
-                          width={110}
-                          onClick={handleAnimationClick}
-                        />
-                      </div>
-                    </motion.div>
+            {showUserGuide && !event && location.pathname === "/" && (
+              <ImmersiveUserGuide
+                setShowUserGuide={setShowUserGuide}
+                setShowAd={setShowAd}
+              />
+            )}
 
-                    <motion.div
-                      key="luckySpin"
-                      className="fixed bottom-[calc(19rem+16px)] left-4 z-[9999] rounded-full p-2"
-                      initial={{ y: 100, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      exit={{ y: 100, opacity: 0 }}
-                      transition={{
-                        type: "spring",
-                        damping: 20,
-                        stiffness: 300,
-                        delay: 0.1,
-                      }}
-                    >
-                      <div className="relative">
-                        <AnimationLoader
-                          animationData={luckySpinAnimation}
-                          width={85}
-                          height={100}
-                          onClick={handleLuckySpinClick}
-                        />
-                      </div>
-                    </motion.div>
-                  </>
-                )}
-              </AnimatePresence>
-              <div className="fixed bottom-[calc(12rem+16px)] left-1 z-[9999] rounded-full p-2">
-                <div className="relative">
-                  <button
-                    className="absolute top-1 right-2 bg-red rounded-full w-5 h-5 flex items-center justify-center text-black z-[10000]"
-                    onClick={() => {
-                      dispatch(setAnimation(false));
-                      setUserHasClosedAnimation(true);
-                      sessionStorage.setItem("animationClosed", "true");
-                    }}
-                  >
-                    <img src={CloseSvg} />
-                  </button>
-                  <AnimationLoader
-                    animationData={fabAnimation}
-                    width={100}
-                    height={100}
-                    onClick={() => setShowEvent(!showEvent)}
+            {/* =================================================================== */}
+            {/* AD POPUP - PRIORITY 6 */}
+            {/* =================================================================== */}
+
+            <AnimatePresence mode="wait">
+              {showAd && !event && location.pathname === "/" && (
+                <PopUp
+                  setShowAd={setShowAd}
+                  setShowAlert={setShowAlert}
+                  isBrowser={isBrowser}
+                  onComplete={handleAdComplete}
+                />
+              )}
+            </AnimatePresence>
+
+            {/* =================================================================== */}
+            {/* ALERT REDIRECT - PRIORITY 7 */}
+            {/* =================================================================== */}
+
+            <AnimatePresence>
+              {!showAd &&
+                showAlert &&
+                isBrowser &&
+                jumpUrl &&
+                showDialog &&
+                !event &&
+                location.pathname === "/" && (
+                  <AlertRedirect
+                    key="alert-redirect"
+                    event={event}
+                    setShowAlert={setShowAlert}
+                    app_download_link={jumpUrl}
                   />
-                </div>
+                )}
+            </AnimatePresence>
+
+            {/* =================================================================== */}
+            {/* AUTH DRAWER - PRIORITY 8 */}
+            {/* =================================================================== */}
+
+            {isOpen && <AuthDrawer />}
+
+            {/* =================================================================== */}
+            {/* GLOBAL COMPONENTS */}
+            {/* =================================================================== */}
+
+            <AlertToast />
+
+            {!hideNew && (
+              <div className="fixed bottom-0 left-0 w-full z-[1600]">
+                <BottomNav />
               </div>
-            </>
+            )}
+
+            {/* =================================================================== */}
+            {/* EVENT ANIMATIONS */}
+            {/* =================================================================== */}
+
+            {!showAd &&
+              !isOpen &&
+              location.pathname === "/" &&
+              !event &&
+              showAnimation &&
+              currentTab === 2 &&
+              !hideBar &&
+              !hideNew &&
+              !userHasClosedAnimation && (
+                <>
+                  <AnimatePresence>
+                    {showEvent && (
+                      <>
+                        {/* Countdown Animation */}
+                        <motion.div
+                          key="countdown"
+                          className={`fixed ${APP_CONFIG.ANIMATION_POSITIONS.COUNTDOWN} z-[9999] rounded-full p-2`}
+                          initial={{ y: 100, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          exit={{ y: 100, opacity: 0 }}
+                          transition={APP_CONFIG.SPRING_CONFIG}
+                        >
+                          <div className="relative">
+                            <AnimationLoader
+                              animationData={countdownAnimation}
+                              {...APP_CONFIG.ANIMATION_SIZES.COUNTDOWN}
+                              onClick={handleAnimationClick}
+                            />
+                          </div>
+                        </motion.div>
+
+                        {/* Lucky Spin Animation */}
+                        <motion.div
+                          key="luckySpin"
+                          className={`fixed ${APP_CONFIG.ANIMATION_POSITIONS.LUCKY_SPIN} z-[9999] rounded-full p-2`}
+                          initial={{ y: 100, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          exit={{ y: 100, opacity: 0 }}
+                          transition={{
+                            ...APP_CONFIG.SPRING_CONFIG,
+                            delay: 0.1,
+                          }}
+                        >
+                          <div className="relative">
+                            <AnimationLoader
+                              animationData={luckySpinAnimation}
+                              {...APP_CONFIG.ANIMATION_SIZES.LUCKY_SPIN}
+                              onClick={handleLuckySpinClick}
+                            />
+                          </div>
+                        </motion.div>
+                      </>
+                    )}
+                  </AnimatePresence>
+
+                  {/* FAB Animation with Close Button */}
+                  <div
+                    className={`fixed ${APP_CONFIG.ANIMATION_POSITIONS.FAB} z-[9999] rounded-full p-2`}
+                  >
+                    <div className="relative">
+                      <button
+                        className="absolute top-1 right-2 bg-red rounded-full w-5 h-5 flex items-center justify-center text-black z-[10000]"
+                        onClick={() => {
+                          dispatch(setAnimation(false));
+                          setUserHasClosedAnimation(true);
+                          sessionStorage.setItem("animationClosed", "true");
+                        }}
+                      >
+                        <img src={CloseSvg} />
+                      </button>
+                      <AnimationLoader
+                        animationData={fabAnimation}
+                        {...APP_CONFIG.ANIMATION_SIZES.FAB}
+                        onClick={() => setShowEvent(!showEvent)}
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+
+            {/* =================================================================== */}
+            {/* PASSWORD SETUP - PRIORITY 9 (iOS WebView only) */}
+            {/* =================================================================== */}
+
+            {!showAd &&
+              !showUserGuide &&
+              !showAlert &&
+              !isOpen &&
+              isIOSWebView() &&
+              location.pathname === "/" && (
+                <PasswordSetUpPopUp
+                  showPasswordSetUpPopUp={showPasswordSetUpPopUp}
+                  setShowPasswordSetUpPopUp={setShowPasswordSetUpPopUp}
+                />
+              )}
+
+            {/* =================================================================== */}
+            {/* NOTIFICATION POPUP - PRIORITY 10 */}
+            {/* =================================================================== */}
+
+            {!showAd &&
+              !showUserGuide &&
+              !showAlert &&
+              !showPasswordSetUpPopUp && (
+                <NotiPopUp notiMessage={notiMessage?.data} />
+              )}
+          </motion.div>
+
+          {!removeSplashScreen && (
+            <Landing onComplete={handleLandingComplete} />
           )}
-
-        {!showAd && isIOSWebView() && location.pathname === "/" && (
-          <PasswordSetUpPopUp
-            showPasswordSetUpPopUp={showPasswordSetUpPopUp}
-            setShowPasswordSetUpPopUp={setShowPasswordSetUpPopUp}
-          />
-        )}
-        {!showAd && !showPasswordSetUpPopUp && (
-          <NotiPopUp notiMessage={notiMessage?.data} />
-        )}
-      </div>
-
-      {/* <ApplicationPreloader /> */}
+        </>
+      )}
     </>
   );
 };
