@@ -2591,6 +2591,8 @@ const Player = ({
   const seekTimeRef = useRef(0); // Store the seek time while dragging
   const timeDisplayRef = useRef<HTMLDivElement | null>(null); // Reference to the time display
   const muteRef = useRef(mute); // Store latest mute state
+  const forceMutedRef = useRef(false);
+  const pendingUnmuteRef = useRef(false);
   const watchedTimeRef = useRef(0); // Track total watched time
   const apiCalledRef = useRef(false); // Ensure API is called only once
   const positionSaveTimerRef = useRef<NodeJS.Timeout | null>(null); // Timer for saving position
@@ -2977,13 +2979,17 @@ const Player = ({
     // Determine if the source is an m3u8 file
     const isM3u8 = src.toLowerCase().endsWith(".m3u8");
 
+    const shouldForceMute = !muteRef.current;
+    forceMutedRef.current = shouldForceMute;
+    pendingUnmuteRef.current = shouldForceMute;
+
     // Configure Artplayer options
     const options: Artplayer["Option"] = {
       autoOrientation: false,
       container: playerContainerRef.current,
       url: src,
       volume: 0.5,
-      muted: muteRef.current, // Mute initially unless user has interacted
+      muted: shouldForceMute ? true : muteRef.current,
       autoplay: isActive, //
       fullscreenWeb: true,
       poster: thumbnail,
@@ -4136,6 +4142,10 @@ const Player = ({
     // Create new player instance
     artPlayerInstanceRef.current = new Artplayer(options);
 
+    if (artPlayerInstanceRef.current?.video) {
+      artPlayerInstanceRef.current.video.muted = options.muted ?? false;
+    }
+
     // Add CSS transitions to the poster element for smooth fade effect
     if (artPlayerInstanceRef.current?.template?.$poster) {
       const posterElement = artPlayerInstanceRef.current.template.$poster;
@@ -4273,6 +4283,19 @@ const Player = ({
 
     // Main play attempt handler
     artPlayerInstanceRef.current.on("play", () => {
+      if (pendingUnmuteRef.current && !muteRef.current) {
+        pendingUnmuteRef.current = false;
+        forceMutedRef.current = false;
+
+        if (artPlayerInstanceRef.current) {
+          artPlayerInstanceRef.current.muted = false;
+          const videoEl = artPlayerInstanceRef.current.video;
+          if (videoEl) {
+            videoEl.muted = false;
+          }
+        }
+      }
+
       // Don't immediately fade out the poster - wait for actual frames
       if (!isFastForwarding) {
         // Only hide the play button, but keep poster until video is actually playing
@@ -4805,8 +4828,25 @@ const Player = ({
 
   useEffect(() => {
     muteRef.current = mute; // Update muteRef when mute state changes
-    if (artPlayerInstanceRef.current) {
-      artPlayerInstanceRef.current.muted = mute;
+    const player = artPlayerInstanceRef.current;
+    const videoElement = player?.video;
+
+    if (!player || !videoElement) {
+      return;
+    }
+
+    if (mute) {
+      player.muted = true;
+      videoElement.muted = true;
+      forceMutedRef.current = false;
+      pendingUnmuteRef.current = false;
+    } else if (forceMutedRef.current) {
+      player.muted = true;
+      videoElement.muted = true;
+      pendingUnmuteRef.current = true;
+    } else {
+      player.muted = false;
+      videoElement.muted = false;
     }
   }, [mute]);
 
@@ -5052,14 +5092,14 @@ const Player = ({
 
   if (hideNew) {
     // artPlayerInstanceRef.current?.template.$danmuku.classList.add("beauty-layer");
-    artPlayerInstanceRef.current?.template.$layer.classList.add(
-      "vignette-layer"
-    );
+    // artPlayerInstanceRef.current?.template.$layer.classList.add(
+    //   "vignette-layer"
+    // );
   } else {
     // artPlayerInstanceRef.current?.template.$danmuku.classList.remove("beauty-layer");
-    artPlayerInstanceRef.current?.template.$layer.classList.remove(
-      "vignette-layer"
-    );
+    // artPlayerInstanceRef.current?.template.$layer.classList.remove(
+    //   "vignette-layer"
+    // );
   }
 
   // useEffect(() => {

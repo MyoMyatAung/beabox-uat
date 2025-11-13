@@ -297,7 +297,7 @@ function VideoSidebar({
     <div
       className={`${
         isHome ? "videoSidebar" : "videoSidebar_exp"
-      } z-[99999] w-[50px]
+      } z-[1500] w-[50px]
 `}
     >
       <div className={`${isFirstTimeUser && "opacity-[0.1]"}`}>

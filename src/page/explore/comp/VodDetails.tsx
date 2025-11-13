@@ -261,6 +261,7 @@ const VodDetails: React.FC<VodDetailsProps> = ({}) => {
               setCountdown={setCountdown}
               // setShowHeart={setShowHeart}
               // coin={profile?.coins}
+              initialActive
             />
           )}
 
