@@ -717,8 +717,8 @@ const VideoContainerFeed = ({
   const [rotateVideoId, setRotateVideoId] = useState<string | null>(null); // For controlling fullscreen per video
   const [isOpen, setIsOpen] = useState(false);
 
-  // Add state to track if this video is active
-  const [isActive, setIsActive] = useState(false);
+  // Use the status prop from parent instead of local state
+  const isActive = Boolean(status);
 
   const handleLike = (() => {
     const likeTimeout = useRef<NodeJS.Timeout | null>(null); // Track the debounce timeout
@@ -987,23 +987,7 @@ const VideoContainerFeed = ({
     }
   };
 
-  useEffect(() => {
-    // Update active state based on visibility
-    const element = document.querySelector(`[data-post-id="${video.post_id}"]`);
-    if (!element) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          setIsActive(entry.isIntersecting);
-        });
-      },
-      { threshold: 0.5 }
-    );
-
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [video.post_id]);
+  // Removed competing IntersectionObserver - using status prop from parent instead
   const [isPortrait, setIsPortrait] = useState(false);
 
   useEffect(() => {

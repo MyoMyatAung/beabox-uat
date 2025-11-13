@@ -786,7 +786,6 @@ import {
   useUnlikePostMutation,
 } from "../services/homeApi";
 import { setVideos } from "../services/videosSlice";
-import { useNavigate } from "react-router-dom";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
 import { showToast } from "../services/errorSlice";
 
@@ -802,17 +801,18 @@ const VideoContainer = ({
   countdown,
   setHearts,
   status,
-  width,
-  height,
   container,
   abortControllerRef,
   indexRef,
   videoData,
+  initialActive = false,
 }: {
   showFollowers: any;
   video: any;
   setWidth: any;
   setHeight: any;
+  width: any;
+  height: any;
   setCountNumber: any;
   setCountdown: any;
   countNumber: any;
@@ -820,12 +820,11 @@ const VideoContainer = ({
   countdown: any;
   setHearts: any;
   status: any;
-  width: any;
-  height: any;
   container: any;
   abortControllerRef: any;
   indexRef: any;
   videoData: any;
+  initialActive?: boolean;
 }) => {
   const [likeCount, setLikeCount] = useState(video?.like_count);
   const [isLiked, setIsLiked] = useState(video?.is_liked);
@@ -842,10 +841,9 @@ const VideoContainer = ({
   const post_id = video?.post_id;
   const [rotateVideoId, setRotateVideoId] = useState<string | null>(null); // For controlling fullscreen per video
   const [isOpen, setIsOpen] = useState(false);
-  const hideNew = useSelector((state: any) => state.hideNewSlice.hideNew);
-
   // Add state to track if this video is active
-  const [isActive, setIsActive] = useState(false);
+  const [isActive, setIsActive] = useState(initialActive);
+  const hasFirstIntersectionRef = useRef(false);
 
   const handleLike = (() => {
     const likeTimeout = useRef<NodeJS.Timeout | null>(null); // Track the debounce timeout
@@ -1115,22 +1113,50 @@ const VideoContainer = ({
   };
 
   useEffect(() => {
-    // Update active state based on visibility
-    const element = document.querySelector(`[data-post-id="${video.post_id}"]`);
-    if (!element) return;
+    const element = document.querySelector(
+      `[data-post-id="${video.post_id}"]`
+    ) as HTMLElement | null;
+
+    if (!element) {
+      return;
+    }
+
+    hasFirstIntersectionRef.current = false;
+
+    const firstSiblingWithPostId =
+      element.parentElement?.querySelector<HTMLElement>("[data-post-id]");
+
+    const shouldStartActive =
+      initialActive ||
+      firstSiblingWithPostId?.dataset?.postId === element.dataset?.postId;
+
+    setIsActive(shouldStartActive);
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
+          if (shouldStartActive && !entry.isIntersecting) {
+            if (!hasFirstIntersectionRef.current) {
+              return;
+            }
+          }
+
           setIsActive(entry.isIntersecting);
+
+          if (entry.isIntersecting) {
+            hasFirstIntersectionRef.current = true;
+          }
         });
       },
       { threshold: 0.5 }
     );
 
     observer.observe(element);
-    return () => observer.disconnect();
-  }, [video.post_id]);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [video.post_id, initialActive]);
 
   const [isPortrait, setIsPortrait] = useState(false);
 
@@ -1160,7 +1186,7 @@ const VideoContainer = ({
         abortControllerRef={abortControllerRef}
         width={video?.files[0].width}
         height={video?.files[0].height}
-        type={video?.type == "ads" ? true : false}
+        type={video?.type === "ads" ? "ads" : ""}
         rotate={rotateVideoId === video?.post_id}
         src={video?.files[0].resourceURL}
         p_img={!isPortrait}

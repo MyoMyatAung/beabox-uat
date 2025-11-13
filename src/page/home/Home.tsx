@@ -793,6 +793,7 @@ const Home = () => {
                                 width={width}
                                 height={height}
                                 // setShowHeart={setShowHeart}
+                                initialActive={index === 0}
                               />
                             )}
 
@@ -805,6 +806,7 @@ const Home = () => {
                                   title={video?.title}
                                   username={video?.user?.name}
                                   city={video?.city}
+                                  checkBottomSpacing={!!showFollowers}
                                 />
                               )}
 
@@ -972,6 +974,7 @@ const Home = () => {
                                 width={width}
                                 height={height}
                                 // setShowHeart={setShowHeart}
+                                initialActive={index === 0}
                               />
                             )}
 
@@ -984,6 +987,7 @@ const Home = () => {
                                   title={video?.title}
                                   username={video?.user?.name}
                                   city={video?.city}
+                                  checkBottomSpacing={false}
                                 />
                               )}
 

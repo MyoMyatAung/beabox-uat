@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPanding } from "../store/slices/ModelSlice";
 import "../page/search/search.css";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
-import Splash from '../assets/splashScreen.webp';
+import Splash from "../assets/splashScreen.webp";
+import { AnimatePresence, motion } from "framer-motion";
 interface AdImage {
   image: string;
   jump_url?: string;
@@ -28,14 +29,16 @@ const Landing: React.FC<LandingProps> = ({ onComplete }) => {
   const [adLoaded, setAdLoaded] = useState(true); // Assets are already preloaded
 
   // Use splash data from Redux state if available
-  const adsData = useSelector((state: RootState) => state.explore?.applicationData?.splash_screen);
+  const adsData = useSelector(
+    (state: RootState) => state.explore?.applicationData?.splash_screen
+  );
 
   // Load ad data from Redux state
   useEffect(() => {
     if (adsData?.image) {
       setImages({
         image: adsData.image,
-        jump_url: adsData.jump_url
+        jump_url: adsData.jump_url,
       });
       setAdLoaded(true);
     }
@@ -69,7 +72,7 @@ const Landing: React.FC<LandingProps> = ({ onComplete }) => {
 
   // We're now only showing the ad view since splash is handled by LoadingScreen
   return (
-    <div className="max-w-[480px] mx-auto">
+    <div className="max-w-[480px] mx-auto fixed inset-0 z-40 overflow-hidden">
       <a target="_blank" rel="noopener noreferrer" href={images?.jump_url}>
         <div className="relative h-screen w-screen max-w-[480px]">
           <AsyncDecryptedImage
@@ -92,6 +95,17 @@ const Landing: React.FC<LandingProps> = ({ onComplete }) => {
           跳过广告 <span>{skip}</span>
         </h1>
       </div>
+
+      <AnimatePresence>
+        {skip <= 0 && (
+          <motion.div
+            className="absolute inset-0 bg-black"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.5, ease: "easeOut" }}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

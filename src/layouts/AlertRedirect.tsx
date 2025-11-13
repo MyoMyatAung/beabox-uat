@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { motion } from "framer-motion";
 import "../page/explore/explore.css";
 import logo from "../assets/alertlogo.webp";
 import closeIcon from "../assets/close.png";
@@ -131,8 +132,16 @@ const AlertRedirect: React.FC<AlertRedirectProps> = ({
   // }, [setShowAlert]);
 
   return (
-    <div className=" bg-black/80 w-screen flex flex-col gap-[20px] justify-center items-center fixed top-0 z-[999999] alert-height">
-      <div className="absolute bottom-0 w-full bg-alert p-5" ref={alertRef}>
+    <div className="bg-black/80 w-screen flex flex-col gap-[20px] justify-center items-center fixed top-0 z-[999999] alert-height">
+      <motion.div
+        key="alert-content"
+        className="absolute bottom-0 w-full bg-alert p-5"
+        ref={alertRef}
+        initial={{ y: "100%" }}
+        animate={{ y: 0 }}
+        exit={{ y: "100%" }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+      >
         {isWebClip() ? (
           <div className="flex justify-between items-center">
             <h1 className="alert-head-title">苹果商店版已上线，建议立刻安装</h1>
@@ -211,7 +220,7 @@ const AlertRedirect: React.FC<AlertRedirectProps> = ({
        
           )} */}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

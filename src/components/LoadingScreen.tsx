@@ -10,6 +10,7 @@ import Lottie from "lottie-react";
 import loadingAnimation from "@/lotties/Slogan.json";
 import LineErrorUI from "./LineErrorUI";
 import { useGetInviteQuery } from "@/store/api/wallet/walletApi";
+import { motion } from "framer-motion";
 
 // Types for our data
 interface AdImage {
@@ -278,7 +279,14 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
   }
 
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center z-[9999] font-['Noto_Sans_SC',sans-serif]">
+    <motion.div
+      key="loading-screen"
+      initial={{ opacity: "0", translateY: "-14px" }}
+      animate={{ opacity: "100%", translateY: "0" }}
+      exit={{ opacity: "0", translateY: "-14px" }}
+      transition={{ duration: 0.3, ease: "easeOut", delay: 0 }}
+      className="fixed inset-0 flex flex-col items-center justify-center z-[9999] font-['Noto_Sans_SC',sans-serif]"
+    >
       <style>{`
         @keyframes steppedFadeIn {
           0% { opacity: 0; }
@@ -312,7 +320,17 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
         <div className="absolute inset-0 bg-black bg-opacity-60"></div>
 
         {/* Content Container */}
-        <div className="relative z-10 flex flex-col items-center justify-center h-full">
+        <motion.div
+          initial={{ y: 0, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: "-100%", opacity: 0 }}
+          transition={{
+            duration: 0.5,
+            ease: "easeOut",
+            delay: 0,
+          }}
+          className="relative z-10 flex flex-col items-center justify-center h-full"
+        >
           {/* Logo */}
           <Lottie
             className="-mt-[50px]"
@@ -355,18 +373,26 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
                 </span>
               </div>
             </div>
-
-            {/* Footer Text */}
-            <div
-              className={`absolute bottom-4 w-full text-center text-xs text-white text-opacity-60 px-4`}
-            >
-              本软件不适合未成年人使用，如果您未满18岁请立刻离开。
-              <br />© 笔盒@2025 ｜ 联系邮箱：zhaohui@beabox.net
-            </div>
           </div>
-        </div>
+        </motion.div>
+
+        {/* Footer Text */}
+        <motion.div
+          initial={{ y: 10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 10, opacity: 0 }}
+          transition={{
+            duration: 0.5,
+            ease: "easeOut",
+            delay: 0,
+          }}
+          className="absolute bottom-4 w-full text-center text-xs text-white text-opacity-60 px-4"
+        >
+          本软件不适合未成年人使用，如果您未满18岁请立刻离开。
+          <br />© 笔盒@2025 ｜ 联系邮箱：zhaohui@beabox.net
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
