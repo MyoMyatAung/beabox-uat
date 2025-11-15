@@ -204,7 +204,7 @@ export const RankingCardVideo = ({
                 strokeWidth="0.8"
               />
             </svg>
-            <p className="text-xs">{data?.like_count} likes</p>
+            <p className="text-xs">{data?.like_count} 喜欢</p>
           </div>
         </div>
       </div>
