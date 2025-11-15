@@ -78,7 +78,7 @@ function TopRankCardVideo({
               />
               <p className="text-xs font-medium">{data?.user?.name}</p>
             </div>
-            <p className="text-xs">{data?.like_count} likes</p>
+            <p className="text-xs">{data?.like_count} 喜欢</p>
           </div>
         </Link>
       </div>

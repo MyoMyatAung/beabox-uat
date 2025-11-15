@@ -555,11 +555,11 @@ const Ranking = () => {
         <div
           ref={filterRef}
           className={cn(
-            "z-30 sticky top-[64px] w-full pb-3 transition-colors duration-300 space-y-3",
-            {
-              "bg-transparent": isFilterSticky,
-              "bg-[#16131C]": !isFilterSticky,
-            }
+            "z-30 sticky top-[64px] w-full pb-3 transition-colors duration-300 space-y-3 bg-transparent"
+            // {
+            //   "bg-transparent": isFilterSticky,
+            //   "bg-[#16131C]": !isFilterSticky,
+            // }
           )}
         >
           <div className="flex items-center gap-4 px-2">
@@ -643,7 +643,7 @@ const Ranking = () => {
                     />
                   </svg>
                 </button>
-                {!isTagsExpanded && (
+                {/* {!isTagsExpanded && (
                   <div
                     className="absolute bottom-0 right-0 w-20 h-8 pointer-events-none"
                     style={{
@@ -652,7 +652,7 @@ const Ranking = () => {
                         : "linear-gradient(270deg, #16131C 21.43%, rgba(22, 19, 28, 0.8) 61.97%, rgba(22, 19, 28, 0) 100%)",
                     }}
                   ></div>
-                )}
+                )} */}
               </>
             </div>
           )}
