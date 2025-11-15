@@ -452,8 +452,8 @@ const RootLayout = ({ children }: any) => {
       {!isLoading && (
         <>
           <motion.div
-            className="fixed inset-0 z-50"
-            style={{ height: "calc(100dvh - 95px);" }}
+            className="fixed insect-0 z-50 overflow-y-auto w-screen"
+            style={{ height: "100dvh" }}
             initial={
               shouldSkipAnimationRef.current
                 ? { clipPath: "inset(0% 0 0% 0)", translateY: "0" }
