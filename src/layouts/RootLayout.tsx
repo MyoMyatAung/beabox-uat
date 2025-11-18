@@ -103,9 +103,15 @@ const RootLayout = ({ children }: any) => {
   // =============================================================================
   // APP FLOW AND LOADING STATE
   // =============================================================================
+  const isHome = location.pathname === "/";
+  const hasSeenAdPopUp = sessionStorage.getItem("hasSeenAdPopUp");
+  const hasSeenLanding = sessionStorage.getItem("hasSeenLanding");
+
   const [isLoading, setIsLoading] = useState(false);
   const [showLanding, setShowLanding] = useState(false);
-  const [removeSplashScreen, setRemoveSplashScreen] = useState(false);
+  const [removeSplashScreen, setRemoveSplashScreen] = useState(
+    isHome ? false : true
+  );
 
   // =============================================================================
   // AD AND POPUP STATE
@@ -157,10 +163,7 @@ const RootLayout = ({ children }: any) => {
     { referral_code: referCode },
     { skip: !referCode }
   );
-  const { data: notiMessage } = useGetNotificationsQuery(
-    {},
-    { skip: location.pathname !== "/" }
-  );
+  const { data: notiMessage } = useGetNotificationsQuery({}, { skip: !isHome });
   const { data: config } = useGetConfigQuery({});
   const { data: currentEventData } = useGetCurrentEventQuery("");
   const [triggerGetEventDetails] = useLazyGetEventDetailsQuery();
@@ -188,18 +191,13 @@ const RootLayout = ({ children }: any) => {
   // Initialize app based on session state
   useEffect(() => {
     // This would only be need if want to skip initial loading and ads
-    const hasSeenAdPopUp = sessionStorage.getItem("hasSeenAdPopUp");
-    const hasSeenLanding = sessionStorage.getItem("hasSeenLanding");
-
-    setIsLoading(true);
-    sendNativeEvent("beabox_ads_started");
-    // if (hasSeenAdPopUp && hasSeenLanding) {
-    //   dispatch(setPlay(true));
-    //   sendNativeEvent("beabox_home_started");
-    // } else {
-    //   setIsLoading(true);
-    //   sendNativeEvent("beabox_ads_started");
-    // }
+    if (hasSeenAdPopUp && hasSeenLanding) {
+      dispatch(setPlay(true));
+      sendNativeEvent("beabox_home_started");
+    } else {
+      setIsLoading(true);
+      sendNativeEvent("beabox_ads_started");
+    }
   }, [dispatch]);
 
   // =============================================================================
@@ -394,7 +392,7 @@ const RootLayout = ({ children }: any) => {
       }
     };
 
-    if (location.pathname === "/" && currentEventData?.data) {
+    if (isHome && currentEventData?.data) {
       prefetchEventDetails();
     }
   }, [
@@ -410,7 +408,7 @@ const RootLayout = ({ children }: any) => {
       !showAd &&
       !showAlert &&
       !isOpen &&
-      location.pathname === "/" &&
+      isHome &&
       !event &&
       showAnimation &&
       currentTab === 2;
@@ -430,10 +428,10 @@ const RootLayout = ({ children }: any) => {
 
   // Debug: Log notifications when on home page
   useEffect(() => {
-    if (location.pathname === "/") {
-      console.log("notifications data:", notiMessage);
+    if (!isHome) {
+      dispatch(sethideNew(false));
     }
-  }, [location.pathname, notiMessage]);
+  }, [location.pathname, dispatch]);
 
   // =============================================================================
   // RENDER LOGIC
@@ -452,23 +450,30 @@ const RootLayout = ({ children }: any) => {
       {!isLoading && (
         <>
           <motion.div
-            className="fixed insect-0 z-50 overflow-y-auto w-screen"
+            className="fixed inset-0 z-50 overflow-y-auto w-screen"
             style={{ height: "100dvh" }}
             initial={
-              shouldSkipAnimationRef.current
+              shouldSkipAnimationRef.current || !isHome
                 ? { clipPath: "inset(0% 0 0% 0)", translateY: "0" }
                 : { clipPath: "inset(50% 0 50% 0)", translateY: "-14px" }
             }
-            animate={{
-              clipPath: !showLanding
-                ? "inset(0% 0 0% 0)"
-                : "inset(50% 0 50% 0)",
-              translateY: !showLanding ? "0" : "-14px",
-            }}
+            animate={
+              removeSplashScreen
+                ? {
+                    clipPath: !showLanding
+                      ? "inset(0% 0 0% 0)"
+                      : "inset(50% 0 50% 0)",
+                    translateY: !showLanding ? "0" : "-14px",
+                  }
+                : {
+                    clipPath: "inset(50% 0 50% 0)",
+                    translateY: "-14px",
+                  }
+            }
             transition={
-              shouldSkipAnimationRef.current
+              shouldSkipAnimationRef.current || !removeSplashScreen || !isHome
                 ? { duration: 0 }
-                : { duration: 1, ease: "easeOut", delay: 0.5 }
+                : { duration: 1, ease: "easeOut" }
             }
           >
             {children}
@@ -506,7 +511,7 @@ const RootLayout = ({ children }: any) => {
             {/* USER GUIDE - PRIORITY 5 */}
             {/* =================================================================== */}
 
-            {showUserGuide && !event && location.pathname === "/" && (
+            {showUserGuide && !event && isHome && (
               <ImmersiveUserGuide
                 setShowUserGuide={setShowUserGuide}
                 setShowAd={setShowAd}
@@ -518,7 +523,7 @@ const RootLayout = ({ children }: any) => {
             {/* =================================================================== */}
 
             <AnimatePresence mode="wait">
-              {showAd && !event && location.pathname === "/" && (
+              {showAd && !event && isHome && (
                 <PopUp
                   setShowAd={setShowAd}
                   setShowAlert={setShowAlert}
@@ -539,7 +544,7 @@ const RootLayout = ({ children }: any) => {
                 jumpUrl &&
                 showDialog &&
                 !event &&
-                location.pathname === "/" && (
+                isHome && (
                   <AlertRedirect
                     key="alert-redirect"
                     event={event}
@@ -573,7 +578,7 @@ const RootLayout = ({ children }: any) => {
 
             {!showAd &&
               !isOpen &&
-              location.pathname === "/" &&
+              isHome &&
               !event &&
               showAnimation &&
               currentTab === 2 &&
@@ -660,7 +665,7 @@ const RootLayout = ({ children }: any) => {
               !showAlert &&
               !isOpen &&
               isIOSWebView() &&
-              location.pathname === "/" && (
+              isHome && (
                 <PasswordSetUpPopUp
                   showPasswordSetUpPopUp={showPasswordSetUpPopUp}
                   setShowPasswordSetUpPopUp={setShowPasswordSetUpPopUp}
