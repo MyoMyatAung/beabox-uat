@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { sethideNew } from "@/page/home/services/hideNewSlice";
 import { sethideBar } from "@/page/home/services/hideBarSlice";
 import { setFirstTimeUser } from "@/store/slices/appSlice";
+import { setMute } from "@/page/home/services/muteSlice";
 import { useUserActionTracker } from "@/hooks/useUserActionTracker";
 
 const STAGES = {
@@ -37,6 +38,7 @@ const ImmersiveUserGuide: React.FC<ImmersiveUserGuideProps> = ({
   const dispatch = useDispatch();
   const hideNew = useSelector((state: any) => state.hideNewSlice.hideNew);
   const { isFirstTimeUser } = useSelector((state: any) => state.app);
+  const mute = useSelector((state: any) => state.muteSlice.mute);
 
   // =============================================================================
   // LOCAL STATE
@@ -95,9 +97,44 @@ const ImmersiveUserGuide: React.FC<ImmersiveUserGuideProps> = ({
     }, 1000);
   };
 
+  const unmuteAllVideos = () => {
+    // Unmute audio when user interacts with the guide
+    dispatch(setMute(false));
+
+    // Directly unmute all video elements on the page
+    const videoElements = document.querySelectorAll("video");
+    videoElements.forEach((video) => {
+      video.muted = false;
+      // Try to play with audio if paused
+      if (video.paused) {
+        video.play().catch((error) => {
+          console.log("Auto-play with audio failed:", error);
+        });
+      }
+    });
+  };
+
+  const handleAudioToggle = () => {
+    const newMuteState = !mute;
+    dispatch(setMute(newMuteState));
+
+    // Directly toggle all video elements on the page
+    const videoElements = document.querySelectorAll("video");
+    videoElements.forEach((video) => {
+      video.muted = newMuteState;
+      // If unmuting and video is paused, try to play
+      if (!newMuteState && video.paused) {
+        video.play().catch((error) => {
+          console.log("Auto-play with audio failed:", error);
+        });
+      }
+    });
+  };
+
   const handleFullScreen = () => {
     dispatch(sethideBar(false));
     dispatch(sethideNew(false));
+    unmuteAllVideos();
 
     if (isFirstTimeUser) {
       dispatch(setFirstTimeUser(false));
@@ -168,6 +205,8 @@ const ImmersiveUserGuide: React.FC<ImmersiveUserGuideProps> = ({
     }
 
     if (shouldTrigger) {
+      // Unmute audio when user starts scrolling
+      unmuteAllVideos();
       setCurrentStage(isFirstTimeUser ? STAGES.CLR_SCREEN_INFO : STAGES.FINISH);
       if (!isFirstTimeUser) {
         setTimeout(() => {
@@ -302,6 +341,59 @@ const ImmersiveUserGuide: React.FC<ImmersiveUserGuideProps> = ({
                 />
               </svg>
               <p className="side_text font-cnFont mt-2">清屏</p>
+            </div>
+          )}
+        </button>
+      </motion.div>
+
+      {/* Audio Toggle Button */}
+      <motion.div
+        className={cn("videoSidebar__button absolute text-white", {
+          "bottom-[110px] right-3":
+            currentStage === STAGES.INITIAL ||
+            currentStage === STAGES.CLR_SCREEN_INFO ||
+            currentStage === STAGES.RETURN_USER_STALE,
+          "bottom-[207px] right-[22px]": currentStage === STAGES.SCROLL_INFO,
+        })}
+        initial={{
+          x: currentStage === STAGES.INITIAL ? 50 : 0,
+          opacity: 0,
+        }}
+        animate={{
+          x: 0,
+          opacity: 1,
+        }}
+        transition={{
+          type: "spring",
+          damping: 20,
+          stiffness: 300,
+          opacity: { duration: 0.2 },
+          delay: 0.1,
+        }}
+      >
+        <button onClick={handleAudioToggle}>
+          {mute && (
+            <div className="flex flex-col items-center">
+              <svg
+                width="25"
+                height="20"
+                viewBox="0 0 25 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M11.1212 1.79168C11.121 1.63504 11.0744 1.48198 10.9872 1.35181C10.9001 1.22164 10.7764 1.1202 10.6316 1.06029C10.4869 1.00037 10.3277 0.984675 10.174 1.01517C10.0204 1.04567 9.87923 1.12099 9.76836 1.23164L5.96278 5.0361C5.81591 5.18384 5.64118 5.30097 5.44872 5.3807C5.25626 5.46042 5.04989 5.50116 4.84157 5.50055H2.12458C1.82632 5.50055 1.54028 5.61903 1.32938 5.82993C1.11848 6.04083 1 6.32688 1 6.62513V13.3726C1 13.6709 1.11848 13.9569 1.32938 14.1678C1.54028 14.3787 1.82632 14.4972 2.12458 14.4972H4.84157C5.04989 14.4966 5.25626 14.5373 5.44872 14.6171C5.64118 14.6968 5.81591 14.8139 5.96278 14.9617L9.76723 18.7672C9.87812 18.8783 10.0195 18.954 10.1734 18.9847C10.3274 19.0154 10.4869 18.9997 10.632 18.9396C10.777 18.8795 10.9009 18.7777 10.988 18.6471C11.0751 18.5165 11.1214 18.363 11.1212 18.2061V1.79168Z"
+                  fill="white"
+                />
+                <path
+                  d="M23.4916 6.62513L16.7441 13.3726M16.7441 6.62513L23.4916 13.3726M11.1212 1.79168C11.121 1.63504 11.0744 1.48198 10.9872 1.35181C10.9001 1.22164 10.7764 1.1202 10.6316 1.06029C10.4869 1.00037 10.3277 0.984675 10.174 1.01517C10.0204 1.04567 9.87923 1.12099 9.76836 1.23164L5.96278 5.0361C5.81591 5.18384 5.64118 5.30097 5.44872 5.3807C5.25626 5.46042 5.04989 5.50116 4.84157 5.50055H2.12458C1.82632 5.50055 1.54028 5.61903 1.32938 5.82993C1.11848 6.04083 1 6.32688 1 6.62513V13.3726C1 13.6709 1.11848 13.9569 1.32938 14.1678C1.54028 14.3787 1.82632 14.4972 2.12458 14.4972H4.84157C5.04989 14.4966 5.25626 14.5373 5.44872 14.6171C5.64118 14.6968 5.81591 14.8139 5.96278 14.9617L9.76723 18.7672C9.87812 18.8783 10.0195 18.954 10.1734 18.9847C10.3274 19.0154 10.4869 18.9997 10.632 18.9396C10.777 18.8795 10.9009 18.7777 10.988 18.6471C11.0751 18.5165 11.1214 18.363 11.1212 18.2061V1.79168Z"
+                  stroke="white"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              <p className="side_text font-cnFont mt-2">取消静音</p>
             </div>
           )}
         </button>

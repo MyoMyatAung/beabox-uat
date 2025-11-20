@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 // Define the initial state using that type
 const initialState: any = {
-  mute: false,
+  mute: true, // Start muted to allow autoplay, will unmute after user interaction
 };
 
 export const muteSlice = createSlice({
