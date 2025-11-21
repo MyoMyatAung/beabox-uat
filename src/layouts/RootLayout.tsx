@@ -9,6 +9,7 @@ import {
   setAnimation,
   setDuration,
 } from "@/store/slices/eventSlice";
+import { setShowUserGuide } from "@/store/slices/appSlice";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGetApplicationAdsQuery } from "@/store/api/explore/exploreApi";
 import {
@@ -135,7 +136,6 @@ const RootLayout = ({ children }: any) => {
   // =============================================================================
   // USER GUIDE STATE
   // =============================================================================
-  const [showUserGuide, setShowUserGuide] = useState(false);
 
   // =============================================================================
   // REGISTRATION AND AUTH STATE
@@ -155,6 +155,9 @@ const RootLayout = ({ children }: any) => {
   const isOpen = useSelector((state: any) => state.profile.isDrawerOpen);
   const showAnimation = useSelector(
     (state: RootState) => state.event.isShowAnimation
+  );
+  const showUserGuide = useSelector(
+    (state: RootState) => state.app.showUserGuide
   );
   // =============================================================================
   // API QUERIES
@@ -307,7 +310,7 @@ const RootLayout = ({ children }: any) => {
       setRemoveSplashScreen(true);
 
       // Show ImmersiveUserGuide on every app mount, then ads
-      setShowUserGuide(true);
+      dispatch(setShowUserGuide(true));
     }, 1000);
   };
 
@@ -513,7 +516,9 @@ const RootLayout = ({ children }: any) => {
 
             {showUserGuide && !event && isHome && (
               <ImmersiveUserGuide
-                setShowUserGuide={setShowUserGuide}
+                setShowUserGuide={(value: boolean) =>
+                  dispatch(setShowUserGuide(value))
+                }
                 setShowAd={setShowAd}
               />
             )}

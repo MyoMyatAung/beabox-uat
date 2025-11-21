@@ -261,7 +261,7 @@ const ImmersiveUserGuide: React.FC<ImmersiveUserGuideProps> = ({
     >
       {/* Fullscreen Toggle Button */}
       <motion.div
-        className={cn("videoSidebar__button absolute text-white", {
+        className={cn("videoSidebar__button absolute text-white ", {
           "bottom-[30px] right-3":
             currentStage === STAGES.INITIAL ||
             currentStage === STAGES.CLR_SCREEN_INFO ||
