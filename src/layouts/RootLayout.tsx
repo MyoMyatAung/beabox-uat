@@ -105,15 +105,16 @@ const RootLayout = ({ children }: any) => {
   // APP FLOW AND LOADING STATE
   // =============================================================================
   const isHome = location.pathname === "/";
-  const hasSeenAdPopUp = sessionStorage.getItem("hasSeenAdPopUp");
-  const hasSeenLanding = sessionStorage.getItem("hasSeenLanding");
+  // Treat session flags as booleans
+  const hasSeenAdPopUp = !!sessionStorage.getItem("hasSeenAdPopUp");
+  const hasSeenLanding = !!sessionStorage.getItem("hasSeenLanding");
 
   const [isLoading, setIsLoading] = useState(false);
   const [showLanding, setShowLanding] = useState(false);
+  // If user has already seen the landing screen on home, skip showing it again
   const [removeSplashScreen, setRemoveSplashScreen] = useState(
-    isHome ? false : true
+    isHome ? hasSeenLanding : true
   );
-
   // =============================================================================
   // AD AND POPUP STATE
   // =============================================================================
@@ -182,10 +183,8 @@ const RootLayout = ({ children }: any) => {
   } | null>(null);
   const [, setIsFetchingDetails] = useState(false);
   const isFetchingRef = useRef(false);
-  const shouldSkipAnimationRef = useRef(
-    false
-    // sessionStorage.getItem("hasSeenLanding") === "true"
-  );
+  // When landing has already been seen (or we're not on home), skip the intro transition animation
+  const shouldSkipAnimationRef = useRef(hasSeenLanding || !isHome);
 
   // =============================================================================
   // EFFECT HOOKS - INITIALIZATION AND SESSION MANAGEMENT
@@ -681,6 +680,7 @@ const RootLayout = ({ children }: any) => {
             {/* NOTIFICATION POPUP - PRIORITY 10 */}
             {/* =================================================================== */}
 
+            {console.log(!showAd, !showUserGuide, !showAlert, !showPasswordSetUpPopUp)}
             {!showAd &&
               !showUserGuide &&
               !showAlert &&

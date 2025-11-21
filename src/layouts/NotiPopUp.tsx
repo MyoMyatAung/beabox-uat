@@ -11,6 +11,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import BellIcon from "@/assets/icons/icon-bell.svg";
 import WalletIcon from "@/assets/icons/icon-wallet.svg";
 import TrophyIcon from "@/assets/icons/icon-trophy.svg";
+import notificationSound from "@/assets/notification_sound.mp3";
 import { NOTIFICATION_CONFIG } from "@/constants/noti-constant";
 import { useSelector } from "react-redux";
 
@@ -300,6 +301,7 @@ const NotiPopUp: React.FC<NotiPopUpProps> = ({ notiMessage }) => {
   const [notification, setNotification] = useState<Notification | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const navigate = useNavigate();
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   // Map API notification to UI format with validation
   const mapApiToNotification = useCallback(
     (apiNoti: ApiNotification): Notification => {
@@ -419,6 +421,37 @@ const NotiPopUp: React.FC<NotiPopUpProps> = ({ notiMessage }) => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);
+
+  // Play notification sound when notification is shown
+  useEffect(() => {
+    if (!notification) return;
+
+    // Initialize audio if not already created
+    if (!audioRef.current) {
+      audioRef.current = new Audio(notificationSound);
+      audioRef.current.volume = 0.5; // Set volume to 50% to avoid being too loud
+    }
+
+    // Play the sound
+    const playSound = async () => {
+      try {
+        await audioRef.current?.play();
+      } catch (error) {
+        // Handle autoplay restrictions (browsers may block autoplay)
+        console.warn("Failed to play notification sound:", error);
+      }
+    };
+
+    playSound();
+
+    // Cleanup: pause and reset audio when notification is removed
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+    };
+  }, [notification]);
 
   // Don't render if no notification or still processing
   if (!notification || isProcessing) {
