@@ -34,16 +34,15 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   const [agree, setAgree] = useState(editPost ? true : false);
 
   // console.log(editPost, "ed post");
-  const finalEditPost = editPost?.files?.length > 0 ? editPost?.files[0] : editPost;
+  const finalEditPost =
+    editPost?.files?.length > 0 ? editPost?.files[0] : editPost;
   const domain = finalEditPost?.image_url;
   const [videoDuration, setVideoDuration] = useState(
     finalEditPost?.duration || 0
   );
   const resData = data?.data;
   const [videoWidth, setVideoWidth] = useState(finalEditPost?.width || 0);
-  const [videoHeight, setVideoHeight] = useState(
-    finalEditPost?.height || 0
-  );
+  const [videoHeight, setVideoHeight] = useState(finalEditPost?.height || 0);
   const videoUrlRef = useRef(finalEditPost?.resourceURL || null);
   // console.log(videoUrlRef, "ref");
   const [uploadedSize, setUploadedSize] = useState(0); // Added
@@ -65,7 +64,10 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   const { toast } = useToast();
 
   // Custom toast function with beabox logo
-  const showToastWithLogo = (message: string, type: 'success' | 'error' = 'error') => {
+  const showToastWithLogo = (
+    message: string,
+    type: "success" | "error" = "error"
+  ) => {
     toast({
       description: (
         <div className="flex items-center gap-2 whitespace-nowrap">
@@ -73,7 +75,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
           <span className="text-[14px] text-white no-underline">{message}</span>
         </div>
       ),
-      variant: type === 'error' ? 'destructive' : 'default',
+      variant: type === "error" ? "destructive" : "default",
       duration: 3000,
       className: "bg-[#25212a] border-[#25212a] text-white",
     });
@@ -254,7 +256,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
       }
 
       // Add size validation here (MB limit from BE config)
-      const maxSizeInBytes = maxVideoSize  * 1024 * 1024; // MB in bytes
+      const maxSizeInBytes = maxVideoSize * 1024 * 1024; // MB in bytes
       if (videoFile.size > maxSizeInBytes) {
         setShowAlert(true);
         setTimeout(() => setShowAlert(false), 3000);
@@ -615,7 +617,10 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
     }
 
     // Validate privacy setting
-    if (!formData.privacy || !["public", "private", "followers"].includes(formData.privacy)) {
+    if (
+      !formData.privacy ||
+      !["public", "private", "followers"].includes(formData.privacy)
+    ) {
       showToastWithLogo("请选择有效的隐私设置。");
       return;
     }
@@ -767,7 +772,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
 
       // Ensure both video and thumbnail URLs are available before proceeding
       if (!videoUrl || !thumbnailUrl) {
-        showToastWithLogo("视频上传失败。请重试。", 'error');
+        showToastWithLogo("视频上传失败。请重试。", "error");
         throw new Error("Failed to generate URLs for uploaded files.");
       }
 
@@ -800,7 +805,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
         await createPosts(payload).unwrap();
 
         // Show success message
-        showToastWithLogo("视频上传成功！", 'success');
+        showToastWithLogo("视频上传成功！", "success");
         setFiles([]);
         formData.setContentTitle("");
         formData.setHashtags([]);
@@ -812,7 +817,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
         setUploadedSize(0);
 
         console.error("createPosts failed:", error);
-        showToastWithLogo("上传失败！请重试", 'error');
+        showToastWithLogo("上传失败！请重试", "error");
       } finally {
         setUploading(false);
       }
@@ -822,7 +827,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
       setUploadedSize(0);
 
       console.error("Upload failed:", error);
-      showToastWithLogo("视频上传失败。请重试。", 'error');
+      showToastWithLogo("视频上传失败。请重试。", "error");
     }
   };
 
@@ -849,7 +854,9 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
         <div className="absolute bottom-[20%] w-full flex justify-center items-center">
           <div className="bg-[#191721] flex gap-1 rounded-lg px-4 py-2">
             <img src={logo} className="w-5" alt="" />
-            <p className="text-[14px]">视频文件大小不能超过{maxVideoSize}MB。</p>
+            <p className="text-[14px]">
+              视频文件大小不能超过{maxVideoSize}MB。
+            </p>
           </div>
         </div>
       ) : (
@@ -1166,7 +1173,8 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
             )}
           </div>
           <p className="text-[14px] text-[#888] text-center pt-2">
-            点击选择图片 <br />
+            点击选择封面图
+            <br />
             (可选)
           </p>
         </div>
