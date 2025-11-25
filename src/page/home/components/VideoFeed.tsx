@@ -459,7 +459,7 @@ const VideoFeed = ({
                     container={videoContainerRef.current}
                     width={width}
                     height={height}
-                    status={false}
+                    status={video.post_id === currentActivePost}
                     countNumber={countNumber}
                     video={video}
                     setCountNumber={setCountNumber}
