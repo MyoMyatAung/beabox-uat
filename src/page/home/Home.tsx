@@ -796,7 +796,6 @@ const Home = () => {
                                 initialActive={index === 0}
                               />
                             )}
-
                             {video?.type !== "ads" &&
                               video?.type !== "ads_virtual" && (
                                 <VideoFooter
@@ -809,12 +808,10 @@ const Home = () => {
                                   checkBottomSpacing={!!showFollowers}
                                 />
                               )}
-
                             {(video?.type === "ads" ||
                               video?.type === "ads_virtual") && (
                               <Ads ads={video?.ads_info} type={video?.type} />
                             )}
-
                             {hearts.map((id: any) => (
                               <HeartCount
                                 id={id}
@@ -822,7 +819,6 @@ const Home = () => {
                                 remove={removeHeart}
                               />
                             ))}
-
                             {/* {showHeart && (
                             <ShowHeartCom
                               countNumber={countNumber}
