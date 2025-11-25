@@ -121,6 +121,7 @@ const RootLayout = ({ children }: any) => {
   const [showAd, setShowAd] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
+  const [showNotiPopUp, setShowNotiPopUp] = useState(false);
   const [jumpUrl, setJumpUrl] = useState("");
   const [showPasswordSetUpPopUp, setShowPasswordSetUpPopUp] = useState(false);
 
@@ -315,7 +316,7 @@ const RootLayout = ({ children }: any) => {
 
   const handleAdComplete = () => {
     setShowAd(false);
-
+    setShowNotiPopUp(true);
     if ((jumpUrl && showDialog) || event) {
       dispatch(setPlay(false));
     } else {
@@ -462,15 +463,15 @@ const RootLayout = ({ children }: any) => {
             animate={
               removeSplashScreen
                 ? {
-                    clipPath: !showLanding
-                      ? "inset(0% 0 0% 0)"
-                      : "inset(50% 0 50% 0)",
-                    translateY: !showLanding ? "0" : "-14px",
-                  }
+                  clipPath: !showLanding
+                    ? "inset(0% 0 0% 0)"
+                    : "inset(50% 0 50% 0)",
+                  translateY: !showLanding ? "0" : "-14px",
+                }
                 : {
-                    clipPath: "inset(50% 0 50% 0)",
-                    translateY: "-14px",
-                  }
+                  clipPath: "inset(50% 0 50% 0)",
+                  translateY: "-14px",
+                }
             }
             transition={
               shouldSkipAnimationRef.current || !removeSplashScreen || !isHome
@@ -680,12 +681,13 @@ const RootLayout = ({ children }: any) => {
             {/* NOTIFICATION POPUP - PRIORITY 10 */}
             {/* =================================================================== */}
 
-            {console.log(!showAd, !showUserGuide, !showAlert, !showPasswordSetUpPopUp)}
+            {console.log('NOTIFICATION POPUP', showNotiPopUp)}
             {!showAd &&
               !showUserGuide &&
-              !showAlert &&
-              !showPasswordSetUpPopUp && (
-                <NotiPopUp notiMessage={notiMessage?.data} />
+              // !showAlert &&
+              !showPasswordSetUpPopUp &&
+              showNotiPopUp && (
+                <NotiPopUp notiMessage={notiMessage?.data} closeNotiPopUp={() => setShowNotiPopUp(false)} />
               )}
           </motion.div>
 

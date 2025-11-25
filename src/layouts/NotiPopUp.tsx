@@ -36,6 +36,7 @@ interface NotiStorage {
 
 interface NotiPopUpProps {
   notiMessage?: Notification | Notification[] | null;
+  closeNotiPopUp: () => void;
 }
 
 interface ApiNotification {
@@ -295,7 +296,7 @@ const NotificationItem: React.FC<{
 NotificationItem.displayName = "NotificationItem";
 
 // --- Main Popup Component ---
-const NotiPopUp: React.FC<NotiPopUpProps> = ({ notiMessage }) => {
+const NotiPopUp: React.FC<NotiPopUpProps> = ({ notiMessage, closeNotiPopUp }) => {
   const location = useLocation();
   const user = useSelector((state: any) => state.persist.user);
   const [notification, setNotification] = useState<Notification | null>(null);
@@ -378,7 +379,8 @@ const NotiPopUp: React.FC<NotiPopUpProps> = ({ notiMessage }) => {
 
   const handleClose = useCallback(() => {
     setNotification(null);
-  }, []);
+    closeNotiPopUp();
+  }, [closeNotiPopUp]);
 
   const handleDetailClick = useCallback(() => {
     setNotification(null);
