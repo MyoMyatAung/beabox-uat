@@ -128,7 +128,7 @@ const shouldShowNotification = (id: string, user?: any): boolean => {
   // const isCooldownPassed =
   //   Date.now() - storage.lastShown >= NOTIFICATION_CONFIG.COOLDOWN_MS;
   // return isCooldownPassed;
-  if (user.token) {
+  if (user && user?.token) {
     return storage.isReadForAuthenticatedUser;
   }
 
@@ -366,7 +366,7 @@ const NotiPopUp: React.FC<NotiPopUpProps> = ({ notiMessage, closeNotiPopUp }) =>
           cooldownRemaining: Math.max(
             0,
             NOTIFICATION_CONFIG.COOLDOWN_MS -
-              (Date.now() - getStorage().lastShown)
+            (Date.now() - getStorage().lastShown)
           ),
         });
       }
