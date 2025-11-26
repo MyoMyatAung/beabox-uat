@@ -2,11 +2,11 @@ import Stats from "@/components/profile/stats";
 import defaultCover from "@/assets/cover.jpg";
 import center from "@/assets/profile/center3.png";
 import VideoTabs from "@/components/profile/video-tabs";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { paths } from "@/routes/paths";
 import { useGetMyOwnProfileQuery } from "@/store/api/profileApi";
 import { useDispatch, useSelector } from "react-redux";
-import { UserPen, Bell, X, Copy, ChevronRight } from "lucide-react";
+import { UserPen, X, Copy, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SettingBtn from "@/components/profile/setting-btn";
 import ProfileAvatar from "@/components/profile/profile-avatar";
@@ -24,8 +24,8 @@ import OtherAds from "@/components/profile/other-ads";
 import NotiButton from "./component/NotiButton";
 
 const Profile = () => {
-  const headerRef = useRef(null);
   const [showHeader, setShowHeader] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
   const user = useSelector((state: any) => state?.persist?.user) || "";
   const isDrawerOpen = useSelector((state: any) => state.profile.isDrawerOpen);
   const { data, isLoading, refetch } = useGetMyOwnProfileQuery("", {
@@ -34,10 +34,6 @@ const Profile = () => {
   const [show, setShow] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const bellHandeler = () => {
-    navigate(paths.noti);
-  };
 
   useEffect(() => {
     if (show) {
@@ -51,22 +47,37 @@ const Profile = () => {
     };
   }, [show]);
 
-  // Scroll handler for header appearance
+  // Toggle sticky header visibility using intersection observer (with scroll fallback)
   useEffect(() => {
-    const handleScroll = () => {
-      if (headerRef.current) {
-        const rect = headerRef.current.getBoundingClientRect();
-        if (rect.top <= 100) {
-          setShowHeader(true);
-        } else {
-          setShowHeader(false);
+    const sentinel = sentinelRef.current;
+    if (typeof window === "undefined") return;
+    if (!sentinel) return;
+
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          setShowHeader(!entry.isIntersecting);
+        },
+        {
+          threshold: 0,
+          rootMargin: "-90px 0px 0px 0px", // align with tabs sticky offset
         }
-      }
+      );
+
+      observer.observe(sentinel);
+
+      return () => observer.disconnect();
+    }
+
+    const handleScroll = () => {
+      const rect = sentinel.getBoundingClientRect();
+      setShowHeader(rect.top <= 90);
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    handleScroll();
+    document.addEventListener("scroll", handleScroll, { passive: true });
+    return () => document.removeEventListener("scroll", handleScroll);
+  }, [data]);
 
   const handleCopy = (text: any) => {
     navigator?.clipboard
@@ -101,14 +112,13 @@ const Profile = () => {
     >
       {showHeader ? (
         <>
-          <div className="gradient-overlay2"></div>
           <div
-            className={`fixed top-0 w-full left-0 h-[155px] z-[1000] bg-cover bg-top bg-no-repeat`}
+            className={`fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] h-[80px] z-[1600] bg-cover bg-top bg-no-repeat`}
           >
             <AsyncDecryptedImage
               imageUrl={user?.token ? data?.data?.cover_photo || "" : ""}
               defaultCover={defaultCover}
-              className="fixed top-0 z-[1000] left-0 w-full h-[155px] object-cover object-center"
+              className="w-full h-[80px] object-cover object-center"
               alt="Cover"
             />
           </div>
@@ -172,14 +182,20 @@ const Profile = () => {
       <div className="flex-1">
         <div
           className={`px-5 ${
-            showHeader ? "opacity-1" : "opacity-0"
-          } fixed top-0 w-full z-[1600] py-5`}
+            showHeader
+              ? "opacity-100 pointer-events-auto"
+              : "opacity-0 pointer-events-none"
+          } fixed top-0 w-full z-[1700] h-[80px] flex items-center transition-all duration-300`}
+          style={{
+            maxWidth: "480px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: "linear-gradient(45deg, #231C3E 35%, #CD3EFF 100%)",
+          }}
         >
           <ScrollHeader
             photo={data?.data?.profile_photo || ""}
             name={data?.data?.nickname}
-            login={user?.token}
-            dphoto={data?.data?.cover_photo}
             setShow={setShow}
           />
         </div>
@@ -322,7 +338,6 @@ const Profile = () => {
           // </Link>
           null}
         </div>
-        <div ref={headerRef} className="sticky z-[1500] top-0"></div>
         <div
           className={`px-3 relative z-[1900] ${
             showHeader ? "opacity-0" : "opacity-1"
@@ -330,7 +345,8 @@ const Profile = () => {
         >
           <OtherAds />
         </div>
-        <div className="">
+        <div ref={sentinelRef} className="h-1"></div>
+        <div className="px-5">
           <VideoTabs />
         </div>
       </div>
