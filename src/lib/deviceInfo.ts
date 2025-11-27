@@ -212,29 +212,76 @@ export const initPersistentDeviceInfo = async (): Promise<void> => {
   }
 };
 
+/**
+ * Initialize and collect comprehensive device information for identification and analytics.
+ * 
+ * This function performs two main tasks:
+ * 1. Initializes a persistent UUID (for browser environments) or uses native-provided UUID
+ * 2. Collects device fingerprinting data using FingerprintJS library
+ * 
+ * The collected data is used for:
+ * - Device identification and tracking
+ * - Security and fraud detection
+ * - Analytics and user behavior analysis
+ * - Ensuring consistent device recognition across sessions
+ * 
+ * @async
+ * @returns {Promise<void>} Resolves when device info initialization is complete
+ * 
+ * @example
+ * // Called once during app initialization
+ * await initDeviceInfo();
+ * const info = getDeviceInfo(); // Retrieve collected device info
+ */
 export const initDeviceInfo = async () => {
-  // Initialize UUID for browser usage only
+  // Step 1: Initialize persistent UUID for browser environments
+  // This creates or retrieves a UUID from IndexedDB that persists across sessions.
+  // In WebView environments, the UUID will be provided by the native app via initDeviceInfoListener()
+  // so this step is skipped for WebViews to avoid conflicts.
   await initPersistentDeviceInfo();
 
   try {
+    // Step 2: Load FingerprintJS library
+    // FingerprintJS is a browser fingerprinting library that collects various device/browser
+    // characteristics to create a unique identifier. This helps identify devices even when
+    // cookies/localStorage are cleared.
     const fp = await FingerprintJS.load();
     const result = await fp.get();
 
-    // Create enhanced payload with additional fingerprinting data
+    // Step 3: Extract fingerprinting components from FingerprintJS result
+    // These components contain detailed information about the browser/device configuration
     const c = result.components;
+
+    // Step 4: Build comprehensive device fingerprinting payload
+    // This payload combines standard browser APIs with FingerprintJS data to create
+    // a detailed device profile. Each property helps uniquely identify the device.
     const payload = {
-      userAgent: navigator.userAgent,
-      screenResolution: `${screen.width}x${screen.height}`,
-      colorDepth: screen.colorDepth,
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      language: navigator.language,
+      // Standard browser identification
+      userAgent: navigator.userAgent, // Browser and OS information
+      screenResolution: `${screen.width}x${screen.height}`, // Display dimensions
+      colorDepth: screen.colorDepth, // Color bit depth (e.g., 24-bit, 32-bit)
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone, // User's timezone (e.g., "America/New_York")
+      language: navigator.language, // Browser language preference (e.g., "en-US")
+
+      // Font detection (from FingerprintJS)
+      // List of available fonts - different devices/browsers have different font sets
+      // This is a strong fingerprinting signal as font availability varies by OS/device
       fonts:
         c.fonts && "value" in c.fonts
           ? c.fonts.value
-          : ["Arial", "Times New Roman"],
+          : ["Arial", "Times New Roman"], // Fallback to common fonts if detection fails
+
+      // Canvas fingerprinting (hashed for privacy)
+      // Canvas rendering produces slightly different outputs based on hardware/OS/drivers
+      // We hash this data to reduce size while maintaining uniqueness
       canvas: await hashString(
         JSON.stringify(c.canvas && "value" in c.canvas ? c.canvas.value : "")
       ),
+
+      // WebGL fingerprinting (hashed for privacy)
+      // WebGL renderer information reveals GPU details and driver versions
+      // Similar to canvas, this varies by hardware and helps identify devices
+      // Hashed to reduce payload size and protect sensitive hardware information
       webgl: await hashString(
         JSON.stringify(
           (c as any).webgl && "value" in (c as any).webgl
@@ -242,21 +289,39 @@ export const initDeviceInfo = async () => {
             : ""
         )
       ),
+
+      // Browser plugins/extensions
+      // List of installed browser plugins (becoming less common in modern browsers)
       plugins: Array.from(navigator.plugins).map((p) => p.name),
-      platform: navigator.platform,
-      hardwareConcurrency: navigator.hardwareConcurrency || 0,
-      deviceMemory: (navigator as any).deviceMemory || 0,
-      touchPoints: navigator.maxTouchPoints || 0,
-      devicePixelRatio: window.devicePixelRatio || 1,
+
+      // System information
+      platform: navigator.platform, // Operating system platform (e.g., "MacIntel", "Win32")
+      hardwareConcurrency: navigator.hardwareConcurrency || 0, // Number of CPU cores
+      deviceMemory: (navigator as any).deviceMemory || 0, // Device RAM in GB (if available)
+      touchPoints: navigator.maxTouchPoints || 0, // Maximum number of simultaneous touch points
+      devicePixelRatio: window.devicePixelRatio || 1, // Screen pixel density ratio
+
+      // Environment flags for security detection
+      // Flags that indicate suspicious environments (emulators, automation tools, etc.)
+      // Used for fraud detection and security purposes
       env_flags: collectEnvironmentFlags(),
     };
 
+    // Step 5: Merge collected data into global deviceInfo object
+    // Important: We spread existing deviceInfo first to preserve:
+    // - UUID from IndexedDB (browser) or native app (WebView)
+    // - Any device info already set by initDeviceInfoListener() from native side
+    // Then we overlay the fingerprinting payload on top
     deviceInfo = {
-      ...deviceInfo, // Keep existing UUID (from IndexedDB or native)
-      ...payload,
+      ...deviceInfo, // Preserve existing UUID and any native-provided data
+      ...payload, // Add comprehensive fingerprinting data
     };
   } catch (e) {
+    // Error handling: If FingerprintJS fails (e.g., blocked by privacy extensions),
+    // we log a warning but don't throw. The app can still function with basic device info
+    // that was collected in initPersistentDeviceInfo().
     console.warn("FingerprintJS failed:", e);
+    // Note: deviceInfo still contains basic info (UUID, deviceName, etc.) even if fingerprinting fails
   }
 };
 
@@ -268,19 +333,26 @@ interface DeviceInfoEvent extends CustomEvent {
 }
 
 /**
- * Initialize device info listener for WebView communication
- * Native side will provide device ID
+ * Listens for device information sent from the native app and merges it into the global deviceInfo object.
+ * Used to enhance browser-collected data with native-specific details.
  */
 export const initDeviceInfoListener = (): void => {
-  window.addEventListener("getDeviceInfo", ((event: DeviceInfoEvent) => {
-    if (event.detail) {
-      deviceInfo = {
-        ...deviceInfo,
-        ...event.detail, // Native side provides device ID and other info
-      };
-      console.log("Device info received from native:", deviceInfo);
-    }
-  }) as EventListener);
+  // Listen for the custom 'getDeviceInfo' event dispatched by the native layer
+  window.addEventListener(
+    "getDeviceInfo",
+    ((event: DeviceInfoEvent) => {
+      // If the event contains device information details
+      if (event.detail) {
+        // Merge received native device info with current deviceInfo object
+        deviceInfo = {
+          ...deviceInfo,
+          ...event.detail, // Properties from native are spread into deviceInfo
+        };
+        // Output device info for debugging/tracing
+        console.log("Device info received from native:", deviceInfo);
+      }
+    }) as EventListener
+  );
 };
 
 /**

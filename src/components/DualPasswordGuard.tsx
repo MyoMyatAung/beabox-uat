@@ -1,5 +1,5 @@
 import { checkPasswordExpiration } from "@/page/home/services/passwordSlice";
-import { useEffect, ReactNode } from "react";
+import { useEffect, ReactNode, startTransition } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -28,7 +28,9 @@ const DualPasswordGuard = ({ children }: DualPasswordGuardProps) => {
       !isPasswordCorrect &&
       location.pathname !== "/pin-entry"
     ) {
-      navigate("/pin-entry");
+      startTransition(() => {
+        navigate("/pin-entry");
+      });
     }
   }, [isEnabledDualPassword, isPasswordCorrect, navigate, location.pathname]);
 
