@@ -36,6 +36,7 @@ interface NotiStorage {
 
 interface NotiPopUpProps {
   notiMessage?: Notification | Notification[] | null;
+  closeNotiPopUp: () => void;
 }
 
 interface ApiNotification {
@@ -127,7 +128,7 @@ const shouldShowNotification = (id: string, user?: any): boolean => {
   // const isCooldownPassed =
   //   Date.now() - storage.lastShown >= NOTIFICATION_CONFIG.COOLDOWN_MS;
   // return isCooldownPassed;
-  if (user.token) {
+  if (user && user?.token) {
     return storage.isReadForAuthenticatedUser;
   }
 
@@ -295,7 +296,7 @@ const NotificationItem: React.FC<{
 NotificationItem.displayName = "NotificationItem";
 
 // --- Main Popup Component ---
-const NotiPopUp: React.FC<NotiPopUpProps> = ({ notiMessage }) => {
+const NotiPopUp: React.FC<NotiPopUpProps> = ({ notiMessage, closeNotiPopUp }) => {
   const location = useLocation();
   const user = useSelector((state: any) => state.persist.user);
   const [notification, setNotification] = useState<Notification | null>(null);
@@ -365,7 +366,7 @@ const NotiPopUp: React.FC<NotiPopUpProps> = ({ notiMessage }) => {
           cooldownRemaining: Math.max(
             0,
             NOTIFICATION_CONFIG.COOLDOWN_MS -
-              (Date.now() - getStorage().lastShown)
+            (Date.now() - getStorage().lastShown)
           ),
         });
       }
@@ -378,7 +379,8 @@ const NotiPopUp: React.FC<NotiPopUpProps> = ({ notiMessage }) => {
 
   const handleClose = useCallback(() => {
     setNotification(null);
-  }, []);
+    closeNotiPopUp();
+  }, [closeNotiPopUp]);
 
   const handleDetailClick = useCallback(() => {
     setNotification(null);

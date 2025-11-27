@@ -57,7 +57,7 @@ const OtherProfile = () => {
 
   const [isCopied, setIsCopied] = useState(false);
   const [isCopied2, setIsCopied2] = useState(false);
-  const headerRef = useRef<HTMLDivElement>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
   const [showHeader, setShowHeader] = useState(false);
   // console.log(user)
   const navigate = useNavigate();
@@ -229,26 +229,37 @@ const OtherProfile = () => {
     }
   };
 
+  // Toggle sticky header visibility using intersection observer (with scroll fallback)
   useEffect(() => {
-    const handleScroll = () => {
-      if (headerRef.current) {
-        const rect = headerRef.current.getBoundingClientRect();
-        // console.log(rect);
+    const sentinel = sentinelRef.current;
+    if (typeof window === "undefined") return;
+    if (!sentinel) return;
 
-        if (rect.top <= 100) {
-          setShowHeader(true);
-        } else {
-          setShowHeader(false);
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          setShowHeader(!entry.isIntersecting);
+        },
+        {
+          threshold: 0,
+          rootMargin: "-90px 0px 0px 0px", // align with tabs sticky offset
         }
-      }
+      );
+
+      observer.observe(sentinel);
+
+      return () => observer.disconnect();
+    }
+
+    const handleScroll = () => {
+      const rect = sentinel.getBoundingClientRect();
+      setShowHeader(rect.top <= 90);
     };
 
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll); // Clean up on unmount
-    };
-  }, []);
+    handleScroll();
+    document.addEventListener("scroll", handleScroll, { passive: true });
+    return () => document.removeEventListener("scroll", handleScroll);
+  }, [userData]);
 
   // useEffect(() => {
   //   if (id || userData) {
@@ -284,9 +295,9 @@ const OtherProfile = () => {
   const goBack = () => {
     // Check for new route and searchQuery parameters
     const searchParams = new URLSearchParams(location.search);
-    const route = searchParams.get('route');
-    const searchQuery = searchParams.get('searchQuery');
-    
+    const route = searchParams.get("route");
+    const searchQuery = searchParams.get("searchQuery");
+
     if (route && searchQuery) {
       try {
         const parsedQuery = JSON.parse(decodeURIComponent(searchQuery));
@@ -294,10 +305,10 @@ const OtherProfile = () => {
         navigate(`/${route}?${queryString}`);
         return;
       } catch (error) {
-        console.error('Error parsing searchQuery:', error);
+        console.error("Error parsing searchQuery:", error);
       }
     }
-    
+
     // Fallback to original logic
     if (
       location.state &&
@@ -315,20 +326,15 @@ const OtherProfile = () => {
     <div className="h-screen flex flex-col hide-sb max-w-[480px] mx-auto">
       {showHeader ? (
         <>
-          <div className="gradient-overlay2"></div>
           <div
-            style={{
-              backgroundImage: `url('${
-                decryptedCover ? decryptedCover : "./assets/cover.jpg"
-              }')`,
-            }}
-            className={`fixed top-0 w-full left-0 h-[155px] z-[1000] bg-cover bg-top bg-no-repeat`}
-          ></div>
-          {/* <img
-            src={decryptedCover ? decryptedCover : defaultCover}
-            alt=""
-            className={`fixed top-0 z-[1500] left-0 w-full h-[155px] object-cover object-center`}
-          /> */}
+            className={`fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] h-[80px] z-[1600] bg-cover bg-top bg-no-repeat`}
+          >
+            <img
+              src={decryptedCover ? decryptedCover : defaultCover}
+              alt="Cover"
+              className="w-full h-[80px] object-cover object-center"
+            />
+          </div>
         </>
       ) : (
         <>
@@ -364,9 +370,17 @@ const OtherProfile = () => {
       )}
       <div className="flex-1">
         <div
-          className={`px-3 fixed ${
-            showHeader ? "opacity-1" : "opacity-0"
-          } top-0 w-full z-[1600] py-3`}
+          className={`px-5 ${
+            showHeader
+              ? "opacity-100 pointer-events-auto"
+              : "opacity-0 pointer-events-none"
+          } fixed top-0 w-full z-[1700] h-[80px] flex items-center transition-all duration-300`}
+          style={{
+            maxWidth: "480px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: "linear-gradient(45deg, #231C3E 35%, #CD3EFF 100%)",
+          }}
         >
           <OscrollHeader
             userData={userData}
@@ -478,14 +492,11 @@ const OtherProfile = () => {
         >
           <OtherAds />
         </div>
-        <div ref={headerRef} className="sticky z-[1500] top-0">
-          {/* {showHeader ? "Show" : "Hide"} */}
-        </div>
-
-        <div className="">
+        <div ref={sentinelRef} className="h-1"></div>
+        <div className="px-5">
           <VideoTab2
             id={id}
-            showHeader={false}
+            showHeader={showHeader}
             visibility={userData?.data?.content_visibility}
           />
         </div>
