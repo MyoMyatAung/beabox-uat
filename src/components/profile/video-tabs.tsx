@@ -1,17 +1,15 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Horin, Play } from "@/assets/profile";
+import { Horin } from "@/assets/profile";
 import { FaHeart } from "react-icons/fa";
 import { MdWatchLater } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import LikedVideos from "./video/liked-videos";
 import HistoryVideos from "./video/history-videos";
-import { LuTally3 } from "react-icons/lu";
 import { setDefaultTab } from "@/store/slices/persistSlice";
 import CreatedVideo2 from "./video/create-video2";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -66,140 +64,131 @@ const VideoTabs = () => {
   }, [isOpen]);
 
   return (
-    <Tabs defaultValue={defaultTab} onValueChange={handleTabChange}>
-      <div className="sticky top-[80px] z-[1650] -mx-5 bg-[#15131c]">
-        <div className="">
-          <TabsList className={`grid w-full grid-cols-3 bg-transparent`}>
-            {user?.token ? (
-              defaultTab == "upload" ? (
-                <TabsTrigger
-                  className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
-                  // onClick={() => dispatch(setDefaultTab("upload"))}
-                  value="upload"
-                  asChild
-                >
-                  <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-                    <DropdownMenuTrigger asChild>
-                      <span className="flex items-center gap-2 flex-col justify-center dropdown-trigger">
-                        <div className="w-[52px] h-[3px] bg-transparent"></div>
-
-                        {isOpen ? (
-                          <img src={upsort} alt="" />
-                        ) : (
-                          <Horin
-                            active={defaultTab == "upload" ? true : false}
-                          />
-                        )}
-                        {/*  */}
-
-                        <div
-                          className={`w-[52px] h-[3px] ${
-                            defaultTab == "upload" && "bg-white"
-                          }`}
-                        ></div>
-                      </span>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="dropdown-content w-[97px] bg-[#252525EB] border-0">
-                      <DropdownMenuGroup>
-                        <DropdownMenuItem>
-                          <div
-                            className="w-full flex items-center justify-between text-white"
-                            onClick={() => dispatch(setSort("created_at"))}
-                          >
-                            <p className="text-white text-[14px]">最新</p>
-                            {sort == "created_at" ? <Check /> : <></>}
-                          </div>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <div
-                            className="w-full flex items-center justify-between text-white"
-                            onClick={() => dispatch(setSort("score"))}
-                          >
-                            <p className="text-white text-[14px]">热门</p>
-                            {sort == "score" ? <Check /> : <></>}
-                          </div>
-                        </DropdownMenuItem>
-                      </DropdownMenuGroup>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TabsTrigger>
-              ) : (
-                <TabsTrigger
-                  className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
-                  // onClick={() => dispatch(setDefaultTab("upload"))}
-                  value="upload"
-                  asChild
-                >
-                  <span className="flex items-center gap-2 flex-col justify-center">
-                    <div className="w-[52px] h-[3px] bg-transparent"></div>
-                    <Horin active={defaultTab == "upload" ? true : false} />
-                    <div
-                      className={`w-[52px] h-[3px] ${
-                        defaultTab == "upload" && "bg-white"
-                      }`}
-                    ></div>
-                  </span>
-                </TabsTrigger>
-              )
-            ) : (
+    <Tabs value={defaultTab} onValueChange={handleTabChange}>
+      <div className="sticky top-[65px] z-[1650] -mx-5 bg-[#15131c]">
+        <TabsList className="grid w-full grid-cols-3 bg-transparent">
+          {user?.token ? (
+            defaultTab === "upload" ? (
               <TabsTrigger
-                className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
-                // onClick={() => dispatch(setDefaultTab("upload"))}
+                className="flex items-center gap-2 rounded-full py-2 text-[17px] text-[#888888] data-[state=active]:bg-transparent data-[state=active]:text-white"
                 value="upload"
                 asChild
               >
-                <span className="flex items-center gap-2 flex-col justify-center">
-                  <div className="w-[52px] h-[3px] bg-transparent"></div>
-                  <Horin active={defaultTab == "upload" ? true : false} />
-                  <div
-                    className={`w-[52px] h-[3px] ${
-                      defaultTab == "upload" && "bg-white"
-                    }`}
-                  ></div>
+                <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+                  <DropdownMenuTrigger asChild>
+                    <span className="dropdown-trigger flex flex-col items-center justify-center gap-3">
+                      <div className="h-[3px] w-[52px] bg-transparent"></div>
+                      {isOpen ? (
+                        <img src={upsort} alt="" className="h-5 w-5" />
+                      ) : (
+                        <Horin active={defaultTab === "upload"} />
+                      )}
+                      <div
+                        className={`h-[3px] w-[52px] ${
+                          defaultTab === "upload"
+                            ? "bg-white"
+                            : "bg-transparent"
+                        }`}
+                      ></div>
+                    </span>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="dropdown-content w-[97px] border-0 bg-[#252525EB]">
+                    <DropdownMenuItem
+                      onClick={() => dispatch(setSort("created_at"))}
+                    >
+                      <div className="flex w-full items-center justify-between text-white">
+                        <p className="text-[14px] text-white">最新</p>
+                        {sort === "created_at" && <Check className="h-4 w-4" />}
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => dispatch(setSort("score"))}
+                    >
+                      <div className="flex w-full items-center justify-between text-white">
+                        <p className="text-[14px] text-white">热门</p>
+                        {sort === "score" && <Check className="h-4 w-4" />}
+                      </div>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TabsTrigger>
+            ) : (
+              <TabsTrigger
+                className="flex items-center gap-2 rounded-full py-2 text-[17px] text-[#888888] data-[state=active]:bg-transparent data-[state=active]:text-white"
+                value="upload"
+                asChild
+              >
+                <span className="flex flex-col items-center justify-center gap-3">
+                  <div className="h-[3px] w-[52px] bg-transparent"></div>
+                  <Horin active={false} />
+                  <div className="h-[3px] w-[52px] bg-transparent"></div>
                 </span>
               </TabsTrigger>
-            )}
+            )
+          ) : (
+            <TabsTrigger
+              className="flex items-center gap-2 rounded-full py-2 text-[17px] text-[#888888] data-[state=active]:bg-transparent data-[state=active]:text-white"
+              value="upload"
+              asChild
+            >
+              <span className="flex flex-col items-center justify-center gap-3">
+                <div className="h-[3px] w-[52px] bg-transparent"></div>
+                <Horin active={defaultTab === "upload"} />
+                <div
+                  className={`h-[3px] w-[52px] ${
+                    defaultTab === "upload" ? "bg-white" : "bg-transparent"
+                  }`}
+                ></div>
+              </span>
+            </TabsTrigger>
+          )}
 
-            <TabsTrigger
-              className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
-              value="liked"
-            >
-              <span className="flex items-center gap-2 flex-col justify-center">
-                <div className={`w-[52px] h-[3px] bg-transparent`}></div>
-                <FaHeart />
-                <div
-                  className={`w-[52px] h-[3px] ${
-                    defaultTab == "liked" && "bg-white"
-                  }`}
-                ></div>
-              </span>
-            </TabsTrigger>
-            <TabsTrigger
-              className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
-              value="history"
-            >
-              <span className="flex items-center gap-2 flex-col justify-center">
-                <div className={`w-[52px] h-[3px] bg-transparent`}></div>
-                <MdWatchLater />
-                <div
-                  className={`w-[52px] h-[3px] ${
-                    defaultTab == "history" && "bg-white"
-                  }`}
-                ></div>
-              </span>
-            </TabsTrigger>
-          </TabsList>
-          <div className="h-[1px] bg-[#FFFFFF14] w-full mt-3.5"></div>
-        </div>
+          {/* Liked Tab */}
+          <TabsTrigger
+            className="flex items-center gap-2 rounded-full py-2 text-[17px] text-[#888888] data-[state=active]:bg-transparent data-[state=active]:text-white"
+            value="liked"
+          >
+            <span className="flex flex-col items-center justify-center gap-3">
+              <div className="h-[3px] w-[52px] bg-transparent"></div>
+              <FaHeart />
+              <div
+                className={`h-[3px] w-[52px] ${
+                  defaultTab === "liked" ? "bg-white" : "bg-transparent"
+                }`}
+              ></div>
+            </span>
+          </TabsTrigger>
+
+          {/* History Tab */}
+          <TabsTrigger
+            className="flex items-center gap-2 rounded-full py-2 text-[17px] text-[#888888] data-[state=active]:bg-transparent data-[state=active]:text-white"
+            value="history"
+          >
+            <span className="flex flex-col items-center justify-center gap-3">
+              <div className="h-[3px] w-[52px] bg-transparent"></div>
+              <MdWatchLater />
+              <div
+                className={`h-[3px] w-[52px] ${
+                  defaultTab === "history" ? "bg-white" : "bg-transparent"
+                }`}
+              ></div>
+            </span>
+          </TabsTrigger>
+        </TabsList>
+        <div className="mt-[22px] h-[1px] w-full bg-[#FFFFFF14]"></div>
       </div>
-      <TabsContent value="liked">
+
+      {/* Tab Content */}
+      <TabsContent value="upload" className="px-1">
+        <CreatedVideo2 id={user?.id} />
+      </TabsContent>
+
+      <TabsContent value="liked" className="px-1">
         <LikedVideos id={user?.id} />
       </TabsContent>
-      <TabsContent value="history">
+
+      <TabsContent value="history" className="px-1">
         <HistoryVideos />
-      </TabsContent>
-      <TabsContent value="upload">
-        <CreatedVideo2 id={user?.id} />
       </TabsContent>
     </Tabs>
   );
