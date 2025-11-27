@@ -1,8 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Horin, Play } from "@/assets/profile";
+import { Horin } from "@/assets/profile";
 import { FaHeart } from "react-icons/fa";
 import CreatedVideo from "./video/created-video";
-import LikedVideos from "./video/liked-videos";
 import { useDispatch, useSelector } from "react-redux";
 import { setDefaultTab2 } from "@/store/slices/persistSlice";
 import LikedVideos2 from "./video/like-videos2";
@@ -10,7 +9,6 @@ import { useEffect, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -61,104 +59,90 @@ const VideoTab2 = ({ id, visibility, showHeader }: any) => {
   }, [isOpen]);
   return (
     <Tabs
-      defaultValue={defaultTab2 ? defaultTab2 : "video"}
-      className="my-5"
+      value={defaultTab2 ? defaultTab2 : "video"}
       onValueChange={handleTabChange}
     >
-      <TabsList className="grid w-full grid-cols-3 z-[1600] bg-transparent sticky top-[100px] px-5">
-        {defaultTab2 == "video" ? (
-          <TabsTrigger
-            className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
-            // onClick={() => dispatch(setDefaultTab("upload"))}
-            value="video"
-            asChild
-          >
-            <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-              <DropdownMenuTrigger asChild>
-                <span className="flex items-center gap-2 flex-col justify-center dropdown-trigger">
-                  <div className="w-[52px] h-[3px] bg-transparent"></div>
-
-                  {isOpen ? (
-                    <img src={upsort} alt="" />
-                  ) : (
-                    <Horin active={defaultTab2 == "video" ? true : false} />
-                  )}
-                  {/*  */}
-
-                  <div
-                    className={`w-[52px] h-[3px] ${
-                      defaultTab2 == "video" && "bg-white"
-                    }`}
-                  ></div>
-                </span>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="dropdown-content w-[97px] bg-[#252525EB] border-0">
-                <DropdownMenuGroup>
-                  <DropdownMenuItem>
+      <div className="sticky top-[65px] z-[1650] -mx-5 bg-[#15131c]">
+        <TabsList className="grid w-full grid-cols-3 bg-transparent">
+          {defaultTab2 === "video" ? (
+            <TabsTrigger
+              className="flex items-center gap-2 rounded-full py-2 text-[17px] text-[#888888] data-[state=active]:bg-transparent data-[state=active]:text-white"
+              value="video"
+              asChild
+            >
+              <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+                <DropdownMenuTrigger asChild>
+                  <span className="dropdown-trigger flex flex-col items-center justify-center gap-3">
+                    <div className="h-[3px] w-[52px] bg-transparent"></div>
+                    {isOpen ? (
+                      <img src={upsort} alt="" className="h-5 w-5" />
+                    ) : (
+                      <Horin active={defaultTab2 === "video"} />
+                    )}
                     <div
-                      className="w-full flex items-center justify-between text-white"
-                      onClick={() => dispatch(setSort("created_at"))}
-                    >
-                      <p className="text-white text-[14px]">最新</p>
-                      {sort == "created_at" ? <Check /> : <></>}
+                      className={`h-[3px] w-[52px] ${
+                        defaultTab2 === "video" ? "bg-white" : "bg-transparent"
+                      }`}
+                    ></div>
+                  </span>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="dropdown-content w-[97px] border-0 bg-[#252525EB]">
+                  <DropdownMenuItem
+                    onClick={() => dispatch(setSort("created_at"))}
+                  >
+                    <div className="flex w-full items-center justify-between text-white">
+                      <p className="text-[14px] text-white">最新</p>
+                      {sort === "created_at" && <Check className="h-4 w-4" />}
                     </div>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <div
-                      className="w-full flex items-center justify-between text-white"
-                      onClick={() => dispatch(setSort("score"))}
-                    >
-                      <p className="text-white text-[14px]">热门</p>
-                      {sort == "score" ? <Check /> : <></>}
+                  <DropdownMenuItem onClick={() => dispatch(setSort("score"))}>
+                    <div className="flex w-full items-center justify-between text-white">
+                      <p className="text-[14px] text-white">热门</p>
+                      {sort === "score" && <Check className="h-4 w-4" />}
                     </div>
                   </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </TabsTrigger>
-        ) : (
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </TabsTrigger>
+          ) : (
+            <TabsTrigger
+              className="flex items-center gap-2 rounded-full py-2 text-[17px] text-[#888888] data-[state=active]:bg-transparent data-[state=active]:text-white"
+              value="video"
+              asChild
+            >
+              <span className="flex flex-col items-center justify-center gap-3">
+                <div className="h-[3px] w-[52px] bg-transparent"></div>
+                <Horin active={false} />
+                <div className="h-[3px] w-[52px] bg-transparent"></div>
+              </span>
+            </TabsTrigger>
+          )}
+
+          {/* Liked Tab */}
           <TabsTrigger
-            className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
-            value="video"
-            // onClick={() => dispatch(setDefaultTab2("video"))}
+            className="flex items-center gap-2 rounded-full py-2 text-[17px] text-[#888888] data-[state=active]:bg-transparent data-[state=active]:text-white"
+            value="liked"
           >
-            <span className="flex items-center gap-2 flex-col justify-center">
-              <div className="w-[52px] h-[3px] bg-transparent"></div>
-              <Horin active={defaultTab2 == "video" ? true : false} />
+            <span className="flex flex-col items-center justify-center gap-3">
+              <div className="h-[3px] w-[52px] bg-transparent"></div>
+              <FaHeart />
               <div
-                className={`w-[52px] h-[3px] ${
-                  defaultTab2 == "video" && "bg-white"
+                className={`h-[3px] w-[52px] ${
+                  defaultTab2 === "liked" ? "bg-white" : "bg-transparent"
                 }`}
               ></div>
             </span>
           </TabsTrigger>
-        )}
+        </TabsList>
+        <div className="mt-[22px] h-[1px] w-full bg-[#FFFFFF14]"></div>
+      </div>
 
-        <TabsTrigger
-          className="text-[#888888] data-[state=active]:text-white data-[state=active]:bg-transparent rounded-full text-[17px] py-2 flex items-center gap-2"
-          value="liked"
-          // onClick={() => dispatch(setDefaultTab2("liked"))}
-        >
-          <span className="flex items-center gap-2 flex-col justify-center">
-            <div className={`w-[52px] h-[3px] bg-transparent`}></div>
-            <FaHeart />
-            <div
-              className={`w-[52px] h-[3px] ${
-                defaultTab2 == "liked" && "bg-white"
-              }`}
-            ></div>
-            {/* 已点赞视频 */}
-          </span>
-          {/* <span className="flex items-center gap-1">
-            <FaHeart /> 已点赞视频
-          </span> */}
-        </TabsTrigger>
-      </TabsList>
-      <div className="h-[1px] bg-[#FFFFFF14] w-full mt-3.5"></div>
-      <TabsContent value="video">
+      {/* Tab Content */}
+      <TabsContent value="video" className="px-1">
         <CreatedVideo id={id} />
       </TabsContent>
-      <TabsContent value="liked">
+
+      <TabsContent value="liked" className="px-1">
         <LikedVideos2 id={id} />
       </TabsContent>
     </Tabs>
