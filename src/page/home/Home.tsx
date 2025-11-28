@@ -53,6 +53,21 @@ import { clearSeenUsers } from "./services/seenUsersSlice";
 import { setHasDecryptedInitialData } from "./services/decryptionSlice";
 import { cn } from "@/lib/utils";
 
+/**
+ * Home Component
+ * 
+ * PURPOSE:
+ * Manages the main video feed with vertical scrolling and tab navigation.
+ * Implements scroll restriction during user guide to ensure Ad Popup is shown.
+ * 
+ * BUSINESS LOGIC:
+ * - Shows videos in vertical scrollable feed
+ * - Supports "Follow" and "For You" tabs
+ * - During user guide: Restricts scrolling to first 2 videos
+ * - After Ad Popup: Allows unlimited scrolling
+ * - Uses IntersectionObserver to track visible videos
+ * - Loads more videos when user approaches the end
+ */
 const Home = () => {
   const dispatch = useDispatch();
 
@@ -162,6 +177,14 @@ const Home = () => {
   );
   const { hasDecryptedInitialData } = useSelector(
     (state: any) => state.decryption
+  );
+  
+  /**
+   * Scroll Restriction State (NEW)
+   * Business Logic: When restricted, only show first 2 videos to ensure Ad Popup is seen
+   */
+  const { isRestricted: scrollRestricted, maxScrollIndex } = useSelector(
+    (state: any) => state.scrollRestriction
   );
 
   // Get both the query hooks and their refetch functions
@@ -574,6 +597,23 @@ const Home = () => {
   );
   const [lastScrollTop, setLastScrollTop] = useState(0);
 
+  /**
+   * Get videos to display based on scroll restriction
+   * Business Logic: 
+   * - When scroll restricted: Show only first 2 videos (index 0 and 1)
+   * - When not restricted: Show all videos
+   * 
+   * @param videoArray - Full video array
+   * @returns Filtered video array based on restriction state
+   */
+  const getRestrictedVideos = (videoArray: any[]) => {
+    if (scrollRestricted && videoArray.length > maxScrollIndex + 1) {
+      // Restrict to first N videos (maxScrollIndex + 1)
+      return videoArray.slice(0, maxScrollIndex + 1);
+    }
+    return videoArray;
+  };
+
   // Load and decrypt followers
   useEffect(() => {
     if (myday?.data.length > 0) {
@@ -752,7 +792,11 @@ const Home = () => {
                           "hidden"
                       )}
                     >
-                      {videos["follow"]?.map((video: any, index: any) => {
+                      {/* 
+                        Apply scroll restriction to video list
+                        Business Logic: Show only first 2 videos during user guide
+                      */}
+                      {getRestrictedVideos(videos["follow"])?.map((video: any, index: any) => {
                         return (
                           <div
                             key={index}
@@ -929,7 +973,11 @@ const Home = () => {
                       ref={videoContainerRef}
                       className={`app__videos ${!hideNew ? "pb-[80px]" : ""}`}
                     >
-                      {videos["foryou"]?.map((video: any, index: any) => {
+                      {/* 
+                        Apply scroll restriction to video list
+                        Business Logic: Show only first 2 videos during user guide
+                      */}
+                      {getRestrictedVideos(videos["foryou"])?.map((video: any, index: any) => {
                         return (
                           <div
                             key={index}

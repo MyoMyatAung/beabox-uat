@@ -1,7 +1,8 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 import { AnimatePresence } from "framer-motion";
 import { useDispatch } from "react-redux";
 import { setShowUserGuide } from "@/store/slices/appSlice";
+import { disableScrollRestriction } from "@/store/slices/scrollRestrictionSlice";
 import { isIOSWebView } from "@/lib/deviceInfo";
 
 // Popup Components
@@ -282,6 +283,7 @@ UserGuidePopup.displayName = "UserGuidePopup";
  * - Shown after user guide completes
  * - Only shown on home page when no event is active
  * - Triggers notification popup after completion via onComplete callback
+ * - Disables scroll restriction when closed (allows unlimited scrolling)
  */
 const AdPopup = React.memo<AdPopupProps>(
   ({
@@ -291,6 +293,22 @@ const AdPopup = React.memo<AdPopupProps>(
     isBrowser,
     onAdComplete,
   }) => {
+    const dispatch = useDispatch();
+
+    /**
+     * Handle Ad Popup completion
+     * Business Logic: When Ad closes, disable scroll restriction to allow unlimited scrolling
+     */
+    const handleAdPopupComplete = useCallback(() => {
+      // Disable scroll restriction - user can now scroll to all videos
+      dispatch(disableScrollRestriction());
+      
+      // Call parent completion handler
+      if (onAdComplete) {
+        onAdComplete();
+      }
+    }, [dispatch, onAdComplete]);
+
     return (
       <AnimatePresence mode="wait">
         {showAd && (
@@ -298,7 +316,7 @@ const AdPopup = React.memo<AdPopupProps>(
             setShowAd={setShowAd}
             setShowAlert={setShowAlert}
             isBrowser={isBrowser}
-            onComplete={onAdComplete}
+            onComplete={handleAdPopupComplete}
           />
         )}
       </AnimatePresence>
