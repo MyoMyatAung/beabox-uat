@@ -119,7 +119,7 @@ User opens app
   → scrollRestriction.isRestricted = true
 ```
 
-### 2. User Guide Active
+### 2. User Guide Active - Stage 1 (INITIAL)
 ```
 User sees first video (index 0)
   → Can scroll to second video (index 1)
@@ -127,16 +127,33 @@ User sees first video (index 0)
   → Home component only renders first 2 videos
 ```
 
-### 3. Reaching Second Video
+### 3. User Scrolls - Stage 2 (CLR_SCREEN_INFO)
 ```
-User scrolls to second video (index 1)
-  → IntersectionObserver detects second video
-  → scrollRestriction.hasReachedSecondVideo = true
-  → User guide hides
-  → Ad Popup shows
+User scrolls video
+  → Guide transitions to CLR_SCREEN_INFO stage
+  → Shows "点击关闭沉浸模式" message
+  → Hand pointer points to fullscreen button
+  → Waits for user to click fullscreen
 ```
 
-### 4. Ad Popup Closed
+### 4. User Clicks Fullscreen - Stage 3 (SCROLL_INFO)
+```
+User clicks fullscreen button
+  → Guide transitions to SCROLL_INFO stage
+  → Shows scroll instruction (arrows + text)
+  → Shows "点击关闭沉浸模式" message
+  → Auto-completes after 3 seconds OR user clicks anywhere
+```
+
+### 5. Guide Completes
+```
+After 3 seconds or user interaction
+  → User guide fades out
+  → Ad Popup appears
+  → scrollRestriction remains active (still restricted to 2 videos)
+```
+
+### 6. Ad Popup Closed
 ```
 User closes Ad Popup
   → scrollRestriction.isRestricted = false

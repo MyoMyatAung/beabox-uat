@@ -52,13 +52,21 @@ Keep the console open to see debug logs:
 - ✅ Only 2 videos should be rendered in the DOM
 - ✅ Check Redux state: `scrollRestriction.isRestricted` should be `true`
 
-**Stage 3 - Reaching Second Video:**
-- ✅ When second video becomes 60% visible:
-  - User guide should fade out
-  - Ad Popup should appear after 500ms delay
-  - Redux: `scrollRestriction.hasReachedSecondVideo` = `true`
+**Stage 3 - Clicking Fullscreen Button:**
+- ✅ Click the fullscreen button (退出清屏)
+- ✅ Guide transitions to SCROLL_INFO stage
+- ✅ See scroll instruction: "向上或向下滑动以切换视频"
+- ✅ See arrows (up and down)
+- ✅ See "点击关闭沉浸模式" message with hand pointer
+- ✅ Can click anywhere to close OR wait 3 seconds
 
-**Stage 4 - After Ad Popup Closes:**
+**Stage 4 - Guide Completes:**
+- ✅ After 3 seconds OR clicking anywhere:
+  - User guide fades out
+  - Ad Popup appears
+  - Scroll restriction still active (can only see 2 videos)
+
+**Stage 5 - After Ad Popup Closes:**
 - ✅ Close the Ad Popup
 - ✅ Redux: `scrollRestriction.isRestricted` should become `false`
 - ✅ Can now scroll to all videos (unrestricted)
@@ -67,15 +75,18 @@ Keep the console open to see debug logs:
 ### Scenario 2: Clicking Fullscreen Button
 
 **Steps:**
-1. Follow steps from Scenario 1
-2. Click the fullscreen button (退出清屏) before scrolling
+1. Clear browser storage
+2. Navigate to app
+3. Scroll down once (to trigger CLR_SCREEN_INFO stage)
+4. Click the fullscreen button (退出清屏)
 
 **Expected Behavior:**
 - ✅ UI controls become visible (bottom nav, top nav)
 - ✅ Videos unmute automatically
 - ✅ User guide transitions to "Scroll Info" stage
-- ✅ Shows "向上或向下滑动以切换视频" instruction
-- ✅ Auto-completes after 5 seconds
+- ✅ Shows "向上或向下滑动以切换视频" instruction with arrows
+- ✅ Shows "点击关闭沉浸模式" message with hand pointer
+- ✅ Auto-completes after 3 seconds (or click anywhere to close)
 - ✅ Shows Ad Popup
 - ✅ Scroll restriction still applies until Ad is closed
 

@@ -200,19 +200,15 @@ const useVideoController = (dispatch: any, mute: boolean) => {
  * BUSINESS LOGIC:
  * - When guide is active, enable scroll restriction in Redux
  * - When guide finishes, keep restriction until Ad Popup closes
- * - Track when user reaches second video
+ * - Track when user reaches second video (for analytics/state tracking)
  * 
  * @param dispatch - Redux dispatch function
  * @param currentStage - Current guide stage
- * @param setShowAd - Callback to show Ad Popup
- * @param setShowUserGuide - Callback to hide user guide
  * @returns Functions to manage scroll restriction
  */
 const useScrollRestrictionManager = (
   dispatch: any,
-  currentStage: StageType,
-  setShowAd: (show: boolean) => void,
-  setShowUserGuide: (show: boolean) => void
+  currentStage: StageType
 ) => {
   const [hasReachedSecondVideo, setHasReachedSecondVideo] = useState(false);
 
@@ -229,25 +225,21 @@ const useScrollRestrictionManager = (
 
   /**
    * Handle video index change from Home component
-   * Business Logic: Trigger Ad Popup when user reaches second video
+   * Business Logic: Track when user reaches second video
+   * Note: We only track this for state management, Ad will show when guide completes
    * 
    * @param videoIndex - Current visible video index
    */
   const handleVideoIndexChange = useCallback((videoIndex: number) => {
-    // If user has reached second video (index 1) and hasn't triggered Ad yet
+    // If user has reached second video (index 1), mark it in state
+    // The guide will complete naturally and then show Ad Popup
     if (videoIndex >= 1 && !hasReachedSecondVideo) {
       setHasReachedSecondVideo(true);
       
-      // Mark in Redux
+      // Mark in Redux for state tracking
       dispatch(markSecondVideoReached());
-      
-      // Hide user guide and show Ad Popup after a short delay
-      setTimeout(() => {
-        setShowUserGuide(false);
-        setShowAd(true);
-      }, 500);
     }
-  }, [hasReachedSecondVideo, setShowAd, setShowUserGuide, dispatch]);
+  }, [hasReachedSecondVideo, dispatch]);
 
   return {
     hasReachedSecondVideo,
@@ -363,7 +355,7 @@ const ImmersiveUserGuide: React.FC<ImmersiveUserGuideProps> = ({
   const {
     hasReachedSecondVideo,
     handleVideoIndexChange,
-  } = useScrollRestrictionManager(dispatch, currentStage, setShowAd, setShowUserGuide);
+  } = useScrollRestrictionManager(dispatch, currentStage);
   
   // Guide visibility management
   const { showGuide, isHidden, setIsHidden } = useGuideVisibility(hideNew, currentStage);
@@ -386,20 +378,16 @@ const ImmersiveUserGuide: React.FC<ImmersiveUserGuideProps> = ({
    * Handle guide completion
    * Business Logic: 
    * - Fade out guide after 1 second
-   * - Show Ad Popup if user hasn't reached second video yet
-   * - If user already reached second video, Ad was already shown
+   * - Always show Ad Popup when guide completes
+   * - Guide should complete naturally before showing Ad
    */
   const handleGuideComplete = useCallback(() => {
     setTimeout(() => {
       setShowUserGuide(false);
-      
-      // Only show Ad if user hasn't reached second video yet
-      // (If they reached it, Ad was already triggered)
-      if (!hasReachedSecondVideo) {
-        setShowAd(true);
-      }
+      // Always show Ad when guide completes
+      setShowAd(true);
     }, 1000);
-  }, [setShowUserGuide, setShowAd, hasReachedSecondVideo]);
+  }, [setShowUserGuide, setShowAd]);
 
   /**
    * Handle fullscreen button click
@@ -429,7 +417,7 @@ const ImmersiveUserGuide: React.FC<ImmersiveUserGuideProps> = ({
         setTimeout(() => {
           setCurrentStage(STAGES.SCROLL_INFO);
           
-          // Auto-complete after 5 seconds
+          // Auto-complete after 3 seconds as per requirements
           scrollInfoTimeoutRef.current = setTimeout(() => {
             setCurrentStage(STAGES.FINISH);
             handleGuideComplete();
