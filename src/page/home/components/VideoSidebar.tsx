@@ -297,9 +297,8 @@ function VideoSidebar({
 
   return (
     <div
-      className={`${
-        isHome ? "videoSidebar" : "videoSidebar_exp"
-      } z-[1500] w-[50px]
+      className={`${isHome ? "videoSidebar" : "videoSidebar_exp"
+        } z-[1500] w-[50px]
 `}
     >
       <div className={`${isFirstTimeUser && "opacity-[0.1]"}`}>
@@ -363,11 +362,11 @@ function VideoSidebar({
                         style={{
                           background:
                             !post.user?.my_day?.watched &&
-                            !onlyseenUserIds.includes(post?.user?.id)
+                              !onlyseenUserIds.includes(post?.user?.id)
                               ? "linear-gradient(#16131C 0 0) padding-box, " +
-                                "linear-gradient(90deg, #e8b9ff 0%, #ff94b4 82.89%) border-box"
+                              "linear-gradient(90deg, #e8b9ff 0%, #ff94b4 82.89%) border-box"
                               : "linear-gradient(#16131C 0 0) padding-box, " +
-                                "rgba(255, 255, 255, 0.40) border-box",
+                              "rgba(255, 255, 255, 0.40) border-box",
                           border: "3px solid transparent",
                           padding: "3px",
                         }}
@@ -659,85 +658,84 @@ function VideoSidebar({
           </button>
         </motion.div>
       </div>
-      {!showUserGuide && (
-        <motion.div
-          className="videoSidebar__button"
-          initial={false} // Disable initial animation
-          animate={{
-            x: hideBar ? 50 : 0, // Slide right when hidden
-            opacity: hideBar ? 0 : 1,
-          }}
-          transition={{
-            type: "spring",
-            damping: 20,
-            stiffness: 300,
-            opacity: { duration: 0.2 },
-          }}
-          style={{
-            pointerEvents: hideBar ? "none" : "auto",
-          }}
-        >
-          <button onClick={handleFullScreen}>
-            {hideNew ? (
-              <div className="flex flex-col items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="25"
-                  height="24"
-                  viewBox="0 0 25 24"
-                  fill="none"
-                >
-                  <path
-                    d="M24.5 24H15.042V21.3525H21.8525V14.542H24.5V24Z"
-                    fill="white"
-                  />
-                  <path
-                    d="M9.1582 23.2217H6.51074V19.7793L2.40625 23.8838L0.552734 22.0303L4.65723 17.9258H1.21484V15.2783H9.1582V23.2217Z"
-                    fill="white"
-                  />
-                  <path
-                    d="M9.95801 2.64746H3.14746V9.45801H0.5V0H9.95801V2.64746Z"
-                    fill="white"
-                  />
-                  <path
-                    d="M24.3838 1.90625L20.2793 6.01074H23.7217V8.65918H15.7783V0.714844H18.4258V4.15723L22.5303 0.0527344L24.3838 1.90625Z"
-                    fill="white"
-                  />
-                </svg>
-                <p className="side_text font-cnFont mt-2">退出清屏</p>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="25"
-                  height="25"
-                  viewBox="0 0 25 25"
-                  fill="none"
-                >
-                  <path
-                    d="M24.5 24.8066H15.0419V22.159H21.8523V15.3486H24.5V24.8066Z"
-                    fill="white"
-                  />
-                  <path
-                    d="M9.15849 17.9382L5.05415 22.0423H8.49644V24.6902H0.552874V16.7467H3.20081V20.1889L7.30491 16.0846L9.15849 17.9382Z"
-                    fill="white"
-                  />
-                  <path
-                    d="M9.95806 3.45433H3.14769V10.2647H0.5V0.806641H9.95806V3.45433Z"
-                    fill="white"
-                  />
-                  <path
-                    d="M24.3836 8.80308H21.7356V5.36079L17.6315 9.46513L15.778 7.61155L19.8823 3.50745H16.44V0.859515H24.3836V8.80308Z"
-                    fill="white"
-                  />
-                </svg>
-                <p className="side_text font-cnFont mt-2">清屏</p>
-              </div>
-            )}
-          </button>
-        </motion.div>
-      )}
+
+      <motion.div
+        className="videoSidebar__button"
+        initial={false} // Disable initial animation
+        animate={{
+          x: hideBar ? 50 : 0, // Slide right when hidden
+        }}
+        transition={{
+          type: "spring",
+          damping: 20,
+          stiffness: 300,
+          opacity: { duration: 0.2 },
+        }}
+        style={{
+          pointerEvents: hideBar ? "none" : "auto",
+          opacity: hideBar || showUserGuide ? 0 : 1,
+        }}
+      >
+        <button onClick={handleFullScreen}>
+          {hideNew ? (
+            <div className="flex flex-col items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="25"
+                height="24"
+                viewBox="0 0 25 24"
+                fill="none"
+              >
+                <path
+                  d="M24.5 24H15.042V21.3525H21.8525V14.542H24.5V24Z"
+                  fill="white"
+                />
+                <path
+                  d="M9.1582 23.2217H6.51074V19.7793L2.40625 23.8838L0.552734 22.0303L4.65723 17.9258H1.21484V15.2783H9.1582V23.2217Z"
+                  fill="white"
+                />
+                <path
+                  d="M9.95801 2.64746H3.14746V9.45801H0.5V0H9.95801V2.64746Z"
+                  fill="white"
+                />
+                <path
+                  d="M24.3838 1.90625L20.2793 6.01074H23.7217V8.65918H15.7783V0.714844H18.4258V4.15723L22.5303 0.0527344L24.3838 1.90625Z"
+                  fill="white"
+                />
+              </svg>
+              <p className="side_text font-cnFont mt-2">退出清屏</p>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="25"
+                height="25"
+                viewBox="0 0 25 25"
+                fill="none"
+              >
+                <path
+                  d="M24.5 24.8066H15.0419V22.159H21.8523V15.3486H24.5V24.8066Z"
+                  fill="white"
+                />
+                <path
+                  d="M9.15849 17.9382L5.05415 22.0423H8.49644V24.6902H0.552874V16.7467H3.20081V20.1889L7.30491 16.0846L9.15849 17.9382Z"
+                  fill="white"
+                />
+                <path
+                  d="M9.95806 3.45433H3.14769V10.2647H0.5V0.806641H9.95806V3.45433Z"
+                  fill="white"
+                />
+                <path
+                  d="M24.3836 8.80308H21.7356V5.36079L17.6315 9.46513L15.778 7.61155L19.8823 3.50745H16.44V0.859515H24.3836V8.80308Z"
+                  fill="white"
+                />
+              </svg>
+              <p className="side_text font-cnFont mt-2">清屏</p>
+            </div>
+          )}
+        </button>
+      </motion.div>
 
       <div
         style={{

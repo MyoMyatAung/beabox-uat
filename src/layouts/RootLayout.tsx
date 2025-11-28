@@ -1,151 +1,139 @@
 import { useEffect, useState, useRef } from "react";
-import { useNavigate, useLocation, useSearchParams, Outlet } from "react-router-dom";
+import { useLocation, useSearchParams, Outlet } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store/store";
-import { setPlay } from "@/page/home/services/playSlice";
 import { sethideNew } from "@/page/home/services/hideNewSlice";
-import {
-  setEventDetail,
-  setAnimation,
-  setDuration,
-} from "@/store/slices/eventSlice";
 import { setShowUserGuide } from "@/store/slices/appSlice";
+import { setPlay } from "@/page/home/services/playSlice";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGetApplicationAdsQuery } from "@/store/api/explore/exploreApi";
 import {
   useGetConfigQuery,
   useGetNotificationsQuery,
 } from "@/page/home/services/homeApi";
-import {
-  useGetCurrentEventQuery,
-  useLazyGetEventDetailsQuery,
-} from "@/store/api/events/eventApi";
 import { useGetUserByReferalQuery } from "@/page/event/eventApi";
 import { BottomNav } from "@/components/shared/bottom-nav";
 import AuthDrawer from "@/components/profile/auth/auth-drawer";
 import RegisterDrawer from "@/components/profile/auth/register-drawer";
 import AlertToast from "@/components/shared/alert-toast";
-import AnimationLoader from "@/components/shared/animation-loader";
 import LoadingScreen from "@/components/LoadingScreen";
 import Landing from "@/components/Landing";
-import ImmersiveUserGuide from "@/components/ImmersiveUserGuide";
-import PopUp from "./PopUp";
-import AlertRedirect from "./AlertRedirect";
-import PasswordSetUpPopUp from "./PasswordSetUpPopUp";
-import NotiPopUp from "./NotiPopUp";
 import DEventBox from "@/page/event/EventBox";
+import { sendNativeEvent, NativeEventType } from "@/utils/nativeBridge";
 
-import countdownAnimation from "@/lotties/Animation.json";
-import luckySpinAnimation from "@/lotties/SpinWheel.json";
-import fabAnimation from "@/lotties/Welfare.json";
-import CloseSvg from "@/assets/icons/Close.svg";
-import { isIOSWebView } from "@/lib/deviceInfo";
-import { EventDetail } from "@/@types/lucky_draw";
+// Custom hooks
+import { useDeviceDetection } from "./hooks/useDeviceDetection";
+import { useSessionManagement } from "./hooks/useSessionManagement";
+import { useAppInitialization } from "./hooks/useAppInitialization";
+import { useDialogConfig } from "./hooks/useDialogConfig";
+import { useEventManagement } from "./hooks/useEventManagement";
 
-const APP_CONFIG = {
-  ANIMATION_DELAY: 5000,
-  SPLASH_DELAY: 1000,
-  ANIMATION_SIZES: {
-    COUNTDOWN: { width: 110 },
-    LUCKY_SPIN: { width: 85, height: 100 },
-    FAB: { width: 100, height: 100 },
-  },
-  ANIMATION_POSITIONS: {
-    COUNTDOWN: "bottom-[calc(22rem+16px)] left-2",
-    LUCKY_SPIN: "bottom-[calc(19rem+16px)] left-4",
-    FAB: "bottom-[calc(12rem+16px)] left-1",
-  },
-  SPRING_CONFIG: {
-    type: "spring",
-    damping: 20,
-    stiffness: 300,
-  },
-} as const;
+// Sub-components
+import { PopupLayer } from "./components/PopupLayer";
+import { EventAnimations } from "./components/EventAnimations";
 
-// =============================================================================
-// UTILITY FUNCTIONS
-// =============================================================================
-
-// Function to check if the app is running in a WebView
-function isWebView() {
-  return (
-    (window as any).webkit &&
-    (window as any).webkit.messageHandlers &&
-    (window as any).webkit.messageHandlers.jsBridge
-  );
-}
-
-function sendNativeEvent(message: string) {
-  if (isWebView()) {
-    (window as any).webkit.messageHandlers.jsBridge.postMessage(message);
-  }
-}
-
-// =============================================================================
-// MAIN COMPONENT
-// =============================================================================
-
+/**
+ * RootLayout Component
+ * 
+ * This is the root layout component that manages the overall app structure and flow.
+ * It handles:
+ * - App initialization and onboarding flow
+ * - Device detection and configuration
+ * - Event management and animations
+ * - Popup/modal display priority
+ * - Navigation and routing
+ * 
+ * Business Flow:
+ * 1. App loads → Check session state
+ * 2. If first visit → Show loading screen → Landing screen → User guide → Ad popup → Notifications
+ * 3. If returning user → Skip to main app (faster startup)
+ * 4. Manage event animations, popups, and modals based on priority
+ * 
+ * SOLID Principles Applied:
+ * - Single Responsibility: Each hook/component handles one concern
+ * - Open/Closed: Extensible via hooks and component composition
+ * - Dependency Inversion: Depends on abstractions (hooks) not concrete implementations
+ */
 const RootLayout = () => {
   // =============================================================================
   // ROUTING AND NAVIGATION
   // =============================================================================
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const referCode = searchParams.get("refer");
-
-  // =============================================================================
-  // DEVICE AND BROWSER DETECTION STATE
-  // =============================================================================
-  const [isBrowser, setIsBrowser] = useState(false);
-  const [deviceType, setDeviceType] = useState<"IOS" | "Android" | "">("");
-
-  // =============================================================================
-  // APP FLOW AND LOADING STATE
-  // =============================================================================
   const isHome = location.pathname === "/";
-  // Treat session flags as booleans
-  const hasSeenAdPopUp = !!sessionStorage.getItem("hasSeenAdPopUp");
-  const hasSeenLanding = !!sessionStorage.getItem("hasSeenLanding");
 
-  const [isLoading, setIsLoading] = useState(false);
+  // =============================================================================
+  // CUSTOM HOOKS - BUSINESS LOGIC SEPARATION
+  // =============================================================================
+  
+  /**
+   * Device Detection Hook
+   * Detects device type (iOS/Android) and browser environment
+   */
+  const { isBrowser, deviceType } = useDeviceDetection();
+  
+  /**
+   * Session Management Hook
+   * Manages session storage flags for onboarding flow
+   */
+  const sessionManagement = useSessionManagement();
+  const { hasSeenLanding, markLandingSeen, hasClosedAnimation } = sessionManagement;
+  
+  /**
+   * App Initialization Hook
+   * Handles initial app state based on session history
+   */
+  const { isLoading, setIsLoading } = useAppInitialization();
+
+  // =============================================================================
+  // APP FLOW STATE
+  // =============================================================================
+  
+  /**
+   * Landing Screen State
+   * Controls visibility of landing screen animation
+   * Business Logic: Skip landing if user has already seen it in this session
+   */
   const [showLanding, setShowLanding] = useState(false);
-  // If user has already seen the landing screen on home, skip showing it again
   const [removeSplashScreen, setRemoveSplashScreen] = useState(
-    isHome ? hasSeenLanding : true
+    isHome ? hasSeenLanding() : true
   );
+  
+  /**
+   * Reference to skip animation transition
+   * Used to prevent animation when user has already seen landing screen
+   */
+  const shouldSkipAnimationRef = useRef(hasSeenLanding() || !isHome);
+
   // =============================================================================
-  // AD AND POPUP STATE
+  // POPUP STATE MANAGEMENT
   // =============================================================================
+  
+  /**
+   * Popup visibility states
+   * Each popup has a priority level (see PopupLayer component for details)
+   */
   const [showAd, setShowAd] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
-  const [showDialog, setShowDialog] = useState(false);
   const [showNotiPopUp, setShowNotiPopUp] = useState(false);
-  const [jumpUrl, setJumpUrl] = useState("");
   const [showPasswordSetUpPopUp, setShowPasswordSetUpPopUp] = useState(false);
 
   // =============================================================================
-  // EVENT AND ANIMATION STATE
+  // EVENT AND REGISTRATION STATE
   // =============================================================================
+  
+  /**
+   * Event Registration State
+   * Manages event registration flow for users coming from referral links
+   */
   const [event, setEvent] = useState(false);
-  const [showEvent, setShowEvent] = useState(false);
-  const [shownextBox, setshownextBox] = useState(false);
-  const [userHasClosedAnimation, setUserHasClosedAnimation] = useState(
-    sessionStorage.getItem("animationClosed") === "true"
-  );
-
-  // =============================================================================
-  // USER GUIDE STATE
-  // =============================================================================
-
-  // =============================================================================
-  // REGISTRATION AND AUTH STATE
-  // =============================================================================
   const [box, setBox] = useState(false);
   const [isOpenNew, setIsOpenNew] = useState(false);
   const [code, setCode] = useState("");
   const [newData, setnewData] = useState(null);
+  const [shownextBox, setshownextBox] = useState(false);
 
   // =============================================================================
   // REDUX STATE SELECTORS
@@ -161,280 +149,152 @@ const RootLayout = () => {
   const showUserGuide = useSelector(
     (state: RootState) => state.app.showUserGuide
   );
+
   // =============================================================================
   // API QUERIES
   // =============================================================================
+  
+  /**
+   * API Queries
+   * - eventData: Referral event data (only fetched if refer code exists)
+   * - notiMessage: System notifications (only fetched on home page)
+   * - config: App configuration including device-specific dialog settings
+   * - currentEventData: Current active events for animations
+   */
   const { data: eventData } = useGetUserByReferalQuery(
     { referral_code: referCode },
     { skip: !referCode }
   );
   const { data: notiMessage } = useGetNotificationsQuery({}, { skip: !isHome });
   const { data: config } = useGetConfigQuery({});
-  const { data: currentEventData } = useGetCurrentEventQuery("");
-  const [triggerGetEventDetails] = useLazyGetEventDetailsQuery();
-
-  // Skip the API query since LoadingScreen handles it
+  
+  // Skip ads query - LoadingScreen handles it
   useGetApplicationAdsQuery("", { skip: true });
 
   // =============================================================================
-  // EVENT CACHING STATE
+  // DIALOG CONFIGURATION HOOK
   // =============================================================================
-  const [cachedEventDetails, setCachedEventDetails] = useState<{
-    data: EventDetail;
-  } | null>(null);
-  const [, setIsFetchingDetails] = useState(false);
-  const isFetchingRef = useRef(false);
-  // When landing has already been seen (or we're not on home), skip the intro transition animation
-  const shouldSkipAnimationRef = useRef(hasSeenLanding || !isHome);
-
-  // =============================================================================
-  // EFFECT HOOKS - INITIALIZATION AND SESSION MANAGEMENT
-  // =============================================================================
-
-  // Initialize app based on session state
-  useEffect(() => {
-    // This would only be need if want to skip initial loading and ads
-    if (hasSeenAdPopUp && hasSeenLanding) {
-      dispatch(setPlay(true));
-      sendNativeEvent("beabox_home_started");
-    } else {
-      setIsLoading(true);
-      sendNativeEvent("beabox_ads_started");
-    }
-  }, [dispatch]);
+  
+  /**
+   * Dialog Configuration Hook
+   * Configures download dialog based on device type
+   * Business Logic: Different devices may have different app download links
+   */
+  const { showDialog, jumpUrl } = useDialogConfig(config, deviceType);
 
   // =============================================================================
-  // EFFECT HOOKS - DEVICE DETECTION AND CONFIG
+  // EVENT MANAGEMENT HOOK
   // =============================================================================
-
-  // Detect device type and browser environment
-  useEffect(() => {
-    const userAgent = navigator.userAgent.toLowerCase();
-
-    setIsBrowser(!isWebView());
-
-    if (
-      userAgent.includes("iphone") ||
-      userAgent.includes("ipad") ||
-      userAgent.includes("ipod")
-    ) {
-      setDeviceType("IOS");
-    } else if (userAgent.includes("android")) {
-      setDeviceType("Android");
-    }
-  }, []);
-
-  // Configure app dialog based on device type
-  useEffect(() => {
-    if (config?.data?.dialog_config && deviceType) {
-      const dialogConfigItem = config.data.dialog_config.find(
-        (item: any) => item.device === deviceType
-      );
-
-      if (dialogConfigItem) {
-        if (dialogConfigItem.jump_url) {
-          setJumpUrl(dialogConfigItem.jump_url);
-        }
-
-        const shouldShowDialog =
-          dialogConfigItem.show_dialog === 1 ||
-          dialogConfigItem.show_dialog === true ||
-          dialogConfigItem.show_dialog === "1" ||
-          dialogConfigItem.show_dialog === "true";
-        setShowDialog(shouldShowDialog);
-      }
-    }
-  }, [config, deviceType]);
-
-  // =============================================================================
-  // EFFECT HOOKS - EVENT MANAGEMENT
-  // =============================================================================
-
-  // Handle event status from referral data
-  useEffect(() => {
-    if (eventData?.data?.event?.status && !box && !user) {
-      setEvent(eventData?.data?.event?.status);
-    }
-  }, [eventData, event, box, user]);
-
-  // Control play state based on event
-  useEffect(() => {
-    if (event) {
-      dispatch(setPlay(false));
-    }
-  }, [event, dispatch]);
-
-  // Control animation display logic
-  useEffect(() => {
-    if (showAd && showAlert && isOpen && !showLanding) {
-      dispatch(setAnimation(false));
-    } else {
-      if (currentEventData?.data && !userHasClosedAnimation) {
-        if (currentEventData?.status === true && !showAd && !isOpen) {
-          const timeout = setTimeout(() => {
-            dispatch(setAnimation(true));
-          }, APP_CONFIG.ANIMATION_DELAY);
-          return () => clearTimeout(timeout);
-        } else {
-          dispatch(setAnimation(false));
-        }
-      }
-      if (userHasClosedAnimation) {
-        dispatch(setAnimation(false));
-      }
-    }
-  }, [
-    currentEventData?.status,
-    currentEventData?.data,
-    dispatch,
+  
+  /**
+   * Event Management Hook
+   * Handles all event-related logic including:
+   * - Event status from referral codes
+   * - Animation display control
+   * - Event details prefetching
+   * - Navigation to event pages
+   */
+  const {
+    event: eventFromHook,
+    setEvent: setEventFromHook,
+    handleAnimationClick,
+    handleLuckySpinClick,
+  } = useEventManagement(
+    eventData,
+    box,
+    user,
     showAd,
-    showLanding,
     showAlert,
     isOpen,
-    userHasClosedAnimation,
-  ]);
+    showLanding,
+    isHome,
+    currentTab,
+    hideBar,
+    hideNew
+  );
+
+  // Sync event state from hook
+  useEffect(() => {
+    setEvent(eventFromHook);
+  }, [eventFromHook]);
 
   // =============================================================================
-  // HANDLER FUNCTIONS
+  // EVENT HANDLERS
   // =============================================================================
 
+  /**
+   * Handle Loading Screen Complete
+   * 
+   * Business Logic:
+   * - Called when loading screen finishes loading all assets
+   * - Shows landing screen and marks it as seen in session
+   * - This prevents showing landing screen again in the same session
+   */
   const handleLoadComplete = () => {
     setIsLoading(false);
     setShowLanding(true);
-    sessionStorage.setItem("hasSeenLanding", "true");
+    markLandingSeen();
   };
 
+  /**
+   * Handle Landing Screen Complete
+   * 
+   * Business Logic:
+   * - Called when landing screen animation completes
+   * - Removes splash screen after a delay (smooth transition)
+   * - Triggers user guide display (onboarding flow)
+   */
   const handleLandingComplete = () => {
     setShowLanding(false);
     setTimeout(() => {
       setRemoveSplashScreen(true);
-
-      // Show ImmersiveUserGuide on every app mount, then ads
+      // Show user guide after landing completes
       dispatch(setShowUserGuide(true));
     }, 1000);
   };
 
+  /**
+   * Handle Ad Popup Complete
+   * 
+   * Business Logic:
+   * - Called when ad popup is closed
+   * - Shows notification popup next
+   * - Controls video play state based on event/dialog state
+   * - Notifies native app that home screen has started
+   */
   const handleAdComplete = () => {
     setShowAd(false);
     setShowNotiPopUp(true);
+    
+    // Control video playback
+    // Business Logic: Pause video if download dialog should show or event is active
     if ((jumpUrl && showDialog) || event) {
       dispatch(setPlay(false));
     } else {
       dispatch(setPlay(true));
     }
 
-    sendNativeEvent("beabox_home_started");
-  };
-
-  // Event animation handlers
-  const handleAnimationClick = async () => {
-    const eventId = currentEventData?.data?.filter(
-      (x: any) => x.type === "event"
-    )[0]?.id;
-    if (!eventId) return;
-
-    if (cachedEventDetails) {
-      navigate(`/events/lucky-draw/${eventId}`);
-
-      try {
-        const freshEventDetails = await triggerGetEventDetails(
-          eventId
-        ).unwrap();
-        dispatch(setEventDetail(freshEventDetails.data));
-        if (freshEventDetails.data?.event_start_time) {
-          dispatch(setDuration(freshEventDetails.data.event_start_time));
-        }
-      } catch (error) {
-        console.error("Failed to refresh event details:", error);
-      }
-      return;
-    }
-
-    try {
-      const eventDetails = await triggerGetEventDetails(eventId).unwrap();
-      dispatch(setEventDetail(eventDetails.data));
-      if (eventDetails.data?.event_start_time) {
-        dispatch(setDuration(eventDetails.data.event_start_time));
-      }
-      navigate(`/events/lucky-draw/${eventId}`);
-    } catch (error) {
-      console.error("Failed to fetch event details:", error);
-    }
-  };
-
-  const handleLuckySpinClick = () => {
-    navigate("/lucky");
+    // Notify native app
+    sendNativeEvent(NativeEventType.HOME_STARTED);
   };
 
   // =============================================================================
-  // EFFECT HOOKS - PERFORMANCE OPTIMIZATION
+  // EFFECT HOOKS - ROUTE-BASED ACTIONS
   // =============================================================================
 
-  // Prefetch event details for better UX
-  useEffect(() => {
-    const prefetchEventDetails = async () => {
-      const eventId = currentEventData?.data?.filter(
-        (x: any) => x.type === "event"
-      )[0]?.id;
-      if (!eventId || isFetchingRef.current) return;
-
-      try {
-        isFetchingRef.current = true;
-        setIsFetchingDetails(true);
-        const eventDetails = await triggerGetEventDetails(eventId).unwrap();
-        setCachedEventDetails(eventDetails);
-        dispatch(setEventDetail(eventDetails.data));
-        if (eventDetails.data?.event_start_time) {
-          dispatch(setDuration(eventDetails.data.event_start_time));
-        }
-      } catch (error) {
-        console.error("Failed to prefetch event details:", error);
-      } finally {
-        setIsFetchingDetails(false);
-        isFetchingRef.current = false;
-      }
-    };
-
-    if (isHome && currentEventData?.data) {
-      prefetchEventDetails();
-    }
-  }, [
-    currentEventData?.data,
-    location.pathname,
-    dispatch,
-    triggerGetEventDetails,
-  ]);
-
-  // Preload lucky draw component for better performance
-  useEffect(() => {
-    const shouldPreload =
-      !showAd &&
-      !showAlert &&
-      !isOpen &&
-      isHome &&
-      !event &&
-      showAnimation &&
-      currentTab === 2;
-
-    if (shouldPreload) {
-      import("@/page/events/Luckydraw");
-    }
-  }, [
-    showAd,
-    showAlert,
-    isOpen,
-    location.pathname,
-    event,
-    showAnimation,
-    currentTab,
-  ]);
-
-  // Debug: Log notifications when on home page
+  /**
+   * Reset hideNew state when navigating away from home
+   * 
+   * Business Logic:
+   * - hideNew controls bottom navigation visibility
+   * - When not on home page, ensure bottom nav is visible
+   * - This provides consistent navigation across the app
+   */
   useEffect(() => {
     if (!isHome) {
       dispatch(sethideNew(false));
     }
-  }, [location.pathname, dispatch]);
+  }, [location.pathname, dispatch, isHome]);
 
   // =============================================================================
   // RENDER LOGIC
@@ -442,6 +302,7 @@ const RootLayout = () => {
 
   return (
     <>
+      {/* Loading Screen - Shown on first visit or new session */}
       <AnimatePresence>
         {isLoading && (
           <LoadingScreen
@@ -450,8 +311,11 @@ const RootLayout = () => {
           />
         )}
       </AnimatePresence>
+
+      {/* Main App Content - Shown after loading completes */}
       {!isLoading && (
         <>
+          {/* Main Content Container with Splash Screen Animation */}
           <motion.div
             className="fixed inset-0 z-50 overflow-y-auto w-screen"
             style={{ height: "100dvh" }}
@@ -463,15 +327,15 @@ const RootLayout = () => {
             animate={
               removeSplashScreen
                 ? {
-                  clipPath: !showLanding
-                    ? "inset(0% 0 0% 0)"
-                    : "inset(50% 0 50% 0)",
-                  translateY: !showLanding ? "0" : "-14px",
-                }
+                    clipPath: !showLanding
+                      ? "inset(0% 0 0% 0)"
+                      : "inset(50% 0 50% 0)",
+                    translateY: !showLanding ? "0" : "-14px",
+                  }
                 : {
-                  clipPath: "inset(50% 0 50% 0)",
-                  translateY: "-14px",
-                }
+                    clipPath: "inset(50% 0 50% 0)",
+                    translateY: "-14px",
+                  }
             }
             transition={
               shouldSkipAnimationRef.current || !removeSplashScreen || !isHome
@@ -479,12 +343,20 @@ const RootLayout = () => {
                 : { duration: 1, ease: "easeOut" }
             }
           >
+            {/* Router Outlet - Renders child routes */}
             <Outlet />
 
             {/* =================================================================== */}
-            {/* EVENT AND REGISTRATION COMPONENTS */}
+            {/* EVENT REGISTRATION COMPONENTS */}
             {/* =================================================================== */}
-
+            
+            {/* 
+              Event Registration Box
+              Business Logic:
+              - Shown when user comes from referral link with event status
+              - Only shown if: event exists, registration box not shown, drawer not open, user not logged in
+              - Allows user to register for events via referral codes
+            */}
             {event && !box && !isOpenNew && !user && (
               <DEventBox
                 setshownextBox={setshownextBox}
@@ -497,10 +369,16 @@ const RootLayout = () => {
                 setCode={setCode}
                 newData={newData}
                 setnewData={setnewData}
-                setEvent={setEvent}
+                setEvent={setEventFromHook}
               />
             )}
 
+            {/* 
+              Registration Drawer
+              Business Logic:
+              - Shown when user clicks to register from event box
+              - Handles user registration with referral code and geetest verification
+            */}
             {isOpenNew && (
               <RegisterDrawer
                 isOpen={isOpenNew}
@@ -511,66 +389,48 @@ const RootLayout = () => {
             )}
 
             {/* =================================================================== */}
-            {/* USER GUIDE - PRIORITY 5 */}
+            {/* POPUP LAYER - MANAGES ALL POPUPS IN PRIORITY ORDER */}
             {/* =================================================================== */}
-
-            {showUserGuide && !event && isHome && (
-              <ImmersiveUserGuide
-                setShowUserGuide={(value: boolean) =>
-                  dispatch(setShowUserGuide(value))
-                }
-                setShowAd={setShowAd}
-              />
-            )}
-
-            {/* =================================================================== */}
-            {/* AD POPUP - PRIORITY 6 */}
-            {/* =================================================================== */}
-
-            <AnimatePresence mode="wait">
-              {showAd && !event && isHome && (
-                <PopUp
-                  setShowAd={setShowAd}
-                  setShowAlert={setShowAlert}
-                  isBrowser={isBrowser}
-                  onComplete={handleAdComplete}
-                />
-              )}
-            </AnimatePresence>
-
-            {/* =================================================================== */}
-            {/* ALERT REDIRECT - PRIORITY 7 */}
-            {/* =================================================================== */}
-
-            <AnimatePresence>
-              {!showAd &&
-                showAlert &&
-                isBrowser &&
-                jumpUrl &&
-                showDialog &&
-                !event &&
-                isHome && (
-                  <AlertRedirect
-                    key="alert-redirect"
-                    event={event}
-                    setShowAlert={setShowAlert}
-                    app_download_link={jumpUrl}
-                  />
-                )}
-            </AnimatePresence>
+            <PopupLayer
+              showUserGuide={showUserGuide}
+              setShowAd={setShowAd}
+              showAd={showAd}
+              setShowAlert={setShowAlert}
+              isBrowser={isBrowser}
+              onAdComplete={handleAdComplete}
+              showAlert={showAlert}
+              jumpUrl={jumpUrl}
+              showDialog={showDialog}
+              event={event}
+              showPasswordSetUpPopUp={showPasswordSetUpPopUp}
+              setShowPasswordSetUpPopUp={setShowPasswordSetUpPopUp}
+              showNotiPopUp={showNotiPopUp}
+              setShowNotiPopUp={setShowNotiPopUp}
+              notiMessage={notiMessage}
+              isHome={isHome}
+              isOpen={isOpen}
+            />
 
             {/* =================================================================== */}
             {/* AUTH DRAWER - PRIORITY 8 */}
             {/* =================================================================== */}
-
+            {/* 
+              Authentication Drawer
+              Business Logic:
+              - Shown when user triggers login/registration from UI
+              - Managed by Redux state (profile.isDrawerOpen)
+              - Allows user to authenticate or create account
+            */}
             {isOpen && <AuthDrawer />}
 
             {/* =================================================================== */}
             {/* GLOBAL COMPONENTS */}
             {/* =================================================================== */}
-
+            
+            {/* Alert Toast - Global notification system */}
             <AlertToast />
 
+            {/* Bottom Navigation - Hidden when hideNew is true */}
             {!hideNew && (
               <div className="fixed bottom-0 left-0 w-full z-[1600]">
                 <BottomNav />
@@ -580,7 +440,14 @@ const RootLayout = () => {
             {/* =================================================================== */}
             {/* EVENT ANIMATIONS */}
             {/* =================================================================== */}
-
+            {/* 
+              Event Animations
+              Business Logic:
+              - Shown when: no ad, drawer closed, on home, no event, animation enabled, on tab 2, nav visible, user hasn't closed
+              - Displays floating action button with countdown and lucky spin animations
+              - Allows user to navigate to event details or lucky wheel
+              - User can permanently dismiss animations
+            */}
             {!showAd &&
               !isOpen &&
               isHome &&
@@ -589,108 +456,15 @@ const RootLayout = () => {
               currentTab === 2 &&
               !hideBar &&
               !hideNew &&
-              !userHasClosedAnimation && (
-                <>
-                  <AnimatePresence>
-                    {showEvent && (
-                      <>
-                        {/* Countdown Animation */}
-                        <motion.div
-                          key="countdown"
-                          className={`fixed ${APP_CONFIG.ANIMATION_POSITIONS.COUNTDOWN} z-[9999] rounded-full p-2`}
-                          initial={{ y: 100, opacity: 0 }}
-                          animate={{ y: 0, opacity: 1 }}
-                          exit={{ y: 100, opacity: 0 }}
-                          transition={APP_CONFIG.SPRING_CONFIG}
-                        >
-                          <div className="relative">
-                            <AnimationLoader
-                              animationData={countdownAnimation}
-                              {...APP_CONFIG.ANIMATION_SIZES.COUNTDOWN}
-                              onClick={handleAnimationClick}
-                            />
-                          </div>
-                        </motion.div>
-
-                        {/* Lucky Spin Animation */}
-                        <motion.div
-                          key="luckySpin"
-                          className={`fixed ${APP_CONFIG.ANIMATION_POSITIONS.LUCKY_SPIN} z-[9999] rounded-full p-2`}
-                          initial={{ y: 100, opacity: 0 }}
-                          animate={{ y: 0, opacity: 1 }}
-                          exit={{ y: 100, opacity: 0 }}
-                          transition={{
-                            ...APP_CONFIG.SPRING_CONFIG,
-                            delay: 0.1,
-                          }}
-                        >
-                          <div className="relative">
-                            <AnimationLoader
-                              animationData={luckySpinAnimation}
-                              {...APP_CONFIG.ANIMATION_SIZES.LUCKY_SPIN}
-                              onClick={handleLuckySpinClick}
-                            />
-                          </div>
-                        </motion.div>
-                      </>
-                    )}
-                  </AnimatePresence>
-
-                  {/* FAB Animation with Close Button */}
-                  <div
-                    className={`fixed ${APP_CONFIG.ANIMATION_POSITIONS.FAB} z-[9999] rounded-full p-2`}
-                  >
-                    <div className="relative">
-                      <button
-                        className="absolute top-1 right-2 bg-red rounded-full w-5 h-5 flex items-center justify-center text-black z-[10000]"
-                        onClick={() => {
-                          dispatch(setAnimation(false));
-                          setUserHasClosedAnimation(true);
-                          sessionStorage.setItem("animationClosed", "true");
-                        }}
-                      >
-                        <img src={CloseSvg} />
-                      </button>
-                      <AnimationLoader
-                        animationData={fabAnimation}
-                        {...APP_CONFIG.ANIMATION_SIZES.FAB}
-                        onClick={() => setShowEvent(!showEvent)}
-                      />
-                    </div>
-                  </div>
-                </>
-              )}
-
-            {/* =================================================================== */}
-            {/* PASSWORD SETUP - PRIORITY 9 (iOS WebView only) */}
-            {/* =================================================================== */}
-
-            {!showAd &&
-              !showUserGuide &&
-              !showAlert &&
-              !isOpen &&
-              isIOSWebView() &&
-              isHome && (
-                <PasswordSetUpPopUp
-                  showPasswordSetUpPopUp={showPasswordSetUpPopUp}
-                  setShowPasswordSetUpPopUp={setShowPasswordSetUpPopUp}
+              !hasClosedAnimation() && (
+                <EventAnimations
+                  onCountdownClick={handleAnimationClick}
+                  onLuckySpinClick={handleLuckySpinClick}
                 />
-              )}
-
-            {/* =================================================================== */}
-            {/* NOTIFICATION POPUP - PRIORITY 10 */}
-            {/* =================================================================== */}
-
-            {console.log('NOTIFICATION POPUP', showNotiPopUp)}
-            {!showAd &&
-              !showUserGuide &&
-              // !showAlert &&
-              !showPasswordSetUpPopUp &&
-              showNotiPopUp && (
-                <NotiPopUp notiMessage={notiMessage?.data} closeNotiPopUp={() => setShowNotiPopUp(false)} />
               )}
           </motion.div>
 
+          {/* Landing Screen - Shown before main content on first visit */}
           {!removeSplashScreen && (
             <Landing onComplete={handleLandingComplete} />
           )}

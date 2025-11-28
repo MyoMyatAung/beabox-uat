@@ -10,7 +10,7 @@ import { sethideNew } from "@/page/home/services/hideNewSlice";
 import { sethideBar } from "@/page/home/services/hideBarSlice";
 import { setFirstTimeUser } from "@/store/slices/appSlice";
 import { setMute } from "@/page/home/services/muteSlice";
-import { useUserActionTracker } from "@/hooks/useUserActionTracker";
+import { useUserActionTracker, UserAction } from "@/hooks/useUserActionTracker";
 
 const STAGES = {
   INITIAL: "initial",
@@ -183,7 +183,7 @@ const ImmersiveUserGuide: React.FC<ImmersiveUserGuideProps> = ({
   // =============================================================================
   // USER ACTION TRACKING
   // =============================================================================
-  useUserActionTracker((action: any) => {
+  useUserActionTracker((action: UserAction) => {
     if (currentStage !== STAGES.INITIAL) return;
 
     let shouldTrigger = false;
