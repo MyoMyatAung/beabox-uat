@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { useGetAdsNoticeQuery } from "@/store/api/explore/exploreApi";
-import { useGetAdsPopUpQuery } from "@/utils/helperService";
+import { useGetAdsNoticeQuery, useGetAdsPopUpQuery } from "@/store/api/explore/exploreApi";
 import type { PopupImage, AppItem, NoticeGroup } from "@/types/popup";
 
 /**
@@ -17,7 +16,7 @@ export const usePopupData = () => {
   const [appList, setAppList] = useState<AppItem[]>([]);
   const [noticeList, setNoticeList] = useState<NoticeGroup[]>([]);
 
-  const { data: adsData } = useGetAdsPopUpQuery();
+  const { data: adsData } = useGetAdsPopUpQuery("");
   const { data: noticeData } = useGetAdsNoticeQuery("");
 
   useEffect(() => {
