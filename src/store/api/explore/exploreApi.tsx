@@ -37,6 +37,7 @@ export const exploreApi = createApi({
       }
     },
   }),
+  tagTypes: ["AdsPopUp", "AdsNotice", "ApplicationAds"],
   endpoints: (builder) => ({
     // getExploreHeader: builder.query<any, string>({
     //   query: () => ({
@@ -54,6 +55,7 @@ export const exploreApi = createApi({
         // url: "app/ads",
         method: "GET",
       }),
+      providesTags: ["AdsPopUp"],
     }),
     getAdsNotice: builder.query<any, string>({
       query: () => ({
@@ -61,6 +63,7 @@ export const exploreApi = createApi({
         // url: "/notice/list",
         method: "GET",
       }),
+      providesTags: ["AdsNotice"],
     }),
     getExploreTag: builder.query<any, any>({
       query: ({ order, tag, page }) => ({
@@ -76,6 +79,7 @@ export const exploreApi = createApi({
         url: convertToSecureUrl(`/application/ads`),
         method: "GET",
       }),
+      providesTags: ["ApplicationAds"],
     }),
     // getExploreList: builder.query<any, any>({
     //   query: ({ id, page }) => ({

@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setApplicationData, setisLoading } from "@/store/slices/exploreSlice";
-import { useGetAdsPopUpQuery } from "@/utils/helperService";
-import { useGetAdsNoticeQuery } from "@/store/api/explore/exploreApi";
+import { useGetAdsPopUpQuery, useGetAdsNoticeQuery } from "@/store/api/explore/exploreApi";
 import { useGetApplicationAdsQuery } from "@/store/api/explore/exploreApi";
 import { useGetConfigQuery } from "@/page/home/services/homeApi";
 import splashVideo from "@/assets/splash.mp4";
@@ -82,7 +81,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
 
   // API queries
   const { data: adsPopUpData, isLoading: adsPopUpLoading } =
-    useGetAdsPopUpQuery();
+    useGetAdsPopUpQuery("");
   const { data: adsNoticeData, isLoading: adsNoticeLoading } =
     useGetAdsNoticeQuery("");
   const { data: applicationAdsData, isLoading: applicationAdsLoading } =
@@ -206,6 +205,11 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadComplete }) => {
         });
       }
     }
+
+    // Add hardcoded popup header image from PopUp.tsx
+    imagesToLoad.push(
+      "https://zm-cloud.oss-cn-beijing.aliyuncs.com/aisou/61a27f94f64bbd267317.png"
+    );
 
     // Set total images count
     setTotalImages(imagesToLoad.length);
