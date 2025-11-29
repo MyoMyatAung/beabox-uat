@@ -811,13 +811,14 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
         formData.setHashtags([]);
         setAgree(false);
         setThumbnail(null);
-      } catch (error) {
+      } catch (error: any) {
         setUploading(false);
         setsuccessEnd(false);
         setUploadedSize(0);
 
-        console.error("createPosts failed:", error);
-        showToastWithLogo("上传失败！请重试", "error");
+        const errorData = JSON.parse(error.data);
+        console.error("createPosts failed:", JSON.parse(error.data));
+        showToastWithLogo(errorData.message, "error");
       } finally {
         setUploading(false);
       }
