@@ -52,6 +52,7 @@ import { setPreviousUser } from "./services/previousUserSlice";
 import { clearSeenUsers } from "./services/seenUsersSlice";
 import { setHasDecryptedInitialData } from "./services/decryptionSlice";
 import { cn } from "@/lib/utils";
+import { sethideNew } from "./services/hideNewSlice";
 
 /**
  * Home Component
@@ -132,6 +133,12 @@ const Home = () => {
   };
 
   const { data: config } = useGetConfigQuery({});
+  useEffect(() => {
+    if (currentTab !== 2) {
+      dispatch(sethideNew(false));
+    }
+  }, [currentTab, dispatch]);
+
   // const user = profile?.data;
 
   // Fetch data based on the current tab

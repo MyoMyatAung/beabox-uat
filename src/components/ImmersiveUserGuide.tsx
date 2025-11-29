@@ -1,12 +1,12 @@
 /**
  * ImmersiveUserGuide Component
- * 
+ *
  * PURPOSE:
  * ========
  * This component provides an interactive onboarding experience for users.
  * It guides users through app features using a multi-stage tutorial flow
  * and manages scroll restrictions to ensure users view the Ad Popup.
- * 
+ *
  * BUSINESS LOGIC:
  * ===============
  * 1. First-Time Users:
@@ -14,16 +14,16 @@
  *    - User scrolls → Stage 2 (CLR_SCREEN_INFO): Show clear screen instruction
  *    - User clicks fullscreen → Stage 3 (SCROLL_INFO): Show scroll instruction (5s timeout)
  *    - Finish → Show Ad Popup
- * 
+ *
  * 2. Returning Users:
  *    - Stage (RETURN_USER_STALE): Show fullscreen control only
  *    - User clicks fullscreen → Finish → Show Ad Popup
- * 
+ *
  * 3. Scroll Restriction (NEW):
  *    - When guide is active, limit scrolling to second video (index 1)
  *    - After user reaches second video, trigger Ad Popup
  *    - After Ad Popup closes, unlock unlimited scrolling
- * 
+ *
  * SOLID PRINCIPLES APPLIED:
  * =========================
  * S - Single Responsibility: Each hook handles one specific concern
@@ -63,11 +63,11 @@ import { useUserActionTracker, UserAction } from "@/hooks/useUserActionTracker";
  * Represents the different states of the user guide flow
  */
 const STAGES = {
-  INITIAL: "initial",                   // Initial state - show controls
-  SCROLL_INFO: "scroll_info",           // Show scroll instructions
-  CLR_SCREEN_INFO: "clr_screen_info",   // Show clear screen info
+  INITIAL: "initial", // Initial state - show controls
+  SCROLL_INFO: "scroll_info", // Show scroll instructions
+  CLR_SCREEN_INFO: "clr_screen_info", // Show clear screen info
   RETURN_USER_STALE: "return_user_stale", // Returning user state
-  FINISH: "finish",                     // Fade out and complete
+  FINISH: "finish", // Fade out and complete
 } as const;
 
 type StageType = (typeof STAGES)[keyof typeof STAGES];
@@ -97,10 +97,10 @@ interface RootState {
 
 /**
  * Hook: useStageManager
- * 
+ *
  * PURPOSE: Manages the current stage and stage transitions
  * RESPONSIBILITY: Stage state management and progression logic
- * 
+ *
  * @param isFirstTimeUser - Whether this is the user's first visit
  * @returns Current stage and stage transition functions
  */
@@ -110,20 +110,23 @@ const useStageManager = (isFirstTimeUser: boolean) => {
   /**
    * Transition to next stage based on current stage and user type
    */
-  const transitionToNextStage = useCallback((fromStage: StageType) => {
-    if (isFirstTimeUser) {
-      switch (fromStage) {
-        case STAGES.INITIAL:
-          return STAGES.CLR_SCREEN_INFO;
-        case STAGES.CLR_SCREEN_INFO:
-          return STAGES.SCROLL_INFO;
-        default:
-          return STAGES.FINISH;
+  const transitionToNextStage = useCallback(
+    (fromStage: StageType) => {
+      if (isFirstTimeUser) {
+        switch (fromStage) {
+          case STAGES.INITIAL:
+            return STAGES.CLR_SCREEN_INFO;
+          case STAGES.CLR_SCREEN_INFO:
+            return STAGES.SCROLL_INFO;
+          default:
+            return STAGES.FINISH;
+        }
+      } else {
+        return STAGES.FINISH;
       }
-    } else {
-      return STAGES.FINISH;
-    }
-  }, [isFirstTimeUser]);
+    },
+    [isFirstTimeUser]
+  );
 
   return {
     currentStage,
@@ -134,10 +137,10 @@ const useStageManager = (isFirstTimeUser: boolean) => {
 
 /**
  * Hook: useVideoController
- * 
+ *
  * PURPOSE: Controls video mute/unmute functionality
  * RESPONSIBILITY: Video audio state management
- * 
+ *
  * @param dispatch - Redux dispatch function
  * @param mute - Current mute state
  * @returns Functions to control video audio
@@ -193,15 +196,15 @@ const useVideoController = (dispatch: any, mute: boolean) => {
 
 /**
  * Hook: useScrollRestrictionManager
- * 
+ *
  * PURPOSE: Manages scroll restriction state in Redux
  * RESPONSIBILITY: Enables/disables scroll restriction based on guide state
- * 
+ *
  * BUSINESS LOGIC:
  * - When guide is active, enable scroll restriction in Redux
  * - When guide finishes, keep restriction until Ad Popup closes
  * - Track when user reaches second video (for analytics/state tracking)
- * 
+ *
  * @param dispatch - Redux dispatch function
  * @param currentStage - Current guide stage
  * @returns Functions to manage scroll restriction
@@ -227,19 +230,22 @@ const useScrollRestrictionManager = (
    * Handle video index change from Home component
    * Business Logic: Track when user reaches second video
    * Note: We only track this for state management, Ad will show when guide completes
-   * 
+   *
    * @param videoIndex - Current visible video index
    */
-  const handleVideoIndexChange = useCallback((videoIndex: number) => {
-    // If user has reached second video (index 1), mark it in state
-    // The guide will complete naturally and then show Ad Popup
-    if (videoIndex >= 1 && !hasReachedSecondVideo) {
-      setHasReachedSecondVideo(true);
-      
-      // Mark in Redux for state tracking
-      dispatch(markSecondVideoReached());
-    }
-  }, [hasReachedSecondVideo, dispatch]);
+  const handleVideoIndexChange = useCallback(
+    (videoIndex: number) => {
+      // If user has reached second video (index 1), mark it in state
+      // The guide will complete naturally and then show Ad Popup
+      if (videoIndex >= 1 && !hasReachedSecondVideo) {
+        setHasReachedSecondVideo(true);
+
+        // Mark in Redux for state tracking
+        dispatch(markSecondVideoReached());
+      }
+    },
+    [hasReachedSecondVideo, dispatch]
+  );
 
   return {
     hasReachedSecondVideo,
@@ -249,10 +255,10 @@ const useScrollRestrictionManager = (
 
 /**
  * Hook: useGuideVisibility
- * 
+ *
  * PURPOSE: Manages guide visibility and animation states
  * RESPONSIBILITY: Show/hide logic and animation control
- * 
+ *
  * @param hideNew - Global hideNew state from Redux
  * @param currentStage - Current guide stage
  * @returns Visibility state and setters
@@ -288,14 +294,16 @@ const useGuideVisibility = (hideNew: boolean, currentStage: StageType) => {
 
 /**
  * Hook: useScrollInfoTimeout
- * 
+ *
  * PURPOSE: Manages the timeout for scroll info stage
  * RESPONSIBILITY: Auto-progress from SCROLL_INFO stage after 5 seconds
- * 
+ *
  * @returns Timeout ref and utility functions
  */
 const useScrollInfoTimeout = () => {
-  const scrollInfoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const scrollInfoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  );
 
   const clearScrollInfoTimeout = useCallback(() => {
     if (scrollInfoTimeoutRef.current) {
@@ -322,7 +330,7 @@ const useScrollInfoTimeout = () => {
 
 /**
  * ImmersiveUserGuide Component
- * 
+ *
  * Main component that orchestrates the onboarding flow using custom hooks.
  * Each hook handles a specific responsibility following SRP.
  */
@@ -343,25 +351,31 @@ const ImmersiveUserGuide: React.FC<ImmersiveUserGuideProps> = ({
   // =============================================================================
   // CUSTOM HOOKS - BUSINESS LOGIC SEPARATION
   // =============================================================================
-  
+
   // Stage management
-  const { currentStage, setCurrentStage, transitionToNextStage } = useStageManager(isFirstTimeUser);
-  
+  const { currentStage, setCurrentStage, transitionToNextStage } =
+    useStageManager(isFirstTimeUser);
+
   // Video control (mute/unmute)
-  const { unmuteAllVideos, handleAudioToggle } = useVideoController(dispatch, mute);
-  
+  const { unmuteAllVideos, handleAudioToggle } = useVideoController(
+    dispatch,
+    mute
+  );
+
   // Scroll restriction logic (NEW FEATURE)
   // Manages Redux state for scroll restriction that Home component will enforce
-  const {
-    hasReachedSecondVideo,
-    handleVideoIndexChange,
-  } = useScrollRestrictionManager(dispatch, currentStage);
-  
+  const { hasReachedSecondVideo, handleVideoIndexChange } =
+    useScrollRestrictionManager(dispatch, currentStage);
+
   // Guide visibility management
-  const { showGuide, isHidden, setIsHidden } = useGuideVisibility(hideNew, currentStage);
-  
+  const { showGuide, isHidden, setIsHidden } = useGuideVisibility(
+    hideNew,
+    currentStage
+  );
+
   // Scroll info timeout management
-  const { scrollInfoTimeoutRef, clearScrollInfoTimeout } = useScrollInfoTimeout();
+  const { scrollInfoTimeoutRef, clearScrollInfoTimeout } =
+    useScrollInfoTimeout();
 
   // =============================================================================
   // LOCAL STATE FOR USER INTERACTION TRACKING
@@ -376,7 +390,7 @@ const ImmersiveUserGuide: React.FC<ImmersiveUserGuideProps> = ({
 
   /**
    * Handle guide completion
-   * Business Logic: 
+   * Business Logic:
    * - Fade out guide after 1 second
    * - Always show Ad Popup when guide completes
    * - Guide should complete naturally before showing Ad
@@ -391,7 +405,7 @@ const ImmersiveUserGuide: React.FC<ImmersiveUserGuideProps> = ({
 
   /**
    * Handle fullscreen button click
-   * Business Logic: 
+   * Business Logic:
    * - Exit clear screen mode
    * - Unmute videos
    * - Progress through stages based on user type
@@ -400,7 +414,7 @@ const ImmersiveUserGuide: React.FC<ImmersiveUserGuideProps> = ({
     // Show UI elements (exit clear screen mode)
     dispatch(sethideBar(false));
     dispatch(sethideNew(false));
-    
+
     // Enable audio
     unmuteAllVideos();
 
@@ -408,15 +422,18 @@ const ImmersiveUserGuide: React.FC<ImmersiveUserGuideProps> = ({
     if (isFirstTimeUser) {
       // Mark user as no longer first-time
       dispatch(setFirstTimeUser(false));
-      
-      if (currentStage === STAGES.INITIAL || currentStage === STAGES.CLR_SCREEN_INFO) {
+
+      if (
+        currentStage === STAGES.INITIAL ||
+        currentStage === STAGES.CLR_SCREEN_INFO
+      ) {
         // Clear any existing timeout
         clearScrollInfoTimeout();
-        
+
         // Transition to scroll info stage with 5-second auto-complete
         setTimeout(() => {
           setCurrentStage(STAGES.SCROLL_INFO);
-          
+
           // Auto-complete after 3 seconds as per requirements
           scrollInfoTimeoutRef.current = setTimeout(() => {
             setCurrentStage(STAGES.FINISH);
@@ -456,23 +473,30 @@ const ImmersiveUserGuide: React.FC<ImmersiveUserGuideProps> = ({
    * - Only respond to clicks on the overlay itself (not buttons)
    * - In SCROLL_INFO stage, clicking overlay completes the guide
    */
-  const handleUserInteraction = useCallback((
-    e: React.MouseEvent | React.TouchEvent | React.WheelEvent
-  ) => {
-    // Only handle clicks on the overlay itself
-    if (e.target === e.currentTarget) {
-      if (currentStage === STAGES.SCROLL_INFO && !isHidden) {
-        clearScrollInfoTimeout();
-        setCurrentStage(STAGES.FINISH);
-        handleGuideComplete();
+  const handleUserInteraction = useCallback(
+    (e: React.MouseEvent | React.TouchEvent | React.WheelEvent) => {
+      // Only handle clicks on the overlay itself
+      if (e.target === e.currentTarget) {
+        if (currentStage === STAGES.SCROLL_INFO && !isHidden) {
+          clearScrollInfoTimeout();
+          setCurrentStage(STAGES.FINISH);
+          handleGuideComplete();
+        }
       }
-    }
-  }, [currentStage, isHidden, clearScrollInfoTimeout, setCurrentStage, handleGuideComplete]);
+    },
+    [
+      currentStage,
+      isHidden,
+      clearScrollInfoTimeout,
+      setCurrentStage,
+      handleGuideComplete,
+    ]
+  );
 
   // =============================================================================
   // USER ACTION TRACKING - DETECT SCROLLING IN INITIAL STAGE
   // =============================================================================
-  
+
   /**
    * Track user scroll/touch actions to detect when they start scrolling
    * Business Logic:
@@ -507,11 +531,11 @@ const ImmersiveUserGuide: React.FC<ImmersiveUserGuideProps> = ({
     if (shouldTrigger) {
       // Unmute audio when user starts scrolling
       unmuteAllVideos();
-      
+
       // Progress stage based on user type
       const nextStage = transitionToNextStage(STAGES.INITIAL);
       setCurrentStage(nextStage);
-      
+
       // For returning users, show UI and complete guide
       if (!isFirstTimeUser) {
         setTimeout(() => {
@@ -526,11 +550,11 @@ const ImmersiveUserGuide: React.FC<ImmersiveUserGuideProps> = ({
   // =============================================================================
   // SCROLL RESTRICTION MONITORING
   // =============================================================================
-  
+
   /**
    * Monitor video container to track current video index
    * Business Logic: Detect when user reaches second video to trigger Ad Popup
-   * 
+   *
    * Note: The actual scroll restriction is enforced by the Home component
    * reading from Redux state. This observer just tracks user progress.
    */
@@ -538,7 +562,7 @@ const ImmersiveUserGuide: React.FC<ImmersiveUserGuideProps> = ({
     // Only monitor during active guide stages
     if (currentStage === STAGES.FINISH || hasReachedSecondVideo) return;
 
-    const videoContainer = document.querySelector('.app__videos');
+    const videoContainer = document.querySelector(".app__videos");
     if (!videoContainer) return;
 
     /**
@@ -550,9 +574,11 @@ const ImmersiveUserGuide: React.FC<ImmersiveUserGuideProps> = ({
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const videoElement = entry.target;
-            const allVideos = Array.from(videoContainer.querySelectorAll('.video'));
+            const allVideos = Array.from(
+              videoContainer.querySelectorAll(".video")
+            );
             const videoIndex = allVideos.indexOf(videoElement as Element);
-            
+
             if (videoIndex >= 0) {
               handleVideoIndexChange(videoIndex);
             }
@@ -566,7 +592,7 @@ const ImmersiveUserGuide: React.FC<ImmersiveUserGuideProps> = ({
     );
 
     // Observe all video elements
-    const videoElements = videoContainer.querySelectorAll('.video');
+    const videoElements = videoContainer.querySelectorAll(".video");
     videoElements.forEach((video) => observer.observe(video));
 
     return () => {
@@ -577,14 +603,14 @@ const ImmersiveUserGuide: React.FC<ImmersiveUserGuideProps> = ({
   // =============================================================================
   // EARLY RETURNS
   // =============================================================================
-  
+
   // Don't render if guide should be hidden
   if (!showGuide) return null;
 
   // =============================================================================
   // RENDER - UI COMPONENTS
   // =============================================================================
-  
+
   /**
    * Determine container classes based on current stage
    * - INITIAL/FINISH/RETURN_USER_STALE: Bottom-right positioned controls
@@ -600,6 +626,10 @@ const ImmersiveUserGuide: React.FC<ImmersiveUserGuideProps> = ({
       currentStage !== STAGES.FINISH &&
       currentStage !== STAGES.RETURN_USER_STALE,
   });
+
+  const shouldAnimateFromEdge =
+    currentStage === STAGES.INITIAL ||
+    currentStage === STAGES.RETURN_USER_STALE;
 
   return (
     <motion.div
@@ -636,6 +666,7 @@ const ImmersiveUserGuide: React.FC<ImmersiveUserGuideProps> = ({
         - Icon changes based on whether in clear screen mode
       */}
       <motion.div
+        key={`fullscreen-${currentStage}`}
         className={cn("videoSidebar__button absolute text-white ", {
           "bottom-[30px] right-3":
             currentStage === STAGES.INITIAL ||
@@ -644,8 +675,8 @@ const ImmersiveUserGuide: React.FC<ImmersiveUserGuideProps> = ({
           "bottom-[127px] right-[22px]": currentStage === STAGES.SCROLL_INFO,
         })}
         initial={{
-          x: currentStage === STAGES.INITIAL ? 50 : 0,
-          opacity: 0,
+          x: shouldAnimateFromEdge ? 50 : 0,
+          opacity: shouldAnimateFromEdge ? 0 : 1,
         }}
         animate={{
           x: 0,
@@ -733,6 +764,7 @@ const ImmersiveUserGuide: React.FC<ImmersiveUserGuideProps> = ({
         - Position changes based on stage
       */}
       <motion.div
+        key={`audio-${currentStage}`}
         className={cn("videoSidebar__button absolute text-white", {
           "bottom-[110px] right-3":
             currentStage === STAGES.INITIAL ||
@@ -741,8 +773,8 @@ const ImmersiveUserGuide: React.FC<ImmersiveUserGuideProps> = ({
           "bottom-[207px] right-[22px]": currentStage === STAGES.SCROLL_INFO,
         })}
         initial={{
-          x: currentStage === STAGES.INITIAL ? 50 : 0,
-          opacity: 0,
+          x: shouldAnimateFromEdge ? 50 : 0,
+          opacity: shouldAnimateFromEdge ? 0 : 1,
         }}
         animate={{
           x: 0,
@@ -753,7 +785,6 @@ const ImmersiveUserGuide: React.FC<ImmersiveUserGuideProps> = ({
           damping: 20,
           stiffness: 300,
           opacity: { duration: 0.2 },
-          delay: 0.1,
         }}
       >
         <button onClick={handleAudioToggle} aria-label="Toggle audio">
