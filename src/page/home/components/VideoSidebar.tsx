@@ -20,6 +20,7 @@ import { setVideosToRender } from "../services/videoRenderSlice";
 import { setDetails } from "@/store/slices/exploreSlice";
 import { sethideBar } from "../services/hideBarSlice";
 import { motion } from "framer-motion";
+import type { MotionStyle } from "framer-motion";
 import { sethideNew } from "../services/hideNewSlice";
 import { addOnlySeenUser } from "../services/onlyseenUserSlice";
 import { setFirstTimeUser } from "@/store/slices/appSlice";
@@ -293,6 +294,12 @@ function VideoSidebar({
     } else {
       dispatch(sethideNew(false));
     }
+  };
+
+  const isGuideActive = showUserGuide && hideNew;
+  const immersiveButtonStyle: MotionStyle = {
+    pointerEvents: hideBar || isGuideActive ? "none" : "auto",
+    opacity: hideBar || isGuideActive ? 0 : 1,
   };
 
   return (
@@ -605,10 +612,7 @@ function VideoSidebar({
             stiffness: 300,
             opacity: { duration: 0.2 },
           }}
-          style={{
-            pointerEvents: hideBar ? "none" : "auto",
-            opacity: hideBar ? 0 : 1,
-          }}
+          style={immersiveButtonStyle}
         >
           <button onClick={handleVoice}>
             {mute ? (
@@ -674,10 +678,7 @@ function VideoSidebar({
             stiffness: 300,
             opacity: { duration: 0.2 },
           }}
-          style={{
-            pointerEvents: hideBar ? "none" : "auto",
-            opacity: hideBar ? 0 : 1,
-          }}
+          style={immersiveButtonStyle}
         >
           <button onClick={handleFullScreen}>
             {hideNew ? (
