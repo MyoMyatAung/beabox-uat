@@ -590,12 +590,13 @@ function VideoSidebar({
             <p className="side_text font-cnFont mt-2">分享</p>
           </button>
         </motion.div>
-        <motion.div
+        
+      </div>
+      <motion.div
           className="videoSidebar__button"
           initial={false} // Disable initial animation
           animate={{
-            x: hideNew || hideBar ? 50 : 0, // Slide right when hidden
-            opacity: hideNew || hideBar ? 0 : 1,
+            x: hideBar ? 50 : 0, // Slide right when hidden
           }}
           transition={{
             type: "spring",
@@ -604,7 +605,8 @@ function VideoSidebar({
             opacity: { duration: 0.2 },
           }}
           style={{
-            pointerEvents: hideNew || hideBar ? "none" : "auto",
+            pointerEvents: hideBar ? "none" : "auto",
+            opacity: hideBar || showUserGuide ? 0 : 1,
           }}
         >
           <button onClick={handleVoice}>
@@ -657,8 +659,6 @@ function VideoSidebar({
             )}
           </button>
         </motion.div>
-      </div>
-
       <motion.div
         className="videoSidebar__button"
         initial={false} // Disable initial animation
