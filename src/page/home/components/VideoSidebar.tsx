@@ -20,6 +20,7 @@ import { setVideosToRender } from "../services/videoRenderSlice";
 import { setDetails } from "@/store/slices/exploreSlice";
 import { sethideBar } from "../services/hideBarSlice";
 import { motion } from "framer-motion";
+import type { MotionStyle } from "framer-motion";
 import { sethideNew } from "../services/hideNewSlice";
 import { addOnlySeenUser } from "../services/onlyseenUserSlice";
 import { setFirstTimeUser } from "@/store/slices/appSlice";
@@ -295,6 +296,12 @@ function VideoSidebar({
     }
   };
 
+  const isGuideActive = showUserGuide && hideNew;
+  const immersiveButtonStyle: MotionStyle = {
+    pointerEvents: hideBar || isGuideActive ? "none" : "auto",
+    opacity: hideBar || isGuideActive ? 0 : 1,
+  };
+
   return (
     <div
       className={`${
@@ -302,7 +309,7 @@ function VideoSidebar({
       } z-[1500] w-[50px]
 `}
     >
-      <div className={`${isFirstTimeUser && "opacity-[0.1]"}`}>
+      <div className={`${isFirstTimeUser && showUserGuide && "opacity-[0.1]"}`}>
         <motion.div
           className="videoSidebar__button"
           initial={false} // Disable initial animation
@@ -591,12 +598,13 @@ function VideoSidebar({
             <p className="side_text font-cnFont mt-2">分享</p>
           </button>
         </motion.div>
+      </div>
+      {currentTab === 2 && (
         <motion.div
           className="videoSidebar__button"
           initial={false} // Disable initial animation
           animate={{
-            x: hideNew || hideBar ? 50 : 0, // Slide right when hidden
-            opacity: hideNew || hideBar ? 0 : 1,
+            x: hideBar ? 50 : 0, // Slide right when hidden
           }}
           transition={{
             type: "spring",
@@ -604,9 +612,7 @@ function VideoSidebar({
             stiffness: 300,
             opacity: { duration: 0.2 },
           }}
-          style={{
-            pointerEvents: hideNew || hideBar ? "none" : "auto",
-          }}
+          style={immersiveButtonStyle}
         >
           <button onClick={handleVoice}>
             {mute ? (
@@ -619,11 +625,11 @@ function VideoSidebar({
                   fill="none"
                 >
                   <path
-                    d="M11.3751 2.76996C11.3749 2.61332 11.3283 2.46025 11.2412 2.33008C11.154 2.19991 11.0303 2.09847 10.8856 2.03856C10.7408 1.97865 10.5816 1.96295 10.4279 1.99344C10.2743 2.02394 10.1331 2.09927 10.0223 2.20991L6.21668 6.01437C6.06982 6.16212 5.89509 6.27924 5.70263 6.35897C5.51017 6.4387 5.3038 6.47943 5.09547 6.47882H2.37849C2.08023 6.47882 1.79419 6.59731 1.58329 6.80821C1.37239 7.01911 1.25391 7.30515 1.25391 7.6034V14.3509C1.25391 14.6491 1.37239 14.9352 1.58329 15.1461C1.79419 15.357 2.08023 15.4755 2.37849 15.4755H5.09547C5.3038 15.4749 5.51017 15.5156 5.70263 15.5953C5.89509 15.6751 6.06982 15.7922 6.21668 15.9399L10.0211 19.7455C10.132 19.8566 10.2734 19.9323 10.4273 19.963C10.5813 19.9937 10.7409 19.978 10.8859 19.9179C11.0309 19.8578 11.1548 19.756 11.2419 19.6254C11.329 19.4948 11.3754 19.3413 11.3751 19.1843V2.76996Z"
+                    d="M11.3751 2.76996C11.3749 2.61332 11.3283 2.46025 11.2412 2.33008C11.154 2.19991 11.0303 2.09847 10.8856 2.03856C10.7408 1.97865 10.5816 1.96295 10.4279 1.99344C10.2743 2.02394 10.1331 2.09927 10.0223 2.20991L6.21668 6.01437C6.06982 6.16211 5.89509 6.27924 5.70263 6.35897C5.51017 6.4387 5.3038 6.47943 5.09547 6.47882H2.37849C2.08023 6.47882 1.79419 6.59731 1.58329 6.80821C1.37239 7.01911 1.25391 7.30515 1.25391 7.6034V14.3509C1.25391 14.6491 1.37239 14.9352 1.58329 15.1461C1.79419 15.357 2.08023 15.4755 2.37849 15.4755H5.09547C5.3038 15.4749 5.51017 15.5156 5.70263 15.5953C5.89509 15.6751 6.06982 15.7922 6.21668 15.9399L10.0211 19.7455C10.132 19.8566 10.2734 19.9323 10.4273 19.963C10.5813 19.9937 10.7409 19.978 10.8859 19.9179C11.0309 19.8578 11.1548 19.756 11.2419 19.6254C11.329 19.4948 11.3754 19.3413 11.3751 19.1843V2.76996Z"
                     fill="white"
                   />
                   <path
-                    d="M23.7455 7.6034L16.998 14.3509M16.998 7.6034L23.7455 14.3509M11.3751 2.76996C11.3749 2.61332 11.3283 2.46025 11.2412 2.33008C11.154 2.19991 11.0303 2.09847 10.8856 2.03856C10.7408 1.97865 10.5816 1.96295 10.4279 1.99344C10.2743 2.02394 10.1331 2.09927 10.0223 2.20991L6.21668 6.01437C6.06982 6.16211 5.89509 6.27924 5.70263 6.35897C5.51017 6.4387 5.3038 6.47943 5.09547 6.47882H2.37849C2.08023 6.47882 1.79419 6.59731 1.58329 6.80821C1.37239 7.01911 1.25391 7.30515 1.25391 7.6034V14.3509C1.25391 14.6491 1.37239 14.9352 1.58329 15.1461C1.79419 15.357 2.08023 15.4755 2.37849 15.4755H5.09547C5.3038 15.4749 5.51017 15.5156 5.70263 15.5953C5.89509 15.6751 6.06982 15.7922 6.21668 15.9399L10.0211 19.7455C10.132 19.8566 10.2734 19.9323 10.4273 19.963C10.5813 19.9937 10.7409 19.978 10.8859 19.9179C11.0309 19.8578 11.1548 19.756 11.2419 19.6254C11.329 19.4948 11.3754 19.3413 11.3751 19.1843V2.76996Z"
+                    d="M23.7455 7.6034L16.998 14.3509M16.998 7.6034L23.7455 14.3509M11.3751 2.76996C11.3749 2.61332 11.3283 2.46025 11.2412 2.33008C11.154 2.19991 11.0303 2.09847 10.8856 2.03856C10.7408 1.97865 10.5816 1.96295 10.4279 1.99344C10.2743 2.02394 10.1331 2.09927 10.0223 2.20991L6.21668 6.01437C6.06982 6.16211 5.89509 6.27924 5.70263 6.35897C5.51017 6.4387 5.3038 6.47943 5.09547 6.47882H2.37849C2.08023 6.47882 1.79419 6.59731 1.58329 6.80821C1.37239 7.01911 1.25391 7.30515 1.25391 7.6034V14.3509C1 14.6491 1.11848 14.9352 1.32938 15.1461C1.54028 15.357 1.82632 15.4755 2.37849 15.4755H5.09547C5.3038 15.4749 5.51017 15.5156 5.70263 15.5953C5.89509 15.6751 6.06982 15.7922 6.21668 15.9399L10.0211 19.7455C10.132 19.8566 10.2734 19.9323 10.4273 19.963C10.5813 19.9937 10.7409 19.978 10.8859 19.9179C11.0309 19.8578 11.1548 19.756 11.2419 19.6254C11.329 19.4948 11.3754 19.3413 11.3751 19.1843V2.76996Z"
                     stroke="white"
                     stroke-width="2"
                     stroke-linecap="round"
@@ -658,14 +664,13 @@ function VideoSidebar({
             )}
           </button>
         </motion.div>
-      </div>
-      {!showUserGuide && (
+      )}
+      {currentTab === 2 && (
         <motion.div
           className="videoSidebar__button"
           initial={false} // Disable initial animation
           animate={{
             x: hideBar ? 50 : 0, // Slide right when hidden
-            opacity: hideBar ? 0 : 1,
           }}
           transition={{
             type: "spring",
@@ -673,9 +678,7 @@ function VideoSidebar({
             stiffness: 300,
             opacity: { duration: 0.2 },
           }}
-          style={{
-            pointerEvents: hideBar ? "none" : "auto",
-          }}
+          style={immersiveButtonStyle}
         >
           <button onClick={handleFullScreen}>
             {hideNew ? (

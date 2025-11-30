@@ -49,6 +49,7 @@ import decryptionSlice from "@/page/home/services/decryptionSlice";
 import pageSlice1 from "@/page/home/services/pageSlice1";
 import activeSlice1 from "@/page/home/services/activeSlice1";
 import passwordSlice from "@/page/home/services/passwordSlice";
+import scrollRestrictionSlice from "./slices/scrollRestrictionSlice";
 
 const sessionStorageWrapper: Storage = {
   getItem: (key: string) => {
@@ -99,6 +100,7 @@ const rootReducer = combineReducers({
   showSlice: showSlice,
   explore: exploreSlice,
   scrollSlice: scrollSlice,
+  scrollRestriction: scrollRestrictionSlice, // Scroll restriction for user guide
   indexSlice: indexSlice,
   watchSlice: watchSlice,
   history: HistorySlice,
