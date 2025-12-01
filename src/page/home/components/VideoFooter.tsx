@@ -350,7 +350,7 @@ const VideoFooter = React.memo(
       <AnimatePresence>
         {!hideBar && !hideNew && (
           <motion.div
-            className="videoFooter w-full fixed bottom-0 left-0"
+            className="videoFooter w-full fixed bottom-0 left-3"
             style={{
               bottom: isIOSDevice() && checkBottomSpacing ? "60px" : "46px",
             }}
@@ -379,10 +379,10 @@ const VideoFooter = React.memo(
                 </div>
               </div>
 
-              <div className="relative flex items-end overflow-hidden w-full">
+              <div className="relative flex items-end overflow-hidden w-full mb-5">
                 <div
                   onClick={shouldExpand ? toggleExpand : undefined}
-                  className={`footer_title font-cnFont transition-all w-[80%] flex flex-wrap ${
+                  className={`footer_title font-cnFont transition-all w-[78%] flex flex-wrap ${
                     shouldExpand
                       ? isExpanded
                         ? "max-h-full"
