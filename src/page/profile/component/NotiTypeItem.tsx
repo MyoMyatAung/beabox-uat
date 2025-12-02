@@ -11,12 +11,48 @@ type Props = {
   path: string;
 };
 
+const formatRelativeTime = (timestamp?: string) => {
+  if (!timestamp) return "";
+  const value = new Date(timestamp).getTime();
+  if (Number.isNaN(value)) return "";
+
+  const diffSeconds = Math.max(0, Math.floor((Date.now() - value) / 1000));
+  if (diffSeconds < 60) {
+    const seconds = Math.max(diffSeconds, 1);
+    return `${seconds}s`;
+  }
+
+  const diffMinutes = Math.floor(diffSeconds / 60);
+  if (diffMinutes < 60) return `${diffMinutes} min`;
+
+  const diffHours = Math.floor(diffMinutes / 60);
+  if (diffHours < 24) return `${diffHours} hr`;
+
+  const diffDays = Math.floor(diffHours / 24);
+  if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? "s" : ""}`;
+
+  const diffWeeks = Math.floor(diffDays / 7);
+  if (diffWeeks < 4) return `${diffWeeks} wk${diffWeeks > 1 ? "s" : ""}`;
+
+  const diffMonths = Math.floor(diffDays / 30);
+  if (diffMonths < 12) return `${diffMonths} mo${diffMonths > 1 ? "s" : ""}`;
+
+  const diffYears = Math.floor(diffDays / 365);
+  return `${diffYears} yr${diffYears > 1 ? "s" : ""}`;
+};
+
 const NotiTypeItem = ({ title, message, src, type, path }: Props) => {
   const { data, isLoading } = useGetNotiQuery(type);
   const notiData = JSON.parse(
     localStorage.getItem(NOTIFICATION_CONFIG.STORAGE_KEY) || "{}"
   );
   const user = useSelector((state: any) => state.persist.user);
+
+  const latestNotiMessage =
+    (!isLoading && data?.data?.[0]?.message) || message || "";
+  const latestNotiTime = !isLoading
+    ? formatRelativeTime(data?.data?.[0]?.created_at)
+    : "";
 
   let isNotiRead = true;
   if (!user?.token) {
@@ -36,15 +72,19 @@ const NotiTypeItem = ({ title, message, src, type, path }: Props) => {
 
   return (
     <Link to={`/notifications/${path}`} className="flex justify-between">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 w-full">
         <img src={src} className="w-10 h-10 mt-1" alt="" />
         <div className="w-full">
           <div className="flex items-center text-[14px] justify-between font-bold">
             <p>{title}</p>
           </div>
-          <div className="flex items-end justify-between">
-            <p className="text-[12px] w-[80%] text-[#888]">{message}</p>
-            <p className="text-[10px] text-[#888]"></p>
+          <div className="flex items-start justify-between gap-3">
+            <p className="text-[12px] w-[80%] text-[#888] line-clamp-2 leading-4">
+              {latestNotiMessage || "目前没有新的通知"}
+            </p>
+            <p className="text-[10px] text-[#888] text-right flex-shrink-0">
+              {latestNotiTime || ""}
+            </p>
           </div>
         </div>
       </div>
