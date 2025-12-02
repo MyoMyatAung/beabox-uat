@@ -5,11 +5,12 @@ import { useReadNotiMutation } from "@/store/api/profileApi";
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { paths } from "@/routes/paths";
 
 const Card = ({ type, item }: any) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [readNoti] = useReadNotiMutation();
-  
+
   const src =
     (type == "balance" && Balance) ||
     (type == "system" && System) ||
@@ -19,17 +20,28 @@ const Card = ({ type, item }: any) => {
     (type == "system" && "进入首页") ||
     (type == "creator" && "进入创作者中心");
 
+  const jumpPath =
+    (type == "balance" && paths.wallet) ||
+    (type == "system" && paths.home) ||
+    (type == "creator" && paths.create_center) ||
+    paths.home;
+
+  const jumpState =
+    (type == "balance" && { from: paths.balance_noti }) ||
+    (type == "creator" && { from: paths.creator_noti }) ||
+    undefined;
+
   const handleExpandAndRead = () => {
     if (!item.is_read) {
       readNoti({ id: item.id });
     }
     setIsExpanded(true);
-  }
+  };
 
   const handleCollapse = () => {
     setIsExpanded(false);
-  }
-  
+  };
+
   return (
     <div className="bg-[#1E1C28] p-3 rounded-[12px]">
       <div className="flex gap-2 items-center">
@@ -48,10 +60,7 @@ const Card = ({ type, item }: any) => {
           } leading-4 ${!isExpanded && "line-clamp-2"}`}
         >
           {item?.message}{" "}
-          <span
-            onClick={handleCollapse}
-            className="text-[14px] text-[#888]"
-          >
+          <span onClick={handleCollapse} className="text-[14px] text-[#888]">
             ...隐藏
           </span>
         </p>
@@ -72,11 +81,8 @@ const Card = ({ type, item }: any) => {
         <ChevronRight size={14} />
       </div> */}
       <Link
-        to={`/notifications/${item?.id}`}
-        state={{
-          data: item,
-          main: item?.title,
-        }}
+        to={jumpPath}
+        state={jumpState}
         className="flex items-center justify-between"
       >
         <p className="text-[14px]">{jumpLabel}</p>

@@ -4,7 +4,7 @@ import YourVideos from "@/components/create-center/your-videos";
 import WalletDetails from "@/components/create-center/wallet-details";
 import ViewAll from "@/components/create-center/view-all";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { paths } from "@/routes/paths";
 import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 import Ads from "@/components/create-center/ads";
@@ -14,7 +14,11 @@ import RankList from "@/components/ranking/rank-list";
 const CreateCenter = () => {
   const user = useSelector((state: any) => state?.persist?.user) || "";
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
+
+  const fromState = (location.state as { from?: string } | null) || null;
+  const backPath = fromState?.from || paths.profile;
 
   return (
     <>
@@ -22,7 +26,7 @@ const CreateCenter = () => {
         styles={"ml-4"}
         center={"创作者中心"}
         left={() => {
-          navigate(paths.profile);
+          navigate(backPath);
         }}
         right={
           <div
