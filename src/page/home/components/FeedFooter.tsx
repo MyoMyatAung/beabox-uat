@@ -215,7 +215,7 @@ function FeedFooter({
               </div>
             </div>
 
-            <div className="relative flex items-end overflow-hidden w-full mb-5">
+            <div className="relative flex items-end overflow-hidden w-full mb-4">
               <div
                 onClick={shouldExpand ? toggleExpand : undefined}
                 className={`footer_title font-cnFont transition-all w-[78%] flex flex-wrap ${

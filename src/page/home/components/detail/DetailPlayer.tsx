@@ -277,7 +277,7 @@ const DetailPlayer = ({
         leftPosition = Math.max(10, Math.min(leftPosition, maxLeft)); // 10px minimum from left edge
 
         previewElement.style.left = `${leftPosition}px`;
-        previewElement.style.bottom = "100px";
+        previewElement.style.bottom = "84px";
 
         if (isSpriteLoading && video?.sprite_url) {
           const innerDiv = previewElement.querySelector(".bg-th");

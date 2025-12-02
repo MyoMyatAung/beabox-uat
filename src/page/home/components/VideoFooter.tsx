@@ -261,7 +261,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
 
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { isIOSDevice } from "@/lib/deviceInfo";
 
 const VideoFooter = React.memo(
@@ -302,6 +302,8 @@ const VideoFooter = React.memo(
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
+    const isStoryDetailPage = location.pathname.includes("/story_detail");
 
     useEffect(() => {
       // Only decrypt the image if the badge has changed
@@ -379,7 +381,11 @@ const VideoFooter = React.memo(
                 </div>
               </div>
 
-              <div className="relative flex items-end overflow-hidden w-full mb-5">
+              <div
+                className={`relative flex items-end overflow-hidden w-full ${
+                  isStoryDetailPage ? "mb-4" : ""
+                }`}
+              >
                 <div
                   onClick={shouldExpand ? toggleExpand : undefined}
                   className={`footer_title font-cnFont transition-all w-[78%] flex flex-wrap ${
