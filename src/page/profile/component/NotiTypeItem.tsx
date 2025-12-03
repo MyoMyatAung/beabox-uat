@@ -19,26 +19,26 @@ const formatRelativeTime = (timestamp?: string) => {
   const diffSeconds = Math.max(0, Math.floor((Date.now() - value) / 1000));
   if (diffSeconds < 60) {
     const seconds = Math.max(diffSeconds, 1);
-    return `${seconds}s`;
+    return `${seconds}秒前`;
   }
 
   const diffMinutes = Math.floor(diffSeconds / 60);
-  if (diffMinutes < 60) return `${diffMinutes} min`;
+  if (diffMinutes < 60) return `${diffMinutes}分钟前`;
 
   const diffHours = Math.floor(diffMinutes / 60);
-  if (diffHours < 24) return `${diffHours} hr`;
+  if (diffHours < 24) return `${diffHours}小时前`;
 
   const diffDays = Math.floor(diffHours / 24);
-  if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? "s" : ""}`;
+  if (diffDays < 7) return `${diffDays}天前`;
 
   const diffWeeks = Math.floor(diffDays / 7);
-  if (diffWeeks < 4) return `${diffWeeks} wk${diffWeeks > 1 ? "s" : ""}`;
+  if (diffWeeks < 4) return `${diffWeeks}周前`;
 
   const diffMonths = Math.floor(diffDays / 30);
-  if (diffMonths < 12) return `${diffMonths} mo${diffMonths > 1 ? "s" : ""}`;
+  if (diffMonths < 12) return `${diffMonths}个月前`;
 
   const diffYears = Math.floor(diffDays / 365);
-  return `${diffYears} yr${diffYears > 1 ? "s" : ""}`;
+  return `${diffYears}年前`;
 };
 
 const NotiTypeItem = ({ title, message, src, type, path }: Props) => {
