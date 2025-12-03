@@ -78,7 +78,7 @@ const NotiTypeItem = ({ title, message, src, type, path }: Props) => {
           <div className="flex items-center text-[14px] justify-between font-bold">
             <p>{title}</p>
           </div>
-          <div className="flex items-start justify-between gap-3">
+          <div className="flex items-end justify-between gap-3">
             <p className="text-[12px] w-[80%] text-[#888] line-clamp-2 leading-4">
               {latestNotiMessage || "目前没有新的通知"}
             </p>

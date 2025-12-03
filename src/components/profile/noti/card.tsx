@@ -50,7 +50,7 @@ const Card = ({ type, item }: any) => {
         {item?.is_read ? (
           <></>
         ) : (
-          <div className="w-2 h-2 rounded-full bg-[#FF0004]"></div>
+          <div className="w-2 h-2 rounded-full shrink-0 bg-[#FF0004]"></div>
         )}
       </div>
       <div className="mt-3">
