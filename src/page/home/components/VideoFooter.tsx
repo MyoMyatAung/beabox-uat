@@ -383,7 +383,7 @@ const VideoFooter = React.memo(
 
               <div
                 className={`relative flex items-end overflow-hidden w-full ${
-                  isStoryDetailPage ? "mb-4" : ""
+                  isStoryDetailPage ? "mb-4" : "mb-4"
                 }`}
               >
                 <div
