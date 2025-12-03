@@ -1,15 +1,16 @@
 /**
  * Custom hook for managing session storage flags
- * 
+ *
  * Business Logic:
  * - Tracks user's progress through the app onboarding flow
  * - Prevents showing the same screens multiple times in a session
  * - Flags are stored in sessionStorage (cleared when browser tab closes)
- * 
+ *
  * Session Flags:
  * - hasSeenAdPopUp: User has seen the ad popup (prevents re-showing ads)
  * - hasSeenLanding: User has seen the landing screen (skips landing animation)
  * - animationClosed: User manually closed event animations (persists preference)
+ * - showEvent: Whether event animations are expanded (persists across navigation)
  */
 export const useSessionManagement = () => {
   /**
@@ -52,12 +53,29 @@ export const useSessionManagement = () => {
     sessionStorage.setItem("animationClosed", "true");
   };
 
+  /**
+   * Get the showEvent state from session storage
+   * Persists across page navigations to maintain expanded state
+   */
+  const getShowEvent = (): boolean => {
+    return sessionStorage.getItem("showEvent") === "true";
+  };
+
+  /**
+   * Set the showEvent state in session storage
+   * Called when user toggles event animations visibility
+   */
+  const setShowEvent = (value: boolean): void => {
+    sessionStorage.setItem("showEvent", value.toString());
+  };
+
   return {
     hasSeenAdPopUp,
     hasSeenLanding,
     hasClosedAnimation,
     markLandingSeen,
     markAnimationClosed,
+    getShowEvent,
+    setShowEvent,
   };
 };
-

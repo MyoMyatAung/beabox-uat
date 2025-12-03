@@ -42,7 +42,9 @@ const formatRelativeTime = (timestamp?: string) => {
 };
 
 const NotiTypeItem = ({ title, message, src, type, path }: Props) => {
-  const { data, isLoading } = useGetNotiQuery(type);
+  const { data, isLoading } = useGetNotiQuery(type, {
+    refetchOnMountOrArgChange: true,
+  });
   const notiData = JSON.parse(
     localStorage.getItem(NOTIFICATION_CONFIG.STORAGE_KEY) || "{}"
   );

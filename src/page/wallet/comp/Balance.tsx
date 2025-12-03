@@ -40,6 +40,16 @@ const Balance: React.FC<BalanceProps> = () => {
     setBalance(data?.data?.total_income || "0");
   }, [data]);
 
+  // Restore showBox state when component mounts
+  useEffect(() => {
+    const shouldShowBox = sessionStorage.getItem("showRedBox") === "true";
+    if (shouldShowBox) {
+      setShowBox(true);
+      // Clear the sessionStorage after restoring state
+      sessionStorage.removeItem("showRedBox");
+    }
+  }, []);
+
   const toggleVisibility = () => {
     setIsHidden((prev) => !prev);
   };
@@ -84,8 +94,7 @@ const Balance: React.FC<BalanceProps> = () => {
         <div className="flex justify-between items-center">
           {/* work */}
           <h1 className=" text-white text-[14px] font-[700] leading-[22px]">
-            作品收益 :{" "}
-            {/* main */}
+            作品收益 : {/* main */}
             <span className=" text-[#CD3EFF]">
               {data?.data?.main_income ? data?.data?.main_income : "0"}
             </span>{" "}

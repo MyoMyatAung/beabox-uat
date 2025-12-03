@@ -135,6 +135,7 @@ export const profileApi = createApi({
         url: convertToSecureUrl(`/profile/logout`),
         method: "POST",
       }),
+      invalidatesTags: ["NOTI_LIST"],
     }),
     changePassword: builder.mutation({
       query: ({ current_password, new_password }) => ({
