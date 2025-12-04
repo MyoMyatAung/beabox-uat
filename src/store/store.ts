@@ -40,6 +40,8 @@ import spinWheelReducer from "./slices/spinWheelSlice";
 import { spinWheelApi } from "../page/luckywheel/services/spinWheelApi";
 import showSlice from "@/page/home/services/showSlice";
 import watchSlice from "@/page/home/services/watchSlice";
+import { gossipApi } from "@/page/gossip/services/gossipApi";
+import { gossipExternalApi } from "@/page/gossip/services/gossipSlice";
 import indexSlice from "@/page/home/services/indexSlice";
 import previousUserReducer from "@/page/home/services/previousUserSlice";
 import hideNewSlice from "@/page/home/services/hideNewSlice";
@@ -138,12 +140,14 @@ const rootReducer = combineReducers({
   [eventInvitationApi.reducerPath]: eventInvitationApi.reducer,
   [versionApi.reducerPath]: versionApi.reducer,
   [spinWheelApi.reducerPath]: spinWheelApi.reducer,
+  [gossipApi.reducerPath]: gossipApi.reducer,
+  [gossipExternalApi.reducerPath]: gossipExternalApi.reducer,
   spinWheel: spinWheelReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-export const store: any = configureStore({
+export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -157,7 +161,9 @@ export const store: any = configureStore({
       .concat(eventApi.middleware)
       .concat(eventInvitationApi.middleware)
       .concat(versionApi.middleware)
-      .concat(spinWheelApi.middleware),
+      .concat(spinWheelApi.middleware)
+      .concat(gossipApi.middleware)
+      .concat(gossipExternalApi.middleware),
 });
 
 export const persistor = persistStore(store);
