@@ -387,7 +387,7 @@ const PostDetail = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#16131C]">
+    <div className="w-full min-h-screen flex flex-col bg-[#16131C]">
       {/* Header */}
       <div className="sticky top-0 z-50 bg-[#16131C] border-b border-gray-800 px-4 py-3">
         <div className="flex items-center justify-between">
@@ -614,11 +614,13 @@ const PostDetail = () => {
       </div>
 
       {/* Comment Section */}
-      <CommentSection
-        {...detailCommentSectionProps}
-        highlightCommentId={highlightCommentId}
-        onHighlightHandled={() => setHighlightCommentId(null)}
-      />
+      <div className="flex-1 relative">
+        <CommentSection
+          {...detailCommentSectionProps}
+          highlightCommentId={highlightCommentId}
+          onHighlightHandled={() => setHighlightCommentId(null)}
+        />
+      </div>
 
       <MediaFullscreenViewer
         media={post.media}

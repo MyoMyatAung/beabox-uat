@@ -10,34 +10,62 @@ import {
 } from "./services/gossipSlice";
 import type { GossipPostMedia } from "./services/gossipSlice";
 
-type TabType = "hot" | "encyclopedia" | "celebrity";
-
 interface Tab {
-  id: TabType;
+  id: string;
   label: string;
   categoryId: string;
 }
 
-const tabs: Tab[] = [
-  // Mapping each tab to the remote category ids returned by the external API
-  { id: "hot", label: "热门大瓜", categoryId: "692fef5f317b970b85090927" }, // Fitness
-  {
-    id: "encyclopedia",
-    label: "吃瓜百科",
-    categoryId: "69315295035d410eba0b26d7",
-  }, // Food
-  {
-    id: "celebrity",
-    label: "网红黑料",
-    categoryId: "692fef5f317b970b85090926",
-  }, // Gaming
-];
+const PostSkeleton = () => (
+  <div className="px-4 py-3 animate-pulse space-y-3 mb-4">
+    <div className="flex gap-3">
+      <div className="w-9 h-9 bg-[#221d2a] rounded-full" />
+      <div className="flex-1 space-y-2">
+        <div className="w-52 h-4 bg-[#221d2a] rounded-md" />
+        <div className="w-24 h-4 bg-[#221d2a] rounded-md" />
+        <div className="w-36 h-4 bg-[#221d2a] rounded-md" />
+      </div>
+    </div>
+    <div className="flex gap-3 overflow-x-auto">
+      <div className="w-[220px] h-[236px] bg-[#221d2a] rounded-md" />
+      <div className="w-[220px] h-[236px] bg-[#221d2a] rounded-md" />
+    </div>
+    <div className="flex justify-between">
+      <div className="w-24 h-4 bg-[#221d2a] rounded-md" />
+      <div className="w-24 h-4 bg-[#221d2a] rounded-md" />
+    </div>
+  </div>
+);
 
 const Gossip = () => {
   const dispatch = useDispatch();
-  const [activeTab, setActiveTab] = useState<TabType>("encyclopedia");
+  const [activeTab, setActiveTab] = useState<string>("");
   const [page, setPage] = useState(1);
   const pageSize = 10;
+
+  const {
+    data: categoryList = [],
+    isLoading: isCategoriesLoading,
+    error: categoriesError,
+  } = useGetGossipCategoriesQuery();
+
+  const tabs: Tab[] = useMemo(() => {
+    if (!Array.isArray(categoryList)) {
+      return [];
+    }
+
+    return categoryList.map((category, index) => ({
+      id: category.slug || category.id || `category-${index}`,
+      label: category.name || `分类${index + 1}`,
+      categoryId: category.id,
+    }));
+  }, [categoryList]);
+
+  useEffect(() => {
+    if (!activeTab && tabs.length > 0) {
+      setActiveTab(tabs[0].id);
+    }
+  }, [activeTab, tabs]);
 
   const activeTabConfig = tabs.find((tab) => tab.id === activeTab);
   const hasCategoryId = Boolean(activeTabConfig?.categoryId);
@@ -48,20 +76,28 @@ const Gossip = () => {
   }, [dispatch]);
 
   const handleTabClick = (tabId: string) => {
-    setActiveTab(tabId as TabType);
+    setActiveTab(tabId);
     setPage(1); // Reset page when switching tabs
   };
 
   const {
     data: apiPosts = [],
-    isLoading,
+    isLoading: isPostsLoading,
+    isFetching: isPostsFetching,
     error,
     refetch,
-  } = useExternalGossipPostsQuery({
-    category_id: "",
-    page,
-    pageSize,
-  });
+  } = useExternalGossipPostsQuery(
+    {
+      category_id: activeTabConfig?.categoryId ?? "",
+      page,
+      pageSize,
+    },
+    {
+      skip: !hasCategoryId,
+    }
+  );
+  const isLoading =
+    isCategoriesLoading || isPostsLoading || isPostsFetching || !hasCategoryId;
 
   type GossipPostData = ComponentProps<typeof GossipPost>["post"];
 
@@ -117,8 +153,15 @@ const Gossip = () => {
   }, [apiPosts]);
 
   const errorMessage = useMemo(() => {
-    if (!hasCategoryId) {
+    if (!tabs.length && !isCategoriesLoading) {
       return "当前频道暂未配置分类，请稍后再试";
+    }
+
+    if (categoriesError && "message" in (categoriesError as any)) {
+      return (
+        ((categoriesError as { message?: string }).message as string) ||
+        "频道加载失败，请稍后重试"
+      );
     }
 
     if (!error) {
@@ -131,7 +174,7 @@ const Gossip = () => {
     }
 
     return error.message || "帖子加载失败，请稍后重试";
-  }, [error, hasCategoryId]);
+  }, [tabs.length, isCategoriesLoading, categoriesError, error]);
 
   const showEmptyState = !isLoading && !errorMessage && posts.length === 0;
 
@@ -145,41 +188,41 @@ const Gossip = () => {
       />
 
       {/* Content Area - Scrollable Posts */}
-      <div className="w-full h-[calc(100vh-136px)] bg-black overflow-y-auto pb-20">
-        {isLoading && (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-white text-lg">Loading...</div>
-          </div>
-        )}
+      {isLoading ? (
+        Array.from({ length: 2 }).map((_, index) => (
+          <PostSkeleton key={index} />
+        ))
+      ) : (
+        <div className="w-full h-[calc(100vh-136px)] bg-black overflow-y-auto pb-20">
+          {!isLoading && errorMessage && (
+            <div className="flex flex-col items-center justify-center h-full gap-4 px-6 text-center">
+              <p className="text-red-400 text-sm">{errorMessage}</p>
+              {hasCategoryId && (
+                <button
+                  onClick={() => refetch()}
+                  className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-full hover:bg-purple-500 transition-colors"
+                >
+                  重新加载
+                </button>
+              )}
+            </div>
+          )}
 
-        {!isLoading && errorMessage && (
-          <div className="flex flex-col items-center justify-center h-full gap-4 px-6 text-center">
-            <p className="text-red-400 text-sm">{errorMessage}</p>
-            {hasCategoryId && (
-              <button
-                onClick={() => refetch()}
-                className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-full hover:bg-purple-500 transition-colors"
-              >
-                重新加载
-              </button>
-            )}
-          </div>
-        )}
+          {showEmptyState && (
+            <div className="flex items-center justify-center h-full">
+              <div className="text-gray-400 text-sm">暂无内容</div>
+            </div>
+          )}
 
-        {showEmptyState && (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-gray-400 text-sm">暂无内容</div>
-          </div>
-        )}
-
-        {!isLoading && !errorMessage && posts.length > 0 && (
-          <div className="w-full max-w-[480px] mx-auto">
-            {posts.map((post) => (
-              <GossipPost key={post.post_id} post={post} />
-            ))}
-          </div>
-        )}
-      </div>
+          {!isLoading && !errorMessage && posts.length > 0 && (
+            <div className="w-full max-w-[480px] mx-auto">
+              {posts.map((post) => (
+                <GossipPost key={post.post_id} post={post} />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

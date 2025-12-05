@@ -10,12 +10,17 @@ import {
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import verifiedBadge from "@/assets/icons/verified-badge.svg";
 import MediaFullscreenViewer from "./MediaFullscreenViewer";
 import {
   useLikeGossipPostMutation,
   useUnlikeGossipPostMutation,
+  useUninterestGossipPostMutation,
+  useReportGossipPostMutation,
 } from "../services/gossipSlice";
+import { showToast } from "@/page/home/services/errorSlice";
+import type { RootState } from "@/store/store";
 
 interface MediaItem {
   id: string;
@@ -49,6 +54,9 @@ interface GossipPostProps {
 
 const GossipPost = ({ post }: GossipPostProps) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.persist?.user);
+  const isAuthenticated = Boolean(user?.token);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLiked, setIsLiked] = useState(post.is_liked);
   const [likeCount, setLikeCount] = useState(post.like_count);
@@ -69,6 +77,51 @@ const GossipPost = ({ post }: GossipPostProps) => {
 
   const [likePost] = useLikeGossipPostMutation();
   const [unlikePost] = useUnlikeGossipPostMutation();
+  const [uninterestGossipPost, { isLoading: uninterestLoading }] =
+    useUninterestGossipPostMutation();
+  const [reportGossipPost, { isLoading: reportLoading }] =
+    useReportGossipPostMutation();
+
+  const ensureAuthenticated = () => {
+    if (isAuthenticated) {
+      return true;
+    }
+    dispatch(
+      showToast({
+        message: "请先登录后再操作",
+        type: "error",
+      })
+    );
+    return false;
+  };
+
+  const getErrorMessage = (error: unknown) => {
+    if (typeof error === "string") {
+      return error;
+    }
+    if (error && typeof error === "object") {
+      const maybeError = error as {
+        data?: { message?: string };
+        error?: string;
+        message?: string;
+      };
+      if (
+        maybeError.data &&
+        typeof maybeError.data === "object" &&
+        "message" in maybeError.data &&
+        maybeError.data.message
+      ) {
+        return maybeError.data.message;
+      }
+      if (typeof maybeError.message === "string" && maybeError.message) {
+        return maybeError.message;
+      }
+      if (typeof maybeError.error === "string" && maybeError.error) {
+        return maybeError.error;
+      }
+    }
+    return "操作失败，请稍后再试";
+  };
 
   const handleLike = async () => {
     if (pendingLike) return;
@@ -121,14 +174,58 @@ const GossipPost = ({ post }: GossipPostProps) => {
     }
   };
 
-  const handleNotInterested = () => {
+  const handleNotInterested = async () => {
     setShowMoreOptionsPopover(false);
-    // TODO: Implement not interested functionality
+    if (uninterestLoading) return;
+    if (!ensureAuthenticated()) {
+      return;
+    }
+    try {
+      const response = await uninterestGossipPost({
+        post_id: post.post_id,
+      }).unwrap();
+      dispatch(
+        showToast({
+          message: response?.message || "将为您减少类似内容",
+          type: "success",
+        })
+      );
+    } catch (error) {
+      dispatch(
+        showToast({
+          message: getErrorMessage(error),
+          type: "error",
+        })
+      );
+    }
   };
 
-  const handleReport = () => {
+  const handleReport = async () => {
     setShowMoreOptionsPopover(false);
-    // TODO: Implement report functionality
+    if (reportLoading) return;
+    if (!ensureAuthenticated()) {
+      return;
+    }
+    try {
+      const response = await reportGossipPost({
+        model_id: post.post_id,
+        type: "post",
+        report_content: "This post contains inappropriate content",
+      }).unwrap();
+      dispatch(
+        showToast({
+          message: response?.message || "已收到您的举报，我们会尽快处理",
+          type: "success",
+        })
+      );
+    } catch (error) {
+      dispatch(
+        showToast({
+          message: getErrorMessage(error),
+          type: "error",
+        })
+      );
+    }
   };
 
   const handleToggleMute = () => {

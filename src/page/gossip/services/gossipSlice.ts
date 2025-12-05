@@ -142,6 +142,12 @@ export interface GossipPostActionResponse {
   };
 }
 
+interface GossipGenericResponse {
+  status: boolean;
+  message: string;
+  data?: Record<string, unknown>;
+}
+
 const BASE_URL = "http://sajktest.qdhgtch.com/api/v1/";
 
 export const gossipExternalApi = createApi({
@@ -252,6 +258,26 @@ export const gossipExternalApi = createApi({
       }),
       invalidatesTags: ["gossipPosts"],
     }),
+    uninterestGossipPost: builder.mutation<
+      GossipPostActionResponse,
+      { post_id: string }
+    >({
+      query: ({ post_id }) => ({
+        url: "post/uninterest",
+        method: "POST",
+        body: { post_id },
+      }),
+    }),
+    reportGossipPost: builder.mutation<
+      GossipGenericResponse,
+      { model_id: string; type?: string; report_content: string }
+    >({
+      query: ({ model_id, type = "post", report_content }) => ({
+        url: "report/store",
+        method: "POST",
+        body: { model_id, type, report_content },
+      }),
+    }),
   }),
 });
 
@@ -263,4 +289,6 @@ export const {
   usePostGossipCommentMutation,
   useLikeGossipPostMutation,
   useUnlikeGossipPostMutation,
+  useUninterestGossipPostMutation,
+  useReportGossipPostMutation,
 } = gossipExternalApi;
