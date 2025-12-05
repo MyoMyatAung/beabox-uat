@@ -72,9 +72,10 @@ const Explore = () => {
   //   window.scrollTo(0, 5);
   // }, []);
 
-  // useEffect(() => {
-  //   setList([]); // Reset list when switching tabs
-  // }, [exp_header,tabs]);
+  useEffect(() => {
+    setList([]); // Reset list when switching tabs
+    setPage(1); // Reset page when switching tabs
+  }, [exp_header]);
 
   useEffect(() => {
     if (swiperRef.current) {
@@ -123,8 +124,11 @@ const Explore = () => {
         </div>
       )}
 
-      <div className="flex max-w-[1024px home-main bg-[#16131C] justify-center items-center min-h-screen overflow-clip">
-        <div className="explore_sec w-full flex flex-col justify-center items-cente px-[10px pb-[100px] mt-14">
+      <div
+        className="max-w-[1024px] home-main bg-[#16131C] h-screen overflow-y-auto no-scrollbar"
+        id="explore-scroll-container"
+      >
+        <div className="explore_sec w-full flex flex-col justify-center items-cente px-[10px] pb-[100px] mt-14">
           <Banner />
           <PopApp />
           <div className="mt-[20px] relative">
