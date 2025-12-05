@@ -22,6 +22,9 @@ const RankingLoadMore = ({ data, fetchData, hasMore, userFetching }: any) => {
               <Loader />
             </div>
           }
+          scrollThreshold={0.9}
+          scrollableTarget="ranking-scroll-container"
+          style={{ overflow: 'visible' }}
         >
           <div className="flex justify-center items-center w-full">
             {/* <Loader /> */}

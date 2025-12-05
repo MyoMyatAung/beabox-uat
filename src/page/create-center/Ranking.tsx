@@ -397,7 +397,8 @@ const Ranking = () => {
   return (
     <div
       ref={pageContainerRef}
-      className="h-screen flex flex-col  hide-sb  max-w-[480px] mx-auto"
+      className="h-screen flex flex-col no-scrollbar max-w-[480px] mx-auto"
+      id="ranking-scroll-container"
     >
       <div
         className={cn(
