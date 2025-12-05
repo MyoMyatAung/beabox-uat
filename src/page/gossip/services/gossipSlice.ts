@@ -183,7 +183,10 @@ export const gossipExternalApi = createApi({
       }),
       transformResponse: (response: GossipPostListResponse) =>
         response?.data ?? [],
-      providesTags: ["gossipPosts"],
+      providesTags: (_result, _error, { category_id }) => [
+        { type: "gossipPosts", id: category_id },
+        "gossipPosts",
+      ],
     }),
     getGossipComments: builder.mutation<
       GossipCommentListResponse,
@@ -262,23 +265,36 @@ export const gossipExternalApi = createApi({
     }),
     uninterestGossipPost: builder.mutation<
       GossipPostActionResponse,
-      { post_id: string }
+      { post_id: string; category_id?: string }
     >({
       query: ({ post_id }) => ({
         url: "post/uninterest",
         method: "POST",
         body: { post_id },
       }),
+      invalidatesTags: (_result, _error, { category_id }) =>
+        category_id
+          ? [{ type: "gossipPosts", id: category_id }]
+          : ["gossipPosts"],
     }),
     reportGossipPost: builder.mutation<
       GossipGenericResponse,
-      { model_id: string; type?: string; report_content: string }
+      {
+        model_id: string;
+        type?: string;
+        report_content: string;
+        category_id?: string;
+      }
     >({
       query: ({ model_id, type = "post", report_content }) => ({
         url: "report/store",
         method: "POST",
         body: { model_id, type, report_content },
       }),
+      invalidatesTags: (_result, _error, { category_id }) =>
+        category_id
+          ? [{ type: "gossipPosts", id: category_id }]
+          : ["gossipPosts"],
     }),
     followGossipUser: builder.mutation<
       GossipGenericResponse,

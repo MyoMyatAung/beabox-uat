@@ -129,6 +129,7 @@ const Gossip = () => {
 
       return {
         post_id: post.id || `post-${index}`,
+        category_id: post.category_id || "",
         user: {
           id: userId,
           nickname: nickname,
