@@ -91,6 +91,7 @@ const Lucky = lazy(() => import("../page/luckywheel/LuckySpinPage"));
 const LuckyDraw = lazy(() => import("../page/events/Luckydraw"));
 const Gossip = lazy(() => import("../page/gossip/Gossip"));
 const GossipPostDetail = lazy(() => import("../page/gossip/PostDetail"));
+const GossipReport = lazy(() => import("../page/gossip/components/GossipReport"));
 
 // ============================================================================
 // LAZY LOADED COMPONENTS - Profile & User Management
@@ -345,6 +346,7 @@ const createMainRoutes = (createRoute: RouteConfig): RouteObject[] => [
   createRoute(paths.download, <Download />),
   createRoute(paths.recommand_more, <More />),
   createRoute(paths.gossip_post_detail, <GossipPostDetail />),
+  createRoute(paths.gossip_report, <GossipReport />),
 ];
 
 /**
