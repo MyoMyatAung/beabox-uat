@@ -135,56 +135,70 @@ const TopRankCard = ({
         (rank == 2 && "rank2") ||
         (rank == 3 && "rank3 ")
       }
-     flex flex-col items-center w-full justify-center  z-50 rounded-[8px] pt-7 relative`}
+     flex flex-col items-center z-50 rounded-[12px] relative w-[100px]`}
+      style={{
+        minWidth: "100px",
+        height: "auto",
+      }}
     >
-      <div className="bg-gradient-to-b from-[#00000000] to-[#000000] absolute top-0 left-0   w-full h-full  rounded-[8px]"></div>
-      <p className="absolute top-2 left-2 text-[#fff] font-semibold text-[16px]">
+      <div className="bg-gradient-to-b from-[#00000000] to-[#000000cc] absolute top-0 left-0 w-full h-full rounded-[12px]"></div>
+      <p className="absolute top-2 left-2 text-[#fff] font-semibold text-[14px] z-10">
         {rank}
       </p>
-      {data?.photo ? (
-        <Link to={paths.getUserProfileId(data?.id)}>
-          <div className="w-10 h-10 relative">
-            <AvatarImage
-              src={data?.photo}
-              width={""}
-              height={""}
-              className="w-10 h-10 rounded-full"
-              alt=""
-            />
+      <div className="flex flex-col items-center pt-6 pb-3 z-10 w-full px-2">
+        {data?.photo ? (
+          <Link to={paths.getUserProfileId(data?.id)}>
+            <div className="w-12 h-12 relative mb-2">
+              <AvatarImage
+                src={data?.photo}
+                width={""}
+                height={""}
+                className="w-12 h-12 rounded-full object-cover"
+                alt=""
+              />
+              <FaCrown
+                size={16}
+                className={` ${
+                  (rank == 1 && "text-[#F7E29B]") ||
+                  (rank == 2 && "text-[#D7D7D8]") ||
+                  (rank == 3 && "text-[#FF9C7B] ")
+                }  absolute -top-2 -rotate-45 -left-1.5`}
+              />
+            </div>
+          </Link>
+        ) : (
+          <div className="bg-[#FFFFFF52] w-12 h-12 rounded-full flex justify-center items-center border relative mb-2">
+            <BsPersonFill size={28} />
             <FaCrown
+              size={16}
               className={` ${
                 (rank == 1 && "text-[#F7E29B]") ||
                 (rank == 2 && "text-[#D7D7D8]") ||
                 (rank == 3 && "text-[#FF9C7B] ")
-              }  absolute -top-3 -rotate-45 -left-2`}
+              }  absolute -top-2 -rotate-45 -left-1.5`}
             />
           </div>
-        </Link>
-      ) : (
-        <div className="bg-[#FFFFFF52] w-10 h-10 rounded-full flex justify-center items-center border relative">
-          <BsPersonFill size={24} />
-          <FaCrown
-            className={` ${
-              (rank == 1 && "text-[#F7E29B]") ||
-              (rank == 2 && "text-[#D7D7D8]") ||
-              (rank == 3 && "text-[#FF9C7B] ")
-            }  absolute -top-3 -rotate-45 -left-2`}
-          />
+        )}
+        <p className="text-[13px] z-10 truncate w-full text-center leading-tight font-semibold mb-1">
+          {data?.nickname ? data?.nickname : "未知"}
+        </p>
+        <p className="text-[#AAA] text-[12px] z-10 leading-tight mb-2">
+          {data?.total_followers}
+        </p>
+        <div className="w-full z-10 mt-auto">
+          {data?.id == me ? (
+            <div className="opacity-0">
+              <RankBtn
+                id={data?.id}
+                followBack={isFollowed}
+                refetch={refetch}
+              />
+            </div>
+          ) : (
+            <RankBtn id={data?.id} followBack={isFollowed} refetch={refetch} />
+          )}
         </div>
-      )}
-      <p className="text-[14px] pt-3 z-50">
-        {data?.nickname ? data?.nickname : "未知"}
-      </p>
-      <p className="text-[#AAA] text-[14px] z-50 pb-1">
-        {data?.total_followers}
-      </p>
-      {data?.id == me ? (
-        <div className="opacity-0">
-          <RankBtn id={data?.id} followBack={isFollowed} refetch={refetch} />
-        </div>
-      ) : (
-        <RankBtn id={data?.id} followBack={isFollowed} refetch={refetch} />
-      )}
+      </div>
     </div>
   );
 };

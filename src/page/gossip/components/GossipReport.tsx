@@ -1,4 +1,9 @@
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { useReportGossipPostMutation } from "../services/gossipSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { showToast } from "@/page/home/services/errorSlice";
@@ -28,9 +33,12 @@ const GossipReport = () => {
   const [triggerReport, { isLoading }] = useReportGossipPostMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const user = useSelector((state: RootState) => state.persist?.user);
   const [isReady, setIsReady] = useState(false);
+  const categoryId =
+    (location.state as { categoryId?: string } | null)?.categoryId || "";
 
   // Wait a moment to ensure token is available from redux-persist
   useEffect(() => {
@@ -66,6 +74,7 @@ const GossipReport = () => {
         model_id: id || "",
         type: type || "post",
         report_content: content,
+        category_id: categoryId,
       });
 
       if (response?.data) {

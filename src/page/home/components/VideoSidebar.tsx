@@ -301,6 +301,7 @@ function VideoSidebar({
     pointerEvents: hideBar || isGuideActive ? "none" : "auto",
     opacity: hideBar || isGuideActive ? 0 : 1,
   };
+  const shouldShowVoiceButton = currentTab === 2 && (!hideNew || mute); // In fullscreen, show only when muted
 
   return (
     <div
@@ -599,7 +600,7 @@ function VideoSidebar({
           </button>
         </motion.div>
       </div>
-      {currentTab === 2 && (
+      {shouldShowVoiceButton && (
         <motion.div
           className="videoSidebar__button"
           initial={false} // Disable initial animation

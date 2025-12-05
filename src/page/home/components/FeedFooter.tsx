@@ -195,7 +195,7 @@ function FeedFooter({
     <AnimatePresence>
       {!hideBar && !hideNew && (
         <motion.div
-          className="videoFooter1 w-full fixed bottom-0 left-0"
+          className="videoFooter1 w-full fixed bottom-0 left-3"
           initial={{ y: "100%", opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: "100%", opacity: 0 }}
@@ -215,10 +215,10 @@ function FeedFooter({
               </div>
             </div>
 
-            <div className="relative flex items-end overflow-hidden w-full">
+            <div className="relative flex items-end overflow-hidden w-full mb-4">
               <div
                 onClick={shouldExpand ? toggleExpand : undefined}
-                className={`footer_title font-cnFont transition-all w-[80%] flex flex-wrap ${
+                className={`footer_title font-cnFont transition-all w-[78%] flex flex-wrap ${
                   shouldExpand
                     ? isExpanded
                       ? "max-h-full"

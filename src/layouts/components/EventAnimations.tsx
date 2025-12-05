@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
 import { setAnimation } from "@/store/slices/eventSlice";
@@ -36,7 +36,7 @@ interface EventAnimationsProps {
    * Navigates to event details page
    */
   onCountdownClick: () => void;
-  
+
   /**
    * Handler for lucky spin animation click
    * Navigates to lucky wheel page
@@ -46,14 +46,15 @@ interface EventAnimationsProps {
 
 /**
  * EventAnimations Component
- * 
+ *
  * Business Logic:
  * - Displays floating action button (FAB) that expands to show event animations
  * - FAB shows countdown and lucky spin animations when expanded
  * - User can close animations permanently (preference saved in session)
+ * - Expanded state (showEvent) persists across page navigation (saved in sessionStorage)
  * - Animations are positioned at fixed bottom-left locations
  * - Uses spring animations for smooth entrance/exit
- * 
+ *
  * Animation Hierarchy:
  * 1. FAB (always visible when conditions met) - toggles showEvent state
  * 2. Countdown animation (shown when FAB expanded) - navigates to event details
@@ -64,12 +65,23 @@ export const EventAnimations: React.FC<EventAnimationsProps> = ({
   onLuckySpinClick,
 }) => {
   const dispatch = useDispatch();
-  const [showEvent, setShowEvent] = useState(false);
-  const { markAnimationClosed } = useSessionManagement();
+  const {
+    markAnimationClosed,
+    getShowEvent,
+    setShowEvent: persistShowEvent,
+  } = useSessionManagement();
+
+  // Initialize showEvent from sessionStorage to persist across navigation
+  const [showEvent, setShowEvent] = useState(() => getShowEvent());
+
+  // Persist showEvent state to sessionStorage whenever it changes
+  useEffect(() => {
+    persistShowEvent(showEvent);
+  }, [showEvent, persistShowEvent]);
 
   /**
    * Handle close button click
-   * 
+   *
    * Business Logic:
    * - Hides animations immediately
    * - Saves preference to session storage (prevents showing again)
@@ -141,7 +153,7 @@ export const EventAnimations: React.FC<EventAnimationsProps> = ({
           >
             <img src={CloseSvg} alt="Close" />
           </button>
-          
+
           {/* FAB Animation - Toggles visibility of countdown and lucky spin */}
           <AnimationLoader
             animationData={fabAnimation}
@@ -153,4 +165,3 @@ export const EventAnimations: React.FC<EventAnimationsProps> = ({
     </>
   );
 };
-

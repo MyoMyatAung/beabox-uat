@@ -1,10 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import "../wallet.css";
-import invite from "../invite.png";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setDuration, setEventDetail } from "@/store/slices/eventSlice";
-import backButton from "../../../assets/backButton.svg";
 
 interface RedBoxProps {
   setShowBox: (show: boolean) => void;
@@ -18,15 +16,19 @@ const RedBox: React.FC<RedBoxProps> = ({
   triggerGetEventDetails,
 }) => {
   const boxRef = useRef<HTMLDivElement>(null);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [showIframe, setShowIframe] = useState(false);
+
+  const handleClose = useCallback(() => {
+    // Clear sessionStorage when actually closing the modal
+    sessionStorage.removeItem("showRedBox");
+    setShowBox(false);
+  }, [setShowBox]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (boxRef.current && !boxRef.current.contains(event.target as Node)) {
-        setShowBox(false); // close popup if clicked outside
+        handleClose(); // close popup if clicked outside
       }
     }
 
@@ -35,7 +37,7 @@ const RedBox: React.FC<RedBoxProps> = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [setShowBox]);
+  }, [handleClose]);
 
   const handleAnimationClick = async () => {
     // if (!user?.token) {
@@ -48,6 +50,8 @@ const RedBox: React.FC<RedBoxProps> = ({
       : currentEventData?.data?.id;
 
     if (!eventId) {
+      // Store state before navigating
+      sessionStorage.setItem("showRedBox", "true");
       navigate("/wallet/invite");
       return;
     }
@@ -74,29 +78,21 @@ const RedBox: React.FC<RedBoxProps> = ({
     }
     // }
 
+    // Store state before navigating
+    sessionStorage.setItem("showRedBox", "true");
     navigate(`/events/lucky-draw/${eventId}`);
   };
 
-  const handleSpinClick = () => {
-    setShowIframe(true);
-    // Sample user info to send
-    const userInfo = {
-      userId: "12345",
-      username: "sampleUser",
-      email: "user@example.com",
-      balance: 1000,
-      level: 5,
-    };
+  const handleLuckySpinClick = () => {
+    // Store state before navigating
+    sessionStorage.setItem("showRedBox", "true");
+    navigate("/lucky");
+  };
 
-    // Send message after iframe loads
-    setTimeout(() => {
-      if (iframeRef.current?.contentWindow) {
-        iframeRef.current.contentWindow.postMessage(
-          userInfo,
-          "http://localhost:5001"
-        );
-      }
-    }, 1000);
+  const handleUploadClick = () => {
+    // Store state before navigating
+    sessionStorage.setItem("showRedBox", "true");
+    navigate("/creator/upload/video");
   };
 
   return (
@@ -110,7 +106,7 @@ const RedBox: React.FC<RedBoxProps> = ({
           <div className=" flex w-full justify-between items-center py-[16px]">
             <div className=""></div>
             <h1 className="red_popup_box_head">我要赚钱</h1>
-            <div onClick={() => setShowBox(false)} className="">
+            <div onClick={handleClose} className="">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="12"
@@ -212,7 +208,7 @@ const RedBox: React.FC<RedBoxProps> = ({
             </div>
             {/* upload */}
             <div
-              onClick={() => navigate("/creator/upload/video")}
+              onClick={handleUploadClick}
               className=" w-full flex justify-between items-center p-[16px] red_popup_box_list cursor-pointer"
             >
               {/* content */}
@@ -276,65 +272,69 @@ const RedBox: React.FC<RedBoxProps> = ({
               </svg>
             </div>
             {/* spin */}
-            {/* <div 
-                onClick={handleSpinClick}
-                className=" w-full flex justify-between items-center p-[16px] red_popup_box_list"
-              >
-                <div className=" flex gap-[12px] justify-center items-center">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="36"
-                    height="37"
-                    viewBox="0 0 36 37"
-                    fill="none"
-                  >
-                    <path
-                      d="M36 18.5087C36 28.4247 27.9209 36.5 18 36.5C8.07915 36.5 0 28.4247 0 18.5087C0 8.57525 8.07915 0.5 18 0.5C27.9209 0.5 36 8.57525 36 18.5087Z"
-                      fill="url(#paint0_linear_3565_9807)"
-                      fill-opacity="0.32"
-                    />
-                    <path
-                      d="M18 9C16.1705 9 14.3821 9.5425 12.861 10.5589C11.3398 11.5753 10.1542 13.02 9.45412 14.7102C8.75401 16.4004 8.57083 18.2603 8.92774 20.0546C9.28465 21.8489 10.1656 23.4971 11.4593 24.7907C12.7529 26.0844 14.4011 26.9653 16.1954 27.3223C17.9897 27.6792 19.8496 27.496 21.5398 26.7959C23.23 26.0958 24.6747 24.9102 25.6911 23.389C26.7075 21.8679 27.25 20.0795 27.25 18.25C27.2474 15.7975 26.272 13.4463 24.5379 11.7121C22.8037 9.97797 20.4525 9.00259 18 9ZM21.4785 11.2405C21.7569 14.3107 20.4014 15.7098 18.6226 16.9701C18.4225 14.7928 17.8719 12.5408 15.2099 10.9381C16.2192 10.5524 17.2975 10.3801 18.3768 10.4322C19.456 10.4842 20.5128 10.7594 21.4803 11.2405H21.4785ZM10.1891 18.7427C12.7097 16.9639 14.598 17.4371 16.5814 18.3523C14.7981 19.6144 13.1251 21.2171 13.0655 24.3212C12.2267 23.6405 11.5381 22.7933 11.0431 21.8332C10.548 20.8731 10.2572 19.8208 10.1891 18.7427ZM22.3297 24.7668C19.5325 23.4727 18.997 21.6022 18.7978 19.4303C19.9292 19.9515 21.1379 20.3864 22.4711 20.3864C23.4788 20.3864 24.5577 20.1374 25.7291 19.4899C25.5563 20.5561 25.1652 21.5751 24.5802 22.4832C23.9953 23.3912 23.2291 24.1686 22.3297 24.7668Z"
-                      fill="#F8E4FF"
-                    />
-                    <defs>
-                      <linearGradient
-                        id="paint0_linear_3565_9807"
-                        x1="18"
-                        y1="0.5"
-                        x2="18"
-                        y2="36.5"
-                        gradientUnits="userSpaceOnUse"
-                      >
-                        <stop stop-color="#E28EFF" />
-                        <stop offset="1" stop-color="#633672" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
-                  <div className=" flex flex-col gap-[8px]">
-                    <span className=" text-white text-[14px] font-[500]">
-                      幸运大转盘{" "}
-                      <span className="recommand_span px-[6px] py-[1px]">推荐</span>{" "}
-                    </span>
-                    <span className=" text-white/80 text-[14px]">
-                      获得丰厚的奖励和奖金
-                    </span>
-                  </div>
-                </div>
+            <div
+              onClick={handleLuckySpinClick}
+              className=" w-full flex justify-between items-center p-[16px] red_popup_box_list cursor-pointer"
+            >
+              {/* content */}
+              <div className=" flex gap-[12px] justify-center items-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="8"
-                  height="15"
-                  viewBox="0 0 8 15"
+                  width="36"
+                  height="37"
+                  viewBox="0 0 36 37"
                   fill="none"
                 >
                   <path
-                    d="M5.09133 7.49999L0 2.40866L1.45437 0.954285L8.00008 7.49999L1.45437 14.0457L0 12.5913L5.09133 7.49999Z"
-                    fill="white"
-                    fill-opacity="0.7"
+                    d="M36 18.5087C36 28.4247 27.9209 36.5 18 36.5C8.07915 36.5 0 28.4247 0 18.5087C0 8.57525 8.07915 0.5 18 0.5C27.9209 0.5 36 8.57525 36 18.5087Z"
+                    fill="url(#paint0_linear_3565_9807)"
+                    fill-opacity="0.32"
                   />
+                  <path
+                    d="M18 9C16.1705 9 14.3821 9.5425 12.861 10.5589C11.3398 11.5753 10.1542 13.02 9.45412 14.7102C8.75401 16.4004 8.57083 18.2603 8.92774 20.0546C9.28465 21.8489 10.1656 23.4971 11.4593 24.7907C12.7529 26.0844 14.4011 26.9653 16.1954 27.3223C17.9897 27.6792 19.8496 27.496 21.5398 26.7959C23.23 26.0958 24.6747 24.9102 25.6911 23.389C26.7075 21.8679 27.25 20.0795 27.25 18.25C27.2474 15.7975 26.272 13.4463 24.5379 11.7121C22.8037 9.97797 20.4525 9.00259 18 9ZM21.4785 11.2405C21.7569 14.3107 20.4014 15.7098 18.6226 16.9701C18.4225 14.7928 17.8719 12.5408 15.2099 10.9381C16.2192 10.5524 17.2975 10.3801 18.3768 10.4322C19.456 10.4842 20.5128 10.7594 21.4803 11.2405H21.4785ZM10.1891 18.7427C12.7097 16.9639 14.598 17.4371 16.5814 18.3523C14.7981 19.6144 13.1251 21.2171 13.0655 24.3212C12.2267 23.6405 11.5381 22.7933 11.0431 21.8332C10.548 20.8731 10.2572 19.8208 10.1891 18.7427ZM22.3297 24.7668C19.5325 23.4727 18.997 21.6022 18.7978 19.4303C19.9292 19.9515 21.1379 20.3864 22.4711 20.3864C23.4788 20.3864 24.5577 20.1374 25.7291 19.4899C25.5563 20.5561 25.1652 21.5751 24.5802 22.4832C23.9953 23.3912 23.2291 24.1686 22.3297 24.7668Z"
+                    fill="#F8E4FF"
+                  />
+                  <defs>
+                    <linearGradient
+                      id="paint0_linear_3565_9807"
+                      x1="18"
+                      y1="0.5"
+                      x2="18"
+                      y2="36.5"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <stop stop-color="#E28EFF" />
+                      <stop offset="1" stop-color="#633672" />
+                    </linearGradient>
+                  </defs>
                 </svg>
-              </div> */}
+                <div className=" flex flex-col gap-[8px]">
+                  <span className=" text-white text-[14px] font-[500]">
+                    幸运大转盘{" "}
+                    <span className="recommand_span px-[6px] py-[1px]">
+                      推荐
+                    </span>{" "}
+                  </span>
+                  <span className=" text-white/80 text-[14px]">
+                    获取丰厚的奖励和奖金
+                  </span>
+                </div>
+              </div>
+              {/* icon */}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="8"
+                height="15"
+                viewBox="0 0 8 15"
+                fill="none"
+              >
+                <path
+                  d="M5.09133 7.49999L0 2.40866L1.45437 0.954285L8.00008 7.49999L1.45437 14.0457L0 12.5913L5.09133 7.49999Z"
+                  fill="white"
+                  fill-opacity="0.7"
+                />
+              </svg>
+            </div>
           </div>
         </div>
       </div>

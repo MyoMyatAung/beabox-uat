@@ -3,6 +3,13 @@ import { convertToSecurePayload, convertToSecureUrl } from "@/lib/encrypt";
 import { decryptWithAes } from "@/lib/decrypt";
 import { getDeviceInfo } from "@/lib/deviceInfo";
 
+type GetNotificationParams = {
+  type: string;
+  page?: number;
+  pageSize?: number;
+  authState?: string;
+};
+
 export const profileApi = createApi({
   reducerPath: "profileApi",
   // baseQuery: fetchBaseQuery({ baseUrl: "https://77eewm.qdhgtch.com/api/v1" }),
@@ -128,6 +135,7 @@ export const profileApi = createApi({
         url: convertToSecureUrl(`/profile/logout`),
         method: "POST",
       }),
+      invalidatesTags: ["NOTI_LIST"],
     }),
     changePassword: builder.mutation({
       query: ({ current_password, new_password }) => ({
@@ -248,13 +256,24 @@ export const profileApi = createApi({
         body: convertToSecurePayload({ follow_user_id, status }),
       }),
     }),
-    getNoti: builder.query<any, string>({
-      query: (type) => ({
-        url: convertToSecureUrl(
-          `/notification/list?type=general&pageSize=10&page=1&type=${type}`
-        ),
-        method: "GET",
-      }),
+    getNoti: builder.query<any, string | GetNotificationParams>({
+      query: (args) => {
+        const params =
+          typeof args === "string"
+            ? { type: args, page: 1, pageSize: 10 }
+            : {
+                type: args.type,
+                page: args.page ?? 1,
+                pageSize: args.pageSize ?? 10,
+              };
+
+        return {
+          url: convertToSecureUrl(
+            `/notification/list?type=${params.type}&pageSize=${params.pageSize}&page=${params.page}`
+          ),
+          method: "GET",
+        };
+      },
       providesTags: ["NOTI_LIST"],
     }),
     readNoti: builder.mutation<any, any>({

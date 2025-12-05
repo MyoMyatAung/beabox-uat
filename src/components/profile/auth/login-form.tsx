@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { useGetCaptchaMutation, useLoginMutation } from "@/store/api/authApi";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/store/slices/persistSlice";
+import { profileApi } from "@/store/api/profileApi";
 import loader from "@/page/home/vod_loader.gif";
 import {
   Dialog,
@@ -95,6 +96,8 @@ const LoginForm = ({ setIsOpen }: any) => {
       dispatch(setIsDrawerOpen(false));
       dispatch(setShowAlert(true));
       dispatch(setAlertText(loginData?.message));
+      // Invalidate notification cache after login
+      dispatch(profileApi.util.invalidateTags(["NOTI_LIST"]));
       setShow验证码(false);
       setflashLoading(false);
       setIsOpen(false);

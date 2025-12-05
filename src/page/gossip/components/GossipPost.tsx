@@ -36,6 +36,7 @@ interface MediaItem {
 
 interface Post {
   post_id: string;
+  category_id?: string;
   user: GossipPostUser;
   content: string;
   media: MediaItem[];
@@ -205,6 +206,7 @@ const GossipPost = ({ post }: GossipPostProps) => {
     try {
       const response = await uninterestGossipPost({
         post_id: post.post_id,
+        category_id: post.category_id,
       }).unwrap();
       dispatch(
         showToast({
@@ -229,7 +231,9 @@ const GossipPost = ({ post }: GossipPostProps) => {
     }
     // Small delay to ensure Redux persist has flushed the state
     setTimeout(() => {
-      navigate(`/gossip/reports/${post.post_id}`);
+      navigate(`/gossip/reports/${post.post_id}`, {
+        state: { categoryId: post.category_id },
+      });
     }, 150);
   };
 
