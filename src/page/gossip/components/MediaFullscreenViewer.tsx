@@ -732,16 +732,37 @@ const MediaFullscreenViewer = ({
 
   const handleSaveVideo = () => {
     setShowMoreOptions(false);
-    // TODO: Implement save video functionality
-    const currentVideo = videoRefs.current.get(currentIndex);
-    if (currentVideo && currentMedia.type === "video") {
-      const a = document.createElement("a");
-      a.href = currentMedia.url;
-      a.download = `video-${currentMedia.id}.mp4`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+    if (!currentMedia) return;
+
+    // Extract file extension from URL to preserve original format
+    let extension = "";
+    try {
+      const url = new URL(currentMedia.url);
+      const pathname = url.pathname;
+      const lastDotIndex = pathname.lastIndexOf(".");
+      if (lastDotIndex !== -1) {
+        extension = pathname.substring(lastDotIndex);
+      }
+    } catch {
+      // If URL parsing fails, use default extension based on type
     }
+
+    // Fallback to default extension if not found
+    if (!extension) {
+      extension = currentMedia.type === "video" ? ".mp4" : ".jpg";
+    }
+
+    // Open media in new tab
+    window.open(currentMedia.url, "_blank");
+
+    // Auto-download with original format
+    const a = document.createElement("a");
+    a.href = currentMedia.url;
+    a.download = `${currentMedia.type}-${currentMedia.id}${extension}`;
+    a.target = "_blank";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
 
   const handleReport = () => {

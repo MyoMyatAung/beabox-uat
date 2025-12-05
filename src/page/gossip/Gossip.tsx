@@ -4,7 +4,10 @@ import { useDispatch } from "react-redux";
 import { sethideNew } from "@/page/home/services/hideNewSlice";
 import GossipTopNavbar from "./components/GossipTopNavbar";
 import GossipPost from "./components/GossipPost";
-import { useGetGossipPostsQuery as useExternalGossipPostsQuery } from "./services/gossipSlice";
+import {
+  useGetGossipPostsQuery as useExternalGossipPostsQuery,
+  useGetGossipCategoriesQuery,
+} from "./services/gossipSlice";
 import type { GossipPostMedia } from "./services/gossipSlice";
 
 type TabType = "hot" | "encyclopedia" | "celebrity";
@@ -21,7 +24,7 @@ const tabs: Tab[] = [
   {
     id: "encyclopedia",
     label: "吃瓜百科",
-    categoryId: "692fef5f317b970b85090923",
+    categoryId: "69315295035d410eba0b26d7",
   }, // Food
   {
     id: "celebrity",
@@ -54,16 +57,11 @@ const Gossip = () => {
     isLoading,
     error,
     refetch,
-  } = useExternalGossipPostsQuery(
-    {
-      category_id: activeTabConfig?.categoryId ?? "",
-      page,
-      pageSize,
-    },
-    {
-      skip: !hasCategoryId,
-    }
-  );
+  } = useExternalGossipPostsQuery({
+    category_id: "",
+    page,
+    pageSize,
+  });
 
   type GossipPostData = ComponentProps<typeof GossipPost>["post"];
 
