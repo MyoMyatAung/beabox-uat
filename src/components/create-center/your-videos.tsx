@@ -21,7 +21,7 @@ const YourVideos = () => {
   return (
     <section
       onClick={() => navigate(paths.your_videos)}
-      className="bg-[#24222C] p-5 rounded-[20px] mx-5"
+      className="bg-[#24222C] p-5 rounded-[20px]"
     >
       <div className="flex items-center gap-2 ">
         <img src={yourvideo} className="w-9" alt="" />

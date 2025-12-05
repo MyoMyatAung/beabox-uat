@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useWatchtPostMutation } from "../../services/homeApi";
 import { showToast } from "../../services/errorSlice";
 import { isIOSDevice } from "@/lib/deviceInfo";
+import { useLocation } from "react-router-dom";
 
 import { sethideBar } from "../../services/hideBarSlice";
 import forward from "../../Fastforward.gif";
@@ -116,6 +117,8 @@ const DetailPlayer = ({
   const touchInfo = useRef<{ x: number; y: number; time: number } | null>(null);
 
   const dispatch = useDispatch();
+  const location = useLocation();
+  const isStoryDetailPage = location.pathname.includes("/story_detail");
 
   const [thumbnailPreview, setThumbnailPreview] = useState({
     visible: false,
@@ -237,16 +240,22 @@ const DetailPlayer = ({
 
   // Update thumbnail preview
   const updateThumbnailPreview = (time: number, clientX: number) => {
-    // if (!artPlayerInstanceRef.current || !spriteImageUrlRef.current) return;
+    // Ensure sprite is loaded if available
+    if (video?.sprite_url && !spriteImageUrlRef.current && !isSpriteLoading) {
+      loadAndDecryptSprite();
+    }
 
     const pos = getSpritePosition(time);
     if (!pos) return;
+
+    // For story videos, position below the progress bar; for home videos, position above
+    const yPosition = isStoryDetailPage ? 100 : -100;
 
     setThumbnailPreview({
       visible: true,
       position: {
         x: clientX - 80, // Center the preview under the cursor
-        y: -100, // Position above the progress bar
+        y: yPosition, // Position above or below the progress bar based on page type
       },
       time,
     });
@@ -260,35 +269,73 @@ const DetailPlayer = ({
     const previewElement = playerContainerRef.current?.querySelector(
       ".thumbnail-preview"
     ) as HTMLDivElement;
-    //  if (!previewElement || !spriteImageUrlRef.current) return;
+
+    if (!previewElement) return;
 
     if (thumbnailPreview.visible) {
       const pos = getSpritePosition(thumbnailPreview.time);
       if (pos) {
         previewElement.style.display = "block";
+        previewElement.style.visibility = "visible";
+        previewElement.style.opacity = "1";
+        previewElement.style.zIndex = "10000";
+
         // Calculate maximum left position to keep thumbnail within viewport
         const thumbnailWidth = metadata.isPortrait ? 90 : 160;
         const viewportWidth = window.innerWidth;
         const maxLeft = viewportWidth - thumbnailWidth - 10; // buffer from right edge
-        const innerDiv = previewElement.querySelector(".bg-th");
+        const innerDiv = previewElement.querySelector(
+          ".bg-th"
+        ) as HTMLDivElement;
 
         // Constrain the position
         let leftPosition = thumbnailPreview.position.x + 20;
         leftPosition = Math.max(10, Math.min(leftPosition, maxLeft)); // 10px minimum from left edge
 
         previewElement.style.left = `${leftPosition}px`;
-        previewElement.style.bottom = "100px";
 
-        if (isSpriteLoading && video?.sprite_url) {
-          const innerDiv = previewElement.querySelector(".bg-th");
-
-          if (innerDiv) {
-            innerDiv.style.backgroundImage = `url(${sprite_loading})`;
+        // Position above the progress bar for both story and home videos
+        // Progress bar is at bottom: 0px with height ~44px, so position thumbnail above it
+        if (isStoryDetailPage) {
+          // For story videos, ensure it's positioned relative to the player container
+          previewElement.style.position = "fixed";
+          const progressContainer = playerContainerRef.current?.querySelector(
+            ".custom-progress-container"
+          ) as HTMLElement;
+          if (progressContainer) {
+            const containerRect = progressContainer.getBoundingClientRect();
+            const viewportTop = window.scrollY || 0;
+            previewElement.style.top = `${
+              containerRect.top -
+              viewportTop -
+              (metadata.isPortrait ? 160 : 90) -
+              20
+            }px`; // Increased spacing from progress bar (moved up)
+            previewElement.style.left = `${leftPosition}px`;
+            previewElement.style.bottom = "auto";
+          } else {
+            previewElement.style.position = "absolute";
+            previewElement.style.bottom = `${44 + 10}px`;
           }
         } else {
-          const innerDiv = previewElement.querySelector(".bg-th");
-          if (innerDiv) {
+          previewElement.style.position = "absolute";
+          previewElement.style.top = "auto";
+          previewElement.style.bottom = `${44 + 20}px`; // 44px (progress bar height) + 20px spacing (moved up)
+        }
+        previewElement.style.zIndex = "10000"; // Ensure it's above other elements
+
+        if (innerDiv) {
+          if (isSpriteLoading && video?.sprite_url) {
+            innerDiv.style.backgroundImage = `url(${sprite_loading})`;
+            innerDiv.style.backgroundSize = "cover";
+            innerDiv.style.backgroundPosition = "center";
+          } else if (spriteImageUrlRef.current) {
             innerDiv.style.backgroundImage = `url(${spriteImageUrlRef.current})`;
+          } else if (video?.sprite_url) {
+            // Sprite not loaded yet, show loading state
+            innerDiv.style.backgroundImage = `url(${sprite_loading})`;
+            innerDiv.style.backgroundSize = "cover";
+            innerDiv.style.backgroundPosition = "center";
           }
         }
 
@@ -307,27 +354,28 @@ const DetailPlayer = ({
         const scaledX = pos.x * scale;
         const scaledY = pos.y * scale;
 
-        if (innerDiv) {
+        if (innerDiv && spriteImageUrlRef.current && !isSpriteLoading) {
           // Set the background size and position with appropriate scaling
           innerDiv.style.backgroundPosition = `-${scaledX}px -${scaledY}px`;
-        }
 
-        // Calculate the full sprite size
-        const fullWidth = metadata.tileCols * metadata.tileWidth;
-        const fullHeight = metadata.tileRows * metadata.tileHeight;
+          // Calculate the full sprite size
+          const fullWidth = metadata.tileCols * metadata.tileWidth;
+          const fullHeight = metadata.tileRows * metadata.tileHeight;
 
-        // Scale the full sprite to match our thumbnail dimensions while maintaining aspect ratio
-        const scaledWidth = fullWidth * scale;
-        const scaledHeight = fullHeight * scale;
+          // Scale the full sprite to match our thumbnail dimensions while maintaining aspect ratio
+          const scaledWidth = fullWidth * scale;
+          const scaledHeight = fullHeight * scale;
 
-        if (innerDiv) {
           innerDiv.style.backgroundSize = `${scaledWidth}px ${scaledHeight}px`;
         }
       }
     } else {
-      previewElement.style.display = "none";
+      if (previewElement) {
+        previewElement.style.display = "none";
+        previewElement.style.visibility = "hidden";
+      }
     }
-  }, [thumbnailPreview]);
+  }, [thumbnailPreview, isSpriteLoading, isStoryDetailPage, metadata]);
 
   // Format time (e.g., 65 => "01:05")
   const formatTime = (time: number) => {
@@ -861,8 +909,9 @@ const DetailPlayer = ({
             bottom: "0px",
             left: "5%",
             width: "90%",
-            height: "25px",
-
+            height: "44px", // Increased height for better touch area
+            paddingTop: "20px", // Add padding to increase touch area above progress bar
+            paddingBottom: "0px",
             zIndex: "9999",
             pointerEvents: "auto", // Ensure it can receive pointer events
             display: "block", // Always display the container
@@ -939,8 +988,12 @@ const DetailPlayer = ({
               );
 
               // Update thumbnail preview
-              if (e instanceof MouseEvent) {
-                updateThumbnailPreview(seekTimeRef.current, e.clientX);
+              const clientX =
+                (e as MouseEvent).clientX ||
+                (e as TouchEvent).touches?.[0]?.clientX ||
+                0;
+              if (clientX > 0) {
+                updateThumbnailPreview(seekTimeRef.current, clientX);
               }
 
               if (timeDisplayRef.current) {
@@ -958,10 +1011,54 @@ const DetailPlayer = ({
                 // } else {
                 //   timeDisplayRef.current.style.bottom = `100px`;
                 // }
-                if (metadata?.isPortrait) {
-                  timeDisplayRef.current.style.bottom = `270px`;
+                // Position timestamp above thumbnail preview
+                if (isStoryDetailPage) {
+                  // For story videos, position relative to progress bar using fixed positioning
+                  const progressContainer =
+                    playerContainerRef.current?.querySelector(
+                      ".custom-progress-container"
+                    ) as HTMLElement;
+                  if (progressContainer && timeDisplayRef.current) {
+                    const containerRect =
+                      progressContainer.getBoundingClientRect();
+                    const viewportTop = window.scrollY || 0;
+                    const thumbnailHeight = metadata?.isPortrait ? 160 : 90;
+                    // More spacing for portrait thumbnails (taller), less for landscape
+                    const spacing = metadata?.isPortrait ? 100 : 90;
+                    timeDisplayRef.current.style.position = "fixed";
+                    timeDisplayRef.current.style.top = `${
+                      containerRect.top -
+                      viewportTop -
+                      thumbnailHeight -
+                      spacing
+                    }px`; // Above thumbnail with spacing based on orientation
+                    timeDisplayRef.current.style.bottom = "auto";
+                    timeDisplayRef.current.style.left = "50%";
+                    timeDisplayRef.current.style.transform = "translateX(-50%)";
+                    timeDisplayRef.current.style.zIndex = "10001"; // Above thumbnail
+                  } else if (timeDisplayRef.current) {
+                    // Fallback positioning
+                    if (metadata?.isPortrait) {
+                      timeDisplayRef.current.style.bottom = `${
+                        44 + 10 + 160 + 10
+                      }px`;
+                    } else {
+                      timeDisplayRef.current.style.bottom = `${
+                        44 + 10 + 90 + 10
+                      }px`;
+                    }
+                  }
                 } else {
-                  timeDisplayRef.current.style.bottom = `200px`;
+                  // For home videos, use absolute positioning
+                  if (metadata?.isPortrait) {
+                    timeDisplayRef.current.style.bottom = `${
+                      44 + 10 + 160 + 10
+                    }px`; // progress bar + spacing + thumbnail height + spacing
+                  } else {
+                    timeDisplayRef.current.style.bottom = `${
+                      44 + 10 + 90 + 10
+                    }px`; // progress bar + spacing + thumbnail height + spacing
+                  }
                 }
                 timeDisplayRef.current.innerHTML = `<span style="border-radius: 100px;
                   background: rgba(0, 0, 0, 0.5);
@@ -1002,8 +1099,463 @@ const DetailPlayer = ({
               artPlayerInstanceRef.current.currentTime = seekTimeRef.current;
             });
 
-            // Mobile touch events
+            // Add touch events directly to progress bar for better touch detection
+            if (progressBarRef.current) {
+              // Also add pointer events for better cross-device support
+              progressBarRef.current.addEventListener("pointerdown", (e) => {
+                e.stopPropagation(); // Prevent event bubbling
+                setisInteractingWithProgressBar(true);
+
+                if (!artPlayerInstanceRef.current?.playing) {
+                  artPlayerInstanceRef.current?.play();
+                  artPlayerInstanceRef.current?.pause();
+                }
+                setShowRotate(true);
+                if (!artPlayerInstanceRef.current || !progressBarRef.current)
+                  return;
+
+                const clientX = (e as PointerEvent).clientX;
+                const rect = progressBarRef.current.getBoundingClientRect();
+                const touchX = clientX - rect.left;
+                const percent = Math.min(
+                  Math.max((touchX / rect.width) * 100, 0),
+                  100
+                );
+
+                progressBarRef.current.value = percent.toString();
+                progressBarRef.current.style.setProperty(
+                  "--progress",
+                  `${percent}%`
+                );
+                isDraggingRef.current = true;
+                dispatch(sethideBar(true));
+                progressBarRef.current.style.height = "10px";
+                progressBarRef.current.style.setProperty(
+                  "--thumb-width",
+                  "16px"
+                );
+                progressBarRef.current.style.setProperty(
+                  "--thumb-height",
+                  "20px"
+                );
+                progressBarRef.current.style.setProperty(
+                  "--thumb-radius",
+                  "5px"
+                );
+                timeDisplayRef.current!.style.display = "block";
+
+                const newTime =
+                  (percent / 100) * artPlayerInstanceRef.current.duration;
+                seekTimeRef.current = newTime;
+                updateThumbnailPreview(newTime, clientX);
+
+                // Update timestamp display
+                if (timeDisplayRef.current) {
+                  const currentTime = formatTime(newTime);
+                  const duration = formatTime(
+                    artPlayerInstanceRef.current.duration
+                  );
+
+                  // Position timestamp above thumbnail preview
+                  if (isStoryDetailPage) {
+                    const progressContainer =
+                      playerContainerRef.current?.querySelector(
+                        ".custom-progress-container"
+                      ) as HTMLElement;
+                    if (progressContainer && timeDisplayRef.current) {
+                      const containerRect =
+                        progressContainer.getBoundingClientRect();
+                      const viewportTop = window.scrollY || 0;
+                      const thumbnailHeight = metadata?.isPortrait ? 160 : 90;
+                      // More spacing for portrait thumbnails (taller), less for landscape
+                      const spacing = metadata?.isPortrait ? 100 : 90;
+                      timeDisplayRef.current.style.position = "fixed";
+                      timeDisplayRef.current.style.top = `${
+                        containerRect.top -
+                        viewportTop -
+                        thumbnailHeight -
+                        spacing
+                      }px`;
+                      timeDisplayRef.current.style.bottom = "auto";
+                      timeDisplayRef.current.style.left = "50%";
+                      timeDisplayRef.current.style.transform =
+                        "translateX(-50%)";
+                      timeDisplayRef.current.style.zIndex = "10001";
+                    }
+                  } else {
+                    if (metadata?.isPortrait) {
+                      timeDisplayRef.current.style.bottom = `${
+                        44 + 10 + 160 + 10
+                      }px`;
+                    } else {
+                      timeDisplayRef.current.style.bottom = `${
+                        44 + 10 + 90 + 10
+                      }px`;
+                    }
+                  }
+                  timeDisplayRef.current.innerHTML = `<span style="border-radius: 100px;
+                  background: rgba(0, 0, 0, 0.5);
+                  padding: 16px 20px;
+                  width: 280px;
+                  display: inline-block;
+                  text-align: center;"><span style="color: #d53ff0;  
+                "  >${currentTime}</span> / ${duration} </span>`;
+                }
+              });
+
+              progressBarRef.current.addEventListener("pointermove", (e) => {
+                e.stopPropagation(); // Prevent event bubbling
+                setisInteractingWithProgressBar(true);
+                setShowRotate(true);
+                if (
+                  !artPlayerInstanceRef.current ||
+                  !progressBarRef.current ||
+                  !isDraggingRef.current
+                )
+                  return;
+                e.preventDefault();
+                const clientX = (e as PointerEvent).clientX;
+                updateThumbnailPreview(seekTimeRef.current, clientX);
+                const rect = progressBarRef.current.getBoundingClientRect();
+                const touchX = clientX - rect.left;
+                const percent = Math.min(
+                  Math.max((touchX / rect.width) * 100, 0),
+                  100
+                );
+
+                dispatch(sethideBar(true));
+
+                progressBarRef.current.value = percent.toString();
+                progressBarRef.current.style.setProperty(
+                  "--progress",
+                  `${percent}%`
+                );
+                seekTimeRef.current =
+                  (percent / 100) * artPlayerInstanceRef.current.duration;
+
+                // Update timestamp display during drag
+                if (timeDisplayRef.current) {
+                  timeDisplayRef.current.style.display = "block";
+                  const currentTime = formatTime(seekTimeRef.current);
+                  const duration = formatTime(
+                    artPlayerInstanceRef.current.duration
+                  );
+
+                  // Position timestamp above thumbnail preview
+                  if (isStoryDetailPage) {
+                    const progressContainer =
+                      playerContainerRef.current?.querySelector(
+                        ".custom-progress-container"
+                      ) as HTMLElement;
+                    if (progressContainer && timeDisplayRef.current) {
+                      const containerRect =
+                        progressContainer.getBoundingClientRect();
+                      const viewportTop = window.scrollY || 0;
+                      const thumbnailHeight = metadata?.isPortrait ? 160 : 90;
+                      // More spacing for portrait thumbnails (taller), less for landscape
+                      const spacing = metadata?.isPortrait ? 100 : 90;
+                      timeDisplayRef.current.style.position = "fixed";
+                      timeDisplayRef.current.style.top = `${
+                        containerRect.top -
+                        viewportTop -
+                        thumbnailHeight -
+                        spacing
+                      }px`;
+                      timeDisplayRef.current.style.bottom = "auto";
+                      timeDisplayRef.current.style.left = "50%";
+                      timeDisplayRef.current.style.transform =
+                        "translateX(-50%)";
+                      timeDisplayRef.current.style.zIndex = "10001";
+                    }
+                  } else {
+                    if (metadata?.isPortrait) {
+                      timeDisplayRef.current.style.bottom = `${
+                        44 + 10 + 160 + 10
+                      }px`;
+                    } else {
+                      timeDisplayRef.current.style.bottom = `${
+                        44 + 10 + 90 + 10
+                      }px`;
+                    }
+                  }
+                  timeDisplayRef.current.innerHTML = `<span style="border-radius: 100px;
+                  background: rgba(0, 0, 0, 0.5);
+                  padding: 16px 20px;
+                  width: 280px;
+                  display: inline-block;
+                  text-align: center;"><span style="color: #d53ff0;  
+                "  >${currentTime}</span> / ${duration} </span>`;
+                }
+              });
+
+              progressBarRef.current.addEventListener("pointerup", (e) => {
+                e.stopPropagation(); // Prevent event bubbling
+                setisInteractingWithProgressBar(false);
+                if (!artPlayerInstanceRef.current?.playing) {
+                  artPlayerInstanceRef.current?.play();
+                }
+
+                setShowRotate(false);
+                if (
+                  !artPlayerInstanceRef.current ||
+                  !progressBarRef.current ||
+                  !isDraggingRef.current
+                )
+                  return;
+                isDraggingRef.current = false;
+                dispatch(sethideBar(false));
+                setThumbnailPreview((prev) => ({ ...prev, visible: false }));
+                progressBarRef.current.style.height = "4px";
+                progressBarRef.current.style.setProperty(
+                  "--thumb-width",
+                  "6px"
+                );
+                progressBarRef.current.style.setProperty(
+                  "--thumb-height",
+                  "16px"
+                );
+                progressBarRef.current.style.setProperty(
+                  "--thumb-radius",
+                  "5px"
+                );
+                timeDisplayRef.current!.style.display = "none";
+                artPlayerInstanceRef.current.currentTime = seekTimeRef.current;
+              });
+
+              progressBarRef.current.addEventListener("touchstart", (e) => {
+                e.stopPropagation(); // Prevent event bubbling
+                setisInteractingWithProgressBar(true);
+
+                if (!artPlayerInstanceRef.current?.playing) {
+                  artPlayerInstanceRef.current?.play();
+                  artPlayerInstanceRef.current?.pause();
+                }
+                setShowRotate(true);
+                if (!artPlayerInstanceRef.current || !progressBarRef.current)
+                  return;
+                const touch = e.touches[0];
+
+                const rect = progressBarRef.current.getBoundingClientRect();
+                const touchX = touch.clientX - rect.left;
+                const percent = Math.min(
+                  Math.max((touchX / rect.width) * 100, 0),
+                  100
+                );
+
+                progressBarRef.current.value = percent.toString();
+                progressBarRef.current.style.setProperty(
+                  "--progress",
+                  `${percent}%`
+                );
+                isDraggingRef.current = true;
+                dispatch(sethideBar(true));
+                progressBarRef.current.style.height = "10px";
+                progressBarRef.current.style.setProperty(
+                  "--thumb-width",
+                  "16px"
+                );
+                progressBarRef.current.style.setProperty(
+                  "--thumb-height",
+                  "20px"
+                );
+                progressBarRef.current.style.setProperty(
+                  "--thumb-radius",
+                  "5px"
+                );
+                timeDisplayRef.current!.style.display = "block";
+
+                const newTime =
+                  (percent / 100) * artPlayerInstanceRef.current.duration;
+                seekTimeRef.current = newTime;
+                updateThumbnailPreview(newTime, touch.clientX);
+
+                // Update timestamp display
+                if (timeDisplayRef.current) {
+                  const currentTime = formatTime(newTime);
+                  const duration = formatTime(
+                    artPlayerInstanceRef.current.duration
+                  );
+
+                  // Position timestamp above thumbnail preview
+                  if (isStoryDetailPage) {
+                    const progressContainer =
+                      playerContainerRef.current?.querySelector(
+                        ".custom-progress-container"
+                      ) as HTMLElement;
+                    if (progressContainer && timeDisplayRef.current) {
+                      const containerRect =
+                        progressContainer.getBoundingClientRect();
+                      const viewportTop = window.scrollY || 0;
+                      const thumbnailHeight = metadata?.isPortrait ? 160 : 90;
+                      // More spacing for portrait thumbnails (taller), less for landscape
+                      const spacing = metadata?.isPortrait ? 100 : 90;
+                      timeDisplayRef.current.style.position = "fixed";
+                      timeDisplayRef.current.style.top = `${
+                        containerRect.top -
+                        viewportTop -
+                        thumbnailHeight -
+                        spacing
+                      }px`;
+                      timeDisplayRef.current.style.bottom = "auto";
+                      timeDisplayRef.current.style.left = "50%";
+                      timeDisplayRef.current.style.transform =
+                        "translateX(-50%)";
+                      timeDisplayRef.current.style.zIndex = "10001";
+                    }
+                  } else {
+                    if (metadata?.isPortrait) {
+                      timeDisplayRef.current.style.bottom = `${
+                        44 + 10 + 160 + 10
+                      }px`;
+                    } else {
+                      timeDisplayRef.current.style.bottom = `${
+                        44 + 10 + 90 + 10
+                      }px`;
+                    }
+                  }
+                  timeDisplayRef.current.innerHTML = `<span style="border-radius: 100px;
+                  background: rgba(0, 0, 0, 0.5);
+                  padding: 16px 20px;
+                  width: 280px;
+                  display: inline-block;
+                  text-align: center;"><span style="color: #d53ff0;  
+                "  >${currentTime}</span> / ${duration} </span>`;
+                }
+              });
+
+              progressBarRef.current.addEventListener("touchmove", (e) => {
+                e.stopPropagation(); // Prevent event bubbling
+                setisInteractingWithProgressBar(true);
+                setShowRotate(true);
+                if (
+                  !artPlayerInstanceRef.current ||
+                  !progressBarRef.current ||
+                  !isDraggingRef.current
+                )
+                  return;
+                e.preventDefault();
+                const touch = e.touches[0];
+                updateThumbnailPreview(seekTimeRef.current, touch.clientX);
+                const rect = progressBarRef.current.getBoundingClientRect();
+                const touchX = touch.clientX - rect.left;
+                const percent = Math.min(
+                  Math.max((touchX / rect.width) * 100, 0),
+                  100
+                );
+
+                // Make sure hideBar stays true during the entire touch drag operation
+                dispatch(sethideBar(true));
+
+                progressBarRef.current.value = percent.toString();
+                progressBarRef.current.style.setProperty(
+                  "--progress",
+                  `${percent}%`
+                );
+                seekTimeRef.current =
+                  (percent / 100) * artPlayerInstanceRef.current.duration;
+
+                // Update timestamp display during drag
+                if (timeDisplayRef.current) {
+                  timeDisplayRef.current.style.display = "block";
+                  const currentTime = formatTime(seekTimeRef.current);
+                  const duration = formatTime(
+                    artPlayerInstanceRef.current.duration
+                  );
+
+                  // Position timestamp above thumbnail preview
+                  if (isStoryDetailPage) {
+                    const progressContainer =
+                      playerContainerRef.current?.querySelector(
+                        ".custom-progress-container"
+                      ) as HTMLElement;
+                    if (progressContainer && timeDisplayRef.current) {
+                      const containerRect =
+                        progressContainer.getBoundingClientRect();
+                      const viewportTop = window.scrollY || 0;
+                      const thumbnailHeight = metadata?.isPortrait ? 160 : 90;
+                      // More spacing for portrait thumbnails (taller), less for landscape
+                      const spacing = metadata?.isPortrait ? 100 : 90;
+                      timeDisplayRef.current.style.position = "fixed";
+                      timeDisplayRef.current.style.top = `${
+                        containerRect.top -
+                        viewportTop -
+                        thumbnailHeight -
+                        spacing
+                      }px`;
+                      timeDisplayRef.current.style.bottom = "auto";
+                      timeDisplayRef.current.style.left = "50%";
+                      timeDisplayRef.current.style.transform =
+                        "translateX(-50%)";
+                      timeDisplayRef.current.style.zIndex = "10001";
+                    }
+                  } else {
+                    if (metadata?.isPortrait) {
+                      timeDisplayRef.current.style.bottom = `${
+                        44 + 10 + 160 + 10
+                      }px`;
+                    } else {
+                      timeDisplayRef.current.style.bottom = `${
+                        44 + 10 + 90 + 10
+                      }px`;
+                    }
+                  }
+                  timeDisplayRef.current.innerHTML = `<span style="border-radius: 100px;
+                  background: rgba(0, 0, 0, 0.5);
+                  padding: 16px 20px;
+                  width: 280px;
+                  display: inline-block;
+                  text-align: center;"><span style="color: #d53ff0;  
+                "  >${currentTime}</span> / ${duration} </span>`;
+                }
+              });
+
+              progressBarRef.current.addEventListener("touchend", (e) => {
+                e.stopPropagation(); // Prevent event bubbling
+                setisInteractingWithProgressBar(false);
+                if (!artPlayerInstanceRef.current?.playing) {
+                  artPlayerInstanceRef.current?.play();
+                }
+
+                setShowRotate(false);
+                if (
+                  !artPlayerInstanceRef.current ||
+                  !progressBarRef.current ||
+                  !isDraggingRef.current
+                )
+                  return;
+                isDraggingRef.current = false;
+                dispatch(sethideBar(false));
+                setThumbnailPreview((prev) => ({ ...prev, visible: false }));
+                progressBarRef.current.style.height = "4px";
+                progressBarRef.current.style.setProperty(
+                  "--thumb-width",
+                  "6px"
+                );
+                progressBarRef.current.style.setProperty(
+                  "--thumb-height",
+                  "16px"
+                );
+                progressBarRef.current.style.setProperty(
+                  "--thumb-radius",
+                  "5px"
+                );
+                timeDisplayRef.current!.style.display = "none";
+                artPlayerInstanceRef.current.currentTime = seekTimeRef.current;
+              });
+            }
+
+            // Mobile touch events on container (for areas around progress bar)
+            // Only handle if touch is NOT directly on the progress bar (let progress bar handler take priority)
             element.addEventListener("touchstart", (e) => {
+              // Check if touch is directly on progress bar - if so, let progress bar handler handle it
+              const target = e.target as HTMLElement;
+              if (
+                target === progressBarRef.current ||
+                progressBarRef.current?.contains(target)
+              ) {
+                return; // Let progress bar handler take over
+              }
+
               setisInteractingWithProgressBar(true);
 
               if (!artPlayerInstanceRef.current?.playing) {
@@ -1057,10 +1609,54 @@ const DetailPlayer = ({
                 // } else {
                 //   timeDisplayRef.current.style.bottom = `100px`;
                 // }
-                if (metadata?.isPortrait) {
-                  timeDisplayRef.current.style.bottom = `270px`;
+                // Position timestamp above thumbnail preview
+                if (isStoryDetailPage) {
+                  // For story videos, position relative to progress bar using fixed positioning
+                  const progressContainer =
+                    playerContainerRef.current?.querySelector(
+                      ".custom-progress-container"
+                    ) as HTMLElement;
+                  if (progressContainer && timeDisplayRef.current) {
+                    const containerRect =
+                      progressContainer.getBoundingClientRect();
+                    const viewportTop = window.scrollY || 0;
+                    const thumbnailHeight = metadata?.isPortrait ? 160 : 90;
+                    // More spacing for portrait thumbnails (taller), less for landscape
+                    const spacing = metadata?.isPortrait ? 100 : 90;
+                    timeDisplayRef.current.style.position = "fixed";
+                    timeDisplayRef.current.style.top = `${
+                      containerRect.top -
+                      viewportTop -
+                      thumbnailHeight -
+                      spacing
+                    }px`; // Above thumbnail with spacing based on orientation
+                    timeDisplayRef.current.style.bottom = "auto";
+                    timeDisplayRef.current.style.left = "50%";
+                    timeDisplayRef.current.style.transform = "translateX(-50%)";
+                    timeDisplayRef.current.style.zIndex = "10001"; // Above thumbnail
+                  } else if (timeDisplayRef.current) {
+                    // Fallback positioning
+                    if (metadata?.isPortrait) {
+                      timeDisplayRef.current.style.bottom = `${
+                        44 + 10 + 160 + 10
+                      }px`;
+                    } else {
+                      timeDisplayRef.current.style.bottom = `${
+                        44 + 10 + 90 + 10
+                      }px`;
+                    }
+                  }
                 } else {
-                  timeDisplayRef.current.style.bottom = `200px`;
+                  // For home videos, use absolute positioning
+                  if (metadata?.isPortrait) {
+                    timeDisplayRef.current.style.bottom = `${
+                      44 + 10 + 160 + 10
+                    }px`; // progress bar + spacing + thumbnail height + spacing
+                  } else {
+                    timeDisplayRef.current.style.bottom = `${
+                      44 + 10 + 90 + 10
+                    }px`; // progress bar + spacing + thumbnail height + spacing
+                  }
                 }
                 timeDisplayRef.current.innerHTML = `<span style="border-radius: 100px;
                 background: rgba(0, 0, 0, 0.5);
@@ -1073,6 +1669,15 @@ const DetailPlayer = ({
             });
 
             element.addEventListener("touchmove", (e) => {
+              // Check if touch is directly on progress bar - if so, let progress bar handler handle it
+              const target = e.target as HTMLElement;
+              if (
+                target === progressBarRef.current ||
+                progressBarRef.current?.contains(target)
+              ) {
+                return; // Let progress bar handler take over
+              }
+
               setisInteractingWithProgressBar(true);
               setShowRotate(true);
               if (
@@ -1117,10 +1722,54 @@ const DetailPlayer = ({
                 // } else {
                 //   timeDisplayRef.current.style.bottom = `100px`;
                 // }
-                if (metadata?.isPortrait) {
-                  timeDisplayRef.current.style.bottom = `270px`;
+                // Position timestamp above thumbnail preview
+                if (isStoryDetailPage) {
+                  // For story videos, position relative to progress bar using fixed positioning
+                  const progressContainer =
+                    playerContainerRef.current?.querySelector(
+                      ".custom-progress-container"
+                    ) as HTMLElement;
+                  if (progressContainer && timeDisplayRef.current) {
+                    const containerRect =
+                      progressContainer.getBoundingClientRect();
+                    const viewportTop = window.scrollY || 0;
+                    const thumbnailHeight = metadata?.isPortrait ? 160 : 90;
+                    // More spacing for portrait thumbnails (taller), less for landscape
+                    const spacing = metadata?.isPortrait ? 100 : 90;
+                    timeDisplayRef.current.style.position = "fixed";
+                    timeDisplayRef.current.style.top = `${
+                      containerRect.top -
+                      viewportTop -
+                      thumbnailHeight -
+                      spacing
+                    }px`; // Above thumbnail with spacing based on orientation
+                    timeDisplayRef.current.style.bottom = "auto";
+                    timeDisplayRef.current.style.left = "50%";
+                    timeDisplayRef.current.style.transform = "translateX(-50%)";
+                    timeDisplayRef.current.style.zIndex = "10001"; // Above thumbnail
+                  } else if (timeDisplayRef.current) {
+                    // Fallback positioning
+                    if (metadata?.isPortrait) {
+                      timeDisplayRef.current.style.bottom = `${
+                        44 + 10 + 160 + 10
+                      }px`;
+                    } else {
+                      timeDisplayRef.current.style.bottom = `${
+                        44 + 10 + 90 + 10
+                      }px`;
+                    }
+                  }
                 } else {
-                  timeDisplayRef.current.style.bottom = `200px`;
+                  // For home videos, use absolute positioning
+                  if (metadata?.isPortrait) {
+                    timeDisplayRef.current.style.bottom = `${
+                      44 + 10 + 160 + 10
+                    }px`; // progress bar + spacing + thumbnail height + spacing
+                  } else {
+                    timeDisplayRef.current.style.bottom = `${
+                      44 + 10 + 90 + 10
+                    }px`; // progress bar + spacing + thumbnail height + spacing
+                  }
                 }
 
                 // timeDisplayRef.current.textContent = `${currentTime} / ${duration}`;
@@ -1175,6 +1824,9 @@ const DetailPlayer = ({
     box-sizing: content-box;
     padding: 0;
     border-radius: 4px;
+    display: none;
+    visibility: hidden;
+    opacity: 0;
     /* Create space for the outside border */
     margin: 1.5px;
 ">
@@ -1225,6 +1877,7 @@ const DetailPlayer = ({
             height: "100%",
             pointerEvents: "none",
             zIndex: "9999",
+            overflow: "visible", // Always visible to allow thumbnail above progress bar
           },
 
           mounted: (element: HTMLElement) => {
@@ -1234,12 +1887,15 @@ const DetailPlayer = ({
 
             // Create a function to update the preview
             const updatePreview = () => {
-              // if (!previewElement || !spriteImageUrlRef.current) return;
+              if (!previewElement) return;
 
               if (thumbnailPreview.visible) {
                 const pos = getSpritePosition(thumbnailPreview.time);
                 if (pos) {
                   previewElement.style.display = "block";
+                  previewElement.style.visibility = "visible";
+                  previewElement.style.opacity = "1";
+
                   // Calculate maximum left position to keep thumbnail within viewport
                   const thumbnailWidth = metadata.isPortrait ? 90 : 160;
                   const viewportWidth = window.innerWidth;
@@ -1248,22 +1904,59 @@ const DetailPlayer = ({
                   // Constrain the position
                   let leftPosition = thumbnailPreview.position.x + 20;
                   leftPosition = Math.max(10, Math.min(leftPosition, maxLeft)); // 10px minimum from left edge
-                  const innerDiv = previewElement.querySelector(".bg-th");
+                  const innerDiv = previewElement.querySelector(
+                    ".bg-th"
+                  ) as HTMLDivElement;
 
-                  previewElement.style.left = `${leftPosition}px`;
-                  previewElement.style.bottom = "100px";
-
-                  if (isSpriteLoading && video?.sprite_url) {
-                    const innerDiv = previewElement.querySelector(".bg-th");
-                    if (innerDiv) {
-                      innerDiv.style.backgroundImage = `url(${sprite_loading})`;
+                  // Position above the progress bar for both story and home videos
+                  // Progress bar is at bottom: 0px with height ~44px, so position thumbnail above it
+                  if (isStoryDetailPage) {
+                    // For story videos, ensure it's positioned relative to the player container
+                    previewElement.style.position = "fixed";
+                    const progressContainer =
+                      playerContainerRef.current?.querySelector(
+                        ".custom-progress-container"
+                      ) as HTMLElement;
+                    if (progressContainer) {
+                      const containerRect =
+                        progressContainer.getBoundingClientRect();
+                      const viewportTop = window.scrollY || 0;
+                      previewElement.style.top = `${
+                        containerRect.top -
+                        viewportTop -
+                        (metadata.isPortrait ? 160 : 90) -
+                        10
+                      }px`;
+                      previewElement.style.left = `${leftPosition}px`;
+                      previewElement.style.bottom = "auto";
+                    } else {
+                      previewElement.style.position = "absolute";
+                      previewElement.style.bottom = `${44 + 10}px`;
+                      previewElement.style.left = `${leftPosition}px`;
                     }
                   } else {
-                    const innerDiv = previewElement.querySelector(".bg-th");
-                    if (innerDiv) {
+                    previewElement.style.position = "absolute";
+                    previewElement.style.top = "auto";
+                    previewElement.style.bottom = `${44 + 10}px`;
+                    previewElement.style.left = `${leftPosition}px`;
+                  }
+                  previewElement.style.zIndex = "10000";
+
+                  if (innerDiv) {
+                    if (isSpriteLoading && video?.sprite_url) {
+                      innerDiv.style.backgroundImage = `url(${sprite_loading})`;
+                      innerDiv.style.backgroundSize = "cover";
+                      innerDiv.style.backgroundPosition = "center";
+                    } else if (spriteImageUrlRef.current) {
                       innerDiv.style.backgroundImage = `url(${spriteImageUrlRef.current})`;
+                    } else if (video?.sprite_url) {
+                      // Sprite not loaded yet, show loading state
+                      innerDiv.style.backgroundImage = `url(${sprite_loading})`;
+                      innerDiv.style.backgroundSize = "cover";
+                      innerDiv.style.backgroundPosition = "center";
                     }
                   }
+
                   // Calculate the correct scale factor to fit the sprite in our thumbnail
                   const scaleX = metadata.isPortrait
                     ? 90 / metadata.tileWidth
@@ -1279,26 +1972,27 @@ const DetailPlayer = ({
                   const scaledX = pos.x * scale;
                   const scaledY = pos.y * scale;
 
-                  if (innerDiv) {
+                  if (
+                    innerDiv &&
+                    spriteImageUrlRef.current &&
+                    !isSpriteLoading
+                  ) {
                     innerDiv.style.backgroundPosition = `-${scaledX}px -${scaledY}px`;
-                  }
 
-                  // Set the background size and position with appropriate scaling
+                    // Calculate the full sprite size
+                    const fullWidth = metadata.tileCols * metadata.tileWidth;
+                    const fullHeight = metadata.tileRows * metadata.tileHeight;
 
-                  // Calculate the full sprite size
-                  const fullWidth = metadata.tileCols * metadata.tileWidth;
-                  const fullHeight = metadata.tileRows * metadata.tileHeight;
+                    // Scale the full sprite to match our thumbnail dimensions while maintaining aspect ratio
+                    const scaledWidth = fullWidth * scale;
+                    const scaledHeight = fullHeight * scale;
 
-                  // Scale the full sprite to match our thumbnail dimensions while maintaining aspect ratio
-                  const scaledWidth = fullWidth * scale;
-                  const scaledHeight = fullHeight * scale;
-
-                  if (innerDiv) {
                     innerDiv.style.backgroundSize = `${scaledWidth}px ${scaledHeight}px`;
                   }
                 }
               } else {
                 previewElement.style.display = "none";
+                previewElement.style.visibility = "hidden";
               }
             };
 

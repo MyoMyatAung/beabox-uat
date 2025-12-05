@@ -8,14 +8,14 @@ import r2 from "@/assets/createcenter/r2.png";
 import r3 from "@/assets/createcenter/r3.png";
 
 const RankList = () => {
-  const { data } = useGetTopListQuery("");
+  const { data, refetch } = useGetTopListQuery("");
   console.log(data);
   return (
     <div className="bg-[#24222C] p-5 rounded-[20px]">
       <div className="flex items-center justify-between pb-5">
         <p className="text-[16px]">顶级创作者</p>
         <Link
-          to={paths.ranking}
+          to={`${paths.ranking}?tab=author`}
           className="flex items-center justify-center gap-1 bg-[#FFFFFF1F] rounded-full px-2 py-1"
         >
           <span className="text-[12px]">查看更多</span>
@@ -27,10 +27,12 @@ const RankList = () => {
           {(item?.rank == 1 && <img src={r1} className="w-[25px]" />) ||
             (item?.rank == 2 && <img src={r2} className="w-[25px]" />) ||
             (item?.rank == 3 && <img src={r3} className="w-[25px]" />) || (
-              <p className="text-[16px] font-semibold w-[25px] text-center">{item?.rank}</p>
+              <p className="text-[16px] font-semibold w-[25px] text-center">
+                {item?.rank}
+              </p>
             )}
 
-          <RankingCard data={item} />
+          <RankingCard data={item} refetch={refetch} />
         </div>
       ))}
     </div>
