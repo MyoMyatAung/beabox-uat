@@ -7,6 +7,8 @@ import {
   AlertTriangle,
   Volume2,
   VolumeX,
+  Check,
+  Minus,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -17,10 +19,13 @@ import {
   useLikeGossipPostMutation,
   useUnlikeGossipPostMutation,
   useUninterestGossipPostMutation,
+  useFollowGossipUserMutation,
+  GossipPostUser,
 } from "../services/gossipSlice";
 import { showToast } from "@/page/home/services/errorSlice";
 import type { RootState } from "@/store/store";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
+import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 
 interface MediaItem {
   id: string;
@@ -31,14 +36,7 @@ interface MediaItem {
 
 interface Post {
   post_id: string;
-  user: {
-    id: string;
-    username: string;
-    profile_photo: string;
-    is_verified: boolean;
-    level: string;
-    level_badge_color: string;
-  };
+  user: GossipPostUser;
   content: string;
   media: MediaItem[];
   like_count: number;
@@ -58,6 +56,7 @@ const GossipPost = ({ post }: GossipPostProps) => {
   const user = useSelector((state: RootState) => state.persist?.user);
   const [isAuthenticated, setIsAuthenticated] = useState(Boolean(user?.token));
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
   const [isLiked, setIsLiked] = useState(post.is_liked);
   const [likeCount, setLikeCount] = useState(post.like_count);
   const [pendingLike, setPendingLike] = useState(false);
@@ -80,6 +79,9 @@ const GossipPost = ({ post }: GossipPostProps) => {
   const [unlikePost] = useUnlikeGossipPostMutation();
   const [uninterestGossipPost, { isLoading: uninterestLoading }] =
     useUninterestGossipPostMutation();
+
+  const [followGossipUser, { isLoading: followLoading }] =
+    useFollowGossipUserMutation();
 
   // Update authentication state when user changes
   useEffect(() => {
@@ -157,12 +159,23 @@ const GossipPost = ({ post }: GossipPostProps) => {
     navigate(`/user/${post.user.id}`);
   };
 
-  const handleFollow = () => {
+  const handleFollow = async () => {
     setShowPopover(false);
     if (!ensureAuthenticated()) {
       return;
     }
-    // TODO: Implement follow functionality
+    const response = await followGossipUser({
+      follow_user_id: post.user?.id?.toString() || "",
+      status: isFollowing ? "unfollow" : "follow",
+    }).unwrap();
+
+    dispatch(
+      showToast({
+        message: response?.message || "关注成功",
+        type: "success",
+      })
+    );
+    setIsFollowing((prev) => !prev);
   };
 
   const handleMoreOptionsClick = () => {
@@ -303,6 +316,10 @@ const GossipPost = ({ post }: GossipPostProps) => {
     };
   }, [showPopover, showMoreOptionsPopover]);
 
+  useEffect(() => {
+    setIsFollowing(post.user.is_following);
+  }, [post.user.is_following]);
+
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -334,13 +351,23 @@ const GossipPost = ({ post }: GossipPostProps) => {
           {/* Profile Picture with Follow Button */}
           <div className="relative" ref={profileRef}>
             <div className="cursor-pointer" onClick={handleProfileClick}>
-              <img
-                src={post.user.profile_photo}
-                alt={post.user.username}
-                className="w-10 h-10 rounded-full object-cover "
-              />
+              {post.user.profile_image ? (
+                <AsyncDecryptedImage
+                  imageUrl={post.user.profile_image}
+                  alt={post.user.nickname}
+                  className="!w-10 !h-10 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-[#FFFFFF12] flex items-center justify-center object-cover">
+                  <User size={22} className="text-white" />
+                </div>
+              )}
               <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-red-600 rounded-full flex items-center justify-center border-2 border-black cursor-pointer">
-                <Plus size={14} className="text-white" />
+                {isFollowing ? (
+                  <Check size={14} className="text-white" />
+                ) : (
+                  <Plus size={14} className="text-white" />
+                )}
               </div>
             </div>
 
@@ -360,10 +387,20 @@ const GossipPost = ({ post }: GossipPostProps) => {
                 <hr className="border-white/10" />
                 <button
                   onClick={handleFollow}
-                  className="w-full flex items-center justify-between px-4 py-2 text-white hover:bg-[#2E2C3A] transition-colors last:rounded-b-lg"
+                  disabled={followLoading}
+                  className="w-full px-4 py-2 text-white hover:bg-[#2E2C3A] transition-colors last:rounded-b-lg"
                 >
-                  <span className="text-sm">关注</span>
-                  <PlusCircle size={18} className="text-white" />
+                  {isFollowing ? (
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-sm">已关注</span>
+                      <Minus size={18} className="text-white" />
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-sm">关注</span>
+                      <PlusCircle size={18} className="text-white" />
+                    </div>
+                  )}
                 </button>
               </div>
             )}
@@ -376,12 +413,23 @@ const GossipPost = ({ post }: GossipPostProps) => {
                 className="text-white font-medium text-sm"
                 onClick={handleProfileClick}
               >
-                {post.user.username}
+                {post.user.nickname}
               </span>
-              {post.user.is_verified && (
-                <img src={verifiedBadge} alt="verified" className="w-4 h-4" />
+              {post.user.badge && (
+                <AsyncDecryptedImage
+                  imageUrl={post.user.badge}
+                  alt="badge"
+                  className="!w-4 !h-4"
+                />
               )}
             </div>
+            {post.user.level && (
+              <AsyncDecryptedImage
+                imageUrl={post.user.level}
+                alt="level"
+                className="!w-10 !h-5 object-contain"
+              />
+            )}
           </div>
         </div>
 
@@ -664,7 +712,10 @@ const GossipPost = ({ post }: GossipPostProps) => {
       />
 
       {/* Login Drawer */}
-      <LoginDrawer isOpen={isLoginDrawerOpen} setIsOpen={setIsLoginDrawerOpen} />
+      <LoginDrawer
+        isOpen={isLoginDrawerOpen}
+        setIsOpen={setIsLoginDrawerOpen}
+      />
     </div>
   );
 };

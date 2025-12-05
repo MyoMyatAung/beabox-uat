@@ -20,6 +20,8 @@ export interface GossipPostUser {
   nickname: string;
   profile_image: string;
   is_following: boolean;
+  level: string;
+  badge: string;
 }
 
 export interface GossipCommentUser {
@@ -278,6 +280,16 @@ export const gossipExternalApi = createApi({
         body: { model_id, type, report_content },
       }),
     }),
+    followGossipUser: builder.mutation<
+      GossipGenericResponse,
+      { follow_user_id: string; status: string }
+    >({
+      query: ({ follow_user_id, status }) => ({
+        url: "follower/change-follow-status",
+        method: "POST",
+        body: { follow_user_id, status },
+      }),
+    }),
   }),
 });
 
@@ -291,4 +303,5 @@ export const {
   useUnlikeGossipPostMutation,
   useUninterestGossipPostMutation,
   useReportGossipPostMutation,
+  useFollowGossipUserMutation,
 } = gossipExternalApi;

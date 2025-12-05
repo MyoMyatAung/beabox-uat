@@ -131,15 +131,11 @@ const Gossip = () => {
         post_id: post.id || `post-${index}`,
         user: {
           id: userId,
-          username: nickname,
-          profile_photo:
-            post.user?.profile_image ||
-            `https://api.dicebear.com/7.x/initials/svg?background=%23121016&seed=${encodeURIComponent(
-              nickname
-            )}`,
-          is_verified: false,
-          level: "Lv1",
-          level_badge_color: "#9333EA",
+          nickname: nickname,
+          profile_image: post.user?.profile_image || "",
+          is_following: post.user?.is_following ?? false,
+          badge: post.user?.badge ?? "",
+          level: post.user?.level ?? "",
         },
         content: post.description || "",
         media: mediaItems,

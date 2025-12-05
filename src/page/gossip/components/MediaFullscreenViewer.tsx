@@ -752,9 +752,6 @@ const MediaFullscreenViewer = ({
       extension = currentMedia.type === "video" ? ".mp4" : ".jpg";
     }
 
-    // Open media in new tab
-    window.open(currentMedia.url, "_blank");
-
     // Auto-download with original format
     const a = document.createElement("a");
     a.href = currentMedia.url;
@@ -1188,18 +1185,15 @@ const MediaFullscreenViewer = ({
             {/* More Options Popover */}
             {showMoreOptions && (
               <div className="absolute top-12 right-0 bg-[#1E1C28] rounded-lg shadow-lg border border-[#1E1C28] min-w-32 z-50">
-                {isVideo && (
-                  <>
-                    <button
-                      onClick={handleSaveVideo}
-                      className="w-full flex items-center justify-between px-4 py-2 text-white hover:bg-[#2E2C3A] transition-colors first:rounded-t-lg"
-                    >
-                      <span className="text-sm">保存视频</span>
-                      <Download size={18} className="text-white" />
-                    </button>
-                    <hr className="border-white/10" />
-                  </>
-                )}
+                <button
+                  onClick={handleSaveVideo}
+                  className="w-full flex items-center justify-between px-4 py-2 text-white hover:bg-[#2E2C3A] transition-colors first:rounded-t-lg"
+                >
+                  <span className="text-sm">保存视频</span>
+                  <Download size={18} className="text-white" />
+                </button>
+                <hr className="border-white/10" />
+
                 <button
                   onClick={handleReport}
                   className="w-full flex items-center justify-between px-4 py-2 text-white hover:bg-[#2E2C3A] transition-colors last:rounded-b-lg"

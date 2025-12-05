@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
-import { ChevronLeft, Volume2, VolumeX } from "lucide-react";
+import { ChevronLeft, User, Volume2, VolumeX } from "lucide-react";
 import CommentSection, {
   CommentSectionProps,
 } from "./components/CommentSection";
@@ -14,8 +14,12 @@ import {
   usePostGossipCommentMutation,
   useLikeGossipPostMutation,
   useUnlikeGossipPostMutation,
+  useFollowGossipUserMutation,
 } from "./services/gossipSlice";
 import { getDeviceInfo } from "@/lib/deviceInfo";
+import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
+import LoginDrawer from "@/components/profile/auth/login-drawer";
+import { showToast } from "../home/services/errorSlice";
 
 type GossipMedia = {
   id: string;
@@ -26,11 +30,10 @@ type GossipMedia = {
 
 type GossipUser = {
   id: string;
-  username: string;
-  profile_photo: string;
-  is_verified?: boolean;
+  nickname: string;
+  profile_image: string;
   level?: string;
-  level_badge_color?: string;
+  badge?: string;
   is_following?: boolean;
 };
 
@@ -58,11 +61,15 @@ interface CommentListApiResponse {
 }
 
 const PostDetail = () => {
+  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.persist?.user);
+  const [isAuthenticated, setIsAuthenticated] = useState(Boolean(user?.token));
   const { postId } = useParams<{ postId: string }>();
   const location = useLocation();
   const navigate = useNavigate();
   const post = (location.state as { post?: GossipDetailPost } | undefined)
     ?.post;
+
   const [isMuted, setIsMuted] = useState(true);
   const [isFollowing, setIsFollowing] = useState(
     post?.user.is_following ?? false
@@ -77,12 +84,16 @@ const PostDetail = () => {
   const [highlightCommentId, setHighlightCommentId] = useState<string | null>(
     null
   );
+  const [isLoginDrawerOpen, setIsLoginDrawerOpen] = useState(false);
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
   const [fullscreenIndex, setFullscreenIndex] = useState(0);
   const [postIsLiked, setPostIsLiked] = useState(post?.is_liked ?? false);
   const [postLikeCount, setPostLikeCount] = useState(post?.like_count ?? 0);
   const [likePost] = useLikeGossipPostMutation();
   const [unlikePost] = useUnlikeGossipPostMutation();
+  const [followGossipUser, { isLoading: followLoading }] =
+    useFollowGossipUserMutation();
+
   const currentUser = useSelector((state: RootState) => state?.persist?.user);
   const fallbackCommentUser = useMemo<GossipCommentType["user"]>(
     () => ({
@@ -112,6 +123,21 @@ const PostDetail = () => {
       ),
     []
   );
+
+  const ensureAuthenticated = () => {
+    if (isAuthenticated) {
+      return true;
+    }
+    setIsLoginDrawerOpen(true);
+    return false;
+  };
+
+  // Update authentication state when user changes
+  useEffect(() => {
+    const authenticated = Boolean(user?.token);
+    setIsAuthenticated(authenticated);
+  }, [user?.token]);
+
   const normalizeComment = useCallback(
     (payload: Partial<GossipCommentType>): GossipCommentType => ({
       comment_id: payload.comment_id ?? `temp-${Date.now()}`,
@@ -143,6 +169,7 @@ const PostDetail = () => {
       setPostLikeCount(post.like_count ?? 0);
     }
   }, [post]);
+
   const togglePostLike = useCallback(async () => {
     if (!post?.post_id) return;
     const nextLiked = !postIsLiked;
@@ -209,9 +236,22 @@ const PostDetail = () => {
     }
   };
 
-  const handleFollow = () => {
-    setIsFollowing(!isFollowing);
-    // TODO: Implement follow API call
+  const handleFollow = async () => {
+    if (!ensureAuthenticated()) {
+      return;
+    }
+    const response = await followGossipUser({
+      follow_user_id: post?.user?.id?.toString() || "",
+      status: isFollowing ? "unfollow" : "follow",
+    }).unwrap();
+
+    dispatch(
+      showToast({
+        message: response?.message || "关注成功",
+        type: "success",
+      })
+    );
+    setIsFollowing((prev) => !prev);
   };
 
   const appendCommentToState = useCallback(
@@ -398,34 +438,41 @@ const PostDetail = () => {
             <ChevronLeft size={20} />
           </button>
           <div className="flex items-center gap-3 flex-1 ml-4">
-            <img
-              src={post.user.profile_photo}
-              alt={post.user.username}
-              className="w-10 h-10 rounded-full object-cover"
-            />
+            {post.user.profile_image ? (
+              <AsyncDecryptedImage
+                imageUrl={post.user.profile_image}
+                alt={post.user.nickname}
+                className="!w-10 !h-10 rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-[#FFFFFF12] flex items-center justify-center object-cover">
+                <User size={22} className="text-white" />
+              </div>
+            )}
             <div className="flex-1">
               <div className="flex items-center gap-2">
                 <span className="text-white font-medium text-sm">
-                  {post.user.username}
+                  {post.user.nickname}
                 </span>
-                {post.user.is_verified && (
-                  <img src={verifiedBadge} alt="verified" className="w-4 h-4" />
-                )}
-                {post.user.level && (
-                  <span
-                    className="px-2 py-0.5 rounded text-xs font-medium"
-                    style={{
-                      backgroundColor: post.user.level_badge_color || "#9333EA",
-                      color: "white",
-                    }}
-                  >
-                    {post.user.level}
-                  </span>
+                {post.user.badge && (
+                  <AsyncDecryptedImage
+                    imageUrl={post.user.badge}
+                    alt="badge"
+                    className="!w-4 !h-4"
+                  />
                 )}
               </div>
+              {post.user.level && (
+                <AsyncDecryptedImage
+                  imageUrl={post.user.level}
+                  alt="level"
+                  className="!w-11 !h-6 object-contain"
+                />
+              )}
             </div>
             <button
               onClick={handleFollow}
+              disabled={followLoading}
               className={`px-4 py-1.5 rounded-2xl border text-sm font-medium transition-all text-white ${
                 isFollowing
                   ? "bg-transparent border-pink-400 text-pink-400"
@@ -637,6 +684,12 @@ const PostDetail = () => {
           onShare: () => {},
         }}
         commentSectionProps={detailCommentSectionProps}
+      />
+
+      {/* Login Drawer */}
+      <LoginDrawer
+        isOpen={isLoginDrawerOpen}
+        setIsOpen={setIsLoginDrawerOpen}
       />
     </div>
   );
