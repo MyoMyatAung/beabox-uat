@@ -4,37 +4,47 @@ import { useDispatch } from "react-redux";
 import { sethideNew } from "@/page/home/services/hideNewSlice";
 import GossipTopNavbar from "./components/GossipTopNavbar";
 import GossipPost from "./components/GossipPost";
-import { useGetGossipPostsQuery as useExternalGossipPostsQuery } from "./services/gossipSlice";
+import {
+  useGetGossipPostsQuery as useExternalGossipPostsQuery,
+  useGetGossipCategoriesQuery,
+} from "./services/gossipSlice";
 import type { GossipPostMedia } from "./services/gossipSlice";
 
-type TabType = "hot" | "encyclopedia" | "celebrity";
-
 interface Tab {
-  id: TabType;
+  id: string;
   label: string;
   categoryId: string;
 }
 
-const tabs: Tab[] = [
-  // Mapping each tab to the remote category ids returned by the external API
-  { id: "hot", label: "热门大瓜", categoryId: "692fef5f317b970b85090927" }, // Fitness
-  {
-    id: "encyclopedia",
-    label: "吃瓜百科",
-    categoryId: "692fef5f317b970b85090923",
-  }, // Food
-  {
-    id: "celebrity",
-    label: "网红黑料",
-    categoryId: "692fef5f317b970b85090926",
-  }, // Gaming
-];
-
 const Gossip = () => {
   const dispatch = useDispatch();
-  const [activeTab, setActiveTab] = useState<TabType>("encyclopedia");
+  const [activeTab, setActiveTab] = useState<string>("");
   const [page, setPage] = useState(1);
   const pageSize = 10;
+
+  const {
+    data: categoryList = [],
+    isLoading: isCategoriesLoading,
+    error: categoriesError,
+  } = useGetGossipCategoriesQuery();
+
+  const tabs: Tab[] = useMemo(() => {
+    if (!Array.isArray(categoryList)) {
+      return [];
+    }
+
+    return categoryList.map((category, index) => ({
+      id: category.slug || category.id || `category-${index}`,
+      label: category.name || `分类${index + 1}`,
+      categoryId: category.id,
+    }));
+  }, [categoryList]);
+
+  useEffect(() => {
+    if (!activeTab && tabs.length > 0) {
+      setActiveTab(tabs[0].id);
+    }
+  }, [activeTab, tabs]);
 
   const activeTabConfig = tabs.find((tab) => tab.id === activeTab);
   const hasCategoryId = Boolean(activeTabConfig?.categoryId);
@@ -45,13 +55,13 @@ const Gossip = () => {
   }, [dispatch]);
 
   const handleTabClick = (tabId: string) => {
-    setActiveTab(tabId as TabType);
+    setActiveTab(tabId);
     setPage(1); // Reset page when switching tabs
   };
 
   const {
     data: apiPosts = [],
-    isLoading,
+    isLoading: isPostsLoading,
     error,
     refetch,
   } = useExternalGossipPostsQuery(
@@ -64,6 +74,7 @@ const Gossip = () => {
       skip: !hasCategoryId,
     }
   );
+  const isLoading = isCategoriesLoading || isPostsLoading || !hasCategoryId;
 
   type GossipPostData = ComponentProps<typeof GossipPost>["post"];
 
@@ -119,8 +130,15 @@ const Gossip = () => {
   }, [apiPosts]);
 
   const errorMessage = useMemo(() => {
-    if (!hasCategoryId) {
+    if (!tabs.length && !isCategoriesLoading) {
       return "当前频道暂未配置分类，请稍后再试";
+    }
+
+    if (categoriesError && "message" in (categoriesError as any)) {
+      return (
+        ((categoriesError as { message?: string }).message as string) ||
+        "频道加载失败，请稍后重试"
+      );
     }
 
     if (!error) {
@@ -133,7 +151,7 @@ const Gossip = () => {
     }
 
     return error.message || "帖子加载失败，请稍后重试";
-  }, [error, hasCategoryId]);
+  }, [tabs.length, isCategoriesLoading, categoriesError, error]);
 
   const showEmptyState = !isLoading && !errorMessage && posts.length === 0;
 
