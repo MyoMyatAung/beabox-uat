@@ -919,7 +919,8 @@ const Latest: React.FC<LatestPorp> = ({
   }, []);
 
   useEffect(() => {
-    setWaterFall([]); // Reset list when switching tabs
+    // Don't reset here - it's managed by parent
+    // setWaterFall([]); // Reset list when switching tabs
   }, [exp_header]);
 
   useEffect(() => {
@@ -931,7 +932,7 @@ const Latest: React.FC<LatestPorp> = ({
     } else {
       setHasMore(false);
     }
-  }, [data, exp_header]);
+  }, [data]);
 
   const formatNumber = (num: number) => {
     if (num >= 1000) {
@@ -1286,6 +1287,8 @@ const Latest: React.FC<LatestPorp> = ({
                 dataLength={waterfall.length}
                 next={fetchMoreData}
                 hasMore={hasMore}
+                scrollThreshold={0.9}
+                scrollableTarget="explore-scroll-container"
                 loader={
                   <div className="flex justify-center w-screen absolute bottom-[-30px] left-[-2px]">
                     <div className="">
