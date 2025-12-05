@@ -133,6 +133,7 @@ const GossipPost = ({ post }: GossipPostProps) => {
     if (!ensureAuthenticated()) {
       return;
     }
+
     if (pendingLike) return;
     const nextLiked = !isLiked;
     const delta = nextLiked ? 1 : -1;
