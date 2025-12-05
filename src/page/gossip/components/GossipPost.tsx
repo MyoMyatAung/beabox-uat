@@ -13,8 +13,8 @@ import {
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import verifiedBadge from "@/assets/icons/verified-badge.svg";
 import MediaFullscreenViewer from "./MediaFullscreenViewer";
+import SharePost from "./SharePost";
 import {
   useLikeGossipPostMutation,
   useUnlikeGossipPostMutation,
@@ -44,6 +44,8 @@ interface Post {
   share_count: number;
   is_liked: boolean;
   created_at: string;
+  share_link: string;
+  time_ago: string;
 }
 
 interface GossipPostProps {
@@ -65,6 +67,7 @@ const GossipPost = ({ post }: GossipPostProps) => {
   const [isMuted, setIsMuted] = useState(true);
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
   const [fullscreenIndex, setFullscreenIndex] = useState(0);
+  const [showShareSheet, setShowShareSheet] = useState(false);
   const [isLoginDrawerOpen, setIsLoginDrawerOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -664,7 +667,10 @@ const GossipPost = ({ post }: GossipPostProps) => {
           </button>
 
           {/* Share Button */}
-          <button className="flex items-center gap-1 text-white transition-colors">
+          <button
+            className="flex items-center gap-1 text-white transition-colors"
+            onClick={() => setShowShareSheet(true)}
+          >
             <svg
               width="19"
               height="15"
@@ -686,9 +692,7 @@ const GossipPost = ({ post }: GossipPostProps) => {
         </div>
 
         {/* Timestamp */}
-        <span className="text-gray-500 text-xs">
-          {formatTime(post.created_at)}
-        </span>
+        <span className="text-gray-500 text-xs">{post.time_ago}</span>
       </div>
 
       {/* Fullscreen Media Viewer */}
@@ -710,6 +714,25 @@ const GossipPost = ({ post }: GossipPostProps) => {
           },
         }}
       />
+
+      {/* Share Bottom Sheet */}
+      {showShareSheet && (
+        <div className="fixed inset-0 z-[1000000] flex items-end justify-center">
+          <div
+            className="absolute inset-0 bg-black/60"
+            onClick={() => setShowShareSheet(false)}
+          />
+          <div className="relative w-full max-w-md bg-[#191721] rounded-t-2xl shadow-xl transform transition-transform duration-200 translate-y-0">
+            <div className="flex justify-center py-2">
+              <div className="h-1 w-12 bg-gray-300 rounded-full" />
+            </div>
+            <SharePost
+              shareUrl={post.share_link}
+              onClose={() => setShowShareSheet(false)}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Login Drawer */}
       <LoginDrawer

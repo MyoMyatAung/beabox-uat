@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useReportGossipPostMutation } from "../services/gossipSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { showToast } from "@/page/home/services/errorSlice";
@@ -22,6 +22,9 @@ const reportReasons = {
 
 const GossipReport = () => {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const type = searchParams.get("type");
+
   const [triggerReport, { isLoading }] = useReportGossipPostMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -61,7 +64,7 @@ const GossipReport = () => {
     try {
       const response: any = await triggerReport({
         model_id: id || "",
-        type: "post",
+        type: type || "post",
         report_content: content,
       });
 

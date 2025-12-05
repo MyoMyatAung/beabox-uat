@@ -142,8 +142,10 @@ const Gossip = () => {
         like_count: Number(post.like_count ?? 0),
         comment_count: Number(post.comment_count ?? 0),
         share_count: Number(post.share_count ?? 0),
+        share_link: post.share_link || "",
         is_liked: Boolean(post.is_liked),
         created_at: post.created_at || new Date().toISOString(),
+        time_ago: post.time_ago || "",
       };
     });
   }, [apiPosts]);
@@ -185,9 +187,11 @@ const Gossip = () => {
 
       {/* Content Area - Scrollable Posts */}
       {isLoading ? (
-        Array.from({ length: 2 }).map((_, index) => (
-          <PostSkeleton key={index} />
-        ))
+        <div className="w-full max-w-[480px] mx-auto">
+          {Array.from({ length: 2 }).map((_, index) => (
+            <PostSkeleton key={index} />
+          ))}
+        </div>
       ) : (
         <div className="w-full h-[calc(100vh-136px)] bg-black overflow-y-auto pb-20">
           {!isLoading && errorMessage && (

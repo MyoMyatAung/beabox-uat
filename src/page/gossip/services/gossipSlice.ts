@@ -46,6 +46,8 @@ export interface GossipPost {
   comment_count?: number;
   share_count?: number;
   is_liked?: boolean;
+  share_link?: string;
+  time_ago?: string;
 }
 
 interface GossipCategoryResponse {
@@ -148,6 +150,16 @@ interface GossipGenericResponse {
   status: boolean;
   message: string;
   data?: Record<string, unknown>;
+}
+
+export interface GossipCommentLikePayload {
+  id: string;
+  is_reply: 0 | 1;
+}
+
+export interface GossipCommentLikeResponse {
+  status: boolean;
+  message: string;
 }
 
 const BASE_URL = "http://sajktest.qdhgtch.com/api/v1/";
@@ -290,6 +302,26 @@ export const gossipExternalApi = createApi({
         body: { follow_user_id, status },
       }),
     }),
+    likeGossipComment: builder.mutation<
+      GossipCommentLikeResponse,
+      GossipCommentLikePayload
+    >({
+      query: (body) => ({
+        url: "comment/like",
+        method: "POST",
+        body,
+      }),
+    }),
+    unlikeGossipComment: builder.mutation<
+      GossipCommentLikeResponse,
+      GossipCommentLikePayload
+    >({
+      query: (body) => ({
+        url: "comment/unlike",
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
@@ -304,4 +336,6 @@ export const {
   useUninterestGossipPostMutation,
   useReportGossipPostMutation,
   useFollowGossipUserMutation,
+  useLikeGossipCommentMutation,
+  useUnlikeGossipCommentMutation,
 } = gossipExternalApi;

@@ -3,11 +3,11 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
 import { ChevronLeft, User, Volume2, VolumeX } from "lucide-react";
+import SharePost from "./components/SharePost";
 import CommentSection, {
   CommentSectionProps,
 } from "./components/CommentSection";
 import MediaFullscreenViewer from "./components/MediaFullscreenViewer";
-import verifiedBadge from "@/assets/icons/verified-badge.svg";
 import {
   useGetGossipCommentsMutation,
   GossipComment as GossipCommentType,
@@ -47,6 +47,8 @@ type GossipDetailPost = {
   share_count: number;
   is_liked: boolean;
   created_at: string;
+  share_link?: string;
+  time_ago?: string;
 };
 
 interface CommentListApiPayload {
@@ -87,6 +89,7 @@ const PostDetail = () => {
   const [isLoginDrawerOpen, setIsLoginDrawerOpen] = useState(false);
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
   const [fullscreenIndex, setFullscreenIndex] = useState(0);
+  const [showShareSheet, setShowShareSheet] = useState(false);
   const [postIsLiked, setPostIsLiked] = useState(post?.is_liked ?? false);
   const [postLikeCount, setPostLikeCount] = useState(post?.like_count ?? 0);
   const [likePost] = useLikeGossipPostMutation();
@@ -171,6 +174,10 @@ const PostDetail = () => {
   }, [post]);
 
   const togglePostLike = useCallback(async () => {
+    if (!ensureAuthenticated()) {
+      return;
+    }
+
     if (!post?.post_id) return;
     const nextLiked = !postIsLiked;
     const delta = nextLiked ? 1 : -1;
@@ -240,6 +247,7 @@ const PostDetail = () => {
     if (!ensureAuthenticated()) {
       return;
     }
+
     const response = await followGossipUser({
       follow_user_id: post?.user?.id?.toString() || "",
       status: isFollowing ? "unfollow" : "follow",
@@ -368,29 +376,14 @@ const PostDetail = () => {
     console.log("Like comment:", commentId);
   };
 
-  const handleReportComment = (commentId: string) => {
-    // TODO: Implement report comment
-    console.log("Report comment:", commentId);
-  };
-
-  const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInHours = Math.floor(
-      (now.getTime() - date.getTime()) / (1000 * 60 * 60)
-    );
-
-    if (diffInHours < 1) {
-      const diffInMinutes = Math.floor(
-        (now.getTime() - date.getTime()) / (1000 * 60)
-      );
-      return `${diffInMinutes}分钟前`;
-    } else if (diffInHours < 24) {
-      return `${diffInHours}小时前`;
-    } else {
-      const diffInDays = Math.floor(diffInHours / 24);
-      return `${diffInDays}天前`;
+  const handleReportComment = (modelId: string) => {
+    if (!ensureAuthenticated()) {
+      return;
     }
+    // Small delay to ensure Redux persist has flushed the state
+    setTimeout(() => {
+      navigate(`/gossip/reports/${modelId}?type=comment`);
+    }, 150);
   };
 
   const firstMedia =
@@ -407,6 +400,13 @@ const PostDetail = () => {
       setIsFullscreenOpen(true);
     },
     [isFirstVideo, post?.media]
+  );
+
+  const shareUrl = useMemo(
+    () =>
+      post?.share_link ||
+      `${window.location.origin}/gossip/post/${post?.post_id ?? postId ?? ""}`,
+    [post?.post_id, post?.share_link, postId]
   );
 
   if (!post) {
@@ -427,7 +427,7 @@ const PostDetail = () => {
   };
 
   return (
-    <div className="w-full min-h-screen flex flex-col bg-[#16131C]">
+    <div className="w-full min-h-screen flex flex-col bg-[#16131C] px-5 pt-5 z-[9999] max-w-[480px] mx-auto">
       {/* Header */}
       <div className="sticky top-0 z-50 bg-[#16131C] border-b border-gray-800 px-4 py-3">
         <div className="flex items-center justify-between">
@@ -636,27 +636,30 @@ const PostDetail = () => {
               <span className="text-sm">{post.comment_count}</span>
             </div>
             <div className="flex items-center gap-1 text-white">
-              <svg
-                width="19"
-                height="15"
-                viewBox="0 0 19 15"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
+              <button
+                className="flex items-center gap-1 text-white"
+                onClick={() => setShowShareSheet(true)}
               >
-                <path
-                  d="M17.5006 7.82434L11.5501 13.5122C11.307 13.7445 10.942 13.8138 10.624 13.6881C10.3069 13.5624 10.0997 13.2661 10.0997 12.9378V10.5132C4.43758 10.6975 2.21734 12.6833 2.19511 12.7046H2.19431C1.92575 12.9544 1.51694 13.0062 1.1886 12.8326C0.860269 12.6581 0.689737 12.2993 0.769424 11.949C0.786956 11.872 2.57842 4.54649 10.0996 4.02857V1.56218C10.0996 1.23388 10.3068 0.93757 10.624 0.811871C10.9419 0.686187 11.3069 0.755504 11.55 0.98783L17.5006 6.67565C17.6599 6.828 17.75 7.03442 17.75 7.24999C17.75 7.46557 17.66 7.67201 17.5006 7.82434Z"
-                  stroke="white"
-                  strokeWidth="1.5"
-                />
-              </svg>
-              {post.share_count > 0 && (
-                <span className="text-sm">{post.share_count}</span>
-              )}
+                <svg
+                  width="19"
+                  height="15"
+                  viewBox="0 0 19 15"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M17.5006 7.82434L11.5501 13.5122C11.307 13.7445 10.942 13.8138 10.624 13.6881C10.3069 13.5624 10.0997 13.2661 10.0997 12.9378V10.5132C4.43758 10.6975 2.21734 12.6833 2.19511 12.7046H2.19431C1.92575 12.9544 1.51694 13.0062 1.1886 12.8326C0.860269 12.6581 0.689737 12.2993 0.769424 11.949C0.786956 11.872 2.57842 4.54649 10.0996 4.02857V1.56218C10.0996 1.23388 10.3068 0.93757 10.624 0.811871C10.9419 0.686187 11.3069 0.755504 11.55 0.98783L17.5006 6.67565C17.6599 6.828 17.75 7.03442 17.75 7.24999C17.75 7.46557 17.66 7.67201 17.5006 7.82434Z"
+                    stroke="white"
+                    strokeWidth="1.5"
+                  />
+                </svg>
+                {post.share_count > 0 && (
+                  <span className="text-sm">{post.share_count}</span>
+                )}
+              </button>
             </div>
           </div>
-          <span className="text-gray-500 text-xs">
-            {formatTime(post.created_at)}
-          </span>
+          <span className="text-gray-500 text-xs">{post.time_ago}</span>
         </div>
       </div>
 
@@ -681,10 +684,29 @@ const PostDetail = () => {
           is_liked: postIsLiked,
           onLike: togglePostLike,
           onComment: () => {},
-          onShare: () => {},
+          onShare: () => setShowShareSheet(true),
         }}
         commentSectionProps={detailCommentSectionProps}
       />
+
+      {/* Share Bottom Sheet */}
+      {showShareSheet && (
+        <div className="fixed inset-0 z-[1000000] flex items-end justify-center">
+          <div
+            className="absolute inset-0 bg-black/60"
+            onClick={() => setShowShareSheet(false)}
+          />
+          <div className="relative w-full max-w-md bg-[#191721] rounded-t-2xl shadow-xl transform transition-transform duration-200 translate-y-0">
+            <div className="flex justify-center py-2">
+              <div className="h-1 w-12 bg-gray-500 rounded-full" />
+            </div>
+            <SharePost
+              shareUrl={shareUrl}
+              onClose={() => setShowShareSheet(false)}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Login Drawer */}
       <LoginDrawer

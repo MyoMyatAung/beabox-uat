@@ -23,11 +23,24 @@ import {
   usePostGossipCommentMutation,
 } from "../services/gossipSlice";
 import { getDeviceInfo } from "@/lib/deviceInfo";
+import LoginDrawer from "@/components/profile/auth/login-drawer";
+import { useNavigate } from "react-router-dom";
 interface MediaItem {
   id: string;
   type: "image" | "video";
   url: string;
   thumbnail?: string;
+}
+
+interface CommentListApiPayload {
+  data?: GossipCommentType[];
+  total?: number;
+  meta?: { total?: number };
+  pagination?: { total?: number };
+}
+
+interface CommentListApiResponse {
+  data?: CommentListApiPayload;
 }
 
 interface MediaFullscreenViewerProps {
@@ -56,6 +69,10 @@ const MediaFullscreenViewer = ({
   postData,
   commentSectionProps,
 }: MediaFullscreenViewerProps) => {
+  const user = useSelector(
+    (state: { persist?: { user?: { token?: string } } }) => state?.persist?.user
+  );
+  const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [showUI, setShowUI] = useState(false);
   const [showCommentSheet, setShowCommentSheet] = useState(false);
@@ -74,6 +91,8 @@ const MediaFullscreenViewer = ({
       }
     >
   >({});
+  const [isAuthenticated, setIsAuthenticated] = useState(Boolean(user?.token));
+  const [isLoginDrawerOpen, setIsLoginDrawerOpen] = useState(false);
   const videoRefs = useRef<Map<number, HTMLVideoElement>>(new Map());
   const slideRefs = useRef<Map<number, HTMLDivElement>>(new Map());
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -229,17 +248,6 @@ const MediaFullscreenViewer = ({
     [fallbackCommentUser, currentPostId]
   );
 
-  interface CommentListApiPayload {
-    data?: GossipCommentType[];
-    total?: number;
-    meta?: { total?: number };
-    pagination?: { total?: number };
-  }
-
-  interface CommentListApiResponse {
-    data?: CommentListApiPayload;
-  }
-
   const fetchComments = useCallback(async (): Promise<void> => {
     if (!currentPostId) return;
     setCommentsLoading(true);
@@ -333,6 +341,20 @@ const MediaFullscreenViewer = ({
     [appendCommentToState, appendReplyToState, normalizeComment]
   );
 
+  const ensureAuthenticated = () => {
+    if (isAuthenticated) {
+      return true;
+    }
+    setIsLoginDrawerOpen(true);
+    return false;
+  };
+
+  // Update authentication state when user changes
+  useEffect(() => {
+    const authenticated = Boolean(user?.token);
+    setIsAuthenticated(authenticated);
+  }, [user?.token]);
+
   const handleCommentSubmit = async (content: string) => {
     if (!currentPostId) return;
     const trimmed = content.trim();
@@ -386,9 +408,14 @@ const MediaFullscreenViewer = ({
     console.log("Like comment:", commentId);
   };
 
-  const handleReportComment = (commentId: string) => {
-    // TODO: Implement report comment
-    console.log("Report comment:", commentId);
+  const handleReportComment = (modelId: string) => {
+    if (!ensureAuthenticated()) {
+      return;
+    }
+    // Small delay to ensure Redux persist has flushed the state
+    setTimeout(() => {
+      navigate(`/gossip/reports/${modelId}?type=comment`);
+    }, 150);
   };
 
   // Build commentSectionProps from fetched data or use provided one
@@ -730,11 +757,15 @@ const MediaFullscreenViewer = ({
     progressRefs.current.set(currentIndex, newTime);
   };
 
-  const handleSaveVideo = () => {
+  const handleSaveVideo = async () => {
     setShowMoreOptions(false);
     if (!currentMedia) return;
 
-    // Extract file extension from URL to preserve original format
+    const normalizedUrl = currentMedia.url.split("?")[0].toLowerCase();
+    const isM3u8 = normalizedUrl.endsWith(".m3u8");
+    const isMp4 = normalizedUrl.endsWith(".mp4");
+
+    // Derive filename and extension
     let extension = "";
     try {
       const url = new URL(currentMedia.url);
@@ -744,22 +775,35 @@ const MediaFullscreenViewer = ({
         extension = pathname.substring(lastDotIndex);
       }
     } catch {
-      // If URL parsing fails, use default extension based on type
+      // ignore and fallback
     }
-
-    // Fallback to default extension if not found
     if (!extension) {
-      extension = currentMedia.type === "video" ? ".mp4" : ".jpg";
+      extension = isM3u8
+        ? ".ts"
+        : isMp4
+        ? ".mp4"
+        : currentMedia.type === "video"
+        ? ".mp4"
+        : ".jpg";
     }
+    const filename = `${currentMedia.type}-${currentMedia.id}${extension}`;
 
-    // Auto-download with original format
-    const a = document.createElement("a");
-    a.href = currentMedia.url;
-    a.download = `${currentMedia.type}-${currentMedia.id}${extension}`;
-    a.target = "_blank";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    // Prefer native browser download UI for better UX
+    const anchor = document.createElement("a");
+    anchor.href = currentMedia.url;
+    anchor.download = filename;
+    anchor.target = "_blank";
+    anchor.rel = "noreferrer";
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+
+    // For m3u8 some browsers may ignore download; open in new tab fallback
+    if (isM3u8) {
+      setTimeout(() => {
+        window.open(currentMedia.url, "_blank");
+      }, 300);
+    }
   };
 
   const handleReport = () => {
@@ -1378,6 +1422,12 @@ const MediaFullscreenViewer = ({
           </div>
         </div>
       )}
+
+      {/* Login Drawer */}
+      <LoginDrawer
+        isOpen={isLoginDrawerOpen}
+        setIsOpen={setIsLoginDrawerOpen}
+      />
     </div>
   );
 };

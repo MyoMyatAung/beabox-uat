@@ -5,6 +5,11 @@ import {
   useGetGossipRepliesMutation,
   GossipComment as GossipCommentType,
 } from "../services/gossipSlice";
+import {
+  useLikeGossipCommentMutation,
+  useUnlikeGossipCommentMutation,
+} from "../services/gossipSlice";
+import LoginDrawer from "@/components/profile/auth/login-drawer";
 
 interface ReplyListApiResponse {
   data?: {
@@ -69,10 +74,17 @@ const CommentSection = ({
   onAutoExpandHandled,
 }: CommentSectionProps) => {
   const commentInputRef = useRef<HTMLInputElement | null>(null);
+  const [localComments, setLocalComments] =
+    useState<GossipCommentType[]>(comments);
+
+  useEffect(() => {
+    setLocalComments(comments);
+  }, [comments]);
 
   const user = useSelector(
     (state: { persist?: { user?: { token?: string } } }) => state?.persist?.user
   );
+  const [isAuthenticated, setIsAuthenticated] = useState(Boolean(user?.token));
   const [expandedReplies, setExpandedReplies] = useState<{
     [key: string]: boolean;
   }>({});
@@ -86,9 +98,26 @@ const CommentSection = ({
   const [repliesCache, setRepliesCache] = useState<
     Record<string, GossipCommentType[]>
   >({});
+  const [isLoginDrawerOpen, setIsLoginDrawerOpen] = useState(false);
   const [replyLoading, setReplyLoading] = useState<Record<string, boolean>>({});
   const replyInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
   const [fetchReplies] = useGetGossipRepliesMutation();
+  const [likeComment] = useLikeGossipCommentMutation();
+  const [unlikeComment] = useUnlikeGossipCommentMutation();
+
+  const ensureAuthenticated = () => {
+    if (isAuthenticated) {
+      return true;
+    }
+    setIsLoginDrawerOpen(true);
+    return false;
+  };
+
+  // Update authentication state when user changes
+  useEffect(() => {
+    const authenticated = Boolean(user?.token);
+    setIsAuthenticated(authenticated);
+  }, [user?.token]);
 
   useEffect(() => {
     if (!highlightCommentId) return;
@@ -153,6 +182,97 @@ const CommentSection = ({
     }
   };
 
+  const updateLikeState = (
+    targetId: string,
+    isReply: boolean,
+    isLiked: boolean
+  ) => {
+    setLocalComments((prev: GossipCommentType[]) =>
+      prev.map((comment: GossipCommentType) => {
+        if (!isReply && comment.comment_id === targetId) {
+          const likeCount = comment.like_count ?? 0;
+          return {
+            ...comment,
+            is_liked: isLiked,
+            like_count: Math.max(0, likeCount + (isLiked ? 1 : -1)),
+          };
+        }
+        if (isReply) {
+          const updatedReplies = comment.replies?.list?.map((reply) => {
+            if (reply.comment_id !== targetId) return reply;
+            const likeCount = reply.like_count ?? 0;
+            return {
+              ...reply,
+              is_liked: isLiked,
+              like_count: Math.max(0, likeCount + (isLiked ? 1 : -1)),
+            };
+          });
+          return comment.replies?.list
+            ? {
+                ...comment,
+                replies: {
+                  ...comment.replies,
+                  list: updatedReplies ?? comment.replies?.list,
+                },
+              }
+            : comment;
+        }
+        return comment;
+      })
+    );
+
+    // Keep cache in sync for replies
+    if (isReply) {
+      setRepliesCache((prev) => {
+        const next: Record<string, GossipCommentType[]> = { ...prev };
+        Object.keys(next).forEach((commentId) => {
+          next[commentId] = (next[commentId] || []).map(
+            (reply: GossipCommentType) => {
+              if (reply.comment_id !== targetId) return reply;
+              const likeCount = reply.like_count ?? 0;
+              return {
+                ...reply,
+                is_liked: isLiked,
+                like_count: Math.max(0, likeCount + (isLiked ? 1 : -1)),
+              };
+            }
+          );
+        });
+        return next;
+      });
+    }
+  };
+
+  const toggleLike = async (targetId: string, isReply: boolean) => {
+    if (!ensureAuthenticated()) {
+      return;
+    }
+
+    const target = isReply
+      ? localComments
+          .flatMap((c) => c.replies?.list || [])
+          .find((r) => r.comment_id === targetId)
+      : localComments.find((c) => c.comment_id === targetId);
+    if (!target) return;
+    const nextLiked = !target.is_liked;
+    updateLikeState(targetId, isReply, nextLiked);
+    try {
+      if (nextLiked) {
+        await likeComment({ id: targetId, is_reply: isReply ? 1 : 0 }).unwrap();
+      } else {
+        await unlikeComment({
+          id: targetId,
+          is_reply: isReply ? 1 : 0,
+        }).unwrap();
+      }
+      onLikeComment?.(targetId);
+    } catch (err) {
+      // revert on failure
+      updateLikeState(targetId, isReply, !nextLiked);
+      console.error("Failed to toggle like:", err);
+    }
+  };
+
   const loadReplies = useCallback(
     async (commentId: string, lastReplyId: string | null) => {
       setReplyLoading((prev) => ({ ...prev, [commentId]: true }));
@@ -198,6 +318,10 @@ const CommentSection = ({
   };
 
   const toggleReplyInput = (commentId: string) => {
+    if (!ensureAuthenticated) {
+      return;
+    }
+
     setShowReplyInput((prev) => {
       const nextState = !prev[commentId];
       if (nextState) {
@@ -253,8 +377,8 @@ const CommentSection = ({
           <div className="px-4 py-8 text-center">
             <p className="text-red-400 text-sm">{error}</p>
           </div>
-        ) : comments.length === 0 ? (
-          <div className="px-4 py-8 text-center h-[35svh]">
+        ) : localComments.length === 0 ? (
+          <div className="px-4 py-8 text-center h-[32svh]">
             <span className="mx-auto inline-block mt-10">
               <svg
                 width="37"
@@ -287,288 +411,312 @@ const CommentSection = ({
             <p className="text-[#888888] text-xs">成为第一个分享想法的人吧！</p>
           </div>
         ) : (
-          comments.map((comment, index) => {
-            const commentLikeCount = comment.like_count ?? 0;
-            const replyListFromComment = sortByCreatedAtAsc(
-              comment.replies?.list
-            );
+          <div className="min-h-[32svh]">
+            {localComments.map((comment, index) => {
+              const commentLikeCount = comment.like_count ?? 0;
+              const replyListFromComment = sortByCreatedAtAsc(
+                comment.replies?.list
+              );
 
-            return (
-              <div
-                key={`comment-${index}-${comment.comment_id}`}
-                id={`comment-${comment.comment_id}`}
-                className="px-4 py-3"
-              >
-                {/* Main Comment */}
-                <div className="flex gap-3">
-                  {comment?.user?.profile_image ? (
-                    <img
-                      src={comment?.user?.profile_image}
-                      alt={comment.user.nickname}
-                      className="w-8 h-8 rounded-full object-cover flex-shrink-0"
-                    />
-                  ) : (
-                    <div className="flex items-center justify-center w-8 h-8 rounded-full object-cover flex-shrink-0 bg-gray-500">
-                      <User size={18} className="text-white" />
-                    </div>
-                  )}
-                  <div className="flex-1">
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-white text-sm font-medium">
-                            {comment?.user?.nickname || "未知用户"}
-                          </span>
-                          {comment?.user?.level && (
-                            <span className="px-1.5 py-0.5 bg-purple-600 rounded text-xs text-white">
-                              {comment?.user?.level}
-                            </span>
-                          )}
-                          {comment?.user?.is_author && (
-                            <span className="px-1.5 py-0.5 bg-yellow-600 rounded text-xs text-white">
-                              作者
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-gray-500 text-xs">
-                          {formatFullTime(comment.created_at)}
-                        </p>
+              return (
+                <div
+                  key={`comment-${index}-${comment.comment_id}`}
+                  id={`comment-${comment.comment_id}`}
+                  className="px-4 py-3"
+                >
+                  {/* Main Comment */}
+                  <div className="flex gap-3">
+                    {comment?.user?.profile_image ? (
+                      <img
+                        src={comment?.user?.profile_image}
+                        alt={comment.user.nickname}
+                        className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center w-8 h-8 rounded-full object-cover flex-shrink-0 bg-gray-500">
+                        <User size={18} className="text-white" />
                       </div>
-                      {/* Action Buttons */}
-                      <div className="flex items-center gap-3 mt-2">
-                        <div className="flex items-center flex-col gap-1">
+                    )}
+                    <div className="flex-1">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-white text-sm font-medium">
+                              {comment?.user?.nickname || "未知用户"}
+                            </span>
+                            {comment?.user?.level && (
+                              <span className="px-1.5 py-0.5 bg-purple-600 rounded text-xs text-white">
+                                {comment?.user?.level}
+                              </span>
+                            )}
+                            {comment?.user?.is_author && (
+                              <span className="px-1.5 py-0.5 bg-yellow-600 rounded text-xs text-white">
+                                作者
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-gray-500 text-xs">
+                            {formatFullTime(comment.created_at)}
+                          </p>
+                        </div>
+                        {/* Action Buttons */}
+                        <div className="flex items-center gap-3 mt-2">
+                          <div className="flex items-center flex-col gap-1">
+                            <button
+                              onClick={() =>
+                                onReportComment?.(comment.comment_id)
+                              }
+                              className="text-gray-500 hover:text-white transition-colors"
+                            >
+                              <svg
+                                width="16"
+                                height="14"
+                                viewBox="0 0 16 14"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  fill-rule="evenodd"
+                                  clip-rule="evenodd"
+                                  d="M6.72796 0.917482L0.882105 11.0455L12.5758 11.0448L6.72796 0.917482ZM0.655349 11.8319C0.540309 11.8319 0.427298 11.8016 0.327672 11.7441C0.228046 11.6866 0.145316 11.6039 0.0877981 11.5042C0.0302798 11.4046 -7.30621e-07 11.2916 0 11.1766C7.30648e-07 11.0615 0.0302827 10.9485 0.0878023 10.8489L6.16042 0.327654C6.21794 0.228033 6.30067 0.145309 6.40029 0.0877938C6.49992 0.0302789 6.61293 0 6.72796 0C6.843 0 6.95601 0.0302789 7.05563 0.0877938C7.15525 0.145309 7.23799 0.228033 7.29551 0.327654L13.3707 10.8482C13.4283 10.9479 13.4585 11.0609 13.4585 11.1759C13.4585 11.2909 13.4283 11.404 13.3707 11.5036C13.3132 11.6032 13.2305 11.6859 13.1309 11.7435C13.0312 11.801 12.9182 11.8313 12.8032 11.8313L0.655349 11.8319ZM6.3177 4.55738H7.14019L7.07662 7.65201H6.38193L6.31836 4.55738H6.3177ZM6.72796 9.23931C6.66751 9.24035 6.60746 9.22937 6.55129 9.20699C6.49513 9.18462 6.44397 9.1513 6.4008 9.10898C6.35762 9.06666 6.32329 9.01618 6.2998 8.96047C6.27631 8.90477 6.26413 8.84494 6.26396 8.78448C6.26396 8.53217 6.46844 8.33359 6.72796 8.33359C6.99011 8.33359 7.19458 8.53217 7.19458 8.78448C7.19433 8.84514 7.18201 8.90514 7.15832 8.96099C7.13464 9.01683 7.10007 9.06739 7.05663 9.10973C7.0132 9.15207 6.96176 9.18533 6.90533 9.20758C6.8489 9.22983 6.78861 9.24061 6.72796 9.23931Z"
+                                  fill="#777777"
+                                />
+                              </svg>
+                            </button>
+                            <span className="text-xs text-gray-500">举报</span>
+                          </div>
+                          <div className="flex items-center flex-col gap-1">
+                            <button
+                              onClick={() =>
+                                toggleLike(comment.comment_id, false)
+                              }
+                              className="flex items-center gap-1 text-gray-500 hover:text-white transition-colors"
+                            >
+                              {comment.is_liked ? (
+                                <svg
+                                  width="20"
+                                  height="17"
+                                  viewBox="0 0 20 17"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    opacity="0.8"
+                                    d="M5.44361 7.26075V14.5213H3.02344V7.26075H5.44361ZM7.86377 14.5213C7.54284 14.5213 7.23505 14.3938 7.00812 14.1668C6.78118 13.9399 6.65369 13.6321 6.65369 13.3112V7.26075C6.65369 6.92797 6.7868 6.62545 7.01066 6.40764L10.9918 2.42041L11.6332 3.06175C11.7965 3.22512 11.8994 3.44898 11.8994 3.69705L11.8813 3.89066L11.3065 6.6557H15.1243C15.4452 6.6557 15.753 6.7832 15.9799 7.01013C16.2069 7.23706 16.3344 7.54485 16.3344 7.86579V9.07587C16.3344 9.23318 16.3041 9.37839 16.2497 9.51755L14.4224 13.7831C14.2409 14.2187 13.8113 14.5213 13.3092 14.5213H7.86377Z"
+                                    fill="white"
+                                  />
+                                </svg>
+                              ) : (
+                                <ThumbsUp size={16} />
+                              )}
+                            </button>
+                            <span className="text-xs text-gray-500">
+                              {commentLikeCount}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <p className="text-gray-300 text-sm my-2">
+                        {comment.content}
+                      </p>
+                      <div className="flex flex-col items-start gap-4 text-xs text-gray-500">
+                        <button
+                          onClick={() => toggleReplyInput(comment.comment_id)}
+                          className="hover:text-white transition-colors bg-[#FFFFFF1F] px-2 py-1 rounded-full"
+                        >
+                          回复
+                        </button>
+                        {(() => {
+                          const cachedCount =
+                            repliesCache[comment.comment_id]?.length ?? 0;
+                          const existingCount =
+                            comment.replies?.list.length ??
+                            comment.replies?.replies_count ??
+                            cachedCount;
+                          return existingCount > 0;
+                        })() && (
+                          <div className="flex items-center gap-1">
+                            <span className="w-5 h-[1px] bg-gray-500"></span>
+                            <button
+                              onClick={() => toggleReplies(comment.comment_id)}
+                              className="hover:text-white transition-colors"
+                            >
+                              {expandedReplies[comment.comment_id]
+                                ? `展开${replyListFromComment.length}条回复`
+                                : `收起${replyListFromComment.length}条回复`}
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Reply Input */}
+                      {showReplyInput[comment.comment_id] && (
+                        <div className="mt-2 flex gap-2 px-4 py-2 ">
+                          <input
+                            type="text"
+                            ref={(el) => {
+                              if (el) {
+                                replyInputRefs.current[comment.comment_id] = el;
+                              } else {
+                                delete replyInputRefs.current[
+                                  comment.comment_id
+                                ];
+                              }
+                            }}
+                            value={replyContent[comment.comment_id] || ""}
+                            onChange={(e) =>
+                              setReplyContent((prev) => ({
+                                ...prev,
+                                [comment.comment_id]: e.target.value,
+                              }))
+                            }
+                            placeholder="回复..."
+                            className="flex-1 px-2 py-2 border border-gray-600 bg-[#191721] rounded-lg text-white text-sm outline-none focus:border-purple-500"
+                            onKeyPress={(e) => {
+                              if (e.key === "Enter") {
+                                handleReplySubmit(comment.comment_id);
+                              }
+                            }}
+                          />
                           <button
                             onClick={() =>
-                              onReportComment?.(comment.comment_id)
+                              handleReplySubmit(comment.comment_id)
                             }
-                            className="text-gray-500 hover:text-white transition-colors"
+                            className="p-2 text-center w-10 h-10 bg-white/5 rounded-full hover:bg-white/10 transition-colors"
                           >
-                            <svg
-                              width="16"
-                              height="14"
-                              viewBox="0 0 16 14"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                fill-rule="evenodd"
-                                clip-rule="evenodd"
-                                d="M6.72796 0.917482L0.882105 11.0455L12.5758 11.0448L6.72796 0.917482ZM0.655349 11.8319C0.540309 11.8319 0.427298 11.8016 0.327672 11.7441C0.228046 11.6866 0.145316 11.6039 0.0877981 11.5042C0.0302798 11.4046 -7.30621e-07 11.2916 0 11.1766C7.30648e-07 11.0615 0.0302827 10.9485 0.0878023 10.8489L6.16042 0.327654C6.21794 0.228033 6.30067 0.145309 6.40029 0.0877938C6.49992 0.0302789 6.61293 0 6.72796 0C6.843 0 6.95601 0.0302789 7.05563 0.0877938C7.15525 0.145309 7.23799 0.228033 7.29551 0.327654L13.3707 10.8482C13.4283 10.9479 13.4585 11.0609 13.4585 11.1759C13.4585 11.2909 13.4283 11.404 13.3707 11.5036C13.3132 11.6032 13.2305 11.6859 13.1309 11.7435C13.0312 11.801 12.9182 11.8313 12.8032 11.8313L0.655349 11.8319ZM6.3177 4.55738H7.14019L7.07662 7.65201H6.38193L6.31836 4.55738H6.3177ZM6.72796 9.23931C6.66751 9.24035 6.60746 9.22937 6.55129 9.20699C6.49513 9.18462 6.44397 9.1513 6.4008 9.10898C6.35762 9.06666 6.32329 9.01618 6.2998 8.96047C6.27631 8.90477 6.26413 8.84494 6.26396 8.78448C6.26396 8.53217 6.46844 8.33359 6.72796 8.33359C6.99011 8.33359 7.19458 8.53217 7.19458 8.78448C7.19433 8.84514 7.18201 8.90514 7.15832 8.96099C7.13464 9.01683 7.10007 9.06739 7.05663 9.10973C7.0132 9.15207 6.96176 9.18533 6.90533 9.20758C6.8489 9.22983 6.78861 9.24061 6.72796 9.23931Z"
-                                fill="#777777"
-                              />
-                            </svg>
-                          </button>
-                          <span className="text-xs text-gray-500">举报</span>
-                        </div>
-                        <div className="flex items-center flex-col gap-1">
-                          <button
-                            onClick={() => onLikeComment?.(comment.comment_id)}
-                            className="flex items-center gap-1 text-gray-500 hover:text-white transition-colors"
-                          >
-                            <ThumbsUp
-                              size={16}
-                              className={
-                                comment.is_liked ? "text-purple-500" : ""
-                              }
+                            <SendHorizonal
+                              size={22}
+                              className="text-white mx-auto"
                             />
-                          </button>
-                          <span className="text-xs text-gray-500">
-                            {commentLikeCount}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <p className="text-gray-300 text-sm my-2">
-                      {comment.content}
-                    </p>
-                    <div className="flex flex-col items-start gap-4 text-xs text-gray-500">
-                      <button
-                        onClick={() => toggleReplyInput(comment.comment_id)}
-                        className="hover:text-white transition-colors bg-[#FFFFFF1F] px-2 py-1 rounded-full"
-                      >
-                        回复
-                      </button>
-                      {(() => {
-                        const cachedCount =
-                          repliesCache[comment.comment_id]?.length ?? 0;
-                        const existingCount =
-                          comment.replies?.list.length ??
-                          comment.replies?.replies_count ??
-                          cachedCount;
-                        return existingCount > 0;
-                      })() && (
-                        <div className="flex items-center gap-1">
-                          <span className="w-5 h-[1px] bg-gray-500"></span>
-                          <button
-                            onClick={() => toggleReplies(comment.comment_id)}
-                            className="hover:text-white transition-colors"
-                          >
-                            {expandedReplies[comment.comment_id]
-                              ? `展开${replyListFromComment.length}条回复`
-                              : `收起${replyListFromComment.length}条回复`}
                           </button>
                         </div>
                       )}
-                    </div>
 
-                    {/* Reply Input */}
-                    {showReplyInput[comment.comment_id] && (
-                      <div className="mt-2 flex gap-2 px-4 py-2 ">
-                        <input
-                          type="text"
-                          ref={(el) => {
-                            if (el) {
-                              replyInputRefs.current[comment.comment_id] = el;
-                            } else {
-                              delete replyInputRefs.current[comment.comment_id];
-                            }
-                          }}
-                          value={replyContent[comment.comment_id] || ""}
-                          onChange={(e) =>
-                            setReplyContent((prev) => ({
-                              ...prev,
-                              [comment.comment_id]: e.target.value,
-                            }))
-                          }
-                          placeholder="回复..."
-                          className="flex-1 px-2 py-2 border border-gray-600 bg-[#191721] rounded-lg text-white text-sm outline-none focus:border-purple-500"
-                          onKeyPress={(e) => {
-                            if (e.key === "Enter") {
-                              handleReplySubmit(comment.comment_id);
-                            }
-                          }}
-                        />
-                        <button
-                          onClick={() => handleReplySubmit(comment.comment_id)}
-                          className="p-2 text-center w-10 h-10 bg-white/5 rounded-full hover:bg-white/10 transition-colors"
-                        >
-                          <SendHorizonal
-                            size={22}
-                            className="text-white mx-auto"
-                          />
-                        </button>
-                      </div>
-                    )}
-
-                    {/* Replies */}
-                    {expandedReplies[comment.comment_id] && (
-                      <div className="mt-3 space-y-3 pl-4 ">
-                        {replyLoading[comment.comment_id] &&
-                        !repliesCache[comment.comment_id] ? (
-                          <p className="text-xs text-gray-500">回复加载中...</p>
-                        ) : (
-                          (
-                            repliesCache[comment.comment_id] ||
-                            replyListFromComment ||
-                            []
-                          ).map((reply, index) => {
-                            const replyLikeCount = reply.like_count ?? 0;
-                            return (
-                              <div
-                                key={`reply-${index}-${reply.comment_id}`}
-                                className="flex gap-3"
-                              >
-                                {reply?.user?.profile_image ? (
-                                  <img
-                                    src={reply.user.profile_image}
-                                    alt={reply.user.nickname}
-                                    className="w-6 h-6 rounded-full object-cover flex-shrink-0"
-                                  />
-                                ) : (
-                                  <div className="w-6 h-6 rounded-full object-cover flex items-center justify-center flex-shrink-0 bg-gray-500">
-                                    <User size={16} className="text-white" />
-                                  </div>
-                                )}
-                                <div className="flex-1">
-                                  <div className="flex justify-between items-center gap-2">
-                                    <div>
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-white text-xs font-medium">
-                                          {reply?.user?.nickname || "未知用户"}
-                                        </span>
-                                        {reply?.user?.level && (
-                                          <span className="px-1 py-0.5 bg-purple-600 rounded text-xs text-white">
-                                            {reply?.user?.level}
+                      {/* Replies */}
+                      {expandedReplies[comment.comment_id] && (
+                        <div className="mt-3 space-y-3 pl-4 ">
+                          {replyLoading[comment.comment_id] &&
+                          !repliesCache[comment.comment_id] ? (
+                            <p className="text-xs text-gray-500">
+                              回复加载中...
+                            </p>
+                          ) : (
+                            (
+                              repliesCache[comment.comment_id] ||
+                              replyListFromComment ||
+                              []
+                            ).map((reply, index) => {
+                              const replyLikeCount = reply.like_count ?? 0;
+                              return (
+                                <div
+                                  key={`reply-${index}-${reply.comment_id}`}
+                                  className="flex gap-3"
+                                >
+                                  {reply?.user?.profile_image ? (
+                                    <img
+                                      src={reply.user.profile_image}
+                                      alt={reply.user.nickname}
+                                      className="w-6 h-6 rounded-full object-cover flex-shrink-0"
+                                    />
+                                  ) : (
+                                    <div className="w-6 h-6 rounded-full object-cover flex items-center justify-center flex-shrink-0 bg-gray-500">
+                                      <User size={16} className="text-white" />
+                                    </div>
+                                  )}
+                                  <div className="flex-1">
+                                    <div className="flex justify-between items-center gap-2">
+                                      <div>
+                                        <div className="flex items-center gap-2">
+                                          <span className="text-white text-xs font-medium">
+                                            {reply?.user?.nickname ||
+                                              "未知用户"}
                                           </span>
-                                        )}
+                                          {reply?.user?.level && (
+                                            <span className="px-1 py-0.5 bg-purple-600 rounded text-xs text-white">
+                                              {reply?.user?.level}
+                                            </span>
+                                          )}
+                                        </div>
+                                        <p className="text-xs text-gray-500">
+                                          {formatFullTime(reply.created_at)}
+                                        </p>
                                       </div>
-                                      <p className="text-xs text-gray-500">
-                                        {formatFullTime(reply.created_at)}
-                                      </p>
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                      <div className="flex items-center flex-col gap-1">
-                                        <button
-                                          onClick={() =>
-                                            onReportComment?.(reply.comment_id)
-                                          }
-                                          className="text-gray-500 hover:text-white transition-colors"
-                                        >
-                                          <svg
-                                            width="16"
-                                            height="14"
-                                            viewBox="0 0 16 14"
-                                            fill="none"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                          >
-                                            <path
-                                              fill-rule="evenodd"
-                                              clip-rule="evenodd"
-                                              d="M6.72796 0.917482L0.882105 11.0455L12.5758 11.0448L6.72796 0.917482ZM0.655349 11.8319C0.540309 11.8319 0.427298 11.8016 0.327672 11.7441C0.228046 11.6866 0.145316 11.6039 0.0877981 11.5042C0.0302798 11.4046 -7.30621e-07 11.2916 0 11.1766C7.30648e-07 11.0615 0.0302827 10.9485 0.0878023 10.8489L6.16042 0.327654C6.21794 0.228033 6.30067 0.145309 6.40029 0.0877938C6.49992 0.0302789 6.61293 0 6.72796 0C6.843 0 6.95601 0.0302789 7.05563 0.0877938C7.15525 0.145309 7.23799 0.228033 7.29551 0.327654L13.3707 10.8482C13.4283 10.9479 13.4585 11.0609 13.4585 11.1759C13.4585 11.2909 13.4283 11.404 13.3707 11.5036C13.3132 11.6032 13.2305 11.6859 13.1309 11.7435C13.0312 11.801 12.9182 11.8313 12.8032 11.8313L0.655349 11.8319ZM6.3177 4.55738H7.14019L7.07662 7.65201H6.38193L6.31836 4.55738H6.3177ZM6.72796 9.23931C6.66751 9.24035 6.60746 9.22937 6.55129 9.20699C6.49513 9.18462 6.44397 9.1513 6.4008 9.10898C6.35762 9.06666 6.32329 9.01618 6.2998 8.96047C6.27631 8.90477 6.26413 8.84494 6.26396 8.78448C6.26396 8.53217 6.46844 8.33359 6.72796 8.33359C6.99011 8.33359 7.19458 8.53217 7.19458 8.78448C7.19433 8.84514 7.18201 8.90514 7.15832 8.96099C7.13464 9.01683 7.10007 9.06739 7.05663 9.10973C7.0132 9.15207 6.96176 9.18533 6.90533 9.20758C6.8489 9.22983 6.78861 9.24061 6.72796 9.23931Z"
-                                              fill="#777777"
-                                            />
-                                          </svg>
-                                        </button>
-                                        <span className="text-xs text-gray-500">
-                                          举报
-                                        </span>
-                                      </div>
-
-                                      <div className="flex items-center flex-col gap-1">
-                                        <button
-                                          onClick={() =>
-                                            onLikeComment?.(reply.comment_id)
-                                          }
-                                          className="flex items-center gap-1 text-gray-500 hover:text-white transition-colors"
-                                        >
-                                          <ThumbsUp
-                                            size={16}
-                                            className={
-                                              reply.is_liked
-                                                ? "text-purple-500"
-                                                : ""
+                                      <div className="flex items-center gap-3">
+                                        <div className="flex items-center flex-col gap-1">
+                                          <button
+                                            onClick={() =>
+                                              onReportComment?.(
+                                                reply.comment_id
+                                              )
                                             }
-                                          />
-                                        </button>
-                                        <span className="text-xs text-gray-500">
-                                          {replyLikeCount}
-                                        </span>
+                                            className="text-gray-500 hover:text-white transition-colors"
+                                          >
+                                            <svg
+                                              width="16"
+                                              height="14"
+                                              viewBox="0 0 16 14"
+                                              fill="none"
+                                              xmlns="http://www.w3.org/2000/svg"
+                                            >
+                                              <path
+                                                fill-rule="evenodd"
+                                                clip-rule="evenodd"
+                                                d="M6.72796 0.917482L0.882105 11.0455L12.5758 11.0448L6.72796 0.917482ZM0.655349 11.8319C0.540309 11.8319 0.427298 11.8016 0.327672 11.7441C0.228046 11.6866 0.145316 11.6039 0.0877981 11.5042C0.0302798 11.4046 -7.30621e-07 11.2916 0 11.1766C7.30648e-07 11.0615 0.0302827 10.9485 0.0878023 10.8489L6.16042 0.327654C6.21794 0.228033 6.30067 0.145309 6.40029 0.0877938C6.49992 0.0302789 6.61293 0 6.72796 0C6.843 0 6.95601 0.0302789 7.05563 0.0877938C7.15525 0.145309 7.23799 0.228033 7.29551 0.327654L13.3707 10.8482C13.4283 10.9479 13.4585 11.0609 13.4585 11.1759C13.4585 11.2909 13.4283 11.404 13.3707 11.5036C13.3132 11.6032 13.2305 11.6859 13.1309 11.7435C13.0312 11.801 12.9182 11.8313 12.8032 11.8313L0.655349 11.8319ZM6.3177 4.55738H7.14019L7.07662 7.65201H6.38193L6.31836 4.55738H6.3177ZM6.72796 9.23931C6.66751 9.24035 6.60746 9.22937 6.55129 9.20699C6.49513 9.18462 6.44397 9.1513 6.4008 9.10898C6.35762 9.06666 6.32329 9.01618 6.2998 8.96047C6.27631 8.90477 6.26413 8.84494 6.26396 8.78448C6.26396 8.53217 6.46844 8.33359 6.72796 8.33359C6.99011 8.33359 7.19458 8.53217 7.19458 8.78448C7.19433 8.84514 7.18201 8.90514 7.15832 8.96099C7.13464 9.01683 7.10007 9.06739 7.05663 9.10973C7.0132 9.15207 6.96176 9.18533 6.90533 9.20758C6.8489 9.22983 6.78861 9.24061 6.72796 9.23931Z"
+                                                fill="#777777"
+                                              />
+                                            </svg>
+                                          </button>
+                                          <span className="text-xs text-gray-500">
+                                            举报
+                                          </span>
+                                        </div>
+
+                                        <div className="flex items-center flex-col gap-1">
+                                          <button
+                                            onClick={() =>
+                                              toggleLike(reply.comment_id, true)
+                                            }
+                                            className="flex items-center gap-1 text-gray-500 hover:text-white transition-colors"
+                                          >
+                                            <ThumbsUp
+                                              size={16}
+                                              className={
+                                                reply.is_liked
+                                                  ? "text-purple-500"
+                                                  : ""
+                                              }
+                                            />
+                                          </button>
+                                          <span className="text-xs text-gray-500">
+                                            {replyLikeCount}
+                                          </span>
+                                        </div>
                                       </div>
                                     </div>
+                                    <p className="text-gray-300 text-sm my-1">
+                                      {reply.content}
+                                    </p>
                                   </div>
-                                  <p className="text-gray-300 text-sm my-1">
-                                    {reply.content}
-                                  </p>
                                 </div>
-                              </div>
-                            );
-                          })
-                        )}
-                      </div>
-                    )}
+                              );
+                            })
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })
+              );
+            })}
+          </div>
         )}
       </div>
 
       {/* Comment Input */}
       {showInput && (
         <div className="sticky bottom-0 left-0 right-0 px-4 py-3 bg-[#191721] rounded-lg">
-          {user?.token ? (
+          {isAuthenticated ? (
             <div className="flex items-center gap-2">
               <input
                 ref={commentInputRef}
@@ -591,12 +739,21 @@ const CommentSection = ({
               </button>
             </div>
           ) : (
-            <button className="w-full py-3 bg-purple-600 rounded-lg text-white text-sm font-medium hover:bg-purple-700 transition-colors">
+            <button
+              onClick={() => setIsLoginDrawerOpen(true)}
+              className="w-full py-3 bg-purple-600 rounded-lg text-white text-sm font-medium hover:bg-purple-700 transition-colors"
+            >
               登录后发布评论
             </button>
           )}
         </div>
       )}
+
+      {/* Login Drawer */}
+      <LoginDrawer
+        isOpen={isLoginDrawerOpen}
+        setIsOpen={setIsLoginDrawerOpen}
+      />
     </div>
   );
 };
