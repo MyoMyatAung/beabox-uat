@@ -56,11 +56,11 @@ import { sethideNew } from "./services/hideNewSlice";
 
 /**
  * Home Component
- * 
+ *
  * PURPOSE:
  * Manages the main video feed with vertical scrolling and tab navigation.
  * Implements scroll restriction during user guide to ensure Ad Popup is shown.
- * 
+ *
  * BUSINESS LOGIC:
  * - Shows videos in vertical scrollable feed
  * - Supports "Follow" and "For You" tabs
@@ -185,7 +185,7 @@ const Home = () => {
   const { hasDecryptedInitialData } = useSelector(
     (state: any) => state.decryption
   );
-  
+
   /**
    * Scroll Restriction State (NEW)
    * Business Logic: When restricted, only show first 2 videos to ensure Ad Popup is seen
@@ -606,10 +606,10 @@ const Home = () => {
 
   /**
    * Get videos to display based on scroll restriction
-   * Business Logic: 
+   * Business Logic:
    * - When scroll restricted: Show only first 2 videos (index 0 and 1)
    * - When not restricted: Show all videos
-   * 
+   *
    * @param videoArray - Full video array
    * @returns Filtered video array based on restriction state
    */
@@ -803,74 +803,75 @@ const Home = () => {
                         Apply scroll restriction to video list
                         Business Logic: Show only first 2 videos during user guide
                       */}
-                      {getRestrictedVideos(videos["follow"])?.map((video: any, index: any) => {
-                        return (
-                          <div
-                            key={index}
-                            className={`video mt-[20px] justify-center items-center overflow-hidden`}
-                            data-post-id={video?.post_id} // Add post ID to the container
-                          >
-                            {video?.file_type !== "video" ? (
-                              <a
-                                href={video?.ads_info?.jump_url}
-                                target="_blank"
-                                className="flex items-center justify-center h-full overflow-hidden"
-                              >
-                                <img
-                                  src={video?.files[0]?.resourceURL}
-                                  alt=""
-                                  className="w-full mx-auto"
-                                />
-                              </a>
-                            ) : (
-                              <VideoContainer
-                                // refetchUser={refetchUser}
-                                videoData={videoData}
-                                indexRef={indexRef}
-                                abortControllerRef={abortControllerRef}
-                                container={videoContainerRef.current}
-                                status={true}
-                                showFollowers={showFollowers}
-                                countNumber={countNumber}
-                                video={video}
-                                // coin={user?.coins}
-                                setCountNumber={setCountNumber}
-                                config={config}
-                                countdown={countdown}
-                                setWidth={setWidth}
-                                setHeight={setHeight}
-                                setHearts={setHearts}
-                                setCountdown={setCountdown}
-                                width={width}
-                                height={height}
-                                // setShowHeart={setShowHeart}
-                                initialActive={index === 0}
-                              />
-                            )}
-                            {video?.type !== "ads" &&
-                              video?.type !== "ads_virtual" && (
-                                <VideoFooter
-                                  badge={video?.user?.badge}
-                                  id={video?.user?.id}
-                                  tags={video?.tag}
-                                  title={video?.title}
-                                  username={video?.user?.name}
-                                  city={video?.city}
-                                  checkBottomSpacing={!!showFollowers}
+                      {getRestrictedVideos(videos["follow"])?.map(
+                        (video: any, index: any) => {
+                          return (
+                            <div
+                              key={index}
+                              className={`video mt-[20px] justify-center items-center overflow-hidden`}
+                              data-post-id={video?.post_id} // Add post ID to the container
+                            >
+                              {video?.file_type !== "video" ? (
+                                <a
+                                  href={video?.ads_info?.jump_url}
+                                  target="_blank"
+                                  className="flex items-center justify-center h-full overflow-hidden"
+                                >
+                                  <img
+                                    src={video?.files[0]?.resourceURL}
+                                    alt=""
+                                    className="w-full mx-auto"
+                                  />
+                                </a>
+                              ) : (
+                                <VideoContainer
+                                  // refetchUser={refetchUser}
+                                  videoData={videoData}
+                                  indexRef={indexRef}
+                                  abortControllerRef={abortControllerRef}
+                                  container={videoContainerRef.current}
+                                  status={true}
+                                  showFollowers={showFollowers}
+                                  countNumber={countNumber}
+                                  video={video}
+                                  // coin={user?.coins}
+                                  setCountNumber={setCountNumber}
+                                  config={config}
+                                  countdown={countdown}
+                                  setWidth={setWidth}
+                                  setHeight={setHeight}
+                                  setHearts={setHearts}
+                                  setCountdown={setCountdown}
+                                  width={width}
+                                  height={height}
+                                  // setShowHeart={setShowHeart}
+                                  initialActive={index === 0}
                                 />
                               )}
-                            {(video?.type === "ads" ||
-                              video?.type === "ads_virtual") && (
-                              <Ads ads={video?.ads_info} type={video?.type} />
-                            )}
-                            {hearts.map((id: any) => (
-                              <HeartCount
-                                id={id}
-                                key={id}
-                                remove={removeHeart}
-                              />
-                            ))}
-                            {/* {showHeart && (
+                              {video?.type !== "ads" &&
+                                video?.type !== "ads_virtual" && (
+                                  <VideoFooter
+                                    badge={video?.user?.badge}
+                                    id={video?.user?.id}
+                                    tags={video?.tag}
+                                    title={video?.title}
+                                    username={video?.user?.name}
+                                    city={video?.city}
+                                    checkBottomSpacing={!!showFollowers}
+                                  />
+                                )}
+                              {(video?.type === "ads" ||
+                                video?.type === "ads_virtual") && (
+                                <Ads ads={video?.ads_info} type={video?.type} />
+                              )}
+                              {hearts.map((id: any) => (
+                                <HeartCount
+                                  id={id}
+                                  key={id}
+                                  remove={removeHeart}
+                                />
+                              ))}
+                              {/* {showHeart && (
                             <ShowHeartCom
                               countNumber={countNumber}
                               nickname={user?.nickname}
@@ -882,9 +883,10 @@ const Home = () => {
                               <CountdownCircle countNumber={countNumber} />
                             </div>
                           )} */}
-                          </div>
-                        );
-                      })}
+                            </div>
+                          );
+                        }
+                      )}
                       {isLastVideoVisible && (
                         <div className="flex justify-center items-center p-3 w-full">
                           <img
@@ -984,82 +986,83 @@ const Home = () => {
                         Apply scroll restriction to video list
                         Business Logic: Show only first 2 videos during user guide
                       */}
-                      {getRestrictedVideos(videos["foryou"])?.map((video: any, index: any) => {
-                        return (
-                          <div
-                            key={index}
-                            className={`video mt-[20px] justify-center items-center overflow-hidden`}
-                            data-post-id={video.post_id} // Add post ID to the container
-                          >
-                            {video?.file_type !== "video" ? (
-                              <a
-                                href={video?.ads_info?.jump_url}
-                                target="_blank"
-                                className="flex items-center justify-center h-full overflow-hidden"
-                              >
-                                <img
-                                  src={video?.files[0]?.resourceURL}
-                                  alt=""
-                                  className="w-full mx-auto"
-                                />
-                              </a>
-                            ) : (
-                              <VideoContainer
-                                showFollowers={false}
-                                // refetchUser={refetchUser}
-                                videoData={videoData}
-                                indexRef={indexRef}
-                                abortControllerRef={abortControllerRef}
-                                container={videoContainerRef.current}
-                                status={true}
-                                countNumber={countNumber}
-                                video={video}
-                                // coin={user?.coins}
-                                setCountNumber={setCountNumber}
-                                config={config}
-                                countdown={countdown}
-                                setWidth={setWidth}
-                                setHeight={setHeight}
-                                setHearts={setHearts}
-                                setCountdown={setCountdown}
-                                width={width}
-                                height={height}
-                                // setShowHeart={setShowHeart}
-                                initialActive={index === 0}
-                              />
-                            )}
-
-                            {video?.type !== "ads" &&
-                              video?.type !== "ads_virtual" && (
-                                <VideoFooter
-                                  badge={video?.user?.badge}
-                                  id={video?.user?.id}
-                                  tags={video?.tag}
-                                  title={video?.title}
-                                  username={video?.user?.name}
-                                  city={video?.city}
-                                  checkBottomSpacing={false}
+                      {getRestrictedVideos(videos["foryou"])?.map(
+                        (video: any, index: any) => {
+                          return (
+                            <div
+                              key={index}
+                              className={`video mt-[20px] justify-center items-center overflow-hidden`}
+                              data-post-id={video.post_id} // Add post ID to the container
+                            >
+                              {video?.file_type !== "video" ? (
+                                <a
+                                  href={video?.ads_info?.jump_url}
+                                  target="_blank"
+                                  className="flex items-center justify-center h-full overflow-hidden"
+                                >
+                                  <img
+                                    src={video?.files[0]?.resourceURL}
+                                    alt=""
+                                    className="w-full mx-auto"
+                                  />
+                                </a>
+                              ) : (
+                                <VideoContainer
+                                  showFollowers={false}
+                                  // refetchUser={refetchUser}
+                                  videoData={videoData}
+                                  indexRef={indexRef}
+                                  abortControllerRef={abortControllerRef}
+                                  container={videoContainerRef.current}
+                                  status={true}
+                                  countNumber={countNumber}
+                                  video={video}
+                                  // coin={user?.coins}
+                                  setCountNumber={setCountNumber}
+                                  config={config}
+                                  countdown={countdown}
+                                  setWidth={setWidth}
+                                  setHeight={setHeight}
+                                  setHearts={setHearts}
+                                  setCountdown={setCountdown}
+                                  width={width}
+                                  height={height}
+                                  // setShowHeart={setShowHeart}
+                                  initialActive={index === 0}
                                 />
                               )}
 
-                            {(video?.type === "ads" ||
-                              video?.type === "ads_virtual") && (
-                              <Ads ads={video?.ads_info} type={video?.type} />
-                            )}
-                            {/*
+                              {video?.type !== "ads" &&
+                                video?.type !== "ads_virtual" && (
+                                  <VideoFooter
+                                    badge={video?.user?.badge}
+                                    id={video?.user?.id}
+                                    tags={video?.tag}
+                                    title={video?.title}
+                                    username={video?.user?.name}
+                                    city={video?.city}
+                                    checkBottomSpacing={false}
+                                  />
+                                )}
+
+                              {(video?.type === "ads" ||
+                                video?.type === "ads_virtual") && (
+                                <Ads ads={video?.ads_info} type={video?.type} />
+                              )}
+                              {/*
   {video?.type === "ads" && (
     <Ads ads={video?.ads_info} />
   )} */}
 
-                            {hearts.map((id: any) => (
-                              <HeartCount
-                                id={id}
-                                key={id}
-                                remove={removeHeart}
-                              />
-                            ))}
+                              {hearts.map((id: any) => (
+                                <HeartCount
+                                  id={id}
+                                  key={id}
+                                  remove={removeHeart}
+                                />
+                              ))}
 
-                            {/* {showHeart && (
+                              {/* {showHeart && (
     <ShowHeartCom
       countNumber={countNumber}
       nickname={user?.nickname}
@@ -1072,9 +1075,10 @@ const Home = () => {
       <CountdownCircle countNumber={countNumber} />
     </div>
   )} */}
-                          </div>
-                        );
-                      })}
+                            </div>
+                          );
+                        }
+                      )}
                       {isLastVideoVisible && (
                         <div className="flex justify-center items-center p-3 w-full">
                           <img

@@ -112,15 +112,14 @@ const RankBtn = ({ id, followBack, refetch }: any) => {
     <button
       disabled={isProcessing}
       onClick={handleChangeFollowStatus}
-      className={`text-[14px] z-[1000] flex items-center justify-between rounded-[8px] px-1 py-1.5 ${
+      className={`text-[12px] font-medium z-[1000] flex items-center justify-center gap-0.5 rounded-[6px] py-2 px-3 ${
         currentFollowState
           ? "bg-[#2B2830] hover:bg-[#2B2830]"
           : "gradient-bg hover:gradient-bg"
-      } w-full`}
+      } w-full transition-all duration-200 whitespace-nowrap`}
     >
-      <div></div>
       {currentFollowState ? "已关注" : "关注"}
-      {currentFollowState ? <Check size={14} /> : <div></div>}
+      {currentFollowState && <Check size={12} />}
     </button>
   );
 };

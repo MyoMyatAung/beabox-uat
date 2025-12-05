@@ -1,13 +1,10 @@
 import { paths } from "@/routes/paths";
 import backButton from "../../../assets/backButton.svg";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Card from "@/components/profile/noti/card";
 import balancebell from "@/assets/profile/balancebell.png";
-import { useGetNotiQuery } from "@/store/api/profileApi";
-import { useSelector } from "react-redux";
-import { useEffect } from "react";
 import Loader from "@/components/shared/loader";
-import { NOTIFICATION_CONFIG } from "@/constants/noti-constant";
+import { useInfiniteNotifications } from "@/hooks/useInfiniteNotifications";
 
 const formatdate = (data: any) => {
   const date = new Date(data);
@@ -25,19 +22,16 @@ const formatdate = (data: any) => {
 };
 
 const BalanceNoti = () => {
-  const { data, isLoading, refetch } = useGetNotiQuery("balance_alert");
-
-  const uniqueDates = [
-    ...new Set(data?.data?.map((item: any) => item?.created_at)),
-  ];
-
-  const groupedData = uniqueDates.map((date) => ({
-    date,
-    list: data?.data
-      ?.filter((item: any) => item?.created_at === date)
-      ?.map((item: any) => item),
-  }));
-
+  const {
+    groupedData,
+    isLoading,
+    isFetchingMore,
+    loadMoreRef,
+    hasNotifications,
+  } = useInfiniteNotifications({
+    type: "balance_alert",
+    unauthFlag: "isReadForUnauthenticatedBalance",
+  });
   const getTodayDate = () => {
     const today = new Date();
     const year = today.getFullYear();
@@ -46,20 +40,6 @@ const BalanceNoti = () => {
     return `${year}-${month}-${day}`;
   };
   const today = getTodayDate();
-
-  const user = useSelector((state: any) => state.persist.user);
-  const notiData = JSON.parse(
-    localStorage.getItem(NOTIFICATION_CONFIG.STORAGE_KEY) || "{}"
-  );
-  useEffect(() => {
-    if (user) refetch();
-    if (!user?.token) {
-      localStorage.setItem(
-        NOTIFICATION_CONFIG.STORAGE_KEY,
-        JSON.stringify({ ...notiData, isReadForUnauthenticatedBalance: true })
-      );
-    }
-  }, [user, refetch, notiData]);
 
   if (isLoading) return <Loader />;
 
@@ -74,20 +54,33 @@ const BalanceNoti = () => {
           <div className="px-2"></div>
         </div>
         <div className="space-y-5 pb-10">
-          {groupedData?.length ? (
-            groupedData?.map((item: any) => (
-              <div>
-                <p className="text-[12px] text-[#666666] text-center my-2">
-                  {/* {formatdate(item?.date)} */}
-                  {item?.date === today ? <></> : formatdate(item?.date)}
-                </p>
-                <div className="space-y-5">
-                  {item?.list?.map((item: any) => (
-                    <Card item={item} type="balance" />
-                  ))}
+          {hasNotifications ? (
+            <>
+              {groupedData.map((group: any, index: number) => (
+                <div key={group?.date ?? index}>
+                  <p className="text-[12px] text-[#666666] text-center my-2">
+                    {group?.date && group?.date !== today
+                      ? formatdate(group?.date)
+                      : null}
+                  </p>
+                  <div className="space-y-5">
+                    {group?.list?.map((item: any) => (
+                      <Card
+                        key={item?.id ?? `${group?.date}-${item?.title}`}
+                        item={item}
+                        type="balance"
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))
+              ))}
+              <div ref={loadMoreRef} className="h-1 w-full" />
+              {isFetchingMore ? (
+                <p className="text-[12px] text-[#666666] text-center py-2">
+                  加载中...
+                </p>
+              ) : null}
+            </>
           ) : (
             <div className="w-full flex flex-col justify-center items-center h-[80vh]">
               <img src={balancebell} className="w-10" alt="" />
