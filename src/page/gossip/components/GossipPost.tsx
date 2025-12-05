@@ -17,10 +17,10 @@ import {
   useLikeGossipPostMutation,
   useUnlikeGossipPostMutation,
   useUninterestGossipPostMutation,
-  useReportGossipPostMutation,
 } from "../services/gossipSlice";
 import { showToast } from "@/page/home/services/errorSlice";
 import type { RootState } from "@/store/store";
+import LoginDrawer from "@/components/profile/auth/login-drawer";
 
 interface MediaItem {
   id: string;
@@ -56,7 +56,7 @@ const GossipPost = ({ post }: GossipPostProps) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.persist?.user);
-  const isAuthenticated = Boolean(user?.token);
+  const [isAuthenticated, setIsAuthenticated] = useState(Boolean(user?.token));
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLiked, setIsLiked] = useState(post.is_liked);
   const [likeCount, setLikeCount] = useState(post.like_count);
@@ -66,6 +66,7 @@ const GossipPost = ({ post }: GossipPostProps) => {
   const [isMuted, setIsMuted] = useState(true);
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
   const [fullscreenIndex, setFullscreenIndex] = useState(0);
+  const [isLoginDrawerOpen, setIsLoginDrawerOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
   const moreOptionsRef = useRef<HTMLButtonElement>(null);
@@ -79,19 +80,18 @@ const GossipPost = ({ post }: GossipPostProps) => {
   const [unlikePost] = useUnlikeGossipPostMutation();
   const [uninterestGossipPost, { isLoading: uninterestLoading }] =
     useUninterestGossipPostMutation();
-  const [reportGossipPost, { isLoading: reportLoading }] =
-    useReportGossipPostMutation();
+
+  // Update authentication state when user changes
+  useEffect(() => {
+    const authenticated = Boolean(user?.token);
+    setIsAuthenticated(authenticated);
+  }, [user?.token]);
 
   const ensureAuthenticated = () => {
     if (isAuthenticated) {
       return true;
     }
-    dispatch(
-      showToast({
-        message: "请先登录后再操作",
-        type: "error",
-      })
-    );
+    setIsLoginDrawerOpen(true);
     return false;
   };
 
@@ -124,6 +124,9 @@ const GossipPost = ({ post }: GossipPostProps) => {
   };
 
   const handleLike = async () => {
+    if (!ensureAuthenticated()) {
+      return;
+    }
     if (pendingLike) return;
     const nextLiked = !isLiked;
     const delta = nextLiked ? 1 : -1;
@@ -156,6 +159,9 @@ const GossipPost = ({ post }: GossipPostProps) => {
 
   const handleFollow = () => {
     setShowPopover(false);
+    if (!ensureAuthenticated()) {
+      return;
+    }
     // TODO: Implement follow functionality
   };
 
@@ -200,32 +206,15 @@ const GossipPost = ({ post }: GossipPostProps) => {
     }
   };
 
-  const handleReport = async () => {
+  const handleReport = () => {
     setShowMoreOptionsPopover(false);
-    if (reportLoading) return;
     if (!ensureAuthenticated()) {
       return;
     }
-    try {
-      const response = await reportGossipPost({
-        model_id: post.post_id,
-        type: "post",
-        report_content: "This post contains inappropriate content",
-      }).unwrap();
-      dispatch(
-        showToast({
-          message: response?.message || "已收到您的举报，我们会尽快处理",
-          type: "success",
-        })
-      );
-    } catch (error) {
-      dispatch(
-        showToast({
-          message: getErrorMessage(error),
-          type: "error",
-        })
-      );
-    }
+    // Small delay to ensure Redux persist has flushed the state
+    setTimeout(() => {
+      navigate(`/gossip/reports/${post.post_id}`);
+    }, 150);
   };
 
   const handleToggleMute = () => {
@@ -545,7 +534,6 @@ const GossipPost = ({ post }: GossipPostProps) => {
           </div>
         </div>
       )}
-
       {/* Interaction Buttons and Timestamp */}
       <div className="px-4 flex items-center justify-between">
         <div className="flex items-center gap-6">
@@ -674,6 +662,9 @@ const GossipPost = ({ post }: GossipPostProps) => {
           },
         }}
       />
+
+      {/* Login Drawer */}
+      <LoginDrawer isOpen={isLoginDrawerOpen} setIsOpen={setIsLoginDrawerOpen} />
     </div>
   );
 };
