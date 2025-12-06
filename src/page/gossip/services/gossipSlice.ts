@@ -163,12 +163,10 @@ export interface GossipCommentLikeResponse {
   message: string;
 }
 
-const BASE_URL = "http://sajktest.qdhgtch.com/api/v1/";
-
 export const gossipExternalApi = createApi({
   reducerPath: "gossipExternalApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: BASE_URL,
+    baseUrl: import.meta.env.VITE_GOSSIP_API_BASE,
     prepareHeaders: (headers, { getState }) => {
       const state = getState() as {
         persist?: { user?: { token?: string } };
