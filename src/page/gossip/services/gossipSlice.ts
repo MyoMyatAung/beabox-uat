@@ -10,6 +10,7 @@ export interface GossipCategory {
 }
 
 export interface GossipPostMedia {
+  id?: string;
   type: "image" | "video";
   url: string;
   download_url?: string;
@@ -21,9 +22,9 @@ export interface GossipPostUser {
   id: number | string;
   nickname: string;
   profile_image: string;
-  is_following: boolean;
-  level: string;
-  badge: string;
+  is_following?: boolean;
+  level?: string;
+  badge?: string;
 }
 
 export interface GossipCommentUser {
@@ -51,6 +52,27 @@ export interface GossipPost {
   is_liked?: boolean;
   share_link?: string;
   time_ago?: string;
+}
+
+export interface GossipDetailPost {
+  post_id: string;
+  category_id?: string;
+  user: GossipPostUser;
+  content: string;
+  media: GossipPostMedia[];
+  like_count: number;
+  comment_count: number;
+  share_count: number;
+  is_liked: boolean;
+  created_at: string;
+  share_link?: string;
+  time_ago?: string;
+}
+
+interface GossipPostDetailResponse {
+  status: boolean;
+  message: string;
+  data?: GossipDetailPost;
 }
 
 interface GossipCategoryResponse {
@@ -209,6 +231,11 @@ export const gossipExternalApi = createApi({
         "gossipPosts",
       ],
     }),
+    getGossipPostDetail: builder.query<GossipDetailPost | null, string>({
+      query: (postId) => `post/detail/${postId}`,
+      transformResponse: (response: GossipPostDetailResponse) =>
+        response?.data ?? null,
+    }),
     getGossipComments: builder.mutation<
       GossipCommentListResponse,
       GossipCommentListParams
@@ -353,6 +380,8 @@ export const gossipExternalApi = createApi({
 export const {
   useGetGossipCategoriesQuery,
   useGetGossipPostsQuery,
+  useGetGossipPostDetailQuery,
+  useLazyGetGossipPostDetailQuery,
   useGetGossipCommentsMutation,
   useGetGossipRepliesMutation,
   usePostGossipCommentMutation,

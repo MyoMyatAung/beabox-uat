@@ -10,47 +10,20 @@ import CommentSection, {
 import MediaFullscreenViewer from "./components/MediaFullscreenViewer";
 import {
   useGetGossipCommentsMutation,
-  GossipComment as GossipCommentType,
   usePostGossipCommentMutation,
   useLikeGossipPostMutation,
   useUnlikeGossipPostMutation,
   useFollowGossipUserMutation,
+  useGetGossipPostDetailQuery,
+} from "./services/gossipSlice";
+import type {
+  GossipComment as GossipCommentType,
+  GossipDetailPost,
 } from "./services/gossipSlice";
 import { getDeviceInfo } from "@/lib/deviceInfo";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
 import { showToast } from "../home/services/errorSlice";
-
-type GossipMedia = {
-  id: string;
-  type: "image" | "video";
-  url: string;
-  download_url?: string;
-  thumbnail_url?: string;
-};
-
-type GossipUser = {
-  id: string;
-  nickname: string;
-  profile_image: string;
-  level?: string;
-  badge?: string;
-  is_following?: boolean;
-};
-
-type GossipDetailPost = {
-  post_id: string;
-  user: GossipUser;
-  content: string;
-  media: GossipMedia[];
-  like_count: number;
-  comment_count: number;
-  share_count: number;
-  is_liked: boolean;
-  created_at: string;
-  share_link?: string;
-  time_ago?: string;
-};
 
 interface CommentListApiPayload {
   data?: GossipCommentType[];
@@ -63,6 +36,8 @@ interface CommentListApiResponse {
   data?: CommentListApiPayload;
 }
 
+type NormalizedMediaItem = GossipDetailPost["media"][number] & { id: string };
+
 const PostDetail = () => {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.persist?.user);
@@ -70,12 +45,16 @@ const PostDetail = () => {
   const { postId } = useParams<{ postId: string }>();
   const location = useLocation();
   const navigate = useNavigate();
-  const post = (location.state as { post?: GossipDetailPost } | undefined)
-    ?.post;
+  const locationPost = (
+    location.state as { post?: GossipDetailPost } | undefined
+  )?.post;
+  const [post, setPost] = useState<GossipDetailPost | null>(
+    locationPost ?? null
+  );
 
   const [isMuted, setIsMuted] = useState(true);
   const [isFollowing, setIsFollowing] = useState(
-    post?.user.is_following ?? false
+    post?.user?.is_following ?? false
   );
   const videoRef = useRef<HTMLVideoElement>(null);
   const [getComments] = useGetGossipCommentsMutation();
@@ -97,6 +76,17 @@ const PostDetail = () => {
   const [unlikePost] = useUnlikeGossipPostMutation();
   const [followGossipUser, { isLoading: followLoading }] =
     useFollowGossipUserMutation();
+  const {
+    data: fetchedPostDetail,
+    isLoading: isPostDetailLoading,
+    isFetching: isPostDetailFetching,
+    isError: isPostDetailError,
+    error: postDetailError,
+    refetch: refetchPostDetail,
+  } = useGetGossipPostDetailQuery(postId ?? "", {
+    skip: !postId,
+  });
+  const detailLoading = isPostDetailLoading || isPostDetailFetching;
 
   const currentUser = useSelector((state: RootState) => state?.persist?.user);
   const fallbackCommentUser = useMemo<GossipCommentType["user"]>(
@@ -119,6 +109,39 @@ const PostDetail = () => {
     }),
     [currentUser]
   );
+  useEffect(() => {
+    if (locationPost) {
+      setPost(locationPost);
+    }
+  }, [locationPost]);
+
+  useEffect(() => {
+    if (fetchedPostDetail) {
+      setPost(fetchedPostDetail);
+    }
+  }, [fetchedPostDetail]);
+
+  useEffect(() => {
+    if (!post) return;
+    setIsFollowing(post.user?.is_following ?? false);
+    setPostIsLiked(post.is_liked ?? false);
+    setPostLikeCount(post.like_count ?? 0);
+    setTotalComments(post.comment_count ?? 0);
+  }, [post]);
+
+  const detailErrorMessage = useMemo(() => {
+    if (!postDetailError) {
+      return null;
+    }
+    if ("status" in postDetailError) {
+      const errData = postDetailError.data as { message?: string };
+      return errData?.message || "帖子加载失败，请稍后重试";
+    }
+    if ("message" in postDetailError && postDetailError.message) {
+      return postDetailError.message;
+    }
+    return "帖子加载失败，请稍后重试";
+  }, [postDetailError]);
   const sortCommentsAsc = useCallback(
     (list: GossipCommentType[]) =>
       [...list].sort(
@@ -161,18 +184,10 @@ const PostDetail = () => {
   );
 
   useEffect(() => {
-    if (!post) {
+    if (!postId) {
       navigate("/gossip", { replace: true });
     }
-  }, [post, navigate]);
-
-  useEffect(() => {
-    if (post) {
-      setIsFollowing(post.user.is_following ?? false);
-      setPostIsLiked(post.is_liked ?? false);
-      setPostLikeCount(post.like_count ?? 0);
-    }
-  }, [post]);
+  }, [postId, navigate]);
 
   const togglePostLike = useCallback(async () => {
     if (!ensureAuthenticated()) {
@@ -387,20 +402,28 @@ const PostDetail = () => {
     }, 150);
   };
 
-  const firstMedia =
-    post?.media && post.media.length > 0 ? post.media[0] : null;
+  const normalizedMedia: NormalizedMediaItem[] = useMemo(() => {
+    if (!post?.media) {
+      return [];
+    }
+    return post.media.map((item, index) => ({
+      ...item,
+      id: item.id ?? `${post.post_id ?? postId ?? "post"}-media-${index}`,
+    }));
+  }, [post, postId]);
+  const firstMedia = normalizedMedia.length > 0 ? normalizedMedia[0] : null;
   const isFirstVideo = firstMedia?.type === "video";
 
   const handleMediaClick = useCallback(
     (index: number) => {
-      if (!post?.media?.length) return;
+      if (!normalizedMedia.length) return;
       if (isFirstVideo && index === 0 && videoRef.current) {
         videoRef.current.pause();
       }
       setFullscreenIndex(index);
       setIsFullscreenOpen(true);
     },
-    [isFirstVideo, post?.media]
+    [isFirstVideo, normalizedMedia.length]
   );
 
   const shareUrl = useMemo(
@@ -411,7 +434,37 @@ const PostDetail = () => {
   );
 
   if (!post) {
-    return null;
+    const fallbackMessage =
+      detailLoading && !isPostDetailError
+        ? "帖子加载中..."
+        : detailErrorMessage || "帖子不存在或已被删除";
+    return (
+      <div className="w-full min-h-screen flex flex-col bg-[#16131C] px-5 pt-5 z-[9999] max-w-[480px] mx-auto">
+        <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center">
+          <p className="text-white text-sm">{fallbackMessage}</p>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate(-1)}
+              className="px-4 py-1.5 rounded-2xl border border-gray-600 text-sm font-medium text-white hover:bg-gray-800/40 transition-colors"
+            >
+              返回
+            </button>
+            {!detailLoading && postId && (
+              <button
+                onClick={() => refetchPostDetail()}
+                className="px-4 py-1.5 rounded-2xl bg-pink-500 text-sm font-medium text-white hover:bg-pink-400 transition-colors"
+              >
+                重试
+              </button>
+            )}
+          </div>
+        </div>
+        <LoginDrawer
+          isOpen={isLoginDrawerOpen}
+          setIsOpen={setIsLoginDrawerOpen}
+        />
+      </div>
+    );
   }
 
   const detailCommentSectionProps: CommentSectionProps = {
@@ -501,10 +554,10 @@ const PostDetail = () => {
         </p>
 
         {/* Media */}
-        {post.media && post.media.length > 0 && (
+        {normalizedMedia.length > 0 && (
           <div className="mb-4">
             <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
-              {post.media.map((item, index) => (
+              {normalizedMedia.map((item, index) => (
                 <div
                   key={item.id}
                   onClick={() => handleMediaClick(index)}
@@ -513,8 +566,8 @@ const PostDetail = () => {
                   tabIndex={0}
                 >
                   {item.type === "image" ? (
-                    <img
-                      src={item.url}
+                    <AsyncDecryptedImage
+                      imageUrl={item.url}
                       alt=""
                       className="w-full h-full object-cover"
                     />
@@ -545,11 +598,15 @@ const PostDetail = () => {
                     </div>
                   ) : (
                     <div className="relative w-full h-full">
-                      <img
-                        src={item.thumbnail_url || item.url}
-                        alt=""
-                        className="w-full h-full object-cover"
-                      />
+                      {item.thumbnail_url || item.thumbnail ? (
+                        <AsyncDecryptedImage
+                          imageUrl={item.thumbnail_url || item.thumbnail || ""}
+                          alt=""
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gray-900" />
+                      )}
                       <div className="absolute inset-0 flex items-center justify-center">
                         <div className="w-16 h-16 bg-black/50 rounded-full flex items-center justify-center">
                           <svg
@@ -634,7 +691,7 @@ const PostDetail = () => {
                   strokeLinejoin="round"
                 />
               </svg>
-              <span className="text-sm">{post.comment_count}</span>
+              <span className="text-sm">{totalComments}</span>
             </div>
             <div className="flex items-center gap-1 text-white">
               <button
@@ -674,7 +731,7 @@ const PostDetail = () => {
       </div>
 
       <MediaFullscreenViewer
-        media={post.media}
+        media={normalizedMedia}
         initialIndex={fullscreenIndex}
         isOpen={isFullscreenOpen}
         onClose={() => setIsFullscreenOpen(false)}
