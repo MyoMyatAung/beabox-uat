@@ -29,6 +29,7 @@ export interface GossipCommentUser {
   nickname: string;
   profile_image: string;
   level?: string;
+  badge?: string;
   level_badge_color?: string;
   is_author?: boolean;
   is_verified?: boolean;

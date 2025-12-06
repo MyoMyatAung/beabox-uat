@@ -10,6 +10,7 @@ import {
   useUnlikeGossipCommentMutation,
 } from "../services/gossipSlice";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
+import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 
 interface ReplyListApiResponse {
   data?: {
@@ -427,8 +428,8 @@ const CommentSection = ({
                   {/* Main Comment */}
                   <div className="flex gap-3">
                     {comment?.user?.profile_image ? (
-                      <img
-                        src={comment?.user?.profile_image}
+                      <AsyncDecryptedImage
+                        imageUrl={comment.user.profile_image}
                         alt={comment.user.nickname}
                         className="w-8 h-8 rounded-full object-cover flex-shrink-0"
                       />
@@ -444,11 +445,21 @@ const CommentSection = ({
                             <span className="text-white text-sm font-medium">
                               {comment?.user?.nickname || "未知用户"}
                             </span>
-                            {comment?.user?.level && (
-                              <span className="px-1.5 py-0.5 bg-purple-600 rounded text-xs text-white">
-                                {comment?.user?.level}
-                              </span>
-                            )}
+                            {comment?.user?.level ? (
+                              <AsyncDecryptedImage
+                                imageUrl={comment.user.level}
+                                alt="level"
+                                className="!w-auto h-6 object-contain"
+                              />
+                            ) : null}
+                            {comment?.user?.badge ? (
+                              <AsyncDecryptedImage
+                                imageUrl={comment.user.badge}
+                                alt="badge"
+                                className="!w-4 !h-4"
+                              />
+                            ) : null}
+
                             {comment?.user?.is_author && (
                               <span className="px-1.5 py-0.5 bg-yellow-600 rounded text-xs text-white">
                                 作者
@@ -614,8 +625,8 @@ const CommentSection = ({
                                   className="flex gap-3"
                                 >
                                   {reply?.user?.profile_image ? (
-                                    <img
-                                      src={reply.user.profile_image}
+                                    <AsyncDecryptedImage
+                                      imageUrl={reply.user.profile_image}
                                       alt={reply.user.nickname}
                                       className="w-6 h-6 rounded-full object-cover flex-shrink-0"
                                     />
@@ -632,11 +643,20 @@ const CommentSection = ({
                                             {reply?.user?.nickname ||
                                               "未知用户"}
                                           </span>
-                                          {reply?.user?.level && (
-                                            <span className="px-1 py-0.5 bg-purple-600 rounded text-xs text-white">
-                                              {reply?.user?.level}
-                                            </span>
-                                          )}
+                                          {reply?.user?.badge ? (
+                                            <AsyncDecryptedImage
+                                              imageUrl={reply.user.badge}
+                                              alt="badge"
+                                              className="!w-4 !h-4"
+                                            />
+                                          ) : null}
+                                          {reply?.user?.level ? (
+                                            <AsyncDecryptedImage
+                                              imageUrl={reply.user.level}
+                                              alt="level"
+                                              className="!w-10 !h-5 object-contain"
+                                            />
+                                          ) : null}
                                         </div>
                                         <p className="text-xs text-gray-500">
                                           {formatFullTime(reply.created_at)}
