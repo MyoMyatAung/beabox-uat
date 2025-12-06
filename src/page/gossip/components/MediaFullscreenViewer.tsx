@@ -25,10 +25,14 @@ import {
 import { getDeviceInfo } from "@/lib/deviceInfo";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
 import { useNavigate } from "react-router-dom";
+import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
+import { decryptImage } from "@/utils/imageDecrypt";
 interface MediaItem {
   id: string;
   type: "image" | "video";
   url: string;
+  download_url?: string;
+  thumbnail_url?: string;
   thumbnail?: string;
 }
 
@@ -761,14 +765,29 @@ const MediaFullscreenViewer = ({
     setShowMoreOptions(false);
     if (!currentMedia) return;
 
-    const normalizedUrl = currentMedia.url.split("?")[0].toLowerCase();
+    const downloadSource = currentMedia.download_url || currentMedia.url;
+
+    const normalizedUrl = downloadSource.split("?")[0].toLowerCase();
     const isM3u8 = normalizedUrl.endsWith(".m3u8");
     const isMp4 = normalizedUrl.endsWith(".mp4");
+    const isEncryptedImage =
+      currentMedia.type === "image" && normalizedUrl.endsWith(".txt");
 
     // Derive filename and extension
+    const deriveExtension = (mime: string | undefined, fallback: string) => {
+      if (!mime) return fallback;
+      if (mime.includes("jpeg")) return ".jpg";
+      if (mime.includes("png")) return ".png";
+      if (mime.includes("webp")) return ".webp";
+      if (mime.includes("gif")) return ".gif";
+      if (mime.includes("mp4")) return ".mp4";
+      if (mime.includes("mpegurl") || mime.includes("m3u8")) return ".m3u8";
+      return fallback;
+    };
+
     let extension = "";
     try {
-      const url = new URL(currentMedia.url);
+      const url = new URL(downloadSource);
       const pathname = url.pathname;
       const lastDotIndex = pathname.lastIndexOf(".");
       if (lastDotIndex !== -1) {
@@ -779,30 +798,47 @@ const MediaFullscreenViewer = ({
     }
     if (!extension) {
       extension = isM3u8
-        ? ".ts"
+        ? ".m3u8"
         : isMp4
         ? ".mp4"
         : currentMedia.type === "video"
         ? ".mp4"
         : ".jpg";
     }
-    const filename = `${currentMedia.type}-${currentMedia.id}${extension}`;
 
-    // Prefer native browser download UI for better UX
-    const anchor = document.createElement("a");
-    anchor.href = currentMedia.url;
-    anchor.download = filename;
-    anchor.target = "_blank";
-    anchor.rel = "noreferrer";
-    document.body.appendChild(anchor);
-    anchor.click();
-    document.body.removeChild(anchor);
+    try {
+      let blob: Blob;
 
-    // For m3u8 some browsers may ignore download; open in new tab fallback
-    if (isM3u8) {
+      if (isEncryptedImage) {
+        const decryptedUrl = await decryptImage(downloadSource, "");
+        const imgResp = await fetch(decryptedUrl);
+        blob = await imgResp.blob();
+        extension = deriveExtension(blob.type, extension);
+      } else {
+        const response = await fetch(downloadSource, {
+          credentials: "include",
+        });
+        blob = await response.blob();
+        extension = deriveExtension(blob.type, extension);
+      }
+
+      const blobUrl = URL.createObjectURL(blob);
+      const filename = `${currentMedia.type}-${currentMedia.id}${extension}`;
+
+      const anchor = document.createElement("a");
+      anchor.href = blobUrl;
+      anchor.download = filename;
+      anchor.rel = "noreferrer";
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+
       setTimeout(() => {
-        window.open(currentMedia.url, "_blank");
-      }, 300);
+        URL.revokeObjectURL(blobUrl);
+      }, 1000);
+    } catch (err) {
+      console.error("Download failed, opening in new tab fallback:", err);
+      window.open(downloadSource, "_blank");
     }
   };
 
@@ -911,7 +947,9 @@ const MediaFullscreenViewer = ({
             setVideoReadyState((prev) => ({
               ...prev,
               [index]: {
-                ...(prev[index] || { thumbnail: mediaItem.thumbnail }),
+                ...(prev[index] || {
+                  thumbnail: mediaItem.thumbnail_url || mediaItem.thumbnail,
+                }),
                 isReady: false,
                 isVideo: true,
               },
@@ -956,7 +994,9 @@ const MediaFullscreenViewer = ({
               setVideoReadyState((prev) => ({
                 ...prev,
                 [index]: {
-                  ...(prev[index] || { thumbnail: mediaItem.thumbnail }),
+                  ...(prev[index] || {
+                    thumbnail: mediaItem.thumbnail_url || mediaItem.thumbnail,
+                  }),
                   isReady: false,
                   isVideo: true,
                 },
@@ -1032,7 +1072,9 @@ const MediaFullscreenViewer = ({
         setVideoReadyState((prev) => ({
           ...prev,
           [index]: {
-            ...(prev[index] || { thumbnail: mediaItem.thumbnail }),
+            ...(prev[index] || {
+              thumbnail: mediaItem.thumbnail_url || mediaItem.thumbnail,
+            }),
             isReady: true,
             isVideo: true,
           },
@@ -1081,7 +1123,8 @@ const MediaFullscreenViewer = ({
           const shouldRenderVideo = isItemVideo && isWithinActivationRange;
           const videoState = videoReadyState[index];
           const isVideoReady = !!videoState?.isReady;
-          const previewThumbnail = videoState?.thumbnail || item.thumbnail;
+          const previewThumbnail =
+            videoState?.thumbnail || item.thumbnail_url || item.thumbnail;
 
           return (
             <div
@@ -1101,8 +1144,8 @@ const MediaFullscreenViewer = ({
                 shouldRenderVideo ? (
                   <div className="relative w-full h-full">
                     {previewThumbnail && (
-                      <img
-                        src={previewThumbnail}
+                      <AsyncDecryptedImage
+                        imageUrl={previewThumbnail}
                         alt=""
                         className={cn(
                           "absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none",
@@ -1124,8 +1167,8 @@ const MediaFullscreenViewer = ({
                 ) : (
                   <div className="relative w-full h-full flex items-center justify-center bg-black">
                     {previewThumbnail ? (
-                      <img
-                        src={previewThumbnail}
+                      <AsyncDecryptedImage
+                        imageUrl={previewThumbnail}
                         alt=""
                         className="max-w-full max-h-full object-contain opacity-70"
                       />
@@ -1163,8 +1206,8 @@ const MediaFullscreenViewer = ({
                   </div>
                 )
               ) : (
-                <img
-                  src={item.url}
+                <AsyncDecryptedImage
+                  imageUrl={item.url}
                   alt=""
                   className="max-w-full max-h-full object-contain"
                 />

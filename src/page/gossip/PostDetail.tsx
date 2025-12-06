@@ -25,7 +25,8 @@ type GossipMedia = {
   id: string;
   type: "image" | "video";
   url: string;
-  thumbnail?: string;
+  download_url?: string;
+  thumbnail_url?: string;
 };
 
 type GossipUser = {
@@ -545,7 +546,7 @@ const PostDetail = () => {
                   ) : (
                     <div className="relative w-full h-full">
                       <img
-                        src={item.thumbnail || item.url}
+                        src={item.thumbnail_url || item.url}
                         alt=""
                         className="w-full h-full object-cover"
                       />

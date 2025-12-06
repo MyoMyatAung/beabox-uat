@@ -12,7 +12,9 @@ export interface GossipCategory {
 export interface GossipPostMedia {
   type: "image" | "video";
   url: string;
+  download_url?: string;
   thumbnail?: string;
+  thumbnail_url?: string;
 }
 
 export interface GossipPostUser {
@@ -67,6 +69,11 @@ interface GossipPagination {
 interface GossipPostListResponse {
   status: boolean;
   message: string;
+  data: GossipPost[];
+  pagination?: GossipPagination;
+}
+
+export interface GossipPostListResult {
   data: GossipPost[];
   pagination?: GossipPagination;
 }
@@ -176,6 +183,7 @@ export const gossipExternalApi = createApi({
         headers.set("Authorization", `Bearer ${token}`);
       }
       headers.set("Content-Type", "application/json");
+      headers.set("Accept-Language", "cn");
       return headers;
     },
   }),
@@ -187,13 +195,15 @@ export const gossipExternalApi = createApi({
         response?.data ?? [],
       providesTags: ["gossipCategory"],
     }),
-    getGossipPosts: builder.query<GossipPost[], GossipPostListParams>({
+    getGossipPosts: builder.query<GossipPostListResult, GossipPostListParams>({
       query: ({ category_id, page = 1, pageSize = 10 }) => ({
         url: "post/list",
         params: { category_id, page, pageSize },
       }),
-      transformResponse: (response: GossipPostListResponse) =>
-        response?.data ?? [],
+      transformResponse: (response: GossipPostListResponse) => ({
+        data: response?.data ?? [],
+        pagination: response?.pagination,
+      }),
       providesTags: (_result, _error, { category_id }) => [
         { type: "gossipPosts", id: category_id },
         "gossipPosts",

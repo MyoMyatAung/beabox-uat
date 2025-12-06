@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import type { ComponentProps } from "react";
 import { useDispatch } from "react-redux";
+import InfiniteScroll from "react-infinite-scroll-component";
 import { sethideNew } from "@/page/home/services/hideNewSlice";
 import GossipTopNavbar from "./components/GossipTopNavbar";
 import GossipPost from "./components/GossipPost";
@@ -37,11 +38,21 @@ const PostSkeleton = () => (
   </div>
 );
 
+const LoadingSpinner = () => (
+  <div className="flex justify-center items-center py-4">
+    <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+  </div>
+);
+
 const Gossip = () => {
   const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState<string>("");
   const [page, setPage] = useState(1);
   const pageSize = 10;
+  const [posts, setPosts] = useState<
+    ComponentProps<typeof GossipPost>["post"][]
+  >([]);
+  const [hasMore, setHasMore] = useState(true);
 
   const {
     data: categoryList = [],
@@ -81,7 +92,7 @@ const Gossip = () => {
   };
 
   const {
-    data: apiPosts = [],
+    data: apiPostsResponse,
     isLoading: isPostsLoading,
     isFetching: isPostsFetching,
     error,
@@ -101,12 +112,10 @@ const Gossip = () => {
 
   type GossipPostData = ComponentProps<typeof GossipPost>["post"];
 
-  const posts: GossipPostData[] = useMemo(() => {
-    if (!apiPosts?.length) {
-      return [];
-    }
+  const mappedApiPosts: GossipPostData[] = useMemo(() => {
+    if (!apiPostsResponse?.data?.length) return [];
 
-    return apiPosts.map((post, index) => {
+    return apiPostsResponse.data.map((post, index) => {
       const nickname = post.user?.nickname?.trim() || "匿名用户";
       const userId =
         post.user?.id !== undefined ? String(post.user.id) : `user-${index}`;
@@ -114,17 +123,18 @@ const Gossip = () => {
       const mediaItems: GossipPostData["media"] = Array.isArray(post.media)
         ? post.media
             .filter((item): item is GossipPostMedia =>
-              Boolean(item && item.url)
+              Boolean(item && (item.url || item.download_url))
             )
-            .map((item, mediaIndex) => ({
-              id: `${post.id || `post-${index}`}-media-${mediaIndex}`,
-              type: item.type === "video" ? "video" : "image",
-              url:
-                item.type === "video"
-                  ? "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-                  : item.url,
-              thumbnail: item.thumbnail,
-            }))
+            .map((item, mediaIndex) => {
+              const mediaUrl = item.download_url || item.url || "";
+              return {
+                id: `${post.id || `post-${index}`}-media-${mediaIndex}`,
+                type: item.type === "video" ? "video" : "image",
+                url: mediaUrl,
+                download_url: item.download_url,
+                thumbnail_url: (item as any).thumbnail_url,
+              };
+            })
         : [];
 
       return {
@@ -149,7 +159,51 @@ const Gossip = () => {
         time_ago: post.time_ago || "",
       };
     });
-  }, [apiPosts]);
+  }, [apiPostsResponse]);
+
+  useEffect(() => {
+    setPosts([]);
+    setHasMore(true);
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (!apiPostsResponse) return;
+
+    const merged = mappedApiPosts;
+
+    setPosts((prev) => {
+      if (page === 1) {
+        return merged;
+      }
+
+      const existingIds = new Set(prev.map((item) => item.post_id));
+      const combined = [...prev];
+
+      merged.forEach((item) => {
+        if (!existingIds.has(item.post_id)) {
+          combined.push(item);
+        }
+      });
+
+      return combined;
+    });
+
+    const pagination = apiPostsResponse.pagination;
+    if (pagination) {
+      setHasMore(pagination.current_page < pagination.last_page);
+    } else {
+      setHasMore(merged.length >= pageSize);
+    }
+  }, [apiPostsResponse, mappedApiPosts, page, pageSize]);
+
+  const loadMorePosts = () => {
+    if (isPostsFetching || isCategoriesLoading || !hasMore) return;
+    setPage((prev) => prev + 1);
+  };
+
+  const isInitialLoading =
+    (isCategoriesLoading || isPostsLoading || !hasCategoryId) &&
+    posts.length === 0;
 
   const errorMessage = useMemo(() => {
     if (!tabs.length && !isCategoriesLoading) {
@@ -175,7 +229,8 @@ const Gossip = () => {
     return error.message || "帖子加载失败，请稍后重试";
   }, [tabs.length, isCategoriesLoading, categoriesError, error]);
 
-  const showEmptyState = !isLoading && !errorMessage && posts.length === 0;
+  const showEmptyState =
+    !isInitialLoading && !errorMessage && posts.length === 0;
 
   return (
     <div className="w-full h-screen bg-black overflow-hidden">
@@ -187,14 +242,17 @@ const Gossip = () => {
       />
 
       {/* Content Area - Scrollable Posts */}
-      {isLoading ? (
+      {isInitialLoading ? (
         <div className="w-full max-w-[480px] mx-auto">
           {Array.from({ length: 2 }).map((_, index) => (
             <PostSkeleton key={index} />
           ))}
         </div>
       ) : (
-        <div className="w-full h-[calc(100vh-136px)] bg-black overflow-y-auto pb-20">
+        <div
+          id="gossip-scroll-container"
+          className="w-full h-[calc(100vh-136px)] bg-black overflow-y-auto pb-20"
+        >
           {!isLoading && errorMessage && (
             <div className="flex flex-col items-center justify-center h-full gap-4 px-6 text-center">
               <p className="text-red-400 text-sm">{errorMessage}</p>
@@ -216,11 +274,21 @@ const Gossip = () => {
           )}
 
           {!isLoading && !errorMessage && posts.length > 0 && (
-            <div className="w-full max-w-[480px] mx-auto">
-              {posts.map((post) => (
-                <GossipPost key={post.post_id} post={post} />
-              ))}
-            </div>
+            <InfiniteScroll
+              dataLength={posts.length}
+              next={loadMorePosts}
+              hasMore={hasMore}
+              loader={<LoadingSpinner />}
+              scrollableTarget="gossip-scroll-container"
+              scrollThreshold={0.9}
+              style={{ overflow: "visible" }}
+            >
+              <div className="w-full max-w-[480px] mx-auto">
+                {posts.map((post) => (
+                  <GossipPost key={post.post_id} post={post} />
+                ))}
+              </div>
+            </InfiniteScroll>
           )}
         </div>
       )}

@@ -31,6 +31,8 @@ interface MediaItem {
   id: string;
   type: "image" | "video";
   url: string;
+  download_url?: string;
+  thumbnail_url?: string;
   thumbnail?: string;
 }
 
@@ -328,26 +330,6 @@ const GossipPost = ({ post }: GossipPostProps) => {
     setIsFollowing(post.user.is_following);
   }, [post.user.is_following]);
 
-  const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInHours = Math.floor(
-      (now.getTime() - date.getTime()) / (1000 * 60 * 60)
-    );
-
-    if (diffInHours < 1) {
-      const diffInMinutes = Math.floor(
-        (now.getTime() - date.getTime()) / (1000 * 60)
-      );
-      return `${diffInMinutes}分钟前`;
-    } else if (diffInHours < 24) {
-      return `${diffInHours}小时前`;
-    } else {
-      const diffInDays = Math.floor(diffInHours / 24);
-      return `${diffInDays}天前`;
-    }
-  };
-
   return (
     <div
       ref={postRef}
@@ -527,13 +509,13 @@ const GossipPost = ({ post }: GossipPostProps) => {
           <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
             {post.media.map((item, index) => (
               <div
-                key={item.id}
+                key={item.id || item.url || item.download_url || index}
                 onClick={() => handleMediaClick(index)}
                 className="flex-shrink-0 w-[190px] h-[240px] rounded-lg overflow-hidden bg-gray-900 relative cursor-pointer"
               >
                 {item.type === "image" ? (
-                  <img
-                    src={item.url}
+                  <AsyncDecryptedImage
+                    imageUrl={item.url}
                     alt=""
                     className="w-full h-full object-cover"
                   />
@@ -565,11 +547,15 @@ const GossipPost = ({ post }: GossipPostProps) => {
                   </div>
                 ) : (
                   <div className="relative w-full h-full">
-                    <img
-                      src={item.thumbnail || item.url}
-                      alt=""
-                      className="w-full h-full object-cover"
-                    />
+                    {item.thumbnail_url || item.thumbnail ? (
+                      <AsyncDecryptedImage
+                        imageUrl={item.thumbnail_url || item.thumbnail || ""}
+                        alt=""
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gray-900" />
+                    )}
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="w-16 h-16 bg-black/50 rounded-full flex items-center justify-center">
                         <svg
