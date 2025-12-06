@@ -10,6 +10,7 @@ import {
   useUnlikeGossipCommentMutation,
 } from "../services/gossipSlice";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
+import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 
 interface ReplyListApiResponse {
   data?: {
@@ -427,8 +428,8 @@ const CommentSection = ({
                   {/* Main Comment */}
                   <div className="flex gap-3">
                     {comment?.user?.profile_image ? (
-                      <img
-                        src={comment?.user?.profile_image}
+                      <AsyncDecryptedImage
+                        imageUrl={comment?.user?.profile_image}
                         alt={comment.user.nickname}
                         className="w-8 h-8 rounded-full object-cover flex-shrink-0"
                       />
@@ -445,9 +446,11 @@ const CommentSection = ({
                               {comment?.user?.nickname || "未知用户"}
                             </span>
                             {comment?.user?.level && (
-                              <span className="px-1.5 py-0.5 bg-purple-600 rounded text-xs text-white">
-                                {comment?.user?.level}
-                              </span>
+                              <AsyncDecryptedImage
+                                imageUrl={comment?.user?.level}
+                                alt="level"
+                                className="!w-11 !h-6 object-contain"
+                              />
                             )}
                             {comment?.user?.is_author && (
                               <span className="px-1.5 py-0.5 bg-yellow-600 rounded text-xs text-white">
