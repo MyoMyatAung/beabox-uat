@@ -59,6 +59,53 @@ const CommentSkeleton = () => (
   </div>
 );
 
+const mergeRepliesState = (
+  incoming: GossipCommentType[] | undefined,
+  previous: GossipCommentType[] | undefined
+): GossipCommentType[] => {
+  if (!incoming) return previous ? [...previous] : [];
+  const prevMap = new Map(previous?.map((reply) => [reply.comment_id, reply]));
+  return incoming.map((reply) => {
+    const prev = prevMap.get(reply.comment_id);
+    if (!prev) return reply;
+    return {
+      ...reply,
+      is_liked: prev.is_liked ?? reply.is_liked,
+      like_count: prev.like_count ?? reply.like_count,
+    };
+  });
+};
+
+const mergeCommentsState = (
+  incoming: GossipCommentType[],
+  previous: GossipCommentType[]
+): GossipCommentType[] => {
+  const prevMap = new Map(
+    previous.map((comment) => [comment.comment_id, comment])
+  );
+  return incoming.map((comment) => {
+    const prev = prevMap.get(comment.comment_id);
+    if (!prev) return comment;
+
+    const mergedReplies = mergeRepliesState(
+      comment.replies?.list,
+      prev.replies?.list
+    );
+
+    return {
+      ...comment,
+      is_liked: prev.is_liked ?? comment.is_liked,
+      like_count: prev.like_count ?? comment.like_count,
+      replies: comment.replies
+        ? {
+            ...comment.replies,
+            list: mergedReplies,
+          }
+        : comment.replies,
+    };
+  });
+};
+
 const CommentSection = ({
   comments,
   commentCount,
@@ -79,7 +126,7 @@ const CommentSection = ({
     useState<GossipCommentType[]>(comments);
 
   useEffect(() => {
-    setLocalComments(comments);
+    setLocalComments((prev) => mergeCommentsState(comments, prev));
   }, [comments]);
 
   const user = useSelector(
@@ -319,7 +366,7 @@ const CommentSection = ({
   };
 
   const toggleReplyInput = (commentId: string) => {
-    if (!ensureAuthenticated) {
+    if (!ensureAuthenticated()) {
       return;
     }
 
