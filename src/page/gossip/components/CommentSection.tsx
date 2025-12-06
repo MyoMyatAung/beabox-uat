@@ -429,7 +429,7 @@ const CommentSection = ({
                   <div className="flex gap-3">
                     {comment?.user?.profile_image ? (
                       <AsyncDecryptedImage
-                        imageUrl={comment.user.profile_image}
+                        imageUrl={comment?.user?.profile_image}
                         alt={comment.user.nickname}
                         className="w-8 h-8 rounded-full object-cover flex-shrink-0"
                       />
@@ -445,13 +445,13 @@ const CommentSection = ({
                             <span className="text-white text-sm font-medium">
                               {comment?.user?.nickname || "未知用户"}
                             </span>
-                            {comment?.user?.level ? (
+                            {comment?.user?.level && (
                               <AsyncDecryptedImage
-                                imageUrl={comment.user.level}
+                                imageUrl={comment?.user?.level}
                                 alt="level"
-                                className="!w-auto h-6 object-contain"
+                                className="!w-11 !h-6 object-contain"
                               />
-                            ) : null}
+                            )}
                             {comment?.user?.badge ? (
                               <AsyncDecryptedImage
                                 imageUrl={comment.user.badge}
@@ -459,7 +459,6 @@ const CommentSection = ({
                                 className="!w-4 !h-4"
                               />
                             ) : null}
-
                             {comment?.user?.is_author && (
                               <span className="px-1.5 py-0.5 bg-yellow-600 rounded text-xs text-white">
                                 作者
