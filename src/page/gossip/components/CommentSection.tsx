@@ -596,7 +596,12 @@ const CommentSection = ({
                       <div className="flex flex-col items-start gap-4 text-xs text-gray-500">
                         <button
                           onClick={() => toggleReplyInput(comment.comment_id)}
-                          className="hover:text-white transition-colors bg-[#FFFFFF1F] px-2 py-1 rounded-full"
+                          className={`transition-colors bg-[#FFFFFF1F] px-2 py-1 rounded-full ${
+                            showReplyInput[comment.comment_id] ||
+                            expandedReplies[comment.comment_id]
+                              ? "text-white"
+                              : "text-gray-500"
+                          }`}
                         >
                           回复
                         </button>
@@ -613,11 +618,15 @@ const CommentSection = ({
                             <span className="w-5 h-[1px] bg-gray-500"></span>
                             <button
                               onClick={() => toggleReplies(comment.comment_id)}
-                              className="hover:text-white transition-colors"
+                              className={`transition-colors ${
+                                expandedReplies[comment.comment_id]
+                                  ? "text-white"
+                                  : "text-gray-500"
+                              }`}
                             >
                               {expandedReplies[comment.comment_id]
-                                ? `展开${replyListFromComment.length}条回复`
-                                : `收起${replyListFromComment.length}条回复`}
+                                ? `收起${replyListFromComment.length}条回复`
+                                : `展开${replyListFromComment.length}条回复`}
                             </button>
                           </div>
                         )}
