@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
-import { useSelector } from "react-redux";
-import type { RootState } from "@/store/store";
+import { useSelector, useDispatch, useStore } from "react-redux";
+import type { RootState, AppDispatch } from "@/store/store";
 import Hls from "hls.js";
 import Artplayer from "artplayer";
 
@@ -21,7 +21,9 @@ import {
   useGetGossipCommentsMutation,
   GossipComment as GossipCommentType,
   usePostGossipCommentMutation,
+  gossipExternalApi,
 } from "../services/gossipSlice";
+import type { GossipPostListParams } from "../services/gossipSlice";
 import { getDeviceInfo } from "@/lib/deviceInfo";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
 import { useNavigate } from "react-router-dom";
@@ -58,6 +60,7 @@ interface MediaFullscreenViewerProps {
     share_count: number;
     is_liked: boolean;
     post_id?: string;
+    category_id?: string;
     onLike?: () => void;
     onComment?: () => void;
     onShare?: () => void;
@@ -76,6 +79,8 @@ const MediaFullscreenViewer = ({
   const user = useSelector(
     (state: { persist?: { user?: { token?: string } } }) => state?.persist?.user
   );
+  const dispatch = useDispatch<AppDispatch>();
+  const store = useStore<RootState>();
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [showUI, setShowUI] = useState(false);
@@ -189,6 +194,41 @@ const MediaFullscreenViewer = ({
   const currentMedia = media[currentIndex];
   const isVideo = currentMedia?.type === "video";
   const currentPostId = postData?.post_id;
+  const syncPostListCommentCount = useCallback(
+    (delta: number) => {
+      if (!delta || !postData?.category_id || !currentPostId) {
+        return;
+      }
+      const cachedArgs =
+        gossipExternalApi.util.selectCachedArgsForQuery(
+          store.getState(),
+          "getGossipPosts"
+        ) || [];
+      cachedArgs.forEach((args: GossipPostListParams) => {
+        if (!args?.category_id || args.category_id !== postData.category_id) {
+          return;
+        }
+        dispatch(
+          gossipExternalApi.util.updateQueryData(
+            "getGossipPosts",
+            args,
+            (draft) => {
+              const target = draft?.data?.find(
+                (item) => item.id === currentPostId
+              );
+              if (target) {
+                target.comment_count = Math.max(
+                  0,
+                  (target.comment_count ?? 0) + delta
+                );
+              }
+            }
+          )
+        );
+      });
+    },
+    [currentPostId, dispatch, postData?.category_id, store]
+  );
 
   // Comment fetching state (only used when commentSectionProps is not provided)
   const [comments, setComments] = useState<GossipCommentType[]>([]);
@@ -371,6 +411,10 @@ const MediaFullscreenViewer = ({
         device: deviceInfo.deviceName,
         app_version: deviceInfo.appVersion,
       });
+      const submissionType = response?.data?.data?.type ?? "comment";
+      if (response?.data?.status && submissionType !== "reply") {
+        syncPostListCommentCount(1);
+      }
       const handled = applySubmissionResponse(response);
       if (!handled) {
         await fetchComments();

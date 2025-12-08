@@ -120,6 +120,7 @@ export interface GossipComment {
   created_at: string;
   is_liked?: boolean;
   like_count?: number;
+  reply_id?: string;
   replies?: GossipReply;
 }
 
@@ -232,7 +233,10 @@ export const gossipExternalApi = createApi({
       ],
     }),
     getGossipPostDetail: builder.query<GossipDetailPost | null, string>({
-      query: (postId) => `post/detail/${postId}`,
+      query: (postId) => ({
+        url: "post/detail",
+        params: { post_id: postId },
+      }),
       transformResponse: (response: GossipPostDetailResponse) =>
         response?.data ?? null,
     }),

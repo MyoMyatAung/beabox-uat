@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import type { RootState } from "@/store/store";
+import { useDispatch, useSelector, useStore } from "react-redux";
+import type { RootState, AppDispatch } from "@/store/store";
 import { ChevronLeft, User, Volume2, VolumeX } from "lucide-react";
 import SharePost from "./components/SharePost";
 import CommentSection, {
@@ -15,10 +15,12 @@ import {
   useUnlikeGossipPostMutation,
   useFollowGossipUserMutation,
   useGetGossipPostDetailQuery,
+  gossipExternalApi,
 } from "./services/gossipSlice";
 import type {
   GossipComment as GossipCommentType,
   GossipDetailPost,
+  GossipPostListParams,
 } from "./services/gossipSlice";
 import { getDeviceInfo } from "@/lib/deviceInfo";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
@@ -39,7 +41,8 @@ interface CommentListApiResponse {
 type NormalizedMediaItem = GossipDetailPost["media"][number] & { id: string };
 
 const PostDetail = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
+  const store = useStore<RootState>();
   const user = useSelector((state: RootState) => state.persist?.user);
   const [isAuthenticated, setIsAuthenticated] = useState(Boolean(user?.token));
   const { postId } = useParams<{ postId: string }>();
@@ -335,6 +338,43 @@ const PostDetail = () => {
     [appendCommentToState, appendReplyToState, normalizeComment]
   );
 
+  const syncPostListCommentCount = useCallback(
+    (delta: number) => {
+      if (!delta) return;
+      const categoryId = post?.category_id;
+      const targetPostId = post?.post_id ?? postId ?? "";
+      if (!categoryId || !targetPostId) {
+        return;
+      }
+      const cachedArgs =
+        gossipExternalApi.util.selectCachedArgsForQuery(
+          store.getState(),
+          "getGossipPosts"
+        ) || [];
+      cachedArgs.forEach((args: GossipPostListParams) => {
+        if (!args?.category_id || args.category_id !== categoryId) return;
+        dispatch(
+          gossipExternalApi.util.updateQueryData(
+            "getGossipPosts",
+            args,
+            (draft) => {
+              const target = draft?.data?.find(
+                (item) => item.id === targetPostId
+              );
+              if (target) {
+                target.comment_count = Math.max(
+                  0,
+                  (target.comment_count ?? 0) + delta
+                );
+              }
+            }
+          )
+        );
+      });
+    },
+    [dispatch, post?.category_id, post?.post_id, postId, store]
+  );
+
   const handleCommentSubmit = async (content: string) => {
     const trimmed = content.trim();
     const targetPostId = post?.post_id ?? postId ?? "";
@@ -349,6 +389,18 @@ const PostDetail = () => {
         device: deviceInfo.deviceName,
         app_version: deviceInfo.appVersion,
       });
+      const submissionType = response?.data?.data?.type ?? "comment";
+      if (response?.data?.status && submissionType !== "reply") {
+        syncPostListCommentCount(1);
+        setPost((prev) =>
+          prev
+            ? {
+                ...prev,
+                comment_count: Math.max(0, (prev.comment_count ?? 0) + 1),
+              }
+            : prev
+        );
+      }
       const handled = applySubmissionResponse(response);
       if (!handled) {
         await fetchComments();

@@ -59,6 +59,9 @@ const CommentSkeleton = () => (
   </div>
 );
 
+const getReplyIdentifier = (reply?: GossipCommentType) =>
+  reply?.reply_id ?? reply?.comment_id ?? "";
+
 const mergeRepliesState = (
   incoming: GossipCommentType[] | undefined,
   previous: GossipCommentType[] | undefined
@@ -247,7 +250,7 @@ const CommentSection = ({
         }
         if (isReply) {
           const updatedReplies = comment.replies?.list?.map((reply) => {
-            if (reply.comment_id !== targetId) return reply;
+            if (getReplyIdentifier(reply) !== targetId) return reply;
             const likeCount = reply.like_count ?? 0;
             return {
               ...reply,
@@ -276,7 +279,7 @@ const CommentSection = ({
         Object.keys(next).forEach((commentId) => {
           next[commentId] = (next[commentId] || []).map(
             (reply: GossipCommentType) => {
-              if (reply.comment_id !== targetId) return reply;
+              if (getReplyIdentifier(reply) !== targetId) return reply;
               const likeCount = reply.like_count ?? 0;
               return {
                 ...reply,
@@ -299,7 +302,7 @@ const CommentSection = ({
     const target = isReply
       ? localComments
           .flatMap((c) => c.replies?.list || [])
-          .find((r) => r.comment_id === targetId)
+          .find((r) => getReplyIdentifier(r) === targetId)
       : localComments.find((c) => c.comment_id === targetId);
     if (!target) return;
     const nextLiked = !target.is_liked;
@@ -415,7 +418,7 @@ const CommentSection = ({
 
       {/* Comments List */}
       <div className="flex-1 overflow-y-auto pb-20">
-        {loading ? (
+        {loading && localComments.length === 0 ? (
           <div>
             {Array.from({ length: 4 }).map((_, idx) => (
               <CommentSkeleton key={idx} />
@@ -754,7 +757,12 @@ const CommentSection = ({
                                         <div className="flex items-center flex-col gap-1">
                                           <button
                                             onClick={() =>
-                                              toggleLike(reply.comment_id, true)
+                                              toggleLike(
+                                                reply.reply_id ??
+                                                  reply.comment_id ??
+                                                  "",
+                                                true
+                                              )
                                             }
                                             className="flex items-center gap-1 text-gray-500 hover:text-white transition-colors"
                                           >
