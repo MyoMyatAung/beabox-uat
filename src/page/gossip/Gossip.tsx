@@ -44,9 +44,16 @@ const LoadingSpinner = () => (
   </div>
 );
 
+const GOSSIP_TAB_STORAGE_KEY = "gossip-active-tab";
+
 const Gossip = () => {
   const dispatch = useDispatch();
-  const [activeTab, setActiveTab] = useState<string>("");
+  const [activeTab, setActiveTab] = useState<string>(() => {
+    if (typeof window === "undefined") {
+      return "";
+    }
+    return window.localStorage.getItem(GOSSIP_TAB_STORAGE_KEY) || "";
+  });
   const [page, setPage] = useState(1);
   const pageSize = 10;
   const [posts, setPosts] = useState<
@@ -73,10 +80,27 @@ const Gossip = () => {
   }, [categoryList]);
 
   useEffect(() => {
-    if (!activeTab && tabs.length > 0) {
-      setActiveTab(tabs[0].id);
+    if (!tabs.length) {
+      return;
     }
+
+    if (activeTab) {
+      const existsInTabs = tabs.some((tab) => tab.id === activeTab);
+      if (!existsInTabs) {
+        setActiveTab(tabs[0].id);
+      }
+      return;
+    }
+
+    setActiveTab(tabs[0].id);
   }, [activeTab, tabs]);
+
+  useEffect(() => {
+    if (!activeTab || typeof window === "undefined") {
+      return;
+    }
+    window.localStorage.setItem(GOSSIP_TAB_STORAGE_KEY, activeTab);
+  }, [activeTab]);
 
   const activeTabConfig = tabs.find((tab) => tab.id === activeTab);
   const hasCategoryId = Boolean(activeTabConfig?.categoryId);
