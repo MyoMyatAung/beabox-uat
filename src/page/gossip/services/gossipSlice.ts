@@ -59,6 +59,7 @@ export interface GossipDetailPost {
   category_id?: string;
   user: GossipPostUser;
   content: string;
+  description?: string;
   media: GossipPostMedia[];
   like_count: number;
   comment_count: number;

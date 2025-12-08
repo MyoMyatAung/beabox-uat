@@ -27,6 +27,20 @@ import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
 import { showToast } from "../home/services/errorSlice";
 
+const decodeUnicodeEscapes = (text?: string | null) => {
+  if (!text) return "";
+  try {
+    const safeText = text
+      .replace(/\\/g, "\\\\")
+      .replace(/"/g, '\\"')
+      .replace(/\n/g, "\\n")
+      .replace(/\r/g, "\\r");
+    return JSON.parse(`"${safeText}"`);
+  } catch {
+    return text;
+  }
+};
+
 interface CommentListApiPayload {
   data?: GossipCommentType[];
   total?: number;
@@ -454,6 +468,12 @@ const PostDetail = () => {
     }, 150);
   };
 
+  const rawPostContent = post?.content ?? post?.description ?? "";
+  const decodedPostContent = useMemo(
+    () => decodeUnicodeEscapes(rawPostContent),
+    [rawPostContent]
+  );
+
   const normalizedMedia: NormalizedMediaItem[] = useMemo(() => {
     if (!post?.media) {
       return [];
@@ -601,8 +621,8 @@ const PostDetail = () => {
 
       {/* Content */}
       <div className="px-4 py-4 border-b border-[#FFFFFF14]">
-        <p className="text-white text-sm leading-relaxed mb-4">
-          {post.content}
+        <p className="text-white text-sm leading-relaxed mb-4 whitespace-pre-line">
+          {decodedPostContent}
         </p>
 
         {/* Media */}

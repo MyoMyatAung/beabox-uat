@@ -489,10 +489,11 @@ const MediaFullscreenViewer = ({
   useEffect(() => {
     if (isOpen) {
       setIsMuted(false);
+      setShowUI(!isVideo);
     } else {
       setShowCommentSheet(false);
     }
-  }, [isOpen]);
+  }, [isOpen, isVideo]);
 
   // Ensure each time the viewer opens we start unmuted
   useEffect(() => {
@@ -558,7 +559,7 @@ const MediaFullscreenViewer = ({
   // Reset UI visibility when media changes
   useEffect(() => {
     if (isOpen) {
-      setShowUI(false);
+      setShowUI(!isVideo);
 
       // Pause all videos except current (if current is video)
       videoRefs.current.forEach((video, index) => {
@@ -779,7 +780,7 @@ const MediaFullscreenViewer = ({
       }
     } else {
       // Toggle UI visibility for image
-      setShowUI(!showUI);
+      setShowUI((prev) => !prev);
     }
   };
 
