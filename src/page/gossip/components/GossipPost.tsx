@@ -338,7 +338,7 @@ const GossipPost = ({ post }: GossipPostProps) => {
   return (
     <div
       ref={postRef}
-      className="w-full bg-black border-b border-gray-800 pb-4 mb-4"
+      className="w-full bg-[#16131C] border-b border-white/10 pb-4"
     >
       {/* Header: Profile and More Options */}
       <div className="flex items-start justify-between px-4 pt-4 mb-3">

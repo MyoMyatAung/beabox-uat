@@ -52,8 +52,8 @@ const GossipTopNavbar = ({
           }}
         >
           <div className="relative">
-            <div className="pointer-events-none absolute left-0 top-0 h-full w-6 bg-gradient-to-r from-[#0B0912] to-transparent" />
-            <div className="pointer-events-none absolute right-0 top-0 h-full w-6 bg-gradient-to-l from-[#0B0912] to-transparent" />
+            <div className="pointer-events-none absolute left-0 top-0 h-full w-6 bg-gradient-to-r from-[#16131C] to-transparent" />
+            <div className="pointer-events-none absolute right-0 top-0 h-full w-6 bg-gradient-to-l from-[#16131C] to-transparent" />
             <div
               ref={scrollContainerRef}
               className={`flex items-center ${

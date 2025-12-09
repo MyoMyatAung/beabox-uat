@@ -264,7 +264,7 @@ const Gossip = () => {
     !isInitialLoading && !errorMessage && posts.length === 0;
 
   return (
-    <div className="w-full h-screen bg-black overflow-hidden">
+    <div className="w-full h-svh bg-[#16131C] overflow-hidden">
       {/* Header Tabs */}
       <GossipTopNavbar
         tabs={tabs.map((tab) => ({ id: tab.id, label: tab.label }))}
