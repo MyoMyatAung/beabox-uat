@@ -516,45 +516,49 @@ const MediaFullscreenViewer = ({
   }, [isOpen, initialIndex]);
 
   // Handle scroll to update current index
-  useEffect(() => {
-    if (!scrollContainerRef.current) return;
-
-    const container = scrollContainerRef.current;
-
-    const handleScroll = () => {
-      // Pause every video immediately during swipe
-      videoRefs.current.forEach((video) => {
-        if (video) {
-          video.pause();
-        }
-      });
-
-      setIsPlaying(false);
-      if (hideUITimerRef.current) {
-        clearTimeout(hideUITimerRef.current);
-        hideUITimerRef.current = null;
+  // Use a stable React event handler (onScroll) instead of manual addEventListener.
+  // Also detect touch/pointer end to ensure we pick final slide when touch scrolling
+  // stops on platforms where continuous scroll events may be sparse.
+  const handleContainerScroll = useCallback(() => {
+    // Pause every video immediately during swipe
+    console.log("Scroll detected, pausing all videos");
+    videoRefs.current.forEach((video) => {
+      if (video) {
+        video.pause();
       }
+    });
 
-      if (scrollEndTimerRef.current) {
-        clearTimeout(scrollEndTimerRef.current);
+    setIsPlaying(false);
+    if (hideUITimerRef.current) {
+      clearTimeout(hideUITimerRef.current);
+      hideUITimerRef.current = null;
+    }
+
+    if (scrollEndTimerRef.current) {
+      clearTimeout(scrollEndTimerRef.current);
+    }
+
+    scrollEndTimerRef.current = setTimeout(() => {
+      const newIndex = getNearestSlideIndex();
+
+      const current = currentIndexRef.current;
+      if (newIndex !== current && newIndex >= 0 && newIndex < media.length) {
+        setCurrentIndex(newIndex);
       }
+    }, 150);
+  }, [getNearestSlideIndex, media.length]);
 
-      scrollEndTimerRef.current = setTimeout(() => {
-        const newIndex = getNearestSlideIndex();
-
-        if (
-          newIndex !== currentIndex &&
-          newIndex >= 0 &&
-          newIndex < media.length
-        ) {
-          setCurrentIndex(newIndex);
-        }
-      }, 150);
-    };
-
-    container.addEventListener("scroll", handleScroll);
-    return () => container.removeEventListener("scroll", handleScroll);
-  }, [currentIndex, getNearestSlideIndex, media.length]);
+  const handleInteractionEnd = useCallback(() => {
+    // Some browsers may not emit a final scroll event — ensure we compute final index
+    if (scrollEndTimerRef.current) {
+      clearTimeout(scrollEndTimerRef.current);
+    }
+    const newIndex = getNearestSlideIndex();
+    const current = currentIndexRef.current;
+    if (newIndex !== current && newIndex >= 0 && newIndex < media.length) {
+      setCurrentIndex(newIndex);
+    }
+  }, [getNearestSlideIndex, media.length]);
 
   // Reset UI visibility when media changes
   useEffect(() => {
@@ -1157,6 +1161,9 @@ const MediaFullscreenViewer = ({
       {/* Media Container - Horizontal Scroll */}
       <div
         ref={scrollContainerRef}
+        onScroll={handleContainerScroll}
+        onTouchEnd={handleInteractionEnd}
+        onPointerUp={handleInteractionEnd}
         className="relative w-full h-full flex overflow-x-auto snap-x snap-mandatory scrollbar-hide"
         style={{ scrollSnapType: "x mandatory" }}
       >
@@ -1164,8 +1171,9 @@ const MediaFullscreenViewer = ({
           const isCurrentVideo =
             item.type === "video" && index === currentIndex;
           const isItemVideo = item.type === "video";
-          const isWithinActivationRange = Math.abs(index - currentIndex) <= 1;
-          const shouldRenderVideo = isItemVideo && isWithinActivationRange;
+          // const isWithinActivationRange = Math.abs(index - currentIndex) <= 1;
+          // const shouldRenderVideo = isItemVideo && isWithinActivationRange;
+          const shouldRenderVideo = isItemVideo;
           const videoState = videoReadyState[index];
           const isVideoReady = !!videoState?.isReady;
           const previewThumbnail =

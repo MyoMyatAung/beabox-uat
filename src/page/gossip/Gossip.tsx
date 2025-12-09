@@ -191,6 +191,13 @@ const Gossip = () => {
   }, [activeTab]);
 
   useEffect(() => {
+    const scrollContainer = document.getElementById("gossip-scroll-container");
+    if (scrollContainer) {
+      scrollContainer.scrollTop = 0;
+    }
+  }, [activeTab]);
+
+  useEffect(() => {
     if (!apiPostsResponse) return;
 
     const merged = mappedApiPosts;
