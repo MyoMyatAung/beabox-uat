@@ -59,54 +59,31 @@ const CommentSkeleton = () => (
   </div>
 );
 
-const getReplyIdentifier = (reply?: GossipCommentType) =>
-  reply?.reply_id ?? reply?.comment_id ?? "";
-
 const mergeRepliesState = (
   incoming: GossipCommentType[] | undefined,
   previous: GossipCommentType[] | undefined
 ): GossipCommentType[] => {
   if (!incoming) return previous ? [...previous] : [];
-  const prevMap = new Map(previous?.map((reply) => [reply.comment_id, reply]));
-  return incoming.map((reply) => {
-    const prev = prevMap.get(reply.comment_id);
-    if (!prev) return reply;
-    return {
-      ...reply,
-      is_liked: prev.is_liked ?? reply.is_liked,
-      like_count: prev.like_count ?? reply.like_count,
-    };
-  });
+  // Simply return incoming data - trust the API as source of truth
+  // The component's optimistic updates in updateLikeState handle immediate UI feedback
+  return incoming;
 };
 
 const mergeCommentsState = (
   incoming: GossipCommentType[],
-  previous: GossipCommentType[]
+  _previous: GossipCommentType[]
 ): GossipCommentType[] => {
-  const prevMap = new Map(
-    previous.map((comment) => [comment.comment_id, comment])
-  );
-  return incoming.map((comment) => {
-    const prev = prevMap.get(comment.comment_id);
-    if (!prev) return comment;
-
-    const mergedReplies = mergeRepliesState(
-      comment.replies?.list,
-      prev.replies?.list
-    );
-
-    return {
-      ...comment,
-      is_liked: prev.is_liked ?? comment.is_liked,
-      like_count: prev.like_count ?? comment.like_count,
-      replies: comment.replies
-        ? {
-            ...comment.replies,
-            list: mergedReplies,
-          }
-        : comment.replies,
-    };
-  });
+  // Trust incoming API data as source of truth
+  // Optimistic updates are handled separately in updateLikeState
+  return incoming.map((comment) => ({
+    ...comment,
+    replies: comment.replies
+      ? {
+          ...comment.replies,
+          list: mergeRepliesState(comment.replies.list, []),
+        }
+      : comment.replies,
+  }));
 };
 
 const CommentSection = ({
@@ -250,7 +227,8 @@ const CommentSection = ({
         }
         if (isReply) {
           const updatedReplies = comment.replies?.list?.map((reply) => {
-            if (getReplyIdentifier(reply) !== targetId) return reply;
+            const identifier = reply.reply_id || reply.comment_id;
+            if (identifier !== targetId) return reply;
             const likeCount = reply.like_count ?? 0;
             return {
               ...reply,
@@ -279,7 +257,8 @@ const CommentSection = ({
         Object.keys(next).forEach((commentId) => {
           next[commentId] = (next[commentId] || []).map(
             (reply: GossipCommentType) => {
-              if (getReplyIdentifier(reply) !== targetId) return reply;
+              const identifier = reply.reply_id || reply.comment_id;
+              if (identifier !== targetId) return reply;
               const likeCount = reply.like_count ?? 0;
               return {
                 ...reply,
@@ -302,7 +281,10 @@ const CommentSection = ({
     const target = isReply
       ? localComments
           .flatMap((c) => c.replies?.list || [])
-          .find((r) => getReplyIdentifier(r) === targetId)
+          .find((r) => {
+            const identifier = r.reply_id || r.comment_id;
+            return identifier === targetId;
+          })
       : localComments.find((c) => c.comment_id === targetId);
     if (!target) return;
     const nextLiked = !target.is_liked;
@@ -596,12 +578,7 @@ const CommentSection = ({
                       <div className="flex flex-col items-start gap-4 text-xs text-gray-500">
                         <button
                           onClick={() => toggleReplyInput(comment.comment_id)}
-                          className={`transition-colors bg-[#FFFFFF1F] px-2 py-1 rounded-full ${
-                            showReplyInput[comment.comment_id] ||
-                            expandedReplies[comment.comment_id]
-                              ? "text-white"
-                              : "text-gray-500"
-                          }`}
+                          className="transition-colors bg-[#FFFFFF1F] px-2 py-1 rounded-full text-white"
                         >
                           回复
                         </button>
@@ -765,14 +742,12 @@ const CommentSection = ({
 
                                         <div className="flex items-center flex-col gap-1">
                                           <button
-                                            onClick={() =>
-                                              toggleLike(
-                                                reply.reply_id ??
-                                                  reply.comment_id ??
-                                                  "",
-                                                true
-                                              )
-                                            }
+                                            onClick={() => {
+                                              const replyId = reply.reply_id || reply.comment_id;
+                                              if (replyId) {
+                                                toggleLike(replyId, true);
+                                              }
+                                            }}
                                             className="flex items-center gap-1 text-gray-500 hover:text-white transition-colors"
                                           >
                                             {reply.is_liked ? (

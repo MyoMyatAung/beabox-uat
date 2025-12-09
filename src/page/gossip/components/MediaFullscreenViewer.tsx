@@ -277,6 +277,7 @@ const MediaFullscreenViewer = ({
   const normalizeComment = useCallback(
     (payload: Partial<GossipCommentType>): GossipCommentType => ({
       comment_id: payload.comment_id ?? `temp-${Date.now()}`,
+      reply_id: payload.reply_id, // Preserve reply_id if it exists
       post_id: payload.post_id ?? currentPostId ?? "",
       content: payload.content ?? "",
       created_at: payload.created_at ?? new Date().toISOString(),
