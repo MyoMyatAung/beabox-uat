@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import CommentSection, { CommentSectionProps } from "./CommentSection";
+import SharePost from "./SharePost";
 import {
   useGetGossipCommentsMutation,
   GossipComment as GossipCommentType,
@@ -61,6 +62,7 @@ interface MediaFullscreenViewerProps {
     is_liked: boolean;
     post_id?: string;
     category_id?: string;
+    share_link?: string;
     onLike?: () => void;
     onComment?: () => void;
     onShare?: () => void;
@@ -90,6 +92,7 @@ const MediaFullscreenViewer = ({
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [showMoreOptions, setShowMoreOptions] = useState(false);
+  const [showShareSheet, setShowShareSheet] = useState(false);
   const [videoReadyState, setVideoReadyState] = useState<
     Record<
       number,
@@ -191,9 +194,12 @@ const MediaFullscreenViewer = ({
     });
   }, []);
 
+  console.log("postData", postData);
+
   const currentMedia = media[currentIndex];
   const isVideo = currentMedia?.type === "video";
   const currentPostId = postData?.post_id;
+
   const syncPostListCommentCount = useCallback(
     (delta: number) => {
       if (!delta || !postData?.category_id || !currentPostId) {
@@ -894,7 +900,14 @@ const MediaFullscreenViewer = ({
 
   const handleReport = () => {
     setShowMoreOptions(false);
-    // TODO: Implement report functionality
+    if (!ensureAuthenticated()) {
+      return;
+    }
+    if (!currentPostId) return;
+    // Small delay to ensure Redux persist has flushed the state
+    setTimeout(() => {
+      navigate(`/gossip/reports/${currentPostId}?type=post`);
+    }, 150);
   };
 
   const attachVideoPlayer = useCallback(
@@ -1451,6 +1464,7 @@ const MediaFullscreenViewer = ({
               <button
                 onClick={(e) => {
                   e.stopPropagation();
+                  setShowShareSheet(true);
                   postData.onShare?.();
                 }}
                 className="flex items-center gap-1 text-white"
@@ -1468,7 +1482,6 @@ const MediaFullscreenViewer = ({
                     strokeWidth="1.5"
                   />
                 </svg>
-                <span className="text-sm">{postData.share_count}</span>
               </button>
             </div>
           )}
@@ -1521,6 +1534,28 @@ const MediaFullscreenViewer = ({
             >
               返回
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Share Sheet */}
+      {showShareSheet && (
+        <div
+          className="fixed inset-0 z-[1000000] flex items-end justify-center"
+          onClick={() => setShowShareSheet(false)}
+        >
+          <div
+            className="absolute inset-0 bg-black/60"
+            onClick={() => setShowShareSheet(false)}
+          />
+          <div
+            className="relative w-full max-w-md bg-[#191721] rounded-t-2xl shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <SharePost
+              shareUrl={postData?.share_link ?? ""}
+              onClose={() => setShowShareSheet(false)}
+            />
           </div>
         </div>
       )}

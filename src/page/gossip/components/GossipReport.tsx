@@ -13,6 +13,7 @@ import {
   useStoreReportMutation,
 } from "@/page/home/services/homeApi";
 import { gossipExternalApi } from "../services/gossipSlice";
+import loader from "@/page/home/vod_loader.gif";
 
 const GossipReport = () => {
   const { id } = useParams();
@@ -135,8 +136,8 @@ const GossipReport = () => {
 
       <div className="px-5 pt-2">
         {isReportOptionsLoading ? (
-          <div className="flex items-center justify-center py-10 text-sm text-gray-400">
-            举报选项加载中...
+          <div className="h-[80vh] flex justify-center items-center">
+            <img src={loader} className="w-[100px] h-[100px]" alt="Loading" />
           </div>
         ) : Object.keys(reportGroups).length === 0 ? (
           <div className="flex items-center justify-center py-10 text-sm text-gray-400">

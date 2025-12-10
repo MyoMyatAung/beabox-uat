@@ -702,6 +702,7 @@ const GossipPost = ({ post }: GossipPostProps) => {
           comment_count: post.comment_count,
           share_count: post.share_count,
           is_liked: isLiked,
+          share_link: post.share_link,
           onLike: handleLike,
           onComment: () => {},
           onShare: () => {
