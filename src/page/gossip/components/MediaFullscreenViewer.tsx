@@ -509,7 +509,7 @@ const MediaFullscreenViewer = ({
       const itemWidth = container.clientWidth;
       container.scrollTo({
         left: initialIndex * itemWidth,
-        behavior: "smooth",
+        behavior: "instant",
       });
       setCurrentIndex(initialIndex);
     }
