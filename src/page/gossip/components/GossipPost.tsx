@@ -582,7 +582,7 @@ const GossipPost = ({ post }: GossipPostProps) => {
         )}
         {/* Interaction Buttons and Timestamp */}
         <div className="px-4 flex items-center justify-between">
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4">
             {/* Like Button */}
             <button
               onClick={handleLike}
@@ -632,7 +632,7 @@ const GossipPost = ({ post }: GossipPostProps) => {
             </button>
 
             {/* Comment Button */}
-            <button
+            {/* <button
               className="flex items-center gap-1 text-white transition-colors"
               onClick={() => {
                 navigate(`/gossip/post/${post.post_id}`, {
@@ -659,7 +659,7 @@ const GossipPost = ({ post }: GossipPostProps) => {
               {post.comment_count > 0 && (
                 <span className="text-sm">{post.comment_count}</span>
               )}
-            </button>
+            </button> */}
 
             {/* Share Button */}
             <button
