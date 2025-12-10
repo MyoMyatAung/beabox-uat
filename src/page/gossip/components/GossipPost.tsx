@@ -189,10 +189,9 @@ const GossipPost = ({ post }: GossipPostProps) => {
     setShowMoreOptionsPopover(!showMoreOptionsPopover);
   };
 
-  const handleCopyLink = async () => {
+  const handleCopyLink = async (shareLink: string) => {
     try {
-      const postUrl = `${window.location.origin}/gossip/post/${post.post_id}`;
-      await navigator.clipboard.writeText(postUrl);
+      await navigator.clipboard.writeText(shareLink);
       setShowMoreOptionsPopover(false);
       dispatch(
         showToast({
@@ -332,7 +331,7 @@ const GossipPost = ({ post }: GossipPostProps) => {
   }, [showPopover, showMoreOptionsPopover]);
 
   useEffect(() => {
-    setIsFollowing(post.user.is_following);
+    setIsFollowing(post.user.is_following || false);
   }, [post.user.is_following]);
 
   return (
@@ -481,7 +480,7 @@ const GossipPost = ({ post }: GossipPostProps) => {
               className="absolute top-8 right-0 z-50 bg-[#1E1C28] rounded-lg shadow-lg border border-[#1E1C28] min-w-32"
             >
               <button
-                onClick={handleCopyLink}
+                onClick={() => handleCopyLink(post.share_link)}
                 className="w-full flex items-center justify-between px-4 py-2 text-white hover:bg-[#2E2C3A] transition-colors first:rounded-t-lg"
               >
                 <span className="text-sm">复制链接</span>
