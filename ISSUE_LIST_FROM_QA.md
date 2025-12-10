@@ -1,3 +1,6 @@
+# BBX_ISSUE_ID_37
+When the user is entering with the without user manual immersive mode, post can scroll Before Ads
+
 # BBX_ISSUE_ID_59
 When switching to the next category tab, the post list opens at the same scroll position as the previous tab instead of starting from the top.
 
