@@ -526,7 +526,7 @@ const PostDetail = () => {
         ? "帖子加载中..."
         : detailErrorMessage || "帖子不存在或已被删除";
     return (
-      <div className="w-full min-h-screen flex flex-col bg-[#16131C] px-5 pt-5 z-[9999] max-w-[480px] mx-auto">
+      <div className="w-full min-h-screen flex flex-col bg-[#16131C] z-[9999] max-w-[480px] mx-auto">
         <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center">
           <p className="text-white text-sm">{fallbackMessage}</p>
           <div className="flex items-center gap-3">
@@ -568,13 +568,13 @@ const PostDetail = () => {
   };
 
   return (
-    <div className="w-full min-h-screen flex flex-col bg-[#16131C] px-5 pt-5 z-[9999] max-w-[480px] mx-auto">
+    <div className="w-full min-h-screen flex flex-col bg-[#16131C] z-[9999] max-w-[480px] mx-auto">
       {/* Header */}
-      <div className="sticky top-0 z-50 bg-[#16131C] border-b border-gray-800 px-4 py-3">
+      <div className="sticky top-0 z-50 bg-[#16131C] border-b border-gray-800 p-4">
         <div className="flex items-center justify-between">
           <button
             onClick={() => navigate(-1)}
-            className="text-white p-2 hover:bg-gray-800/50 rounded-lg transition-colors"
+            className="text-white hover:bg-gray-800/50 rounded-lg transition-colors"
           >
             <ChevronLeft size={20} />
           </button>
@@ -717,7 +717,7 @@ const PostDetail = () => {
 
         {/* Engagement Stats */}
         <div className="flex justify-between items-center gap-6">
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4">
             <button
               onClick={togglePostLike}
               className={`flex items-center gap-1 transition-colors ${
@@ -760,9 +760,11 @@ const PostDetail = () => {
                   />
                 </svg>
               )}
-              <span className="text-sm">{postLikeCount}</span>
+              {postLikeCount > 0 && (
+                <span className="text-sm">{postLikeCount}</span>
+              )}
             </button>
-            <div className="flex items-center gap-1 text-white">
+            {/* <div className="flex items-center gap-1 text-white">
               <svg
                 width="16"
                 height="16"
@@ -779,7 +781,7 @@ const PostDetail = () => {
                 />
               </svg>
               <span className="text-sm">{totalComments}</span>
-            </div>
+            </div> */}
             <div className="flex items-center gap-1 text-white">
               <button
                 className="flex items-center gap-1 text-white"
@@ -809,13 +811,13 @@ const PostDetail = () => {
       </div>
 
       {/* Comment Section */}
-      <div className="flex-1 relative">
+      {/* <div className="flex-1 relative">
         <CommentSection
           {...detailCommentSectionProps}
           highlightCommentId={highlightCommentId}
           onHighlightHandled={() => setHighlightCommentId(null)}
         />
-      </div>
+      </div> */}
 
       <MediaFullscreenViewer
         media={normalizedMedia}
