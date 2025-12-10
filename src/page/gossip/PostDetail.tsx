@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import type { RootState, AppDispatch } from "@/store/store";
 import { ChevronLeft, User, Volume2, VolumeX } from "lucide-react";
+import { getPlayerManager } from "./services/playerManager";
 import SharePost from "./components/SharePost";
 import CommentSection, {
   CommentSectionProps,
@@ -206,6 +207,19 @@ const PostDetail = () => {
       navigate("/gossip", { replace: true });
     }
   }, [postId, navigate]);
+
+  // ============================================================================
+  // MEMORY MANAGEMENT: Clean up fullscreen players on unmount
+  // ============================================================================
+  // When leaving the post detail page, destroy fullscreen players to free memory.
+  useEffect(() => {
+    const playerManager = getPlayerManager();
+
+    return () => {
+      // Destroy fullscreen pool when leaving post detail
+      playerManager.destroyAllPlayers(true);
+    };
+  }, []);
 
   const togglePostLike = useCallback(async () => {
     if (!ensureAuthenticated()) {
