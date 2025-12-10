@@ -10,7 +10,7 @@ import {
   Check,
   Minus,
 } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import MediaFullscreenViewer from "./MediaFullscreenViewer";
@@ -26,6 +26,7 @@ import { showToast } from "@/page/home/services/errorSlice";
 import type { RootState } from "@/store/store";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
+import { getPlayerManager } from "../services/playerManager";
 
 interface MediaItem {
   id: string;
@@ -76,8 +77,17 @@ const GossipPost = ({ post }: GossipPostProps) => {
   const profileRef = useRef<HTMLDivElement>(null);
   const moreOptionsRef = useRef<HTMLButtonElement>(null);
   const moreOptionsPopoverRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const postRef = useRef<HTMLDivElement>(null);
+
+  // ============================================================================
+  // POOLED VIDEO PLAYER - Memory Management
+  // ============================================================================
+  // Instead of creating a <video> element per post, we use the global player pool.
+  // The pool maintains at most 3 player instances, recycling them as posts scroll.
+  // This prevents memory leaks from accumulating video elements during fast scroll.
+  const videoContainerRef = useRef<HTMLDivElement>(null);
+  const [isVideoReady, setIsVideoReady] = useState(false);
+  const playerManager = getPlayerManager();
 
   const shouldExpand = post.content.length > 100;
 
@@ -244,17 +254,20 @@ const GossipPost = ({ post }: GossipPostProps) => {
     }, 150);
   };
 
-  const handleToggleMute = () => {
-    if (videoRef.current) {
-      videoRef.current.muted = !videoRef.current.muted;
-      setIsMuted(videoRef.current.muted);
-    }
-  };
+  // ============================================================================
+  // MUTE TOGGLE - Uses global player manager for consistent mute state
+  // ============================================================================
+  const handleToggleMute = useCallback(() => {
+    const newMuted = !isMuted;
+    setIsMuted(newMuted);
+    playerManager.setGlobalMuted(newMuted);
+  }, [isMuted, playerManager]);
 
   const handleMediaClick = (index: number) => {
     // Pause the auto-playing video if it's the first video
-    if (isFirstVideo && index === 0 && videoRef.current) {
-      videoRef.current.pause();
+    if (isFirstVideo && index === 0) {
+      // Release player back to pool when opening fullscreen
+      playerManager.releasePlayer(`gossip-post-${post.post_id}`, false);
     }
     setFullscreenIndex(index);
     setIsFullscreenOpen(true);
@@ -263,9 +276,35 @@ const GossipPost = ({ post }: GossipPostProps) => {
   const firstMedia = post.media && post.media.length > 0 ? post.media[0] : null;
   const isFirstVideo = firstMedia?.type === "video";
 
-  // IntersectionObserver to detect when post is in view
+  // ============================================================================
+  // POOLED PLAYER LIFECYCLE - IntersectionObserver with Player Pool
+  // ============================================================================
+  // This effect manages the player pool integration:
+  // 1. When post becomes visible (>50% in viewport), request a player from pool
+  // 2. When post goes off-screen, release player back to pool for recycling
+  // 3. Pool automatically limits to 3 active players, preventing memory growth
+  //
+  // NOTE: We use a ref for muted state to avoid re-creating the observer when
+  // mute changes. The observer only needs to be set up once per post.
+  const isMutedRef = useRef(isMuted);
   useEffect(() => {
-    if (!isFirstVideo || !postRef.current) return;
+    isMutedRef.current = isMuted;
+  }, [isMuted]);
+
+  // Store firstMedia URL in a ref to avoid effect re-runs on object reference changes
+  const firstMediaUrlRef = useRef(firstMedia?.url);
+  useEffect(() => {
+    firstMediaUrlRef.current = firstMedia?.url;
+  }, [firstMedia?.url]);
+
+  useEffect(() => {
+    if (!isFirstVideo || !postRef.current || !videoContainerRef.current) return;
+    if (!firstMedia?.url) return;
+
+    const postElement = postRef.current;
+    const container = videoContainerRef.current;
+    const playerId = `gossip-post-${post.post_id}`;
+    const mediaUrl = firstMedia.url;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -273,14 +312,40 @@ const GossipPost = ({ post }: GossipPostProps) => {
           const isVisible =
             entry.isIntersecting && entry.intersectionRatio > 0.5;
 
-          if (videoRef.current) {
-            if (isVisible) {
-              videoRef.current.play().catch((err) => {
-                console.error("Error playing video:", err);
-              });
-            } else {
-              videoRef.current.pause();
+          if (isVisible) {
+            // ============================================================
+            // MEMORY MANAGEMENT: Request player from pool when visible
+            // Pool will recycle oldest inactive player if at capacity
+            // ============================================================
+            const player = playerManager.requestPlayer(
+              playerId,
+              container,
+              mediaUrl,
+              {
+                autoplay: true,
+                muted: isMutedRef.current, // Use ref to get current value
+                loop: true,
+                onReady: () => {
+                  setIsVideoReady(true);
+                },
+                onError: (err: Error) => {
+                  console.error("Error with pooled video player:", err);
+                },
+              },
+              false // not fullscreen
+            );
+
+            if (player) {
+              // Pause all other feed players to save resources
+              playerManager.pauseAllExcept(playerId, false);
             }
+          } else {
+            // ============================================================
+            // MEMORY MANAGEMENT: Release player when off-screen
+            // Player is paused and marked inactive for recycling
+            // ============================================================
+            playerManager.releasePlayer(playerId, false);
+            setIsVideoReady(false);
           }
         });
       },
@@ -290,12 +355,18 @@ const GossipPost = ({ post }: GossipPostProps) => {
       }
     );
 
-    observer.observe(postRef.current);
+    observer.observe(postElement);
 
+    // ============================================================
+    // CLEANUP: Release player on unmount to prevent leaks
+    // ============================================================
     return () => {
       observer.disconnect();
+      playerManager.releasePlayer(playerId, false);
     };
-  }, [isFirstVideo]);
+    // Dependencies: Only re-run when post identity changes, not on every render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFirstVideo, post.post_id, playerManager]);
 
   // Close popover when clicking outside
   useEffect(() => {
@@ -525,15 +596,25 @@ const GossipPost = ({ post }: GossipPostProps) => {
                     />
                   ) : index === 0 && isFirstVideo ? (
                     <div className="relative w-full h-full">
-                      <video
-                        ref={videoRef}
-                        src={item.url}
-                        className="w-full h-full object-cover"
-                        muted={isMuted}
-                        playsInline
-                        loop
-                        autoPlay
+                      {/* ============================================================
+                          POOLED VIDEO CONTAINER
+                          ============================================================
+                          This div serves as the mount point for the pooled Artplayer.
+                          The player is managed by playerManager and attached/detached
+                          based on visibility. This prevents creating N video elements
+                          for N posts - instead we reuse at most 3 players.
+                          ============================================================ */}
+                      <div
+                        ref={videoContainerRef}
+                        className="w-full h-full"
+                        style={{ pointerEvents: "none" }}
                       />
+                      {/* Loading indicator while player initializes */}
+                      {!isVideoReady && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                          <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        </div>
+                      )}
                       {/* Mute/Unmute Button */}
                       <button
                         onClick={(e) => {

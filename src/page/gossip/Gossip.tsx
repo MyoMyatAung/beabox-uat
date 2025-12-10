@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import type { ComponentProps } from "react";
 import { useDispatch } from "react-redux";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -10,6 +10,8 @@ import {
   useGetGossipCategoriesQuery,
 } from "./services/gossipSlice";
 import type { GossipPostMedia } from "./services/gossipSlice";
+import { getPlayerManager } from "./services/playerManager";
+import loaderGif from "@/page/home/vod_loader.gif";
 
 interface Tab {
   id: string;
@@ -40,7 +42,7 @@ const PostSkeleton = () => (
 
 const LoadingSpinner = () => (
   <div className="flex justify-center items-center py-4">
-    <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+    <img src={loaderGif} alt="Loading..." className="w-10 h-10" />
   </div>
 );
 
@@ -110,6 +112,37 @@ const Gossip = () => {
     dispatch(sethideNew(false));
   }, [dispatch]);
 
+  // ============================================================================
+  // MEMORY MANAGEMENT: Clean up all player instances on tab change
+  // ============================================================================
+  // When switching tabs, we destroy all feed players to prevent memory buildup.
+  // This ensures that old videos from the previous tab don't linger in memory.
+  // NOTE: We use a ref to track the previous tab to avoid cleanup on initial mount
+  // and during pagination (which doesn't change activeTab).
+  const prevTabRef = useRef<string | null>(null);
+  useEffect(() => {
+    // Only destroy players when tab actually changes (not on initial mount or pagination)
+    if (prevTabRef.current !== null && prevTabRef.current !== activeTab) {
+      const playerManager = getPlayerManager();
+      playerManager.destroyAllPlayers(false);
+    }
+    prevTabRef.current = activeTab;
+  }, [activeTab]);
+
+  // ============================================================================
+  // MEMORY MANAGEMENT: Clean up all players on unmount
+  // ============================================================================
+  // When leaving the gossip page entirely, destroy all player instances
+  // (both feed and fullscreen pools) to free all video-related memory.
+  useEffect(() => {
+    const playerManager = getPlayerManager();
+
+    return () => {
+      // Destroy all players when component unmounts
+      playerManager.destroyAllPlayers();
+    };
+  }, []);
+
   const handleTabClick = (tabId: string) => {
     setActiveTab(tabId);
     setPage(1); // Reset page when switching tabs
@@ -131,8 +164,13 @@ const Gossip = () => {
       skip: !hasCategoryId,
     }
   );
-  const isLoading =
-    isCategoriesLoading || isPostsLoading || isPostsFetching || !hasCategoryId;
+  // NOTE: We separate initial loading from pagination fetching.
+  // isPostsFetching is true during pagination, but we don't want to hide
+  // existing content while loading more posts (which causes scroll reset).
+  const isInitialDataLoading =
+    isCategoriesLoading || isPostsLoading || !hasCategoryId;
+  // This is used for showing error states, not for hiding content
+  const isLoading = isInitialDataLoading || isPostsFetching;
 
   type GossipPostData = ComponentProps<typeof GossipPost>["post"];
 
@@ -282,9 +320,9 @@ const Gossip = () => {
       ) : (
         <div
           id="gossip-scroll-container"
-          className="w-full h-[calc(100vh-136px)] bg-black overflow-y-auto pb-20"
+          className="w-full h-[calc(100vh-136px)] bg-black overflow-y-auto pb-4"
         >
-          {!isLoading && errorMessage && (
+          {!isInitialDataLoading && errorMessage && posts.length === 0 && (
             <div className="flex flex-col items-center justify-center h-full gap-4 px-6 text-center">
               <p className="text-red-400 text-sm">{errorMessage}</p>
               {hasCategoryId && (
@@ -304,7 +342,12 @@ const Gossip = () => {
             </div>
           )}
 
-          {!isLoading && !errorMessage && posts.length > 0 && (
+          {/*
+            NOTE: Use isInitialDataLoading instead of isLoading here.
+            During pagination (isPostsFetching=true), we still want to show
+            existing posts to prevent scroll position reset and UI flicker.
+          */}
+          {!isInitialDataLoading && !errorMessage && posts.length > 0 && (
             <InfiniteScroll
               dataLength={posts.length}
               next={loadMorePosts}

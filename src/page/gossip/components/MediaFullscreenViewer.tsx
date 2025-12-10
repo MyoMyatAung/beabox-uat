@@ -1,10 +1,7 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useSelector, useDispatch, useStore } from "react-redux";
 import type { RootState, AppDispatch } from "@/store/store";
-import Hls from "hls.js";
-import Artplayer from "artplayer";
-
-type ArtplayerOptions = ConstructorParameters<typeof Artplayer>[0];
+import { getPlayerManager, PooledPlayer } from "../services/playerManager";
 import {
   X,
   MoreVertical,
@@ -105,7 +102,12 @@ const MediaFullscreenViewer = ({
   >({});
   const [isAuthenticated, setIsAuthenticated] = useState(Boolean(user?.token));
   const [isLoginDrawerOpen, setIsLoginDrawerOpen] = useState(false);
-  const videoRefs = useRef<Map<number, HTMLVideoElement>>(new Map());
+  // ============================================================================
+  // POOLED PLAYER REFS - Memory-optimized approach
+  // ============================================================================
+  // Instead of maintaining multiple Maps for Artplayer, HLS, video elements,
+  // and abort controllers per video index, we now use the global player pool.
+  // The pool limits active instances to MAX_FULLSCREEN_POOL_SIZE (3).
   const slideRefs = useRef<Map<number, HTMLDivElement>>(new Map());
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const moreOptionsRef = useRef<HTMLDivElement>(null);
@@ -114,12 +116,12 @@ const MediaFullscreenViewer = ({
   const playerContainerRefs = useRef<Map<number, HTMLDivElement | null>>(
     new Map()
   );
-  const artPlayerRefs = useRef<Map<number, Artplayer | null>>(new Map());
-  const hlsRefs = useRef<Map<number, Hls | null>>(new Map());
   const progressRefs = useRef<Map<number, number>>(new Map());
-  const mp4AbortRefs = useRef<Map<number, AbortController | null>>(new Map());
   const currentIndexRef = useRef(currentIndex);
   const [videoReadyTick, setVideoReadyTick] = useState(0);
+
+  // Global player manager instance (singleton)
+  const playerManager = getPlayerManager();
   useEffect(() => {
     currentIndexRef.current = currentIndex;
   }, [currentIndex]);
@@ -148,51 +150,25 @@ const MediaFullscreenViewer = ({
     return closestIndex;
   }, [currentIndex]);
 
-  const destroyArtplayer = useCallback((index: number) => {
-    const art = artPlayerRefs.current.get(index);
-    if (art) {
-      const videoElement = art.video;
-      try {
-        art.pause();
-      } catch {
-        // ignore
-      }
-      try {
-        art.destroy(false);
-      } catch {
-        art.destroy();
-      }
-      if (videoElement) {
-        try {
-          videoElement.pause();
-          videoElement.removeAttribute("src");
-          videoElement.load();
-        } catch {
-          // ignore cleanup errors
-        }
-      }
-      artPlayerRefs.current.delete(index);
-    }
+  // ============================================================================
+  // CLEANUP HELPER - Uses player pool for proper resource cleanup
+  // ============================================================================
+  // This function releases a player back to the pool. The pool handles:
+  // - HLS instance destruction
+  // - Video element cleanup (pause, remove src, load())
+  // - Artplayer destruction
+  // - AbortController cancellation
+  const releasePlayerAtIndex = useCallback((index: number) => {
+    const playerId = `fullscreen-${index}`;
+    playerManager.releasePlayer(playerId, true); // true = fullscreen pool
 
-    const hls = hlsRefs.current.get(index);
-    if (hls) {
-      hls.destroy();
-      hlsRefs.current.delete(index);
-    }
-
-    videoRefs.current.delete(index);
-    const abort = mp4AbortRefs.current.get(index);
-    if (abort) {
-      abort.abort();
-      mp4AbortRefs.current.delete(index);
-    }
     setVideoReadyState((prev) => {
       if (!prev[index]) return prev;
       const next = { ...prev };
       delete next[index];
       return next;
     });
-  }, []);
+  }, [playerManager]);
 
   console.log("postData", postData);
 
@@ -527,12 +503,13 @@ const MediaFullscreenViewer = ({
   // Also detect touch/pointer end to ensure we pick final slide when touch scrolling
   // stops on platforms where continuous scroll events may be sparse.
   const handleContainerScroll = useCallback(() => {
-    // Pause every video immediately during swipe
-    console.log("Scroll detected, pausing all videos");
-    videoRefs.current.forEach((video) => {
-      if (video) {
-        video.pause();
-      }
+    // ============================================================
+    // MEMORY MANAGEMENT: Pause all fullscreen players during swipe
+    // This prevents multiple videos playing simultaneously
+    // ============================================================
+    media.forEach((_, index) => {
+      const playerId = `fullscreen-${index}`;
+      playerManager.pausePlayer(playerId, true);
     });
 
     setIsPlaying(false);
@@ -553,7 +530,7 @@ const MediaFullscreenViewer = ({
         setCurrentIndex(newIndex);
       }
     }, 150);
-  }, [getNearestSlideIndex, media.length]);
+  }, [getNearestSlideIndex, media.length, playerManager]);
 
   const handleInteractionEnd = useCallback(() => {
     // Some browsers may not emit a final scroll event — ensure we compute final index
@@ -572,34 +549,35 @@ const MediaFullscreenViewer = ({
     if (isOpen) {
       setShowUI(!isVideo);
 
-      // Pause all videos except current (if current is video)
-      videoRefs.current.forEach((video, index) => {
-        if (video && index !== currentIndex) {
-          video.pause();
-        }
-      });
+      // ============================================================
+      // MEMORY MANAGEMENT: Pause all players except current
+      // Uses player pool to manage playback state
+      // ============================================================
+      const currentPlayerId = `fullscreen-${currentIndex}`;
+      playerManager.pauseAllExcept(currentPlayerId, true);
 
-      const currentVideo = videoRefs.current.get(currentIndex);
-      if (isVideo && currentVideo) {
+      const currentPlayer = playerManager.getPlayer(currentPlayerId, true);
+      if (isVideo && currentPlayer?.videoElement) {
         // Sync isPlaying state with video's actual state
-        setIsPlaying(!currentVideo.paused);
-        setCurrentTime(currentVideo.currentTime || 0);
+        setIsPlaying(!currentPlayer.videoElement.paused);
+        setCurrentTime(currentPlayer.videoElement.currentTime || 0);
       } else {
         setIsPlaying(false);
         setCurrentTime(0);
         setDuration(0);
       }
     }
-  }, [currentIndex, isOpen, isVideo]);
+  }, [currentIndex, isOpen, isVideo, playerManager]);
 
   // Stop all videos when switching to non-video media
   useEffect(() => {
     if (!isVideo) {
-      // If current media is not a video, pause all videos
-      videoRefs.current.forEach((video) => {
-        if (video) {
-          video.pause();
-        }
+      // ============================================================
+      // MEMORY MANAGEMENT: Pause all fullscreen players when viewing image
+      // ============================================================
+      media.forEach((_, index) => {
+        const playerId = `fullscreen-${index}`;
+        playerManager.pausePlayer(playerId, true);
       });
       setIsPlaying(false);
       setCurrentTime(0);
@@ -611,7 +589,7 @@ const MediaFullscreenViewer = ({
         hideUITimerRef.current = null;
       }
     }
-  }, [isVideo, currentIndex]);
+  }, [isVideo, currentIndex, media, playerManager]);
 
   // Cleanup scroll end timer on unmount
   useEffect(() => {
@@ -622,31 +600,32 @@ const MediaFullscreenViewer = ({
     };
   }, []);
 
+  // ============================================================================
+  // CLEANUP ON UNMOUNT - Release all fullscreen players back to pool
+  // ============================================================================
+  // This effect ensures all player resources are released when the viewer unmounts.
+  // The pool handles actual destruction of HLS/Artplayer instances.
   useEffect(() => {
-    const artMap = artPlayerRefs.current;
-    const hlsMap = hlsRefs.current;
-    const videoMap = videoRefs.current;
     const containerMap = playerContainerRefs.current;
-    const mp4AbortMap = mp4AbortRefs.current;
 
     return () => {
-      artMap.forEach((_, index) => {
-        destroyArtplayer(index);
+      // Release all fullscreen players back to pool
+      media.forEach((_, index) => {
+        const playerId = `fullscreen-${index}`;
+        playerManager.destroyPlayer(playerId, true);
       });
-      artMap.clear();
-      hlsMap.clear();
-      videoMap.clear();
       containerMap.clear();
-      mp4AbortMap.forEach((controller) => controller?.abort());
-      mp4AbortMap.clear();
+      progressRefs.current.clear();
     };
-  }, [destroyArtplayer]);
+  }, [media, playerManager]);
 
   // Handle video time updates for current video
   useEffect(() => {
     if (!isVideo) return;
 
-    const currentVideo = videoRefs.current.get(currentIndex);
+    const playerId = `fullscreen-${currentIndex}`;
+    const player = playerManager.getPlayer(playerId, true);
+    const currentVideo = player?.videoElement;
     if (!currentVideo) return;
 
     currentVideo.play().catch(() => {
@@ -713,14 +692,16 @@ const MediaFullscreenViewer = ({
         clearTimeout(hideUITimerRef.current);
       }
     };
-  }, [isVideo, currentIndex, videoReadyTick]);
+  }, [isVideo, currentIndex, videoReadyTick, playerManager]);
 
+  // Sync muted state with current video
   useEffect(() => {
-    const currentVideo = videoRefs.current.get(currentIndex);
-    if (currentVideo) {
-      currentVideo.muted = isMuted;
+    const playerId = `fullscreen-${currentIndex}`;
+    const player = playerManager.getPlayer(playerId, true);
+    if (player?.videoElement) {
+      player.videoElement.muted = isMuted;
     }
-  }, [isMuted, currentIndex, videoReadyTick]);
+  }, [isMuted, currentIndex, videoReadyTick, playerManager]);
 
   // Close on escape key
   useEffect(() => {
@@ -766,7 +747,9 @@ const MediaFullscreenViewer = ({
 
   const handleMediaClick = () => {
     if (isVideo) {
-      const currentVideo = videoRefs.current.get(currentIndex);
+      const playerId = `fullscreen-${currentIndex}`;
+      const player = playerManager.getPlayer(playerId, true);
+      const currentVideo = player?.videoElement;
       if (!currentVideo) return;
 
       // Always bring UI back when tapping the video
@@ -797,23 +780,28 @@ const MediaFullscreenViewer = ({
 
   const handleToggleMute = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const currentVideo = videoRefs.current.get(currentIndex);
-    if (currentVideo) {
-      currentVideo.muted = !currentVideo.muted;
-      setIsMuted(currentVideo.muted);
+    const playerId = `fullscreen-${currentIndex}`;
+    const player = playerManager.getPlayer(playerId, true);
+    if (player?.videoElement) {
+      const newMuted = !player.videoElement.muted;
+      player.videoElement.muted = newMuted;
+      setIsMuted(newMuted);
+      // Update global mute state for consistency
+      playerManager.setGlobalMuted(newMuted);
     }
   };
 
   const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
-    const currentVideo = videoRefs.current.get(currentIndex);
-    if (!currentVideo) return;
+    const playerId = `fullscreen-${currentIndex}`;
+    const player = playerManager.getPlayer(playerId, true);
+    if (!player?.videoElement) return;
 
     const rect = e.currentTarget.getBoundingClientRect();
     const clickX = e.clientX - rect.left;
     const percentage = clickX / rect.width;
     const newTime = percentage * duration;
-    currentVideo.currentTime = newTime;
+    player.videoElement.currentTime = newTime;
     progressRefs.current.set(currentIndex, newTime);
   };
 
@@ -910,11 +898,24 @@ const MediaFullscreenViewer = ({
     }, 150);
   };
 
+  // ============================================================================
+  // POOLED VIDEO PLAYER ATTACHMENT
+  // ============================================================================
+  // This function is called when a video container div is rendered.
+  // Instead of creating a new Artplayer/HLS instance directly, we request
+  // a player from the global pool. The pool handles:
+  // - Instance creation with proper HLS/MP4 handling
+  // - Memory-optimized buffer settings
+  // - Automatic recycling when pool is full
+  // - Proper cleanup of all resources
   const attachVideoPlayer = useCallback(
     (index: number, mediaItem: MediaItem, element: HTMLDivElement | null) => {
       if (mediaItem.type !== "video") return;
 
+      const playerId = `fullscreen-${index}`;
+
       if (!element) {
+        // Element removed from DOM - release player back to pool
         const existingElement = playerContainerRefs.current.get(index);
         const isStillInDom =
           typeof document !== "undefined" &&
@@ -926,87 +927,80 @@ const MediaFullscreenViewer = ({
         }
 
         playerContainerRefs.current.delete(index);
-        destroyArtplayer(index);
+        releasePlayerAtIndex(index);
         return;
       }
 
+      // Check if we already have a player for this container
       const existingElement = playerContainerRefs.current.get(index);
-      if (existingElement === element && artPlayerRefs.current.get(index)) {
+      const existingPlayer = playerManager.getPlayer(playerId, true);
+      if (existingElement === element && existingPlayer) {
         return;
       }
 
       playerContainerRefs.current.set(index, element);
-      destroyArtplayer(index);
 
-      const normalizedUrl = mediaItem.url.split("?")[0].toLowerCase();
-      const isM3u8 = normalizedUrl.endsWith(".m3u8");
-      const isMp4 = normalizedUrl.endsWith(".mp4");
-      let hlsInstance: Hls | null = null;
+      // Set loading state
+      setVideoReadyState((prev) => ({
+        ...prev,
+        [index]: {
+          ...(prev[index] || {
+            thumbnail: mediaItem.thumbnail_url || mediaItem.thumbnail,
+          }),
+          isReady: false,
+          isVideo: true,
+        },
+      }));
 
-      const typeOrder = isM3u8
-        ? ["m3u8", "normal"]
-        : isMp4
-        ? ["mp4", "normal"]
-        : ["normal"];
+      // ============================================================
+      // MEMORY MANAGEMENT: Request player from global pool
+      // The pool will recycle oldest inactive player if at capacity
+      // ============================================================
+      const savedTime = progressRefs.current.get(index) || 0;
 
-      const customTypeHandlers: Record<
-        string,
-        (video: HTMLVideoElement, url: string) => void
-      > = {};
-
-      if (isM3u8) {
-        customTypeHandlers.m3u8 = (video: HTMLVideoElement, url: string) => {
-          if (Hls.isSupported()) {
-            const hls = new Hls({
-              enableWorker: true,
-              lowLatencyMode: true,
-              backBufferLength: 30,
-              maxBufferLength: 30,
-              maxMaxBufferLength: 60,
-              maxBufferSize: 50 * 1000 * 1000,
-              maxBufferHole: 0.5,
-              maxFragLookUpTolerance: 0.25,
-              startLevel: -1,
-              abrEwmaDefaultEstimate: 500000,
-              abrBandWidthFactor: 0.95,
-              abrBandWidthUpFactor: 0.7,
-              abrMaxWithRealBitrate: true,
-              startFragPrefetch: false,
-              fpsDroppedMonitoringThreshold: 0.2,
-              fpsDroppedMonitoringPeriod: 1000,
-              capLevelToPlayerSize: true,
-              initialLiveManifestSize: 1,
-              stretchShortVideoTrack: true,
-              forceKeyFrameOnDiscontinuity: true,
-              manifestLoadingTimeOut: 10000,
-              manifestLoadingMaxRetry: 3,
-              manifestLoadingRetryDelay: 500,
-              manifestLoadingMaxRetryTimeout: 5000,
-              levelLoadingTimeOut: 10000,
-              levelLoadingMaxRetry: 3,
-              levelLoadingRetryDelay: 500,
-              levelLoadingMaxRetryTimeout: 5000,
-              fragLoadingTimeOut: 20000,
-              fragLoadingMaxRetry: 6,
-              fragLoadingRetryDelay: 500,
-              fragLoadingMaxRetryTimeout: 5000,
-            });
-
-            hls.on(Hls.Events.ERROR, (_, data) => {
-              if (!data.fatal) return;
-              switch (data.type) {
-                case Hls.ErrorTypes.NETWORK_ERROR:
-                  hls.startLoad();
-                  break;
-                case Hls.ErrorTypes.MEDIA_ERROR:
-                  hls.recoverMediaError();
-                  break;
-                default:
-                  hls.destroy();
-                  break;
+      playerManager.requestPlayer(
+        playerId,
+        element,
+        mediaItem.url,
+        {
+          autoplay: index === currentIndexRef.current,
+          muted: isMuted,
+          loop: true,
+          onReady: (player) => {
+            // Restore saved position if any
+            if (savedTime > 0 && player.videoElement) {
+              try {
+                player.videoElement.currentTime = savedTime;
+              } catch {
+                // ignore seeking errors
               }
-            });
+            }
 
+            setVideoReadyState((prev) => ({
+              ...prev,
+              [index]: {
+                ...(prev[index] || {
+                  thumbnail: mediaItem.thumbnail_url || mediaItem.thumbnail,
+                }),
+                isReady: true,
+                isVideo: true,
+              },
+            }));
+
+            // Play if this is the active index, pause otherwise
+            const activeIndex = currentIndexRef.current;
+            if (index === activeIndex) {
+              player.videoElement?.play().catch(() => {
+                /* ignore autoplay errors */
+              });
+            } else {
+              player.videoElement?.pause();
+            }
+
+            setVideoReadyTick((prev) => prev + 1);
+          },
+          onError: (error) => {
+            console.error(`[MediaFullscreenViewer] Player error for index ${index}:`, error);
             setVideoReadyState((prev) => ({
               ...prev,
               [index]: {
@@ -1017,155 +1011,12 @@ const MediaFullscreenViewer = ({
                 isVideo: true,
               },
             }));
-
-            hls.loadSource(url);
-            hls.attachMedia(video);
-            hlsInstance = hls;
-          } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-            video.preload = "auto";
-            video.src = url;
-          } else {
-            video.src = url;
-          }
-        };
-      }
-
-      if (isMp4) {
-        customTypeHandlers.mp4 = (video: HTMLVideoElement, url: string) => {
-          video.preload = "metadata";
-
-          const abortController = new AbortController();
-          mp4AbortRefs.current.set(index, abortController);
-
-          const loadVideo = async () => {
-            try {
-              const headers = new Headers();
-              headers.append("Range", "bytes=0-1048576");
-
-              const response = await fetch(url, {
-                headers,
-                method: "GET",
-                signal: abortController.signal,
-              });
-
-              video.src = url;
-              video.preload = response.status === 206 ? "auto" : "metadata";
-            } catch (error) {
-              if ((error as Error).name !== "AbortError") {
-                console.error("Error loading MP4:", error);
-              }
-              setVideoReadyState((prev) => ({
-                ...prev,
-                [index]: {
-                  ...(prev[index] || {
-                    thumbnail: mediaItem.thumbnail_url || mediaItem.thumbnail,
-                  }),
-                  isReady: false,
-                  isVideo: true,
-                },
-              }));
-
-              video.src = url;
-              video.preload = "metadata";
-            }
-          };
-
-          const handleCanPlayThrough = () => {
-            video.preload = "auto";
-          };
-          const handleWaiting = () => {
-            video.preload = "auto";
-          };
-
-          video.addEventListener("canplaythrough", handleCanPlayThrough);
-          video.addEventListener("waiting", handleWaiting);
-
-          loadVideo().catch(console.error);
-        };
-      }
-
-      const options: ArtplayerOptions = {
-        container: element,
-        url: mediaItem.url,
-        muted: isMuted,
-        autoplay: true,
-        loop: true,
-        type: typeOrder[0],
-        ...(Object.keys(customTypeHandlers).length > 0
-          ? { customType: customTypeHandlers }
-          : {}),
-        moreVideoAttr: {
-          playsInline: true,
-          preload: "auto",
-          crossOrigin: "anonymous",
-        },
-        icons: {
-          loading: `<div style="display:none"></div>`,
-          state: `<div style="display:none"></div>`,
-        },
-      };
-
-      const art = new Artplayer(options);
-      artPlayerRefs.current.set(index, art);
-
-      art.on("ready", () => {
-        const video = art.video;
-        video.style.width = "100%";
-        video.style.height = "100%";
-        video.style.objectFit = "contain";
-        video.style.pointerEvents = "none";
-
-        if (hlsInstance) {
-          hlsRefs.current.set(index, hlsInstance);
-        }
-
-        videoRefs.current.set(index, video);
-
-        const savedTime = progressRefs.current.get(index);
-        if (typeof savedTime === "number" && !Number.isNaN(savedTime)) {
-          try {
-            video.currentTime = savedTime;
-          } catch {
-            // ignore seeking errors
-          }
-        }
-
-        video.muted = isMuted;
-
-        setVideoReadyState((prev) => ({
-          ...prev,
-          [index]: {
-            ...(prev[index] || {
-              thumbnail: mediaItem.thumbnail_url || mediaItem.thumbnail,
-            }),
-            isReady: true,
-            isVideo: true,
           },
-        }));
-
-        const activeIndex = currentIndexRef.current;
-        if (index === activeIndex) {
-          video.play().catch(() => {
-            /* ignore autoplay errors */
-          });
-        } else {
-          video.pause();
-        }
-
-        setVideoReadyTick((prev) => prev + 1);
-      });
-
-      art.on("destroy", () => {
-        videoRefs.current.delete(index);
-        artPlayerRefs.current.delete(index);
-        const hls = hlsRefs.current.get(index);
-        if (hls) {
-          hls.destroy();
-          hlsRefs.current.delete(index);
-        }
-      });
+        },
+        true // true = fullscreen pool
+      );
     },
-    [destroyArtplayer, isMuted]
+    [isMuted, playerManager, releasePlayerAtIndex]
   );
 
   if (!isOpen) return null;
