@@ -1419,7 +1419,7 @@ const MediaFullscreenViewer = ({
 
           {/* Engagement Stats - Hide after 2 seconds for videos */}
           {postData && showUI && (
-            <div className="flex items-center justify-center gap-10">
+            <div className="flex items-center justify-center gap-4">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -1432,17 +1432,19 @@ const MediaFullscreenViewer = ({
                   fill={postData.is_liked ? "currentColor" : "none"}
                   className={postData.is_liked ? "text-red-500" : ""}
                 />
-                <span
-                  className={cn(
-                    "text-sm",
-                    postData.is_liked ? "text-red-500" : ""
-                  )}
-                >
-                  {postData.like_count}
-                </span>
+                {postData.like_count > 0 && (
+                  <span
+                    className={cn(
+                      "text-sm",
+                      postData.is_liked ? "text-red-500" : ""
+                    )}
+                  >
+                    {postData.like_count}
+                  </span>
+                )}
               </button>
 
-              <button
+              {/* <button
                 onClick={(e) => {
                   e.stopPropagation();
                   if (effectiveCommentSectionProps) {
@@ -1453,8 +1455,10 @@ const MediaFullscreenViewer = ({
                 className="flex items-center gap-1 text-white"
               >
                 <MessageCircle size={20} />
-                <span className="text-sm">{postData.comment_count}</span>
-              </button>
+                {postData.comment_count > 0 && (
+                  <span className="text-sm">{postData.comment_count}</span>
+                )}
+              </button> */}
 
               <button
                 onClick={(e) => {
