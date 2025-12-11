@@ -186,8 +186,6 @@ const MediaFullscreenViewer = ({
     [playerManager]
   );
 
-  console.log("postData", postData);
-
   const currentMedia = media[currentIndex];
   const isVideo = currentMedia?.type === "video";
   const currentPostId = postData?.post_id;
@@ -488,7 +486,7 @@ const MediaFullscreenViewer = ({
   useEffect(() => {
     if (isOpen) {
       setIsMuted(globalMutedState);
-      setShowUI(isVideo);
+      setShowUI(true);
     } else {
       setShowCommentSheet(false);
     }
@@ -563,7 +561,7 @@ const MediaFullscreenViewer = ({
   // Reset UI visibility when media changes
   useEffect(() => {
     if (isOpen) {
-      setShowUI(isVideo);
+      setShowUI(true);
 
       // ============================================================
       // MEMORY MANAGEMENT: Pause all players except current
@@ -818,7 +816,7 @@ const MediaFullscreenViewer = ({
       playerManager.setGlobalMuted(newMuted);
       // Update global Redux state if post_id is available
       if (postData?.post_id) {
-        (setPostMuted({ postId: postData.post_id, muted: newMuted }));
+        setPostMuted({ postId: postData.post_id, muted: newMuted });
       }
     }
   };
