@@ -1113,7 +1113,7 @@ const MediaFullscreenViewer = ({
                     {showUI && (
                       <div className="absolute bottom-5 w-full z-10">
                         {/* Progress Bar with Time and Mute */}
-                        <div className="flex items-center gap-3 mb-2">
+                        <div className="flex items-center gap-3 mb-2 px-4 pb-3">
                           {/* Current Time */}
                           <span className="text-white text-sm min-w-[45px]">
                             {formatTime(currentTime)}
