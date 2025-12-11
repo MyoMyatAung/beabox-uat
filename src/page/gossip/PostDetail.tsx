@@ -222,27 +222,31 @@ const PostDetail = () => {
   }, []);
 
   const togglePostLike = useCallback(async () => {
+    console.log("post", post);
+    console.log("togglePostLike", postIsLiked);
+    console.log("post?.post_id", post?.id);
+    console.log("ensureAuthenticated", ensureAuthenticated());
     if (!ensureAuthenticated()) {
       return;
     }
 
-    if (!post?.post_id) return;
+    if (!post?.id) return;
     const nextLiked = !postIsLiked;
     const delta = nextLiked ? 1 : -1;
     setPostIsLiked(nextLiked);
     setPostLikeCount((prev) => Math.max(0, prev + delta));
     try {
       if (nextLiked) {
-        await likePost({ post_id: post.post_id }).unwrap();
+        await likePost({ post_id: post.id }).unwrap();
       } else {
-        await unlikePost({ post_id: post.post_id }).unwrap();
+        await unlikePost({ post_id: post.id }).unwrap();
       }
     } catch (error) {
       console.error("Failed to toggle like:", error);
       setPostIsLiked(!nextLiked);
       setPostLikeCount((prev) => Math.max(0, prev - delta));
     }
-  }, [likePost, post?.post_id, postIsLiked, unlikePost]);
+  }, [likePost, post?.id, postIsLiked, unlikePost]);
 
   const fetchComments = useCallback(async (): Promise<void> => {
     const targetPostId = post?.post_id ?? postId ?? "";

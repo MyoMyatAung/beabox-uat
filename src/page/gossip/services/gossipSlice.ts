@@ -55,7 +55,7 @@ export interface GossipPost {
 }
 
 export interface GossipDetailPost {
-  post_id: string;
+  id: string;
   category_id?: string;
   user: GossipPostUser;
   content: string;
