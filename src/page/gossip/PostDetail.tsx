@@ -222,10 +222,6 @@ const PostDetail = () => {
   }, []);
 
   const togglePostLike = useCallback(async () => {
-    console.log("post", post);
-    console.log("togglePostLike", postIsLiked);
-    console.log("post?.post_id", post?.id);
-    console.log("ensureAuthenticated", ensureAuthenticated());
     if (!ensureAuthenticated()) {
       return;
     }
