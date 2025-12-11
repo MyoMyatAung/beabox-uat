@@ -27,6 +27,7 @@ import type { RootState } from "@/store/store";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 import { getPlayerManager } from "../services/playerManager";
+import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 
 interface MediaItem {
   id: string;
@@ -72,7 +73,7 @@ const GossipPost = ({ post }: GossipPostProps) => {
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
   const [fullscreenIndex, setFullscreenIndex] = useState(0);
   const [showShareSheet, setShowShareSheet] = useState(false);
-  const [isLoginDrawerOpen, setIsLoginDrawerOpen] = useState(false);
+  // const [isLoginDrawerOpen, setIsLoginDrawerOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
   const moreOptionsRef = useRef<HTMLButtonElement>(null);
@@ -109,7 +110,8 @@ const GossipPost = ({ post }: GossipPostProps) => {
     if (isAuthenticated) {
       return true;
     }
-    setIsLoginDrawerOpen(true);
+    // setIsLoginDrawerOpen(true);
+    dispatch(setIsDrawerOpen(true));
     return false;
   };
 
@@ -812,10 +814,10 @@ const GossipPost = ({ post }: GossipPostProps) => {
       )}
 
       {/* Login Drawer */}
-      <LoginDrawer
+      {/* <LoginDrawer
         isOpen={isLoginDrawerOpen}
         setIsOpen={setIsLoginDrawerOpen}
-      />
+      /> */}
     </div>
   );
 };
