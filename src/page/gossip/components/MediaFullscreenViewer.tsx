@@ -472,7 +472,7 @@ const MediaFullscreenViewer = ({
   useEffect(() => {
     if (isOpen) {
       setIsMuted(false);
-      setShowUI(!isVideo);
+      setShowUI(isVideo);
     } else {
       setShowCommentSheet(false);
     }
@@ -547,7 +547,7 @@ const MediaFullscreenViewer = ({
   // Reset UI visibility when media changes
   useEffect(() => {
     if (isOpen) {
-      setShowUI(!isVideo);
+      setShowUI(isVideo);
 
       // ============================================================
       // MEMORY MANAGEMENT: Pause all players except current
