@@ -158,17 +158,20 @@ const MediaFullscreenViewer = ({
   // - Video element cleanup (pause, remove src, load())
   // - Artplayer destruction
   // - AbortController cancellation
-  const releasePlayerAtIndex = useCallback((index: number) => {
-    const playerId = `fullscreen-${index}`;
-    playerManager.releasePlayer(playerId, true); // true = fullscreen pool
+  const releasePlayerAtIndex = useCallback(
+    (index: number) => {
+      const playerId = `fullscreen-${index}`;
+      playerManager.releasePlayer(playerId, true); // true = fullscreen pool
 
-    setVideoReadyState((prev) => {
-      if (!prev[index]) return prev;
-      const next = { ...prev };
-      delete next[index];
-      return next;
-    });
-  }, [playerManager]);
+      setVideoReadyState((prev) => {
+        if (!prev[index]) return prev;
+        const next = { ...prev };
+        delete next[index];
+        return next;
+      });
+    },
+    [playerManager]
+  );
 
   console.log("postData", postData);
 
@@ -1000,7 +1003,10 @@ const MediaFullscreenViewer = ({
             setVideoReadyTick((prev) => prev + 1);
           },
           onError: (error) => {
-            console.error(`[MediaFullscreenViewer] Player error for index ${index}:`, error);
+            console.error(
+              `[MediaFullscreenViewer] Player error for index ${index}:`,
+              error
+            );
             setVideoReadyState((prev) => ({
               ...prev,
               [index]: {
@@ -1075,61 +1081,63 @@ const MediaFullscreenViewer = ({
                       className="w-full h-full pointer-events-none relative z-10"
                       ref={(el) => attachVideoPlayer(index, item, el)}
                     />
-                    {showUI && <div className="absolute bottom-5 w-full z-10">
-                      {/* Progress Bar with Time and Mute */}
-                      <div className="flex items-center gap-3 mb-2">
-                        {/* Current Time */}
-                        <span className="text-white text-sm min-w-[45px]">
-                          {formatTime(currentTime)}
-                        </span>
-
-                        {/* Progress Bar with Scrubber */}
-                        <div
-                          className="flex-1 relative h-1 bg-white/20 rounded-full cursor-pointer"
-                          onClick={handleProgressClick}
-                        >
-                          {/* Progress Fill */}
-                          <div
-                            className="absolute left-0 top-0 h-full bg-purple-500 rounded-full transition-all"
-                            style={{
-                              width:
-                                duration > 0
-                                  ? `${(currentTime / duration) * 100}%`
-                                  : "0%",
-                            }}
-                          />
-                          {/* Scrubber Indicator */}
-                          <div
-                            className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-lg transition-all"
-                            style={{
-                              left:
-                                duration > 0
-                                  ? `calc(${
-                                      (currentTime / duration) * 100
-                                    }% - 6px)`
-                                  : "-6px",
-                            }}
-                          />
-                        </div>
-
-                        {/* Duration and Mute */}
-                        <div className="flex items-center gap-3">
+                    {showUI && (
+                      <div className="absolute bottom-5 w-full z-10">
+                        {/* Progress Bar with Time and Mute */}
+                        <div className="flex items-center gap-3 mb-2 px-4 pb-3">
+                          {/* Current Time */}
                           <span className="text-white text-sm min-w-[45px]">
-                            {formatTime(duration)}
+                            {formatTime(currentTime)}
                           </span>
-                          <button
-                            onClick={handleToggleMute}
-                            className="w-8 h-8 flex items-center justify-center text-white hover:opacity-70 transition-opacity"
+
+                          {/* Progress Bar with Scrubber */}
+                          <div
+                            className="flex-1 relative h-1 bg-white/20 rounded-full cursor-pointer"
+                            onClick={handleProgressClick}
                           >
-                            {isMuted ? (
-                              <VolumeX size={18} />
-                            ) : (
-                              <Volume2 size={18} />
-                            )}
-                          </button>
+                            {/* Progress Fill */}
+                            <div
+                              className="absolute left-0 top-0 h-full bg-purple-500 rounded-full transition-all"
+                              style={{
+                                width:
+                                  duration > 0
+                                    ? `${(currentTime / duration) * 100}%`
+                                    : "0%",
+                              }}
+                            />
+                            {/* Scrubber Indicator */}
+                            <div
+                              className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-lg transition-all"
+                              style={{
+                                left:
+                                  duration > 0
+                                    ? `calc(${
+                                        (currentTime / duration) * 100
+                                      }% - 6px)`
+                                    : "-6px",
+                              }}
+                            />
+                          </div>
+
+                          {/* Duration and Mute */}
+                          <div className="flex items-center gap-3">
+                            <span className="text-white text-sm min-w-[45px]">
+                              {formatTime(duration)}
+                            </span>
+                            <button
+                              onClick={handleToggleMute}
+                              className="w-8 h-8 flex items-center justify-center text-white hover:opacity-70 transition-opacity"
+                            >
+                              {isMuted ? (
+                                <VolumeX size={18} />
+                              ) : (
+                                <Volume2 size={18} />
+                              )}
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>}
+                    )}
                     {!isVideoReady && (
                       <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/60 z-20">
                         <div className="w-10 h-10 border-2 border-white/25 border-t-white rounded-full animate-spin" />
@@ -1271,7 +1279,6 @@ const MediaFullscreenViewer = ({
       {showUI && (
         <div className="absolute bottom-0 left-0 right-0 p-4 z-30">
           {/* Video Controls */}
-          
 
           {/* Engagement Stats - Hide after 2 seconds for videos */}
           {postData && showUI && (
