@@ -27,6 +27,7 @@ import { getDeviceInfo } from "@/lib/deviceInfo";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
 import { showToast } from "../home/services/errorSlice";
+import { setPostMuted } from "./services/gossipMuteSlice";
 
 const decodeUnicodeEscapes = (text?: string | null) => {
   if (!text) return "";
@@ -70,7 +71,10 @@ const PostDetail = () => {
     locationPost ?? null
   );
 
-  const [isMuted, setIsMuted] = useState(true);
+  const currentPostId = post?.id ?? postId ?? "";
+  const isMuted = useSelector(
+    (state: RootState) => state.gossipMute?.mutedByPostId[currentPostId] ?? true
+  );
   const [isFollowing, setIsFollowing] = useState(
     post?.user?.is_following ?? false
   );
@@ -285,9 +289,10 @@ const PostDetail = () => {
   }, [fetchComments]);
 
   const handleToggleMute = () => {
-    if (videoRef.current) {
-      videoRef.current.muted = !videoRef.current.muted;
-      setIsMuted(videoRef.current.muted);
+    if (videoRef.current && currentPostId) {
+      const newMuted = !videoRef.current.muted;
+      videoRef.current.muted = newMuted;
+      dispatch(setPostMuted({ postId: currentPostId, muted: newMuted }));
     }
   };
 
@@ -824,7 +829,9 @@ const PostDetail = () => {
         initialIndex={fullscreenIndex}
         isOpen={isFullscreenOpen}
         onClose={() => setIsFullscreenOpen(false)}
+        initialMuted={isMuted}
         postData={{
+          post_id: currentPostId,
           like_count: postLikeCount,
           comment_count: totalComments,
           share_count: post.share_count,

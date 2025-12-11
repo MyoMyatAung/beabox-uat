@@ -42,6 +42,7 @@ import showSlice from "@/page/home/services/showSlice";
 import watchSlice from "@/page/home/services/watchSlice";
 import { gossipApi } from "@/page/gossip/services/gossipApi";
 import { gossipExternalApi } from "@/page/gossip/services/gossipSlice";
+import gossipMuteSlice from "@/page/gossip/services/gossipMuteSlice";
 import indexSlice from "@/page/home/services/indexSlice";
 import previousUserReducer from "@/page/home/services/previousUserSlice";
 import hideNewSlice from "@/page/home/services/hideNewSlice";
@@ -142,6 +143,7 @@ const rootReducer = combineReducers({
   [spinWheelApi.reducerPath]: spinWheelApi.reducer,
   [gossipApi.reducerPath]: gossipApi.reducer,
   [gossipExternalApi.reducerPath]: gossipExternalApi.reducer,
+  gossipMute: gossipMuteSlice,
   spinWheel: spinWheelReducer,
 });
 

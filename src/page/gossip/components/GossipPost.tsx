@@ -27,6 +27,7 @@ import type { RootState } from "@/store/store";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 import { getPlayerManager } from "../services/playerManager";
+import { setPostMuted } from "../services/gossipMuteSlice";
 
 interface MediaItem {
   id: string;
@@ -68,7 +69,9 @@ const GossipPost = ({ post }: GossipPostProps) => {
   const [pendingLike, setPendingLike] = useState(false);
   const [showPopover, setShowPopover] = useState(false);
   const [showMoreOptionsPopover, setShowMoreOptionsPopover] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
+  const isMuted = useSelector(
+    (state: RootState) => state.gossipMute?.mutedByPostId[post.post_id] ?? true
+  );
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
   const [fullscreenIndex, setFullscreenIndex] = useState(0);
   const [showShareSheet, setShowShareSheet] = useState(false);
@@ -255,13 +258,13 @@ const GossipPost = ({ post }: GossipPostProps) => {
   };
 
   // ============================================================================
-  // MUTE TOGGLE - Uses global player manager for consistent mute state
+  // MUTE TOGGLE - Uses global state and player manager for consistent mute state
   // ============================================================================
   const handleToggleMute = useCallback(() => {
     const newMuted = !isMuted;
-    setIsMuted(newMuted);
+    dispatch(setPostMuted({ postId: post.post_id, muted: newMuted }));
     playerManager.setGlobalMuted(newMuted);
-  }, [isMuted, playerManager]);
+  }, [isMuted, post.post_id, dispatch, playerManager]);
 
   const handleMediaClick = (index: number) => {
     // Pause the auto-playing video if it's the first video
@@ -777,6 +780,7 @@ const GossipPost = ({ post }: GossipPostProps) => {
         initialIndex={fullscreenIndex}
         isOpen={isFullscreenOpen}
         onClose={() => setIsFullscreenOpen(false)}
+        initialMuted={isMuted}
         postData={{
           post_id: post.post_id,
           like_count: likeCount,
