@@ -224,11 +224,22 @@ const Gossip = () => {
 
     // Check for posts loading errors
     if (postsError) {
-      if ("status" in postsError) {
-        const errData = postsError.data as { message?: string };
+      if (
+        typeof postsError === "object" &&
+        postsError !== null &&
+        "status" in postsError
+      ) {
+        const errData = (postsError as { status: unknown; data?: { message?: string } }).data;
         return errData?.message || "帖子加载失败，请稍后重试";
       }
-      return postsError.message || "帖子加载失败，请稍后重试";
+      if (
+        typeof postsError === "object" &&
+        postsError !== null &&
+        "message" in postsError
+      ) {
+        return (postsError as { message?: string }).message || "帖子加载失败，请稍后重试";
+      }
+      return "帖子加载失败，请稍后重试";
     }
 
     return null;
