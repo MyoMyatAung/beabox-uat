@@ -1,431 +1,220 @@
-import { useState, useEffect, useMemo, useRef, useCallback } from "react";
-import type { ComponentProps } from "react";
+/**
+ * ============================================================================
+ * GOSSIP PAGE COMPONENT
+ * ============================================================================
+ *
+ * Main page component for the Gossip feature - a social media-style feed
+ * with categorized posts, infinite scroll, and video player support.
+ *
+ * ARCHITECTURE:
+ * This component follows SOLID principles with clear separation of concerns:
+ *
+ * - useGossipTabs: Tab/category management and persistence
+ * - useGossipPosts: Post fetching, transformation, and pagination
+ * - useScrollPreservation: Scroll position caching per tab
+ * - usePlayerCleanup: Video player memory management
+ *
+ * FEATURES:
+ * 1. Category Tabs: Navigate between different gossip categories
+ * 2. Infinite Scroll: Load more posts as user scrolls
+ * 3. Tab State Caching: Preserve posts and scroll position per tab
+ * 4. Session Persistence: Remember tab and scroll on route navigation
+ * 5. Memory Management: Clean up video players on tab change/unmount
+ *
+ * USER EXPERIENCE:
+ * - Instant tab switching with cached data
+ * - Scroll position restored when returning to a tab
+ * - Last viewed tab remembered across sessions
+ * - Smooth loading states with skeleton placeholders
+ *
+ * COMPONENT HIERARCHY:
+ * Gossip
+ * ├── GossipTopNavbar (tab navigation)
+ * ├── PostSkeleton (loading state)
+ * ├── GossipErrorState (error display)
+ * ├── GossipEmptyState (no content)
+ * └── GossipPostList (infinite scroll + posts)
+ *     └── GossipPost (individual post)
+ *
+ * @see types.ts for type definitions
+ * @see constants.ts for configuration values
+ */
+
+import { useEffect, useMemo, useCallback } from "react";
 import { useDispatch } from "react-redux";
-import InfiniteScroll from "react-infinite-scroll-component";
 import { sethideNew } from "@/page/home/services/hideNewSlice";
-import GossipTopNavbar from "./components/GossipTopNavbar";
-import GossipPost from "./components/GossipPost";
+import { SCROLL_CONTAINER_ID } from "./constants";
+
+// Hooks
 import {
-  useGetGossipPostsQuery as useExternalGossipPostsQuery,
-  useGetGossipCategoriesQuery,
-} from "./services/gossipSlice";
-import type { GossipPostMedia } from "./services/gossipSlice";
-import { getPlayerManager } from "./services/playerManager";
-import loaderGif from "@/page/home/vod_loader.gif";
+  useGossipTabs,
+  useGossipPosts,
+  useScrollPreservation,
+  usePlayerCleanup,
+} from "./hooks";
 
-interface Tab {
-  id: string;
-  label: string;
-  categoryId: string;
-}
+// Components
+import GossipTopNavbar from "./components/GossipTopNavbar";
+import { PostSkeleton } from "./components/PostSkeleton";
+import { GossipErrorState } from "./components/GossipErrorState";
+import { GossipEmptyState } from "./components/GossipEmptyState";
+import { GossipPostList } from "./components/GossipPostList";
 
-// Storage keys for scroll position persistence
-const GOSSIP_SCROLL_STORAGE_KEY = "gossip-scroll-position";
+// Types
+import type { NavbarTab } from "./types";
 
-// Type for cached tab state
-type GossipPostData = ComponentProps<typeof GossipPost>["post"];
-interface TabCache {
-  posts: GossipPostData[];
-  page: number;
-  hasMore: boolean;
-  scrollPosition: number;
-}
-
-const PostSkeleton = () => (
-  <div className="px-4 py-3 animate-pulse space-y-3 mb-4">
-    <div className="flex gap-3">
-      <div className="w-9 h-9 bg-[#221d2a] rounded-full" />
-      <div className="flex-1 space-y-2">
-        <div className="w-52 h-4 bg-[#221d2a] rounded-md" />
-        <div className="w-24 h-4 bg-[#221d2a] rounded-md" />
-        <div className="w-36 h-4 bg-[#221d2a] rounded-md" />
-      </div>
-    </div>
-    <div className="flex gap-3 overflow-x-auto">
-      <div className="w-[220px] h-[236px] bg-[#221d2a] rounded-md" />
-      <div className="w-[220px] h-[236px] bg-[#221d2a] rounded-md" />
-    </div>
-    <div className="flex justify-between">
-      <div className="w-24 h-4 bg-[#221d2a] rounded-md" />
-      <div className="w-24 h-4 bg-[#221d2a] rounded-md" />
-    </div>
-  </div>
-);
-
-const LoadingSpinner = () => (
-  <div className="flex justify-center items-center py-4">
-    <img src={loaderGif} alt="Loading..." className="w-10 h-10" />
-  </div>
-);
-
-const GOSSIP_TAB_STORAGE_KEY = "gossip-active-tab";
-
+/**
+ * Main Gossip page component.
+ *
+ * Orchestrates the gossip feed experience by composing specialized hooks
+ * and components. Handles tab switching with state preservation.
+ */
 const Gossip = () => {
   const dispatch = useDispatch();
-  const [activeTab, setActiveTab] = useState<string>(() => {
-    if (typeof window === "undefined") {
-      return "";
-    }
-    return window.localStorage.getItem(GOSSIP_TAB_STORAGE_KEY) || "";
-  });
-  const [page, setPage] = useState(1);
-  const pageSize = 10;
-  const [posts, setPosts] = useState<GossipPostData[]>([]);
-  const [hasMore, setHasMore] = useState(true);
 
   // ============================================================================
-  // SCROLL POSITION PRESERVATION: Per-tab caching
+  // HOOKS: Tabs Management
   // ============================================================================
-  // Cache tab state (posts, page, hasMore, scrollPosition) to restore when switching back
-  const tabCacheRef = useRef<Record<string, TabCache>>({});
-  // Track if we should restore scroll position after posts load
-  const pendingScrollRestoreRef = useRef<number | null>(null);
-  // Track if this is a fresh mount (for route navigation restoration)
-  const isInitialMountRef = useRef(true);
-
+  // Manages category tabs, active tab state, and localStorage persistence
   const {
-    data: categoryList = [],
+    tabs,
+    activeTab,
+    activeTabConfig,
     isLoading: isCategoriesLoading,
     error: categoriesError,
-  } = useGetGossipCategoriesQuery();
+    handleTabClick: baseHandleTabClick,
+  } = useGossipTabs();
 
-  const tabs: Tab[] = useMemo(() => {
-    if (!Array.isArray(categoryList)) {
-      return [];
-    }
+  // ============================================================================
+  // HOOKS: Posts Management
+  // ============================================================================
+  // Manages post fetching, transformation, pagination, and loading states
+  const {
+    posts,
+    page,
+    hasMore,
+    isInitialLoading,
+    isFetching,
+    error: postsError,
+    loadMore,
+    refetch,
+    setPosts,
+    setPage,
+    setHasMore,
+    reset: resetPosts,
+  } = useGossipPosts({
+    categoryId: activeTabConfig?.categoryId,
+  });
 
-    return categoryList.map((category, index) => ({
-      id: category.slug || category.id || `category-${index}`,
-      label: category.name || `分类${index + 1}`,
-      categoryId: category.id,
-    }));
-  }, [categoryList]);
+  // ============================================================================
+  // HOOKS: Scroll Preservation
+  // ============================================================================
+  // Manages scroll position caching per tab and session persistence
+  const {
+    saveCurrentTabState,
+    getCachedState,
+    scheduleScrollRestore,
+    clearPendingRestore,
+  } = useScrollPreservation({
+    activeTab,
+    posts,
+    page,
+    hasMore,
+  });
 
-  useEffect(() => {
-    if (!tabs.length) {
-      return;
-    }
+  // ============================================================================
+  // HOOKS: Player Memory Management
+  // ============================================================================
+  // Cleans up video players on tab change and component unmount
+  usePlayerCleanup({ activeTab });
 
-    if (activeTab) {
-      const existsInTabs = tabs.some((tab) => tab.id === activeTab);
-      if (!existsInTabs) {
-        setActiveTab(tabs[0].id);
-      }
-      return;
-    }
-
-    setActiveTab(tabs[0].id);
-  }, [activeTab, tabs]);
-
-  useEffect(() => {
-    if (!activeTab || typeof window === "undefined") {
-      return;
-    }
-    window.localStorage.setItem(GOSSIP_TAB_STORAGE_KEY, activeTab);
-  }, [activeTab]);
-
-  const activeTabConfig = tabs.find((tab) => tab.id === activeTab);
-  const hasCategoryId = Boolean(activeTabConfig?.categoryId);
-
-  // Ensure bottom nav is visible on gossip page
+  // ============================================================================
+  // EFFECTS: Bottom Navigation Visibility
+  // ============================================================================
+  // Ensure bottom navigation bar is visible on the gossip page
   useEffect(() => {
     dispatch(sethideNew(false));
   }, [dispatch]);
 
   // ============================================================================
-  // MEMORY MANAGEMENT: Clean up all player instances on tab change
+  // HANDLERS: Tab Click with State Preservation
   // ============================================================================
-  // When switching tabs, we destroy all feed players to prevent memory buildup.
-  // This ensures that old videos from the previous tab don't linger in memory.
-  // NOTE: We use a ref to track the previous tab to avoid cleanup on initial mount
-  // and during pagination (which doesn't change activeTab).
-  const prevTabRef = useRef<string | null>(null);
-  useEffect(() => {
-    // Only destroy players when tab actually changes (not on initial mount or pagination)
-    if (prevTabRef.current !== null && prevTabRef.current !== activeTab) {
-      const playerManager = getPlayerManager();
-      playerManager.destroyAllPlayers(false);
-    }
-    prevTabRef.current = activeTab;
-  }, [activeTab]);
+  /**
+   * Handle tab click with scroll and state preservation.
+   *
+   * FLOW:
+   * 1. Save current tab state to cache
+   * 2. Check for cached state in target tab
+   * 3a. If cached: Restore posts, pagination, schedule scroll restore
+   * 3b. If not cached: Reset to initial state
+   * 4. Switch to new tab
+   */
+  const handleTabClick = useCallback(
+    (tabId: string) => {
+      if (tabId === activeTab) return;
 
-  // ============================================================================
-  // MEMORY MANAGEMENT: Clean up all players on unmount
-  // ============================================================================
-  // When leaving the gossip page entirely, destroy all player instances
-  // (both feed and fullscreen pools) to free all video-related memory.
-  useEffect(() => {
-    const playerManager = getPlayerManager();
+      // Step 1: Save current tab state before switching
+      saveCurrentTabState();
 
-    return () => {
-      // Destroy all players when component unmounts
-      playerManager.destroyAllPlayers();
-    };
-  }, []);
+      // Step 2: Check for cached state in target tab
+      const cachedState = getCachedState(tabId);
 
-  // ============================================================================
-  // SCROLL POSITION PRESERVATION: Save current tab state before switching
-  // ============================================================================
-  const saveCurrentTabState = useCallback(() => {
-    if (!activeTab) return;
+      if (cachedState && cachedState.posts.length > 0) {
+        // Step 3a: Restore cached state
+        setPosts(cachedState.posts);
+        setPage(cachedState.page);
+        setHasMore(cachedState.hasMore);
+        scheduleScrollRestore(cachedState.scrollPosition);
+      } else {
+        // Step 3b: No cache - reset to initial state
+        resetPosts();
+        clearPendingRestore();
+      }
 
-    const scrollContainer = document.getElementById("gossip-scroll-container");
-    const scrollPosition = scrollContainer?.scrollTop ?? 0;
-
-    tabCacheRef.current[activeTab] = {
-      posts,
-      page,
-      hasMore,
-      scrollPosition,
-    };
-  }, [activeTab, posts, page, hasMore]);
-
-  const handleTabClick = (tabId: string) => {
-    if (tabId === activeTab) return;
-
-    // Save current tab state before switching
-    saveCurrentTabState();
-
-    // Check if we have cached data for the target tab
-    const cachedState = tabCacheRef.current[tabId];
-
-    if (cachedState && cachedState.posts.length > 0) {
-      // Restore cached state
-      setPosts(cachedState.posts);
-      setPage(cachedState.page);
-      setHasMore(cachedState.hasMore);
-      // Schedule scroll position restoration after render
-      pendingScrollRestoreRef.current = cachedState.scrollPosition;
-    } else {
-      // No cache, reset to initial state
-      setPosts([]);
-      setPage(1);
-      setHasMore(true);
-      pendingScrollRestoreRef.current = null;
-    }
-
-    setActiveTab(tabId);
-  };
-
-  const {
-    data: apiPostsResponse,
-    isLoading: isPostsLoading,
-    isFetching: isPostsFetching,
-    error,
-    refetch,
-  } = useExternalGossipPostsQuery(
-    {
-      category_id: activeTabConfig?.categoryId ?? "",
-      page,
-      pageSize,
+      // Step 4: Switch tab (triggers data fetch if no cache)
+      baseHandleTabClick(tabId);
     },
-    {
-      skip: !hasCategoryId,
-    }
+    [
+      activeTab,
+      saveCurrentTabState,
+      getCachedState,
+      setPosts,
+      setPage,
+      setHasMore,
+      scheduleScrollRestore,
+      resetPosts,
+      clearPendingRestore,
+      baseHandleTabClick,
+    ]
   );
-  // NOTE: We separate initial loading from pagination fetching.
-  // isPostsFetching is true during pagination, but we don't want to hide
-  // existing content while loading more posts (which causes scroll reset).
-  const isInitialDataLoading =
-    isCategoriesLoading || isPostsLoading || !hasCategoryId;
-  // This is used for showing error states, not for hiding content
-  const isLoading = isInitialDataLoading || isPostsFetching;
-
-  const mappedApiPosts: GossipPostData[] = useMemo(() => {
-    if (!apiPostsResponse?.data?.length) return [];
-
-    return apiPostsResponse.data.map((post, index) => {
-      const nickname = post.user?.nickname?.trim() || "匿名用户";
-      const userId =
-        post.user?.id !== undefined ? String(post.user.id) : `user-${index}`;
-
-      const mediaItems: GossipPostData["media"] = Array.isArray(post.media)
-        ? post.media
-            .filter((item): item is GossipPostMedia =>
-              Boolean(item && (item.url || item.download_url))
-            )
-            .map((item, mediaIndex) => {
-              const mediaUrl = item.download_url || item.url || "";
-              return {
-                id: `${post.id || `post-${index}`}-media-${mediaIndex}`,
-                type: item.type === "video" ? "video" : "image",
-                url: mediaUrl,
-                download_url: item.download_url,
-                thumbnail_url: (item as any).thumbnail_url,
-              };
-            })
-        : [];
-
-      return {
-        post_id: post.id || `post-${index}`,
-        category_id: post.category_id || "",
-        user: {
-          id: userId,
-          nickname: nickname,
-          profile_image: post.user?.profile_image || "",
-          is_following: post.user?.is_following ?? false,
-          badge: post.user?.badge ?? "",
-          level: post.user?.level ?? "",
-        },
-        content: post.description || "",
-        media: mediaItems,
-        like_count: Number(post.like_count ?? 0),
-        comment_count: Number(post.comment_count ?? 0),
-        share_count: Number(post.share_count ?? 0),
-        share_link: post.share_link || "",
-        is_liked: Boolean(post.is_liked),
-        created_at: post.created_at || new Date().toISOString(),
-        time_ago: post.time_ago || "",
-      };
-    });
-  }, [apiPostsResponse]);
-
-  // NOTE: We no longer reset posts or scroll position on tab change here.
-  // This is now handled by handleTabClick which preserves cached state per tab.
-
-  useEffect(() => {
-    if (!apiPostsResponse) return;
-
-    const merged = mappedApiPosts;
-
-    setPosts((prev) => {
-      if (page === 1) {
-        return merged;
-      }
-
-      const existingIds = new Set(prev.map((item) => item.post_id));
-      const combined = [...prev];
-
-      merged.forEach((item) => {
-        if (!existingIds.has(item.post_id)) {
-          combined.push(item);
-        }
-      });
-
-      return combined;
-    });
-
-    const pagination = apiPostsResponse.pagination;
-    if (pagination) {
-      setHasMore(pagination.current_page < pagination.last_page);
-    } else {
-      setHasMore(merged.length >= pageSize);
-    }
-  }, [apiPostsResponse, mappedApiPosts, page, pageSize]);
 
   // ============================================================================
-  // SCROLL POSITION PRESERVATION: Restore scroll after posts load
+  // COMPUTED: Navbar Tabs
   // ============================================================================
-  // This handles both tab switching (pendingScrollRestoreRef) and route navigation
-  // (sessionStorage) scroll restoration.
-  useEffect(() => {
-    if (posts.length === 0 || !activeTab) return;
-
-    const scrollContainer = document.getElementById("gossip-scroll-container");
-    if (!scrollContainer) return;
-
-    // Priority 1: Restore from pending tab switch
-    if (pendingScrollRestoreRef.current !== null) {
-      const targetPosition = pendingScrollRestoreRef.current;
-      pendingScrollRestoreRef.current = null;
-      // Use requestAnimationFrame to ensure DOM is updated
-      requestAnimationFrame(() => {
-        scrollContainer.scrollTop = targetPosition;
-      });
-      return;
-    }
-
-    // Priority 2: Restore from sessionStorage on initial mount (route navigation)
-    if (isInitialMountRef.current) {
-      isInitialMountRef.current = false;
-      try {
-        const savedState = sessionStorage.getItem(GOSSIP_SCROLL_STORAGE_KEY);
-        if (savedState) {
-          const { tab, position } = JSON.parse(savedState);
-          if (tab === activeTab && position > 0) {
-            requestAnimationFrame(() => {
-              scrollContainer.scrollTop = position;
-            });
-          }
-        }
-      } catch {
-        // Ignore parsing errors
-      }
-    }
-  }, [posts.length, activeTab]);
+  // Transform tabs to navbar format (id + label only)
+  const navbarTabs: NavbarTab[] = useMemo(
+    () => tabs.map((tab) => ({ id: tab.id, label: tab.label })),
+    [tabs]
+  );
 
   // ============================================================================
-  // SCROLL POSITION PRESERVATION: Save scroll position to sessionStorage
+  // COMPUTED: Error Message
   // ============================================================================
-  // Debounced save of scroll position for route navigation restoration
-  useEffect(() => {
-    const scrollContainer = document.getElementById("gossip-scroll-container");
-    if (!scrollContainer || !activeTab) return;
-
-    let timeoutId: ReturnType<typeof setTimeout>;
-
-    const handleScroll = () => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => {
-        try {
-          sessionStorage.setItem(
-            GOSSIP_SCROLL_STORAGE_KEY,
-            JSON.stringify({
-              tab: activeTab,
-              position: scrollContainer.scrollTop,
-            })
-          );
-        } catch {
-          // Ignore storage errors (e.g., quota exceeded)
-        }
-      }, 150); // Debounce 150ms
-    };
-
-    scrollContainer.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => {
-      scrollContainer.removeEventListener("scroll", handleScroll);
-      clearTimeout(timeoutId);
-    };
-  }, [activeTab]);
-
-  // ============================================================================
-  // SCROLL POSITION PRESERVATION: Save state before unmount (route navigation)
-  // ============================================================================
-  useEffect(() => {
-    return () => {
-      // Save current scroll position to sessionStorage when leaving the page
-      const scrollContainer = document.getElementById("gossip-scroll-container");
-      if (scrollContainer && activeTab) {
-        try {
-          sessionStorage.setItem(
-            GOSSIP_SCROLL_STORAGE_KEY,
-            JSON.stringify({
-              tab: activeTab,
-              position: scrollContainer.scrollTop,
-            })
-          );
-        } catch {
-          // Ignore storage errors
-        }
-      }
-    };
-  }, [activeTab]);
-
-  const loadMorePosts = () => {
-    if (isPostsFetching || isCategoriesLoading || !hasMore) return;
-    setPage((prev) => prev + 1);
-  };
-
-  const isInitialLoading =
-    (isCategoriesLoading || isPostsLoading || !hasCategoryId) &&
-    posts.length === 0;
-
+  /**
+   * Determine error message to display.
+   *
+   * Priority:
+   * 1. No categories configured
+   * 2. Category loading error
+   * 3. Posts loading error
+   */
   const errorMessage = useMemo(() => {
+    // Check for missing categories (configuration issue)
     if (!tabs.length && !isCategoriesLoading) {
       return "当前频道暂未配置分类，请稍后再试";
     }
 
+    // Check for category loading errors
     if (categoriesError && "message" in (categoriesError as any)) {
       return (
         ((categoriesError as { message?: string }).message as string) ||
@@ -433,83 +222,69 @@ const Gossip = () => {
       );
     }
 
-    if (!error) {
-      return null;
+    // Check for posts loading errors
+    if (postsError) {
+      if ("status" in postsError) {
+        const errData = postsError.data as { message?: string };
+        return errData?.message || "帖子加载失败，请稍后重试";
+      }
+      return postsError.message || "帖子加载失败，请稍后重试";
     }
 
-    if ("status" in error) {
-      const errData = error.data as { message?: string };
-      return errData?.message || "帖子加载失败，请稍后重试";
-    }
+    return null;
+  }, [tabs.length, isCategoriesLoading, categoriesError, postsError]);
 
-    return error.message || "帖子加载失败，请稍后重试";
-  }, [tabs.length, isCategoriesLoading, categoriesError, error]);
+  // ============================================================================
+  // COMPUTED: Display State Flags
+  // ============================================================================
+  const hasCategoryId = Boolean(activeTabConfig?.categoryId);
+  const showSkeleton = isInitialLoading || (isCategoriesLoading && posts.length === 0);
+  const showError = !showSkeleton && errorMessage && posts.length === 0;
+  const showEmpty = !showSkeleton && !errorMessage && posts.length === 0;
+  const showPosts = !showSkeleton && !errorMessage && posts.length > 0;
 
-  const showEmptyState =
-    !isInitialLoading && !errorMessage && posts.length === 0;
-
+  // ============================================================================
+  // RENDER
+  // ============================================================================
   return (
     <div className="w-full h-svh bg-[#16131C] overflow-hidden">
-      {/* Header Tabs */}
+      {/* Header: Category Tab Navigation */}
       <GossipTopNavbar
-        tabs={tabs.map((tab) => ({ id: tab.id, label: tab.label }))}
+        tabs={navbarTabs}
         activeTab={activeTab}
         onTabClick={handleTabClick}
       />
 
-      {/* Content Area - Scrollable Posts */}
-      {isInitialLoading ? (
-        <div className="w-full max-w-[480px] mx-auto">
-          {Array.from({ length: 2 }).map((_, index) => (
-            <PostSkeleton key={index} />
-          ))}
-        </div>
+      {/* Content Area */}
+      {showSkeleton ? (
+        // Loading State: Skeleton placeholders
+        <PostSkeleton />
       ) : (
+        // Scrollable Content Container
         <div
-          id="gossip-scroll-container"
+          id={SCROLL_CONTAINER_ID}
           className="w-full h-[calc(100vh-136px)] bg-black overflow-y-auto pb-4"
         >
-          {!isInitialDataLoading && errorMessage && posts.length === 0 && (
-            <div className="flex flex-col items-center justify-center h-full gap-4 px-6 text-center">
-              <p className="text-red-400 text-sm">{errorMessage}</p>
-              {hasCategoryId && (
-                <button
-                  onClick={() => refetch()}
-                  className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-full hover:bg-purple-500 transition-colors"
-                >
-                  重新加载
-                </button>
-              )}
-            </div>
+          {/* Error State: Display error with optional retry */}
+          {showError && (
+            <GossipErrorState
+              message={errorMessage!}
+              showRetry={hasCategoryId}
+              onRetry={refetch}
+            />
           )}
 
-          {showEmptyState && (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-gray-400 text-sm">暂无内容</div>
-            </div>
-          )}
+          {/* Empty State: No posts available */}
+          {showEmpty && <GossipEmptyState />}
 
-          {/*
-            NOTE: Use isInitialDataLoading instead of isLoading here.
-            During pagination (isPostsFetching=true), we still want to show
-            existing posts to prevent scroll position reset and UI flicker.
-          */}
-          {!isInitialDataLoading && !errorMessage && posts.length > 0 && (
-            <InfiniteScroll
-              dataLength={posts.length}
-              next={loadMorePosts}
+          {/* Posts List: Infinite scroll with posts */}
+          {showPosts && (
+            <GossipPostList
+              posts={posts}
               hasMore={hasMore}
-              loader={<LoadingSpinner />}
-              scrollableTarget="gossip-scroll-container"
-              scrollThreshold={0.9}
-              style={{ overflow: "visible" }}
-            >
-              <div className="w-full max-w-[480px] mx-auto">
-                {posts.map((post) => (
-                  <GossipPost key={post.post_id} post={post} />
-                ))}
-              </div>
-            </InfiniteScroll>
+              onLoadMore={loadMore}
+              scrollContainerId={SCROLL_CONTAINER_ID}
+            />
           )}
         </div>
       )}
