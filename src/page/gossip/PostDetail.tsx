@@ -2,13 +2,12 @@ import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import type { RootState, AppDispatch } from "@/store/store";
-import { ChevronLeft, User, Volume2, VolumeX } from "lucide-react";
+import { ChevronLeft, User } from "lucide-react";
 import { getPlayerManager } from "./services/playerManager";
 import SharePost from "./components/SharePost";
-import CommentSection, {
-  CommentSectionProps,
-} from "./components/CommentSection";
+import { CommentSectionProps } from "./components/CommentSection";
 import MediaFullscreenViewer from "./components/MediaFullscreenViewer";
+import ImageGrid from "./components/ImageGrid";
 import {
   useGetGossipCommentsMutation,
   usePostGossipCommentMutation,
@@ -78,16 +77,14 @@ const PostDetail = () => {
   const [isFollowing, setIsFollowing] = useState(
     post?.user?.is_following ?? false
   );
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoContainerRef = useRef<HTMLDivElement>(null);
+  const [isVideoReady, setIsVideoReady] = useState(false);
   const [getComments] = useGetGossipCommentsMutation();
   const [postCommentMutation] = usePostGossipCommentMutation();
   const [comments, setComments] = useState<GossipCommentType[]>([]);
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [commentsError, setCommentsError] = useState<string | null>(null);
   const [totalComments, setTotalComments] = useState(post?.comment_count ?? 0);
-  const [highlightCommentId, setHighlightCommentId] = useState<string | null>(
-    null
-  );
   const [isLoginDrawerOpen, setIsLoginDrawerOpen] = useState(false);
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
   const [fullscreenIndex, setFullscreenIndex] = useState(0);
@@ -173,13 +170,13 @@ const PostDetail = () => {
     []
   );
 
-  const ensureAuthenticated = () => {
+  const ensureAuthenticated = useCallback(() => {
     if (isAuthenticated) {
       return true;
     }
     setIsLoginDrawerOpen(true);
     return false;
-  };
+  }, [isAuthenticated]);
 
   // Update authentication state when user changes
   useEffect(() => {
@@ -212,6 +209,18 @@ const PostDetail = () => {
     }
   }, [postId, navigate]);
 
+  const normalizedMedia: NormalizedMediaItem[] = useMemo(() => {
+    if (!post?.media) {
+      return [];
+    }
+    return post.media.map((item, index) => ({
+      ...item,
+      id: item.id ?? `${post.post_id ?? postId ?? "post"}-media-${index}`,
+    }));
+  }, [post, postId]);
+  const firstMedia = normalizedMedia.length > 0 ? normalizedMedia[0] : null;
+  const isFirstVideo = firstMedia?.type === "video";
+
   // ============================================================================
   // MEMORY MANAGEMENT: Clean up fullscreen players on unmount
   // ============================================================================
@@ -220,10 +229,60 @@ const PostDetail = () => {
     const playerManager = getPlayerManager();
 
     return () => {
+      // Destroy feed pool player on unmount
+      if (currentPostId) {
+        playerManager.destroyPlayer(currentPostId, false);
+      }
       // Destroy fullscreen pool when leaving post detail
       playerManager.destroyAllPlayers(true);
     };
-  }, []);
+  }, [currentPostId]);
+
+  // ============================================================================
+  // VIDEO PLAYER MANAGEMENT: Attach/detach player for first video
+  // ============================================================================
+  useEffect(() => {
+    const actualFirstMedia =
+      normalizedMedia.length > 0 ? normalizedMedia[0] : null;
+    const actualIsFirstVideo = actualFirstMedia?.type === "video";
+
+    if (!actualIsFirstVideo || !actualFirstMedia || !currentPostId) return;
+
+    const playerManager = getPlayerManager();
+    const container = videoContainerRef.current;
+    if (!container) return;
+
+    let isMounted = true;
+
+    const initPlayer = async () => {
+      try {
+        const player = playerManager.requestPlayer(
+          currentPostId,
+          container,
+          actualFirstMedia.url,
+          {
+            muted: isMuted,
+            autoplay: true,
+            loop: true,
+          },
+          false // feed pool
+        );
+
+        if (isMounted && player) {
+          setIsVideoReady(true);
+        }
+      } catch (error) {
+        console.error("Failed to init player in PostDetail:", error);
+      }
+    };
+
+    initPlayer();
+
+    return () => {
+      isMounted = false;
+      playerManager.releasePlayer(currentPostId, false);
+    };
+  }, [normalizedMedia, currentPostId, isMuted]);
 
   const togglePostLike = useCallback(async () => {
     if (!ensureAuthenticated()) {
@@ -246,7 +305,7 @@ const PostDetail = () => {
       setPostIsLiked(!nextLiked);
       setPostLikeCount((prev) => Math.max(0, prev - delta));
     }
-  }, [likePost, post?.id, postIsLiked, unlikePost]);
+  }, [ensureAuthenticated, likePost, post?.id, postIsLiked, unlikePost]);
 
   const fetchComments = useCallback(async (): Promise<void> => {
     const targetPostId = post?.post_id ?? postId ?? "";
@@ -289,10 +348,14 @@ const PostDetail = () => {
   }, [fetchComments]);
 
   const handleToggleMute = () => {
-    if (videoRef.current && currentPostId) {
-      const newMuted = !videoRef.current.muted;
-      videoRef.current.muted = newMuted;
-      dispatch(setPostMuted({ postId: currentPostId, muted: newMuted }));
+    if (currentPostId) {
+      const playerManager = getPlayerManager();
+      const player = playerManager.getPlayer(currentPostId, false);
+      if (player?.artplayer) {
+        const newMuted = !player.artplayer.muted;
+        player.artplayer.muted = newMuted;
+        dispatch(setPostMuted({ postId: currentPostId, muted: newMuted }));
+      }
     }
   };
 
@@ -319,7 +382,6 @@ const PostDetail = () => {
     (incoming: GossipCommentType) => {
       setComments((prev) => sortCommentsAsc([...prev, incoming]));
       setTotalComments((prev) => prev + 1);
-      setHighlightCommentId(incoming.comment_id);
     },
     [sortCommentsAsc]
   );
@@ -342,7 +404,6 @@ const PostDetail = () => {
           };
         })
       );
-      setHighlightCommentId(parentId);
     },
     [sortCommentsAsc]
   );
@@ -465,7 +526,6 @@ const PostDetail = () => {
       });
       if (!handled) {
         await fetchComments();
-        setHighlightCommentId(commentId);
       }
     } catch (err) {
       console.error("Failed to submit reply:", err);
@@ -494,28 +554,24 @@ const PostDetail = () => {
     [rawPostContent]
   );
 
-  const normalizedMedia: NormalizedMediaItem[] = useMemo(() => {
-    if (!post?.media) {
-      return [];
-    }
-    return post.media.map((item, index) => ({
-      ...item,
-      id: item.id ?? `${post.post_id ?? postId ?? "post"}-media-${index}`,
-    }));
-  }, [post, postId]);
-  const firstMedia = normalizedMedia.length > 0 ? normalizedMedia[0] : null;
-  const isFirstVideo = firstMedia?.type === "video";
-
   const handleMediaClick = useCallback(
     (index: number) => {
       if (!normalizedMedia.length) return;
-      if (isFirstVideo && index === 0 && videoRef.current) {
-        videoRef.current.pause();
+      const actualFirstMedia =
+        normalizedMedia.length > 0 ? normalizedMedia[0] : null;
+      const actualIsFirstVideo = actualFirstMedia?.type === "video";
+
+      if (actualIsFirstVideo && index === 0) {
+        const playerManager = getPlayerManager();
+        const player = playerManager.getPlayer(currentPostId, false);
+        if (player?.artplayer) {
+          player.artplayer.pause();
+        }
       }
       setFullscreenIndex(index);
       setIsFullscreenOpen(true);
     },
-    [isFirstVideo, normalizedMedia.length]
+    [normalizedMedia, currentPostId]
   );
 
   const shareUrl = useMemo(
@@ -645,79 +701,17 @@ const PostDetail = () => {
           {decodedPostContent}
         </p>
 
-        {/* Media */}
+        {/* Media Grid */}
         {normalizedMedia.length > 0 && (
-          <div className="mb-4">
-            <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
-              {normalizedMedia.map((item, index) => (
-                <div
-                  key={item.id}
-                  onClick={() => handleMediaClick(index)}
-                  className="flex-shrink-0 w-[190px] h-[240px] rounded-lg overflow-hidden bg-gray-900 relative cursor-pointer"
-                  role="button"
-                  tabIndex={0}
-                >
-                  {item.type === "image" ? (
-                    <AsyncDecryptedImage
-                      imageUrl={item.url}
-                      alt=""
-                      className="w-full h-full object-cover"
-                    />
-                  ) : index === 0 && isFirstVideo ? (
-                    <div className="relative w-full h-full">
-                      <video
-                        ref={videoRef}
-                        src={item.url}
-                        className="w-full h-full object-cover"
-                        muted={isMuted}
-                        playsInline
-                        loop
-                        autoPlay
-                      />
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleToggleMute();
-                        }}
-                        className="absolute bottom-2 right-2 w-8 h-8 bg-black/50 rounded-full flex items-center justify-center hover:bg-black/70 transition-colors z-10"
-                      >
-                        {isMuted ? (
-                          <VolumeX size={16} className="text-white" />
-                        ) : (
-                          <Volume2 size={16} className="text-white" />
-                        )}
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="relative w-full h-full">
-                      {item.thumbnail_url || item.thumbnail ? (
-                        <AsyncDecryptedImage
-                          imageUrl={item.thumbnail_url || item.thumbnail || ""}
-                          alt=""
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gray-900" />
-                      )}
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-16 h-16 bg-black/50 rounded-full flex items-center justify-center">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="32"
-                            height="32"
-                            viewBox="0 0 24 24"
-                            fill="white"
-                          >
-                            <path d="M8 5v14l11-7z" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
+          <ImageGrid
+            media={normalizedMedia}
+            onMediaClick={handleMediaClick}
+            videoContainerRef={videoContainerRef}
+            isFirstVideo={isFirstVideo}
+            isVideoReady={isVideoReady}
+            isMuted={isMuted}
+            onToggleMute={handleToggleMute}
+          />
         )}
 
         {/* Engagement Stats */}

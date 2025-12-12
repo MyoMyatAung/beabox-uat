@@ -5,8 +5,6 @@ import {
   Link,
   HeartOff,
   AlertTriangle,
-  Volume2,
-  VolumeX,
   Check,
   Minus,
 } from "lucide-react";
@@ -28,6 +26,7 @@ import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 import { getPlayerManager } from "../services/playerManager";
 import { setPostMuted } from "../services/gossipMuteSlice";
 import { setIsDrawerOpen } from "@/store/slices/profileSlice";
+import ImageGrid from "./ImageGrid";
 
 interface MediaItem {
   id: string;
@@ -582,88 +581,17 @@ const GossipPost = ({ post }: GossipPostProps) => {
         </div>
       </div>
       <div className="pl-14">
-        {/* Media: Horizontal Scroll */}
+        {/* Media Grid */}
         {post.media && post.media.length > 0 && (
-          <div className="px-3 mb-3">
-            <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
-              {post.media.map((item, index) => (
-                <div
-                  key={item.id || item.url || item.download_url || index}
-                  onClick={() => handleMediaClick(index)}
-                  className="flex-shrink-0 w-[190px] h-[240px] rounded-lg overflow-hidden bg-gray-900 relative cursor-pointer"
-                >
-                  {item.type === "image" ? (
-                    <AsyncDecryptedImage
-                      imageUrl={item.url}
-                      alt=""
-                      className="w-full h-full object-cover"
-                    />
-                  ) : index === 0 && isFirstVideo ? (
-                    <div className="relative w-full h-full">
-                      {/* ============================================================
-                          POOLED VIDEO CONTAINER
-                          ============================================================
-                          This div serves as the mount point for the pooled Artplayer.
-                          The player is managed by playerManager and attached/detached
-                          based on visibility. This prevents creating N video elements
-                          for N posts - instead we reuse at most 3 players.
-                          ============================================================ */}
-                      <div
-                        ref={videoContainerRef}
-                        className="w-full h-full"
-                        style={{ pointerEvents: "none" }}
-                      />
-                      {/* Loading indicator while player initializes */}
-                      {!isVideoReady && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                          <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        </div>
-                      )}
-                      {/* Mute/Unmute Button */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleToggleMute();
-                        }}
-                        className="absolute bottom-2 right-2 w-8 h-8 bg-black/50 rounded-full flex items-center justify-center hover:bg-black/70 transition-colors z-10"
-                      >
-                        {isMuted ? (
-                          <VolumeX size={16} className="text-white" />
-                        ) : (
-                          <Volume2 size={16} className="text-white" />
-                        )}
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="relative w-full h-full">
-                      {item.thumbnail_url || item.thumbnail ? (
-                        <AsyncDecryptedImage
-                          imageUrl={item.thumbnail_url || item.thumbnail || ""}
-                          alt=""
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gray-900" />
-                      )}
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-16 h-16 bg-black/50 rounded-full flex items-center justify-center">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="32"
-                            height="32"
-                            viewBox="0 0 24 24"
-                            fill="white"
-                          >
-                            <path d="M8 5v14l11-7z" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
+          <ImageGrid
+            media={post.media}
+            onMediaClick={handleMediaClick}
+            videoContainerRef={videoContainerRef}
+            isFirstVideo={isFirstVideo}
+            isVideoReady={isVideoReady}
+            isMuted={isMuted}
+            onToggleMute={handleToggleMute}
+          />
         )}
         {/* Interaction Buttons and Timestamp */}
         <div className="px-4 flex items-center justify-between">
