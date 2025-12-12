@@ -711,6 +711,7 @@ const PostDetail = () => {
             isVideoReady={isVideoReady}
             isMuted={isMuted}
             onToggleMute={handleToggleMute}
+            showAllMedia={true}
           />
         )}
 

@@ -12,12 +12,16 @@ interface ImageGridProps {
   isVideoReady?: boolean;
   isMuted?: boolean;
   onToggleMute?: () => void;
+  showAllMedia?: boolean; // If true, show all media without limit
 }
 
 type MediaOrientation = "horizontal" | "vertical";
 
 interface MediaWithOrientation extends GossipPostMedia {
   orientation: MediaOrientation;
+  width: number;
+  height: number;
+  aspectRatio: number; // width / height
 }
 
 const ImageGrid = ({
@@ -28,26 +32,36 @@ const ImageGrid = ({
   isVideoReady = false,
   isMuted = true,
   onToggleMute,
+  showAllMedia = false,
 }: ImageGridProps) => {
   const [mediaWithOrientations, setMediaWithOrientations] = useState<
     MediaWithOrientation[]
   >([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Detect image orientations
+  // Detect image orientations and dimensions
   useEffect(() => {
     const detectOrientations = async () => {
       const orientationPromises = media.map((item) => {
         return new Promise<MediaWithOrientation>((resolve) => {
           const img = new Image();
           img.onload = () => {
+            const width = img.width;
+            const height = img.height;
+            const aspectRatio = width / height;
             const orientation: MediaOrientation =
-              img.width > img.height ? "horizontal" : "vertical";
-            resolve({ ...item, orientation });
+              width > height ? "horizontal" : "vertical";
+            resolve({ ...item, orientation, width, height, aspectRatio });
           };
           img.onerror = () => {
-            // Default to vertical on error
-            resolve({ ...item, orientation: "vertical" });
+            // Default to vertical on error with standard aspect ratio
+            resolve({
+              ...item,
+              orientation: "vertical",
+              width: 1080,
+              height: 1350,
+              aspectRatio: 0.8,
+            });
           };
           // Use thumbnail for videos, url for images
           img.src = item.thumbnail_url || item.thumbnail || item.url;
@@ -63,6 +77,61 @@ const ImageGrid = ({
   }, [media]);
 
   const mediaCount = media.length;
+
+  // Helper function to calculate row span based on aspect ratio
+  const getRowSpan = (index: number): number => {
+    const mediaItem = mediaWithOrientations[index];
+    if (!mediaItem) return 1;
+
+    const ratio = mediaItem.aspectRatio;
+
+    // Very tall images (portrait) - span 2 rows
+    if (ratio < 0.6) return 2;
+    // Tall images - span 2 rows
+    if (ratio < 0.8) return 2;
+    // Normal vertical - span 1 row
+    if (ratio < 1) return 1;
+    // Horizontal images - span 1 row
+    return 1;
+  };
+
+  // Helper function to calculate column span based on aspect ratio
+  const getColSpan = (index: number): number => {
+    const mediaItem = mediaWithOrientations[index];
+    if (!mediaItem) return 1;
+
+    const ratio = mediaItem.aspectRatio;
+
+    // Very wide images (panoramic) - span 2 columns
+    if (ratio > 1.5) return 2;
+    // Wide images - span 2 columns
+    if (ratio > 1.2) return 2;
+    // Normal images - span 1 column
+    return 1;
+  };
+
+  // Helper function to get aspect ratio style based on actual dimensions
+  const getAspectRatioStyle = (index: number): string => {
+    const mediaItem = mediaWithOrientations[index];
+    if (!mediaItem) return "aspect-square";
+
+    const ratio = mediaItem.aspectRatio;
+
+    // For very wide images (panoramic)
+    if (ratio > 2) return "aspect-[21/9]";
+    // For wide images
+    if (ratio > 1.5) return "aspect-[16/9]";
+    // For slightly wide images
+    if (ratio > 1.1) return "aspect-[4/3]";
+    // For square-ish images
+    if (ratio >= 0.9 && ratio <= 1.1) return "aspect-square";
+    // For slightly tall images
+    if (ratio > 0.7) return "aspect-[4/5]";
+    // For tall/portrait images
+    if (ratio > 0.5) return "aspect-[3/4]";
+    // For very tall images
+    return "aspect-[9/16]";
+  };
 
   // Get layout pattern based on count and orientations
   const getLayoutPattern = () => {
@@ -199,7 +268,7 @@ const ImageGrid = ({
         )}
 
         {/* +N overlay for extra items */}
-        {mediaCount > 5 && index === 4 && (
+        {!showAllMedia && mediaCount > 5 && index === 4 && (
           <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
             <span className="text-white text-2xl font-semibold">
               +{mediaCount - 5}
@@ -217,30 +286,39 @@ const ImageGrid = ({
       );
     }
 
-    const displayMedia = media.slice(0, Math.min(mediaCount, 5));
+    const maxDisplay = showAllMedia ? mediaCount : Math.min(mediaCount, 5);
+    const displayMedia = media.slice(0, maxDisplay);
 
     switch (layoutPattern) {
-      // 1 media
+      // 1 media - use actual aspect ratio
       case "1v":
         return (
           <div className="w-full">
-            {renderMediaItem(displayMedia[0], 0, "w-full aspect-[4/5]")}
+            {renderMediaItem(
+              displayMedia[0],
+              0,
+              `w-full ${getAspectRatioStyle(0)}`
+            )}
           </div>
         );
 
       case "1h":
         return (
           <div className="w-full">
-            {renderMediaItem(displayMedia[0], 0, "w-full aspect-[16/9]")}
+            {renderMediaItem(
+              displayMedia[0],
+              0,
+              `w-full ${getAspectRatioStyle(0)}`
+            )}
           </div>
         );
 
-      // 2 media
+      // 2 media - use actual aspect ratios
       case "2v":
         return (
           <div className="grid grid-cols-2 gap-1">
             {displayMedia.map((item, idx) =>
-              renderMediaItem(item, idx, "w-full aspect-[4/5]")
+              renderMediaItem(item, idx, `w-full ${getAspectRatioStyle(idx)}`)
             )}
           </div>
         );
@@ -249,7 +327,7 @@ const ImageGrid = ({
         return (
           <div className="flex flex-col gap-1">
             {displayMedia.map((item, idx) =>
-              renderMediaItem(item, idx, "w-full aspect-[16/9]")
+              renderMediaItem(item, idx, `w-full ${getAspectRatioStyle(idx)}`)
             )}
           </div>
         );
@@ -257,25 +335,41 @@ const ImageGrid = ({
       case "1h1v":
         return (
           <div className="flex flex-col gap-1">
-            {renderMediaItem(displayMedia[0], 0, "w-full aspect-[16/9]")}
-            {renderMediaItem(displayMedia[1], 1, "w-full aspect-[16/9]")}
+            {renderMediaItem(
+              displayMedia[0],
+              0,
+              `w-full ${getAspectRatioStyle(0)}`
+            )}
+            {renderMediaItem(
+              displayMedia[1],
+              1,
+              `w-full ${getAspectRatioStyle(1)}`
+            )}
           </div>
         );
 
       case "1v1h":
         return (
           <div className="grid grid-cols-2 gap-1">
-            {renderMediaItem(displayMedia[0], 0, "w-full aspect-[4/5]")}
-            {renderMediaItem(displayMedia[1], 1, "w-full aspect-[4/5]")}
+            {renderMediaItem(
+              displayMedia[0],
+              0,
+              `w-full ${getAspectRatioStyle(0)}`
+            )}
+            {renderMediaItem(
+              displayMedia[1],
+              1,
+              `w-full ${getAspectRatioStyle(1)}`
+            )}
           </div>
         );
 
-      // 3 media
+      // 3 media - use actual aspect ratios
       case "3v":
         return (
           <div className="grid grid-cols-3 gap-1">
             {displayMedia.map((item, idx) =>
-              renderMediaItem(item, idx, "w-full aspect-[4/5]")
+              renderMediaItem(item, idx, `w-full ${getAspectRatioStyle(idx)}`)
             )}
           </div>
         );
@@ -284,7 +378,7 @@ const ImageGrid = ({
         return (
           <div className="flex flex-col gap-1">
             {displayMedia.map((item, idx) =>
-              renderMediaItem(item, idx, "w-full aspect-[16/9]")
+              renderMediaItem(item, idx, `w-full ${getAspectRatioStyle(idx)}`)
             )}
           </div>
         );
@@ -292,10 +386,22 @@ const ImageGrid = ({
       case "1h2v":
         return (
           <div className="flex flex-col gap-1">
-            {renderMediaItem(displayMedia[0], 0, "w-full aspect-[16/9]")}
+            {renderMediaItem(
+              displayMedia[0],
+              0,
+              `w-full ${getAspectRatioStyle(0)}`
+            )}
             <div className="grid grid-cols-2 gap-1">
-              {renderMediaItem(displayMedia[1], 1, "w-full aspect-[4/5]")}
-              {renderMediaItem(displayMedia[2], 2, "w-full aspect-[4/5]")}
+              {renderMediaItem(
+                displayMedia[1],
+                1,
+                `w-full ${getAspectRatioStyle(1)}`
+              )}
+              {renderMediaItem(
+                displayMedia[2],
+                2,
+                `w-full ${getAspectRatioStyle(2)}`
+              )}
             </div>
           </div>
         );
@@ -304,10 +410,22 @@ const ImageGrid = ({
         return (
           <div className="flex flex-col gap-1">
             <div className="grid grid-cols-2 gap-1">
-              {renderMediaItem(displayMedia[0], 0, "w-full aspect-[4/5]")}
-              {renderMediaItem(displayMedia[1], 1, "w-full aspect-[4/5]")}
+              {renderMediaItem(
+                displayMedia[0],
+                0,
+                `w-full ${getAspectRatioStyle(0)}`
+              )}
+              {renderMediaItem(
+                displayMedia[1],
+                1,
+                `w-full ${getAspectRatioStyle(1)}`
+              )}
             </div>
-            {renderMediaItem(displayMedia[2], 2, "w-full aspect-[16/9]")}
+            {renderMediaItem(
+              displayMedia[2],
+              2,
+              `w-full ${getAspectRatioStyle(2)}`
+            )}
           </div>
         );
 
@@ -318,8 +436,16 @@ const ImageGrid = ({
               {renderMediaItem(displayMedia[0], 0, "w-full h-full")}
             </div>
             <div className="flex flex-col gap-1">
-              {renderMediaItem(displayMedia[1], 1, "w-full aspect-[16/9]")}
-              {renderMediaItem(displayMedia[2], 2, "w-full aspect-[16/9]")}
+              {renderMediaItem(
+                displayMedia[1],
+                1,
+                `w-full ${getAspectRatioStyle(1)}`
+              )}
+              {renderMediaItem(
+                displayMedia[2],
+                2,
+                `w-full ${getAspectRatioStyle(2)}`
+              )}
             </div>
           </div>
         );
@@ -327,20 +453,32 @@ const ImageGrid = ({
       case "2h1v":
         return (
           <div className="flex flex-col gap-1">
-            {renderMediaItem(displayMedia[0], 0, "w-full aspect-[16/9]")}
+            {renderMediaItem(
+              displayMedia[0],
+              0,
+              `w-full ${getAspectRatioStyle(0)}`
+            )}
             <div className="grid grid-cols-2 gap-1">
-              {renderMediaItem(displayMedia[1], 1, "w-full aspect-[16/9]")}
-              {renderMediaItem(displayMedia[2], 2, "w-full aspect-[4/5]")}
+              {renderMediaItem(
+                displayMedia[1],
+                1,
+                `w-full ${getAspectRatioStyle(1)}`
+              )}
+              {renderMediaItem(
+                displayMedia[2],
+                2,
+                `w-full ${getAspectRatioStyle(2)}`
+              )}
             </div>
           </div>
         );
 
-      // 4 media
+      // 4 media - use actual aspect ratios
       case "4v":
         return (
           <div className="grid grid-cols-2 gap-1">
             {displayMedia.map((item, idx) =>
-              renderMediaItem(item, idx, "w-full aspect-[4/5]")
+              renderMediaItem(item, idx, `w-full ${getAspectRatioStyle(idx)}`)
             )}
           </div>
         );
@@ -349,7 +487,7 @@ const ImageGrid = ({
         return (
           <div className="grid grid-cols-2 gap-1">
             {displayMedia.map((item, idx) =>
-              renderMediaItem(item, idx, "w-full aspect-[16/9]")
+              renderMediaItem(item, idx, `w-full ${getAspectRatioStyle(idx)}`)
             )}
           </div>
         );
@@ -358,12 +496,28 @@ const ImageGrid = ({
         return (
           <div className="flex flex-col gap-1">
             <div className="grid grid-cols-2 gap-1">
-              {renderMediaItem(displayMedia[0], 0, "w-full aspect-[4/5]")}
-              {renderMediaItem(displayMedia[1], 1, "w-full aspect-[4/5]")}
+              {renderMediaItem(
+                displayMedia[0],
+                0,
+                `w-full ${getAspectRatioStyle(0)}`
+              )}
+              {renderMediaItem(
+                displayMedia[1],
+                1,
+                `w-full ${getAspectRatioStyle(1)}`
+              )}
             </div>
             <div className="grid grid-cols-2 gap-1">
-              {renderMediaItem(displayMedia[2], 2, "w-full aspect-[4/5]")}
-              {renderMediaItem(displayMedia[3], 3, "w-full aspect-[16/9]")}
+              {renderMediaItem(
+                displayMedia[2],
+                2,
+                `w-full ${getAspectRatioStyle(2)}`
+              )}
+              {renderMediaItem(
+                displayMedia[3],
+                3,
+                `w-full ${getAspectRatioStyle(3)}`
+              )}
             </div>
           </div>
         );
@@ -375,13 +529,21 @@ const ImageGrid = ({
               {renderMediaItem(displayMedia[0], 0, "w-full h-full")}
             </div>
             <div className="flex flex-col gap-1">
-              {renderMediaItem(displayMedia[1], 1, "w-full aspect-[16/9]")}
-              {renderMediaItem(displayMedia[2], 2, "w-full aspect-[16/9]")}
+              {renderMediaItem(
+                displayMedia[1],
+                1,
+                `w-full ${getAspectRatioStyle(1)}`
+              )}
+              {renderMediaItem(
+                displayMedia[2],
+                2,
+                `w-full ${getAspectRatioStyle(2)}`
+              )}
             </div>
             {renderMediaItem(
               displayMedia[3],
               3,
-              "w-full aspect-[16/9] col-span-2"
+              `w-full ${getAspectRatioStyle(3)} col-span-2`
             )}
           </div>
         );
@@ -390,43 +552,115 @@ const ImageGrid = ({
         return (
           <div className="grid grid-cols-2 gap-1">
             {displayMedia.map((item, idx) =>
-              renderMediaItem(item, idx, "w-full aspect-square")
+              renderMediaItem(item, idx, `w-full ${getAspectRatioStyle(idx)}`)
             )}
           </div>
         );
 
-      // 5 media - show all 5 in grid layout (2x2 + 1)
+      // 5 media - show all 5 in grid layout (2x2 + 3)
       case "5mixed":
         return (
           <div className="flex flex-col gap-1">
             <div className="grid grid-cols-2 gap-1">
-              {renderMediaItem(displayMedia[0], 0, "w-full aspect-square")}
-              {renderMediaItem(displayMedia[1], 1, "w-full aspect-square")}
+              {renderMediaItem(
+                displayMedia[0],
+                0,
+                `w-full ${getAspectRatioStyle(0)}`
+              )}
+              {renderMediaItem(
+                displayMedia[1],
+                1,
+                `w-full ${getAspectRatioStyle(1)}`
+              )}
             </div>
             <div className="grid grid-cols-3 gap-1">
-              {renderMediaItem(displayMedia[2], 2, "w-full aspect-square")}
-              {renderMediaItem(displayMedia[3], 3, "w-full aspect-square")}
-              {renderMediaItem(displayMedia[4], 4, "w-full aspect-square")}
+              {renderMediaItem(
+                displayMedia[2],
+                2,
+                `w-full ${getAspectRatioStyle(2)}`
+              )}
+              {renderMediaItem(
+                displayMedia[3],
+                3,
+                `w-full ${getAspectRatioStyle(3)}`
+              )}
+              {renderMediaItem(
+                displayMedia[4],
+                4,
+                `w-full ${getAspectRatioStyle(4)}`
+              )}
             </div>
           </div>
         );
 
-      // 6+ media - show first 5 with +N overlay on the last one
+      // 6+ media - show first 5 with +N overlay (or all if showAllMedia is true)
       case "6mixed":
-      default:
+      default: {
+        // If showAllMedia is true and we have more than 5, show all in an optimized masonry-style grid
+        if (showAllMedia && displayMedia.length > 5) {
+          return (
+            <div className="grid grid-cols-2 gap-1 auto-rows-[minmax(100px,auto)] grid-flow-dense">
+              {displayMedia.map((item, idx) => {
+                const colSpan = getColSpan(idx);
+                const rowSpan = getRowSpan(idx);
+                const colSpanClass =
+                  colSpan === 2 ? "col-span-2" : "col-span-1";
+                const rowSpanClass =
+                  rowSpan === 2 ? "row-span-2" : "row-span-1";
+
+                return (
+                  <div
+                    key={item.id || item.url || idx}
+                    className={`${colSpanClass} ${rowSpanClass}`}
+                  >
+                    {renderMediaItem(
+                      item,
+                      idx,
+                      `w-full ${getAspectRatioStyle(idx)}`
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          );
+        }
+
+        // Otherwise show 2x2 + 3 layout (first 5 only)
         return (
           <div className="flex flex-col gap-1">
             <div className="grid grid-cols-2 gap-1">
-              {renderMediaItem(displayMedia[0], 0, "w-full aspect-square")}
-              {renderMediaItem(displayMedia[1], 1, "w-full aspect-square")}
+              {renderMediaItem(
+                displayMedia[0],
+                0,
+                `w-full ${getAspectRatioStyle(0)}`
+              )}
+              {renderMediaItem(
+                displayMedia[1],
+                1,
+                `w-full ${getAspectRatioStyle(1)}`
+              )}
             </div>
             <div className="grid grid-cols-3 gap-1">
-              {renderMediaItem(displayMedia[2], 2, "w-full aspect-square")}
-              {renderMediaItem(displayMedia[3], 3, "w-full aspect-square")}
-              {renderMediaItem(displayMedia[4], 4, "w-full aspect-square")}
+              {renderMediaItem(
+                displayMedia[2],
+                2,
+                `w-full ${getAspectRatioStyle(2)}`
+              )}
+              {renderMediaItem(
+                displayMedia[3],
+                3,
+                `w-full ${getAspectRatioStyle(3)}`
+              )}
+              {displayMedia[4] &&
+                renderMediaItem(
+                  displayMedia[4],
+                  4,
+                  `w-full ${getAspectRatioStyle(4)}`
+                )}
             </div>
           </div>
         );
+      }
     }
   };
 
