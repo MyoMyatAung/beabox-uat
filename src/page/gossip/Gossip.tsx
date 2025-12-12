@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import type { ComponentProps } from "react";
 import { useDispatch } from "react-redux";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -17,6 +17,18 @@ interface Tab {
   id: string;
   label: string;
   categoryId: string;
+}
+
+// Storage keys for scroll position persistence
+const GOSSIP_SCROLL_STORAGE_KEY = "gossip-scroll-position";
+
+// Type for cached tab state
+type GossipPostData = ComponentProps<typeof GossipPost>["post"];
+interface TabCache {
+  posts: GossipPostData[];
+  page: number;
+  hasMore: boolean;
+  scrollPosition: number;
 }
 
 const PostSkeleton = () => (
@@ -58,10 +70,18 @@ const Gossip = () => {
   });
   const [page, setPage] = useState(1);
   const pageSize = 10;
-  const [posts, setPosts] = useState<
-    ComponentProps<typeof GossipPost>["post"][]
-  >([]);
+  const [posts, setPosts] = useState<GossipPostData[]>([]);
   const [hasMore, setHasMore] = useState(true);
+
+  // ============================================================================
+  // SCROLL POSITION PRESERVATION: Per-tab caching
+  // ============================================================================
+  // Cache tab state (posts, page, hasMore, scrollPosition) to restore when switching back
+  const tabCacheRef = useRef<Record<string, TabCache>>({});
+  // Track if we should restore scroll position after posts load
+  const pendingScrollRestoreRef = useRef<number | null>(null);
+  // Track if this is a fresh mount (for route navigation restoration)
+  const isInitialMountRef = useRef(true);
 
   const {
     data: categoryList = [],
@@ -143,9 +163,48 @@ const Gossip = () => {
     };
   }, []);
 
+  // ============================================================================
+  // SCROLL POSITION PRESERVATION: Save current tab state before switching
+  // ============================================================================
+  const saveCurrentTabState = useCallback(() => {
+    if (!activeTab) return;
+
+    const scrollContainer = document.getElementById("gossip-scroll-container");
+    const scrollPosition = scrollContainer?.scrollTop ?? 0;
+
+    tabCacheRef.current[activeTab] = {
+      posts,
+      page,
+      hasMore,
+      scrollPosition,
+    };
+  }, [activeTab, posts, page, hasMore]);
+
   const handleTabClick = (tabId: string) => {
+    if (tabId === activeTab) return;
+
+    // Save current tab state before switching
+    saveCurrentTabState();
+
+    // Check if we have cached data for the target tab
+    const cachedState = tabCacheRef.current[tabId];
+
+    if (cachedState && cachedState.posts.length > 0) {
+      // Restore cached state
+      setPosts(cachedState.posts);
+      setPage(cachedState.page);
+      setHasMore(cachedState.hasMore);
+      // Schedule scroll position restoration after render
+      pendingScrollRestoreRef.current = cachedState.scrollPosition;
+    } else {
+      // No cache, reset to initial state
+      setPosts([]);
+      setPage(1);
+      setHasMore(true);
+      pendingScrollRestoreRef.current = null;
+    }
+
     setActiveTab(tabId);
-    setPage(1); // Reset page when switching tabs
   };
 
   const {
@@ -171,8 +230,6 @@ const Gossip = () => {
     isCategoriesLoading || isPostsLoading || !hasCategoryId;
   // This is used for showing error states, not for hiding content
   const isLoading = isInitialDataLoading || isPostsFetching;
-
-  type GossipPostData = ComponentProps<typeof GossipPost>["post"];
 
   const mappedApiPosts: GossipPostData[] = useMemo(() => {
     if (!apiPostsResponse?.data?.length) return [];
@@ -223,17 +280,8 @@ const Gossip = () => {
     });
   }, [apiPostsResponse]);
 
-  useEffect(() => {
-    setPosts([]);
-    setHasMore(true);
-  }, [activeTab]);
-
-  useEffect(() => {
-    const scrollContainer = document.getElementById("gossip-scroll-container");
-    if (scrollContainer) {
-      scrollContainer.scrollTop = 0;
-    }
-  }, [activeTab]);
+  // NOTE: We no longer reset posts or scroll position on tab change here.
+  // This is now handled by handleTabClick which preserves cached state per tab.
 
   useEffect(() => {
     if (!apiPostsResponse) return;
@@ -264,6 +312,105 @@ const Gossip = () => {
       setHasMore(merged.length >= pageSize);
     }
   }, [apiPostsResponse, mappedApiPosts, page, pageSize]);
+
+  // ============================================================================
+  // SCROLL POSITION PRESERVATION: Restore scroll after posts load
+  // ============================================================================
+  // This handles both tab switching (pendingScrollRestoreRef) and route navigation
+  // (sessionStorage) scroll restoration.
+  useEffect(() => {
+    if (posts.length === 0 || !activeTab) return;
+
+    const scrollContainer = document.getElementById("gossip-scroll-container");
+    if (!scrollContainer) return;
+
+    // Priority 1: Restore from pending tab switch
+    if (pendingScrollRestoreRef.current !== null) {
+      const targetPosition = pendingScrollRestoreRef.current;
+      pendingScrollRestoreRef.current = null;
+      // Use requestAnimationFrame to ensure DOM is updated
+      requestAnimationFrame(() => {
+        scrollContainer.scrollTop = targetPosition;
+      });
+      return;
+    }
+
+    // Priority 2: Restore from sessionStorage on initial mount (route navigation)
+    if (isInitialMountRef.current) {
+      isInitialMountRef.current = false;
+      try {
+        const savedState = sessionStorage.getItem(GOSSIP_SCROLL_STORAGE_KEY);
+        if (savedState) {
+          const { tab, position } = JSON.parse(savedState);
+          if (tab === activeTab && position > 0) {
+            requestAnimationFrame(() => {
+              scrollContainer.scrollTop = position;
+            });
+          }
+        }
+      } catch {
+        // Ignore parsing errors
+      }
+    }
+  }, [posts.length, activeTab]);
+
+  // ============================================================================
+  // SCROLL POSITION PRESERVATION: Save scroll position to sessionStorage
+  // ============================================================================
+  // Debounced save of scroll position for route navigation restoration
+  useEffect(() => {
+    const scrollContainer = document.getElementById("gossip-scroll-container");
+    if (!scrollContainer || !activeTab) return;
+
+    let timeoutId: ReturnType<typeof setTimeout>;
+
+    const handleScroll = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        try {
+          sessionStorage.setItem(
+            GOSSIP_SCROLL_STORAGE_KEY,
+            JSON.stringify({
+              tab: activeTab,
+              position: scrollContainer.scrollTop,
+            })
+          );
+        } catch {
+          // Ignore storage errors (e.g., quota exceeded)
+        }
+      }, 150); // Debounce 150ms
+    };
+
+    scrollContainer.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      scrollContainer.removeEventListener("scroll", handleScroll);
+      clearTimeout(timeoutId);
+    };
+  }, [activeTab]);
+
+  // ============================================================================
+  // SCROLL POSITION PRESERVATION: Save state before unmount (route navigation)
+  // ============================================================================
+  useEffect(() => {
+    return () => {
+      // Save current scroll position to sessionStorage when leaving the page
+      const scrollContainer = document.getElementById("gossip-scroll-container");
+      if (scrollContainer && activeTab) {
+        try {
+          sessionStorage.setItem(
+            GOSSIP_SCROLL_STORAGE_KEY,
+            JSON.stringify({
+              tab: activeTab,
+              position: scrollContainer.scrollTop,
+            })
+          );
+        } catch {
+          // Ignore storage errors
+        }
+      }
+    };
+  }, [activeTab]);
 
   const loadMorePosts = () => {
     if (isPostsFetching || isCategoriesLoading || !hasMore) return;
