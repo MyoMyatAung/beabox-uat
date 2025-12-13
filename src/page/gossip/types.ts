@@ -56,7 +56,30 @@ export interface GossipMediaItem {
   url: string;
   download_url?: string;
   thumbnail_url?: string;
+  thumbnail?: string;
 }
+
+/**
+ * Complete gossip post data structure.
+ * Used in the post list and detail views.
+ */
+export interface GossipPostData {
+  post_id: string;
+  category_id?: string;
+  user: GossipPostUser;
+  content: string;
+  media: GossipMediaItem[];
+  like_count: number;
+  comment_count: number;
+  share_count: number;
+  is_liked: boolean;
+  created_at: string;
+  share_link: string;
+  time_ago: string;
+}
+
+// Re-export GossipPostUser from gossipSlice for convenience
+export type { GossipPostUser } from "./services/gossipSlice";
 
 /**
  * User information attached to a gossip post.

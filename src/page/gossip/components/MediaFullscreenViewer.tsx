@@ -1055,7 +1055,7 @@ const MediaFullscreenViewer = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[999999] bg-black flex items-center justify-center">
+    <div className="fixed inset-0 z-[1899] bg-black flex items-center justify-center">
       {/* Media Container - Horizontal Scroll */}
       <div
         ref={scrollContainerRef}
