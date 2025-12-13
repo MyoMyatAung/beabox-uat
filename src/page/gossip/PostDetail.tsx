@@ -25,8 +25,8 @@ import type {
 import { getDeviceInfo } from "@/lib/deviceInfo";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 import LoginDrawer from "@/components/profile/auth/login-drawer";
-import { showToast } from "../home/services/errorSlice";
 import { setPostMuted } from "./services/gossipMuteSlice";
+import FollowSuccessToast from "./components/FollowSuccessToast";
 
 const decodeUnicodeEscapes = (text?: string | null) => {
   if (!text) return "";
@@ -89,6 +89,8 @@ const PostDetail = () => {
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
   const [fullscreenIndex, setFullscreenIndex] = useState(0);
   const [showShareSheet, setShowShareSheet] = useState(false);
+  const [showFollowToast, setShowFollowToast] = useState(false);
+  const [followToastMessage, setFollowToastMessage] = useState("");
   const [postIsLiked, setPostIsLiked] = useState(post?.is_liked ?? false);
   const [postLikeCount, setPostLikeCount] = useState(post?.like_count ?? 0);
   const [likePost] = useLikeGossipPostMutation();
@@ -369,12 +371,9 @@ const PostDetail = () => {
       status: isFollowing ? "unfollow" : "follow",
     }).unwrap();
 
-    dispatch(
-      showToast({
-        message: response?.message || "关注成功",
-        type: "success",
-      })
-    );
+    // Show custom follow success toast
+    setFollowToastMessage(response?.message || "关注成功");
+    setShowFollowToast(true);
     setIsFollowing((prev) => !prev);
   };
 
@@ -861,6 +860,14 @@ const PostDetail = () => {
       <LoginDrawer
         isOpen={isLoginDrawerOpen}
         setIsOpen={setIsLoginDrawerOpen}
+      />
+
+      {/* Custom Follow Success Toast */}
+      <FollowSuccessToast
+        show={showFollowToast}
+        message={followToastMessage}
+        isFollowed={isFollowing}
+        onHide={() => setShowFollowToast(false)}
       />
     </div>
   );

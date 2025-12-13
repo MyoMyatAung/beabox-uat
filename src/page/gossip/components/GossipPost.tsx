@@ -27,6 +27,7 @@ import { getPlayerManager } from "../services/playerManager";
 import { setPostMuted } from "../services/gossipMuteSlice";
 import { setIsDrawerOpen } from "@/store/slices/profileSlice";
 import ImageGrid from "./ImageGrid";
+import FollowSuccessToast from "./FollowSuccessToast";
 
 interface MediaItem {
   id: string;
@@ -74,6 +75,8 @@ const GossipPost = ({ post }: GossipPostProps) => {
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
   const [fullscreenIndex, setFullscreenIndex] = useState(0);
   const [showShareSheet, setShowShareSheet] = useState(false);
+  const [showFollowToast, setShowFollowToast] = useState(false);
+  const [followToastMessage, setFollowToastMessage] = useState("");
   // const [isLoginDrawerOpen, setIsLoginDrawerOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -189,12 +192,9 @@ const GossipPost = ({ post }: GossipPostProps) => {
       status: isFollowing ? "unfollow" : "follow",
     }).unwrap();
 
-    dispatch(
-      showToast({
-        message: response?.message || "关注成功",
-        type: "success",
-      })
-    );
+    // Show custom follow success toast
+    setFollowToastMessage(response?.message || "关注成功");
+    setShowFollowToast(true);
     setIsFollowing((prev) => !prev);
   };
 
@@ -754,6 +754,14 @@ const GossipPost = ({ post }: GossipPostProps) => {
         isOpen={isLoginDrawerOpen}
         setIsOpen={setIsLoginDrawerOpen}
       /> */}
+
+      {/* Custom Follow Success Toast */}
+      <FollowSuccessToast
+        show={showFollowToast}
+        message={followToastMessage}
+        isFollowed={isFollowing}
+        onHide={() => setShowFollowToast(false)}
+      />
     </div>
   );
 };
