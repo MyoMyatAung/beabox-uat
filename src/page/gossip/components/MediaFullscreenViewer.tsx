@@ -1,14 +1,13 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useSelector, useDispatch, useStore } from "react-redux";
 import type { RootState, AppDispatch } from "@/store/store";
-import { getPlayerManager, PooledPlayer } from "../services/playerManager";
+import { getPlayerManager } from "../services/playerManager";
 import {
   X,
   MoreVertical,
   Volume2,
   VolumeX,
   Heart,
-  MessageCircle,
   Download,
   AlertTriangle,
 } from "lucide-react";
@@ -93,6 +92,9 @@ const MediaFullscreenViewer = ({
   const [duration, setDuration] = useState(0);
   const [showMoreOptions, setShowMoreOptions] = useState(false);
   const [showShareSheet, setShowShareSheet] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragTime, setDragTime] = useState<number | null>(null);
+  const [isSeeking, setIsSeeking] = useState(false);
   const [videoReadyState, setVideoReadyState] = useState<
     Record<
       number,
@@ -130,6 +132,10 @@ const MediaFullscreenViewer = ({
     new Map()
   );
   const progressRefs = useRef<Map<number, number>>(new Map());
+  const pendingSeekRef = useRef<{ index: number; percentage: number } | null>(
+    null
+  );
+  const dragBarRef = useRef<HTMLDivElement | null>(null);
   const currentIndexRef = useRef(currentIndex);
   const [videoReadyTick, setVideoReadyTick] = useState(0);
 
@@ -676,7 +682,23 @@ const MediaFullscreenViewer = ({
     };
 
     const handleLoadedMetadata = () => {
-      setDuration(currentVideo.duration || 0);
+      const metaDuration = currentVideo.duration || 0;
+      setDuration(metaDuration);
+
+      // Apply pending seek if we now know duration
+      const pending = pendingSeekRef.current;
+      if (pending && pending.index === currentIndex && metaDuration > 0) {
+        const targetTime = pending.percentage * metaDuration;
+        try {
+          currentVideo.currentTime = targetTime;
+          progressRefs.current.set(currentIndex, targetTime);
+          setCurrentTime(targetTime);
+        } catch {
+          // ignore seek errors
+        } finally {
+          pendingSeekRef.current = null;
+        }
+      }
     };
 
     const handlePlaying = () => {
@@ -821,19 +843,193 @@ const MediaFullscreenViewer = ({
     }
   };
 
-  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
+  const getEffectiveDuration = (video?: HTMLVideoElement | null) => {
+    const seekableEnd =
+      video && video.seekable && video.seekable.length > 0
+        ? video.seekable.end(video.seekable.length - 1)
+        : 0;
+    const videoDuration =
+      video && video.duration && !Number.isNaN(video.duration)
+        ? video.duration
+        : 0;
+    return duration > 0
+      ? duration
+      : seekableEnd > 0
+      ? seekableEnd
+      : videoDuration > 0
+      ? videoDuration
+      : 0;
+  };
+
+  const applySeek = (percentage: number) => {
     const playerId = `fullscreen-${currentIndex}`;
     const player = playerManager.getPlayer(playerId, true);
-    if (!player?.videoElement) return;
+    const video = player?.videoElement;
+    const effectiveDuration = getEffectiveDuration(video);
 
+    if (!video || effectiveDuration <= 0) {
+      pendingSeekRef.current = { index: currentIndex, percentage };
+      setIsSeeking(true);
+      return;
+    }
+
+    const newTime = percentage * effectiveDuration;
+    setCurrentTime(newTime);
+
+    try {
+      const wasPlaying = !video.paused;
+      video.currentTime = newTime;
+      progressRefs.current.set(currentIndex, newTime);
+      setIsSeeking(video.readyState < 2);
+      if (wasPlaying) {
+        video.play().catch(() => {
+          /* ignore */
+        });
+      }
+    } catch {
+      pendingSeekRef.current = { index: currentIndex, percentage };
+      setIsSeeking(true);
+    }
+  };
+
+  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isDragging) return;
+    e.stopPropagation();
     const rect = e.currentTarget.getBoundingClientRect();
     const clickX = e.clientX - rect.left;
-    const percentage = clickX / rect.width;
-    const newTime = percentage * duration;
-    player.videoElement.currentTime = newTime;
-    progressRefs.current.set(currentIndex, newTime);
+    const percentage = Math.max(0, Math.min(1, clickX / rect.width));
+    applySeek(percentage);
   };
+
+  const handleProgressMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    setIsDragging(true);
+    dragBarRef.current = e.currentTarget;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pos = e.clientX - rect.left;
+    const percentage = Math.max(0, Math.min(1, pos / rect.width));
+    const player = playerManager.getPlayer(`fullscreen-${currentIndex}`, true);
+    const video = player?.videoElement;
+    const effDur = getEffectiveDuration(video);
+    const newTime = effDur > 0 ? percentage * effDur : 0;
+    setDragTime(newTime);
+    setCurrentTime(newTime);
+  };
+
+  const handleProgressMouseMove = (clientX: number) => {
+    if (!isDragging || !dragBarRef.current) return;
+    const rect = dragBarRef.current.getBoundingClientRect();
+    const posX = clientX - rect.left;
+    const percentage = Math.max(0, Math.min(1, posX / rect.width));
+    const player = playerManager.getPlayer(`fullscreen-${currentIndex}`, true);
+    const video = player?.videoElement;
+    const effDur = getEffectiveDuration(video);
+    const newTime = effDur > 0 ? percentage * effDur : 0;
+    setDragTime(newTime);
+    setCurrentTime(newTime);
+
+    // Follow the cursor smoothly by seeking during drag (like DetailPlayer)
+    if (video && effDur > 0) {
+      try {
+        const wasPlaying = !video.paused;
+        video.currentTime = newTime;
+        progressRefs.current.set(currentIndex, newTime);
+        setIsSeeking(video.readyState < 2);
+        if (wasPlaying) {
+          video.play().catch(() => {
+            /* ignore */
+          });
+        }
+      } catch {
+        // ignore errors during drag
+      }
+    }
+  };
+
+  const handleProgressMouseUp = (clientX: number) => {
+    if (!isDragging || !dragBarRef.current) return;
+    const rect = dragBarRef.current.getBoundingClientRect();
+    const posX = clientX - rect.left;
+    const percentage = Math.max(0, Math.min(1, posX / rect.width));
+    dragBarRef.current = null;
+    setIsDragging(false);
+    setDragTime(null);
+    applySeek(percentage);
+  };
+
+  const handleProgressTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    setIsDragging(true);
+    dragBarRef.current = e.currentTarget;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pos = e.touches[0].clientX - rect.left;
+    const percentage = Math.max(0, Math.min(1, pos / rect.width));
+    const player = playerManager.getPlayer(`fullscreen-${currentIndex}`, true);
+    const video = player?.videoElement;
+    const effDur = getEffectiveDuration(video);
+    const newTime = effDur > 0 ? percentage * effDur : 0;
+    setDragTime(newTime);
+    setCurrentTime(newTime);
+  };
+
+  const handleProgressTouchMove = (e: TouchEvent) => {
+    if (!isDragging || !dragBarRef.current) return;
+    const rect = dragBarRef.current.getBoundingClientRect();
+    const pos = e.touches[0].clientX - rect.left;
+    const percentage = Math.max(0, Math.min(1, pos / rect.width));
+    const player = playerManager.getPlayer(`fullscreen-${currentIndex}`, true);
+    const video = player?.videoElement;
+    const effDur = getEffectiveDuration(video);
+    const newTime = effDur > 0 ? percentage * effDur : 0;
+    setDragTime(newTime);
+    setCurrentTime(newTime);
+
+    // Follow finger during drag
+    if (video && effDur > 0) {
+      try {
+        const wasPlaying = !video.paused;
+        video.currentTime = newTime;
+        progressRefs.current.set(currentIndex, newTime);
+        setIsSeeking(video.readyState < 2);
+        if (wasPlaying) {
+          video.play().catch(() => {
+            /* ignore */
+          });
+        }
+      } catch {
+        // ignore errors during drag
+      }
+    }
+  };
+
+  const handleProgressTouchEnd = (e: TouchEvent) => {
+    if (!isDragging || !dragBarRef.current) return;
+    const rect = dragBarRef.current.getBoundingClientRect();
+    const pos = e.changedTouches[0].clientX - rect.left;
+    const percentage = Math.max(0, Math.min(1, pos / rect.width));
+    dragBarRef.current = null;
+    setIsDragging(false);
+    setDragTime(null);
+    applySeek(percentage);
+  };
+
+  useEffect(() => {
+    if (!isDragging) return;
+    const onMove = (e: MouseEvent) => handleProgressMouseMove(e.clientX);
+    const onUp = (e: MouseEvent) => handleProgressMouseUp(e.clientX);
+    const onTouchMove = (e: TouchEvent) => handleProgressTouchMove(e);
+    const onTouchEnd = (e: TouchEvent) => handleProgressTouchEnd(e);
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+    document.addEventListener("touchmove", onTouchMove, { passive: false });
+    document.addEventListener("touchend", onTouchEnd);
+    return () => {
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+      document.removeEventListener("touchmove", onTouchMove);
+      document.removeEventListener("touchend", onTouchEnd);
+    };
+  }, [isDragging]);
 
   const handleSaveVideo = async () => {
     setShowMoreOptions(false);
@@ -997,12 +1193,32 @@ const MediaFullscreenViewer = ({
           muted: isMuted,
           loop: true,
           onReady: (player) => {
+            const video = player.videoElement;
+            if (!video) return;
+
             // Restore saved position if any
-            if (savedTime > 0 && player.videoElement) {
+            if (savedTime > 0) {
               try {
-                player.videoElement.currentTime = savedTime;
+                video.currentTime = savedTime;
               } catch {
                 // ignore seeking errors
+              }
+            }
+
+            // Apply pending seek if exists and duration is known
+            const pending = pendingSeekRef.current;
+            if (pending && pending.index === index && video.duration > 0) {
+              const targetTime = pending.percentage * video.duration;
+              try {
+                video.currentTime = targetTime;
+                progressRefs.current.set(index, targetTime);
+                if (index === currentIndexRef.current) {
+                  setCurrentTime(targetTime);
+                }
+              } catch {
+                // ignore seek errors
+              } finally {
+                pendingSeekRef.current = null;
               }
             }
 
@@ -1020,11 +1236,11 @@ const MediaFullscreenViewer = ({
             // Play if this is the active index, pause otherwise
             const activeIndex = currentIndexRef.current;
             if (index === activeIndex) {
-              player.videoElement?.play().catch(() => {
+              video.play().catch(() => {
                 /* ignore autoplay errors */
               });
             } else {
-              player.videoElement?.pause();
+              video.pause();
             }
 
             setVideoReadyTick((prev) => prev + 1);
@@ -1055,7 +1271,7 @@ const MediaFullscreenViewer = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[999999] bg-black flex items-center justify-center">
+    <div className="fixed inset-0 z-[1899] bg-black flex items-center justify-center">
       {/* Media Container - Horizontal Scroll */}
       <div
         ref={scrollContainerRef}
@@ -1121,6 +1337,8 @@ const MediaFullscreenViewer = ({
                           <div
                             className="flex-1 relative h-1 bg-white/20 rounded-full cursor-pointer"
                             onClick={handleProgressClick}
+                            onMouseDown={handleProgressMouseDown}
+                            onTouchStart={handleProgressTouchStart}
                           >
                             {/* Progress Fill */}
                             <div
@@ -1139,11 +1357,19 @@ const MediaFullscreenViewer = ({
                                 left:
                                   duration > 0
                                     ? `calc(${
-                                        (currentTime / duration) * 100
+                                        (isDragging && dragTime !== null
+                                          ? dragTime / duration
+                                          : currentTime / duration) * 100
                                       }% - 6px)`
                                     : "-6px",
                               }}
                             />
+                            {/* Loading Indicator Overlay */}
+                            {isSeeking && !isVideoReady && (
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="w-3 h-3 border-2 border-white/50 border-t-white rounded-full animate-spin" />
+                              </div>
+                            )}
                           </div>
 
                           {/* Duration and Mute */}

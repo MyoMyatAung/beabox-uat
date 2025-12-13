@@ -90,7 +90,6 @@ const PostDetail = () => {
   const [fullscreenIndex, setFullscreenIndex] = useState(0);
   const [showShareSheet, setShowShareSheet] = useState(false);
   const [showFollowToast, setShowFollowToast] = useState(false);
-  const [followToastMessage, setFollowToastMessage] = useState("");
   const [postIsLiked, setPostIsLiked] = useState(post?.is_liked ?? false);
   const [postLikeCount, setPostLikeCount] = useState(post?.like_count ?? 0);
   const [likePost] = useLikeGossipPostMutation();
@@ -371,8 +370,6 @@ const PostDetail = () => {
       status: isFollowing ? "unfollow" : "follow",
     }).unwrap();
 
-    // Show custom follow success toast
-    setFollowToastMessage(response?.message || "关注成功");
     setShowFollowToast(true);
     setIsFollowing((prev) => !prev);
   };
@@ -865,7 +862,6 @@ const PostDetail = () => {
       {/* Custom Follow Success Toast */}
       <FollowSuccessToast
         show={showFollowToast}
-        message={followToastMessage}
         isFollowed={isFollowing}
         onHide={() => setShowFollowToast(false)}
       />
