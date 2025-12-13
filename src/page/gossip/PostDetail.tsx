@@ -262,7 +262,7 @@ const PostDetail = () => {
           actualFirstMedia.url,
           {
             muted: isMuted,
-            autoplay: true,
+            autoplay: false,
             loop: true,
           },
           false // feed pool

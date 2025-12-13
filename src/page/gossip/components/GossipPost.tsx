@@ -325,7 +325,7 @@ const GossipPost = ({ post }: GossipPostProps) => {
               container,
               mediaUrl,
               {
-                autoplay: true,
+                autoplay: false,
                 muted: isMutedRef.current, // Use ref to get current value
                 loop: true,
                 onReady: () => {
@@ -584,13 +584,18 @@ const GossipPost = ({ post }: GossipPostProps) => {
         {/* Media Grid */}
         {post.media && post.media.length > 0 && (
           <ImageGrid
-            media={post.media}
+            media={post.media || []}
             onMediaClick={handleMediaClick}
             videoContainerRef={videoContainerRef}
             isFirstVideo={isFirstVideo}
             isVideoReady={isVideoReady}
             isMuted={isMuted}
             onToggleMute={handleToggleMute}
+            onOverlayClick={() => {
+              navigate(`/gossip/post/${post.post_id}`, {
+                state: { post },
+              });
+            }}
           />
         )}
         {/* Interaction Buttons and Timestamp */}
