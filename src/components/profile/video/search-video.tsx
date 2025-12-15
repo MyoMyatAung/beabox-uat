@@ -14,6 +14,8 @@ import InfinitLoad from "@/components/shared/infinit-load";
 import loader from "@/page/home/vod_loader.gif";
 import { useSearchParams } from "react-router-dom";
 import VideoFeed from "@/page/home/components/VideoFeed";
+import empty from "@/page/home/empty.png";
+
 // import {
 //   isMobile,
 //   isAndroid,
@@ -23,6 +25,19 @@ import VideoFeed from "@/page/home/components/VideoFeed";
 //   isIOS13,
 //   getUA,
 // } from "react-device-detect";
+
+export function EmptyResult() {
+  return <div
+    className={`flex justify-center items-center py-[200px]`}
+  >
+    <div className="flex flex-col items-center">
+      <img src={empty} className="w-[80px]" alt="" />
+      <h1 className="text-center text-white/60">
+        搜索结果为空
+      </h1>
+    </div>
+  </div>
+}
 
 export function isWebView() {
   return (
@@ -174,31 +189,37 @@ const SearchVideo = ({ id }: { id: string }) => {
                     <img src={loader} className="w-14" alt="" />
                   </div>
                 ) : (
-                  <div className="py-5">
-                    <div className="grid grid-cols-2 gap-1">
-                      {videos.map((item: any) => (
-                        <div
-                          key={item.post_id}
-                          onClick={() => {
-                            // console.log(item);
-                            setSelectedMovieId(item?.post_id);
-                            setShowVideoFeed(true);
-                          }}
-                        >
-                          <VideoCard2
-                            videoData={item}
-                            loadingVideoId={loadingVideoId}
-                            setLoadingVideoId={setLoadingVideoId}
-                          />
+                  videos.length === 0 ? (
+                    <EmptyResult />
+                  ) : (
+                    <>
+                      <div className="py-5">
+                        <div className="grid grid-cols-2 gap-1">
+                          {videos.map((item: any) => (
+                            <div
+                              key={item.post_id}
+                              onClick={() => {
+                                // console.log(item);
+                                setSelectedMovieId(item?.post_id);
+                                setShowVideoFeed(true);
+                              }}
+                            >
+                              <VideoCard2
+                                videoData={item}
+                                loadingVideoId={loadingVideoId}
+                                setLoadingVideoId={setLoadingVideoId}
+                              />
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                    <InfinitLoad
-                      data={videos}
-                      fetchData={fetchMoreData}
-                      hasMore={hasMore}
-                    />
-                  </div>
+                        <InfinitLoad
+                          data={videos}
+                          fetchData={fetchMoreData}
+                          hasMore={hasMore}
+                        />
+                      </div>
+                    </>
+                  )
                 )}
               </div>
             </>
