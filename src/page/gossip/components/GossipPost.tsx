@@ -301,7 +301,7 @@ const GossipPost = ({ post }: GossipPostProps) => {
                 </div>
               )}
               <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-red-600 rounded-full flex items-center justify-center border-2 border-black cursor-pointer">
-                {isFollowing ? (
+                {post.user.is_following ? (
                   <Check size={14} className="text-white" />
                 ) : (
                   <Plus size={14} className="text-white" />
@@ -310,7 +310,7 @@ const GossipPost = ({ post }: GossipPostProps) => {
             </div>
             <ProfilePopover
               isOpen={showProfilePopover}
-              isFollowing={isFollowing}
+              isFollowing={post.user.is_following || false}
               isFollowLoading={isFollowLoading}
               popoverRef={profilePopoverRef}
               onPersonalHomepage={handlePersonalHomepage}
