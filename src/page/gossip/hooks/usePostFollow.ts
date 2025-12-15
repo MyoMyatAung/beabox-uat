@@ -13,7 +13,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useFollowGossipUserMutation } from "../services/gossipSlice";
-import { showToast } from "@/page/home/services/errorSlice";
 
 /**
  * Hook return type for post follow functionality.
@@ -70,18 +69,18 @@ export function usePostFollow(
     }
 
     try {
-      const response = await followGossipUser({
+      await followGossipUser({
         follow_user_id: userId,
         status: isFollowing ? "unfollow" : "follow",
       }).unwrap();
 
       // Show success message
-      dispatch(
-        showToast({
-          message: response?.message || "关注成功",
-          type: "success",
-        })
-      );
+      // dispatch(
+      //   showToast({
+      //     message: response?.message || "关注成功",
+      //     type: "success",
+      //   })
+      // );
 
       // Update local state
       setIsFollowing((prev) => !prev);
@@ -97,4 +96,3 @@ export function usePostFollow(
     handleFollow,
   };
 }
-

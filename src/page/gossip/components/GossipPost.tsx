@@ -252,6 +252,7 @@ const GossipPost = ({ post }: GossipPostProps) => {
   const handleFollowWithClose = async (): Promise<void> => {
     closeProfilePopover();
     await handleFollow();
+    setShowFollowToast(true);
   };
 
   /**

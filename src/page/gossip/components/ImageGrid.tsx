@@ -435,7 +435,8 @@ const ImageGrid = ({
     layout: BentoLayout
   ) => {
     const isVideo = item.type === "video";
-    const isFirstVideoItem = index === 0 && isFirstVideo && isVideo;
+    // const isFirstVideoItem = index === 0 && isFirstVideo && isVideo;
+    const isFirstVideoItem = false;
     const { colSpan, rowSpan, order } = layout;
 
     const maxDisplay = showAllMedia ? media.length : Math.min(media.length, 5);
