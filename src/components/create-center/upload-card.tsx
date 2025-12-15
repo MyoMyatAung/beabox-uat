@@ -15,7 +15,7 @@ const UploadCard = ({ item, config, imgdomain }: any) => {
   return (
     <div className="grid grid-cols-2 items-center">
       {item?.preview_image?.endsWith(".txt") ? (
-        <UploadImg imgsrc={item?.preview_image} />
+        <UploadImg imgsrc={`${imageurl}/${item?.preview_image}`} />
       ) : (
         <img
           src={`${imageurl}/${item?.preview_image}`}
