@@ -24,9 +24,11 @@ import type {
 } from "./services/gossipSlice";
 import { getDeviceInfo } from "@/lib/deviceInfo";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
-import LoginDrawer from "@/components/profile/auth/login-drawer";
+import AuthDrawer from "@/components/profile/auth/auth-drawer";
 import { setPostMuted } from "./services/gossipMuteSlice";
 import FollowSuccessToast from "./components/FollowSuccessToast";
+import { useAuthentication } from "./hooks/useAuthentication";
+import { setAuthToggle } from "@/store/slices/profileSlice";
 
 const decodeUnicodeEscapes = (text?: string | null) => {
   if (!text) return "";
@@ -58,8 +60,8 @@ type NormalizedMediaItem = GossipDetailPost["media"][number] & { id: string };
 const PostDetail = () => {
   const dispatch = useDispatch<AppDispatch>();
   const store = useStore<RootState>();
-  const user = useSelector((state: RootState) => state.persist?.user);
-  const [isAuthenticated, setIsAuthenticated] = useState(Boolean(user?.token));
+  const { ensureAuthenticated } = useAuthentication();
+  const isOpen = useSelector((state: RootState) => state.profile.isDrawerOpen);
   const { postId } = useParams<{ postId: string }>();
   const location = useLocation();
   const navigate = useNavigate();
@@ -85,7 +87,6 @@ const PostDetail = () => {
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [commentsError, setCommentsError] = useState<string | null>(null);
   const [totalComments, setTotalComments] = useState(post?.comment_count ?? 0);
-  const [isLoginDrawerOpen, setIsLoginDrawerOpen] = useState(false);
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
   const [fullscreenIndex, setFullscreenIndex] = useState(0);
   const [showShareSheet, setShowShareSheet] = useState(false);
@@ -170,20 +171,6 @@ const PostDetail = () => {
       ),
     []
   );
-
-  const ensureAuthenticated = useCallback(() => {
-    if (isAuthenticated) {
-      return true;
-    }
-    setIsLoginDrawerOpen(true);
-    return false;
-  }, [isAuthenticated]);
-
-  // Update authentication state when user changes
-  useEffect(() => {
-    const authenticated = Boolean(user?.token);
-    setIsAuthenticated(authenticated);
-  }, [user?.token]);
 
   const normalizeComment = useCallback(
     (payload: Partial<GossipCommentType>): GossipCommentType => ({
@@ -287,6 +274,7 @@ const PostDetail = () => {
 
   const togglePostLike = useCallback(async () => {
     if (!ensureAuthenticated()) {
+      dispatch(setAuthToggle(true));
       return;
     }
 
@@ -306,7 +294,14 @@ const PostDetail = () => {
       setPostIsLiked(!nextLiked);
       setPostLikeCount((prev) => Math.max(0, prev - delta));
     }
-  }, [ensureAuthenticated, likePost, post?.id, postIsLiked, unlikePost]);
+  }, [
+    dispatch,
+    ensureAuthenticated,
+    likePost,
+    post?.id,
+    postIsLiked,
+    unlikePost,
+  ]);
 
   const fetchComments = useCallback(async (): Promise<void> => {
     const targetPostId = post?.post_id ?? postId ?? "";
@@ -362,10 +357,11 @@ const PostDetail = () => {
 
   const handleFollow = async () => {
     if (!ensureAuthenticated()) {
+      dispatch(setAuthToggle(true));
       return;
     }
 
-    const response = await followGossipUser({
+    await followGossipUser({
       follow_user_id: post?.user?.id?.toString() || "",
       status: isFollowing ? "unfollow" : "follow",
     }).unwrap();
@@ -603,10 +599,9 @@ const PostDetail = () => {
             )}
           </div>
         </div>
-        <LoginDrawer
-          isOpen={isLoginDrawerOpen}
-          setIsOpen={setIsLoginDrawerOpen}
-        />
+
+        {/* Auth Drawer */}
+        {isOpen && <AuthDrawer />}
       </div>
     );
   }
@@ -853,11 +848,8 @@ const PostDetail = () => {
         </div>
       )}
 
-      {/* Login Drawer */}
-      <LoginDrawer
-        isOpen={isLoginDrawerOpen}
-        setIsOpen={setIsLoginDrawerOpen}
-      />
+      {/* Auth Drawer */}
+      {isOpen && <AuthDrawer />}
 
       {/* Custom Follow Success Toast */}
       <FollowSuccessToast
