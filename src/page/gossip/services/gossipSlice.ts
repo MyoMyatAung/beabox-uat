@@ -359,6 +359,75 @@ export const gossipExternalApi = createApi({
         method: "POST",
         body: { follow_user_id, status },
       }),
+      // Optimistically update is_following in all cached posts for this user
+      async onQueryStarted(
+        { follow_user_id, status },
+        { dispatch, getState, queryFulfilled }
+      ) {
+        const newIsFollowing = status === "follow";
+        const patches: Array<{ undo: () => void }> = [];
+
+        // Update all cached post lists
+        const cachedListArgs =
+          gossipExternalApi.util.selectCachedArgsForQuery(
+            getState(),
+            "getGossipPosts"
+          ) || [];
+
+        cachedListArgs.forEach((args: GossipPostListParams) => {
+          patches.push(
+            dispatch(
+              gossipExternalApi.util.updateQueryData(
+                "getGossipPosts",
+                args,
+                (draft) => {
+                  draft.data?.forEach((post) => {
+                    if (
+                      post.user &&
+                      String(post.user.id) === String(follow_user_id)
+                    ) {
+                      post.user.is_following = newIsFollowing;
+                    }
+                  });
+                }
+              )
+            )
+          );
+        });
+
+        // Update all cached post details
+        const cachedDetailArgs =
+          gossipExternalApi.util.selectCachedArgsForQuery(
+            getState(),
+            "getGossipPostDetail"
+          ) || [];
+
+        cachedDetailArgs.forEach((postId: string) => {
+          patches.push(
+            dispatch(
+              gossipExternalApi.util.updateQueryData(
+                "getGossipPostDetail",
+                postId,
+                (draft) => {
+                  if (
+                    draft?.user &&
+                    String(draft.user.id) === String(follow_user_id)
+                  ) {
+                    draft.user.is_following = newIsFollowing;
+                  }
+                }
+              )
+            )
+          );
+        });
+
+        try {
+          await queryFulfilled;
+        } catch {
+          // Rollback all patches on error
+          patches.forEach((patch) => patch.undo());
+        }
+      },
     }),
     likeGossipComment: builder.mutation<
       GossipCommentLikeResponse,

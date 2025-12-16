@@ -94,7 +94,6 @@ const MediaFullscreenViewer = ({
   const [showShareSheet, setShowShareSheet] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [dragTime, setDragTime] = useState<number | null>(null);
-  const [isSeeking, setIsSeeking] = useState(false);
   const [videoReadyState, setVideoReadyState] = useState<
     Record<
       number,
@@ -132,10 +131,12 @@ const MediaFullscreenViewer = ({
     new Map()
   );
   const progressRefs = useRef<Map<number, number>>(new Map());
+  const progressTrackRef = useRef<HTMLDivElement | null>(null);
+  const isDraggingProgressRef = useRef(false);
+  const seekTimeRef = useRef(0);
   const pendingSeekRef = useRef<{ index: number; percentage: number } | null>(
     null
   );
-  const dragBarRef = useRef<HTMLDivElement | null>(null);
   const currentIndexRef = useRef(currentIndex);
   const [videoReadyTick, setVideoReadyTick] = useState(0);
 
@@ -861,175 +862,126 @@ const MediaFullscreenViewer = ({
       : 0;
   };
 
-  const applySeek = (percentage: number) => {
-    const playerId = `fullscreen-${currentIndex}`;
-    const player = playerManager.getPlayer(playerId, true);
-    const video = player?.videoElement;
-    const effectiveDuration = getEffectiveDuration(video);
-
-    if (!video || effectiveDuration <= 0) {
-      pendingSeekRef.current = { index: currentIndex, percentage };
-      setIsSeeking(true);
-      return;
-    }
-
-    const newTime = percentage * effectiveDuration;
-    setCurrentTime(newTime);
-
-    try {
-      const wasPlaying = !video.paused;
-      video.currentTime = newTime;
-      progressRefs.current.set(currentIndex, newTime);
-      setIsSeeking(video.readyState < 2);
-      if (wasPlaying) {
-        video.play().catch(() => {
-          /* ignore */
-        });
-      }
-    } catch {
-      pendingSeekRef.current = { index: currentIndex, percentage };
-      setIsSeeking(true);
-    }
-  };
-
-  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (isDragging) return;
-    e.stopPropagation();
-    const rect = e.currentTarget.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const percentage = Math.max(0, Math.min(1, clickX / rect.width));
-    applySeek(percentage);
-  };
-
-  const handleProgressMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-    setIsDragging(true);
-    dragBarRef.current = e.currentTarget;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const pos = e.clientX - rect.left;
-    const percentage = Math.max(0, Math.min(1, pos / rect.width));
-    const player = playerManager.getPlayer(`fullscreen-${currentIndex}`, true);
-    const video = player?.videoElement;
-    const effDur = getEffectiveDuration(video);
-    const newTime = effDur > 0 ? percentage * effDur : 0;
-    setDragTime(newTime);
-    setCurrentTime(newTime);
-  };
-
-  const handleProgressMouseMove = (clientX: number) => {
-    if (!isDragging || !dragBarRef.current) return;
-    const rect = dragBarRef.current.getBoundingClientRect();
-    const posX = clientX - rect.left;
-    const percentage = Math.max(0, Math.min(1, posX / rect.width));
-    const player = playerManager.getPlayer(`fullscreen-${currentIndex}`, true);
-    const video = player?.videoElement;
-    const effDur = getEffectiveDuration(video);
-    const newTime = effDur > 0 ? percentage * effDur : 0;
-    setDragTime(newTime);
-    setCurrentTime(newTime);
-
-    // Follow the cursor smoothly by seeking during drag (like DetailPlayer)
-    if (video && effDur > 0) {
-      try {
-        const wasPlaying = !video.paused;
-        video.currentTime = newTime;
-        progressRefs.current.set(currentIndex, newTime);
-        setIsSeeking(video.readyState < 2);
-        if (wasPlaying) {
-          video.play().catch(() => {
-            /* ignore */
-          });
-        }
-      } catch {
-        // ignore errors during drag
-      }
-    }
-  };
-
-  const handleProgressMouseUp = (clientX: number) => {
-    if (!isDragging || !dragBarRef.current) return;
-    const rect = dragBarRef.current.getBoundingClientRect();
-    const posX = clientX - rect.left;
-    const percentage = Math.max(0, Math.min(1, posX / rect.width));
-    dragBarRef.current = null;
-    setIsDragging(false);
-    setDragTime(null);
-    applySeek(percentage);
-  };
-
-  const handleProgressTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-    setIsDragging(true);
-    dragBarRef.current = e.currentTarget;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const pos = e.touches[0].clientX - rect.left;
-    const percentage = Math.max(0, Math.min(1, pos / rect.width));
-    const player = playerManager.getPlayer(`fullscreen-${currentIndex}`, true);
-    const video = player?.videoElement;
-    const effDur = getEffectiveDuration(video);
-    const newTime = effDur > 0 ? percentage * effDur : 0;
-    setDragTime(newTime);
-    setCurrentTime(newTime);
-  };
-
-  const handleProgressTouchMove = (e: TouchEvent) => {
-    if (!isDragging || !dragBarRef.current) return;
-    const rect = dragBarRef.current.getBoundingClientRect();
-    const pos = e.touches[0].clientX - rect.left;
-    const percentage = Math.max(0, Math.min(1, pos / rect.width));
-    const player = playerManager.getPlayer(`fullscreen-${currentIndex}`, true);
-    const video = player?.videoElement;
-    const effDur = getEffectiveDuration(video);
-    const newTime = effDur > 0 ? percentage * effDur : 0;
-    setDragTime(newTime);
-    setCurrentTime(newTime);
-
-    // Follow finger during drag
-    if (video && effDur > 0) {
-      try {
-        const wasPlaying = !video.paused;
-        video.currentTime = newTime;
-        progressRefs.current.set(currentIndex, newTime);
-        setIsSeeking(video.readyState < 2);
-        if (wasPlaying) {
-          video.play().catch(() => {
-            /* ignore */
-          });
-        }
-      } catch {
-        // ignore errors during drag
-      }
-    }
-  };
-
-  const handleProgressTouchEnd = (e: TouchEvent) => {
-    if (!isDragging || !dragBarRef.current) return;
-    const rect = dragBarRef.current.getBoundingClientRect();
-    const pos = e.changedTouches[0].clientX - rect.left;
-    const percentage = Math.max(0, Math.min(1, pos / rect.width));
-    dragBarRef.current = null;
-    setIsDragging(false);
-    setDragTime(null);
-    applySeek(percentage);
-  };
-
+  // Progress bar touch/mouse handlers - similar to Player.tsx
   useEffect(() => {
-    if (!isDragging) return;
-    const onMove = (e: MouseEvent) => handleProgressMouseMove(e.clientX);
-    const onUp = (e: MouseEvent) => handleProgressMouseUp(e.clientX);
-    const onTouchMove = (e: TouchEvent) => handleProgressTouchMove(e);
-    const onTouchEnd = (e: TouchEvent) => handleProgressTouchEnd(e);
-    document.addEventListener("mousemove", onMove);
-    document.addEventListener("mouseup", onUp);
-    document.addEventListener("touchmove", onTouchMove, { passive: false });
-    document.addEventListener("touchend", onTouchEnd);
-    return () => {
-      document.removeEventListener("mousemove", onMove);
-      document.removeEventListener("mouseup", onUp);
-      document.removeEventListener("touchmove", onTouchMove);
-      document.removeEventListener("touchend", onTouchEnd);
+    const track = progressTrackRef.current;
+    if (!track) return;
+
+    const getPercentFromEvent = (clientX: number) => {
+      const rect = track.getBoundingClientRect();
+      if (!rect.width) return 0;
+      return Math.min(Math.max((clientX - rect.left) / rect.width, 0), 1);
     };
-  }, [isDragging]);
+
+    const updatePreview = (percent: number) => {
+      const playerId = `fullscreen-${currentIndex}`;
+      const player = playerManager.getPlayer(playerId, true);
+      const video = player?.videoElement;
+      const effectiveDuration = getEffectiveDuration(video);
+      if (effectiveDuration > 0) {
+        const newTime = Math.min(
+          effectiveDuration,
+          Math.max(0, percent * effectiveDuration)
+        );
+        seekTimeRef.current = newTime;
+        setDragTime(newTime);
+        setCurrentTime(newTime);
+      }
+    };
+
+    const handleTouchStart = (e: TouchEvent) => {
+      e.stopPropagation();
+      e.preventDefault();
+      const touch = e.touches[0];
+      const percent = getPercentFromEvent(touch.clientX);
+      isDraggingProgressRef.current = true;
+      setIsDragging(true);
+      setShowUI(true);
+      updatePreview(percent);
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isDraggingProgressRef.current) return;
+      e.stopPropagation();
+      e.preventDefault();
+      const touch = e.touches[0];
+      const percent = getPercentFromEvent(touch.clientX);
+      updatePreview(percent);
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (!isDraggingProgressRef.current) return;
+      e.stopPropagation();
+      e.preventDefault();
+      isDraggingProgressRef.current = false;
+      setIsDragging(false);
+      const playerId = `fullscreen-${currentIndex}`;
+      const player = playerManager.getPlayer(playerId, true);
+      const video = player?.videoElement;
+      const effectiveDuration = getEffectiveDuration(video);
+      if (video && effectiveDuration > 0) {
+        const finalTime = seekTimeRef.current;
+        video.currentTime = finalTime;
+        progressRefs.current.set(currentIndex, finalTime);
+        setCurrentTime(finalTime);
+      }
+      setDragTime(null);
+    };
+
+    const handleMouseDown = (e: MouseEvent) => {
+      e.stopPropagation();
+      e.preventDefault();
+      const percent = getPercentFromEvent(e.clientX);
+      isDraggingProgressRef.current = true;
+      setIsDragging(true);
+      setShowUI(true);
+      updatePreview(percent);
+
+      const handleMouseMove = (moveEvent: MouseEvent) => {
+        if (!isDraggingProgressRef.current) return;
+        moveEvent.preventDefault();
+        const movePercent = getPercentFromEvent(moveEvent.clientX);
+        updatePreview(movePercent);
+      };
+
+      const handleMouseUp = (upEvent: MouseEvent) => {
+        if (!isDraggingProgressRef.current) return;
+        upEvent.preventDefault();
+        isDraggingProgressRef.current = false;
+        setIsDragging(false);
+        const playerId = `fullscreen-${currentIndex}`;
+        const player = playerManager.getPlayer(playerId, true);
+        const video = player?.videoElement;
+        const effectiveDuration = getEffectiveDuration(video);
+        if (video && effectiveDuration > 0) {
+          const finalTime = seekTimeRef.current;
+          video.currentTime = finalTime;
+          progressRefs.current.set(currentIndex, finalTime);
+          setCurrentTime(finalTime);
+        }
+        setDragTime(null);
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+      };
+
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+    };
+
+    track.addEventListener("touchstart", handleTouchStart, { passive: false });
+    track.addEventListener("touchmove", handleTouchMove, { passive: false });
+    track.addEventListener("touchend", handleTouchEnd, { passive: false });
+    track.addEventListener("touchcancel", handleTouchEnd, { passive: false });
+    track.addEventListener("mousedown", handleMouseDown);
+
+    return () => {
+      track.removeEventListener("touchstart", handleTouchStart);
+      track.removeEventListener("touchmove", handleTouchMove);
+      track.removeEventListener("touchend", handleTouchEnd);
+      track.removeEventListener("touchcancel", handleTouchEnd);
+      track.removeEventListener("mousedown", handleMouseDown);
+    };
+  }, [currentIndex, playerManager, duration]);
 
   const handleSaveVideo = async () => {
     setShowMoreOptions(false);
@@ -1268,6 +1220,33 @@ const MediaFullscreenViewer = ({
     [isMuted, playerManager, releasePlayerAtIndex]
   );
 
+  const activePlayer = playerManager.getPlayer(
+    `fullscreen-${currentIndex}`,
+    true
+  );
+  const activeVideoElement = activePlayer?.videoElement;
+  const progressDuration = getEffectiveDuration(activeVideoElement);
+  const safeProgressDuration = progressDuration > 0 ? progressDuration : 0;
+  const basePercent =
+    safeProgressDuration > 0 ? (currentTime / safeProgressDuration) * 100 : 0;
+  const displayedPercent = Math.max(
+    0,
+    Math.min(
+      100,
+      isDragging && dragTime !== null && safeProgressDuration > 0
+        ? (dragTime / safeProgressDuration) * 100
+        : basePercent
+    )
+  );
+  const displayedTimeValue =
+    isDragging && dragTime !== null ? dragTime : currentTime;
+  const durationLabelValue =
+    progressDuration > 0
+      ? progressDuration
+      : Number.isFinite(duration)
+      ? duration
+      : 0;
+
   if (!isOpen) return null;
 
   return (
@@ -1330,52 +1309,39 @@ const MediaFullscreenViewer = ({
                         <div className="flex items-center gap-3 mb-2 px-4 pb-3">
                           {/* Current Time */}
                           <span className="text-white text-sm min-w-[45px]">
-                            {formatTime(currentTime)}
+                            {formatTime(displayedTimeValue)}
                           </span>
 
-                          {/* Progress Bar with Scrubber */}
+                          {/* Progress Bar with Scrubber - Large touch area for mobile */}
                           <div
-                            className="flex-1 relative h-1 bg-white/20 rounded-full cursor-pointer"
-                            onClick={handleProgressClick}
-                            onMouseDown={handleProgressMouseDown}
-                            onTouchStart={handleProgressTouchStart}
+                            ref={
+                              index === currentIndex ? progressTrackRef : null
+                            }
+                            className="flex-1 relative h-10 cursor-pointer select-none"
+                            style={{ touchAction: "none" }}
                           >
+                            {/* Track background */}
+                            <div className="absolute top-1/2 left-0 right-0 h-1 -translate-y-1/2 bg-white/25 rounded-full pointer-events-none" />
                             {/* Progress Fill */}
                             <div
-                              className="absolute left-0 top-0 h-full bg-purple-500 rounded-full transition-all"
+                              className="absolute top-1/2 left-0 -translate-y-1/2 h-1 bg-purple-500 rounded-full pointer-events-none"
                               style={{
-                                width:
-                                  duration > 0
-                                    ? `${(currentTime / duration) * 100}%`
-                                    : "0%",
+                                width: `${displayedPercent}%`,
                               }}
                             />
-                            {/* Scrubber Indicator */}
+                            {/* Scrubber Indicator - larger for touch */}
                             <div
-                              className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-lg transition-all"
+                              className="absolute top-1/2 -translate-y-1/2 w-5 h-5 bg-white rounded-full shadow-lg pointer-events-none"
                               style={{
-                                left:
-                                  duration > 0
-                                    ? `calc(${
-                                        (isDragging && dragTime !== null
-                                          ? dragTime / duration
-                                          : currentTime / duration) * 100
-                                      }% - 6px)`
-                                    : "-6px",
+                                left: `calc(${displayedPercent}% - 10px)`,
                               }}
                             />
-                            {/* Loading Indicator Overlay */}
-                            {isSeeking && !isVideoReady && (
-                              <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="w-3 h-3 border-2 border-white/50 border-t-white rounded-full animate-spin" />
-                              </div>
-                            )}
                           </div>
 
                           {/* Duration and Mute */}
                           <div className="flex items-center gap-3">
                             <span className="text-white text-sm min-w-[45px]">
-                              {formatTime(duration)}
+                              {formatTime(durationLabelValue)}
                             </span>
                             <button
                               onClick={handleToggleMute}
