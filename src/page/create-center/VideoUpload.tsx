@@ -10,6 +10,7 @@ import {
   useCreatePostsMutation,
   useGetConfigQuery,
   useGetS3Query,
+  useCheckFileHashMutation,
 } from "@/store/api/createCenterApi";
 import TopNav from "@/components/create-center/top-nav";
 import UploadProgress from "@/components/create-center/upload-progress";
@@ -18,6 +19,7 @@ import { setAlertText } from "@/store/slices/profileSlice";
 import { useDispatch } from "react-redux";
 import Info from "@/components/create-center/info";
 import { ReceiptEuroIcon } from "lucide-react";
+import { computeFileHash } from "@/utils/computeFileHash";
 
 const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   // console.log(editPost?.files[0]?.image_url, "editpost");
@@ -58,8 +60,10 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
   const abortController = useRef<any>(null); // Added
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [successEnd, setsuccessEnd] = useState(false);
+  const [fileHashExists, setFileHashExists] = useState(false);
 
   const [createPosts, { isLoading }] = useCreatePostsMutation(); // Use the mutation hook
+  const [checkFileHash] = useCheckFileHashMutation();
 
   const { toast } = useToast();
 
@@ -277,6 +281,26 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
       try {
         // Generate thumbnails for the video - one for video poster and one for cover
         const generatedThumbnail = await generateThumbnail(videoFile);
+
+        const hashedString = await computeFileHash(acceptedFiles[0]);
+        console.log("Hashed String:", hashedString);
+
+        // Check if file hash already exists
+        try {
+          const checkResult = await checkFileHash({
+            file_hash: hashedString,
+            update_id: editPost?.post_id,
+          }).unwrap();
+          console.log("Check Result:", checkResult);
+          setFileHashExists(checkResult?.data?.exists || false);
+          if (checkResult?.data?.exists) {
+            showToastWithLogo("已存在使用该文件的视频，请勿重复上传。", "error");
+          }
+        } catch (error) {
+          console.error("Error checking file hash:", error);
+          // Don't block upload if hash check fails, but log the error
+          setFileHashExists(false);
+        }
 
         // Only set the thumbnail if one doesn't exist yet
         if (!thumbnail) {
@@ -807,6 +831,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
         // Show success message
         showToastWithLogo("视频上传成功！", "success");
         setFiles([]);
+        setFileHashExists(false);
         formData.setContentTitle("");
         formData.setHashtags([]);
         setAgree(false);
@@ -999,7 +1024,10 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
 
                 {!uploading && (
                   <button
-                    onClick={() => setFiles([])}
+                    onClick={() => {
+                      setFiles([]);
+                      setFileHashExists(false);
+                    }}
                     className="upload-progress1"
                     style={{
                       position: "absolute",
@@ -1188,6 +1216,7 @@ const UploadVideos = ({ editPost, seteditPost, refetch }: any) => {
           loading={isLoading}
           agree={agree}
           setAgree={setAgree}
+          fileHashExists={fileHashExists}
         />
       </div>
     </div>

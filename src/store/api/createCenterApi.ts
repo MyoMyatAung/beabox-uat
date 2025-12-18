@@ -149,6 +149,19 @@ export const createCenterApi = createApi({
     getTopList: builder.query({
       query: () => convertToSecureUrl(`/top/account/list`),
     }),
+    checkFileHash: builder.mutation({
+      query: ({ file_hash, update_id }: { file_hash: string; update_id?: string }) => {
+        const payload: any = { file_hash };
+        if (update_id) {
+          payload.update_id = update_id;
+        }
+        return {
+          url: convertToSecureUrl("/post/check-file-hash"),
+          method: "POST",
+          body: convertToSecurePayload(payload),
+        };
+      },
+    }),
   }),
 });
 
@@ -170,4 +183,5 @@ export const {
   useRestorePostMutation,
   useDeletePostMutation,
   useMoveToRecycleMutation,
+  useCheckFileHashMutation,
 } = createCenterApi;

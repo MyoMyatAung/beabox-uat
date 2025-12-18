@@ -21,6 +21,7 @@ const UploadFrom = ({
   loading,
   agree,
   setAgree,
+  fileHashExists,
 }: any) => {
   const { data } = useGetConfigQuery({});
   const link = data?.data?.website_upload_link;
@@ -192,10 +193,11 @@ const UploadFrom = ({
         <button
           onClick={handleSubmit}
           disabled={
-            agree && contentTitle?.length > 0 && hashtags?.length ? false : true
+            fileHashExists ||
+            !(agree && contentTitle?.length > 0 && hashtags?.length)
           }
           className={`text-[16px] font-semibold ${
-            agree && contentTitle?.length > 0 && hashtags?.length
+            !fileHashExists && agree && contentTitle?.length > 0 && hashtags?.length
               ? "bg-gradient-to-b from-[#FFB2E0] to-[#CD3EFF] text-white"
               : "bg-[#FFFFFF0A] text-[#444444]"
           }    w-full rounded-[16px] py-3`}
