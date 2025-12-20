@@ -74,7 +74,7 @@ const PostDetail = () => {
 
   const currentPostId = post?.id ?? postId ?? "";
   const isMuted = useSelector(
-    (state: RootState) => state.gossipMute?.mutedByPostId[currentPostId] ?? true
+    (state: RootState) => state.gossipMute?.mutedByPostId[currentPostId] ?? false
   );
   const [isFollowing, setIsFollowing] = useState(
     post?.user?.is_following ?? false

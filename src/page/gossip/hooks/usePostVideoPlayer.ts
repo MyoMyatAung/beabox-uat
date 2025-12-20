@@ -73,7 +73,7 @@ export function usePostVideoPlayer(
 
   // Get mute state from global Redux store
   const isMuted = useSelector(
-    (state: RootState) => state.gossipMute?.mutedByPostId[postId] ?? true
+    (state: RootState) => state.gossipMute?.mutedByPostId[postId] ?? false
   );
 
   // Store mute state in ref to avoid recreating observer when mute changes
