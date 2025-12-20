@@ -111,7 +111,7 @@ export function useGossipPosts({
                 type: item.type === "video" ? "video" : "image",
                 url: mediaUrl,
                 download_url: item.download_url,
-                thumbnail_url: (item as any).thumbnail_url,
+                thumbnail_url: (item as any).thumbnail_url || (item as any).thumbnail,
               };
             })
         : [];
