@@ -9,17 +9,12 @@
  * This hook encapsulates all follow-related business logic, making it
  * reusable and testable.
  */
-
-import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
 import { useFollowGossipUserMutation } from "../services/gossipSlice";
 
 /**
  * Hook return type for post follow functionality.
  */
 export interface UsePostFollowReturn {
-  /** Whether the user is currently following the post author */
-  isFollowing: boolean;
   /** Whether a follow/unfollow operation is in progress */
   isLoading: boolean;
   /** Handler to toggle follow status */
@@ -47,16 +42,10 @@ export interface UsePostFollowReturn {
 export function usePostFollow(
   userId: string,
   initialFollowing: boolean | undefined,
-  onAuthenticated: () => boolean
+  onAuthenticated: () => boolean,
+  onFollowSuccess: () => void
 ): UsePostFollowReturn {
-  const dispatch = useDispatch();
-  const [isFollowing, setIsFollowing] = useState(initialFollowing || false);
   const [followGossipUser, { isLoading }] = useFollowGossipUserMutation();
-
-  // Sync with prop changes (e.g., when post data updates)
-  useEffect(() => {
-    setIsFollowing(initialFollowing || false);
-  }, [initialFollowing]);
 
   /**
    * Handles follow/unfollow toggle.
@@ -71,7 +60,7 @@ export function usePostFollow(
     try {
       await followGossipUser({
         follow_user_id: userId,
-        status: isFollowing ? "unfollow" : "follow",
+        status: initialFollowing ? "unfollow" : "follow",
       }).unwrap();
 
       // Show success message
@@ -83,7 +72,7 @@ export function usePostFollow(
       // );
 
       // Update local state
-      setIsFollowing((prev) => !prev);
+      onFollowSuccess();
     } catch (error) {
       // Error handling is done by RTK Query
       console.error("Failed to toggle follow:", error);
@@ -91,7 +80,6 @@ export function usePostFollow(
   };
 
   return {
-    isFollowing,
     isLoading,
     handleFollow,
   };

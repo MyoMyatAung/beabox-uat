@@ -116,13 +116,13 @@ const GossipPost = ({ post }: GossipPostProps) => {
   // POST ACTIONS - Follow
   // ============================================================================
   const {
-    isFollowing,
     isLoading: isFollowLoading,
     handleFollow,
   } = usePostFollow(
     post.user?.id?.toString() || "",
     post.user.is_following,
-    ensureAuthenticated
+    ensureAuthenticated,
+    () => setShowFollowToast(true)
   );
 
   // ============================================================================
@@ -252,7 +252,6 @@ const GossipPost = ({ post }: GossipPostProps) => {
   const handleFollowWithClose = async (): Promise<void> => {
     closeProfilePopover();
     await handleFollow();
-    setShowFollowToast(true);
   };
 
   /**
@@ -442,7 +441,7 @@ const GossipPost = ({ post }: GossipPostProps) => {
 
       <FollowSuccessToast
         show={showFollowToast}
-        isFollowed={isFollowing}
+        isFollowed={post.user.is_following}
         onHide={() => setShowFollowToast(false)}
       />
     </div>
