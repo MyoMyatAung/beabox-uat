@@ -25,11 +25,10 @@
  * - Optimistic updates for like/follow actions
  */
 
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, memo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { User, Check, Plus } from "lucide-react";
-import MediaFullscreenViewer from "./MediaFullscreenViewer";
 import ImageGrid from "./ImageGrid";
 import PostContent from "./PostContent";
 import PostActions from "./PostActions";
@@ -49,6 +48,7 @@ import { usePostFollow } from "../hooks/usePostFollow";
 import { usePostVideoPlayer } from "../hooks/usePostVideoPlayer";
 import { usePostPopovers } from "../hooks/usePostPopovers";
 import FollowSuccessToast from "./FollowSuccessToast";
+import { openFullScreenGossip } from "@/store/slices/fullScreenGossipSlice";
 
 // ============================================================================
 // TYPES
@@ -155,12 +155,6 @@ const GossipPost = ({ post }: GossipPostProps) => {
   } = usePostPopovers();
 
   // ============================================================================
-  // FULLSCREEN MEDIA VIEWER
-  // ============================================================================
-  const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
-  const [fullscreenIndex, setFullscreenIndex] = useState(0);
-
-  // ============================================================================
   // SHARE SHEET
   // ============================================================================
   const [showShareSheet, setShowShareSheet] = useState(false);
@@ -241,10 +235,10 @@ const GossipPost = ({ post }: GossipPostProps) => {
   /**
    * Handles profile click - navigates to user profile page.
    */
-  const handlePersonalHomepage = (): void => {
+  const handlePersonalHomepage = useCallback((): void => {
     closeProfilePopover();
     navigate(`/user/${post.user.id}`);
-  };
+  }, [closeProfilePopover, navigate, post.user.id]);
 
   /**
    * Handles follow action with popover closure.
@@ -264,18 +258,17 @@ const GossipPost = ({ post }: GossipPostProps) => {
       if (isFirstVideo && index === 0) {
         releasePlayer();
       }
-      setFullscreenIndex(index);
-      setIsFullscreenOpen(true);
+      dispatch(openFullScreenGossip({ index, isOpen: true, post }));
     },
-    [isFirstVideo, releasePlayer]
+    [isFirstVideo, releasePlayer, dispatch, post]
   );
 
   /**
    * Handles post content/overlay click - navigates to post detail.
    */
-  const handlePostClick = (): void => {
+  const handlePostClick = useCallback((): void => {
     navigate(`/gossip/post/${post.post_id}`, { state: { post } });
-  };
+  }, [navigate, post.post_id]);
 
   return (
     <div
@@ -410,28 +403,6 @@ const GossipPost = ({ post }: GossipPostProps) => {
         />
       </div>
 
-      {/* Fullscreen Media Viewer */}
-      <MediaFullscreenViewer
-        media={post.media}
-        initialIndex={fullscreenIndex}
-        isOpen={isFullscreenOpen}
-        onClose={() => setIsFullscreenOpen(false)}
-        initialMuted={isMuted}
-        postData={{
-          post_id: post.post_id,
-          like_count: likeCount,
-          comment_count: post.comment_count,
-          share_count: post.share_count,
-          is_liked: isLiked,
-          share_link: post.share_link,
-          onLike: handleLike,
-          onComment: () => {},
-          onShare: () => {
-            // TODO: Implement share functionality
-          },
-        }}
-      />
-
       {/* Share Bottom Sheet */}
       <ShareSheet
         isOpen={showShareSheet}
@@ -448,4 +419,12 @@ const GossipPost = ({ post }: GossipPostProps) => {
   );
 };
 
-export default GossipPost;
+export default memo(GossipPost, (prevProps, nextProps) => {
+  // Return true if props are equal (skip re-render)
+  return (
+    prevProps.post.post_id === nextProps.post.post_id &&
+    prevProps.post.is_liked === nextProps.post.is_liked &&
+    prevProps.post.like_count === nextProps.post.like_count &&
+    prevProps.post.user.is_following === nextProps.post.user.is_following
+  );
+});

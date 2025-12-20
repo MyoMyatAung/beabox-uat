@@ -41,7 +41,7 @@ const GossipTopNavbar = ({
     <AnimatePresence>
       {!hideBar && !hideNew && (
         <motion.div
-          className="px-4 z-[9999] max-w-[480px] mx-auto"
+          className="px-4 z-[1898] max-w-[480px] mx-auto"
           initial={{ y: "-100%", opacity: 0 }}
           animate={{ y: "0", opacity: 1 }}
           exit={{ y: "-100%", opacity: 0 }}

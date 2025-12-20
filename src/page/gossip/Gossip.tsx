@@ -40,10 +40,11 @@
  * @see constants.ts for configuration values
  */
 
-import { useEffect, useMemo, useCallback } from "react";
-import { useDispatch } from "react-redux";
+import { useEffect, useMemo, useCallback, lazy, Suspense, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { sethideNew } from "@/page/home/services/hideNewSlice";
 import { SCROLL_CONTAINER_ID } from "./constants";
+const MediaFullscreenViewer = lazy(() => import("./components/MediaFullscreenViewer"));
 
 // Hooks
 import {
@@ -61,7 +62,10 @@ import { GossipEmptyState } from "./components/GossipEmptyState";
 import { GossipPostList } from "./components/GossipPostList";
 
 // Types
-import type { NavbarTab } from "./types";
+import type { GossipPostData, NavbarTab } from "./types";
+import LoadingSpinner from "./components/LoadingSpinner";
+import { RootState } from "@/store/store";
+import { closeFullScreenGossip } from "@/store/slices/fullScreenGossipSlice";
 
 /**
  * Main Gossip page component.
@@ -71,6 +75,7 @@ import type { NavbarTab } from "./types";
  */
 const Gossip = () => {
   const dispatch = useDispatch();
+  const { isOpen, index, post } = useSelector((state: RootState) => state.fullScreenGossip);
 
   // ============================================================================
   // HOOKS: Tabs Management
@@ -258,48 +263,73 @@ const Gossip = () => {
   // RENDER
   // ============================================================================
   return (
-    <div className="w-full h-svh bg-[#16131C] overflow-hidden">
-      {/* Header: Category Tab Navigation */}
-      <GossipTopNavbar
-        tabs={navbarTabs}
-        activeTab={activeTab}
-        onTabClick={handleTabClick}
-      />
+    <>
+      <div className="w-full h-svh bg-[#16131C] overflow-hidden">
+        {/* Header: Category Tab Navigation */}
+        <GossipTopNavbar
+          tabs={navbarTabs}
+          activeTab={activeTab}
+          onTabClick={handleTabClick}
+        />
 
-      {/* Content Area */}
-      {showSkeleton ? (
-        // Loading State: Skeleton placeholders
-        <PostSkeleton />
-      ) : (
-        // Scrollable Content Container
-        <div
-          id={SCROLL_CONTAINER_ID}
-          className="w-full h-[calc(100vh-136px)] bg-black overflow-y-auto pb-4"
-        >
-          {/* Error State: Display error with optional retry */}
-          {showError && (
-            <GossipErrorState
-              message={errorMessage!}
-              showRetry={hasCategoryId}
-              onRetry={refetch}
-            />
-          )}
+        {/* Content Area */}
+        {showSkeleton ? (
+          // Loading State: Skeleton placeholders
+          <PostSkeleton />
+        ) : (
+          // Scrollable Content Container
+          <div
+            id={SCROLL_CONTAINER_ID}
+            className="w-full h-[calc(100vh-136px)] bg-black overflow-y-auto pb-4"
+          >
+            {/* Error State: Display error with optional retry */}
+            {showError && (
+              <GossipErrorState
+                message={errorMessage!}
+                showRetry={hasCategoryId}
+                onRetry={refetch}
+              />
+            )}
 
-          {/* Empty State: No posts available */}
-          {showEmpty && <GossipEmptyState />}
+            {/* Empty State: No posts available */}
+            {showEmpty && <GossipEmptyState />}
 
-          {/* Posts List: Infinite scroll with posts */}
-          {showPosts && (
-            <GossipPostList
-              posts={posts}
-              hasMore={hasMore}
-              onLoadMore={loadMore}
-              scrollContainerId={SCROLL_CONTAINER_ID}
-            />
-          )}
-        </div>
+            {/* Posts List: Infinite scroll with posts */}
+            {showPosts && (
+              <GossipPostList
+                posts={posts}
+                hasMore={hasMore}
+                onLoadMore={loadMore}
+                scrollContainerId={SCROLL_CONTAINER_ID}
+              />
+            )}
+          </div>
+        )}
+      </div>
+      {/* Lazy Loaded Fullscreen Media Viewer */}
+      {isOpen && (
+        <Suspense fallback={<LoadingSpinner />}>
+          <MediaFullscreenViewer
+            media={post?.media || []}
+            initialIndex={index}
+            isOpen={isOpen}
+            onClose={() => dispatch(closeFullScreenGossip())}
+            initialMuted={false}
+            postData={{
+              post_id: post?.post_id,
+              like_count: post?.like_count || 0,
+              comment_count: post?.comment_count || 0,
+              share_count: post?.share_count || 0,
+              is_liked: post?.is_liked || false,
+              share_link: post?.share_link || "",
+              onLike: () => { },
+              onComment: () => { },
+              onShare: () => { },
+            }}
+          />
+        </Suspense>
       )}
-    </div>
+    </>
   );
 };
 

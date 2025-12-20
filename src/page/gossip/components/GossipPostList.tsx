@@ -22,6 +22,8 @@ import GossipPost from "./GossipPost";
 import LoadingSpinner from "./LoadingSpinner";
 import { SCROLL_THRESHOLD } from "../constants";
 import type { GossipPostListProps } from "../types";
+import { useRef } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 
 /**
  * Infinite scroll post list component.
@@ -44,23 +46,86 @@ export const GossipPostList = ({
   hasMore,
   onLoadMore,
   scrollContainerId,
-}: GossipPostListProps) => (
-  <InfiniteScroll
-    dataLength={posts.length}
-    next={onLoadMore}
-    hasMore={hasMore}
-    loader={<LoadingSpinner />}
-    scrollableTarget={scrollContainerId}
-    scrollThreshold={SCROLL_THRESHOLD}
-    style={{ overflow: "visible" }}
-  >
-    {/* Centered content container with max width */}
-    <div className="w-full max-w-[480px] mx-auto">
-      {posts.map((post) => (
-        <GossipPost key={post.post_id} post={post} />
-      ))}
+}: GossipPostListProps) => {
+  const parentRef = useRef<HTMLDivElement>(null);
+
+  const virtualizer = useVirtualizer({
+    count: posts.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 500,
+    overscan: 3,
+  });
+
+  const items = virtualizer.getVirtualItems();
+
+  // const lastItem = items[items.length - 1];
+  // if (lastItem && lastItem.index >= posts.length && hasMore) {
+  //   // console.log("lastItem: ", lastItem);
+  //   // console.log("hasMore: ", hasMore);
+  //   // console.log("lastItem.index: ", lastItem.index);
+  //   // console.log("posts.length: ", posts.length);
+  //   // console.log("lastItem.index >= posts.length - 3: ", lastItem.index >= posts.length - 3);
+  //   onLoadMore();
+  // }
+
+  return (
+    <div ref={parentRef} className="w-full max-w-[480px] mx-auto bg-black pb-4">
+      <div
+        style={{
+          height: `${virtualizer.getTotalSize()}px`,
+          position: "relative",
+        }}
+      >
+        {items.map((virtualRow) => (
+          <div
+            key={posts[virtualRow.index].post_id}
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              transform: `translateY(${virtualRow.start}px)`,
+            }}
+            ref={virtualizer.measureElement}
+            data-index={virtualRow.index}
+          >
+            <GossipPost post={posts[virtualRow.index]} />
+          </div>
+        ))}
+      </div>
+      {/* IntersectionObserver trigger for infinite scroll */}
+      {hasMore && (
+        <>
+          <div
+            id="infinite-scroll-sentinel"
+            ref={node => {
+              if (!node) return;
+              const observer = new window.IntersectionObserver(
+                entries => {
+                  if (entries[0].isIntersecting) {
+                    console.log("IntersectionObserver triggered");
+                    onLoadMore();
+                  }
+                },
+                {
+                  root: document.getElementById(scrollContainerId) || null,
+                  rootMargin: "300px",
+                  threshold: 0.1,
+                }
+              );
+              observer.observe(node);
+              // Cleanup function
+              return () => {
+                observer.disconnect();
+              };
+            }}
+            style={{ height: 1 }}
+          />
+          <LoadingSpinner />
+        </>
+      )}
     </div>
-  </InfiniteScroll>
-);
+  )
+};
 
 export default GossipPostList;

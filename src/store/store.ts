@@ -53,6 +53,7 @@ import pageSlice1 from "@/page/home/services/pageSlice1";
 import activeSlice1 from "@/page/home/services/activeSlice1";
 import passwordSlice from "@/page/home/services/passwordSlice";
 import scrollRestrictionSlice from "./slices/scrollRestrictionSlice";
+import fullScreenGossipSlice from "./slices/fullScreenGossipSlice";
 
 const sessionStorageWrapper: Storage = {
   getItem: (key: string) => {
@@ -94,6 +95,7 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   app: appSlice,
+  fullScreenGossip: fullScreenGossipSlice,
   count: counterSlice,
   [homeApi.reducerPath]: homeApi.reducer,
   profile: profileSlice,
