@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import HomeSVG from "@/assets/icons/Home.svg";
 import Home1SVG from "@/assets/icons/Home1.svg";
-import GossipSVG from "@/assets/icons/Gossip.svg";
+import GossipInactiveSVG from "@/assets/icons/GossipInactive.svg";
 import GossipActiveSVG from "@/assets/icons/GossipActive.svg";
 import ProfileSVG from "@/assets/icons/Profile.svg";
 import Profile1SVG from "@/assets/icons/Profile1.svg";
@@ -28,7 +28,7 @@ const navItems = [
   {
     name: "大瓜",
     selectedIcon: GossipActiveSVG,
-    icon: GossipSVG,
+    icon: GossipInactiveSVG,
     href: "/gossip",
   },
   {

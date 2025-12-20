@@ -380,7 +380,7 @@ const GossipPost = ({ post }: GossipPostProps) => {
       </div>
 
       {/* Content Section */}
-      <div className="pl-14">
+      <div>
         {/* Post Content Text */}
         <PostContent content={post.content} onClick={handlePostClick} />
 
@@ -441,7 +441,7 @@ const GossipPost = ({ post }: GossipPostProps) => {
 
       <FollowSuccessToast
         show={showFollowToast}
-        isFollowed={post.user.is_following}
+        isFollowed={post.user.is_following || false}
         onHide={() => setShowFollowToast(false)}
       />
     </div>

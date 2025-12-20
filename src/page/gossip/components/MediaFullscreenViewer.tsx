@@ -794,20 +794,12 @@ const MediaFullscreenViewer = ({
       .padStart(2, "0")}`;
   };
 
-  const handleMediaClick = () => {
+  const handlePlayPause = () => {
     if (isVideo) {
       const playerId = `fullscreen-${currentIndex}`;
       const player = playerManager.getPlayer(playerId, true);
       const currentVideo = player?.videoElement;
       if (!currentVideo) return;
-
-      // Always bring UI back when tapping the video
-      setShowUI(true);
-      if (hideUITimerRef.current) {
-        clearTimeout(hideUITimerRef.current);
-        hideUITimerRef.current = null;
-      }
-
       if (currentVideo.paused) {
         currentVideo.play().catch(() => {
           /* ignore autoplay errors */
@@ -821,10 +813,41 @@ const MediaFullscreenViewer = ({
         setIsPlaying(false);
         // Keep UI visible while paused so user can see controls
       }
-    } else {
-      // Toggle UI visibility for image
-      setShowUI((prev) => !prev);
     }
+  };
+
+  const handleMediaClick = () => {
+    // if (isVideo) {
+    //   const playerId = `fullscreen-${currentIndex}`;
+    //   const player = playerManager.getPlayer(playerId, true);
+    //   const currentVideo = player?.videoElement;
+    //   if (!currentVideo) return;
+
+    //   // Always bring UI back when tapping the video
+    //   setShowUI(true);
+    //   if (hideUITimerRef.current) {
+    //     clearTimeout(hideUITimerRef.current);
+    //     hideUITimerRef.current = null;
+    //   }
+
+    //   // if (currentVideo.paused) {
+    //   //   currentVideo.play().catch(() => {
+    //   //     /* ignore autoplay errors */
+    //   //   });
+    //   //   setIsPlaying(true);
+    //   //   hideUITimerRef.current = setTimeout(() => {
+    //   //     setShowUI(false);
+    //   //   }, 2000);
+    //   // } else {
+    //   //   currentVideo.pause();
+    //   //   setIsPlaying(false);
+    //   //   // Keep UI visible while paused so user can see controls
+    //   // }
+    // } else {
+    //   // Toggle UI visibility for image
+    //   setShowUI((prev) => !prev);
+    // }
+    setShowUI((prev) => !prev);
   };
 
   const handleToggleMute = (e: React.MouseEvent) => {
@@ -1415,7 +1438,7 @@ const MediaFullscreenViewer = ({
 
               {/* Play/Pause Overlay for Video */}
               {isCurrentVideo && showUI && isVideoReady && (
-                <div className="absolute inset-0 flex items-center justify-center">
+                <div onClick={handlePlayPause} className="absolute inset-0 flex items-center justify-center">
                   {!isPlaying ? (
                     <div className="z-50 w-16 h-16 bg-black/50 rounded-full flex items-center justify-center">
                       <svg

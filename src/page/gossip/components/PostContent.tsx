@@ -39,7 +39,7 @@ export default function PostContent({
   const shouldExpand = content.length > expandThreshold;
 
   return (
-    <div className="mb-3">
+    <div className="mb-3 px-3">
       <p
         onClick={onClick}
         className={`text-white text-sm leading-relaxed cursor-pointer transition-colors ${

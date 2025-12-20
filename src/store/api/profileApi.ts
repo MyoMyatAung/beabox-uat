@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { convertToSecurePayload, convertToSecureUrl } from "@/lib/encrypt";
 import { decryptWithAes } from "@/lib/decrypt";
 import { getDeviceInfo } from "@/lib/deviceInfo";
+import { gossipExternalApi } from "@/page/gossip/services/gossipSlice";
 
 type GetNotificationParams = {
   type: string;
@@ -255,6 +256,14 @@ export const profileApi = createApi({
         method: "Post",
         body: convertToSecurePayload({ follow_user_id, status }),
       }),
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(gossipExternalApi.util.invalidateTags(["gossipPosts"]));
+        } catch (error) {
+          console.error("Error invalidating gossip posts:", error);
+        }
+      },
     }),
     getNoti: builder.query<any, string | GetNotificationParams>({
       query: (args) => {
