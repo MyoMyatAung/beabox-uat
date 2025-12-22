@@ -66,6 +66,10 @@ import type { GossipPostData, NavbarTab } from "./types";
 import LoadingSpinner from "./components/LoadingSpinner";
 import { RootState } from "@/store/store";
 import { closeFullScreenGossip } from "@/store/slices/fullScreenGossipSlice";
+import { useAuthentication } from "./hooks/useAuthentication";
+import { usePostLike } from "./hooks/usePostLike";
+import ShareSheet from "./components/ShareSheet";
+import { closeShareGossip } from "@/store/slices/shareGossipSlice";
 
 /**
  * Main Gossip page component.
@@ -76,6 +80,26 @@ import { closeFullScreenGossip } from "@/store/slices/fullScreenGossipSlice";
 const Gossip = () => {
   const dispatch = useDispatch();
   const { isOpen, index, post } = useSelector((state: RootState) => state.fullScreenGossip);
+  const { isOpen: isShareOpen, shareUrl } = useSelector((state: RootState) => state.shareGossip);
+
+    // ============================================================================
+  // AUTHENTICATION
+  // ============================================================================
+  const { ensureAuthenticated } = useAuthentication();
+
+  // ============================================================================
+  // POST ACTIONS - Like
+  // ============================================================================
+  const {
+    handleLike,
+    likeCount,
+    isLiked,
+  } = usePostLike(
+    post?.post_id ?? "",
+    post?.is_liked ?? false,
+    post?.like_count ?? 0,
+    ensureAuthenticated
+  );
 
   // ============================================================================
   // HOOKS: Tabs Management
@@ -99,7 +123,6 @@ const Gossip = () => {
     page,
     hasMore,
     isInitialLoading,
-    isFetching,
     error: postsError,
     loadMore,
     refetch,
@@ -317,15 +340,28 @@ const Gossip = () => {
             initialMuted={false}
             postData={{
               post_id: post?.post_id,
-              like_count: post?.like_count || 0,
+              like_count: likeCount,
               comment_count: post?.comment_count || 0,
               share_count: post?.share_count || 0,
-              is_liked: post?.is_liked || false,
+              is_liked: isLiked,
               share_link: post?.share_link || "",
-              onLike: () => { },
+              onLike: () => {
+                console.log("onLike");
+                handleLike();
+              },
               onComment: () => { },
               onShare: () => { },
             }}
+          />
+        </Suspense>
+      )}
+
+      {isShareOpen && (
+        <Suspense fallback={<LoadingSpinner />}>
+          <ShareSheet
+            isOpen={isShareOpen}
+            shareUrl={shareUrl}
+            onClose={() => dispatch(closeShareGossip())}
           />
         </Suspense>
       )}

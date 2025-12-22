@@ -49,6 +49,7 @@ import { usePostVideoPlayer } from "../hooks/usePostVideoPlayer";
 import { usePostPopovers } from "../hooks/usePostPopovers";
 import FollowSuccessToast from "./FollowSuccessToast";
 import { openFullScreenGossip } from "@/store/slices/fullScreenGossipSlice";
+import { openShareGossip } from "@/store/slices/shareGossipSlice";
 
 // ============================================================================
 // TYPES
@@ -264,6 +265,14 @@ const GossipPost = ({ post }: GossipPostProps) => {
   );
 
   /**
+   * Handles share click - opens share sheet.
+   * Dispatches openShareGossip action to open share sheet.
+   */
+  const handleShareClick = useCallback((): void => {
+    dispatch(openShareGossip({ isOpen: true, shareUrl: post.share_link }));
+  }, [dispatch, post.share_link]);
+
+  /**
    * Handles post content/overlay click - navigates to post detail.
    */
   const handlePostClick = useCallback((): void => {
@@ -399,16 +408,9 @@ const GossipPost = ({ post }: GossipPostProps) => {
           shareCount={post.share_count}
           timeAgo={post.time_ago}
           onLike={handleLike}
-          onShare={() => setShowShareSheet(true)}
+          onShare={handleShareClick}
         />
       </div>
-
-      {/* Share Bottom Sheet */}
-      <ShareSheet
-        isOpen={showShareSheet}
-        shareUrl={post.share_link}
-        onClose={() => setShowShareSheet(false)}
-      />
 
       <FollowSuccessToast
         show={showFollowToast}

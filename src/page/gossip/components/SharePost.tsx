@@ -27,7 +27,6 @@ function SharePost({
     // Prevent any event bubbling that might interfere with modal state
     e.preventDefault();
     e.stopPropagation();
-
     // Clear any pending WeChat timeout to prevent unwanted modal closure
     if (wechatTimeoutRef.current) {
       clearTimeout(wechatTimeoutRef.current);
@@ -36,7 +35,7 @@ function SharePost({
 
     navigator.clipboard.writeText(shareUrl);
     setIsCopied(true);
-
+    onClose();
     setTimeout(() => {
       setIsCopied(false);
     }, 3000);

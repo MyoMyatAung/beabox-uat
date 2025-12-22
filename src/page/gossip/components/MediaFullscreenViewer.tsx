@@ -312,9 +312,9 @@ const MediaFullscreenViewer = ({
         const fallbackTotal = postData?.comment_count ?? 0;
         setTotalComments(
           payload.total ??
-            payload.meta?.total ??
-            payload.pagination?.total ??
-            fallbackTotal
+          payload.meta?.total ??
+          payload.pagination?.total ??
+          fallbackTotal
         );
       }
     } catch (err) {
@@ -475,19 +475,19 @@ const MediaFullscreenViewer = ({
     commentSectionProps ||
     (currentPostId
       ? {
-          comments,
-          commentCount: totalComments,
-          postId: currentPostId,
-          onCommentSubmit: handleCommentSubmit,
-          onReplySubmit: handleReplySubmit,
-          onLikeComment: handleLikeComment,
-          onReportComment: handleReportComment,
-          showInput: true,
-          loading: commentsLoading,
-          error: commentsError,
-          highlightCommentId,
-          onHighlightHandled: () => setHighlightCommentId(null),
-        }
+        comments,
+        commentCount: totalComments,
+        postId: currentPostId,
+        onCommentSubmit: handleCommentSubmit,
+        onReplySubmit: handleReplySubmit,
+        onLikeComment: handleLikeComment,
+        onReportComment: handleReportComment,
+        showInput: true,
+        loading: commentsLoading,
+        error: commentsError,
+        highlightCommentId,
+        onHighlightHandled: () => setHighlightCommentId(null),
+      }
       : undefined);
 
   useEffect(() => {
@@ -879,10 +879,10 @@ const MediaFullscreenViewer = ({
     return duration > 0
       ? duration
       : seekableEnd > 0
-      ? seekableEnd
-      : videoDuration > 0
-      ? videoDuration
-      : 0;
+        ? seekableEnd
+        : videoDuration > 0
+          ? videoDuration
+          : 0;
   };
 
   // Progress bar touch/mouse handlers - similar to Player.tsx
@@ -1045,10 +1045,10 @@ const MediaFullscreenViewer = ({
       extension = isM3u8
         ? ".m3u8"
         : isMp4
-        ? ".mp4"
-        : currentMedia.type === "video"
-        ? ".mp4"
-        : ".jpg";
+          ? ".mp4"
+          : currentMedia.type === "video"
+            ? ".mp4"
+            : ".jpg";
     }
 
     try {
@@ -1267,8 +1267,8 @@ const MediaFullscreenViewer = ({
     progressDuration > 0
       ? progressDuration
       : Number.isFinite(duration)
-      ? duration
-      : 0;
+        ? duration
+        : 0;
 
   if (!isOpen) return null;
 
@@ -1326,60 +1326,61 @@ const MediaFullscreenViewer = ({
                       className="w-full h-full pointer-events-none relative z-10"
                       ref={(el) => attachVideoPlayer(index, item, el)}
                     />
-                    {showUI && (
-                      <div className="absolute bottom-5 w-full z-10">
-                        {/* Progress Bar with Time and Mute */}
-                        <div className="flex items-center gap-3 mb-2 px-4 pb-3">
-                          {/* Current Time */}
-                          <span className="text-white text-sm min-w-[45px]">
-                            {formatTime(displayedTimeValue)}
-                          </span>
+                    <div className={cn(
+                      "absolute bottom-5 w-full z-10 transition-opacity",
+                      showUI ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+                    )}>
+                      {/* Progress Bar with Time and Mute */}
+                      <div className="flex items-center gap-3 mb-2 px-4 pb-3">
+                        {/* Current Time */}
+                        <span className="text-white text-sm min-w-[45px]">
+                          {formatTime(displayedTimeValue)}
+                        </span>
 
-                          {/* Progress Bar with Scrubber - Large touch area for mobile */}
+                        {/* Progress Bar with Scrubber - Large touch area for mobile */}
+                        <div
+                          ref={
+                            index === currentIndex ? progressTrackRef : null
+                          }
+                          className="flex-1 relative h-10 cursor-pointer select-none"
+                          style={{ touchAction: "none" }}
+                        >
+                          {/* Track background */}
+                          <div className="absolute top-1/2 left-0 right-0 h-1 -translate-y-1/2 bg-white/25 rounded-full pointer-events-none" />
+                          {/* Progress Fill */}
                           <div
-                            ref={
-                              index === currentIndex ? progressTrackRef : null
-                            }
-                            className="flex-1 relative h-10 cursor-pointer select-none"
-                            style={{ touchAction: "none" }}
-                          >
-                            {/* Track background */}
-                            <div className="absolute top-1/2 left-0 right-0 h-1 -translate-y-1/2 bg-white/25 rounded-full pointer-events-none" />
-                            {/* Progress Fill */}
-                            <div
-                              className="absolute top-1/2 left-0 -translate-y-1/2 h-1 bg-purple-500 rounded-full pointer-events-none"
-                              style={{
-                                width: `${displayedPercent}%`,
-                              }}
-                            />
-                            {/* Scrubber Indicator - larger for touch */}
-                            <div
-                              className="absolute top-1/2 -translate-y-1/2 w-5 h-5 bg-white rounded-full shadow-lg pointer-events-none"
-                              style={{
-                                left: `calc(${displayedPercent}% - 10px)`,
-                              }}
-                            />
-                          </div>
+                            className="absolute top-1/2 left-0 -translate-y-1/2 h-1 bg-purple-500 rounded-full pointer-events-none"
+                            style={{
+                              width: `${displayedPercent}%`,
+                            }}
+                          />
+                          {/* Scrubber Indicator - larger for touch */}
+                          <div
+                            className="absolute top-1/2 -translate-y-1/2 w-5 h-5 bg-white rounded-full shadow-lg pointer-events-none"
+                            style={{
+                              left: `calc(${displayedPercent}% - 10px)`,
+                            }}
+                          />
+                        </div>
 
-                          {/* Duration and Mute */}
-                          <div className="flex items-center gap-3">
-                            <span className="text-white text-sm min-w-[45px]">
-                              {formatTime(durationLabelValue)}
-                            </span>
-                            <button
-                              onClick={handleToggleMute}
-                              className="w-8 h-8 flex items-center justify-center text-white hover:opacity-70 transition-opacity"
-                            >
-                              {isMuted ? (
-                                <VolumeX size={18} />
-                              ) : (
-                                <Volume2 size={18} />
-                              )}
-                            </button>
-                          </div>
+                        {/* Duration and Mute */}
+                        <div className="flex items-center gap-3">
+                          <span className="text-white text-sm min-w-[45px]">
+                            {formatTime(durationLabelValue)}
+                          </span>
+                          <button
+                            onClick={handleToggleMute}
+                            className="w-8 h-8 flex items-center justify-center text-white hover:opacity-70 transition-opacity"
+                          >
+                            {isMuted ? (
+                              <VolumeX size={18} />
+                            ) : (
+                              <Volume2 size={18} />
+                            )}
+                          </button>
                         </div>
                       </div>
-                    )}
+                    </div>
                     {!isVideoReady && (
                       <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/60 z-20">
                         <div className="w-10 h-10 border-2 border-white/25 border-t-white rounded-full animate-spin" />
