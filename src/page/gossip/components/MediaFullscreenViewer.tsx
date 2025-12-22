@@ -26,7 +26,7 @@ import LoginDrawer from "@/components/profile/auth/login-drawer";
 import { useNavigate } from "react-router-dom";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 import { decryptImage } from "@/utils/imageDecrypt";
-import { setPostMuted } from "../services/gossipMuteSlice";
+import { setMuteAll, setPostMuted } from "../services/gossipMuteSlice";
 interface MediaItem {
   id: string;
   type: "image" | "video";
@@ -109,11 +109,11 @@ const MediaFullscreenViewer = ({
 
   // Get muted state from global state if post_id is available, otherwise use initialMuted
   const globalMutedState = useSelector((state: RootState) => {
-    const postId = postData?.post_id;
-    if (postId) {
-      return state.gossipMute?.mutedByPostId[postId] ?? initialMuted;
-    }
-    return initialMuted;
+    // const postId = postData?.post_id;
+    // if (postId) {
+    //   return state.gossipMute?.mutedByPostId[postId] ?? initialMuted;
+    // }
+    return state.gossipMute?.muteAll ?? initialMuted;
   });
 
   // ============================================================================
@@ -852,19 +852,21 @@ const MediaFullscreenViewer = ({
 
   const handleToggleMute = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const playerId = `fullscreen-${currentIndex}`;
-    const player = playerManager.getPlayer(playerId, true);
-    if (player?.videoElement) {
-      const newMuted = !player.videoElement.muted;
-      player.videoElement.muted = newMuted;
-      setIsMuted(newMuted);
-      // Update global mute state for consistency
-      playerManager.setGlobalMuted(newMuted);
-      // Update global Redux state if post_id is available
-      if (postData?.post_id) {
-        setPostMuted({ postId: postData.post_id, muted: newMuted });
-      }
-    }
+    // const playerId = `fullscreen-${currentIndex}`;
+    // const player = playerManager.getPlayer(playerId, true);
+    // if (player?.videoElement) {
+    //   const newMuted = !player.videoElement.muted;
+    //   player.videoElement.muted = newMuted;
+    //   setIsMuted(newMuted);
+    //   // Update global mute state for consistency
+    //   playerManager.setGlobalMuted(newMuted);
+    //   // Update global Redux state if post_id is available
+    //   if (postData?.post_id) {
+    //     // dispatch(setPostMuted({ postId: postData.post_id, muted: newMuted }));
+    //     dispatch(setMuteAll(newMuted as boolean));
+    //   }
+    // }
+    dispatch(setMuteAll(!globalMutedState));
   };
 
   const getEffectiveDuration = (video?: HTMLVideoElement | null) => {

@@ -3,10 +3,13 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface GossipMuteState {
   // Map of post_id -> muted state
   mutedByPostId: Record<string, boolean>;
+  // Mute all
+  muteAll: boolean;
 }
 
 const initialState: GossipMuteState = {
   mutedByPostId: {},
+  muteAll: false,
 };
 
 export const gossipMuteSlice = createSlice({
@@ -28,10 +31,13 @@ export const gossipMuteSlice = createSlice({
     clearPostMuted: (state, action: PayloadAction<string>) => {
       delete state.mutedByPostId[action.payload];
     },
+    setMuteAll: (state, action: PayloadAction<boolean>) => {
+      state.muteAll = action.payload;
+    },
   },
 });
 
-export const { setPostMuted, togglePostMuted, clearPostMuted } =
+export const { setPostMuted, togglePostMuted, clearPostMuted, setMuteAll } =
   gossipMuteSlice.actions;
 
 export default gossipMuteSlice.reducer;

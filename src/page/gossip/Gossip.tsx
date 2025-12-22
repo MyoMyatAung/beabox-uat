@@ -343,7 +343,8 @@ const Gossip = () => {
               like_count: post?.like_count || 0,
               comment_count: post?.comment_count || 0,
               share_count: post?.share_count || 0,
-              is_liked: isLiked,
+              // is_liked: isLiked,
+              is_liked: post?.is_liked || false,
               share_link: post?.share_link || "",
               onLike: () => {
                 handleLike();
