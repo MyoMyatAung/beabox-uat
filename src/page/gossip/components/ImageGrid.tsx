@@ -586,7 +586,7 @@ const ImageGrid = ({
         style={{
           ...(showAllMedia
             ? {
-                gridTemplateRows: "repeat(2, 1fr)", // Exactly 2 rows
+                gridTemplateRows: "repeat(1, 1fr)", // Exactly 2 rows
                 gridAutoFlow: "dense", // Fill gaps intelligently
                 overflow: "hidden", // Hide anything that doesn't fit
               }

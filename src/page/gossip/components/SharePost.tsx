@@ -2,7 +2,9 @@ import BaiduIcon from "@/assets/icons/Baidu.svg";
 import QqIcon from "@/assets/icons/Qq.svg";
 import WechatIcon from "@/assets/icons/Wechat.svg";
 import WeiboIcon from "@/assets/icons/Weibo.svg";
+import { toast } from "@/hooks/use-toast";
 import { useEffect, useRef, useState } from "react";
+import logo from "@/assets/logo.svg";
 
 function SharePost({
   shareUrl,
@@ -23,6 +25,23 @@ function SharePost({
     };
   }, []);
 
+  const showToastWithLogo = (
+    message: string,
+    type: "success" | "error" = "error"
+  ) => {
+    toast({
+      description: (
+        <div className="flex items-center gap-2 whitespace-nowrap">
+          <img src={logo} className="w-5 h-5 flex-shrink-0" alt="beabox" />
+          <span className="text-[14px] text-white no-underline">{message}</span>
+        </div>
+      ),
+      variant: type === "error" ? "destructive" : "default",
+      duration: 3000,
+      className: "bg-[#25212a] border-[#25212a] text-white",
+    });
+  };
+
   const handleCopyLink = (e: React.MouseEvent) => {
     // Prevent any event bubbling that might interfere with modal state
     e.preventDefault();
@@ -36,6 +55,7 @@ function SharePost({
     navigator.clipboard.writeText(shareUrl);
     setIsCopied(true);
     onClose();
+    showToastWithLogo("链接已复制到剪贴板");
     setTimeout(() => {
       setIsCopied(false);
     }, 3000);
