@@ -27,7 +27,7 @@ const FollowSuccessToast = ({
   if (!show) return null;
 
   return (
-    <div className="fixed bottom-[100px] left-1/2 transform -translate-x-1/2 z-[9999] flex justify-center items-center">
+    <div className="fixed bottom-[50px] left-1/2 transform -translate-x-1/2 z-[9999] flex justify-center items-center">
       <div className="bg-[#4a4448] bg-opacity-90 text-white px-5 py-3 rounded-full flex items-center justify-center gap-2 shadow-lg">
         {isFollowed ? (
           <PlusCircle size={18} className="text-white" />

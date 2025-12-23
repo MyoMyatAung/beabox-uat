@@ -364,11 +364,10 @@ const PostDetail = () => {
 
     await followGossipUser({
       follow_user_id: post?.user?.id?.toString() || "",
-      status: isFollowing ? "unfollow" : "follow",
+      status: post?.user?.is_following ? "unfollow" : "follow",
     }).unwrap();
 
     setShowFollowToast(true);
-    setIsFollowing((prev) => !prev);
   };
 
   const appendCommentToState = useCallback(
@@ -668,12 +667,12 @@ const PostDetail = () => {
               onClick={handleFollow}
               disabled={followLoading}
               className={`px-4 py-1.5 rounded-2xl border text-sm font-medium transition-all text-white ${
-                isFollowing
+                post.user.is_following
                   ? "bg-transparent border-pink-400 text-pink-400"
                   : "hover:opacity-90 hover:brightness-110 border-pink-400"
               }`}
               style={
-                !isFollowing
+                !post.user.is_following
                   ? {
                       background:
                         "linear-gradient(315deg, #CD3EFF 0%, #FFB2E0 100%)",
@@ -681,7 +680,7 @@ const PostDetail = () => {
                   : undefined
               }
             >
-              {isFollowing ? "已关注" : "+关注"}
+              {post.user.is_following ? "已关注" : "+关注"}
             </button>
           </div>
         </div>

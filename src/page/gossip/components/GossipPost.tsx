@@ -25,7 +25,7 @@
  * - Optimistic updates for like/follow actions
  */
 
-import { useRef, useState, useCallback, memo } from "react";
+import { useRef, useCallback, memo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { User, Check, Plus } from "lucide-react";
@@ -34,7 +34,6 @@ import PostContent from "./PostContent";
 import PostActions from "./PostActions";
 import ProfilePopover from "./ProfilePopover";
 import MoreOptionsPopover from "./MoreOptionsPopover";
-import ShareSheet from "./ShareSheet";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 import {
   useUninterestGossipPostMutation,
@@ -47,8 +46,8 @@ import { usePostLike } from "../hooks/usePostLike";
 import { usePostFollow } from "../hooks/usePostFollow";
 import { usePostVideoPlayer } from "../hooks/usePostVideoPlayer";
 import { usePostPopovers } from "../hooks/usePostPopovers";
-import FollowSuccessToast from "./FollowSuccessToast";
 import { openFullScreenGossip } from "@/store/slices/fullScreenGossipSlice";
+import { showFollowToast } from "@/store/slices/followToastSlice";
 import { openShareGossip } from "@/store/slices/shareGossipSlice";
 
 // ============================================================================
@@ -91,7 +90,6 @@ const GossipPost = ({ post }: GossipPostProps) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const postRef = useRef<HTMLDivElement>(null);
-  const [showFollowToast, setShowFollowToast] = useState(false);
 
   // ============================================================================
   // AUTHENTICATION
@@ -123,7 +121,7 @@ const GossipPost = ({ post }: GossipPostProps) => {
     post.user?.id?.toString() || "",
     post.user.is_following,
     ensureAuthenticated,
-    () => setShowFollowToast(true)
+    () => dispatch(showFollowToast({ isFollowed: !post.user.is_following }))
   );
 
   // ============================================================================
@@ -154,11 +152,6 @@ const GossipPost = ({ post }: GossipPostProps) => {
     moreOptionsPopoverRef,
     moreOptionsTriggerRef,
   } = usePostPopovers();
-
-  // ============================================================================
-  // SHARE SHEET
-  // ============================================================================
-  const [showShareSheet, setShowShareSheet] = useState(false);
 
   // ============================================================================
   // POST OPTIONS - Not Interested & Report
@@ -411,12 +404,6 @@ const GossipPost = ({ post }: GossipPostProps) => {
           onShare={handleShareClick}
         />
       </div>
-
-      <FollowSuccessToast
-        show={showFollowToast}
-        isFollowed={post.user.is_following || false}
-        onHide={() => setShowFollowToast(false)}
-      />
     </div>
   );
 };

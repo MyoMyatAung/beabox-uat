@@ -212,7 +212,7 @@ export const gossipExternalApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["gossipCategory", "gossipPosts"],
+  tagTypes: ["gossipCategory", "gossipPosts", "gossipPostDetail"],
   endpoints: (builder) => ({
     getGossipCategories: builder.query<GossipCategory[], void>({
       query: () => "category/list",
@@ -241,6 +241,7 @@ export const gossipExternalApi = createApi({
       }),
       transformResponse: (response: GossipPostDetailResponse) =>
         response?.data ?? null,
+      providesTags: (_result, _error, postId) => [{ type: "gossipPostDetail", id: postId }],
     }),
     getGossipComments: builder.mutation<
       GossipCommentListResponse,
@@ -359,6 +360,7 @@ export const gossipExternalApi = createApi({
         method: "POST",
         body: { follow_user_id, status },
       }),
+      invalidatesTags: ["gossipPostDetail"],
       // Optimistically update is_following in all cached posts for this user
       async onQueryStarted(
         { follow_user_id, status },

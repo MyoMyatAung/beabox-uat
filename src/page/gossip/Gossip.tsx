@@ -40,7 +40,7 @@
  * @see constants.ts for configuration values
  */
 
-import { useEffect, useMemo, useCallback, lazy, Suspense, useState } from "react";
+import { useEffect, useMemo, useCallback, lazy, Suspense } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { sethideNew } from "@/page/home/services/hideNewSlice";
 import { SCROLL_CONTAINER_ID } from "./constants";
@@ -62,7 +62,7 @@ import { GossipEmptyState } from "./components/GossipEmptyState";
 import { GossipPostList } from "./components/GossipPostList";
 
 // Types
-import type { GossipPostData, NavbarTab } from "./types";
+import type { NavbarTab } from "./types";
 import LoadingSpinner from "./components/LoadingSpinner";
 import { RootState } from "@/store/store";
 import { closeFullScreenGossip } from "@/store/slices/fullScreenGossipSlice";
@@ -70,6 +70,8 @@ import { useAuthentication } from "./hooks/useAuthentication";
 import { usePostLike } from "./hooks/usePostLike";
 import ShareSheet from "./components/ShareSheet";
 import { closeShareGossip } from "@/store/slices/shareGossipSlice";
+import FollowSuccessToast from "./components/FollowSuccessToast";
+import { hideFollowToast } from "@/store/slices/followToastSlice";
 
 /**
  * Main Gossip page component.
@@ -81,6 +83,7 @@ const Gossip = () => {
   const dispatch = useDispatch();
   const { isOpen, index, post } = useSelector((state: RootState) => state.fullScreenGossip);
   const { isOpen: isShareOpen, shareUrl } = useSelector((state: RootState) => state.shareGossip);
+  const { isOpen: isFollowToastOpen, isFollowed } = useSelector((state: RootState) => state.followToast);
 
     // ============================================================================
   // AUTHENTICATION
@@ -365,6 +368,12 @@ const Gossip = () => {
           />
         </Suspense>
       )}
+
+      <FollowSuccessToast
+        show={isFollowToastOpen}
+        isFollowed={isFollowed}
+        onHide={() => dispatch(hideFollowToast())}
+      />
     </>
   );
 };
