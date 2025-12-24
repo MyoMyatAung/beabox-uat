@@ -102,7 +102,7 @@ export const useEventManagement = (
       dispatch(setAnimation(false));
     } else {
       if (currentEventData?.data && !userHasClosedAnimation) {
-        if (currentEventData?.status === true && !showAd && !isOpen) {
+        if (currentEventData?.status === true && currentEventData?.data?.length > 0 && !showAd && !isOpen) {
           // Priority 2: Show animations after delay
           const timeout = setTimeout(() => {
             dispatch(setAnimation(true));
