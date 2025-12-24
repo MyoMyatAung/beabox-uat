@@ -305,7 +305,10 @@ export const gossipExternalApi = createApi({
         method: "POST",
         body: { post_id },
       }),
-      // invalidatesTags: ["gossipPosts"],
+      invalidatesTags: (_result, _error, { post_id }) => [
+        { type: "gossipPosts", id: post_id },
+        { type: "gossipPostDetail", id: post_id },
+      ],
     }),
     unlikeGossipPost: builder.mutation<
       GossipPostActionResponse,
@@ -316,7 +319,10 @@ export const gossipExternalApi = createApi({
         method: "POST",
         body: { post_id },
       }),
-      // invalidatesTags: ["gossipPosts"],
+      invalidatesTags: (_result, _error, { post_id }) => [
+        { type: "gossipPosts", id: post_id },
+        { type: "gossipPostDetail", id: post_id },
+      ],
     }),
     uninterestGossipPost: builder.mutation<
       GossipPostActionResponse,

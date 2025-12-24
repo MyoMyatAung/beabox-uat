@@ -343,11 +343,10 @@ const Gossip = () => {
             initialMuted={false}
             postData={{
               post_id: post?.post_id,
-              like_count: post?.like_count || 0,
+              like_count: likeCount,
               comment_count: post?.comment_count || 0,
               share_count: post?.share_count || 0,
-              // is_liked: isLiked,
-              is_liked: post?.is_liked || false,
+              is_liked: isLiked,
               share_link: post?.share_link || "",
               onLike: () => {
                 handleLike();

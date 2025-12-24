@@ -5,7 +5,6 @@ import Privacy from "./privacy";
 import selected from "@/assets/createcenter/selected.png";
 import unselected from "@/assets/createcenter/unselected.png";
 import Tags from "@/page/create-center/Tags";
-import Info from "./info";
 import { useGetConfigQuery } from "@/store/api/createCenterApi";
 const Selected = () => (
   <img className="w-[18px] h-[18px]" src={selected} alt="" />
@@ -26,7 +25,7 @@ const UploadFrom = ({
   const { data } = useGetConfigQuery({});
   const link = data?.data?.website_upload_link;
 
-  console.log(link);
+  console.log('Website Upload Link',link);
 
   const [privacy, setPrivacy] = useState(editPost?.privacy || "public");
   const [contentTitle, setContentTitle] = useState(editPost?.title || "");
