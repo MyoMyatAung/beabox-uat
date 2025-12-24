@@ -44,7 +44,7 @@ export const profileApi = createApi({
       }
     },
   }),
-  tagTypes: ["NOTI_LIST"],
+  tagTypes: ["NOTI_LIST", "MY_LIKED_POSTS"],
   endpoints: (builder) => ({
     getMyProfile: builder.query<any, string>({
       query: () => ({
@@ -189,6 +189,7 @@ export const profileApi = createApi({
         ),
         method: "GET",
       }),
+      providesTags: ["MY_LIKED_POSTS"],
     }),
     getPosts: builder.query<any, any>({
       query: ({ id, page, sort }) => ({
@@ -339,6 +340,7 @@ export const profileApi = createApi({
         url: convertToSecureUrl(`/user/liked-post?user_id=${id}&page=${page}`),
         method: "Get",
       }),
+      providesTags: ["MY_LIKED_POSTS"],
     }),
     checkUsername: builder.mutation<any, any>({
       query: ({ username, captcha, captcha_key }) => ({
