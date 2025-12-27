@@ -205,6 +205,7 @@ const MediaFullscreenViewer = ({
   // ============================================================================
   const {
     data: cachedPostDetail,
+    isFetching: isPostDetailFetching,
   } = useGetGossipPostDetailQuery(currentPostId ?? "", {
     skip: !currentPostId,
   });
@@ -415,11 +416,15 @@ const MediaFullscreenViewer = ({
   // ============================================================================
   const {
     handleLike,
+    isPending: isLikePending,
   } = usePostLike(
     postData?.post_id ?? "",
     isLiked,
     ensureAuthenticated
   );
+
+  // Disable like button when API is fetching or cache is validating
+  const isLikeDisabled = isLikePending || isPostDetailFetching;
 
   // Update authentication state when user changes
   useEffect(() => {
@@ -1557,7 +1562,11 @@ const MediaFullscreenViewer = ({
                   e.stopPropagation();
                   handleLike();
                 }}
-                className="flex items-center gap-1 text-white"
+                disabled={isLikeDisabled}
+                className={cn(
+                  "flex items-center gap-1 text-white transition-opacity",
+                  isLikeDisabled && "opacity-50 cursor-not-allowed"
+                )}
               >
                 <Heart
                   size={20}

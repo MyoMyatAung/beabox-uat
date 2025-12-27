@@ -331,10 +331,7 @@ export const gossipExternalApi = createApi({
         method: "POST",
         body: { post_id },
       }),
-      invalidatesTags: (_result, _error, { post_id }) => [
-        { type: "gossipPosts", id: post_id },
-        { type: "gossipPostDetail", id: post_id },
-      ],
+      invalidatesTags: ["gossipPostDetail", "gossipPosts"],
       // Optimistically update is_liked and like_count in cache
       async onQueryStarted({ post_id }, { dispatch, getState, queryFulfilled }) {
         const patches: Array<{ undo: () => void }> = [];
@@ -398,10 +395,7 @@ export const gossipExternalApi = createApi({
         method: "POST",
         body: { post_id },
       }),
-      invalidatesTags: (_result, _error, { post_id }) => [
-        { type: "gossipPosts", id: post_id },
-        { type: "gossipPostDetail", id: post_id },
-      ],
+      invalidatesTags: ["gossipPosts", "gossipPostDetail"],
       // Optimistically update is_liked and like_count in cache
       async onQueryStarted({ post_id }, { dispatch, getState, queryFulfilled }) {
         const patches: Array<{ undo: () => void }> = [];
