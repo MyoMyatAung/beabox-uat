@@ -335,6 +335,59 @@ export const gossipExternalApi = createApi({
         { type: "gossipPosts", id: post_id },
         { type: "gossipPostDetail", id: post_id },
       ],
+      // Optimistically update is_liked and like_count in cache
+      async onQueryStarted({ post_id }, { dispatch, getState, queryFulfilled }) {
+        const patches: Array<{ undo: () => void }> = [];
+
+        // Update all cached post lists
+        const cachedListArgs =
+          gossipExternalApi.util.selectCachedArgsForQuery(
+            getState(),
+            "getGossipPosts"
+          ) || [];
+
+        cachedListArgs.forEach((args: GossipPostListParams) => {
+          patches.push(
+            dispatch(
+              gossipExternalApi.util.updateQueryData(
+                "getGossipPosts",
+                args,
+                (draft) => {
+                  draft.data?.forEach((post) => {
+                    if (post.id === post_id) {
+                      post.is_liked = true;
+                      post.like_count = (post.like_count || 0) + 1;
+                    }
+                  });
+                }
+              )
+            )
+          );
+        });
+
+        // Update cached post detail
+        patches.push(
+          dispatch(
+            gossipExternalApi.util.updateQueryData(
+              "getGossipPostDetail",
+              post_id,
+              (draft) => {
+                if (draft) {
+                  draft.is_liked = true;
+                  draft.like_count = (draft.like_count || 0) + 1;
+                }
+              }
+            )
+          )
+        );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          // Rollback all patches on error
+          patches.forEach((patch) => patch.undo());
+        }
+      },
     }),
     unlikeGossipPost: builder.mutation<
       GossipPostActionResponse,
@@ -349,6 +402,59 @@ export const gossipExternalApi = createApi({
         { type: "gossipPosts", id: post_id },
         { type: "gossipPostDetail", id: post_id },
       ],
+      // Optimistically update is_liked and like_count in cache
+      async onQueryStarted({ post_id }, { dispatch, getState, queryFulfilled }) {
+        const patches: Array<{ undo: () => void }> = [];
+
+        // Update all cached post lists
+        const cachedListArgs =
+          gossipExternalApi.util.selectCachedArgsForQuery(
+            getState(),
+            "getGossipPosts"
+          ) || [];
+
+        cachedListArgs.forEach((args: GossipPostListParams) => {
+          patches.push(
+            dispatch(
+              gossipExternalApi.util.updateQueryData(
+                "getGossipPosts",
+                args,
+                (draft) => {
+                  draft.data?.forEach((post) => {
+                    if (post.id === post_id) {
+                      post.is_liked = false;
+                      post.like_count = Math.max(0, (post.like_count || 0) - 1);
+                    }
+                  });
+                }
+              )
+            )
+          );
+        });
+
+        // Update cached post detail
+        patches.push(
+          dispatch(
+            gossipExternalApi.util.updateQueryData(
+              "getGossipPostDetail",
+              post_id,
+              (draft) => {
+                if (draft) {
+                  draft.is_liked = false;
+                  draft.like_count = Math.max(0, (draft.like_count || 0) - 1);
+                }
+              }
+            )
+          )
+        );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          // Rollback all patches on error
+          patches.forEach((patch) => patch.undo());
+        }
+      },
     }),
     uninterestGossipPost: builder.mutation<
       GossipPostActionResponse,

@@ -19,6 +19,7 @@ import {
   GossipComment as GossipCommentType,
   usePostGossipCommentMutation,
   gossipExternalApi,
+  useGetGossipPostDetailQuery,
 } from "../services/gossipSlice";
 import type { GossipPostListParams } from "../services/gossipSlice";
 import { getDeviceInfo } from "@/lib/deviceInfo";
@@ -27,6 +28,8 @@ import { useNavigate } from "react-router-dom";
 import AsyncDecryptedImage from "@/utils/asyncDecryptedImage";
 import { decryptImage } from "@/utils/imageDecrypt";
 import { setMuteAll, setPostMuted } from "../services/gossipMuteSlice";
+import { usePostLike } from "../hooks/usePostLike";
+import { useAuthentication } from "../hooks/useAuthentication";
 interface MediaItem {
   id: string;
   type: "image" | "video";
@@ -196,6 +199,19 @@ const MediaFullscreenViewer = ({
   const currentMedia = media[currentIndex];
   const isVideo = currentMedia?.type === "video";
   const currentPostId = postData?.post_id;
+
+  // ============================================================================
+  // GET POST DETAIL FROM CACHE - For syncing is_liked and like_count
+  // ============================================================================
+  const {
+    data: cachedPostDetail,
+  } = useGetGossipPostDetailQuery(currentPostId ?? "", {
+    skip: !currentPostId,
+  });
+
+  // Use cached values for is_liked and like_count, fallback to postData prop
+  const isLiked = cachedPostDetail?.is_liked ?? postData?.is_liked ?? false;
+  const likeCount = cachedPostDetail?.like_count ?? postData?.like_count ?? 0;
 
   const syncPostListCommentCount = useCallback(
     (delta: number) => {
@@ -389,13 +405,21 @@ const MediaFullscreenViewer = ({
     [appendCommentToState, appendReplyToState, normalizeComment]
   );
 
-  const ensureAuthenticated = () => {
-    if (isAuthenticated) {
-      return true;
-    }
-    setIsLoginDrawerOpen(true);
-    return false;
-  };
+  // ============================================================================
+  // AUTHENTICATION
+  // ============================================================================
+  const { ensureAuthenticated } = useAuthentication();
+
+  // ============================================================================
+  // POST ACTIONS - Like
+  // ============================================================================
+  const {
+    handleLike,
+  } = usePostLike(
+    postData?.post_id ?? "",
+    isLiked,
+    ensureAuthenticated
+  );
 
   // Update authentication state when user changes
   useEffect(() => {
@@ -1531,23 +1555,23 @@ const MediaFullscreenViewer = ({
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  postData.onLike?.();
+                  handleLike();
                 }}
                 className="flex items-center gap-1 text-white"
               >
                 <Heart
                   size={20}
-                  fill={postData.is_liked ? "currentColor" : "none"}
-                  className={postData.is_liked ? "text-red-500" : ""}
+                  fill={isLiked ? "currentColor" : "none"}
+                  className={isLiked ? "text-red-500" : ""}
                 />
-                {postData.like_count > 0 && (
+                {likeCount > 0 && (
                   <span
                     className={cn(
                       "text-sm",
-                      postData.is_liked ? "text-red-500" : ""
+                      isLiked ? "text-red-500" : ""
                     )}
                   >
-                    {postData.like_count}
+                    {likeCount}
                   </span>
                 )}
               </button>

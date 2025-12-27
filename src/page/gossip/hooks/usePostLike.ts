@@ -20,10 +20,6 @@ import {
  * Hook return type for post like functionality.
  */
 export interface UsePostLikeReturn {
-  /** Whether the post is currently liked */
-  isLiked: boolean;
-  /** Current like count */
-  likeCount: number;
   /** Whether a like/unlike operation is in progress */
   isPending: boolean;
   /** Handler to toggle like status */
@@ -33,40 +29,39 @@ export interface UsePostLikeReturn {
 /**
  * Custom hook for managing post like/unlike functionality.
  *
+ * Note: isLiked and likeCount should be read directly from the post data
+ * in the RTK Query cache for proper synchronization. The hook only handles
+ * the action logic and does not maintain its own state for these values.
+ *
  * @param postId - The ID of the post to like/unlike
- * @param initialLiked - Initial liked state from post data
- * @param initialLikeCount - Initial like count from post data
+ * @param currentIsLiked - Current liked state from cache (used to determine action)
  * @param onAuthenticated - Callback to check authentication (returns false if not authenticated)
  *
- * @returns Like state and handler function
+ * @returns Like handler function and pending state
  *
  * @example
  * ```tsx
- * const { isLiked, likeCount, handleLike } = usePostLike(
+ * const { handleLike, isPending } = usePostLike(
  *   post.post_id,
  *   post.is_liked,
- *   post.like_count,
  *   ensureAuthenticated
  * );
+ * // Use post.is_liked and post.like_count from cache directly
  * ```
  */
 export function usePostLike(
   postId: string,
-  initialLiked: boolean,
-  initialLikeCount: number,
+  currentIsLiked: boolean,
   onAuthenticated: () => boolean
 ): UsePostLikeReturn {
-  const [isLiked, setIsLiked] = useState(initialLiked);
-  const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [isPending, setIsPending] = useState(false);
 
   const [likePost] = useLikeGossipPostMutation();
   const [unlikePost] = useUnlikeGossipPostMutation();
 
   /**
-   * Handles like/unlike toggle with optimistic updates.
-   * Updates UI immediately, then syncs with server.
-   * Reverts on error.
+   * Handles like/unlike toggle.
+   * Cache is updated optimistically via mutation's onQueryStarted.
    */
   const handleLike = async (): Promise<void> => {
     // Check authentication before proceeding
@@ -79,33 +74,23 @@ export function usePostLike(
       return;
     }
 
-    // Optimistic update: update UI immediately
-    const nextLiked = !isLiked;
-    const delta = nextLiked ? 1 : -1;
-    setIsLiked(nextLiked);
-    setLikeCount((prev) => Math.max(0, prev + delta));
     setIsPending(true);
 
     try {
-      // Sync with server
-      if (nextLiked) {
-        await likePost({ post_id: postId }).unwrap();
-      } else {
+      // Determine action based on current state from cache
+      if (currentIsLiked) {
         await unlikePost({ post_id: postId }).unwrap();
+      } else {
+        await likePost({ post_id: postId }).unwrap();
       }
     } catch (error) {
-      // Revert optimistic update on error
       console.error("Failed to toggle like:", error);
-      setIsLiked(!nextLiked);
-      setLikeCount((prev) => Math.max(0, prev - delta));
     } finally {
       setIsPending(false);
     }
   };
 
   return {
-    isLiked,
-    likeCount,
     isPending,
     handleLike,
   };

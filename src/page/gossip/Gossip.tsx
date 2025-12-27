@@ -81,25 +81,6 @@ const Gossip = () => {
   const { isOpen: isShareOpen, shareUrl } = useSelector((state: RootState) => state.shareGossip);
   const { isOpen: isFollowToastOpen, isFollowed } = useSelector((state: RootState) => state.followToast);
 
-    // ============================================================================
-  // AUTHENTICATION
-  // ============================================================================
-  const { ensureAuthenticated } = useAuthentication();
-
-  // ============================================================================
-  // POST ACTIONS - Like
-  // ============================================================================
-  const {
-    handleLike,
-    likeCount,
-    isLiked,
-  } = usePostLike(
-    post?.post_id ?? "",
-    post?.is_liked ?? false,
-    post?.like_count ?? 0,
-    ensureAuthenticated
-  );
-
   // ============================================================================
   // HOOKS: Tabs Management
   // ============================================================================
@@ -307,14 +288,12 @@ const Gossip = () => {
             initialMuted={false}
             postData={{
               post_id: post?.post_id,
-              like_count: likeCount,
+              like_count: post?.like_count || 0,
               comment_count: post?.comment_count || 0,
               share_count: post?.share_count || 0,
-              is_liked: isLiked,
+              is_liked: post?.is_liked || false,
               share_link: post?.share_link || "",
-              onLike: () => {
-                handleLike();
-              },
+              onLike: () => { },
               onComment: () => { },
               onShare: () => { },
             }}

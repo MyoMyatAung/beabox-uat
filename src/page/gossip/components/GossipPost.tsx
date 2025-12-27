@@ -100,14 +100,11 @@ const GossipPost = ({ post }: GossipPostProps) => {
   // POST ACTIONS - Like
   // ============================================================================
   const {
-    isLiked,
-    likeCount,
     isPending: isLikePending,
     handleLike,
   } = usePostLike(
     post.post_id,
     post.is_liked,
-    post.like_count,
     ensureAuthenticated
   );
 
@@ -395,8 +392,8 @@ const GossipPost = ({ post }: GossipPostProps) => {
 
         {/* Interaction Buttons and Timestamp */}
         <PostActions
-          isLiked={isLiked}
-          likeCount={likeCount}
+          isLiked={post.is_liked}
+          likeCount={post.like_count}
           isLikePending={isLikePending}
           shareCount={post.share_count}
           timeAgo={post.time_ago}
