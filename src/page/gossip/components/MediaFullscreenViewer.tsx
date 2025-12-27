@@ -203,12 +203,10 @@ const MediaFullscreenViewer = ({
   // ============================================================================
   // GET POST DETAIL FROM CACHE - For syncing is_liked and like_count
   // ============================================================================
-  const {
-    data: cachedPostDetail,
-    isFetching: isPostDetailFetching,
-  } = useGetGossipPostDetailQuery(currentPostId ?? "", {
-    skip: !currentPostId,
-  });
+  const { data: cachedPostDetail, isFetching: isPostDetailFetching } =
+    useGetGossipPostDetailQuery(currentPostId ?? "", {
+      skip: !currentPostId,
+    });
 
   // Use cached values for is_liked and like_count, fallback to postData prop
   const isLiked = cachedPostDetail?.is_liked ?? postData?.is_liked ?? false;
@@ -329,9 +327,9 @@ const MediaFullscreenViewer = ({
         const fallbackTotal = postData?.comment_count ?? 0;
         setTotalComments(
           payload.total ??
-          payload.meta?.total ??
-          payload.pagination?.total ??
-          fallbackTotal
+            payload.meta?.total ??
+            payload.pagination?.total ??
+            fallbackTotal
         );
       }
     } catch (err) {
@@ -414,10 +412,7 @@ const MediaFullscreenViewer = ({
   // ============================================================================
   // POST ACTIONS - Like
   // ============================================================================
-  const {
-    handleLike,
-    isPending: isLikePending,
-  } = usePostLike(
+  const { handleLike, isPending: isLikePending } = usePostLike(
     postData?.post_id ?? "",
     isLiked,
     ensureAuthenticated
@@ -504,19 +499,19 @@ const MediaFullscreenViewer = ({
     commentSectionProps ||
     (currentPostId
       ? {
-        comments,
-        commentCount: totalComments,
-        postId: currentPostId,
-        onCommentSubmit: handleCommentSubmit,
-        onReplySubmit: handleReplySubmit,
-        onLikeComment: handleLikeComment,
-        onReportComment: handleReportComment,
-        showInput: true,
-        loading: commentsLoading,
-        error: commentsError,
-        highlightCommentId,
-        onHighlightHandled: () => setHighlightCommentId(null),
-      }
+          comments,
+          commentCount: totalComments,
+          postId: currentPostId,
+          onCommentSubmit: handleCommentSubmit,
+          onReplySubmit: handleReplySubmit,
+          onLikeComment: handleLikeComment,
+          onReportComment: handleReportComment,
+          showInput: true,
+          loading: commentsLoading,
+          error: commentsError,
+          highlightCommentId,
+          onHighlightHandled: () => setHighlightCommentId(null),
+        }
       : undefined);
 
   useEffect(() => {
@@ -910,10 +905,10 @@ const MediaFullscreenViewer = ({
     return duration > 0
       ? duration
       : seekableEnd > 0
-        ? seekableEnd
-        : videoDuration > 0
-          ? videoDuration
-          : 0;
+      ? seekableEnd
+      : videoDuration > 0
+      ? videoDuration
+      : 0;
   };
 
   // Progress bar touch/mouse handlers - similar to Player.tsx
@@ -1076,10 +1071,10 @@ const MediaFullscreenViewer = ({
       extension = isM3u8
         ? ".m3u8"
         : isMp4
-          ? ".mp4"
-          : currentMedia.type === "video"
-            ? ".mp4"
-            : ".jpg";
+        ? ".mp4"
+        : currentMedia.type === "video"
+        ? ".mp4"
+        : ".jpg";
     }
 
     try {
@@ -1298,8 +1293,8 @@ const MediaFullscreenViewer = ({
     progressDuration > 0
       ? progressDuration
       : Number.isFinite(duration)
-        ? duration
-        : 0;
+      ? duration
+      : 0;
 
   if (!isOpen) return null;
 
@@ -1357,10 +1352,14 @@ const MediaFullscreenViewer = ({
                       className="w-full h-full pointer-events-none relative z-10"
                       ref={(el) => attachVideoPlayer(index, item, el)}
                     />
-                    <div className={cn(
-                      "absolute bottom-5 w-full z-10 transition-opacity",
-                      showUI ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-                    )}>
+                    <div
+                      className={cn(
+                        "absolute bottom-5 w-full z-10 transition-opacity",
+                        showUI
+                          ? "opacity-100 pointer-events-auto"
+                          : "opacity-0 pointer-events-none"
+                      )}
+                    >
                       {/* Progress Bar with Time and Mute */}
                       <div className="flex items-center gap-3 mb-2 px-4 pb-3">
                         {/* Current Time */}
@@ -1370,9 +1369,7 @@ const MediaFullscreenViewer = ({
 
                         {/* Progress Bar with Scrubber - Large touch area for mobile */}
                         <div
-                          ref={
-                            index === currentIndex ? progressTrackRef : null
-                          }
+                          ref={index === currentIndex ? progressTrackRef : null}
                           className="flex-1 relative h-10 cursor-pointer select-none"
                           style={{ touchAction: "none" }}
                         >
@@ -1470,7 +1467,10 @@ const MediaFullscreenViewer = ({
 
               {/* Play/Pause Overlay for Video */}
               {isCurrentVideo && showUI && isVideoReady && (
-                <div onClick={handlePlayPause} className="absolute inset-0 flex items-center justify-center">
+                <div
+                  onClick={handlePlayPause}
+                  className="absolute inset-0 flex items-center justify-center"
+                >
                   {!isPlaying ? (
                     <div className="z-50 w-16 h-16 bg-black/50 rounded-full flex items-center justify-center">
                       <svg
@@ -1565,19 +1565,23 @@ const MediaFullscreenViewer = ({
                 disabled={isLikeDisabled}
                 className={cn(
                   "flex items-center gap-1 text-white transition-opacity",
-                  isLikeDisabled && "opacity-50 cursor-not-allowed"
+                  isLikeDisabled && "pointer-events-none"
                 )}
               >
                 <Heart
                   size={20}
                   fill={isLiked ? "currentColor" : "none"}
-                  className={isLiked ? "text-red-500" : ""}
+                  className={cn(
+                    isLiked ? "text-red-500" : "",
+                    isLikeDisabled && "opacity-50"
+                  )}
                 />
                 {likeCount > 0 && (
                   <span
                     className={cn(
                       "text-sm",
-                      isLiked ? "text-red-500" : ""
+                      isLiked ? "text-red-500" : "",
+                      isLikeDisabled && "opacity-50"
                     )}
                   >
                     {likeCount}
