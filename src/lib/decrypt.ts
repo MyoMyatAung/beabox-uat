@@ -6,10 +6,13 @@ import CryptoJS from "crypto-js";
  * @param {string} encryptedData - The encrypted data (URL-safe Base64 encoded).
  * @returns {string} - The decrypted plain text.
  */
-export function decryptWithAes(encryptedData: string): string {
+export function decryptWithAes(encryptedData: string | Object): string {
   try {
+    if(typeof encryptedData === "object") {
+      return JSON.stringify({data: encryptedData});
+    }
     // Decode URL-safe Base64 encoded data
-    const decodedData = decodeUrlSafeBase64(encryptedData);
+    const decodedData = decodeUrlSafeBase64(encryptedData as string);
 
     // Perform AES decryption
     const decrypted = CryptoJS.AES.decrypt(

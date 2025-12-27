@@ -62,8 +62,6 @@ import type { NavbarTab } from "./types";
 import LoadingSpinner from "./components/LoadingSpinner";
 import { RootState } from "@/store/store";
 import { closeFullScreenGossip } from "@/store/slices/fullScreenGossipSlice";
-import { useAuthentication } from "./hooks/useAuthentication";
-import { usePostLike } from "./hooks/usePostLike";
 import ShareSheet from "./components/ShareSheet";
 import { closeShareGossip } from "@/store/slices/shareGossipSlice";
 import FollowSuccessToast from "./components/FollowSuccessToast";
