@@ -29,6 +29,8 @@ import { setPostMuted } from "./services/gossipMuteSlice";
 import FollowSuccessToast from "./components/FollowSuccessToast";
 import { useAuthentication } from "./hooks/useAuthentication";
 import { setAuthToggle } from "@/store/slices/profileSlice";
+import { showToast } from "@/page/home/services/errorSlice";
+import { getErrorMessage } from "./utils/errorUtils";
 
 const decodeUnicodeEscapes = (text?: string | null) => {
   if (!text) return "";
@@ -362,12 +364,22 @@ const PostDetail = () => {
       return;
     }
 
-    await followGossipUser({
-      follow_user_id: post?.user?.id?.toString() || "",
-      status: post?.user?.is_following ? "unfollow" : "follow",
-    }).unwrap();
+    try {
+      await followGossipUser({
+        follow_user_id: post?.user?.id?.toString() || "",
+        status: post?.user?.is_following ? "unfollow" : "follow",
+      }).unwrap();
 
-    setShowFollowToast(true);
+      setShowFollowToast(true);
+    } catch (error) {
+      console.error("Failed to toggle follow:", error);
+      dispatch(
+        showToast({
+          message: getErrorMessage(error),
+          type: "error",
+        })
+      );
+    }
   };
 
   const appendCommentToState = useCallback(
