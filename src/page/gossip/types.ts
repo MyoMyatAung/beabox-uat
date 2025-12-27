@@ -94,50 +94,6 @@ export interface GossipUserInfo {
 }
 
 // ============================================================================
-// CACHE TYPES
-// ============================================================================
-
-/**
- * Cached state for a single tab.
- * Used to preserve posts, pagination, and scroll position when switching tabs.
- *
- * This enables:
- * - Instant tab switching without re-fetching data
- * - Scroll position restoration per tab
- * - Reduced API calls and improved UX
- */
-export interface TabCache {
-  /** Cached posts for this tab */
-  posts: GossipPostData[];
-  /** Current pagination page number */
-  page: number;
-  /** Whether more posts are available for pagination */
-  hasMore: boolean;
-  /** Scroll position (in pixels) to restore */
-  scrollPosition: number;
-}
-
-/**
- * Map of tab ID to cached tab state.
- */
-export type TabCacheMap = Record<string, TabCache>;
-
-// ============================================================================
-// SCROLL PRESERVATION TYPES
-// ============================================================================
-
-/**
- * Scroll position data persisted to sessionStorage.
- * Used for restoring scroll position after route navigation.
- */
-export interface ScrollStorageData {
-  /** Active tab ID when scroll position was saved */
-  tab: string;
-  /** Scroll position in pixels */
-  position: number;
-}
-
-// ============================================================================
 // HOOK RETURN TYPES
 // ============================================================================
 
@@ -163,13 +119,18 @@ export interface UseGossipTabsReturn {
 /**
  * Return type for useGossipPosts hook.
  * Provides posts data, pagination state, and loading indicators.
+ *
+ * Note: RTK Query handles caching automatically per category_id.
+ * Posts are merged and deduplicated at the cache level.
  */
 export interface UseGossipPostsReturn {
-  /** Array of posts to display */
+  /** Array of posts to display (from RTK Query cache) */
   posts: GossipPostData[];
   /** Current page number */
   page: number;
-  /** Whether more posts are available */
+  /** Set page number */
+  setPage: (page: number) => void;
+  /** Whether more posts are available (derived from pagination) */
   hasMore: boolean;
   /** Whether initial data is loading (show skeleton) */
   isInitialLoading: boolean;
@@ -181,29 +142,6 @@ export interface UseGossipPostsReturn {
   loadMore: () => void;
   /** Refetch current data */
   refetch: () => void;
-  /** Set posts directly (for cache restoration) */
-  setPosts: (posts: GossipPostData[]) => void;
-  /** Set page number (for cache restoration) */
-  setPage: (page: number) => void;
-  /** Set hasMore state (for cache restoration) */
-  setHasMore: (hasMore: boolean) => void;
-  /** Reset to initial state */
-  reset: () => void;
-}
-
-/**
- * Return type for useScrollPreservation hook.
- * Provides scroll position management for tabs.
- */
-export interface UseScrollPreservationReturn {
-  /** Save current tab state to cache */
-  saveCurrentTabState: () => void;
-  /** Get cached state for a tab */
-  getCachedState: (tabId: string) => TabCache | undefined;
-  /** Schedule scroll restoration after render */
-  scheduleScrollRestore: (position: number) => void;
-  /** Clear pending scroll restoration */
-  clearPendingRestore: () => void;
 }
 
 // ============================================================================

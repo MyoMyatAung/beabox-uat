@@ -4,32 +4,28 @@
  * ============================================================================
  *
  * Infinite scroll container for gossip posts.
- * Wraps posts in InfiniteScroll component for automatic pagination.
+ * Triggers load more when scrolling to near the end of the list.
  *
  * FEATURES:
- * - Automatic "load more" on scroll
+ * - Automatic "load more" when reaching 5th last item
  * - Custom scroll container support
  * - Loading spinner at bottom during pagination
  *
  * PERFORMANCE:
- * - Uses scrollThreshold to trigger loading before reaching bottom
- * - Overflow handling for smooth scroll experience
+ * - Uses IntersectionObserver for efficient scroll detection
  * - Keys posts by post_id for optimal React reconciliation
  */
 
-import InfiniteScroll from "react-infinite-scroll-component";
+import { useEffect, useRef, useCallback } from "react";
 import GossipPost from "./GossipPost";
 import LoadingSpinner from "./LoadingSpinner";
-import { SCROLL_THRESHOLD } from "../constants";
 import type { GossipPostListProps } from "../types";
-import { useRef } from "react";
-import { useVirtualizer } from "@tanstack/react-virtual";
 
 /**
  * Infinite scroll post list component.
  *
  * @param props - Component props
- * @returns Infinite scroll container with posts
+ * @returns Post list with infinite scroll
  *
  * @example
  * ```tsx
@@ -47,85 +43,70 @@ export const GossipPostList = ({
   onLoadMore,
   scrollContainerId,
 }: GossipPostListProps) => {
-  const parentRef = useRef<HTMLDivElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const loadMoreCalledRef = useRef(false);
 
-  const virtualizer = useVirtualizer({
-    count: posts.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 500,
-    overscan: 3,
-  });
+  // Reset loadMoreCalled flag when posts change (new page loaded)
+  useEffect(() => {
+    loadMoreCalledRef.current = false;
+  }, [posts.length]);
 
-  const items = virtualizer.getVirtualItems();
+  // Callback ref for the 5th last item
+  const triggerRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      // Disconnect previous observer
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
 
-  // const lastItem = items[items.length - 1];
-  // if (lastItem && lastItem.index >= posts.length && hasMore) {
-  //   // console.log("lastItem: ", lastItem);
-  //   // console.log("hasMore: ", hasMore);
-  //   // console.log("lastItem.index: ", lastItem.index);
-  //   // console.log("posts.length: ", posts.length);
-  //   // console.log("lastItem.index >= posts.length - 3: ", lastItem.index >= posts.length - 3);
-  //   onLoadMore();
-  // }
+      if (!node || !hasMore) return;
+
+      observerRef.current = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting && !loadMoreCalledRef.current) {
+            loadMoreCalledRef.current = true;
+            onLoadMore();
+          }
+        },
+        {
+          root: document.getElementById(scrollContainerId) || null,
+          rootMargin: "100px",
+          threshold: 0.1,
+        }
+      );
+
+      observerRef.current.observe(node);
+    },
+    [hasMore, onLoadMore, scrollContainerId]
+  );
+
+  // Cleanup observer on unmount
+  useEffect(() => {
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, []);
+
+  // Calculate the trigger index (5th last item)
+  const triggerIndex = posts.length - 5;
 
   return (
-    <div ref={parentRef} className="w-full max-w-[480px] mx-auto bg-black pb-4">
-      <div
-        style={{
-          height: `${virtualizer.getTotalSize()}px`,
-          position: "relative",
-        }}
-      >
-        {items.map((virtualRow) => (
-          <div
-            key={posts[virtualRow.index].post_id}
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              transform: `translateY(${virtualRow.start}px)`,
-            }}
-            ref={virtualizer.measureElement}
-            data-index={virtualRow.index}
-          >
-            <GossipPost post={posts[virtualRow.index]} />
-          </div>
-        ))}
-      </div>
-      {/* IntersectionObserver trigger for infinite scroll */}
-      {hasMore && (
-        <>
-          <div
-            id="infinite-scroll-sentinel"
-            ref={node => {
-              if (!node) return;
-              const observer = new window.IntersectionObserver(
-                entries => {
-                  if (entries[0].isIntersecting) {
-                    console.log("IntersectionObserver triggered");
-                    onLoadMore();
-                  }
-                },
-                {
-                  root: document.getElementById(scrollContainerId) || null,
-                  rootMargin: "300px",
-                  threshold: 0.1,
-                }
-              );
-              observer.observe(node);
-              // Cleanup function
-              return () => {
-                observer.disconnect();
-              };
-            }}
-            style={{ height: 1 }}
-          />
-          <LoadingSpinner />
-        </>
-      )}
+    <div className="w-full max-w-[480px] mx-auto bg-black pb-4">
+      {posts.map((post, index) => (
+        <div
+          key={post.post_id}
+          ref={index === triggerIndex ? triggerRef : undefined}
+        >
+          <GossipPost post={post} />
+        </div>
+      ))}
+
+      {/* Loading spinner when fetching more */}
+      {hasMore && <LoadingSpinner />}
     </div>
-  )
+  );
 };
 
 export default GossipPostList;

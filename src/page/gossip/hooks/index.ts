@@ -9,6 +9,5 @@
 
 export { useGossipTabs } from "./useGossipTabs";
 export { useGossipPosts } from "./useGossipPosts";
-export { useScrollPreservation } from "./useScrollPreservation";
 export { usePlayerCleanup } from "./usePlayerCleanup";
 export { usePooledPlayer } from "./usePooledPlayer";

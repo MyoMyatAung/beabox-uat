@@ -10,20 +10,17 @@
  * This component follows SOLID principles with clear separation of concerns:
  *
  * - useGossipTabs: Tab/category management and persistence
- * - useGossipPosts: Post fetching, transformation, and pagination
- * - useScrollPreservation: Scroll position caching per tab
+ * - useGossipPosts: Post fetching, transformation, and pagination (RTK Query)
  * - usePlayerCleanup: Video player memory management
  *
  * FEATURES:
  * 1. Category Tabs: Navigate between different gossip categories
  * 2. Infinite Scroll: Load more posts as user scrolls
- * 3. Tab State Caching: Preserve posts and scroll position per tab
- * 4. Session Persistence: Remember tab and scroll on route navigation
- * 5. Memory Management: Clean up video players on tab change/unmount
+ * 3. RTK Query Caching: Posts cached per category automatically
+ * 4. Memory Management: Clean up video players on tab change/unmount
  *
  * USER EXPERIENCE:
  * - Instant tab switching with cached data
- * - Scroll position restored when returning to a tab
  * - Last viewed tab remembered across sessions
  * - Smooth loading states with skeleton placeholders
  *
@@ -40,17 +37,16 @@
  * @see constants.ts for configuration values
  */
 
-import { useEffect, useMemo, useCallback, lazy, Suspense } from "react";
+import { useEffect, useMemo, useCallback, lazy, Suspense, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { sethideNew } from "@/page/home/services/hideNewSlice";
-import { SCROLL_CONTAINER_ID } from "./constants";
+import { INITIAL_PAGE, SCROLL_CONTAINER_ID } from "./constants";
 const MediaFullscreenViewer = lazy(() => import("./components/MediaFullscreenViewer"));
 
 // Hooks
 import {
   useGossipTabs,
   useGossipPosts,
-  useScrollPreservation,
   usePlayerCleanup,
 } from "./hooks";
 
@@ -120,37 +116,17 @@ const Gossip = () => {
   // ============================================================================
   // HOOKS: Posts Management
   // ============================================================================
-  // Manages post fetching, transformation, pagination, and loading states
+  // Manages post fetching via RTK Query with built-in caching per category
   const {
     posts,
-    page,
+    setPage,
     hasMore,
     isInitialLoading,
     error: postsError,
     loadMore,
     refetch,
-    setPosts,
-    setPage,
-    setHasMore,
-    reset: resetPosts,
   } = useGossipPosts({
     categoryId: activeTabConfig?.categoryId,
-  });
-
-  // ============================================================================
-  // HOOKS: Scroll Preservation
-  // ============================================================================
-  // Manages scroll position caching per tab and session persistence
-  const {
-    saveCurrentTabState,
-    getCachedState,
-    scheduleScrollRestore,
-    clearPendingRestore,
-  } = useScrollPreservation({
-    activeTab,
-    posts,
-    page,
-    hasMore,
   });
 
   // ============================================================================
@@ -168,55 +144,43 @@ const Gossip = () => {
   }, [dispatch]);
 
   // ============================================================================
-  // HANDLERS: Tab Click with State Preservation
+  // EFFECTS: Scroll to Top on Tab Change
+  // ============================================================================
+  // Scroll to the top of the content when user switches tabs
+  const prevActiveTabRef = useRef<string | null>(null);
+  useEffect(() => {
+    // Skip scroll on initial mount
+    if (prevActiveTabRef.current === null) {
+      prevActiveTabRef.current = activeTab;
+      return;
+    }
+
+    // Only scroll if the tab actually changed
+    if (prevActiveTabRef.current !== activeTab) {
+      const scrollContainer = document.getElementById(SCROLL_CONTAINER_ID);
+      if (scrollContainer) {
+        scrollContainer.scrollTo({ top: 0, behavior: "instant" });
+      }
+      prevActiveTabRef.current = activeTab;
+    }
+  }, [activeTab]);
+
+  // ============================================================================
+  // HANDLERS: Tab Click
   // ============================================================================
   /**
-   * Handle tab click with scroll and state preservation.
-   *
-   * FLOW:
-   * 1. Save current tab state to cache
-   * 2. Check for cached state in target tab
-   * 3a. If cached: Restore posts, pagination, schedule scroll restore
-   * 3b. If not cached: Reset to initial state
-   * 4. Switch to new tab
+   * Handle tab click. RTK Query handles data caching automatically per category_id.
    */
   const handleTabClick = useCallback(
     (tabId: string) => {
       if (tabId === activeTab) return;
 
-      // Step 1: Save current tab state before switching
-      saveCurrentTabState();
-
-      // Step 2: Check for cached state in target tab
-      const cachedState = getCachedState(tabId);
-
-      if (cachedState && cachedState.posts.length > 0) {
-        // Step 3a: Restore cached state
-        setPosts(cachedState.posts);
-        setPage(cachedState.page);
-        setHasMore(cachedState.hasMore);
-        scheduleScrollRestore(cachedState.scrollPosition);
-      } else {
-        // Step 3b: No cache - reset to initial state
-        resetPosts();
-        clearPendingRestore();
-      }
-
-      // Step 4: Switch tab (triggers data fetch if no cache)
+      // Switch tab (RTK Query handles data caching automatically)
       baseHandleTabClick(tabId);
+      // Reset page number to 1 when switching tabs
+      setPage(INITIAL_PAGE);
     },
-    [
-      activeTab,
-      saveCurrentTabState,
-      getCachedState,
-      setPosts,
-      setPage,
-      setHasMore,
-      scheduleScrollRestore,
-      resetPosts,
-      clearPendingRestore,
-      baseHandleTabClick,
-    ]
+    [activeTab, baseHandleTabClick, setPage]
   );
 
   // ============================================================================

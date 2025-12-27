@@ -3,19 +3,17 @@
  * USE GOSSIP POSTS HOOK
  * ============================================================================
  *
- * Custom hook for fetching and managing gossip posts with pagination.
+ * Custom hook for fetching and managing gossip posts with infinite scroll.
  *
  * RESPONSIBILITIES:
  * - Fetches posts from API with pagination support
  * - Transforms API response to component-friendly format
- * - Manages posts state with deduplication
- * - Handles loading and error states
+ * - Leverages RTK Query's built-in caching for infinite scroll
  *
  * BUSINESS LOGIC:
  * - Posts are fetched per category (categoryId)
- * - Pagination uses page-based approach with configurable page size
- * - New posts are appended while preventing duplicates
- * - hasMore flag controls infinite scroll behavior
+ * - RTK Query handles caching and merging via serializeQueryArgs + merge
+ * - hasMore flag is derived from pagination response
  *
  * DATA TRANSFORMATION:
  * - API response is normalized to ensure consistent data structure
@@ -23,7 +21,7 @@
  * - Media items are filtered to only include valid entries
  */
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { useGetGossipPostsQuery } from "../services/gossipSlice";
 import type { GossipPostMedia } from "../services/gossipSlice";
 import { DEFAULT_PAGE_SIZE, INITIAL_PAGE } from "../constants";
@@ -38,6 +36,7 @@ interface UseGossipPostsOptions {
 
 /**
  * Hook for fetching and managing gossip posts with infinite scroll pagination.
+ * Uses RTK Query's native caching for efficient data management.
  *
  * @param options - Configuration options
  * @returns Posts state, loading indicators, and control methods
@@ -60,13 +59,19 @@ export function useGossipPosts({
   pageSize = DEFAULT_PAGE_SIZE,
 }: UseGossipPostsOptions): UseGossipPostsReturn {
   const [page, setPage] = useState(INITIAL_PAGE);
-  const [posts, setPosts] = useState<GossipPostData[]>([]);
-  const [hasMore, setHasMore] = useState(true);
 
   const hasCategoryId = Boolean(categoryId);
 
+  // Reset page to 1 when category changes
+  // useEffect(() => {
+  //   if (categoryId !== prevCategoryIdRef.current) {
+  //     setPage(INITIAL_PAGE);
+  //     prevCategoryIdRef.current = categoryId;
+  //   }
+  // }, [categoryId]);
+
   // Fetch posts from API
-  // Skip query if no category ID is available
+  // RTK Query handles caching and merging via serializeQueryArgs + merge
   const {
     data: apiPostsResponse,
     isLoading: isPostsLoading,
@@ -88,7 +93,7 @@ export function useGossipPosts({
    * Transform API posts to component-friendly format.
    * Handles missing/null fields and normalizes data structure.
    */
-  const mappedApiPosts: GossipPostData[] = useMemo(() => {
+  const posts: GossipPostData[] = useMemo(() => {
     if (!apiPostsResponse?.data?.length) return [];
 
     return apiPostsResponse.data.map((post, index) => {
@@ -111,7 +116,8 @@ export function useGossipPosts({
                 type: item.type === "video" ? "video" : "image",
                 url: mediaUrl,
                 download_url: item.download_url,
-                thumbnail_url: (item as any).thumbnail_url || (item as any).thumbnail,
+                thumbnail_url:
+                  (item as any).thumbnail_url || (item as any).thumbnail,
               };
             })
         : [];
@@ -141,81 +147,45 @@ export function useGossipPosts({
   }, [apiPostsResponse]);
 
   /**
-   * Merge new posts with existing posts, preventing duplicates.
-   * On page 1 (fresh load), replaces all posts.
-   * On subsequent pages, appends only new unique posts.
+   * Derive hasMore from pagination info.
    */
-  useEffect(() => {
-    if (!apiPostsResponse) return;
-
-    const newPosts = mappedApiPosts;
-
-    setPosts((prev) => {
-      // Page 1: Replace all posts (fresh load or category change)
-      if (page === 1) {
-        return newPosts;
-      }
-
-      // Subsequent pages: Append only new unique posts
-      const existingIds = new Set(prev.map((item) => item.post_id));
-      const combined = [...prev];
-
-      newPosts.forEach((item) => {
-        if (!existingIds.has(item.post_id)) {
-          combined.push(item);
-        }
-      });
-
-      return combined;
-    });
-
-    // Update hasMore based on pagination info
-    const pagination = apiPostsResponse.pagination;
+  const hasMore = useMemo(() => {
+    const pagination = apiPostsResponse?.pagination;
     if (pagination) {
-      setHasMore(pagination.current_page < pagination.last_page);
-    } else {
-      // Fallback: assume more if we got a full page
-      setHasMore(newPosts.length >= pageSize);
+      return pagination.current_page < pagination.last_page;
     }
-  }, [apiPostsResponse, mappedApiPosts, page, pageSize]);
+    // Fallback: assume more if we got a full page
+    return (apiPostsResponse?.data?.length ?? 0) >= pageSize;
+  }, [apiPostsResponse, pageSize]);
 
   /**
    * Load next page of posts.
    * Guards against multiple simultaneous requests.
    */
   const loadMore = useCallback(() => {
+    console.log('loadMore triggered');
     if (isPostsFetching || !hasMore) return;
-    setPage((prev) => prev + 1);
+    setPage((prev) => {
+      console.log('loadMore prev is=>', prev);
+      return prev + 1;
+    });
   }, [isPostsFetching, hasMore]);
-
-  /**
-   * Reset to initial state.
-   * Used when switching categories or on errors.
-   */
-  const reset = useCallback(() => {
-    setPosts([]);
-    setPage(INITIAL_PAGE);
-    setHasMore(true);
-  }, []);
 
   // Calculate loading states
   // Initial loading: show skeleton (no existing posts)
-  // Fetching: includes pagination requests (show spinner at bottom)
-  const isInitialLoading = (isPostsLoading || !hasCategoryId) && posts.length === 0;
+  const isInitialLoading =
+    (isPostsLoading || !hasCategoryId) && posts.length === 0;
 
   return {
     posts,
     page,
+    setPage,
     hasMore,
     isInitialLoading,
     isFetching: isPostsFetching,
     error,
     loadMore,
     refetch,
-    setPosts,
-    setPage,
-    setHasMore,
-    reset,
   };
 }
 

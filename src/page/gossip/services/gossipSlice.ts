@@ -221,14 +221,40 @@ export const gossipExternalApi = createApi({
       providesTags: ["gossipCategory"],
     }),
     getGossipPosts: builder.query<GossipPostListResult, GossipPostListParams>({
-      query: ({ category_id, page = 1, pageSize = 10 }) => ({
-        url: "post/list",
-        params: { category_id, page, pageSize },
-      }),
+      query: ({ category_id, page = 1, pageSize = 10 }) => {
+        return {
+          url: "post/list",
+          params: { category_id, page, pageSize },
+        }
+      },
       transformResponse: (response: GossipPostListResponse) => ({
         data: response?.data ?? [],
         pagination: response?.pagination,
       }),
+      // Cache key is based on category_id only (ignore page for caching)
+      serializeQueryArgs: ({ queryArgs }) => {
+        return queryArgs.category_id;
+      },
+      // Merge new results with existing cache for infinite scroll
+      merge: (currentCache, newItems, { arg }) => {
+        if (arg.page === 1) {
+          // Reset cache on first page (fresh load or category change)
+          return newItems;
+        }
+        // Append new posts, deduplicate by id
+        const existingIds = new Set(currentCache.data.map((p) => p.id));
+        const uniqueNewPosts = newItems.data.filter(
+          (p) => !existingIds.has(p.id)
+        );
+        return {
+          data: [...currentCache.data, ...uniqueNewPosts],
+          pagination: newItems.pagination,
+        };
+      },
+      // Force refetch when page changes
+      forceRefetch: ({ currentArg, previousArg }) => {
+        return currentArg?.page !== previousArg?.page;
+      },
       providesTags: (_result, _error, { category_id }) => [
         { type: "gossipPosts", id: category_id },
         "gossipPosts",
