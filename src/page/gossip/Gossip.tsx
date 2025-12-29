@@ -229,6 +229,16 @@ const Gossip = () => {
   const showPosts = !showSkeleton && !errorMessage && posts.length > 0;
 
   // ============================================================================
+  // HANDLERS: Follow Toast
+  // ============================================================================
+  /**
+   * Handle hide follow toast.
+   */
+  const handleHideFollowToast = useCallback(() => {
+    dispatch(hideFollowToast());
+  }, [dispatch]);
+
+  // ============================================================================
   // RENDER
   // ============================================================================
   return (
@@ -312,7 +322,7 @@ const Gossip = () => {
       <FollowSuccessToast
         show={isFollowToastOpen}
         isFollowed={isFollowed}
-        onHide={() => dispatch(hideFollowToast())}
+        onHide={handleHideFollowToast}
       />
     </>
   );
