@@ -55,4 +55,9 @@ export const paths = {
   story_detail: "/story_detail/:id",
   getUserProfileId: (id: any) => `/user/${id}`,
   download: "/download",
+  gossip: "/gossip",
+  gossip_post_detail: "/gossip/post/:postId",
+  gossip_report: "/gossip/reports/:id",
+  getGossipPostDetailId: (postId: string) => `/gossip/post/${postId}`,
+  getGossipReportId: (id: string) => `/gossip/reports/${id}`,
 };

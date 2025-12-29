@@ -38,6 +38,7 @@
     "copy-to-clipboard": "^3.3.3",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.13",
+    "file-saver": "^2.0.5",
     "framer-motion": "^12.4.1",
     "geetest": "^4.1.2",
     "he": "^1.2.0",
@@ -65,12 +66,13 @@
     "react-router-dom": "^7.0.2",
     "react-swipeable": "^7.0.2",
     "redux-persist": "^6.0.0",
+    "spark-md5": "^3.0.2",
     "swiper": "^11.2.2",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^1.1.2",
     "vite-plugin-pwa": "^0.21.1",
-    "zod": "^3.24.1"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
@@ -78,6 +80,7 @@
     "@types/node": "^22.10.2",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
+    "@types/spark-md5": "^3.0.5",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.15.0",

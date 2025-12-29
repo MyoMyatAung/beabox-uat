@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { convertToSecurePayload, convertToSecureUrl } from "@/lib/encrypt";
 import { decryptWithAes } from "@/lib/decrypt";
 import { getDeviceInfo } from "@/lib/deviceInfo";
+import { gossipExternalApi } from "@/page/gossip/services/gossipSlice";
 
 type GetNotificationParams = {
   type: string;
@@ -43,7 +44,7 @@ export const profileApi = createApi({
       }
     },
   }),
-  tagTypes: ["NOTI_LIST"],
+  tagTypes: ["NOTI_LIST", "MY_LIKED_POSTS"],
   endpoints: (builder) => ({
     getMyProfile: builder.query<any, string>({
       query: () => ({
@@ -188,6 +189,7 @@ export const profileApi = createApi({
         ),
         method: "GET",
       }),
+      providesTags: ["MY_LIKED_POSTS"],
     }),
     getPosts: builder.query<any, any>({
       query: ({ id, page, sort }) => ({
@@ -255,6 +257,14 @@ export const profileApi = createApi({
         method: "Post",
         body: convertToSecurePayload({ follow_user_id, status }),
       }),
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(gossipExternalApi.util.invalidateTags(["gossipPosts"]));
+        } catch (error) {
+          console.error("Error invalidating gossip posts:", error);
+        }
+      },
     }),
     getNoti: builder.query<any, string | GetNotificationParams>({
       query: (args) => {
@@ -330,6 +340,7 @@ export const profileApi = createApi({
         url: convertToSecureUrl(`/user/liked-post?user_id=${id}&page=${page}`),
         method: "Get",
       }),
+      providesTags: ["MY_LIKED_POSTS"],
     }),
     checkUsername: builder.mutation<any, any>({
       query: ({ username, captcha, captcha_key }) => ({

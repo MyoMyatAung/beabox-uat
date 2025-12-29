@@ -5,6 +5,7 @@ import { getDeviceInfo } from "@/lib/deviceInfo";
 import { useDispatch } from "react-redux";
 import { logOutUser } from "@/store/slices/persistSlice";
 import { store } from "@/store/store";
+import { profileApi } from "@/store/api/profileApi";
 
 export const homeApi = createApi({
     reducerPath: "homeApi",
@@ -113,6 +114,14 @@ export const homeApi = createApi({
                     count,
                 }),
             }),
+            async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                    dispatch(profileApi.util.invalidateTags(["MY_LIKED_POSTS"]));
+                } catch {
+                    // Error handling - do nothing on failure
+                }
+            },
         }),
 
         unlikePost: builder.mutation<void, { post_id: any }>({
@@ -123,6 +132,14 @@ export const homeApi = createApi({
                     post_id,
                 }),
             }),
+            async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                    dispatch(profileApi.util.invalidateTags(["MY_LIKED_POSTS"]));
+                } catch {
+                    // Error handling - do nothing on failure
+                }
+            },
         }),
         unInterestPost: builder.mutation<void, { post_id: any }>({
             query: ({ post_id }) => ({

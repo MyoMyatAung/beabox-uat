@@ -20,6 +20,7 @@ const SafeLazyLoad: React.FC<SafeLazyLoadProps> = ({
   useEffect(() => {
     // Add a global handler to catch chunk loading errors
     const handleChunkError = (event: ErrorEvent) => {
+      console.log("Error event caught", event);
       // Check if this is a chunk loading error
       if (
         event.message.includes("Loading chunk") || 

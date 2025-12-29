@@ -31,7 +31,6 @@ export const authApi = createApi({
         localStorage.setItem("auth-error", encryptedData?.message);
       try {
         const decryptedData = decryptWithAes(encryptedData?.data);
-
         return JSON.parse(decryptedData);
       } catch (err) {
         console.error("Error decrypting response:", err);

@@ -24,6 +24,7 @@ import type { MotionStyle } from "framer-motion";
 import { sethideNew } from "../services/hideNewSlice";
 import { addOnlySeenUser } from "../services/onlyseenUserSlice";
 import { setFirstTimeUser } from "@/store/slices/appSlice";
+import { useAuthentication } from "@/page/gossip/hooks/useAuthentication";
 
 function VideoSidebar({
   messages,
@@ -216,7 +217,17 @@ function VideoSidebar({
     setCommentsVisible(false);
   };
 
+  // ============================================================================
+  // AUTHENTICATION
+  // ============================================================================
+  const { ensureAuthenticated } = useAuthentication();
+
   const handleFollow = async () => {
+    if (!ensureAuthenticated()) {
+      dispatch(setAuthToggle(true));
+      return;
+    }
+
     if (user?.token) {
       try {
         const res = await followStatus({
@@ -263,9 +274,9 @@ function VideoSidebar({
     dispatch(setMute(!mute));
   };
 
-  if (isOpen) {
-    return <LoginDrawer isOpen={isOpen} setIsOpen={setIsOpen} />;
-  }
+  // if (isOpen) {
+  //   return <LoginDrawer isOpen={isOpen} setIsOpen={setIsOpen} />;
+  // }
 
   const handleProfile = (id: any) => {
     const seenUser = onlyseenUserIds.includes(id);

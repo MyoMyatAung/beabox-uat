@@ -5,7 +5,6 @@ import Privacy from "./privacy";
 import selected from "@/assets/createcenter/selected.png";
 import unselected from "@/assets/createcenter/unselected.png";
 import Tags from "@/page/create-center/Tags";
-import Info from "./info";
 import { useGetConfigQuery } from "@/store/api/createCenterApi";
 const Selected = () => (
   <img className="w-[18px] h-[18px]" src={selected} alt="" />
@@ -21,11 +20,12 @@ const UploadFrom = ({
   loading,
   agree,
   setAgree,
+  fileHashExists,
 }: any) => {
   const { data } = useGetConfigQuery({});
   const link = data?.data?.website_upload_link;
 
-  console.log(link);
+  console.log('Website Upload Link',link);
 
   const [privacy, setPrivacy] = useState(editPost?.privacy || "public");
   const [contentTitle, setContentTitle] = useState(editPost?.title || "");
@@ -192,10 +192,11 @@ const UploadFrom = ({
         <button
           onClick={handleSubmit}
           disabled={
-            agree && contentTitle?.length > 0 && hashtags?.length ? false : true
+            fileHashExists ||
+            !(agree && contentTitle?.length > 0 && hashtags?.length)
           }
           className={`text-[16px] font-semibold ${
-            agree && contentTitle?.length > 0 && hashtags?.length
+            !fileHashExists && agree && contentTitle?.length > 0 && hashtags?.length
               ? "bg-gradient-to-b from-[#FFB2E0] to-[#CD3EFF] text-white"
               : "bg-[#FFFFFF0A] text-[#444444]"
           }    w-full rounded-[16px] py-3`}

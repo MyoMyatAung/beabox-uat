@@ -40,6 +40,9 @@ import spinWheelReducer from "./slices/spinWheelSlice";
 import { spinWheelApi } from "../page/luckywheel/services/spinWheelApi";
 import showSlice from "@/page/home/services/showSlice";
 import watchSlice from "@/page/home/services/watchSlice";
+import { gossipApi } from "@/page/gossip/services/gossipApi";
+import { gossipExternalApi } from "@/page/gossip/services/gossipSlice";
+import gossipMuteSlice from "@/page/gossip/services/gossipMuteSlice";
 import indexSlice from "@/page/home/services/indexSlice";
 import previousUserReducer from "@/page/home/services/previousUserSlice";
 import hideNewSlice from "@/page/home/services/hideNewSlice";
@@ -50,6 +53,9 @@ import pageSlice1 from "@/page/home/services/pageSlice1";
 import activeSlice1 from "@/page/home/services/activeSlice1";
 import passwordSlice from "@/page/home/services/passwordSlice";
 import scrollRestrictionSlice from "./slices/scrollRestrictionSlice";
+import fullScreenGossipSlice from "./slices/fullScreenGossipSlice";
+import shareGossipSlice from "./slices/shareGossipSlice";
+import followToastSlice from "./slices/followToastSlice";
 
 const sessionStorageWrapper: Storage = {
   getItem: (key: string) => {
@@ -91,6 +97,9 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   app: appSlice,
+  fullScreenGossip: fullScreenGossipSlice,
+  shareGossip: shareGossipSlice,
+  followToast: followToastSlice,
   count: counterSlice,
   [homeApi.reducerPath]: homeApi.reducer,
   profile: profileSlice,
@@ -138,12 +147,15 @@ const rootReducer = combineReducers({
   [eventInvitationApi.reducerPath]: eventInvitationApi.reducer,
   [versionApi.reducerPath]: versionApi.reducer,
   [spinWheelApi.reducerPath]: spinWheelApi.reducer,
+  [gossipApi.reducerPath]: gossipApi.reducer,
+  [gossipExternalApi.reducerPath]: gossipExternalApi.reducer,
+  gossipMute: gossipMuteSlice,
   spinWheel: spinWheelReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-export const store: any = configureStore({
+export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -157,7 +169,9 @@ export const store: any = configureStore({
       .concat(eventApi.middleware)
       .concat(eventInvitationApi.middleware)
       .concat(versionApi.middleware)
-      .concat(spinWheelApi.middleware),
+      .concat(spinWheelApi.middleware)
+      .concat(gossipApi.middleware)
+      .concat(gossipExternalApi.middleware),
 });
 
 export const persistor = persistStore(store);

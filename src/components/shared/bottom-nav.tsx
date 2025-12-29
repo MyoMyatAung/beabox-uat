@@ -2,13 +2,12 @@ import { cn } from "@/lib/utils";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import HomeSVG from "@/assets/icons/Home.svg";
 import Home1SVG from "@/assets/icons/Home1.svg";
-import ExploreSVG from "@/assets/icons/Explore.svg";
-import AppSVG from "@/assets/icons/App.svg";
-import PlusSVG from "@/assets/icons/Plus.svg";
+import GossipInactiveSVG from "@/assets/icons/GossipInactive.svg";
+import GossipActiveSVG from "@/assets/icons/GossipActive.svg";
 import ProfileSVG from "@/assets/icons/Profile.svg";
 import Profile1SVG from "@/assets/icons/Profile1.svg";
 import addImg from "@/assets/icons/add.svg";
-import App1SVG from "@/assets/icons/App1.svg";
+
 import ranksvg from "@/assets/icons/rank.svg";
 import selectedrank from "@/assets/icons/selecteRank.svg";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,11 +19,17 @@ import { NOTIFICATION_CONFIG } from "@/constants/noti-constant";
 
 const navItems = [
   { name: "首页", selectedIcon: Home1SVG, icon: HomeSVG, href: "/" },
+  // {
+  //   name: "应用推荐",
+  //   selectedIcon: App1SVG,
+  //   icon: AppSVG,
+  //   href: "/application",
+  // },
   {
-    name: "应用推荐",
-    selectedIcon: App1SVG,
-    icon: AppSVG,
-    href: "/application",
+    name: "大瓜",
+    selectedIcon: GossipActiveSVG,
+    icon: GossipInactiveSVG,
+    href: "/gossip",
   },
   {
     name: "创作",

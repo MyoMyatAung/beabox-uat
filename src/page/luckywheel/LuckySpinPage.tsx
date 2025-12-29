@@ -188,7 +188,7 @@ const LuckySpinPage: React.FC = () => {
       refetchProfile();
     }
   }, [user?.token, refetchProfile]);
-
+  console.log('currentEventData is=>', currentEventData);
   const eventId = currentEventData?.data?.filter(
     (x: { type: string }) => x.type === "event"
   )[0]?.id;
@@ -405,7 +405,10 @@ const LuckySpinPage: React.FC = () => {
     navigate("/wallet/withdraw");
   };
 
-  if (!eventId) return null;
+  if (!eventId) {
+    console.log('eventId is not found');
+    return null;
+  }
 
   return (
     <div className="w-full max-w-[440px] min-h-dvh overflow-y-auto relative">

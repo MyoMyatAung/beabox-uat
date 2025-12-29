@@ -1,17 +1,17 @@
 /**
  * Routing Configuration Module
- * 
+ *
  * This module defines the application's routing structure using React Router v6.
  * It implements lazy loading for code splitting, error handling, and conditional
  * route registration based on device/platform requirements.
- * 
+ *
  * Key Features:
  * - Lazy loading for performance optimization
  * - Error boundary handling with SafeLazyLoad
  * - Dual password protection for sensitive routes
  * - Platform-specific routes (iOS WebView only)
  * - Centralized route configuration for maintainability
- * 
+ *
  * Design Principles:
  * - Single Responsibility: Each function handles a specific aspect of routing
  * - Open/Closed: Easy to extend with new routes without modifying existing code
@@ -60,9 +60,7 @@ const ResetPassword = lazy(
   () => import("../components/profile/auth/reset-password")
 );
 const PinEntry = lazy(() => import("../page/profile/security/PinEntry"));
-const SecurityQuestion = lazy(
-  () => import("../page/profile/SecurityQuestion")
-);
+const SecurityQuestion = lazy(() => import("../page/profile/SecurityQuestion"));
 const Question = lazy(() => import("../page/profile/security/Question"));
 const CheckAnswer = lazy(
   () => import("../components/profile/auth/check-answer")
@@ -91,6 +89,9 @@ const Explore = lazy(() => import("../page/explore/Explore"));
 const Application = lazy(() => import("../page/application/Application"));
 const Lucky = lazy(() => import("../page/luckywheel/LuckySpinPage"));
 const LuckyDraw = lazy(() => import("../page/events/Luckydraw"));
+const Gossip = lazy(() => import("../page/gossip/Gossip"));
+const GossipPostDetail = lazy(() => import("../page/gossip/PostDetail"));
+const GossipReport = lazy(() => import("../page/gossip/components/GossipReport"));
 
 // ============================================================================
 // LAZY LOADED COMPONENTS - Profile & User Management
@@ -99,9 +100,7 @@ const Profile = lazy(() => import("../page/profile/Profile"));
 const OtherProfile = lazy(() => import("../page/profile/OtherProfile"));
 const ProfileDetail = lazy(() => import("../page/profile/ProfileDetail"));
 const Settings = lazy(() => import("../page/profile/Settings"));
-const PrivacySettings = lazy(
-  () => import("../page/profile/PrivacySettings")
-);
+const PrivacySettings = lazy(() => import("../page/profile/PrivacySettings"));
 const AddBio = lazy(() => import("../components/profile/add-bio"));
 const UserFeedSet = lazy(() => import("../page/profile/security/UserFeedSet"));
 
@@ -116,18 +115,10 @@ const BalanceNoti = lazy(() => import("../page/profile/noti/BalanceNoti"));
 // ============================================================================
 // LAZY LOADED COMPONENTS - Content Creation
 // ============================================================================
-const CreateCenter = lazy(
-  () => import("../page/create-center/CreateCenter")
-);
-const CreatorUpload = lazy(
-  () => import("../page/create-center/CreatorUpload")
-);
-const VideoUpload = lazy(
-  () => import("../page/create-center/VideoUpload")
-);
-const VideoDetails = lazy(
-  () => import("../page/create-center/VideoDetails")
-);
+const CreateCenter = lazy(() => import("../page/create-center/CreateCenter"));
+const CreatorUpload = lazy(() => import("../page/create-center/CreatorUpload"));
+const VideoUpload = lazy(() => import("../page/create-center/VideoUpload"));
+const VideoDetails = lazy(() => import("../page/create-center/VideoDetails"));
 const YourVideos = lazy(() => import("../page/create-center/YourVideos"));
 const Recycle = lazy(() => import("../page/create-center/Recycle"));
 const Tags = lazy(() => import("../page/create-center/Tags"));
@@ -169,11 +160,11 @@ type RouteConfig = (
 /**
  * Creates a route wrapper function that applies error handling, lazy loading,
  * and authentication guards consistently across all routes.
- * 
+ *
  * This factory function implements the Dependency Inversion Principle by
  * abstracting route creation logic, making it easy to modify route behavior
  * in one place.
- * 
+ *
  * @param defaultOptions - Default options to apply to all routes
  * @returns A function that creates route configurations with consistent wrapping
  */
@@ -182,7 +173,8 @@ const createRouteWrapper =
   (path, component, options = {}) => {
     // Merge default options with route-specific options
     const finalOptions = { ...defaultOptions, ...options };
-    const { skipPasswordGuard = false, skipSafeLazyLoad = false } = finalOptions;
+    const { skipPasswordGuard = false, skipSafeLazyLoad = false } =
+      finalOptions;
 
     let wrappedComponent: ReactNode;
 
@@ -198,11 +190,11 @@ const createRouteWrapper =
       // For lazy-loaded components, wrap with SafeLazyLoad for Suspense and error handling
       wrappedComponent = skipPasswordGuard ? (
         <SafeLazyLoad>{component}</SafeLazyLoad>
-    ) : (
-      <DualPasswordGuard>
+      ) : (
+        <DualPasswordGuard>
           <SafeLazyLoad>{component}</SafeLazyLoad>
-      </DualPasswordGuard>
-    );
+        </DualPasswordGuard>
+      );
     }
 
     return {
@@ -239,37 +231,47 @@ const createHomeRoute = (createRoute: RouteConfig): RouteObject => {
         element: (
           <DualPasswordGuard>
             <SafeLazyLoad>
-          <Home />
+              <Home />
             </SafeLazyLoad>
           </DualPasswordGuard>
-      ),
-    },
-    {
-      path: paths.application,
+        ),
+      },
+      {
+        path: paths.application,
         element: (
           <DualPasswordGuard>
             <SafeLazyLoad>
-          <Application />
+              <Application />
             </SafeLazyLoad>
           </DualPasswordGuard>
-      ),
-    },
-    {
-      path: paths.profile,
+        ),
+      },
+      {
+        path: paths.profile,
         element: (
           <DualPasswordGuard>
             <SafeLazyLoad>
-          <Profile />
+              <Profile />
             </SafeLazyLoad>
           </DualPasswordGuard>
-      ),
-    },
-    {
+        ),
+      },
+      {
         path: paths.ranking,
         element: (
           <DualPasswordGuard>
             <SafeLazyLoad>
               <Ranking />
+            </SafeLazyLoad>
+          </DualPasswordGuard>
+        ),
+      },
+      {
+        path: paths.gossip,
+        element: (
+          <DualPasswordGuard>
+            <SafeLazyLoad>
+              <Gossip />
             </SafeLazyLoad>
           </DualPasswordGuard>
         ),
@@ -343,6 +345,8 @@ const createMainRoutes = (createRoute: RouteConfig): RouteObject[] => [
   createRoute(paths.add_bio, <AddBio />),
   createRoute(paths.download, <Download />),
   createRoute(paths.recommand_more, <More />),
+  createRoute(paths.gossip_post_detail, <GossipPostDetail />),
+  createRoute(paths.gossip_report, <GossipReport />),
 ];
 
 /**
@@ -417,8 +421,8 @@ const createEventRoutes = (createRoute: RouteConfig): RouteObject[] => [
  * This route must be placed last in the routes array.
  */
 const createNotFoundRoute = (): RouteObject => ({
-      path: "*",
-      element: <h1>Page Not Found!</h1>,
+  path: "*",
+  element: <h1>Page Not Found!</h1>,
   errorElement: <Navigate to={paths.home} replace />,
 });
 
@@ -428,11 +432,11 @@ const createNotFoundRoute = (): RouteObject => ({
 
 /**
  * Main Routing Component
- * 
+ *
  * This component configures and provides the application router.
  * It aggregates all route configurations using the builder functions above,
  * ensuring a clean separation of concerns and easy maintainability.
- * 
+ *
  * Performance optimizations:
  * - Routes are memoized to prevent unnecessary re-creation on re-renders
  * - Lazy loading reduces initial bundle size
