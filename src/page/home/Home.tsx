@@ -920,7 +920,7 @@ const Home = () => {
                               创作者成为闪亮之星，从创作者开始
                             </p>
                             <Link
-                              to={"/ranking"}
+                              to={"/ranking?tab=author"}
                               className="follow_re_btn mt-5"
                             >
                               查看全部
