@@ -593,8 +593,8 @@ function VideoSidebarFeed({
         className="videoSidebar__button"
         initial={false} // Disable initial animation
         animate={{
-          x: hideBar ? 50 : 0, // Slide right when hidden
-          opacity: hideBar ? 0 : 1,
+          x: hideNew || hideBar ? 50 : 0, // Slide right when hidden
+          opacity: hideNew || hideBar ? 0 : 1,
         }}
         transition={{
           type: "spring",
