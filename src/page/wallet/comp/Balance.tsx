@@ -114,7 +114,7 @@ const Balance: React.FC<BalanceProps> = () => {
         <div className=" flex justify-between items-center">
           <div
             onClick={() => setShowBox(true)}
-            className=" w-1/2 flex justify-between items-center px-[12px] h-[40px] red_box_wal"
+            className=" w-1/2 flex justify-between items-center px-[12px] h-[40px] bg-[#FF275D1F] rounded-md"
           >
             <div className="flex justify-center items-center gap-[6px]">
               <img src={red} alt="Red Icon" className="w-[28px] h-[28px]" />
