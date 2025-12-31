@@ -4,8 +4,13 @@
  * ============================================================================
  *
  * Shared type definitions for the Gossip feature module.
- * This file centralizes all interfaces to ensure consistency across components
- * and hooks, following the Single Responsibility Principle.
+ * This file centralizes all interfaces to ensure consistency across components,
+ * following the Single Responsibility Principle.
+ *
+ * TYPE CATEGORIES:
+ * - Tab Types: Navigation and category types
+ * - Post Types: Post data structures
+ * - Component Props: Props for gossip components
  */
 
 import type { ComponentProps } from "react";
@@ -26,15 +31,6 @@ export interface Tab {
   label: string;
   /** Backend category ID for API requests */
   categoryId: string;
-}
-
-/**
- * Simplified tab interface for the navbar component.
- * Contains only display-related properties.
- */
-export interface NavbarTab {
-  id: string;
-  label: string;
 }
 
 // ============================================================================
@@ -94,82 +90,31 @@ export interface GossipUserInfo {
 }
 
 // ============================================================================
-// HOOK RETURN TYPES
-// ============================================================================
-
-/**
- * Return type for useGossipTabs hook.
- * Provides tab management state and handlers.
- */
-export interface UseGossipTabsReturn {
-  /** Array of available tabs */
-  tabs: Tab[];
-  /** Currently active tab ID */
-  activeTab: string;
-  /** Currently active tab configuration */
-  activeTabConfig: Tab | undefined;
-  /** Whether categories are loading */
-  isLoading: boolean;
-  /** Error from categories API */
-  error: unknown;
-  /** Handler for tab click events */
-  handleTabClick: (tabId: string) => void;
-}
-
-/**
- * Return type for useGossipPosts hook.
- * Provides posts data, pagination state, and loading indicators.
- *
- * Note: RTK Query handles caching automatically per category_id.
- * Posts are merged and deduplicated at the cache level.
- */
-export interface UseGossipPostsReturn {
-  /** Array of posts to display (from RTK Query cache) */
-  posts: GossipPostData[];
-  /** Current page number */
-  page: number;
-  /** Set page number */
-  setPage: (page: number) => void;
-  /** Whether more posts are available (derived from pagination) */
-  hasMore: boolean;
-  /** Whether initial data is loading (show skeleton) */
-  isInitialLoading: boolean;
-  /** Whether data is currently being fetched (includes pagination) */
-  isFetching: boolean;
-  /** Error from posts API */
-  error: unknown;
-  /** Load next page of posts */
-  loadMore: () => void;
-  /** Refetch current data */
-  refetch: () => void;
-}
-
-// ============================================================================
 // COMPONENT PROP TYPES
 // ============================================================================
 
 /**
- * Props for GossipErrorState component.
- */
-export interface GossipErrorStateProps {
-  /** Error message to display */
-  message: string;
-  /** Whether retry button should be shown */
-  showRetry: boolean;
-  /** Callback for retry button click */
-  onRetry: () => void;
-}
-
-/**
  * Props for GossipPostList component.
+ * Used for rendering the infinite scroll post list.
  */
 export interface GossipPostListProps {
   /** Array of posts to render */
   posts: GossipPostData[];
-  /** Whether more posts are available */
+  /** Whether more posts are available for pagination */
   hasMore: boolean;
-  /** Callback to load more posts */
+  /** Callback to load more posts (triggered by infinite scroll) */
   onLoadMore: () => void;
-  /** ID of the scroll container element */
+  /** ID of the scroll container element for scroll detection */
   scrollContainerId: string;
+}
+
+/**
+ * Props for GossipTabContent component.
+ * Used for each category tab's content with keep-alive support.
+ */
+export interface GossipTabContentProps {
+  /** Category ID to fetch posts for */
+  categoryId: string;
+  /** Whether this tab is currently active/visible */
+  isActive: boolean;
 }

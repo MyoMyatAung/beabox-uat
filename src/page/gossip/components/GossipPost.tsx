@@ -49,6 +49,7 @@ import { usePostPopovers } from "../hooks/usePostPopovers";
 import { openFullScreenGossip } from "@/store/slices/fullScreenGossipSlice";
 import { showFollowToast } from "@/store/slices/followToastSlice";
 import { openShareGossip } from "@/store/slices/shareGossipSlice";
+import { openPostDetailDialog } from "@/store/slices/postDetailDialogSlice";
 
 // ============================================================================
 // TYPES
@@ -263,11 +264,11 @@ const GossipPost = ({ post }: GossipPostProps) => {
   }, [dispatch, post.share_link]);
 
   /**
-   * Handles post content/overlay click - navigates to post detail.
+   * Handles post content/overlay click - opens post detail dialog.
    */
   const handlePostClick = useCallback((): void => {
-    navigate(`/gossip/post/${post.post_id}`, { state: { post } });
-  }, [navigate, post.post_id]);
+    dispatch(openPostDetailDialog({ postId: post.post_id, post }));
+  }, [dispatch, post]);
 
   return (
     <div

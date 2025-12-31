@@ -8,64 +8,67 @@
  *
  * ARCHITECTURE:
  * This component follows SOLID principles with clear separation of concerns:
- *
- * - useGossipTabs: Tab/category management and persistence
- * - useGossipPosts: Post fetching, transformation, and pagination (RTK Query)
- * - usePlayerCleanup: Video player memory management
+ * - Single Responsibility: Each sub-component handles one specific task
+ * - Open/Closed: Extensible via props without modifying existing code
+ * - Dependency Inversion: Uses RTK Query hooks for data fetching
  *
  * FEATURES:
  * 1. Category Tabs: Navigate between different gossip categories
  * 2. Infinite Scroll: Load more posts as user scrolls
  * 3. RTK Query Caching: Posts cached per category automatically
- * 4. Memory Management: Clean up video players on tab change/unmount
+ * 4. Keep-alive Pattern: Preserves tab state when switching
+ * 5. Fullscreen Media Viewer: View images/videos in fullscreen
+ * 6. Post Detail Dialog: View post details without navigation
  *
  * USER EXPERIENCE:
  * - Instant tab switching with cached data
- * - Last viewed tab remembered across sessions
  * - Smooth loading states with skeleton placeholders
+ * - Share functionality via ShareSheet
+ * - Follow success toast notifications
  *
  * COMPONENT HIERARCHY:
  * Gossip
- * ├── GossipTopNavbar (tab navigation)
- * ├── PostSkeleton (loading state)
- * ├── GossipErrorState (error display)
- * ├── GossipEmptyState (no content)
- * └── GossipPostList (infinite scroll + posts)
- *     └── GossipPost (individual post)
+ * ├── Tabs (category navigation using shadcn/ui)
+ * │   └── TabsTrigger (category buttons)
+ * ├── GossipTabContent (per-category content with keep-alive)
+ * │   ├── PostSkeleton (loading state)
+ * │   └── GossipPostList (infinite scroll + posts)
+ * │       └── GossipPost (individual post with actions)
+ * ├── MediaFullscreenViewer (lazy-loaded, fullscreen media)
+ * ├── ShareSheet (lazy-loaded, share functionality)
+ * ├── FollowSuccessToast (follow notification)
+ * └── PostDetailDialog (fullscreen post detail view)
  *
  * @see types.ts for type definitions
  * @see constants.ts for configuration values
+ * @see GossipTabContent for tab content implementation
  */
 
-import { useEffect, useMemo, useCallback, lazy, Suspense, useRef } from "react";
+import { useEffect, useCallback, lazy, Suspense, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { sethideNew } from "@/page/home/services/hideNewSlice";
-import { INITIAL_PAGE, SCROLL_CONTAINER_ID } from "./constants";
-const MediaFullscreenViewer = lazy(() => import("./components/MediaFullscreenViewer"));
 
-// Hooks
-import {
-  useGossipTabs,
-  useGossipPosts,
-  usePlayerCleanup,
-} from "./hooks";
+// Lazy-loaded components for code splitting
+const MediaFullscreenViewer = lazy(
+  () => import("./components/MediaFullscreenViewer")
+);
 
-// Components
-import GossipTopNavbar from "./components/GossipTopNavbar";
-import { PostSkeleton } from "./components/PostSkeleton";
-import { GossipErrorState } from "./components/GossipErrorState";
-import { GossipEmptyState } from "./components/GossipEmptyState";
-import { GossipPostList } from "./components/GossipPostList";
-
-// Types
-import type { NavbarTab } from "./types";
-import LoadingSpinner from "./components/LoadingSpinner";
+// Store imports
 import { RootState } from "@/store/store";
+import { sethideNew } from "@/page/home/services/hideNewSlice";
 import { closeFullScreenGossip } from "@/store/slices/fullScreenGossipSlice";
-import ShareSheet from "./components/ShareSheet";
 import { closeShareGossip } from "@/store/slices/shareGossipSlice";
-import FollowSuccessToast from "./components/FollowSuccessToast";
 import { hideFollowToast } from "@/store/slices/followToastSlice";
+
+// API hooks
+import { useGetGossipCategoriesQuery } from "./services/gossipSlice";
+
+// UI components
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import LoadingSpinner from "./components/LoadingSpinner";
+import ShareSheet from "./components/ShareSheet";
+import FollowSuccessToast from "./components/FollowSuccessToast";
+import GossipTabContent from "./components/GossipTabContent";
+import PostDetailDialog from "./components/PostDetailDialog";
 
 /**
  * Main Gossip page component.
@@ -75,44 +78,64 @@ import { hideFollowToast } from "@/store/slices/followToastSlice";
  */
 const Gossip = () => {
   const dispatch = useDispatch();
-  const { isOpen, index, post } = useSelector((state: RootState) => state.fullScreenGossip);
-  const { isOpen: isShareOpen, shareUrl } = useSelector((state: RootState) => state.shareGossip);
-  const { isOpen: isFollowToastOpen, isFollowed } = useSelector((state: RootState) => state.followToast);
+  const { isOpen, index, post } = useSelector(
+    (state: RootState) => state.fullScreenGossip
+  );
+  const { isOpen: isShareOpen, shareUrl } = useSelector(
+    (state: RootState) => state.shareGossip
+  );
+  const { isOpen: isFollowToastOpen, isFollowed } = useSelector(
+    (state: RootState) => state.followToast
+  );
+
+  const [activeTab, setActiveTab] = useState<string | undefined>(undefined);
+  // Track visited tabs for keep-alive (only mount once visited)
+  const [visitedTabs, setVisitedTabs] = useState<Set<string>>(new Set());
 
   // ============================================================================
   // HOOKS: Tabs Management
   // ============================================================================
   // Manages category tabs, active tab state, and localStorage persistence
   const {
-    tabs,
-    activeTab,
-    activeTabConfig,
-    isLoading: isCategoriesLoading,
-    error: categoriesError,
-    handleTabClick: baseHandleTabClick,
-  } = useGossipTabs();
+    data: categoryList = [],
+    isLoading,
+    error,
+  } = useGetGossipCategoriesQuery();
 
-  // ============================================================================
-  // HOOKS: Posts Management
-  // ============================================================================
-  // Manages post fetching via RTK Query with built-in caching per category
-  const {
-    posts,
-    setPage,
-    hasMore,
-    isInitialLoading,
-    error: postsError,
-    loadMore,
-    refetch,
-  } = useGossipPosts({
-    categoryId: activeTabConfig?.categoryId,
-  });
+  const categoryErrorMessage = useMemo(() => {
+    if (error) {
+      if (typeof error === "object" && error !== null) {
+        if ("status" in error) {
+          const errData = (error as { data?: { message?: string } }).data;
+          return errData?.message || "频道加载失败，请稍后重试";
+        }
+        if ("message" in error) {
+          return (error as { message?: string }).message || "频道加载失败，请稍后重试";
+        }
+      }
+      return "频道加载失败，请稍后重试";
+    }
 
-  // ============================================================================
-  // HOOKS: Player Memory Management
-  // ============================================================================
-  // Cleans up video players on tab change and component unmount
-  usePlayerCleanup({ activeTab });
+    if (!isLoading && !categoryList.length) {
+      return "当前频道暂未配置分类，请稍后再试";
+    }
+
+    return null;
+  }, [categoryList.length, error, isLoading]);
+
+  useEffect(() => {
+    if (!activeTab && categoryList.length) {
+      const firstTabId = categoryList[0].id;
+      setActiveTab(firstTabId);
+      setVisitedTabs(new Set([firstTabId]));
+    }
+  }, [activeTab, categoryList]);
+
+  // Handle tab change - add to visited tabs
+  const handleTabChange = useCallback((tabId: string) => {
+    setActiveTab(tabId);
+    setVisitedTabs((prev) => new Set(prev).add(tabId));
+  }, []);
 
   // ============================================================================
   // EFFECTS: Bottom Navigation Visibility
@@ -121,112 +144,6 @@ const Gossip = () => {
   useEffect(() => {
     dispatch(sethideNew(false));
   }, [dispatch]);
-
-  // ============================================================================
-  // EFFECTS: Scroll to Top on Tab Change
-  // ============================================================================
-  // Scroll to the top of the content when user switches tabs
-  const prevActiveTabRef = useRef<string | null>(null);
-  useEffect(() => {
-    // Skip scroll on initial mount
-    if (prevActiveTabRef.current === null) {
-      prevActiveTabRef.current = activeTab;
-      return;
-    }
-
-    // Only scroll if the tab actually changed
-    if (prevActiveTabRef.current !== activeTab) {
-      const scrollContainer = document.getElementById(SCROLL_CONTAINER_ID);
-      if (scrollContainer) {
-        scrollContainer.scrollTo({ top: 0, behavior: "instant" });
-      }
-      prevActiveTabRef.current = activeTab;
-    }
-  }, [activeTab]);
-
-  // ============================================================================
-  // HANDLERS: Tab Click
-  // ============================================================================
-  /**
-   * Handle tab click. RTK Query handles data caching automatically per category_id.
-   */
-  const handleTabClick = useCallback(
-    (tabId: string) => {
-      if (tabId === activeTab) return;
-
-      // Switch tab (RTK Query handles data caching automatically)
-      baseHandleTabClick(tabId);
-      // Reset page number to 1 when switching tabs
-      setPage(INITIAL_PAGE);
-    },
-    [activeTab, baseHandleTabClick, setPage]
-  );
-
-  // ============================================================================
-  // COMPUTED: Navbar Tabs
-  // ============================================================================
-  // Transform tabs to navbar format (id + label only)
-  const navbarTabs: NavbarTab[] = useMemo(
-    () => tabs.map((tab) => ({ id: tab.id, label: tab.label })),
-    [tabs]
-  );
-
-  // ============================================================================
-  // COMPUTED: Error Message
-  // ============================================================================
-  /**
-   * Determine error message to display.
-   *
-   * Priority:
-   * 1. No categories configured
-   * 2. Category loading error
-   * 3. Posts loading error
-   */
-  const errorMessage = useMemo(() => {
-    // Check for missing categories (configuration issue)
-    if (!tabs.length && !isCategoriesLoading) {
-      return "当前频道暂未配置分类，请稍后再试";
-    }
-
-    // Check for category loading errors
-    if (categoriesError && "message" in (categoriesError as any)) {
-      return (
-        ((categoriesError as { message?: string }).message as string) ||
-        "频道加载失败，请稍后重试"
-      );
-    }
-
-    // Check for posts loading errors
-    if (postsError) {
-      if (
-        typeof postsError === "object" &&
-        postsError !== null &&
-        "status" in postsError
-      ) {
-        const errData = (postsError as { status: unknown; data?: { message?: string } }).data;
-        return errData?.message || "帖子加载失败，请稍后重试";
-      }
-      if (
-        typeof postsError === "object" &&
-        postsError !== null &&
-        "message" in postsError
-      ) {
-        return (postsError as { message?: string }).message || "帖子加载失败，请稍后重试";
-      }
-      return "帖子加载失败，请稍后重试";
-    }
-
-    return null;
-  }, [tabs.length, isCategoriesLoading, categoriesError, postsError]);
-
-  // ============================================================================
-  // COMPUTED: Display State Flags
-  // ============================================================================
-  const hasCategoryId = Boolean(activeTabConfig?.categoryId);
-  const showSkeleton = isInitialLoading || (isCategoriesLoading && posts.length === 0);
-  const showError = !showSkeleton && errorMessage && posts.length === 0;
-  const showEmpty = !showSkeleton && !errorMessage && posts.length === 0;
-  const showPosts = !showSkeleton && !errorMessage && posts.length > 0;
 
   // ============================================================================
   // HANDLERS: Follow Toast
@@ -243,46 +160,72 @@ const Gossip = () => {
   // ============================================================================
   return (
     <>
-      <div className="w-full h-svh bg-[#16131C] overflow-hidden">
-        {/* Header: Category Tab Navigation */}
-        <GossipTopNavbar
-          tabs={navbarTabs}
-          activeTab={activeTab}
-          onTabClick={handleTabClick}
-        />
+      <div className="w-full h-svh bg-[#16131C] overflow-hidden flex flex-col">
+        <div className="sticky top-0 z-10 bg-[#16131C] px-4 py-3 shrink-0">
+          {isLoading ? (
+            <div className="flex h-14 items-center justify-center">
+              <LoadingSpinner />
+            </div>
+          ) : categoryList.length ? (
+            <div className="relative">
+              <div className="pointer-events-none absolute left-0 top-0 h-full w-6 bg-gradient-to-r from-[#16131C] to-transparent z-10" />
+              <div className="pointer-events-none absolute right-0 top-0 h-full w-6 bg-gradient-to-l from-[#16131C] to-transparent z-10" />
+              <Tabs
+                value={activeTab ?? categoryList[0]?.id}
+                onValueChange={handleTabChange}
+              >
+                <TabsList
+                  className={`flex items-center ${
+                    categoryList.length <= 4 ? "justify-center" : "justify-start"
+                  } text-white min-h-14 overflow-x-auto scrollbar-hide px-6 bg-transparent`}
+                >
+                  <div className="flex items-center gap-5 w-max">
+                    {categoryList.map((category) => (
+                      <TabsTrigger
+                        key={category.id}
+                        value={category.id}
+                        className="flex flex-col items-center cursor-pointer min-w-20 px-3 bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                      >
+                        <div className="w-[24px] h-[3px] bg-transparent rounded-full transition-all duration-300" />
+                        <p
+                          className={`whitespace-nowrap transition-all duration-300 ease-in-out ${
+                            activeTab === category.id
+                              ? "text-2xl text-white opacity-100 font-semibold home-normal-text-shadow"
+                              : "home-normal-text"
+                          }`}
+                        >
+                          {category.name}
+                        </p>
+                        <div
+                          className={`w-[24px] h-[3px] rounded-full ${
+                            activeTab === category.id ? "bg-white" : "bg-transparent"
+                          }`}
+                        />
+                      </TabsTrigger>
+                    ))}
+                  </div>
+                </TabsList>
+              </Tabs>
+            </div>
+          ) : (
+            <div className="text-sm text-[#8B8498]">暂无频道</div>
+          )}
+          {categoryErrorMessage && (
+            <div className="mt-2 text-xs text-[#F87171]">
+              {categoryErrorMessage}
+            </div>
+          )}
+        </div>
 
-        {/* Content Area */}
-        {showSkeleton ? (
-          // Loading State: Skeleton placeholders
-          <PostSkeleton />
-        ) : (
-          // Scrollable Content Container
-          <div
-            id={SCROLL_CONTAINER_ID}
-            className="w-full h-[calc(100vh-136px)] bg-black overflow-y-auto pb-4"
-          >
-            {/* Error State: Display error with optional retry */}
-            {showError && (
-              <GossipErrorState
-                message={errorMessage!}
-                showRetry={hasCategoryId}
-                onRetry={refetch}
-              />
-            )}
-
-            {/* Empty State: No posts available */}
-            {showEmpty && <GossipEmptyState />}
-
-            {/* Posts List: Infinite scroll with posts */}
-            {showPosts && (
-              <GossipPostList
-                posts={posts}
-                hasMore={hasMore}
-                onLoadMore={loadMore}
-                scrollContainerId={SCROLL_CONTAINER_ID}
-              />
-            )}
-          </div>
+        {/* Tab Content - Keep-alive pattern: render all visited tabs, show/hide via isActive */}
+        {categoryList.map((category) =>
+          visitedTabs.has(category.id) ? (
+            <GossipTabContent
+              key={category.id}
+              categoryId={category.id}
+              isActive={activeTab === category.id}
+            />
+          ) : null
         )}
       </div>
       {/* Lazy Loaded Fullscreen Media Viewer */}
@@ -301,9 +244,9 @@ const Gossip = () => {
               share_count: post?.share_count || 0,
               is_liked: post?.is_liked || false,
               share_link: post?.share_link || "",
-              onLike: () => { },
-              onComment: () => { },
-              onShare: () => { },
+              onLike: () => {},
+              onComment: () => {},
+              onShare: () => {},
             }}
           />
         </Suspense>
@@ -324,6 +267,9 @@ const Gossip = () => {
         isFollowed={isFollowed}
         onHide={handleHideFollowToast}
       />
+
+      {/* Post Detail Dialog */}
+      <PostDetailDialog />
     </>
   );
 };
