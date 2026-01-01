@@ -182,13 +182,38 @@ export const profileApi = createApi({
         body: region,
       }),
     }),
-    getLikedPost: builder.query<any, any>({
-      query: ({ user_id, page }) => ({
+    getLikedPost: builder.query<any, { user_id: string; page?: number }>({
+      query: ({ user_id, page = 1 }) => ({
         url: convertToSecureUrl(
           `/user/liked-post?user_id=${user_id}&page=${page}`
         ),
         method: "GET",
       }),
+      // Cache key is based on user_id only (ignore page for caching)
+      serializeQueryArgs: ({ queryArgs }) => {
+        return queryArgs.user_id;
+      },
+      // Merge new results with existing cache for infinite scroll
+      merge: (currentCache, newItems, { arg }) => {
+        if (arg.page === 1) {
+          // Reset cache on first page (fresh load)
+          return newItems;
+        }
+        // Append new posts, deduplicate by post_id
+        const existingIds = new Set(
+          currentCache.data?.map((p: any) => p.post_id) ?? []
+        );
+        const uniqueNewPosts =
+          newItems.data?.filter((p: any) => !existingIds.has(p.post_id)) ?? [];
+        return {
+          ...newItems,
+          data: [...(currentCache.data ?? []), ...uniqueNewPosts],
+        };
+      },
+      // Force refetch when page changes
+      forceRefetch: ({ currentArg, previousArg }) => {
+        return currentArg?.page !== previousArg?.page;
+      },
       providesTags: ["MY_LIKED_POSTS"],
     }),
     getPosts: builder.query<any, any>({

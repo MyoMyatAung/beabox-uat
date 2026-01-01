@@ -32,7 +32,7 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "@/store/store";
-import { User, X } from "lucide-react";
+import { User, ChevronLeft } from "lucide-react";
 import { getPlayerManager } from "../services/playerManager";
 import SharePost from "./SharePost";
 import MediaFullscreenViewer from "./MediaFullscreenViewer";
@@ -362,7 +362,7 @@ const PostDetailContent = ({
             onClick={onClose}
             className="text-white hover:bg-gray-800/50 rounded-lg transition-colors"
           >
-            <X size={20} />
+            <ChevronLeft size={20} />
           </button>
         </div>
         <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center">
@@ -398,7 +398,7 @@ const PostDetailContent = ({
             onClick={onClose}
             className="text-white hover:bg-gray-800/50 rounded-lg transition-colors"
           >
-            <X size={20} />
+            <ChevronLeft size={20} />
           </button>
           <div className="flex items-center gap-3 flex-1 ml-4">
             {post.user.profile_image ? (
