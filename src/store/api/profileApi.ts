@@ -441,11 +441,36 @@ export const profileApi = createApi({
         method: "GET",
       }),
     }),
-    getWatchHistory: builder.query<any, any>({
-      query: ({ page }) => ({
+    getWatchHistory: builder.query<any, { page?: number }>({
+      query: ({ page = 1 }) => ({
         url: convertToSecureUrl(`/watch-history?pageSize=12&page=${page}`),
         method: "GET",
       }),
+      // Cache key ignores page for infinite scroll
+      serializeQueryArgs: () => {
+        return "watchHistory";
+      },
+      // Merge new results with existing cache for infinite scroll
+      merge: (currentCache, newItems, { arg }) => {
+        if (arg.page === 1) {
+          // Reset cache on first page (fresh load)
+          return newItems;
+        }
+        // Append new posts, deduplicate by post_id
+        const existingIds = new Set(
+          currentCache.data?.map((p: any) => p.post_id) ?? []
+        );
+        const uniqueNewPosts =
+          newItems.data?.filter((p: any) => !existingIds.has(p.post_id)) ?? [];
+        return {
+          ...newItems,
+          data: [...(currentCache.data ?? []), ...uniqueNewPosts],
+        };
+      },
+      // Force refetch when page changes
+      forceRefetch: ({ currentArg, previousArg }) => {
+        return currentArg?.page !== previousArg?.page;
+      },
     }),
     userShareInfo: builder.query<any, any>({
       query: () => ({

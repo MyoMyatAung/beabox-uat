@@ -1,66 +1,60 @@
-import React, { useEffect, useState } from "react";
-import {
-  useGetLikedPostQuery,
-  useGetWatchHistoryQuery,
-} from "@/store/api/profileApi";
+import { useState, useCallback, useRef, useEffect } from "react";
+import { useGetWatchHistoryQuery } from "@/store/api/profileApi";
 import { useSelector } from "react-redux";
 import Loader from "@/page/home/vod_loader.gif";
-import { NoVideo } from "@/assets/profile";
-import InfinitLoad from "@/components/shared/infinit-load";
 import VideoCard from "../video-card";
 import { useSearchParams } from "react-router-dom";
 import VideoFeed from "@/page/home/components/VideoFeed";
 import NoVideoCard from "@/components/shared/no-video-card";
+import LoadingSpinner from "@/page/gossip/components/LoadingSpinner";
 
 const HistoryVideos = () => {
   const [loadingVideoId, setLoadingVideoId] = useState<string | null>(null);
   const user = useSelector((state: any) => state?.persist?.user);
-  const [videos, setVideos] = useState<any[]>([]);
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [totalData, setTotalData] = useState<number>(0);
   const [searchParams] = useSearchParams();
   const initialQuery = searchParams.get("query") || "";
   const [query, setQuery] = useState(initialQuery);
   const [selectedMovieId, setSelectedMovieId] = useState(null);
   const [showVideoFeed, setShowVideoFeed] = useState(false);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
 
-  const { data, isLoading } = useGetWatchHistoryQuery(
+  const { data, isLoading, isFetching } = useGetWatchHistoryQuery(
     { page },
     { skip: !user }
   );
 
-  // useEffect(() => {
-  //   if (data?.data?.length) {
-  //     // Append new data to the existing videos
-  //     setVideos((prevVideos) => [...prevVideos, ...data.data]);
-  //     setTotalData(data.pagination.total);
-  //   }
-  // }, [data]);
-  useEffect(() => {
-    if (data?.data) {
-      if (page === 1) {
-        setVideos(data.data); // Replace ranking list when filter changes
-      } else {
-        setVideos((prev: any) => [...prev, ...data.data]); // Append new results for infinite scroll
-      }
-      setTotalData(data?.pagination?.total);
-    }
-  }, [data]);
+  // Get videos from merged cache
+  const videos = data?.data ?? [];
+  const totalData = data?.pagination?.total ?? 0;
+  const hasMore = videos.length < totalData;
 
-  useEffect(() => {
-    if (totalData <= videos.length) {
-      setHasMore(false);
-    } else {
-      setHasMore(true);
-    }
-  }, [totalData, videos]);
-
-  const fetchMoreData = () => {
-    if (hasMore) {
+  const fetchMoreData = useCallback(() => {
+    if (hasMore && !isFetching) {
       setPage((prev) => prev + 1);
     }
-  };
+  }, [hasMore, isFetching]);
+
+  // IntersectionObserver for loading more when spinner is in viewport
+  useEffect(() => {
+    const node = loadMoreRef.current;
+    if (!node || !hasMore) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !isFetching) {
+          fetchMoreData();
+        }
+      },
+      { rootMargin: "100px", threshold: 0.1 }
+    );
+
+    observer.observe(node);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [hasMore, isFetching, fetchMoreData]);
 
   if (isLoading && page === 1) {
     return (
@@ -78,11 +72,12 @@ const HistoryVideos = () => {
         <div className="z-[9900] h-screen fixed top-0 overflow-y-scroll left-0 w-full">
           <VideoFeed
             setPage={setPage}
-            setVideos={setVideos}
+            setVideos={() => {}} // Videos are managed by RTK Query cache
             videos={videos}
             currentActiveId={selectedMovieId}
             setShowVideoFeed={setShowVideoFeed}
             query={query}
+            search={false}
           />
         </div>
       ) : (
@@ -99,7 +94,6 @@ const HistoryVideos = () => {
                   <div
                     key={item.post_id}
                     onClick={() => {
-                      // console.log(item);
                       setSelectedMovieId(item?.post_id);
                       setShowVideoFeed(true);
                     }}
@@ -112,11 +106,10 @@ const HistoryVideos = () => {
                   </div>
                 ))}
               </div>
-              <InfinitLoad
-                data={videos}
-                fetchData={fetchMoreData}
-                hasMore={hasMore}
-              />
+              {/* Loading spinner - triggers load more when in viewport */}
+              <div ref={loadMoreRef}>
+                {hasMore && <LoadingSpinner />}
+              </div>
               <div className="py-[38px]"></div>
             </div>
           </>
